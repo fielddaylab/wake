@@ -185,6 +185,12 @@ MonoBehaviour:
         m_HashValue: 1177739487
       ConditionString: 
       Amount: 0
+    - Type: 1
+      Target:
+        m_Source: LionfishInvasion.Population.Ick
+        m_HashValue: 1380939620
+      ConditionString: 
+      Amount: 0
     PrerequisiteTaskIds:
     - m_Source: scanHistory
       m_HashValue: 1869113232
@@ -203,26 +209,8 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: Lionfish.Eats.BlueheadWrasse.Stressed
-        m_HashValue: 1767076566
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
         m_Source: Lionfish.Eats.BlueTang
         m_HashValue: 2564734920
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: Lionfish.Eats.BlueTang.Stressed
-        m_HashValue: 1027242879
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: BlueTang.Eats.TurfAlgae
-        m_HashValue: 115798069
       ConditionString: 
       Amount: 0
     - Type: 1
@@ -239,32 +227,14 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: RedGrouper.Eats.BlueheadWrasse.Stressed
-        m_HashValue: 1927669665
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
         m_Source: RedGrouper.Eats.BlueTang
         m_HashValue: 1688490569
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: RedGrouper.Eats.BlueTang.Stressed
-        m_HashValue: 2542836908
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
         m_Source: BlueheadWrasse.Eats.Ick.Stressed
         m_HashValue: 3984907015
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: BlueheadWrasse.Eats.Ick
-        m_HashValue: 170722032
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
@@ -385,6 +355,18 @@ MonoBehaviour:
         m_HashValue: 2244697653
       ConditionString: 
       Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Lionfish.Light.Stressed
+        m_HashValue: 1779705110
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Lionfish.Temperature.Stressed
+        m_HashValue: 4064289156
+      ConditionString: 
+      Amount: 0
     PrerequisiteTaskIds:
     - m_Source: observeEatRules
       m_HashValue: 4279728306
@@ -403,26 +385,8 @@ MonoBehaviour:
       Amount: 0
     - Type: 2
       Target:
-        m_Source: Lionfish.Eats.BlueheadWrasse.Stressed
-        m_HashValue: 1767076566
-      ConditionString: 
-      Amount: 0
-    - Type: 2
-      Target:
         m_Source: Lionfish.Eats.BlueTang
         m_HashValue: 2564734920
-      ConditionString: 
-      Amount: 0
-    - Type: 2
-      Target:
-        m_Source: Lionfish.Eats.BlueTang.Stressed
-        m_HashValue: 1027242879
-      ConditionString: 
-      Amount: 0
-    - Type: 2
-      Target:
-        m_Source: BlueTang.Eats.TurfAlgae
-        m_HashValue: 115798069
       ConditionString: 
       Amount: 0
     - Type: 2
@@ -439,26 +403,8 @@ MonoBehaviour:
       Amount: 0
     - Type: 2
       Target:
-        m_Source: RedGrouper.Eats.BlueTang.Stressed
-        m_HashValue: 2542836908
-      ConditionString: 
-      Amount: 0
-    - Type: 2
-      Target:
         m_Source: RedGrouper.Eats.BlueheadWrasse
         m_HashValue: 299259218
-      ConditionString: 
-      Amount: 0
-    - Type: 2
-      Target:
-        m_Source: RedGrouper.Eats.BlueheadWrasse.Stressed
-        m_HashValue: 1927669665
-      ConditionString: 
-      Amount: 0
-    - Type: 2
-      Target:
-        m_Source: BlueheadWrasse.Eats.Ick
-        m_HashValue: 170722032
       ConditionString: 
       Amount: 0
     - Type: 2
@@ -497,20 +443,32 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: Lionfish.Reproduce.Stressed
-        m_HashValue: 1871935247
+        m_Source: Lionfish.Reproduce
+        m_HashValue: 3773007000
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: TurfAlgae.Reproduce.Stressed
-        m_HashValue: 346476850
+        m_Source: TurfAlgae.Reproduce
+        m_HashValue: 1199979687
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: RedGrouper.Reproduce.Stressed
-        m_HashValue: 1521144896
+        m_Source: RedGrouper.Reproduce
+        m_HashValue: 2555751373
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Sargassum.Reproduce
+        m_HashValue: 3860466180
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Ick.Reproduce
+        m_HashValue: 516665143
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
@@ -543,26 +501,80 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: Sargassum.Consume.Light
-        m_HashValue: 2760913775
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
         m_Source: Sargassum.Produce.Oxygen
         m_HashValue: 3093528107
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: StaghornCoral.Consume.CO2
-        m_HashValue: 1327411962
+        m_Source: Sargassum.Consume.Light
+        m_HashValue: 2760913775
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: StaghornCoral.Produce.Oxygen
-        m_HashValue: 4003606908
+        m_Source: StaghornCoral.Consume.CarbonDioxide.Stressed
+        m_HashValue: 1300319732
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: StaghornCoral.Produce.Oxygen.Stressed
+        m_HashValue: 1569436531
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Lionfish.Consume.Oxygen
+        m_HashValue: 3814092213
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Lionfish.Produce.CarbonDioxide
+        m_HashValue: 3353259402
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BlueheadWrasse.Consume.Oxygen.Stressed
+        m_HashValue: 4088369463
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BlueheadWrasse.Produce.CarbonDioxide.Stressed
+        m_HashValue: 1782244912
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BlueTang.Consume.Oxygen.Stressed
+        m_HashValue: 70980120
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BlueTang.Produce.CarbonDioxide.Stressed
+        m_HashValue: 1949393929
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: TurfAlgae.Consume.Light
+        m_HashValue: 945503368
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: TurfAlgae.Produce.Oxygen
+        m_HashValue: 1615867758
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: TurfAlgae.Consume.CarbonDioxide
+        m_HashValue: 4290467751
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
@@ -758,6 +770,12 @@ MonoBehaviour:
         m_HashValue: 1177739487
       ConditionString: 
       Amount: 0
+    - Type: 1
+      Target:
+        m_Source: LionfishInvasion.Population.Ick
+        m_HashValue: 1380939620
+      ConditionString: 
+      Amount: 0
     PrerequisiteTaskIndices: 0200
   - Id:
       m_Source: observeEatRules
@@ -776,26 +794,8 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: Lionfish.Eats.BlueheadWrasse.Stressed
-        m_HashValue: 1767076566
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
         m_Source: Lionfish.Eats.BlueTang
         m_HashValue: 2564734920
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: Lionfish.Eats.BlueTang.Stressed
-        m_HashValue: 1027242879
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: BlueTang.Eats.TurfAlgae
-        m_HashValue: 115798069
       ConditionString: 
       Amount: 0
     - Type: 1
@@ -812,32 +812,14 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: RedGrouper.Eats.BlueheadWrasse.Stressed
-        m_HashValue: 1927669665
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
         m_Source: RedGrouper.Eats.BlueTang
         m_HashValue: 1688490569
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: RedGrouper.Eats.BlueTang.Stressed
-        m_HashValue: 2542836908
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
         m_Source: BlueheadWrasse.Eats.Ick.Stressed
         m_HashValue: 3984907015
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: BlueheadWrasse.Eats.Ick
-        m_HashValue: 170722032
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 0300
@@ -958,6 +940,18 @@ MonoBehaviour:
         m_HashValue: 2244697653
       ConditionString: 
       Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Lionfish.Light.Stressed
+        m_HashValue: 1779705110
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Lionfish.Temperature.Stressed
+        m_HashValue: 4064289156
+      ConditionString: 
+      Amount: 0
     PrerequisiteTaskIndices: 0400
   - Id:
       m_Source: measureEatRates
@@ -976,26 +970,8 @@ MonoBehaviour:
       Amount: 0
     - Type: 2
       Target:
-        m_Source: Lionfish.Eats.BlueheadWrasse.Stressed
-        m_HashValue: 1767076566
-      ConditionString: 
-      Amount: 0
-    - Type: 2
-      Target:
         m_Source: Lionfish.Eats.BlueTang
         m_HashValue: 2564734920
-      ConditionString: 
-      Amount: 0
-    - Type: 2
-      Target:
-        m_Source: Lionfish.Eats.BlueTang.Stressed
-        m_HashValue: 1027242879
-      ConditionString: 
-      Amount: 0
-    - Type: 2
-      Target:
-        m_Source: BlueTang.Eats.TurfAlgae
-        m_HashValue: 115798069
       ConditionString: 
       Amount: 0
     - Type: 2
@@ -1012,26 +988,8 @@ MonoBehaviour:
       Amount: 0
     - Type: 2
       Target:
-        m_Source: RedGrouper.Eats.BlueTang.Stressed
-        m_HashValue: 2542836908
-      ConditionString: 
-      Amount: 0
-    - Type: 2
-      Target:
         m_Source: RedGrouper.Eats.BlueheadWrasse
         m_HashValue: 299259218
-      ConditionString: 
-      Amount: 0
-    - Type: 2
-      Target:
-        m_Source: RedGrouper.Eats.BlueheadWrasse.Stressed
-        m_HashValue: 1927669665
-      ConditionString: 
-      Amount: 0
-    - Type: 2
-      Target:
-        m_Source: BlueheadWrasse.Eats.Ick
-        m_HashValue: 170722032
       ConditionString: 
       Amount: 0
     - Type: 2
@@ -1070,20 +1028,32 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: Lionfish.Reproduce.Stressed
-        m_HashValue: 1871935247
+        m_Source: Lionfish.Reproduce
+        m_HashValue: 3773007000
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: TurfAlgae.Reproduce.Stressed
-        m_HashValue: 346476850
+        m_Source: TurfAlgae.Reproduce
+        m_HashValue: 1199979687
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: RedGrouper.Reproduce.Stressed
-        m_HashValue: 1521144896
+        m_Source: RedGrouper.Reproduce
+        m_HashValue: 2555751373
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Sargassum.Reproduce
+        m_HashValue: 3860466180
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Ick.Reproduce
+        m_HashValue: 516665143
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 0600
@@ -1116,26 +1086,80 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: Sargassum.Consume.Light
-        m_HashValue: 2760913775
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
         m_Source: Sargassum.Produce.Oxygen
         m_HashValue: 3093528107
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: StaghornCoral.Consume.CO2
-        m_HashValue: 1327411962
+        m_Source: Sargassum.Consume.Light
+        m_HashValue: 2760913775
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: StaghornCoral.Produce.Oxygen
-        m_HashValue: 4003606908
+        m_Source: StaghornCoral.Consume.CarbonDioxide.Stressed
+        m_HashValue: 1300319732
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: StaghornCoral.Produce.Oxygen.Stressed
+        m_HashValue: 1569436531
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Lionfish.Consume.Oxygen
+        m_HashValue: 3814092213
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Lionfish.Produce.CarbonDioxide
+        m_HashValue: 3353259402
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BlueheadWrasse.Consume.Oxygen.Stressed
+        m_HashValue: 4088369463
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BlueheadWrasse.Produce.CarbonDioxide.Stressed
+        m_HashValue: 1782244912
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BlueTang.Consume.Oxygen.Stressed
+        m_HashValue: 70980120
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BlueTang.Produce.CarbonDioxide.Stressed
+        m_HashValue: 1949393929
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: TurfAlgae.Consume.Light
+        m_HashValue: 945503368
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: TurfAlgae.Produce.Oxygen
+        m_HashValue: 1615867758
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: TurfAlgae.Consume.CarbonDioxide
+        m_HashValue: 4290467751
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 0700
