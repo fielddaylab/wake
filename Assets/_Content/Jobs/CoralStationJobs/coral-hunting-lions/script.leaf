@@ -100,7 +100,7 @@ $endif
 @when		scene:name == "ExperimentV2", JobTaskCompleted(measureStressReproduceRates)
 @once
 @cutscene
-{@kevin}	Wow!  Reproduction rates for every species at Site S can now be found in your AQOS tablet.
+{@kevin}	Wow! Reproduction rates for every species at Site S can now be found in your AQOS tablet.
 
 :: obtainChemistryComplete
 @trigger    JobTasksUpdated
@@ -175,14 +175,14 @@ $endif
 @when 		JobTaskActive(measureStressEatRates)
 @boostScore -5
 @cutscene
-{@kevin}    Using the Measurement Tank, find out how quickly everything at Site S eats other things when stressed.
+{@kevin}    Using the Measurement Tank, find out how quickly things at Site S eat other things.
 
 :: catchMeasureStressReproduceRates
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(measureStressReproduceRates)
 @boostScore -5
 @cutscene
-{@kevin}    Using the Measurement Tank, find out how quickly everything at Site S reproduces when stressed.
+{@kevin}    Using the Measurement Tank, find out how quickly things at Site S reproduce.
 
 :: catchObtainChemistry
 @trigger    RequestPartnerHelp
