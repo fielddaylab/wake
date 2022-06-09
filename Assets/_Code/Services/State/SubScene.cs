@@ -7,5 +7,6 @@ namespace Aqua
     public class SubScene : MonoBehaviour
     {
         public SceneReference Scene;
+        public bool ImportLighting = false;
     }
 }

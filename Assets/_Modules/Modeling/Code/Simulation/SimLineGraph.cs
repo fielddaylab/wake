@@ -444,7 +444,7 @@ namespace Aqua.Modeling {
             renderer.Colors = Array.Empty<Color>();
             renderer.SetColor(actorColor);
             renderer.EnsurePointBuffer(count);
-            Unsafe.Copy(pointBuffer, count, renderer.Points);
+            Unsafe.CopyArray(pointBuffer, count, renderer.Points);
             renderer.PointCount = count;
             renderer.PointRenderCount = count;
             return range;
@@ -454,7 +454,7 @@ namespace Aqua.Modeling {
             Rect range = FillPopulationBuffer(results, count, actorIdx, pointBuffer, stressBuffer, stressCount, true);
             renderer.EnsureColorBuffer(count);
             renderer.EnsurePointBuffer(count);
-            Unsafe.Copy(pointBuffer, count, renderer.Points);
+            Unsafe.CopyArray(pointBuffer, count, renderer.Points);
             Color[] colors = renderer.Colors;
             for(int i = 0; i < count; i++) {
                 colors[i] = actorColor;
@@ -477,7 +477,7 @@ namespace Aqua.Modeling {
             renderer.Colors = Array.Empty<Color>();
             renderer.SetColor(propertyColor);
             renderer.EnsurePointBuffer(count);
-            Unsafe.Copy(pointBuffer, count, renderer.Points);
+            Unsafe.CopyArray(pointBuffer, count, renderer.Points);
             renderer.PointCount = count;
             renderer.PointRenderCount = count;
             return range;

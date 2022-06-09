@@ -55,17 +55,19 @@ namespace Aqua
 
         static private int GetFramerate(OptionsPerformance.FramerateMode inFramerate)
         {
-            switch(inFramerate)
-            {
-                case OptionsPerformance.FramerateMode.Stable:
-                    return 30;
+            return -1;
 
-                case OptionsPerformance.FramerateMode.High:
-                    return 60;
+            // switch(inFramerate)
+            // {
+            //     case OptionsPerformance.FramerateMode.Stable:
+            //         return 30;
 
-                default:
-                    return -1;
-            }
+            //     case OptionsPerformance.FramerateMode.High:
+            //         return 60;
+
+            //     default:
+            //         return -1;
+            // }
         }
     }
 }

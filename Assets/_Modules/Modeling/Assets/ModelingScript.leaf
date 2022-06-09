@@ -49,6 +49,7 @@ $set jobs:sync-model.saved = true
 @trigger	PredictModelStarted
 @boostScore 1050 // arbitraryily high number
 @when		scene:name == "Modeling", HasUpgrade(PredictionModel), !jobs:predict-model.saved
+@once
 @cutscene
 {@kevin}	Once we have a complete Sync Model, we can click the button that says {h}Run Prediction{/h}.
 {@kevin}	This will provide us with a model forecasting what the site will look like in the future!

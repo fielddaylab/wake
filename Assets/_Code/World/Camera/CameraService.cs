@@ -183,8 +183,6 @@ namespace Aqua.Cameras
 
         private void LateUpdate()
         {
-            UpdateCameraRenderRegion();
-
             if (m_Paused || Script.IsLoading || Time.timeScale <= 0)
                 return;
 
@@ -1337,16 +1335,24 @@ namespace Aqua.Cameras
             r.width = 1 - diffX;
             r.height = 1 - diffY;
 
-            if (m_LastScreenAspectClip != r) {
-                m_LastScreenAspectClip = r;
-                if (m_Camera) {
-                    m_Camera.rect = r;
-                }
-                Services.UI.AdjustCameraRegion(r);
-            }
+            m_LastScreenAspectClip = r;
         }
 
         private void OnCameraPreRender(ScriptableRenderContext ctx, Camera[] cameras) {
+            UpdateCameraRenderRegion();
+
+            foreach(var camera in cameras) {
+                if (camera.cameraType != CameraType.Game) {
+                    return;
+                }
+
+                if (camera.targetTexture == null) {
+                    camera.rect = m_LastScreenAspectClip;
+                } else {
+                    return;
+                }
+            }
+            
             float left = m_LastScreenAspectClip.x, bottom = m_LastScreenAspectClip.y;
             if (left != 0 || bottom != 0) {
                 Color c = m_ClipOutsideColor;

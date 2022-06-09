@@ -147,7 +147,7 @@ namespace Aqua.Modeling {
         }
 
         ~ModelWorldDisplay() {
-            Unsafe.TryFreeArena(ref m_SolverState.Allocator);
+            Unsafe.TryDestroyArena(ref m_SolverState.Allocator);
         }
 
         private void Awake() {
@@ -164,7 +164,7 @@ namespace Aqua.Modeling {
         }
 
         private void OnDestroy() {
-            Unsafe.TryFreeArena(ref m_SolverState.Allocator);
+            Unsafe.TryDestroyArena(ref m_SolverState.Allocator);
         }
 
         private unsafe void InitMemoryArena() {
