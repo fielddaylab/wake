@@ -7,12 +7,12 @@
 {@kevin}	 We need to develop a sense of why the {nameof TurfAlgae} population has gotten big enough to cover the coral.
 $if !JobTaskCompleted(scanAll)
 	// BRANCH A
-	{@kevin}	We need to know the species at Site S that could be affecting the Turf Algae. Let's dive!
+	{@kevin}	We need to know the species at {h}Site S{/h} that could be affecting the Turf Algae. Let's dive!
 $else
 	$if !JobTaskCompleted(observeEatAlgae)
 		// BRANCH B
 		{@kevin}	In a balanced ecosystem, something would be eating the Turf Algae and reducing its population.
-					Have you used a tank to Observe what species from Site S eats Turf Algae?
+					Have you used a tank to Observe what species from {h}Site S{/h} eats Turf Algae?
 	$else
 		$if !JobTaskCompleted(measureEatRate)
 			// BRANCH C
@@ -79,13 +79,13 @@ $endif
 @when		JobTaskTop(modelPopulations)
 @once
 @cutscene
-{@kevin}	We've got numbers, but we won't know if that number makes sense until we build a Descriptive Model.
+{@kevin}	We've got numbers, but we won't know if that number makes sense until we build a {map-name}Descriptive Model{/map-name}.
 
 :: helpBuildModel
 @trigger    RequestPartnerHelp
 @when       JobTaskTop(modelPopulations) // BRANCH D
 @cutscene
-{@kevin} 	Build a Descriptive Model of the Site S ecosystem, focusing on the {nameof BlueTang} and {nameof TurfAlgae}.
+{@kevin} 	Build a {map-name}Descriptive Model{/map-name} of the {h}Site S{/h} ecosystem, focusing on the {nameof BlueTang} and {nameof TurfAlgae}.
 
 :: inModeling
 @trigger	SceneStart
