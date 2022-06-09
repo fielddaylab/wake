@@ -229,10 +229,9 @@ $choose branch
 {@profCempaka}	Well, let me know when you do.
 
 :: argue.haveModel
-{@profCempaka}	Okay. I need a model that shows the coral will come back, an observation of what species they impact,
-				And a connection to the Coral.
+{@profCempaka}	Okay. I need a model that shows the coral will come back, an observation of what species Lionfish impact, and a connection to the Coral.
 $if ArgueSetClaim(hunting-lionsClaim, jobs.coral-hunting-lions.argue.claimEvidence)
-		$call ArgueFactSlot(ReefEdge.Model.HuntingLionsIntervene)
+		$call ArgueFactSlot(LionfishInvasion.Model.HuntingLionsIntervene)
 		$call ArgueFactSlot(Lionfish.Eats.BlueTang)
 		$call ArgueFactSlot(Lionfish.Eats.BlueheadWrasse)
 		$call ArgueFactSlot(StaghornCoral.Light.Stressed)
