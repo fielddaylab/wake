@@ -200,6 +200,13 @@ namespace Aqua
                 RegisterStationToggle(mapMenu, map.Id());
             }
 
+            mapMenu.AddDivider();
+
+            foreach(var map in Services.Assets.Map.Stations())
+            {
+                RegisterStationSwitchToggle(mapMenu, map.Id());
+            }
+
             yield return mapMenu;
 
             // ship rooms
@@ -469,6 +476,19 @@ namespace Aqua
                     else
                         Save.Map.LockStation(inStationId);
                 }
+            );
+        }
+
+        static private void RegisterStationSwitchToggle(DMInfo inMenu, StringHash32 inStationId)
+        {
+            inMenu.AddToggle("Switch to " + inStationId.ToDebugString(),
+                () => { return Save.Map.CurrentStationId() == inStationId; },
+                (b) =>
+                {
+                    if (b)
+                        Save.Map.SetCurrentStationId(inStationId);
+                },
+                () => { return Save.Map.IsStationUnlocked(inStationId); }
             );
         }
 
