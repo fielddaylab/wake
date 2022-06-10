@@ -1,8 +1,11 @@
 # basePath RS-2V
 
 :: OnScanFishers
-@trigger BestiaryEntryAdded
-@when   entryId == "SpearedLionfish"
+@trigger    ScannedObject
+@when       scanId == "RS-2S.spearedLionfish"
 @cutscene
 @once
-$call GiveEntity(Fishers)
+$if !HasEntity(Fishers)
+    $call GiveEntity(Fishers)
+$endif
+$call GiveFact(Fishers.Eats.Lionfish)
