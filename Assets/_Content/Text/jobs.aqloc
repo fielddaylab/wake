@@ -733,19 +733,19 @@ The artificial reef has helped coral populations at {h}Site S{/h}
 So Much Algae
 
 :: coral-much-algae.desc
-Another researcher reported that the coral is covered in turf algae. Those lionfish scare me, so I avoid that area as much as possible... Can you double check and see if you can figure out why there is so much algae?
+Another researcher reported that the coral is covered in turf algae. Those lionfish scare me, so I avoid that area as much as possible. Can you double check and see if you can figure out why there is so much algae?
 
 :: coral-much-algae.task.scanAll
 Scan all species at {h}Site S{/h}
 
 :: coral-much-algae.task.observeEatAlgae
-Find what eats Turf Algae
+Find what eats {nameof TurfAlgae}	
 
 :: coral-much-algae.task.measureEatRate
-Measure the rate at which Blue Tang eats Turf Algae
+Measure the rate at which {nameof BlueTang} eats {nameof TurfAlgae}
 
 :: coral-much-algae.task.modelPopulations
-Model Blue Tang and Turf Algae populations
+Model {nameof BlueTang} and {nameof TurfAlgae} populations
 
 :: coral-much-algae.task.reportBack
 Argue why there is so much Turf Algae
@@ -991,7 +991,7 @@ Gather historical population data from the probe at Site S
 ** Tang Check-Up
 
 :: coral-check-up.desc
-I've been considering that model you made. What if the Tang are stressed? Can you find out whether something is stressing them...?
+I've been considering that model you made, and it seems the accuracy of this model is too low for us to draw real conclusions. We need to collect more data about the {nameof BlueTang} at {h}Site S{/h}
 
 :: coral-check-up.task.findStress
 Find Blue Tang stress ranges
@@ -1006,7 +1006,7 @@ Observe the effect of Ick on Tang in the Observation Tank
 Improve Site S descriptive model based on new data
 
 :: coral-check-up.task.reviseVisual
-Revise Site S visual model based on new data
+Revise {h}Site S{/h} models based on new data
 
 :: coral-check-up.task.report
 Report your findings
@@ -1018,7 +1018,7 @@ Count Ick populations
 The Ick are stressing the Blue Tang
 
 :: coral-check-up.task.measureIck
-Measure the effect of Ick on Tang in the Measurement Tank
+Measure the reproduction rate of the Tang in the {map-name}Measurement Tank{/map-name}
 
 :: bayou-displaced-reef.task.makeModel
 Compile your data into a {h}visual model{/h} to display the creatures found here.
@@ -1048,6 +1048,6 @@ Present your findings to Professor Whalen
 :: arctic-isolated-instance.task.scanProbe
 Scan the Site Z water chemistry probe.
 
-:: bayou-turtle-danger2.task.measureStress
-Measure the stress ranges of Site O organisms
+:: coral-much-algae.desc.short
+Another researcher reported that the coral is covered in {nameof TurfAlgae}. Develop a hypothesis for the cause of the increasing Turf Algae.
 
