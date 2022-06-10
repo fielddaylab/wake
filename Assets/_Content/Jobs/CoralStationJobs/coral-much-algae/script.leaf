@@ -49,11 +49,8 @@ $endif
 @cutscene
 {@kevin} 	Go to {h}Site S{/h} and scan all species.
 
-
-
 // EXPERIMENT
 	
-
 :: helpExperiment
 @trigger    RequestPartnerHelp
 @when       JobTaskTop(observeEatAlgae) // BRANCH B
@@ -71,7 +68,7 @@ $endif
 @trigger    RequestPartnerHelp
 @when       JobTaskTop(measureEatRate) // BRANCH C
 @cutscene
-{@kevin} 	Use the Measurement Tank to get the rate that {nameof BlueTang} eat {nameof TurfAlgae}.
+{@kevin} 	Use the {map-name}Measurement Tank{/map-name} to get the rate that {nameof BlueTang} eat {nameof TurfAlgae}.
 
 // MODELING
 
@@ -141,21 +138,21 @@ $endif
 @when 		JobTaskActive(measureEatRate)
 @boostScore -5
 @cutscene
-{@kevin}    Put Blue Tang and Turf Algae in the Measurement Tank and see how quickly Blue Tang eats the algae.
+{@kevin}    Put {nameof BlueTang} and {nameof TurfAlgae} in the {map-name}Measurement Tank{/map-name} and see how quickly Blue Tang eats the algae.
 
 :: catchModelPopulations
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(modelPopulations)
 @boostScore -5
 @cutscene
-{@kevin}    Create a Sync Model at the Modeling Lab.
+{@kevin}    Create a {h}Sync Model{/h} at the {map-name}Modeling Lab{map-name}.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(sargArgue)
 @boostScore -5
 @cutscene
-{@kevin}    Talk to Professor Cempaka in the Office.
+{@kevin}    Talk to {@nameof profCempaka} in the {map-name}Office{map-name}.
 
 
 // ARGUMENTATION
