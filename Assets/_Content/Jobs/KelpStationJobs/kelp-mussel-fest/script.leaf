@@ -94,8 +94,7 @@
 $if ArgueIsComplete(musselFestReasonChemistry)
 	{@drKelp}	We've talked about the temperature, pH, and light at the site.
 	$branch .argue.chooseClaim
-$endif
-$if ArgueIsComplete(musselFestReasonStress)
+$elseif ArgueIsComplete(musselFestReasonStress)
 	{@drKelp}	So. We've already established the stress ranges for the mussels.
     $call ArgueLoad(musselFestReasonChemistry)
 	$branch .argue.reasonChemistry
@@ -177,7 +176,7 @@ $branch .argue.chooseClaim
 
 :: argue.giveUpArgument
 $call ArgueCancelClaim()
-$branch .argue.giveUp
+$goto .argue.giveUp
 
 :: argue.giveUp
 {@drKelp} OK. Get back to me when you're ready.
