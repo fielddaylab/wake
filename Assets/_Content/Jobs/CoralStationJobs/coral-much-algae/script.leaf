@@ -58,7 +58,7 @@ $endif
 @trigger    RequestPartnerHelp
 @when       JobTaskTop(observeEatAlgae) // BRANCH B
 @cutscene
-{@kevin} 	Use the Observation Tank to determine what eats {nameof TurfAlgae} and is native to Site S.
+{@kevin} 	Use the {map-name}Observation Tank{/map-name} to determine what eats {nameof TurfAlgae} and is native to {h}Site S{/h}.
 
 :: rateMeasured
 @trigger    JobTasksUpdated
@@ -134,7 +134,7 @@ $endif
 @when 		JobTaskActive(observeEatAlgae)
 @boostScore -5
 @cutscene
-{@kevin}    Use the Observation Tank and see if anything eats TurfAlgae.
+{@kevin}    Use the {map-name}Observation Tank{map-name} and see if anything eats TurfAlgae.
 
 :: catchMeasureEatRate
 @trigger    RequestPartnerHelp
