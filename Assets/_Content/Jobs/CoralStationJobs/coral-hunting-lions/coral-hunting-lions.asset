@@ -33,7 +33,7 @@ MonoBehaviour:
   m_ArgumentationDifficulty: 4
   m_PrerequisiteJobs:
   - {fileID: 11400000, guid: a93bac5aba8ab424ab21ba4069eac2ea, type: 2}
-  m_PrereqConditions: HasEntity("SpearedLionfish")
+  m_PrereqConditions: HasScanned("RS-2S.spearedLionfish")
   m_PrereqUpgrades:
   - m_HashValue: 1109988049
   - m_HashValue: 2866492762
@@ -48,20 +48,6 @@ MonoBehaviour:
   m_DiveSiteIds:
   - m_HashValue: 2212791738
   m_Tasks:
-  - Id:
-      m_Source: scanSpear
-      m_HashValue: 710485473
-    LabelId:
-      m_Source: jobs.coral-hunting-lions.task.scanSpear
-      m_HashValue: 3773130645
-    Steps:
-    - Type: 0
-      Target:
-        m_Source: SpearedLionfish
-        m_HashValue: 3238591471
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds: []
   - Id:
       m_Source: scanCritters
       m_HashValue: 1495220036
@@ -117,9 +103,7 @@ MonoBehaviour:
         m_HashValue: 3815586090
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: scanSpear
-      m_HashValue: 710485473
+    PrerequisiteTaskIds: []
   - Id:
       m_Source: scanHistory
       m_HashValue: 1869113232
@@ -513,14 +497,20 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: StaghornCoral.Consume.CarbonDioxide.Stressed
-        m_HashValue: 1300319732
+        m_Source: StaghornCoral.Consume.CO2
+        m_HashValue: 1327411962
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: StaghornCoral.Produce.Oxygen.Stressed
-        m_HashValue: 1569436531
+        m_Source: StaghornCoral.Produce.Oxygen
+        m_HashValue: 4003606908
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: StaghornCoral.Consume.Light
+        m_HashValue: 3366071054
       ConditionString: 
       Amount: 0
     - Type: 1
@@ -537,26 +527,26 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: BlueheadWrasse.Consume.Oxygen.Stressed
-        m_HashValue: 4088369463
+        m_Source: BlueheadWrasse.Consume.Oxygen
+        m_HashValue: 2107927968
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: BlueheadWrasse.Produce.CarbonDioxide.Stressed
-        m_HashValue: 1782244912
+        m_Source: BlueheadWrasse.Produce.CarbonDioxide
+        m_HashValue: 207756605
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: BlueTang.Consume.Oxygen.Stressed
-        m_HashValue: 70980120
+        m_Source: BlueTang.Consume.Oxygen
+        m_HashValue: 3696060869
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: BlueTang.Produce.CarbonDioxide.Stressed
-        m_HashValue: 1949393929
+        m_Source: BlueTang.Produce.CarbonDioxide
+        m_HashValue: 3761326362
       ConditionString: 
       Amount: 0
     - Type: 1
@@ -630,26 +620,10 @@ MonoBehaviour:
       m_HashValue: 2249891962
   m_OptimizedTaskList:
   - Id:
-      m_Source: scanSpear
-      m_HashValue: 710485473
-    IdString: scanSpear
-    Index: 0
-    LabelId:
-      m_Source: jobs.coral-hunting-lions.task.scanSpear
-      m_HashValue: 3773130645
-    Steps:
-    - Type: 0
-      Target:
-        m_Source: SpearedLionfish
-        m_HashValue: 3238591471
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 
-  - Id:
       m_Source: scanCritters
       m_HashValue: 1495220036
     IdString: scanCritters
-    Index: 1
+    Index: 0
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.scanCritters
       m_HashValue: 1635544448
@@ -702,12 +676,12 @@ MonoBehaviour:
         m_HashValue: 3815586090
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0000
+    PrerequisiteTaskIndices: 
   - Id:
       m_Source: scanHistory
       m_HashValue: 1869113232
     IdString: scanHistory
-    Index: 2
+    Index: 1
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.scanHistory
       m_HashValue: 32716956
@@ -724,12 +698,12 @@ MonoBehaviour:
         m_HashValue: 1443959053
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0100
+    PrerequisiteTaskIndices: 0000
   - Id:
       m_Source: countPopulation
       m_HashValue: 1635493235
     IdString: countPopulation
-    Index: 3
+    Index: 2
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.countPopulation
       m_HashValue: 3885012231
@@ -776,12 +750,12 @@ MonoBehaviour:
         m_HashValue: 1380939620
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0200
+    PrerequisiteTaskIndices: 0100
   - Id:
       m_Source: observeEatRules
       m_HashValue: 4279728306
     IdString: observeEatRules
-    Index: 4
+    Index: 3
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.observeEatRules
       m_HashValue: 826814686
@@ -822,12 +796,12 @@ MonoBehaviour:
         m_HashValue: 3984907015
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0300
+    PrerequisiteTaskIndices: 0200
   - Id:
       m_Source: obtainStressRules
       m_HashValue: 3804672883
     IdString: obtainStressRules
-    Index: 5
+    Index: 4
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.obtainStressRules
       m_HashValue: 1076555463
@@ -952,12 +926,12 @@ MonoBehaviour:
         m_HashValue: 4064289156
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0400
+    PrerequisiteTaskIndices: 0300
   - Id:
       m_Source: measureEatRates
       m_HashValue: 1302348262
     IdString: measureEatRates
-    Index: 6
+    Index: 5
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.measureEatRates
       m_HashValue: 1847961002
@@ -998,12 +972,12 @@ MonoBehaviour:
         m_HashValue: 3984907015
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0500
+    PrerequisiteTaskIndices: 0400
   - Id:
       m_Source: measureStressReproduceRates
       m_HashValue: 795492441
     IdString: measureStressReproduceRates
-    Index: 7
+    Index: 6
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.measureStressReproduceRates
       m_HashValue: 651488821
@@ -1056,12 +1030,12 @@ MonoBehaviour:
         m_HashValue: 516665143
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0600
+    PrerequisiteTaskIndices: 0500
   - Id:
       m_Source: obtainChemistry
       m_HashValue: 1751383414
     IdString: obtainChemistry
-    Index: 8
+    Index: 7
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.obtainChemistry
       m_HashValue: 2308555914
@@ -1098,14 +1072,20 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: StaghornCoral.Consume.CarbonDioxide.Stressed
-        m_HashValue: 1300319732
+        m_Source: StaghornCoral.Consume.CO2
+        m_HashValue: 1327411962
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: StaghornCoral.Produce.Oxygen.Stressed
-        m_HashValue: 1569436531
+        m_Source: StaghornCoral.Produce.Oxygen
+        m_HashValue: 4003606908
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: StaghornCoral.Consume.Light
+        m_HashValue: 3366071054
       ConditionString: 
       Amount: 0
     - Type: 1
@@ -1122,26 +1102,26 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: BlueheadWrasse.Consume.Oxygen.Stressed
-        m_HashValue: 4088369463
+        m_Source: BlueheadWrasse.Consume.Oxygen
+        m_HashValue: 2107927968
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: BlueheadWrasse.Produce.CarbonDioxide.Stressed
-        m_HashValue: 1782244912
+        m_Source: BlueheadWrasse.Produce.CarbonDioxide
+        m_HashValue: 207756605
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: BlueTang.Consume.Oxygen.Stressed
-        m_HashValue: 70980120
+        m_Source: BlueTang.Consume.Oxygen
+        m_HashValue: 3696060869
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: BlueTang.Produce.CarbonDioxide.Stressed
-        m_HashValue: 1949393929
+        m_Source: BlueTang.Produce.CarbonDioxide
+        m_HashValue: 3761326362
       ConditionString: 
       Amount: 0
     - Type: 1
@@ -1162,12 +1142,12 @@ MonoBehaviour:
         m_HashValue: 4290467751
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0700
+    PrerequisiteTaskIndices: 0600
   - Id:
       m_Source: predictModel
       m_HashValue: 2555559815
     IdString: predictModel
-    Index: 9
+    Index: 8
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.predictModel
       m_HashValue: 4179720499
@@ -1178,12 +1158,12 @@ MonoBehaviour:
         m_HashValue: 3434771298
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0800
+    PrerequisiteTaskIndices: 0700
   - Id:
       m_Source: interveneModel
       m_HashValue: 2249891962
     IdString: interveneModel
-    Index: 10
+    Index: 9
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.interveneModel
       m_HashValue: 113021158
@@ -1194,12 +1174,12 @@ MonoBehaviour:
         m_HashValue: 852133711
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0900
+    PrerequisiteTaskIndices: 0800
   - Id:
       m_Source: argueIncentive
       m_HashValue: 2428336910
     IdString: argueIncentive
-    Index: 11
+    Index: 10
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.argueIncentive
       m_HashValue: 1939686082
@@ -1210,7 +1190,7 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0a00
+    PrerequisiteTaskIndices: 0900
   m_CashReward: 100
   m_ExpReward: 5
   m_Scripting: {fileID: -1942890987711236906, guid: 5fb1824027eae134d8b1ae839078a7f0,
