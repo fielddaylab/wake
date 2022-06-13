@@ -79,7 +79,7 @@ $endif
 @when		scene:name == "ExperimentV2", JobTaskCompleted(observeEatRules)
 @once
 @cutscene
-{@kevin}	OK, we have enough to make a visual model of the ecosystem, but we're going to need a lot more for an intervention model.
+{@kevin}	OK, we've got some of the basics of the ecosystem, but we're going to need a lot more for an intervention model.
 
 :: obtainStressRulesComplete
 @trigger    JobTasksUpdated
@@ -100,7 +100,7 @@ $endif
 @when		scene:name == "ExperimentV2", JobTaskCompleted(measureStressReproduceRates)
 @once
 @cutscene
-{@kevin}	Wow!  Reproduction rates for every species at Site S can now be found in your AQOS tablet.
+{@kevin}	Wow! Reproduction rates for every species at Site S can now be found in your AQOS tablet.
 
 :: obtainChemistryComplete
 @trigger    JobTasksUpdated
@@ -175,14 +175,14 @@ $endif
 @when 		JobTaskActive(measureStressEatRates)
 @boostScore -5
 @cutscene
-{@kevin}    Using the Measurement Tank, find out how quickly everything at Site S eats other things when stressed.
+{@kevin}    Using the Measurement Tank, find out how quickly things at Site S eat other things.
 
 :: catchMeasureStressReproduceRates
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(measureStressReproduceRates)
 @boostScore -5
 @cutscene
-{@kevin}    Using the Measurement Tank, find out how quickly everything at Site S reproduces when stressed.
+{@kevin}    Using the Measurement Tank, find out how quickly things at Site S reproduce.
 
 :: catchObtainChemistry
 @trigger    RequestPartnerHelp
@@ -229,10 +229,9 @@ $choose branch
 {@profCempaka}	Well, let me know when you do.
 
 :: argue.haveModel
-{@profCempaka}	Okay. I need a model that shows the coral will come back, an observation of what species they impact,
-				And a connection to the Coral.
+{@profCempaka}	Okay. I need a model that shows the coral will come back, an observation of what species Lionfish impact, and a connection to the Coral.
 $if ArgueSetClaim(hunting-lionsClaim, jobs.coral-hunting-lions.argue.claimEvidence)
-		$call ArgueFactSlot(ReefEdge.Model.HuntingLionsIntervene)
+		$call ArgueFactSlot(LionfishInvasion.Model.HuntingLionsIntervene)
 		$call ArgueFactSlot(Lionfish.Eats.BlueTang)
 		$call ArgueFactSlot(Lionfish.Eats.BlueheadWrasse)
 		$call ArgueFactSlot(StaghornCoral.Light.Stressed)

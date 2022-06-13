@@ -313,10 +313,15 @@ namespace Aqua
             m_CurrentPortableAppId = inId;
             switch(inId)
             {
-                case PortableAppId.Environments:
                 case PortableAppId.Organisms:
                     {
-                        LogOpenBestiary();
+                        LogOpenBestiaryOrganisms();
+                        break;
+                    }
+
+                case PortableAppId.Environments:
+                    {
+                        LogOpenBestiaryEnvironments();
                         break;
                     }
 
@@ -568,7 +573,7 @@ namespace Aqua
         }
 
         #region Bestiary App Logging
-        private void LogOpenBestiary()
+        private void LogOpenBestiaryOrganisms()
         {
             m_CurrentPortableBestiaryTabId = BestiaryDescCategory.Critter;
 
@@ -578,7 +583,20 @@ namespace Aqua
 
             m_SequenceIndex++;
 
-            LogBestiaryOpenSpeciesTab(); //Bestiary starts by opening Critters tab
+            LogBestiaryOpenSpeciesTab();
+        }
+
+        private void LogOpenBestiaryEnvironments()
+        {
+            m_CurrentPortableBestiaryTabId = BestiaryDescCategory.Environment;
+
+            #if FIREBASE
+            FBOpenBestiary(m_SequenceIndex, m_UserCode, m_AppVersion, m_AppFlavor, m_LogVersion, m_CurrentJobName);
+            #endif
+
+            m_SequenceIndex++;
+
+            LogBestiaryOpenEnvironmentsTab();
         }
 
         private void LogBestiaryOpenSpeciesTab()

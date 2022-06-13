@@ -394,7 +394,7 @@ namespace Aqua.Profile {
 
             writer.Header("Completed Tasks");
             foreach(var taskId in m_CompletedTasks) {
-                writer.Text(taskId.JobId.ToDebugString());
+                writer.Text(taskId.ToDebugString());
             }
         }
 

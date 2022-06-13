@@ -47,7 +47,7 @@ $endif
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(observeInteractions), scene:name != "ExperimentV2"
 @cutscene
-{@kevin}	Get to the Experimentation Room and see how the Lionfish interacts with other species you've found.
+{@kevin}	Get to the {map-name}Experiment Room{/map-name} and see how the {nameof Lionfish} interacts with other species you've found.
 
 
 // EXPERIMENTATION
@@ -63,8 +63,8 @@ $endif
 @when		scene:name == "ExperimentV2", JobTaskTop(observeInteractions)
 @once
 @cutscene
-{@kevin}	As I said, no one knows how the Lionfish fits into the ecosystem of the reef, so you'd better observe the Lionfsh with as many other species as you can.
-			Especially with the coral.
+{@kevin}	As I said, no one knows how the Lionfish fits into the ecosystem of the reef, so you'd better observe the Lionfish with as many other species as you can.
+			// Especially with the coral.
 			
 :: experimentComplete
 @trigger JobTasksUpdated

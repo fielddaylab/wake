@@ -24,6 +24,14 @@
 @cutscene
 {@kevin}    Gather historical population data from a probe at Site O.
 
+:: catchMeasureStress
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(measureStress)
+@boostScore -5
+@cutscene
+{@kevin}    Do some experimenting to obtain rules about Site O organisms. Then, head to the Modeling Lab and make a Descriptive Model.
+            The model should match the population history you collected.
+
 :: catchSyncModel
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(syncModel)

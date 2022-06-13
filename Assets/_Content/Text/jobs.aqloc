@@ -625,7 +625,7 @@ Use your measurement tank to find the rates at which Loggerhead Turtles eat Moon
 Create a prediction model of your findings for the jellyfish.
 
 :: bayou-hide-n-seek.name
-**Hide 'n Seek
+Hide 'n Seek
 
 :: bayou-hide-n-seek.desc
 We want to see what might happen in the future for the turtles, and we need to make sure we're not missing anything.
@@ -691,7 +691,7 @@ Obtain all stress rules for organisms at {h}Site S{/h}
 Measure the eating rates of all organisms at {h}Site S{/h} when stressed
 
 :: coral-hunting-lions.task.measureStressReproduceRates
-Measure the reproduction rates of all organisms at {h}Site S{/h} when stressed
+Measure the reproduction rates of all organisms at {h}Site S{/h}
 
 :: coral-hunting-lions.task.obtainChemistry
 Measure the effects of organisms on their environment
@@ -733,19 +733,19 @@ The artificial reef has helped coral populations at {h}Site S{/h}
 So Much Algae
 
 :: coral-much-algae.desc
-Another researcher reported that the coral is covered in turf algae. Those lionfish scare me, so I avoid that area as much as possible... Can you double check and see if you can figure out why there is so much algae?
+Another researcher reported that the coral is covered in turf algae. Those lionfish scare me, so I avoid that area as much as possible. Can you double check and see if you can figure out why there is so much algae?
 
 :: coral-much-algae.task.scanAll
 Scan all species at {h}Site S{/h}
 
 :: coral-much-algae.task.observeEatAlgae
-Find what eats Turf Algae
+Find what eats {nameof TurfAlgae}
 
 :: coral-much-algae.task.measureEatRate
-Measure the rate at which Blue Tang eats Turf Algae
+Measure the rate at which {nameof BlueTang} eats {nameof TurfAlgae}
 
 :: coral-much-algae.task.modelPopulations
-Model Blue Tang and Turf Algae populations
+{map-name}Model{map-name} Blue Tang and Turf Algae populations.
 
 :: coral-much-algae.task.reportBack
 Argue why there is so much Turf Algae
@@ -838,7 +838,7 @@ Report your findings back to Prof. Whalen
 Scan all critters feasting on the whale fall {h}Site W{/h}
 
 :: arctic-missing-whale.task.foundDetritus
-Measure the amount of detritus found on the whale carcass
+Count the amount of detritus found on the whale carcass
 
 :: arctic-disappearing-act.argue.claimLabel
 Present your visual model of the species interactions at {h}Site W{/h}
@@ -934,7 +934,7 @@ Present evidence explaining why Sea Sponges are not found in {h}Site Z{/h}.
 Scan all species at {h}Site Z{/h}
 
 :: arctic-isolated-instance.task.experimentPredatorAll
-See if predators from nearby sites eat Glass Sponges
+See if predators from Site Y eat Glass Sponges
 
 :: arctic-isolated-instance.task.experimentPredatorZ
 Observe which organisms {h}Site Z{/h} predators eat
@@ -946,7 +946,7 @@ Discuss your findings with Professor Whalen
 Determine Glass Sponge stress levels
 
 :: arctic-isolated-instance.task.findPredator
-Search sites near {h}Site Z{/h} for predators of Glass Sponges
+Search a site between Site X and Site Z for predators of Glass Sponges
 
 :: arctic-isolated-instance.task.scanSponge
 Scan a Glass Sponge at {h}Site X{/h}
@@ -991,7 +991,7 @@ Gather historical population data from the probe at Site S
 ** Tang Check-Up
 
 :: coral-check-up.desc
-I've been considering that model you made. What if the Tang are stressed? Can you find out whether something is stressing them...?
+I've been considering that model you made, and it seems the accuracy of this model is too low for us to draw real conclusions. We need to collect more data about the {nameof BlueTang} at {h}Site S{/h}
 
 :: coral-check-up.task.findStress
 Find Blue Tang stress ranges
@@ -1006,7 +1006,7 @@ Observe the effect of Ick on Tang in the Observation Tank
 Improve Site S descriptive model based on new data
 
 :: coral-check-up.task.reviseVisual
-Revise Site S visual model based on new data
+Revise {h}Site S{/h} models based on new data
 
 :: coral-check-up.task.report
 Report your findings
@@ -1018,7 +1018,7 @@ Count Ick populations
 The Ick are stressing the Blue Tang
 
 :: coral-check-up.task.measureIck
-Measure the effect of Ick on Tang in the Measurement Tank
+Measure the reproduction rate of the Tang in the {map-name}Measurement Tank{/map-name}
 
 :: bayou-displaced-reef.task.makeModel
 Compile your data into a {h}visual model{/h} to display the creatures found here.
@@ -1027,15 +1027,27 @@ Compile your data into a {h}visual model{/h} to display the creatures found here
 Create a visual model including plastic.
 
 :: arctic-isolated-instance.task.checkCrab
-Place Glass Sponges in the Observation Tank with Snow Crabs.
+Place Glass Sponges in the Observation Tank with Snow Crabs
 
 :: arctic-isolated-instance.task.checkShark
-Place Glass Sponges in the Observation Tank with Salmon Sharks.
+Place Glass Sponges in the Observation Tank with Salmon Sharks
 
 :: arctic-isolated-instance.task.checkSeal
-Place Glass Sponges in the Observation Tank with Ribbon Seals.
+Place Glass Sponges in the Observation Tank with Ribbon Seals
 
 :: kelp-start-refuge.desc.short
 Which site would make a good kelp refuge:
 {h}Site 1{/h}:[Temp 02°C | Light 60%]; {h}Site 2{/h}:[Temp 20°C | Light 100%]; {h}Site 3{/h}:[Temp 13°C | Light 100%]
+
+:: coral-hunting-lions.task.measureEatRates
+Measure the eating rates of all organisms at {h}Site S{/h}
+
+:: arctic-isolated-instance.task.reportFinal
+Present your findings to Professor Whalen
+
+:: arctic-isolated-instance.task.scanProbe
+Scan the Site Z water chemistry probe.
+
+:: coral-much-algae.desc.short
+Another researcher reported that the coral is covered in {nameof TurfAlgae}. Develop a hypothesis for the cause of the increasing Turf Algae.
 
