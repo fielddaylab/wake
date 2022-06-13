@@ -32,6 +32,7 @@ namespace Aqua.Modeling {
         [NonSerialized] private SimGraphBlock m_InterventionBlock;
         private readonly GenerateStressPointsDelegate StressPointCallback;
         private readonly GenerateDivergenceDelegate DivergenceCallback;
+        private FilterSet m_LastKnownFilters;
 
         private SimLineGraph() {
             StressPointCallback = (SimGraphBlock block, SimRenderMask phase, StressedRegion* stressRegions, int stressRegionCount) => {
@@ -135,8 +136,13 @@ namespace Aqua.Modeling {
             }
         }
 
+        public void RenderData(SimRenderMask mask, FilterSet filterSet, bool onlyFirstPoint = false) {
+            m_LastKnownFilters = filterSet;
+            Render(onlyFirstPoint ? 1 : 99, m_AllocatedBlocks, mask, filterSet);
+        }
+
         public void RenderData(SimRenderMask mask, bool onlyFirstPoint = false) {
-            Render(onlyFirstPoint ? 1 : 99, m_AllocatedBlocks, mask);
+            Render(onlyFirstPoint ? 1 : 99, m_AllocatedBlocks, mask, m_LastKnownFilters);
         }
 
         private void PopulateTargets(ModelState state, ModelProgressInfo info) {
@@ -164,6 +170,7 @@ namespace Aqua.Modeling {
             m_DivergenceIcons.Reset();
             m_Targets.Reset();
             m_InterventionBlock = null;
+            m_LastKnownFilters = default;
             Array.Clear(m_AllocatedWaterMap, 0, m_AllocatedWaterMap.Length);
         }
 
@@ -179,6 +186,7 @@ namespace Aqua.Modeling {
                 block.PrimaryColor = info.Color();
                 block.IconBG.SetColor(block.PrimaryColor * 0.5f);
                 block.Icon.sprite = state.Simulation.Intervention.Target == info || state.Conceptual.GraphedEntities.Contains(info) ? info.Icon() : m_MissingOrganisms;
+                block.gameObject.SetActive(true);
                 m_AllocatedBlockMap.Add(organismId, block);
                 m_AllocatedBlocks.Add(block);
             }
@@ -195,6 +203,7 @@ namespace Aqua.Modeling {
                 block.PrimaryColor = info.Color();
                 block.IconBG.SetColor(block.PrimaryColor * 0.5f);
                 block.Icon.sprite = info.Icon();
+                block.gameObject.SetActive(true);
                 m_AllocatedWaterMap[(int) propertyId] = block;
                 m_AllocatedBlocks.Add(block);
             }
@@ -313,7 +322,7 @@ namespace Aqua.Modeling {
 
         #region Rendering Blocks
 
-        static public void Render(int pointCount, ListSlice<SimGraphBlock> blocks, SimRenderMask mask) {
+        static public void Render(int pointCount, ListSlice<SimGraphBlock> blocks, SimRenderMask mask, FilterSet filters) {
             bool showHistorical = pointCount > 0 && (mask & SimRenderMask.Historical) != 0;
             bool showPlayer = pointCount > 0 && (mask & SimRenderMask.Player) != 0;
             bool showFill = showHistorical && showPlayer && (mask & SimRenderMask.Fill) != 0;
@@ -327,6 +336,8 @@ namespace Aqua.Modeling {
                 changed |= Ref.Replace(ref block.Historical.PointRenderCount, pointCount);
                 changed |= Ref.Replace(ref block.Player.PointRenderCount, pointCount);
                 changed |= Ref.Replace(ref block.Predict.PointRenderCount, pointCount);
+
+                block.gameObject.SetActive(true);
 
                 if (showHistorical && showPlayer) {
                     Rect bounds = block.LastRectHistorical;
@@ -413,6 +424,12 @@ namespace Aqua.Modeling {
                     block.Player.SubmitChanges();
                     block.Predict.SubmitChanges();
                 }
+
+                if (block.PropertyId != WaterPropertyId.NONE) {
+                    block.gameObject.SetActive(!filters.HiddenProperties[block.PropertyId]);
+                } else {
+                    block.gameObject.SetActive(filters.HiddenOrganisms == null || !filters.HiddenOrganisms.Contains(block.ActorId));
+                }
             }
         }
 
@@ -436,6 +453,22 @@ namespace Aqua.Modeling {
         }
 
         #endregion // Rendering Blocks
+
+        #region Filtering
+
+        public void Filter(FilterSet filters) {
+            m_LastKnownFilters = filters;
+            for(int i = 0; i < m_AllocatedBlocks.Count; i++) {
+                SimGraphBlock block = m_AllocatedBlocks[i];
+                if (block.PropertyId != WaterPropertyId.NONE) {
+                    block.gameObject.SetActive(!filters.HiddenProperties[block.PropertyId]);
+                } else {
+                    block.gameObject.SetActive(filters.HiddenOrganisms == null || !filters.HiddenOrganisms.Contains(block.ActorId));
+                }
+            }
+        }
+
+        #endregion // Filtering
 
         #region Generating Lines
 
@@ -541,5 +574,11 @@ namespace Aqua.Modeling {
 
         public delegate void GenerateStressPointsDelegate(SimGraphBlock block, SimRenderMask phase, StressedRegion* stressRegions, int stressRegionCount);
         public delegate void GenerateDivergenceDelegate(SimGraphBlock block);
+        
+        public struct FilterSet
+        {
+            public HashSet<StringHash32> HiddenOrganisms;
+            public WaterPropertyMask HiddenProperties;
+        }
     }
 }

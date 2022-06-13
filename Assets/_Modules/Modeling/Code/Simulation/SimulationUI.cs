@@ -38,6 +38,10 @@ namespace Aqua.Modeling {
         [SerializeField] private Button m_InterveneResetButton = null;
         [SerializeField] private Button m_InterveneRunButton = null;
 
+        [Header("Filter")]
+        [SerializeField] private SimFilterBox m_FilterBox = null;
+        [SerializeField] private SimFilterLine.Pool m_FilterLinePool = null;
+
         [Header("Settings")]
         [SerializeField] private TextId m_MissingPopulationsLabel = default;
         [SerializeField] private TextId m_MissingWaterChemistryLabel = default;
@@ -49,6 +53,9 @@ namespace Aqua.Modeling {
         [NonSerialized] private bool m_IsIntervention;
         [NonSerialized] private BaseInputLayer m_InputLayer;
         [NonSerialized] private int m_TargetStars = -1;
+        [NonSerialized] private SimLineGraph.FilterSet m_Filters = new SimLineGraph.FilterSet() {
+            HiddenOrganisms = new HashSet<StringHash32>()
+        };
 
         private ModelState m_State;
         private ModelProgressInfo m_ProgressInfo;
@@ -154,7 +161,6 @@ namespace Aqua.Modeling {
             } else {
                 m_Graph.RenderData(SimRenderMask.HistoricalPlayer);
             }
-
         }
 
         #endif // UNITY_EDITOR
@@ -170,6 +176,7 @@ namespace Aqua.Modeling {
 
             m_State.Simulation.EnsureHistorical();
             m_Graph.AllocateBlocks(m_State);
+            m_Graph.Filter(m_Filters);
 
             m_SimulateButton.gameObject.SetActive(phase == ModelPhases.Sync);
             m_AccuracyDisplay.SetActive(phase == ModelPhases.Sync);
@@ -490,6 +497,44 @@ namespace Aqua.Modeling {
 
         #endregion // Rendering
 
+        #region Filters
+
+        private void PopulateFilters() {
+            
+        }
+
+        private void OnFilterExpandContract(bool expanded) {
+            // UpdateFilterEnabled(expanded ? m_State.Conceptual.GraphedMask : 0, m_FilterBox);
+            m_FilterBox.Close.gameObject.SetActive(expanded);
+        }
+
+        private void OnFilterStateChanged(SimFilterLine line, bool state) {
+            if (line.PropertyId != WaterPropertyId.NONE) {
+                m_Filters.HiddenProperties[line.PropertyId] = !state;
+            } else {
+                if (state) {
+                    m_Filters.HiddenOrganisms.Remove(line.OrganismId);
+                } else {
+                    m_Filters.HiddenOrganisms.Add(line.OrganismId);
+                }
+            }
+
+            // UpdateFilterToggle(m_CurrentFilter, m_State.Conceptual.GraphedMask, m_FilterBox);
+            m_Graph.Filter(m_Filters);
+        }
+
+        static private void UpdateFilterToggle(WorldFilterMask current, WorldFilterMask valid, SimFilterBox box) {
+            // WorldFilterMask a, m;
+            // ConceptualFilterLine line;
+            // for (int i = 0; i < box.Lines.Length; i++) {
+            //     line = box.Lines[i];
+            //     a = current & (m = line.Mask) & valid;
+            //     line.Sync(a != 0);
+            // }
+        }
+
+        #endregion // Filters
+
         #region BasePanel
 
         protected override void InstantTransitionToShow() {
@@ -522,6 +567,8 @@ namespace Aqua.Modeling {
             m_Graph.RenderData(0);
             m_InterveneAddPanel.ClearSelection();
             m_InterveneAddPanel.Hide();
+            m_Filters.HiddenOrganisms.Clear();
+            m_Filters.HiddenProperties = default;
         }
 
         #endregion // BasePanel
@@ -581,6 +628,9 @@ namespace Aqua.Modeling {
                 m_State.Simulation.RegenerateIntervention();
                 m_State.Simulation.GeneratePredictProfile();
                 m_InterveneAddPanel.Hide();
+                if (m_Filters.HiddenOrganisms.Remove(desc.Id())) {
+                    m_Graph.Filter(m_Filters);
+                }
             }
         }
 
