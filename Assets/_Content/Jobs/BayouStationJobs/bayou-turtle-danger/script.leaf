@@ -6,7 +6,7 @@
 @trigger    JobStarted
 @cutscene
 
-{@profHarper}	People are concerned about the {nameof LoggerheadTurtles} that live by the {h}Oil Rig Reef{/h}.
+{@profHarper}	People are concerned about the {pluralnameof LoggerheadTurtle} that live by the {h}Oil Rig Reef{/h}.
 				For this job, I need you to develop a food web with the species you found there.
                 We want to learn if there are any new predators of the Turtles.
 $if !HasEntity(Cyanobacteria)
@@ -28,14 +28,14 @@ $endif
 @when 		JobTaskActive(scanCyano)
 @boostScore -5
 @cutscene
-{@kevin}    Head to {h}Site O{/h} and scan the {nameof Cyanobacteria}. Make sure you have your Microscope pulled out!
+{@kevin}    Head to {h}Site O{/h} and scan the {nameof Cyanobacteria}. Make sure you have your {item}Microscope{/item} pulled out!
 
 :: catchCountCyano
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(countCyano)
 @boostScore -5
 @cutscene
-{@kevin}    Head to {h}Site O{/h} and count the {nameof Cyanobacteria} population. Make sure you have your Microscope pulled out!
+{@kevin}    Head to {h}Site O{/h} and count the {nameof Cyanobacteria} population. Make sure you have your {item}Microscope{/item} pulled out!
 
 :: catchExperimentsForSiteO
 @trigger    RequestPartnerHelp

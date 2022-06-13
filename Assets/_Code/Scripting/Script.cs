@@ -165,7 +165,8 @@ namespace Aqua {
         [LeafMember]
         static public bool IsPlayerOnShip() {
             StringHash32 currentMapId = MapDB.LookupCurrentMap();
-            return (currentMapId == MapIds.Ship) || (currentMapId == MapIds.Modeling) || (currentMapId == MapIds.Experimentation);
+            return ((currentMapId == MapIds.Ship) || (currentMapId == MapIds.Modeling) || (currentMapId == MapIds.Experimentation) ||
+            (currentMapId == MapIds.JobBoard) || (currentMapId == MapIds.WorldMap));
         }
     }
 }

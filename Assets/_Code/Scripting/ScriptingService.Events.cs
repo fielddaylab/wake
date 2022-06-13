@@ -31,7 +31,7 @@ namespace Aqua
             m_TagEventParser.AddReplace("critter-name", "<#e59866>").CloseWith("</color>");
             m_TagEventParser.AddReplace("!", "<#db3553>").CloseWith("</color>");
             m_TagEventParser.AddReplace("env-name", "<#85c1e9>").CloseWith("</color>");
-            m_TagEventParser.AddReplace("item", "<#f0ff00>").CloseWith("</color>");
+            m_TagEventParser.AddReplace("item", "<#00ffc8>").CloseWith("</color>");
             m_TagEventParser.AddReplace("item-name", "<#f0ff00>").CloseWith("</color>");
             m_TagEventParser.AddReplace("map-name", "<#FFCCF9>").CloseWith("</color>");
             m_TagEventParser.AddReplace("m", "<#FFCCF9>").CloseWith("</color>");

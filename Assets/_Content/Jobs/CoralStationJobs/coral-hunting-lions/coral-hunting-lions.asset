@@ -103,6 +103,12 @@ MonoBehaviour:
         m_HashValue: 3815586090
       ConditionString: 
       Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Fishers
+        m_HashValue: 4257683625
+      ConditionString: 
+      Amount: 0
     PrerequisiteTaskIds: []
   - Id:
       m_Source: scanHistory
@@ -123,9 +129,7 @@ MonoBehaviour:
         m_HashValue: 1443959053
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: scanCritters
-      m_HashValue: 1495220036
+    PrerequisiteTaskIds: []
   - Id:
       m_Source: countPopulation
       m_HashValue: 1635493235
@@ -175,9 +179,7 @@ MonoBehaviour:
         m_HashValue: 1380939620
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: scanHistory
-      m_HashValue: 1869113232
+    PrerequisiteTaskIds: []
   - Id:
       m_Source: observeEatRules
       m_HashValue: 4279728306
@@ -217,8 +219,8 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: BlueheadWrasse.Eats.Ick.Stressed
-        m_HashValue: 3984907015
+        m_Source: BlueheadWrasse.Eats.Ick
+        m_HashValue: 170722032
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
@@ -620,90 +622,10 @@ MonoBehaviour:
       m_HashValue: 2249891962
   m_OptimizedTaskList:
   - Id:
-      m_Source: scanCritters
-      m_HashValue: 1495220036
-    IdString: scanCritters
-    Index: 0
-    LabelId:
-      m_Source: jobs.coral-hunting-lions.task.scanCritters
-      m_HashValue: 1635544448
-    Steps:
-    - Type: 0
-      Target:
-        m_Source: BlueheadWrasse
-        m_HashValue: 193540374
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: BlueTang
-        m_HashValue: 1734724709
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: Lionfish
-        m_HashValue: 586288757
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: RedGrouper
-        m_HashValue: 1605956068
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: Sargassum
-        m_HashValue: 444981425
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: StaghornCoral
-        m_HashValue: 2717353052
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: TurfAlgae
-        m_HashValue: 3939929818
-      ConditionString: 
-      Amount: 0
-    - Type: 0
-      Target:
-        m_Source: Ick
-        m_HashValue: 3815586090
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 
-  - Id:
-      m_Source: scanHistory
-      m_HashValue: 1869113232
-    IdString: scanHistory
-    Index: 1
-    LabelId:
-      m_Source: jobs.coral-hunting-lions.task.scanHistory
-      m_HashValue: 32716956
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: LionfishInvasion.Light.History
-        m_HashValue: 2325572518
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: LionfishInvasion.PopulationHistory.Lionfish
-        m_HashValue: 1443959053
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 0000
-  - Id:
       m_Source: countPopulation
       m_HashValue: 1635493235
     IdString: countPopulation
-    Index: 2
+    Index: 0
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.countPopulation
       m_HashValue: 3885012231
@@ -750,12 +672,12 @@ MonoBehaviour:
         m_HashValue: 1380939620
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0100
+    PrerequisiteTaskIndices: 
   - Id:
       m_Source: observeEatRules
       m_HashValue: 4279728306
     IdString: observeEatRules
-    Index: 3
+    Index: 1
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.observeEatRules
       m_HashValue: 826814686
@@ -792,16 +714,16 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: BlueheadWrasse.Eats.Ick.Stressed
-        m_HashValue: 3984907015
+        m_Source: BlueheadWrasse.Eats.Ick
+        m_HashValue: 170722032
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0200
+    PrerequisiteTaskIndices: 0000
   - Id:
       m_Source: obtainStressRules
       m_HashValue: 3804672883
     IdString: obtainStressRules
-    Index: 4
+    Index: 2
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.obtainStressRules
       m_HashValue: 1076555463
@@ -926,12 +848,12 @@ MonoBehaviour:
         m_HashValue: 4064289156
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0300
+    PrerequisiteTaskIndices: 0100
   - Id:
       m_Source: measureEatRates
       m_HashValue: 1302348262
     IdString: measureEatRates
-    Index: 5
+    Index: 3
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.measureEatRates
       m_HashValue: 1847961002
@@ -972,12 +894,12 @@ MonoBehaviour:
         m_HashValue: 3984907015
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0400
+    PrerequisiteTaskIndices: 0200
   - Id:
       m_Source: measureStressReproduceRates
       m_HashValue: 795492441
     IdString: measureStressReproduceRates
-    Index: 6
+    Index: 4
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.measureStressReproduceRates
       m_HashValue: 651488821
@@ -1030,12 +952,12 @@ MonoBehaviour:
         m_HashValue: 516665143
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0500
+    PrerequisiteTaskIndices: 0300
   - Id:
       m_Source: obtainChemistry
       m_HashValue: 1751383414
     IdString: obtainChemistry
-    Index: 7
+    Index: 5
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.obtainChemistry
       m_HashValue: 2308555914
@@ -1142,12 +1064,12 @@ MonoBehaviour:
         m_HashValue: 4290467751
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0600
+    PrerequisiteTaskIndices: 0400
   - Id:
       m_Source: predictModel
       m_HashValue: 2555559815
     IdString: predictModel
-    Index: 8
+    Index: 6
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.predictModel
       m_HashValue: 4179720499
@@ -1158,12 +1080,12 @@ MonoBehaviour:
         m_HashValue: 3434771298
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0700
+    PrerequisiteTaskIndices: 0500
   - Id:
       m_Source: interveneModel
       m_HashValue: 2249891962
     IdString: interveneModel
-    Index: 9
+    Index: 7
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.interveneModel
       m_HashValue: 113021158
@@ -1174,7 +1096,93 @@ MonoBehaviour:
         m_HashValue: 852133711
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0800
+    PrerequisiteTaskIndices: 0600
+  - Id:
+      m_Source: scanCritters
+      m_HashValue: 1495220036
+    IdString: scanCritters
+    Index: 8
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.scanCritters
+      m_HashValue: 1635544448
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: BlueheadWrasse
+        m_HashValue: 193540374
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: BlueTang
+        m_HashValue: 1734724709
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Lionfish
+        m_HashValue: 586288757
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: RedGrouper
+        m_HashValue: 1605956068
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Sargassum
+        m_HashValue: 444981425
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: StaghornCoral
+        m_HashValue: 2717353052
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: TurfAlgae
+        m_HashValue: 3939929818
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Ick
+        m_HashValue: 3815586090
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Fishers
+        m_HashValue: 4257683625
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: scanHistory
+      m_HashValue: 1869113232
+    IdString: scanHistory
+    Index: 9
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.scanHistory
+      m_HashValue: 32716956
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: LionfishInvasion.Light.History
+        m_HashValue: 2325572518
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: LionfishInvasion.PopulationHistory.Lionfish
+        m_HashValue: 1443959053
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
   - Id:
       m_Source: argueIncentive
       m_HashValue: 2428336910
@@ -1190,7 +1198,7 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0900
+    PrerequisiteTaskIndices: 0700
   m_CashReward: 100
   m_ExpReward: 5
   m_Scripting: {fileID: -1942890987711236906, guid: 5fb1824027eae134d8b1ae839078a7f0,
