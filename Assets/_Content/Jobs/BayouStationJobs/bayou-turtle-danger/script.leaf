@@ -6,11 +6,7 @@
 @trigger    JobStarted
 @cutscene
 
-<<<<<<< HEAD
 {@profHarper}	People are concerned about the {nameof LoggerheadTurtles} that live by the {h}Oil Rig Reef{/h}.
-=======
-{@profHarper}	People are concerned about the Loggerhead Turtles that live by the Oil Rig Reef at {h}Site O{/h}.
->>>>>>> a646906a7689dbdb5c32398ec2f8c26376725f1f
 				For this job, I need you to develop a food web with the species you found there.
                 We want to learn if there are any new predators of the Turtles.
 $if !HasEntity(Cyanobacteria)
@@ -32,33 +28,21 @@ $endif
 @when 		JobTaskActive(scanCyano)
 @boostScore -5
 @cutscene
-<<<<<<< HEAD
 {@kevin}    Head to {h}Site O{/h} and scan the {nameof Cyanobacteria}. Make sure you have your Microscope pulled out!
-=======
-{@kevin}    Scan the Cyanobacteria in {h}Site O{/h}. Make sure you have your Microscope pulled out!
->>>>>>> a646906a7689dbdb5c32398ec2f8c26376725f1f
 
 :: catchCountCyano
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(countCyano)
 @boostScore -5
 @cutscene
-<<<<<<< HEAD
 {@kevin}    Head to {h}Site O{/h} and count the {nameof Cyanobacteria} population. Make sure you have your Microscope pulled out!
-=======
-{@kevin}    Count the Cyanobacteria population in {h}Site O{/h}. Make sure you have your Microscope pulled out!
->>>>>>> a646906a7689dbdb5c32398ec2f8c26376725f1f
 
 :: catchExperimentsForSiteO
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(experimentsForSiteO)
 @boostScore -5
 @cutscene
-<<<<<<< HEAD
 {@kevin}    Use the {item}Observation Tank{/item} to find what Loggerhead Turtles eat at Site O.
-=======
-{@kevin}    Use the {h}Observation Tank{/h} to find what Loggerhead Turtles eat at Site O.
->>>>>>> a646906a7689dbdb5c32398ec2f8c26376725f1f
 
 :: catchVisualModelO
 @trigger    RequestPartnerHelp
