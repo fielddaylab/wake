@@ -66,6 +66,7 @@
 @cutscene
 {@kevin}	Wow! Reproduction rates for every species at Site S can now be found in your AQOS tablet.
 
+
 :: obtainChemistryComplete
 @trigger    JobTasksUpdated
 @when		scene:name == "ExperimentV2", JobTaskCompleted(obtainChemistry)
@@ -162,7 +163,7 @@ $call CompleteJob()
 
 :: backToShip
 @trigger    RequestPartnerHelp
-@when		JobTaskCompleted(countPopulation), !IsPlayerOnShip()
+@when		JobTaskCompleted(scanCritters), JobTaskCompleted(scanHistory), JobTaskCompleted(countPopulation), !IsPlayerOnShip()
 @cutscene
 {@kevin}    Let's head back to the {m}Ship{/m} to continue this job.
 

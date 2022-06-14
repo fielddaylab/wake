@@ -1,7 +1,6 @@
 :: basePath job.turtle-danger2
 
 // INTRO
-
 :: start
 @trigger    JobStarted
 @cutscene
@@ -16,13 +15,31 @@
 {@profHarper}   Exactly!  
 
 // CATCH-ALL GUIDE TEXT
-
 :: catchHistoricalData
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(historicalData)
 @boostScore -5
 @cutscene
 {@kevin}    The first task for this job can be found in your trusty {item}AQOS{/item}.
+
+:: helpProbe
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(historicalData), scene:name == "RS-3O"
+@boostScore -5
+@cutscene
+{@kevin}    Remember, we can collect historic population data for a site from a {item}probe{/item} at the site.
+
+:: backToShip
+@trigger    RequestPartnerHelp
+@when 		JobTaskCompleted(measureStress), !IsPlayerOnShip()
+@cutscene
+{@kevin}    Let's head back to the {m}ship{/m} to conduct our experiments.
+
+:: catchStressRanges
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(measureStress), IsPlayerOnShip(), scene:name != "ExperimentV2"
+@cutscene
+{@kevin}    {item}Stress ranges{/item} can be studies with in the {m}Experimentation Lab{/m}
 
 :: catchSyncModel
 @trigger    RequestPartnerHelp
@@ -31,6 +48,7 @@
 @cutscene
 {@kevin}    We need to do some {m}experimenting{/m} to obtain rules about {h}Site O{/h} organisms. 
             Then, head to the {m}Modeling Lab{/m} and make a {item}Descriptive Model{/item}, which should match the population history data you collected.
+            You can view missing rules by viewing your {item}Visual Model{/item} 
 
 :: catchVisualize
 @trigger    RequestPartnerHelp
