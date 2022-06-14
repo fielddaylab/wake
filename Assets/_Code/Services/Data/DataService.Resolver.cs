@@ -662,6 +662,12 @@ namespace Aqua
                 return Save.Jobs.CompletedJobIds().Count;
             }
 
+            [LeafMember("UpgradeUnlocksJobAtStation"), UnityEngine.Scripting.Preserve]
+            static private bool UpgradeUnlocksJobAtStation(StringHash32 inUpgradeId = default(StringHash32), StringHash32 inStationId = default(StringHash32))
+            {
+                return JobUtils.UpgradeUnlocksJobAtStation(inUpgradeId, inStationId);
+            }
+
             [LeafMember("UnlockJob"), UnityEngine.Scripting.Preserve]
             static private bool UnlockJob(StringHash32 inJobId)
             {
