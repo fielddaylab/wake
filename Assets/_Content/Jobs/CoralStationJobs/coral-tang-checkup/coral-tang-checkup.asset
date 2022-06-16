@@ -119,30 +119,8 @@ MonoBehaviour:
     - m_Source: countIck
       m_HashValue: 2900031109
   - Id:
-      m_Source: measureIck
-      m_HashValue: 2883187240
-    LabelId:
-      m_Source: jobs.coral-check-up.task.measureIck
-      m_HashValue: 1302720141
-    Steps:
-    - Type: 2
-      Target:
-        m_Source: BlueTang.Reproduce.Stressed
-        m_HashValue: 1892619327
-      ConditionString: 
-      Amount: 0
-    - Type: 2
-      Target:
-        m_Source: BlueTang.Eats.TurfAlgae.Stressed
-        m_HashValue: 3290904200
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: observeIck
-      m_HashValue: 3336794152
-  - Id:
-      m_Source: reviseVisual
-      m_HashValue: 1650102469
+      m_Source: reviseModels
+      m_HashValue: 1658807895
     LabelId:
       m_Source: jobs.coral-check-up.task.reviseVisual
       m_HashValue: 1895454920
@@ -153,16 +131,6 @@ MonoBehaviour:
         m_HashValue: 1168859998
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: measureIck
-      m_HashValue: 2883187240
-  - Id:
-      m_Source: improveDescribe
-      m_HashValue: 2250175574
-    LabelId:
-      m_Source: jobs.coral-check-up.task.improveDescribe
-      m_HashValue: 494751317
-    Steps:
     - Type: 1
       Target:
         m_Source: LionfishInvasion.Model.IckStressDescribe
@@ -170,8 +138,8 @@ MonoBehaviour:
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
-    - m_Source: reviseVisual
-      m_HashValue: 1650102469
+    - m_Source: observeIck
+      m_HashValue: 3336794152
   - Id:
       m_Source: report
       m_HashValue: 431699179
@@ -186,8 +154,8 @@ MonoBehaviour:
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
-    - m_Source: improveDescribe
-      m_HashValue: 2250175574
+    - m_Source: reviseModels
+      m_HashValue: 1658807895
   m_OptimizedTaskList:
   - Id:
       m_Source: findStress
@@ -266,32 +234,10 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 0200
   - Id:
-      m_Source: measureIck
-      m_HashValue: 2883187240
-    IdString: measureIck
+      m_Source: reviseModels
+      m_HashValue: 1658807895
+    IdString: reviseModels
     Index: 4
-    LabelId:
-      m_Source: jobs.coral-check-up.task.measureIck
-      m_HashValue: 1302720141
-    Steps:
-    - Type: 2
-      Target:
-        m_Source: BlueTang.Reproduce.Stressed
-        m_HashValue: 1892619327
-      ConditionString: 
-      Amount: 0
-    - Type: 2
-      Target:
-        m_Source: BlueTang.Eats.TurfAlgae.Stressed
-        m_HashValue: 3290904200
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 0300
-  - Id:
-      m_Source: reviseVisual
-      m_HashValue: 1650102469
-    IdString: reviseVisual
-    Index: 5
     LabelId:
       m_Source: jobs.coral-check-up.task.reviseVisual
       m_HashValue: 1895454920
@@ -302,28 +248,18 @@ MonoBehaviour:
         m_HashValue: 1168859998
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0400
-  - Id:
-      m_Source: improveDescribe
-      m_HashValue: 2250175574
-    IdString: improveDescribe
-    Index: 6
-    LabelId:
-      m_Source: jobs.coral-check-up.task.improveDescribe
-      m_HashValue: 494751317
-    Steps:
     - Type: 1
       Target:
         m_Source: LionfishInvasion.Model.IckStressDescribe
         m_HashValue: 4195378611
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0500
+    PrerequisiteTaskIndices: 0300
   - Id:
       m_Source: report
       m_HashValue: 431699179
     IdString: report
-    Index: 7
+    Index: 5
     LabelId:
       m_Source: jobs.coral-check-up.task.report
       m_HashValue: 3562548038
@@ -334,7 +270,7 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0600
+    PrerequisiteTaskIndices: 0400
   m_CashReward: 0
   m_ExpReward: 10
   m_Scripting: {fileID: -1942890987711236906, guid: db489f1f2d3f1a94c96e94667c686f5d,

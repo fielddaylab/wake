@@ -3,6 +3,7 @@
 :: start
 @trigger    JobStarted
 @cutscene
+$branch common.ringPhone
 {@profCempaka}  According to the data collected by our reasearch probe, the {nameof BlueTang} seem to be more {!}stressed{/!} than in the model you submitted. We need collect more data to improve our model's accuracy.
 {@kevin}        Well, the first thing we can do is see what stress ranges the {nameof BlueTang} can tolerate.
                 For that, we'll need to conduct some {map-name}Experiments{/map-name} with the {h}Stress Tank{/h}.
@@ -32,15 +33,24 @@ $branch common.ringPhone
 @when		JobTaskTop(observeIck)
 @once
 @cutscene
-{@kevin}	This place is just crawling with {nameof Ick}. We've got to get back to the Observation tank and see how this is affecting the Tang.
+{@kevin}	This place is just crawling with {nameof Ick}. We've got to get back to the {item}Observation tank{/item} and see how this is affecting the Tang.
 
-:: measureHint1
-@trigger	ExperimentTankViewed
-@when		tankType == "Measurement", JobTaskTop(measureIck)
+:: measureIck
+@trigger	JobTaskCompleted
+@when		JobTaskTop(reviseModels)
 @once
 @cutscene
-{@kevin}	Now that we know {nameof Ick} stresses {nameof BlueTang}, we'll need to measure the rate at which Blue Tang reproduces when stressed.
-			Place the Blue Tang in water that stresses it. I believe the {h}Warm Kelp Forest{/h} should do the trick...
+{@kevin}	Now that we know {nameof Ick} stresses {nameof BlueTang}, we can measure the reproduction and eating rates of the stressed Tang to improve our model.
+$branch common.ringPhone
+{@profCempaka} Sorry to intrude, after you measured the stress ranges of the Tang we measured their eating and reproduction rates when stressed. I'll send the data over now.
+$call UpgradeFact(Ick.Stresses.BlueTang)
+$call UpgradeFact(BlueTang.Eats.TurfAlgae.Stressed)
+$call UpgradeFact(BlueTang.Reproduce.Stressed)
+$call GiveFact(BlueTang.Eats.TurfAlgae.Stressed)
+$call GiveFact(BlueTang.Reproduce.Stressed)
+$call GiveFact(StaghornCoral.Reproduce)
+$call GiveFact(Ick.Reproduce)
+{@player} Well that's convenient!
 
 :: helpMeasure1
 @trigger    RequestPartnerHelp
@@ -48,33 +58,33 @@ $branch common.ringPhone
 @cutscene
 {@kevin}     Use the measurement tank to get the reproduction rate of Blue Tang when stressed
 
-:: measureHint2
-@trigger	ExperimentFinished
-@when		IsFactFullyUpgraded(BlueTang.Reproduce.Stressed), !IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed)
-@once
-@cutscene
-{@kevin}	The presence of {nameof Ick} really slows down {nameof BlueTang} reproduction. What about consumption?
-            Do Tang eat slower when stressed? You'll need to measure {nameof BlueTang} and {nameof TurfAlgae} in {h}water that stresses{/h} the {nameof BlueTang}.
+// :: measureHint2
+// @trigger	ExperimentFinished
+// @when		IsFactFullyUpgraded(BlueTang.Reproduce.Stressed), !IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed)
+// @once
+// @cutscene
+// {@kevin}	The presence of {nameof Ick} really slows down {nameof BlueTang} reproduction. What about consumption?
+//             Do Tang eat slower when stressed? You'll need to measure {nameof BlueTang} and {nameof TurfAlgae} in {h}water that stresses{/h} the {nameof BlueTang}.
 
-:: helpMeasure2
-@trigger    RequestPartnerHelp
-@when 		JobTaskActive(measureIck), IsFactFullyUpgraded(BlueTang.Reproduce.Stressed), !IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed)
-@cutscene
-{@kevin}     Use the {map-name}Measurement Tank{/map-name} to get the rate at which {nameof BlueTang} eats {nameof TurfAlgae} when stressed.
+// :: helpMeasure2
+// @trigger    RequestPartnerHelp
+// @when 		JobTaskActive(measureIck), IsFactFullyUpgraded(BlueTang.Reproduce.Stressed), !IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed)
+// @cutscene
+// {@kevin}     Use the {map-name}Measurement Tank{/map-name} to get the rate at which {nameof BlueTang} eats {nameof TurfAlgae} when stressed.
 
-:: measureHint3
-@trigger	ExperimentFinished
-@when		IsFactFullyUpgraded(BlueTang.Reproduce.Stressed), IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed)
-@once
-@cutscene
-{@kevin}	I calculate that this may be the missing element from our previous model.
-			Let's try to revise your {map-name}descriptive model{/map-name} in light of the new information just acquired.
+// :: measureHint3
+// @trigger	ExperimentFinished
+// @when		IsFactFullyUpgraded(BlueTang.Reproduce.Stressed), IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed)
+// @once
+// @cutscene
+// {@kevin}	I calculate that this may be the missing element from our previous model.
+// 			Let's try to revise your {map-name}descriptive model{/map-name} in light of the new information just acquired.
 
-:: helpMeasure3
-@trigger    RequestPartnerHelp
-@when 		JobTaskActive(improveDescribe), IsFactFullyUpgraded(BlueTang.Reproduce.Stressed), IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed)
-@cutscene
-{@kevin}	Go to the {map-name}modeling tool{map-name} and redo your {h}descriptive model{/h} with the new information you have.	 
+// :: helpMeasure3
+// @trigger    RequestPartnerHelp
+// @when 		JobTaskActive(improveDescribe), IsFactFullyUpgraded(BlueTang.Reproduce.Stressed), IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed)
+// @cutscene
+// {@kevin}	Go to the {map-name}modeling tool{/map-name} and redo your {h}descriptive model{/h} with the new information you have.	 
 
 :: describeComplete
 @trigger	JobTasksUpdated
@@ -114,27 +124,27 @@ $branch common.ringPhone
 @cutscene
 {@kevin}    Let's {map-name}Observe{/map-name} the interactions between {nameof BlueTang} and {nameof Ick}.
 
-:: catchMeasureIck
-@trigger    RequestPartnerHelp
-@when 		JobTaskActive(measureIck)
-@boostScore -5
-@cutscene
-{@kevin}    You'll need to measure {nameof BlueTang} and {nameof TurfAlgae} in {h}water that stresses{/h} the {nameof BlueTang}.
-			Place the {nameof BlueTang} in water that stresses it. We could try the {h}Warm Kelp Forest{/h}...
+// :: catchMeasureIck
+// @trigger    RequestPartnerHelp
+// @when 		JobTaskActive(measureIck)
+// @boostScore -5
+// @cutscene
+// {@kevin}    You'll need to measure {nameof BlueTang} and {nameof TurfAlgae} in {h}water that stresses{/h} the {nameof BlueTang}.
+// 			Place the {nameof BlueTang} in water that stresses it. We could try the {h}Warm Kelp Forest{/h}...
 
 :: catchReviseVisual
 @trigger    RequestPartnerHelp
-@when 		JobTaskActive(reviseVisual)
+@when 		JobTaskActive(reviseModels)
 @boostScore -5
 @cutscene
 {@kevin}    Remake your visual model based on your new {nameof Ick} data.
 
-:: catchImproveDescribe
-@trigger    RequestPartnerHelp
-@when 		JobTaskActive(improveDescribe)
-@boostScore -5
-@cutscene
-{@kevin}    Remake your describe model based on your new {nameof Ick} data.
+// :: catchImproveDescribe
+// @trigger    RequestPartnerHelp
+// @when 		JobTaskActive(improveDescribe)
+// @boostScore -5
+// @cutscene
+// {@kevin}    Remake your describe model based on your new {nameof Ick} data.
 
 :: catchReport
 @trigger    RequestPartnerHelp
