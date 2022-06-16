@@ -511,10 +511,12 @@ namespace Aqua
 
                 if (Services.UI.IsSkippingCutscene())
                     return null;
+
+                TextId header = itemDesc.Category() == InvItemCategory.Upgrade ? "ui.popup.newUpgrade.header" : "ui.popup.newItem.header";
                 
                 Services.Audio.PostEvent("item.popup.new");
                 return Services.UI.Popup.Display(
-                    Loc.Format("ui.popup.newItem.header", itemDesc.NameTextId()),
+                    Loc.Format(header, itemDesc.NameTextId()),
                     Loc.Find(itemDesc.DescriptionTextId()),
                     itemDesc.ImageSet(),
                     PopupFlags.TallImage

@@ -6,7 +6,7 @@
 @trigger    JobStarted
 @cutscene
 
-{@profHarper}	People are concerned about the Loggerhead Turtles that live by the Oil Rig Reef at {h}Site O{/h}.
+{@profHarper}	People are concerned about the {pluralnameof LoggerheadTurtle} that live by the {h}Oil Rig Reef{/h}.
 				For this job, I need you to develop a food web with the species you found there.
                 We want to learn if there are any new predators of the Turtles.
 $if !HasEntity(Cyanobacteria)
@@ -28,28 +28,28 @@ $endif
 @when 		JobTaskActive(scanCyano)
 @boostScore -5
 @cutscene
-{@kevin}    Scan the Cyanobacteria in {h}Site O{/h}. Make sure you have your Microscope pulled out!
+{@kevin}    Head to {h}Site O{/h} and scan the {nameof Cyanobacteria}. Make sure you have your {item}Microscope{/item} pulled out!
 
 :: catchCountCyano
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(countCyano)
 @boostScore -5
 @cutscene
-{@kevin}    Count the Cyanobacteria population in {h}Site O{/h}. Make sure you have your Microscope pulled out!
+{@kevin}    Head to {h}Site O{/h} and count the {nameof Cyanobacteria} population. Make sure you have your {item}Microscope{/item} pulled out!
 
 :: catchExperimentsForSiteO
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(experimentsForSiteO)
 @boostScore -5
 @cutscene
-{@kevin}    Use the {h}Observation Tank{/h} to find what Loggerhead Turtles eat at Site O.
+{@kevin}    Use the {item}Observation Tank{/item} to find what Loggerhead Turtles eat at Site O.
 
 :: catchVisualModelO
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(visualModelO)
 @boostScore -5
 @cutscene
-{@kevin}    Make a {h}Visual Model{/h} of what you found out from the Observation Tank.
+{@kevin}    Make a {item}Visual Model{/item} of what you found out from the Observation Tank.
 
 :: catchReportback
 @trigger    RequestPartnerHelp

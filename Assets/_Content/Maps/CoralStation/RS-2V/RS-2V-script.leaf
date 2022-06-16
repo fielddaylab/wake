@@ -1,11 +1,13 @@
 # basePath RS-2V
 
 :: OnScanFishers
-@trigger BestiaryEntryAdded
-@when   entryId == "Fishers"
+@trigger    ScannedObject
+@when       scanId == "RS-2V.fisherLine", !jobs:coral-generic.scannedFisherLine
 @cutscene
-@once
-
+$if !HasEntity(Fishers)
+    $call GiveEntity(Fishers)
+$endif
+$call GiveFact(ReefEdge.Population.Fishers)
 {@fisher} Hey! Why are you messing with my line?
 {@player}   What? No no, we were just scanning it.
 {@fisher} Oh, okay. So you're a scientist around here?
@@ -16,3 +18,4 @@
 {@fisher} Sure thing!
 $call GiveFact(Fishers.Eats.RedGrouper)
 {@player}   Thank you!
+$set jobs:coral-generic.scannedFisherLine = true
