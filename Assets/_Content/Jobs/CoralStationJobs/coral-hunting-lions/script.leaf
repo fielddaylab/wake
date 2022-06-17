@@ -3,12 +3,16 @@
 :: start
 @trigger    JobStarted
 @cutscene
-
-{@kevin}	This job calls for a complete model of all living things in this ecosystem.  Maybe we should come back to it later?
-			If you want to keep going, we'll need to make sure all species are scanned and counted,
-			make sure we've observed every interaction between every pair of species, get data on what causes each species too be stressed,
-			and then measure the effect on water chemistry and the rates of predation and reproduction under stressed and unstressed conditions for each species. 
-			But don't worry, we'll take it one step at a time.
+$branch common.ringPhone
+{@profCempaka}  There's been a proposal within our scientific community recently advocating for more hunting of the {nameof Lionfish}.
+                I'm no fan of the Lionfish myself, but I think we'll need to do some more research and create a comprehensive model before we can validate this proposal.
+                {wait 0.5}
+{@kevin}	In order to validate this proposal, we'll need to completely model of all interactions between living things in this ecosystem.  
+            That could take some time...| we could always come back to it later?
+			If you want to keep going, we'll need to make sure all species are {h}scanned{/h} and {h}counted{/h},
+			make sure we've {item}observed{/item} every interaction between every pair of species, get data on what causes each species too be {!}stressed{/!},
+			and then {item}measure{/item} the effect on water chemistry and the rates of predation and reproduction under stressed and unstressed conditions for each species. 
+			But don't worry, we'll take it one step at a time!
 
 // SCANNING
 
@@ -96,8 +100,8 @@
 @when   !ArgueIsComplete(huntingLionsArgue)
 @cutscene
 $call ArgueLoad(huntingLionsArgue)
-{@profCempaka}	We know I'm not the fishers' biggest fan, but if I'm going to advocate for hunting, I need a model that demonstrates it will improve the populations or the diversity of the reef in the future.
-				Have that model yet?
+{@profCempaka}	I'm not the fishers' biggest fan, but if I'm going to advocate for hunting, I need a model that demonstrates it will improve the populations or the diversity of the reef in the future.
+				Do you have a model that can demonstrate that?
 	$choice .argue.haveModel; Yes! I know how it works!
 	$choice .argue.noModel; No, not yet.
 $choose branch	
@@ -106,17 +110,18 @@ $choose branch
 {@profCempaka}	Well, let me know when you do.
 
 :: argue.haveModel
-{@profCempaka}	Okay. I need a model that shows the coral will come back, an observation of what species Lionfish impact, and a connection to the Coral.
+{@profCempaka}	Okay. I need a model that shows the coral will come back, and the rate that {nameof Fishers} eat {nameof Lionfish}.
 $if ArgueSetClaim(hunting-lionsClaim, jobs.coral-hunting-lions.argue.claimEvidence)
-		$call ArgueFactSlot(LionfishInvasion.Model.HuntingLionsIntervene)
-		$call ArgueFactSlot(Lionfish.Eats.BlueTang)
-		$call ArgueFactSlot(Lionfish.Eats.BlueheadWrasse)
-		$call ArgueFactSlot(StaghornCoral.Light.Stressed)
+    $call ArgueFactSlot(LionfishInvasion.Model.HuntingLionsIntervene)
+    $call ArgueFactSlot(Fishers.Eats.Lionfish)
+		// $call ArgueFactSlot(Lionfish.Eats.BlueTang)
+		// $call ArgueFactSlot(Lionfish.Eats.BlueheadWrasse)
+		// $call ArgueFactSlot(StaghornCoral.Light.Stressed)
 $endif
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.correctFacts
-		$answer incorrect, .argue.incorrectFacts
+    $answer correct, .argue.correctFacts
+    $answer incorrect, .argue.incorrectFacts
 $choice .argue.giveUp; Let me get back to you
 
 :: argue.giveUp
@@ -125,18 +130,73 @@ $choice .argue.giveUp; Let me get back to you
 :: argue.incorrectFacts
 {@profCempaka}	Hmm, this isn't quite what I'm looking for.
 $call ArgueRejectIncorrect()
-$call ArgueClearFacts()
+// $call ArgueClearFacts()
+$goto .argue.haveModel
 
 :: argue.correctFacts
-{@profCempaka}	So, the less Lionfish, the more small fish, less algae, more light, happier coral!
-				Whoa. That is complex, but you did it!
-				I knew those Lionfish were awful from day 1.
+$call ArgueUnload()
+{@profCempaka}	Whoa. That is complex...
+                If we increase the rate the {nameof Lionfish} are hunted how will that affect the other interactions of the site?
+                We need a chain of every interaction affected by Lionfish. 
+$goto .argue.chain
+
+:: argue.chain
+{@profCempaka}  For instance, if we start with the interactions between {nameof Lionfish} and {nameof BlueheadWrasse}, what other species could be affected?
+$call ArgueLoad(huntingLionsArgue)
+$if ArgueSetClaim(hunting-lionsClaim_pt2, jobs.coral-hunting-lions.argue.claimEvidence2)
+    $call ArgueFactSlot(Lionfish.Eats.BlueheadWrasse)
+    $call ArgueFactSlot(BlueheadWrasse.Eats.Ick)
+    $call ArgueFactSlot(Ick.Stresses.BlueTang)
+    $call ArgueFactSlot(BlueTang.Eats.TurfAlgae.Stressed)
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.correctFacts2
+    $answer incorrect, .argue.incorrectFacts2
+$choice .argue.giveUp; Let me get back to you
+
+:: argue.incorrectFacts2
+{@profCempaka}	Hmm, this isn't quite what I'm looking for.
+$if ArgueIsFactSubmitted(BlueTang.Eats.TurfAlgae)
+    {@profCempaka} Don't forget, the rate {nameof BlueTang} eat {nameof TurfAlgae} will be different when they interact with the {nameof Ick}
+$endif 
+$call ArgueRejectIncorrect()
+// $call ArgueClearFacts()
+$goto .argue.chain
+
+:: argue.correctFacts2
+$call ArgueUnload()
+{@profCempaka} I see. That all makes sense.
+$goto .argue.FinalSet
+
+:: argue.FinalSet 
+{@profCempaka} We also know {nameof TurfAlgae} will consume light for photosynthesis. How will this affect the {nameof StaghornCoral}? 
+$call ArgueLoad(huntingLionsArgue)
+$if ArgueSetClaim(hunting-lionsClaim_pt3, jobs.coral-hunting-lions.argue.claimEvidence3)
+    $call ArgueFactSlot(TurfAlgae.Consume.Light)
+    $call ArgueFactSlot(StaghornCoral.Light.Stressed)
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.done
+    $answer incorrect, .argue.incorrectFacts3
+$choice .argue.giveUp; Let me get back to you
+
+:: argue.incorrectFacts3
+{@profCempaka}	Hmm, this isn't quite what I'm looking for.
+$call ArgueRejectIncorrect()
+// $call ArgueClearFacts()
+$goto .argue.FinalSet
+
+::argue.done
+{@profCempaka}  So, the less Lionfish, the more small fish, less algae, more light, happier coral!
+                I knew those Lionfish were awful from day one!
+                You've really come a long way from where you started {nameof player}. I can tell you've really thought through all the interactions at the site.
+                You're really starting to think like a scientist! Outstanding work!
 $call ArgueComplete()
 $call CompleteJob()
 
-
 // REQUEST HELP
-
 :: collectData
 @trigger RequestPartnerHelp
 @when   scene:name != "RS-2S", !JobTaskCompleted(countPopulation), !JobTaskCompleted(scanCritters), !JobTaskCompleted(scanHistory)
