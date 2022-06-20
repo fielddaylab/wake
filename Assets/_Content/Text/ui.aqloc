@@ -72,18 +72,6 @@ Go Back
 :: interact.locked
 Locked
 
-:: staion.exit.tooltip
-Return to Site
-
-:: station.view.station
-Zoom Out
-
-:: station.view.shop
-Shop
-
-:: station.view.job
-Job Giver
-
 # basePath ui.popup
 
 :: newItem.header
@@ -209,6 +197,16 @@ A save with the name {h}{0}{/h} does not exist.
 
 Check that you entered your save name correctly and try again.
 
+:: fileCorrupt.header
+Save Invalid
+
+:: fileCorrupt.description
+Your save was found on the server but could not be loaded.
+
+Your save may have been created with an incompatible version of the game.
+
+This shouldn't occur under normal circumstances, so please report your save name to the developers so we can investigate.
+
 # basePath ui.ship
 
 :: helm.exit.tooltip
@@ -218,7 +216,7 @@ To Ship Exterior
 Job Board
 
 :: helm.kevin.tooltip
-V1ctor, Your Mechanical Companion
+Kevin, Your Jellyblob Companion
 
 :: helm.settings.tooltip
 Ship Settings
@@ -279,25 +277,16 @@ Dining Table
 :: exterior.shop.tooltip
 Shop
 
+:: helm.guide.tooltip
+Talk to V1ct0r
+
 :: modeling.tooltip
-Modeling
-
-:: exterior.shipMap.tooltip
-Ship Map
-
-:: exterior.cabin.tooltip
-Cabin
-
-:: map.header
-The Monstrum
-
-:: map.subheader
-Research Vessel
+Begin Modeling
 
 # basePath ui.jobBoard
 
 :: setActive.label
-Set as Active
+Set as Current
 
 :: start.label
 Accept Job
@@ -312,19 +301,19 @@ Current Location
 Job List
 
 :: group.active
-Active
+Current Job
 
 :: group.available
-Available
+Available Jobs
 
 :: group.completed
-Completed
+Completed Jobs
 
 :: group.inProgress
-In Progress
+In Progress Jobs
 
 :: group.locked
-Locked
+Locked Jobs
 
 :: selectPrompt
 Select a Job
@@ -362,6 +351,18 @@ No Jobs available
 
 Check other stations
 for available Jobs
+
+:: difficulty.header
+Difficulty
+
+:: difficulty.experimentation
+Experimentation
+
+:: difficulty.modeling
+Modeling
+
+:: difficulty.argumentation
+Argumentation
 
 # basePath ui.nav
 
@@ -420,7 +421,4 @@ Microscope
 
 :: microscope.tooltip
 Toggle Microscope
-
-:: enter.label
-Enter
 
