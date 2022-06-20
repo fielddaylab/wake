@@ -102,6 +102,10 @@ namespace ProtoAqua.ExperimentV2 {
             PointerListener.TryGetComponentUserData<SelectableTank>(inTankPointer, out SelectableTank tank);
             
             m_SelectedTank = tank;
+            OnTankNavigated(m_SelectedTank);
+        }
+
+        private void OnTankNavigated(SelectableTank tank) {
             DeactivateTankClickHandlers();
             m_WaterSystem.SetActiveTank(tank);
 
@@ -109,8 +113,7 @@ namespace ProtoAqua.ExperimentV2 {
 
             Services.Events.Dispatch(ExperimentEvents.ExperimentView, tank.Type);
 
-            using(var table = TempVarTable.Alloc())
-            {
+            using (var table = TempVarTable.Alloc()) {
                 table.Set("tankType", tank.Type.ToString());
                 table.Set("tankId", tank.Id);
                 Services.Script.TriggerResponse(ExperimentTriggers.ExperimentTankViewed, table);
@@ -118,11 +121,16 @@ namespace ProtoAqua.ExperimentV2 {
 
             m_SelectedTank.CurrentState |= TankState.Selected;
             m_SelectedTank.ActivateMethod?.Invoke();
+            // activate nav arrows
+            foreach (var arrow in m_SelectedTank.NavArrows) {
+                arrow.gameObject.SetActive(true);
+            }
             Routine.Start(this, m_ExitSceneButtonGroup.Hide(0.2f, false));
             m_ExitTankButtonAnimation.Replace(this, m_ExitTankButtonGroup.Show(0.2f, true));
             m_TankTransitionAnim.Replace(this, SelectTankTransition(tank)).Tick();
         }
 
+        // TODO: replace with destination tank
         private void OnBackClicked()
         {
             Assert.NotNull(m_SelectedTank);
@@ -132,6 +140,10 @@ namespace ProtoAqua.ExperimentV2 {
             m_SelectedTank.CurrentState &= ~TankState.Selected;
 
             m_TankTransitionAnim.Replace(this, DeselectTankTransition(m_SelectedTank, m_Pose)).Tick();
+            // de-activate nav arrows
+            foreach (var arrow in m_SelectedTank.NavArrows) {
+                arrow.gameObject.SetActive(false);
+            }
             m_SelectedTank = null;
 
             ActivateTankClickHandlers();
@@ -169,6 +181,9 @@ namespace ProtoAqua.ExperimentV2 {
                 InitializeTank(tank);
                 m_WaterSystem.InitializeTank(tank);
                 tank.Clickable.onClick.AddListener(OnTankClicked);
+                foreach (var arrow in tank.NavArrows) {
+                    arrow.Button.onClick.AddListener(delegate { OnTankNavigated(arrow.DestTank); });
+                }
             }
             Services.Camera.SnapToPose(m_Pose);
             m_ExitTankButton.onClick.AddListener(OnBackClicked);
