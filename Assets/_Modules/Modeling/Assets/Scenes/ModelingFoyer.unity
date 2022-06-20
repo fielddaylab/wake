@@ -10557,7 +10557,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: a816f5eb691a34042811d00ae3f4f531, type: 2}
-  - {fileID: 2100000, guid: 4a22b8fc9546949cd9e55d147347d45a, type: 2}
+  - {fileID: 2100000, guid: cbdfab238c99941b5a9da053679a862f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -16473,6 +16473,7 @@ GameObject:
   - component: {fileID: 1773657370}
   - component: {fileID: 1773657368}
   - component: {fileID: 1773657369}
+  - component: {fileID: 1773657367}
   - component: {fileID: 1773657372}
   m_Layer: 0
   m_Name: ComputerRegion
@@ -16495,6 +16496,28 @@ Transform:
   m_Father: {fileID: 1008225337}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 19.95, z: 0}
+--- !u!114 &1773657367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1773657365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ab2806173aaeea4fbdb9265d5e9284b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MapId:
+    m_HashValue: 1022992966
+  Group:
+    GameObjects:
+    - {fileID: 1773657365}
+    Behaviours: []
+  Highlight:
+    GameObjects: []
+    Behaviours: []
+  AlwaysAvailable: 0
 --- !u!114 &1773657368
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16527,10 +16550,10 @@ MonoBehaviour:
   m_Proxy: {fileID: 0}
   m_Selectable: {fileID: 0}
   Config:
-    Action: 0
+    Action: 1
     TargetId:
-      m_Source: 
-      m_HashValue: 0
+      m_Source: Modeling
+      m_HashValue: 1022992966
     TargetEntranceId:
       m_Source: 
       m_HashValue: 0
