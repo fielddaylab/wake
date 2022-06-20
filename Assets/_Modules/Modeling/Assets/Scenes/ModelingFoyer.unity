@@ -11403,7 +11403,7 @@ PrefabInstance:
     - target: {fileID: 8045199738856709109, guid: 7f7de2cb8d14dfa4ea6a8ed063fd3dfc,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.2
+      value: 1.28
       objectReference: {fileID: 0}
     - target: {fileID: 8045199738856709109, guid: 7f7de2cb8d14dfa4ea6a8ed063fd3dfc,
         type: 3}
@@ -16471,9 +16471,9 @@ GameObject:
   - component: {fileID: 1773657366}
   - component: {fileID: 1773657371}
   - component: {fileID: 1773657370}
-  - component: {fileID: 1773657369}
   - component: {fileID: 1773657368}
-  - component: {fileID: 1773657367}
+  - component: {fileID: 1773657369}
+  - component: {fileID: 1773657372}
   m_Layer: 0
   m_Name: ComputerRegion
   m_TagString: Untagged
@@ -16495,28 +16495,6 @@ Transform:
   m_Father: {fileID: 1008225337}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 19.95, z: 0}
---- !u!114 &1773657367
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1773657365}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ab2806173aaeea4fbdb9265d5e9284b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MapId:
-    m_HashValue: 1022992966
-  Group:
-    GameObjects:
-    - {fileID: 1773657365}
-    Behaviours: []
-  Highlight:
-    GameObjects: []
-    Behaviours: []
-  AlwaysAvailable: 0
 --- !u!114 &1773657368
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16549,14 +16527,14 @@ MonoBehaviour:
   m_Proxy: {fileID: 0}
   m_Selectable: {fileID: 0}
   Config:
-    Action: 1
+    Action: 0
     TargetId:
-      m_Source: WorldMap
-      m_HashValue: 2589678915
+      m_Source: 
+      m_HashValue: 0
     TargetEntranceId:
       m_Source: 
       m_HashValue: 0
-    LoadFlags: 96
+    LoadFlags: 100
 --- !u!114 &1773657370
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16570,21 +16548,46 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Id:
-    m_Source: Modeling
-    m_HashValue: 1022992966
---- !u!65 &1773657371
-BoxCollider:
+    m_Source: ModelComputer
+    m_HashValue: 2730058039
+--- !u!61 &1773657371
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1773657365}
+  m_Enabled: 1
+  m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.41438007, y: 0.10622215}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 14.7, y: 7.6, z: 1.87}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 12.074213, y: 6.594265}
+  m_EdgeRadius: 0
+--- !u!114 &1773657372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1773657365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f10e8779719b342ca941c584c013ec4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1802160480
 GameObject:
   m_ObjectHideFlags: 0
@@ -16719,7 +16722,7 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.23050909, g: 0.3301887, b: 0.24192224, a: 1}
   m_Intensity: 1
   m_Range: 8
   m_SpotAngle: 30
