@@ -37,6 +37,8 @@ namespace ProtoAqua.ExperimentV2
         [Required(ComponentLookupDirection.Children)] public PointerListener Clickable = null;
         [Required(ComponentLookupDirection.Children)] public CursorInteractionHint InteractionHint = null;
 
+        [Required(ComponentLookupDirection.Children)] public NavArrow[] NavArrows = null;
+
         [Header("Canvas")]
         [Required] public Canvas Interface = null;
         [Required] public InputRaycasterLayer InterfaceRaycaster = null;
