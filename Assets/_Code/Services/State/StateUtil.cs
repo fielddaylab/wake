@@ -90,11 +90,11 @@ namespace Aqua {
 
             if (!string.IsNullOrEmpty(sceneToLoad)) {
                 return Services.UI.ScreenFaders.WipeTransition(PauseDuration,
-                () => Sequence.Create(Services.State.LoadScene(sceneToLoad, inEntrance, inContext, inFlags)).Then(AfterLoad)
+                () => Sequence.Create(PreSceneChange).Then(Services.State.LoadScene(sceneToLoad, inEntrance, inContext, inFlags)).Then(AfterLoad)
             );
             }
             return Services.UI.ScreenFaders.WipeTransition(PauseDuration,
-                () => Sequence.Create(Services.State.LoadPreviousScene(DefaultBackScene, inEntrance, inContext, inFlags)).Then(AfterLoad)
+                () => Sequence.Create(PreSceneChange).Then(Services.State.LoadPreviousScene(DefaultBackScene, inEntrance, inContext, inFlags)).Then(AfterLoad)
             );
         }
 
@@ -118,6 +118,10 @@ namespace Aqua {
             Services.Events.Dispatch(GameEvents.SceneWillUnload);
             s_IsLoading = true;
             return true;
+        }
+
+        static private void PreSceneChange() {
+            s_IsLoading = false;
         }
 
         static private void AfterLoad() {

@@ -4,6 +4,8 @@ using Aqua.Debugging;
 using BeauData;
 using BeauUtil;
 using BeauUtil.Debugger;
+using EasyBugReporter;
+using LogMask = Aqua.Debugging.LogMask;
 
 namespace Aqua.Profile
 {
@@ -203,6 +205,33 @@ namespace Aqua.Profile
                 SavePatcher.PatchIds(data.ExpectedFacts);
                 SavePatcher.PatchIds(data.SubmittedFacts);
                 data.OnChanged = MarkChanged;
+            }
+        }
+
+        public void Dump(EasyBugReporter.IDumpWriter writer) {
+            writer.KeyValue("Science Level", m_CurrentLevel);
+
+            foreach(var siteSurvey in m_SiteData) {
+                writer.Header("Survey Data for " + Assets.NameOf(siteSurvey.MapId));
+                foreach(var taggedId in siteSurvey.TaggedCritters) {
+                    writer.KeyValue("Tagged", Assets.NameOf(taggedId));
+                }
+                foreach(var graphedId in siteSurvey.GraphedCritters) {
+                    writer.KeyValue("Graphed", Assets.NameOf(graphedId));
+                }
+                foreach(var graphedId in siteSurvey.GraphedFacts) {
+                    writer.KeyValue("Graphed", Assets.NameOf(graphedId));
+                }
+            }
+
+            writer.Header("Completed Argumentations");
+            foreach(var argueId in m_CompletedArgues) {
+                writer.Text(argueId.ToDebugString());
+            }
+
+            foreach(var inProgress in m_ArgueData) {
+                writer.Header("Argument " + inProgress.Id.ToDebugString() + " in progress");
+                writer.KeyValue("Claim Id", inProgress.ClaimId.ToDebugString());
             }
         }
 

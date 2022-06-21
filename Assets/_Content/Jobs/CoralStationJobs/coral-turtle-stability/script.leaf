@@ -12,7 +12,6 @@ $branch common.ringPhone
 $set jobs:turtle-stability-visual-model.saved = false
 
 // SCAN ALL
-
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Helm", JobTaskTop(scanAll)
@@ -31,9 +30,9 @@ $set jobs:turtle-stability-visual-model.saved = false
 @trigger    SceneStart
 @when       scene:name == "RS-2V"
 @once
-@cutscene
+// @cutscene
 $set    	jobs:coral-turtle-stability.seen.bottom = true
-{@kevin}   Looks like we made it! Time to see what species we can find here.
+// {@kevin}   Looks like we made it! Time to see what species we can find here.
 
 :: helpAtSiteR
 @trigger    RequestPartnerHelp
@@ -77,6 +76,14 @@ $endif
 {@kevin}	Let's head west and return to the ship.
 
 // BEHAVIOR
+// :: atShip
+// @trigger    SceneStart
+// @when       scene:name == "Ship", jobs:coral-turtle-stability.got.scans == true
+// @once
+// @cutscene
+// {@player}   We're back. Now what?
+// {@kevin}   	Let's head to the {nameof Experimentation} and see what the turtles eat.
+// {@player}   On it!
 
 :: atShip
 @trigger    SceneStart
@@ -179,7 +186,7 @@ $endif
 @cutscene
 {@kevin}	So this is the {nameof VisualModel}.
 {@kevin}	From here you'll import any new facts you have about the ecosystem.
-{@kevin}	If you have all the facts you need, you'll see a button to {h}Import Facts{/h}
+{@kevin}	If you have all the facts you need, you'll see a button to {h}Import New Facts{/h}
 {@kevin}	If you don't see the button, you may need to gather more data!
 {@kevin}	You will only be able to {h}Save{/h} a model if your current job requires it and you are working in the correct ecosystem.
 {@kevin}	Always double check that you have the right ecosystem pulled up!
@@ -278,6 +285,12 @@ $endif
 $call ArgueComplete()
 {@profCempaka}	Thank you! Eventually we may need more information to complete this food web.
 $call CompleteJob()
+
+:: argue.unrelated
+$call ArgueRejectIncorrect()
+{@profCempaka}  Ok, that's interesting, but it's not answering my question.
+                Do you have a model of the food web which shows what species turtles are consuming?
+$goto .argue.chooseFacts
 
 :: argue.giveUp
 {@profCempaka} OK. Get back to me when you're ready.

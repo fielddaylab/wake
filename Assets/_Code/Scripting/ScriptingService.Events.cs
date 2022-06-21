@@ -29,9 +29,12 @@ namespace Aqua
             m_TagEventParser.AddReplace("highlight", "<color=yellow>").WithAliases("h").CloseWith("</color>");
             m_TagEventParser.AddReplace("property-name", "<#bb8fce>").CloseWith("</color>");
             m_TagEventParser.AddReplace("critter-name", "<#e59866>").CloseWith("</color>");
+            m_TagEventParser.AddReplace("!", "<#db3553>").CloseWith("</color>");
             m_TagEventParser.AddReplace("env-name", "<#85c1e9>").CloseWith("</color>");
+            m_TagEventParser.AddReplace("item", "<#00ffc8>").CloseWith("</color>");
             m_TagEventParser.AddReplace("item-name", "<#f0ff00>").CloseWith("</color>");
             m_TagEventParser.AddReplace("map-name", "<#FFCCF9>").CloseWith("</color>");
+            m_TagEventParser.AddReplace("m", "<#FFCCF9>").CloseWith("</color>");
             m_TagEventParser.AddReplace("player-name", () => Save.Name);
             m_TagEventParser.AddReplace("cash", "<#DDDC64>").CloseWith("</color><sprite name=\"cash\">");
             m_TagEventParser.AddReplace("exp", "<#79A4EA>").CloseWith("</color><sprite name=\"exp\">");

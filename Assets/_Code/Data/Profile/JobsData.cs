@@ -7,6 +7,8 @@ using Aqua.Debugging;
 using BeauData;
 using BeauUtil;
 using BeauUtil.Debugger;
+using EasyBugReporter;
+using LogMask = Aqua.Debugging.LogMask;
 
 namespace Aqua.Profile {
     public class JobsData : IProfileChunk, ISerializedVersion, ISerializedCallbacks {
@@ -371,6 +373,29 @@ namespace Aqua.Profile {
 
         public void MarkChangesPersisted() {
             m_HasChanges = false;
+        }
+
+        public void Dump(EasyBugReporter.IDumpWriter writer) {
+            writer.KeyValue("Current Job", Assets.NameOf(m_CurrentJobId));
+            
+            writer.Header("In Progress Jobs");
+            foreach(var jobId in m_InProgressJobs) {
+                writer.Text(Assets.NameOf(jobId));
+            }
+            writer.Header("Completed Jobs");
+            foreach(var jobId in m_CompletedJobs) {
+                writer.Text(Assets.NameOf(jobId));
+            }
+
+            writer.Header("Unlocked Jobs");
+            foreach(var jobId in m_UnlockedJobs) {
+                writer.Text(Assets.NameOf(jobId));
+            }
+
+            writer.Header("Completed Tasks");
+            foreach(var taskId in m_CompletedTasks) {
+                writer.Text(taskId.ToDebugString());
+            }
         }
 
         #endregion // IProfileChunk

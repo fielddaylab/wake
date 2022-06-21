@@ -41,6 +41,8 @@ namespace ProtoAqua.Observation {
         int IBaked.Order { get { return 0; } }
 
         bool IBaked.Bake(BakeFlags flags) {
+            Bake.ResetStaticFlags(gameObject, true);
+
             if (!TrackTransform) {
                 TrackTransform = transform;
                 return true;

@@ -15,7 +15,7 @@
 @trigger    TryArgumentation
 @when   !ArgueIsComplete() // TODO: NAME ME
 @cutscene
-$call ArgueLoad(siteOAnalysis) // TODO: SAME NAME HERE
+$call ArgueLoad() // TODO: SAME NAME HERE
 // TODO: add your claim label to jobs.aqloc
 $if ArgueSetClaim(Claim, jobs.station-job-name.argue.claimLabel) 
     $call ArgueFactSlot() // TODO: put fact slot info here 
@@ -42,6 +42,6 @@ $call ArgueCancelClaim()
 :: argue.complete
 $call ArgueComplete()
 {@kevin} This looks great!
-{@kevin}    This is the conclusion to the [[JOB-NAME]] job!
+         This is the conclusion to the [[JOB-NAME]] job!
 
 $call CompleteJob()

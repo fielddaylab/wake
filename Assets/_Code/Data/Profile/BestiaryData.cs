@@ -8,12 +8,15 @@ using BeauData;
 using BeauPools;
 using BeauUtil;
 using BeauUtil.Debugger;
+using EasyBugReporter;
 using UnityEngine;
 
 namespace Aqua.Profile
 {
     public class BestiaryData : IProfileChunk, ISerializedVersion, ISerializedCallbacks
     {
+        private const BFDiscoveredFlags TempDiscoveredMask = BFDiscoveredFlags.HasPair;
+
         #region Types
 
         private struct FactData : ISerializedObject, IKeyValuePair<StringHash32, FactData>
@@ -250,7 +253,7 @@ namespace Aqua.Profile
 
         public bool AddDiscoveredFlags(StringHash32 inFactId, BFDiscoveredFlags inFlags)
         {
-            inFlags &= ~BFDiscoveredFlags.TempMask;
+            inFlags &= ~TempDiscoveredMask;
 
             if (inFlags <= 0)
                 return false;
@@ -290,7 +293,7 @@ namespace Aqua.Profile
 
         public bool RemoveDiscoveredFlags(StringHash32 inFactId, BFDiscoveredFlags inFlags)
         {
-            inFlags &= ~BFDiscoveredFlags.TempMask;
+            inFlags &= ~TempDiscoveredMask;
 
             if (inFlags <= 0)
                 return false;
@@ -404,6 +407,18 @@ namespace Aqua.Profile
         public void MarkChangesPersisted()
         {
             m_HasChanges = false;
+        }
+
+        public void Dump(EasyBugReporter.IDumpWriter writer) {
+            writer.Header("Bestiary Entities");
+            foreach(var entityId in m_ObservedEntities) {
+                writer.Text(Assets.NameOf(entityId));
+            }
+            
+            writer.Header("Discovered Facts");
+            foreach(var factId in m_ObservedFacts) {
+                writer.KeyValue(Assets.NameOf(factId), GetDiscoveredFlags(factId));
+            }
         }
 
         #endregion // IProfileChunk

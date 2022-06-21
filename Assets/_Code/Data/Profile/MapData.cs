@@ -4,6 +4,7 @@ using Aqua.Debugging;
 using BeauData;
 using BeauUtil;
 using BeauUtil.Debugger;
+using EasyBugReporter;
 using UnityEngine;
 
 namespace Aqua.Profile
@@ -339,6 +340,33 @@ namespace Aqua.Profile
         public void MarkChangesPersisted()
         {
             m_HasChanges = false;
+        }
+
+        public void Dump(EasyBugReporter.IDumpWriter writer) {
+            writer.Header("Location");
+            writer.KeyValue("Current Map Id", Assets.NameOf(m_CurrentMapId));
+            writer.KeyValue("Current Map Entrance", m_CurrentMapEntranceId.ToDebugString());
+            writer.KeyValue("Current Station Id", Assets.NameOf(m_CurrentStationId));
+
+            writer.Header("Unlocked Stations");
+            foreach(var stationId in m_UnlockedStationIds) {
+                writer.Text(Assets.NameOf(stationId));
+            }
+
+            writer.Header("Unlocked Sites");
+            foreach(var siteId in m_UnlockedSiteIds) {
+                writer.Text(Assets.NameOf(siteId));
+            }
+
+            writer.Header("Unlocked Rooms");
+            foreach(var roomId in m_UnlockedRoomIds) {
+                writer.Text(roomId.ToDebugString());
+            }
+
+            writer.Header("Visited Locations");
+            foreach(var locationId in m_VisitedLocations) {
+                writer.Text(locationId.ToDebugString());
+            }
         }
 
         #endregion // IProfileChunk

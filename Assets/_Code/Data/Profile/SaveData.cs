@@ -1,5 +1,7 @@
+using System;
 using Aqua.Option;
 using BeauData;
+using EasyBugReporter;
 
 namespace Aqua.Profile
 {
@@ -75,6 +77,41 @@ namespace Aqua.Profile
                 || Script.HasChanges() || Bestiary.HasChanges()
                 || Map.HasChanges() || Jobs.HasChanges()
                 || Science.HasChanges();
+        }
+
+        public void Dump(EasyBugReporter.IDumpWriter writer) {
+            writer.KeyValue("Save Id", Id);
+            writer.KeyValue("Last Updated", DateTime.FromFileTimeUtc(LastUpdated));
+            writer.KeyValue("Save Version", Version);
+            writer.Space();
+
+            writer.BeginSection("Character", false);
+            Character.Dump(writer);
+            writer.EndSection();
+
+            writer.BeginSection("Inventory", false);
+            Inventory.Dump(writer);
+            writer.EndSection();
+
+            writer.BeginSection("Scripting", false);
+            Script.Dump(writer);
+            writer.EndSection();
+
+            writer.BeginSection("Bestiary", false);
+            Bestiary.Dump(writer);
+            writer.EndSection();
+
+            writer.BeginSection("Map", false);
+            Map.Dump(writer);
+            writer.EndSection();
+
+            writer.BeginSection("Jobs", false);
+            Jobs.Dump(writer);
+            writer.EndSection();
+
+            writer.BeginSection("Science", false);
+            Science.Dump(writer);
+            writer.EndSection();
         }
 
         #endregion // IProfileChunk

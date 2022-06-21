@@ -1,0 +1,200 @@
+#basePath   job.coral-check-up
+
+:: start
+@trigger    JobStarted
+@cutscene
+$branch common.ringPhone
+{@profCempaka}  According to the data collected by our reasearch probe, the {nameof BlueTang} seem to be more {!}stressed{/!} than in the model you submitted. We need collect more data to improve our model's accuracy.
+{@kevin}        Well, the first thing we can do is see what stress ranges the {nameof BlueTang} can tolerate.
+                For that, we'll need to conduct some {map-name}Experiments{/map-name} with the {h}Stress Tank{/h}.
+
+:: microHint
+@trigger	JobTasksUpdated
+@when		JobTaskTop(findMicro)
+@once
+@cutscene
+$branch common.ringPhone
+
+{@profCempaka}	Forgive the intrusion, but your {nameof @kevin} tells me that according to the stress ranges you've measured,
+				the environmental conditions at {h}Site S{/h} should be well within the Blue Tang's comfortable range. 
+{@kevin}        So something else is stressing the tang?
+{@profCempaka}	There is something else which could be stressing the Blue Tang: {h}Microorganisms{/h}! 
+				I'm going to need you to go back to {h}Site S{/h} and scan for microorganisms.
+
+:: scanIck
+@trigger	JobTaskCompleted
+@when		HasEntity(Ick)
+@once
+@cutscene
+{@kevin}	This must be what's stressing the Tang!  We'd better get a population count.
+
+:: countIck
+@trigger	JobTaskCompleted
+@when		JobTaskTop(observeIck)
+@once
+@cutscene
+{@kevin}	This place is just crawling with {nameof Ick}. We've got to get back to the {item}Observation tank{/item} and see how this is affecting the Tang.
+
+:: measureIck
+@trigger	JobTaskCompleted
+@when		JobTaskTop(reviseModels)
+@once
+@cutscene
+{@kevin}	Now that we know {nameof Ick} stresses {nameof BlueTang}, we can measure the reproduction and eating rates of the stressed Tang to improve our model.
+$branch common.ringPhone
+{@profCempaka} Sorry to intrude, after you measured the stress ranges of the Tang we measured their eating and reproduction rates when stressed. I'll send the data over now.
+$call UpgradeFact(Ick.Stresses.BlueTang)
+$call UpgradeFact(BlueTang.Eats.TurfAlgae.Stressed)
+$call UpgradeFact(BlueTang.Reproduce.Stressed)
+$call GiveFact(BlueTang.Eats.TurfAlgae.Stressed)
+$call GiveFact(BlueTang.Reproduce.Stressed)
+$call GiveFact(StaghornCoral.Reproduce)
+$call GiveFact(Ick.Reproduce)
+{@player} Well that's convenient!
+
+:: helpMeasure1
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(measureIck), !IsFactFullyUpgraded(BlueTang.Reproduce.Stressed), !IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed)
+@cutscene
+{@kevin}     Use the measurement tank to get the reproduction rate of Blue Tang when stressed
+
+// :: measureHint2
+// @trigger	ExperimentFinished
+// @when		IsFactFullyUpgraded(BlueTang.Reproduce.Stressed), !IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed)
+// @once
+// @cutscene
+// {@kevin}	The presence of {nameof Ick} really slows down {nameof BlueTang} reproduction. What about consumption?
+//             Do Tang eat slower when stressed? You'll need to measure {nameof BlueTang} and {nameof TurfAlgae} in {h}water that stresses{/h} the {nameof BlueTang}.
+
+// :: helpMeasure2
+// @trigger    RequestPartnerHelp
+// @when 		JobTaskActive(measureIck), IsFactFullyUpgraded(BlueTang.Reproduce.Stressed), !IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed)
+// @cutscene
+// {@kevin}     Use the {map-name}Measurement Tank{/map-name} to get the rate at which {nameof BlueTang} eats {nameof TurfAlgae} when stressed.
+
+// :: measureHint3
+// @trigger	ExperimentFinished
+// @when		IsFactFullyUpgraded(BlueTang.Reproduce.Stressed), IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed)
+// @once
+// @cutscene
+// {@kevin}	I calculate that this may be the missing element from our previous model.
+// 			Let's try to revise your {map-name}descriptive model{/map-name} in light of the new information just acquired.
+
+// :: helpMeasure3
+// @trigger    RequestPartnerHelp
+// @when 		JobTaskActive(improveDescribe), IsFactFullyUpgraded(BlueTang.Reproduce.Stressed), IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed)
+// @cutscene
+// {@kevin}	Go to the {map-name}modeling tool{/map-name} and redo your {h}descriptive model{/h} with the new information you have.	 
+
+:: describeComplete
+@trigger	JobTasksUpdated
+@when		JobTaskTop(report)
+@once
+@cutscene
+{@kevin}	This model seems much more aligned to the Professor's observations. Let's go report back with our new model.
+
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchFindStress
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(findStress)
+@boostScore -5
+@cutscene
+{@kevin}    We need to do some experiments on the {nameof BlueTang}.
+
+:: catchFindMicro
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(findMicro)
+@boostScore -5
+@cutscene
+{@kevin}    Go to {h}Site S{/h} and try to scan for microorganisms.
+
+:: catchCountIck
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(countIck)
+@boostScore -5
+@cutscene
+{@kevin}    Get a population count of the {nameof Ick} microorganism you just found.
+
+:: catchObserveIck
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(observeIck)
+@boostScore -5
+@cutscene
+{@kevin}    Let's {map-name}Observe{/map-name} the interactions between {nameof BlueTang} and {nameof Ick}.
+
+// :: catchMeasureIck
+// @trigger    RequestPartnerHelp
+// @when 		JobTaskActive(measureIck)
+// @boostScore -5
+// @cutscene
+// {@kevin}    You'll need to measure {nameof BlueTang} and {nameof TurfAlgae} in {h}water that stresses{/h} the {nameof BlueTang}.
+// 			Place the {nameof BlueTang} in water that stresses it. We could try the {h}Warm Kelp Forest{/h}...
+
+:: catchReviseVisual
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reviseModels)
+@boostScore -5
+@cutscene
+{@kevin}    Remake your visual model based on your new {nameof Ick} data.
+
+// :: catchImproveDescribe
+// @trigger    RequestPartnerHelp
+// @when 		JobTaskActive(improveDescribe)
+// @boostScore -5
+// @cutscene
+// {@kevin}    Remake your describe model based on your new {nameof Ick} data.
+
+:: catchReport
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(report)
+@boostScore -5
+@cutscene
+{@kevin}    Present your new model to {@profCempaka} in the Comms room.
+
+// ARGUMENTATION
+
+:: argue.intro
+@trigger    TryArgumentation
+@when		!ArgueIsComplete(checkUpArgue)
+@cutscene
+$call ArgueLoad(checkUpArgue)
+{@profCempaka}	What's going on with the {nameof BlueTang}?
+$if JobTaskTop(report)
+	$choice .argue.transition; The Ick are making them stressed!
+$endif
+$choice .argue.giveUp; I'm still not sure...
+
+:: argue.transition
+{@profCempaka}	The Ick? Did adding Ick fix the model?
+$if ArgueSetClaim(checkUpClaim, jobs.coral-check-up.argue.claimLabel)
+		$call ArgueFactSlot(LionfishInvasion.Model.IckStressDescribe)
+$endif
+$call ArgueDisplayClaim()
+$branch .argue.presentFacts
+
+:: argue.presentFacts
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.correctModel
+		$answer incorrect, .argue.incorrectModel
+$choice .argue.giveUp; Let me get back to you
+
+:: argue.correctModel
+{@profCempaka}	Well done! Now we understand more about the effects of Ick on Blue Tang.
+$branch .end
+
+:: argue.incorrectModel
+{@profCempaka}	Hmm. I don't see how this pertains to the issue at hand.
+$call ArgueRejectIncorrect()
+{@profCempaka}	Why do you say the Ick are stressing the Tang?
+$branch .argue.presentFacts
+
+:: argue.giveUp
+{@profCempaka}	OK. Get back to me when you're ready.
+
+// END
+
+:: end
+$call ArgueComplete()
+$call CompleteJob()

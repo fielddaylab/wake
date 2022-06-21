@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BeauData;
 using BeauUtil;
 using BeauUtil.Debugger;
+using EasyBugReporter;
 
 namespace Aqua.Profile
 {
@@ -370,6 +371,21 @@ namespace Aqua.Profile
         public void MarkChangesPersisted()
         {
             m_HasChanges = false;
+        }
+
+        public void Dump(EasyBugReporter.IDumpWriter writer) {
+            writer.Header("Inventory");
+            foreach(var item in m_Items) {
+                writer.KeyValue(Assets.NameOf(item.ItemId), item.Count);
+            }
+            writer.Header("Upgrade Ids");
+            foreach(var itemId in m_UpgradeIds) {
+                writer.Text(Assets.NameOf(itemId));
+            }
+            writer.Header("Scanner Ids");
+            foreach(var scannerId in m_ScannerIds) {
+                writer.Text(scannerId.ToDebugString());
+            }
         }
 
         #endregion // IProfileChunk

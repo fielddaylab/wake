@@ -17,6 +17,8 @@ namespace Aqua
 
         IVariantResolver ILeafVariableAccess.Resolver { get { return Services.Data.VariableResolver; }}
 
+        LeafRuntimeConfiguration ILeafPlugin.Configuration { get { return null; } }
+
         void ILeafPlugin<ScriptNode>.OnNodeEnter(ScriptNode inNode, LeafThreadState<ScriptNode> inThreadState)
         {
             var thread = ScriptThread(inThreadState);

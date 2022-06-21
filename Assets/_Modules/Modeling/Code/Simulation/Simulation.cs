@@ -87,7 +87,7 @@ namespace Aqua.Modeling
             }
 
             public void Dispose() {
-                Unsafe.TryFreeArena(ref m_Allocator);
+                Unsafe.TryDestroyArena(ref m_Allocator);
                 Populations = null;
                 Unconsumed = null;
                 Hungers = null;

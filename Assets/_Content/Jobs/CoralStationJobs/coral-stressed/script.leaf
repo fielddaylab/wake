@@ -10,6 +10,7 @@ $branch common.ringPhone
 {@profCempaka} It just seems... well, stressed.  You'll need to go to Site R and see for yourself.
 {@profCempaka}	You can run some experiments to see if something about the environment is stressing it.
 {@player} 	Ok. I'm on it!
+$set	jobs:coral-stressed.struggling = false
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
@@ -24,8 +25,8 @@ $branch common.ringPhone
 @when       scene:name == "Station2"
 @once
 @cutscene
-{@kevin} You're gonna want to take your sub over to Dive Site R.
-                    It should be just north of the ship. When you're there, dive.
+{@kevin}	You're gonna want to take your sub over to Dive Site R.
+            It should be just north of the ship. When you're there, dive.
 					
 :: helpGoToSiteR
 @trigger    RequestPartnerHelp
@@ -114,8 +115,8 @@ $set jobs:coral-stressed.gotScans = true
 
 
 :: experimentEnd
-@trigger    ExperimentFinished
-@when 		HasFact(StaghornCoral.Light.Stressed), HasFact(StaghornCoral.Light.Stressed)
+@trigger    ExperimentFinished //NewStressResults
+@when 		HasFact(StaghornCoral.Light.Stressed)
 @once
 @cutscene
 {@kevin}	Fantastic! The {h}Stress Tank{/h} gave us some new clues.
@@ -129,16 +130,18 @@ $set jobs:coral-stressed.gotScans = true
 
 :: helpReportBack
 @trigger    RequestPartnerHelp
-@when 		HasFact(StaghornCoral.Light.Stressed)
+@when 		JobTaskTop(reportBack)
 @boostScore 1
 @cutscene
-{@player} 	What should we be doing now?
-$if !HasFact(SargassumCoveredReef.WaterChemHistory.Light)
-	{@kevin} We need to get the historical environmental data of Site R. Let's head back and scan the water chemistry probe. 
+$if	jobs:coral-stressed.struggling
+	{@player} 	Any tips about which facts to focus on?
+	{@kevin}	Make sure to open AQOS and compare the coral stress ranges with the conditions at Site R.
 $else
-	{@kevin}	That should be everything we need for now. Let's report back to Professor Harper.
+	{@player} 	What should we be doing now?
 	$if global:nav.shipRoom == "office"
 		{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
+	$else
+		{@kevin}	That should be everything we need for now. Let's report back to Professor Harper.
 	$endif
 $endif
 
@@ -205,6 +208,7 @@ $call CompleteJob()
 :: argue.incorrectLight
 {@profCempaka} Those don't support your claim perfectly.  What are the current light levels at Site R, and what is the light range for coral life?
 $call ArgueRejectIncorrect()
+$set	jobs:coral-stressed.struggling = true
 $goto .argue.coralNeedsLight
 
 :: argue.giveUp
@@ -213,6 +217,7 @@ $goto .argue.coralNeedsLight
 
 :: argue.waterIsAcidicIntro
 {@profCempaka} What evidence do you have about pH at Site R, and how it affected the coral?
+$set	jobs:coral-stressed.struggling = true
 $goto .argue.waterIsAcidic
 
 ::argue.waterIsAcidic
@@ -238,6 +243,7 @@ $goto .argue.chooseClaim
 
 ::argue.waterIsHotIntro
 {@profCempaka} What evidence do you have about temperature at Site R, and how it affected the coral?
+$set	jobs:coral-stressed.struggling = true
 $goto .argue.waterIsHot
 
 ::argue.waterIsHot

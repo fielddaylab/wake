@@ -56,7 +56,7 @@ namespace Aqua.Animation
         {
             m_LastTimestamp += Time.deltaTime;
 
-            if (m_Renderers.Count > 0)
+            if (m_Renderers.Count > 0 && Time.timeScale > 0)
             {
                 Process(m_LastTimestamp, m_Renderers, m_Random);
             }
@@ -73,11 +73,11 @@ namespace Aqua.Animation
             int objectIdx;
 
             // buffers
-            Color* colors = stackalloc Color[objectCount];
+            Color* colors = Frame.AllocArray<Color>(objectCount);
 
-            AmbientColorState* stateBuffer = stackalloc AmbientColorState[objectCount];
-            AmbientColorPropertyConfig* configBuffer = stackalloc AmbientColorPropertyConfig[objectCount];
-            byte* changeBuffer = stackalloc byte[objectCount];
+            AmbientColorState* stateBuffer = Frame.AllocArray<AmbientColorState>(objectCount);
+            AmbientColorPropertyConfig* configBuffer = Frame.AllocArray<AmbientColorPropertyConfig>(objectCount);
+            byte* changeBuffer = Frame.AllocArray<byte>(objectCount);
 
             for(int i = 0; i < objectCount; ++i)
             {

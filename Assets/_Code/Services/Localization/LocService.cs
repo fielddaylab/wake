@@ -48,8 +48,8 @@ namespace Aqua
             m_LanguagePackage.name = "LanguageStrings";
             foreach(var file in m_EnglishStrings)
             {
-                var parser = BlockParser.ParseAsync(ref m_LanguagePackage, file.name, file.Source(), Parsing.Block, LocPackage.Generator.Instance);
-                yield return Async.Schedule(parser);
+                var parser = BlockParser.ParseAsync(ref m_LanguagePackage, file, Parsing.Block, LocPackage.Generator.Instance);
+                yield return Async.Schedule(parser); 
             }
 
             DebugService.Log(LogMask.Loading | LogMask.Localization, "[LocService] Loaded {0} keys (english)", m_LanguagePackage.Count);

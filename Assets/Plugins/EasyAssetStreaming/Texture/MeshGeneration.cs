@@ -14,15 +14,17 @@ namespace EasyAssetStreaming {
         /// <summary>
         /// Generates a quad mesh.
         /// </summary>
-        static public Mesh CreateQuad(Vector2 inSize, Vector2 inPivot, Color32 inColor, Rect uv, Mesh ioOverwrite = null) {
+        static public Mesh CreateQuad(Vector2 inSize, Vector2 inNormalizedPivot, Color32 inColor, Rect uv, Mesh ioOverwrite = null) {
             Mesh mesh = ioOverwrite;
+            bool bNew = false;
             if (mesh == null) {
                 mesh = new Mesh();
                 mesh.name = "Quad";
+                bNew = true;
             }
 
-            float left = inSize.x * -inPivot.x;
-            float bottom = inSize.y * -inPivot.y;
+            float left = inSize.x * -inNormalizedPivot.x;
+            float bottom = inSize.y * -inNormalizedPivot.y;
             float right = left + inSize.x;
             float top = bottom + inSize.y;
 
@@ -47,7 +49,9 @@ namespace EasyAssetStreaming {
             mesh.SetVertices(s_QuadGeneratorVertices);
             mesh.SetColors(s_QuadGeneratorColors);
             mesh.SetUVs(0, s_QuadGeneratorUVs);
-            mesh.SetIndices(s_QuadGeneratorIndices, MeshTopology.Triangles, 0, false, 0);
+            if (bNew) {
+                mesh.SetIndices(s_QuadGeneratorIndices, MeshTopology.Triangles, 0, false, 0);
+            }
             
             mesh.RecalculateNormals();
             mesh.RecalculateTangents();

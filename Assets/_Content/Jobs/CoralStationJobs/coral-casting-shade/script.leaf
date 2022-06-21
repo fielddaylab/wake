@@ -192,12 +192,12 @@ $else
 		$if !HasFact(StaghornCoral.Reproduce.Stressed)
 			{@kevin}	Looks like you still need to try more experiments.
 			{@kevin}	We'll need more information to build a model.
-			{@kevin}	Try measuring the Coral with both the tank stabilizer and auto feeder on.
+			{@kevin}	Try measuring the Staghorn Coral with both the tank stabilizer and auto feeder on.
 		$else
 			$if !HasFact(StaghornCoral.Reproduce)
 				{@kevin}	Looks like you still need to try more experiments.
 				{@kevin}	We'll need more information to build a model.
-				{@kevin}	Try measuring the Coral in a different Environment.
+				{@kevin}	Try measuring the Staghorn Coral in a different Environment.
 			$endif
 		$endif
 	$endif
@@ -207,7 +207,7 @@ $endif
 @trigger    RequestPartnerHelp
 @when 		scene:name != "ExperimentV2", jobs:coral-casting-shade.gotMeasurement, !VisualModelStarted
 @cutscene
-{@kevin} We still need more information about how Sargassum and Coral behave.
+{@kevin} We still need more information about how Sargassum and Staghorn Coral behave.
 {@kevin} Go back to the Experiment Lab.
 
 :: allExperimentsDone
@@ -222,7 +222,7 @@ $endif
 @when HasFact(Sargassum.Reproduce), HasFact(Sargassum.Consume.Light), HasFact(StaghornCoral.Reproduce.Stressed), HasFact(StaghornCoral.Reproduce)
 @cutscene
 {@kevin}	Head over to the Modeling Lab.
-{@kevin}	We need to build a descriptive model of how Sargassum affects Coral.
+{@kevin}	We need to build a descriptive model of how Sargassum affects Staghorn Coral.
 
 
 :: InterventionModelingSetup
@@ -357,14 +357,14 @@ $endif
 @when   !ArgueIsComplete(castingShadeArgue)
 @cutscene
 $call ArgueLoad(castingShadeArgue)
-{@profCempaka} Have you got evidence that Sargassum is hurting the Coral?
+{@profCempaka} Have you got evidence that Sargassum is hurting the Staghorn Coral?
 	$choice .argue.yesEvidence; Yes, I've got the evidence.
 	$choice .argue.noEvidence; No, I don't have it, yet.
 	$choice .argue.disagree; I disagree that Sargassum is the problem.
 $choose branch
 
 :: argue.introRevisit
-{@profCempaka} So, do you have the model showing Sargassum is hurting the Coral?
+{@profCempaka} So, do you have the model showing Sargassum is hurting the Staghorn Coral?
 	$choice .argue.yesEvidence; Yes, I've got the evidence.
 	$choice .argue.noEvidence; No, I don't have it, yet.
 	$choice .argue.disagree; I disagree that Sargassum is the problem.
@@ -397,7 +397,7 @@ $call CompleteJob()
 
 :: argue.wrongModelSupplied
 {@profCempaka} If I'm going to convince people to pull the Sargassum, I need a model.
-{@profCempaka} It should show that Sargassum is hurting the Coral.
+{@profCempaka} It should show that Sargassum is hurting the Staghorn Coral.
 $call ArgueRejectIncorrect()
 $goto .argue.yesEvidence
 

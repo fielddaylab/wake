@@ -7,8 +7,6 @@
 @boostScore 1052 // arbitraryily high number
 @cutscene
 
-$branch common.ringPhone
-
 {@kevin}	Okay, this is the {h}Modeling tool{/h}.
             We've gathered a bunch of facts about what eats what in the ecosystem.
             We can combine those facts into {h}Visual Model{/h}. That can help us see how they fit together.
@@ -29,6 +27,7 @@ $set jobs:visual-model.saved = true
 @boostScore 1051 // arbitraryily high number
 @when		scene:name == "Modeling", HasUpgrade(SyncModel), !jobs:sync-model.saved
 @cutscene
+@once
 {@kevin}	So this is the {h}Sync Model{/h}! This is where all your facts get turned into a big simulation.
 			What that practically means is we have a bunch of virtual organisms interacting with each other.
             And their interactions are driven by the facts you have.
@@ -49,6 +48,7 @@ $set jobs:sync-model.saved = true
 @trigger	PredictModelStarted
 @boostScore 1050 // arbitraryily high number
 @when		scene:name == "Modeling", HasUpgrade(PredictionModel), !jobs:predict-model.saved
+@once
 @cutscene
 {@kevin}	Once we have a complete Sync Model, we can click the button that says {h}Run Prediction{/h}.
 {@kevin}	This will provide us with a model forecasting what the site will look like in the future!
@@ -67,6 +67,7 @@ $set jobs:predict-model.saved = true
 @boostScore 1049 // arbitraryily high number
 @when		scene:name == "Modeling", HasUpgrade(InterveneModel), !jobs:intervene-model.saved
 @cutscene
+@once
 {@kevin}	Okay, so this is the {h}Intervene Model{/h}. From here you can see what might happen if you intervene in an ecosystem.
             You can determine what would happen if we added more of one kind of organism or removed another kind.
             You can use the plus and minus buttons next to the organisms to increase or decrease their populations.

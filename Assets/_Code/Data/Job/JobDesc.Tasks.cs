@@ -98,7 +98,7 @@ namespace Aqua
 
                 JobTask task = new JobTask();
                 task.Id = editorTask.Id;
-                task.IdString = editorTask.Id.ToDebugString();
+                task.IdString = editorTask.Id.Source();
                 task.Index = (ushort) taskIndex;
                 task.LabelId = editorTask.LabelId;
                 task.Steps = (JobStep[]) editorTask.Steps.Clone();

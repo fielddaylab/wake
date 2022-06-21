@@ -31,7 +31,7 @@ namespace Aqua.Modeling
         public delegate void UpdateStatusInfoDelegate(TextId text, Color? color = null);
         public delegate void DisplayInlinePopupDelegate(TextId text, Color? color = null);
         public delegate void DisplayInlineFactsDelegate(BFBase[] facts);
-        public delegate void FilterNodesDelegate(WorldFilterMask any, WorldFilterMask all = 0, bool force = false);
+        public delegate void FilterNodesDelegate(WorldFilterMask any, WorldFilterMask all = 0, WorldFilterMask none = 0, bool force = false);
         
         public UpdateStatusInfoDelegate Status;
         public DisplayInlinePopupDelegate TextPopup;

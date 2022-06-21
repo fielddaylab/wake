@@ -380,7 +380,9 @@ namespace EasyAssetStreaming {
                 return;
             }
 
-            m_RawImage.enabled = m_LoadedTexture && m_Visible;
+            bool bHasTexture = m_LoadedTexture;
+
+            m_RawImage.enabled = bHasTexture && m_Visible;
             m_RawImage.texture = m_LoadedTexture;
             m_ClippedUVs = m_UVRect;
 
@@ -390,8 +392,12 @@ namespace EasyAssetStreaming {
             }
             #endif // USING_BEAUUTIL
 
-            if (Streaming.IsLoaded(m_LoadedTexture))
+            Streaming.AssetStatus status = Streaming.Status(m_LoadedTexture);
+            if ((status & Streaming.AssetStatus.Loaded) != 0) {
                 Resize(m_AutoSize);
+            } else {
+                OnUpdated?.Invoke(this, status);
+            }
         }
 
         private void LoadClipping() {
@@ -420,6 +426,7 @@ namespace EasyAssetStreaming {
         public void Unload() {
             if (m_RawImage) {
                 m_RawImage.enabled = false;
+                m_RawImage.texture = null;
             }
 
             #if USING_BEAUUTIL

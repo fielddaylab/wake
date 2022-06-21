@@ -144,10 +144,17 @@ namespace Aqua.Title
                 Services.Input.ResumeAll();
 
                 switch(DataService.ReturnStatus(load)) {
-                    case OGD.Core.ReturnStatus.Error_Request: {
+                    case DataService.ErrorStatus.Error_Request: {
                         Services.UI.Popup.DisplayWithClose(
                             Loc.Find("ui.title.fileMissing.header"),
                             Loc.Format("ui.title.fileMissing.description", profileName));
+                        break;
+                    }
+
+                    case DataService.ErrorStatus.DeserializeError: {
+                        Services.UI.Popup.DisplayWithClose(
+                            Loc.Find("ui.title.fileCorrupt.header"),
+                            Loc.Format("ui.title.fileCorrupt.description", profileName));
                         break;
                     }
 

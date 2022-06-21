@@ -216,8 +216,15 @@ namespace EasyAssetStreaming {
             m_AudioSource.enabled = m_AssetId;
             m_AudioSource.Stop();
 
-            if (Streaming.IsLoaded(m_AssetId) && m_PlayRequested)
-                Play(m_PlayRequestedTime.GetValueOrDefault());
+            Streaming.AssetStatus status = Streaming.Status(m_AssetId);
+
+            if ((status & Streaming.AssetStatus.Loaded) != 0) {
+                if (m_PlayRequested) {
+                    Play(m_PlayRequestedTime.GetValueOrDefault());
+                }
+            } else {
+                OnUpdated?.Invoke(this, status);
+            }
         }
 
         private void LoadSettings() {
