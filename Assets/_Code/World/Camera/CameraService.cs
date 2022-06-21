@@ -1330,6 +1330,23 @@ namespace Aqua.Cameras
         }
 
         /// <summary>
+        /// Casts from a screen position to a world position on the given plane.
+        /// </summary>
+        public Vector3? ScreenToPlanePosition(Vector2 inScreenPos, Plane inPlane)
+        {
+            Vector3 screenPos = inScreenPos;
+            screenPos.z = 1;
+
+            Ray r = m_Camera.ScreenPointToRay(screenPos);
+
+            float dist;
+            if (!inPlane.Raycast(r, out dist))
+                return null;
+
+            return r.GetPoint(dist);
+        }
+
+        /// <summary>
         /// Returns the scale needed to have a consistent scale for the gameplay axis.
         /// </summary>
         public float GameplayPlaneScaleFactor(Transform inTransform)
