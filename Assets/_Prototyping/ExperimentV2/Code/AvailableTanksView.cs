@@ -22,6 +22,7 @@ namespace ProtoAqua.ExperimentV2 {
 
         [SerializeField, Required] private CameraPose m_Pose = null;
         [SerializeField, HideInInspector] private SelectableTank[] m_Tanks = null;
+        [SerializeField, Required] private SelectableTank m_StartingTank = null;
         [SerializeField, Required] private CanvasGroup m_ExitSceneButtonGroup = null;
         [SerializeField, Required] private CanvasGroup m_ExitTankButtonGroup = null;
         [SerializeField, Required] private Button m_ExitTankButton = null;
@@ -214,6 +215,10 @@ namespace ProtoAqua.ExperimentV2 {
 
             Services.Events.Register<TankType>(ExperimentEvents.ExperimentBegin, OnExperimentStart, this)
                 .Register<TankType>(ExperimentEvents.ExperimentEnded, OnExperimentFinish, this);
+
+            // Navigate to the initial tank
+
+            OnTankNavigated(m_StartingTank);
         }
 
         void ISceneUnloadHandler.OnSceneUnload(SceneBinding inScene, object inContext)
