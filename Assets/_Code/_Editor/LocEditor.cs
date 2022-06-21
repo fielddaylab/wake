@@ -8,6 +8,7 @@ using BeauUtil.Blocks;
 using BeauUtil.Debugger;
 using BeauUtil.Editor;
 using BeauUtil.IO;
+using BeauUtil.Streaming;
 using BeauUtil.Tags;
 using Leaf.Editor;
 using UnityEditor;
@@ -182,11 +183,10 @@ namespace Aqua.Editor {
                 for (int i = 0; i < packageCount; i++) {
                     package = allPackages[i];
                     string assetPath = AssetDatabase.GetAssetPath(package);
-                    string fileContents = File.ReadAllText(assetPath);
 
                     Debug.LogFormat("[LocEditor] Importing {0}...", assetPath);
                     EditorUtility.DisplayProgressBar("Updating Loc Database", string.Format("Importing {0}/{1}: {2}", i + 1, packageCount, assetPath), (float)i + 1 / packageCount);
-                    PackageRecord record = BlockParser.Parse(package.name, fileContents, Parsing.Block, PackageGenerator.Instance);
+                    PackageRecord record = BlockParser.Parse(CharStreamParams.FromStream(File.OpenRead(assetPath), null, true, package.name), Parsing.Block, PackageGenerator.Instance);
                     record.FilePath = assetPath;
                     record.Asset = package;
                     m_PackageRecords.Add(record);
