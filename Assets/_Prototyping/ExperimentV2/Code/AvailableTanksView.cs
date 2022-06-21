@@ -116,9 +116,7 @@ namespace ProtoAqua.ExperimentV2 {
 
                 m_TankExitTransitionAnim.Replace(this, DeselectTankTransition(m_SelectedTank, m_Pose)).Tick();
                 // de-activate nav arrows
-                foreach (var arrow in m_SelectedTank.NavArrows) {
-                    arrow.gameObject.SetActive(false);
-                }
+                m_SelectedTank.NavArrowParent.SetActive(false);
 
                 Routine.Start(this, m_ExitSceneButtonGroup.Show(0.2f, true));
                 m_ExitTankButtonAnimation.Replace(this, m_ExitTankButtonGroup.Hide(0.2f, false));
@@ -130,10 +128,10 @@ namespace ProtoAqua.ExperimentV2 {
 
             m_SelectedTank = tank;
 
+            SelectableTank.Reset(m_SelectedTank, true);
+
             DeactivateTankClickHandlers();
             m_WaterSystem.SetActiveTank(tank);
-
-            SelectableTank.Reset(m_SelectedTank, true);
 
             Services.Events.Dispatch(ExperimentEvents.ExperimentView, tank.Type);
 
@@ -145,10 +143,10 @@ namespace ProtoAqua.ExperimentV2 {
 
             m_SelectedTank.CurrentState |= TankState.Selected;
             m_SelectedTank.ActivateMethod?.Invoke();
+
             // activate nav arrows
-            foreach (var arrow in m_SelectedTank.NavArrows) {
-                arrow.gameObject.SetActive(true);
-            }
+            m_SelectedTank.NavArrowParent.SetActive(true);
+
             Routine.Start(this, m_ExitSceneButtonGroup.Hide(0.2f, false));
             m_ExitTankButtonAnimation.Replace(this, m_ExitTankButtonGroup.Show(0.2f, true));
             m_TankEnterTransitionAnim.Replace(this, SelectTankTransition(tank)).Tick();
@@ -163,11 +161,9 @@ namespace ProtoAqua.ExperimentV2 {
             m_SelectedTank.CurrentState &= ~TankState.Selected;
 
             m_TankExitTransitionAnim.Replace(this, DeselectTankTransition(m_SelectedTank, m_Pose)).Tick();
-            // de-activate nav arrows
-            foreach (var arrow in m_SelectedTank.NavArrows) {
-                arrow.gameObject.SetActive(false);
-            }
 
+            // de-activate nav arrows
+            m_SelectedTank.NavArrowParent.SetActive(false);
 
             m_SelectedTank = null;
 
