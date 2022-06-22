@@ -20,7 +20,7 @@ namespace Aqua.Character
                     return location;
             }
 
-            Log.Error("[SpawnLocationMap] No location found for '{0}'", inId);
+            Log.Warn("[SpawnLocationMap] No location found for '{0}'", inId);
             return null;
         }
 

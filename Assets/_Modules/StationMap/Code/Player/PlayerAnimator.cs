@@ -9,6 +9,8 @@ namespace Aqua.StationMap
     public class PlayerAnimator : MonoBehaviour
     {
         [SerializeField] private UnityEngine.Animation m_Animation = null;
+        [SerializeField] private ParticleSystem[] m_TrackedParticles = null;
+        [SerializeField] private TrailRenderer[] m_TrackedTrails = null;
 
         private Routine m_DiveRoutine;
 
@@ -25,6 +27,22 @@ namespace Aqua.StationMap
         private void StartDiving()
         {
             m_DiveRoutine.Replace(this, DiveRoutine());
+        }
+
+        public void OnTeleport()
+        {
+            foreach(var particleSystem in m_TrackedParticles)
+            {
+                if (particleSystem.isPlaying) {
+                    particleSystem.Stop();
+                    particleSystem.Play();
+                }
+            }
+
+            foreach(var trail in m_TrackedTrails)
+            {
+                trail.Clear();
+            }
         }
 
         private IEnumerator DiveRoutine()

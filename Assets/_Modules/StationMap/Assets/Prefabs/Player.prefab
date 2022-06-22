@@ -52,12 +52,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Kinematics: {fileID: 5302725472274256837}
+  m_SpawnCtrl: {fileID: 0}
   m_Input: {fileID: 2635531021390785891}
+  m_Animator: {fileID: 1950210926}
   m_MoveParams:
     MaxSpeed: 20
     SpeedCurve: 0
     Acceleration: 15
-    TurnRate: 20
+    TurnRate: 30
     InPlaceRotationSpeedThreshold: 5
   m_DragEngineOn: 2
   m_DragEngineOff: 3
@@ -122,6 +124,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Animation: {fileID: 5820258842027003453}
+  m_TrackedParticles:
+  - {fileID: 5629009326388530303}
+  - {fileID: 5629009326063225493}
+  - {fileID: 5629009327414494047}
+  m_TrackedTrails:
+  - {fileID: 5629009326472665622}
+  - {fileID: 5629009326371206126}
 --- !u!114 &5302725472274256837
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -436,6 +445,36 @@ Transform:
 --- !u!111 &5820258842027003453 stripped
 Animation:
   m_CorrespondingSourceObject: {fileID: 8033464122846328511, guid: ad8324d6bfe8c4201be5a526baa0068a,
+    type: 3}
+  m_PrefabInstance: {fileID: 4591753633917384834}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &5629009326388530303 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 8189635061042050301, guid: ad8324d6bfe8c4201be5a526baa0068a,
+    type: 3}
+  m_PrefabInstance: {fileID: 4591753633917384834}
+  m_PrefabAsset: {fileID: 0}
+--- !u!96 &5629009326472665622 stripped
+TrailRenderer:
+  m_CorrespondingSourceObject: {fileID: 8189635060950016660, guid: ad8324d6bfe8c4201be5a526baa0068a,
+    type: 3}
+  m_PrefabInstance: {fileID: 4591753633917384834}
+  m_PrefabAsset: {fileID: 0}
+--- !u!96 &5629009326371206126 stripped
+TrailRenderer:
+  m_CorrespondingSourceObject: {fileID: 8189635060856933228, guid: ad8324d6bfe8c4201be5a526baa0068a,
+    type: 3}
+  m_PrefabInstance: {fileID: 4591753633917384834}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &5629009326063225493 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 8189635061094363671, guid: ad8324d6bfe8c4201be5a526baa0068a,
+    type: 3}
+  m_PrefabInstance: {fileID: 4591753633917384834}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &5629009327414494047 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 8189635061891988445, guid: ad8324d6bfe8c4201be5a526baa0068a,
     type: 3}
   m_PrefabInstance: {fileID: 4591753633917384834}
   m_PrefabAsset: {fileID: 0}
