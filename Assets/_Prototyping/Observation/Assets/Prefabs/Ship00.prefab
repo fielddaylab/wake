@@ -9886,7 +9886,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3788262077270393548}
-  - component: {fileID: 3788262077270393549}
   m_Layer: 0
   m_Name: Ship00
   m_TagString: Untagged
@@ -9915,20 +9914,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3788262077270393549
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3788262077270393554}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0723b078b779a49daa252733dad957ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shipSpeed: 20
-  shipTurnSpeed: 0.5
 --- !u!1 &3788262077380221443
 GameObject:
   m_ObjectHideFlags: 0
@@ -14682,25 +14667,147 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!95 &3788262077298484343
-Animator:
-  serializedVersion: 3
+--- !u!114 &6417564771014570703
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4058857723137661226}
   m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: eb27e94a9ed2d4c6997a8004b5b943fa, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c3173d042930de4d91f44f667465238, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Transform: {fileID: 3681733603727295376}
+  TransformSpace: 1
+  AnimationScale: 1
+  PositionAnimation:
+    Initial: {x: 0, y: 0, z: 0}
+    WaveXYZ:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceXYZ: {x: 0, y: 0, z: 0}
+    WaveX:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceX: 0
+    WaveY:
+      Frequency: 1
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 5.2
+      DurationRandom:
+        m_Value: 7
+    DistanceY: 0.3
+    WaveZ:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceZ: 0
+  ScaleAnimation:
+    Initial: {x: 0, y: 0, z: 0}
+    WaveXYZ:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceXYZ: {x: 0, y: 0, z: 0}
+    WaveX:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceX: 0
+    WaveY:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceY: 0
+    WaveZ:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceZ: 0
+  RotationAnimation:
+    Initial: {x: 0, y: 0, z: 0}
+    WaveXYZ:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceXYZ: {x: 0, y: 0, z: 0}
+    WaveX:
+      Frequency: 1
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 7.3
+      DurationRandom:
+        m_Value: 7
+    DistanceX: 1.5
+    WaveY:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceY: 0
+    WaveZ:
+      Frequency: 1
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 4.9
+      DurationRandom:
+        m_Value: 7
+    DistanceZ: 0.7
 --- !u!1001 &3788262076690530365
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14912,6 +15019,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 139.97537
       objectReference: {fileID: 0}
+    - target: {fileID: 2223639932434330405, guid: a1202a22e474c4918b2e3678712ed1f0,
+        type: 3}
+      propertyPath: m_PlayAutomatically
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6151712985140306579, guid: a1202a22e474c4918b2e3678712ed1f0,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -14964,9 +15076,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a1202a22e474c4918b2e3678712ed1f0, type: 3}
---- !u!4 &643852847772013771 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4358904486612611248, guid: a1202a22e474c4918b2e3678712ed1f0,
+--- !u!1 &4058857723137661226 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a1202a22e474c4918b2e3678712ed1f0,
     type: 3}
   m_PrefabInstance: {fileID: 3788262077298484347}
   m_PrefabAsset: {fileID: 0}
@@ -14976,9 +15088,9 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 3788262077298484347}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &4058857723137661226 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a1202a22e474c4918b2e3678712ed1f0,
+--- !u!4 &643852847772013771 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4358904486612611248, guid: a1202a22e474c4918b2e3678712ed1f0,
     type: 3}
   m_PrefabInstance: {fileID: 3788262077298484347}
   m_PrefabAsset: {fileID: 0}

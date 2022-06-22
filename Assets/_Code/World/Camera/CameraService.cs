@@ -650,7 +650,14 @@ namespace Aqua.Cameras
             }
 
             PhysicsService.PerformCollisionChecks();
-            SnapToTarget();
+            if (m_Rig != null && m_Rig.ThreeDMode)
+            {
+                SnapToTarget(CameraPoseProperties.All);
+            }
+            else
+            {
+                SnapToTarget();
+            }
             ConstrainPositionToBounds();
         }
 

@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3563158262990282941}
-  - component: {fileID: 5959759175148303338}
+  - component: {fileID: 8905932339081874460}
   m_Layer: 0
   m_Name: Buoy00
   m_TagString: Untagged
@@ -34,25 +34,147 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &5959759175148303338
-Animator:
-  serializedVersion: 3
+--- !u!114 &8905932339081874460
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4195438555519580679}
   m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: bd85885ae67b6453186575337530c93b, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c3173d042930de4d91f44f667465238, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Transform: {fileID: 7097234220693449418}
+  TransformSpace: 1
+  AnimationScale: 1
+  PositionAnimation:
+    Initial: {x: 0, y: 0, z: 0}
+    WaveXYZ:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceXYZ: {x: 0, y: 0, z: 0}
+    WaveX:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceX: 0
+    WaveY:
+      Frequency: 1
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 4.1
+      DurationRandom:
+        m_Value: 0
+    DistanceY: 0.05
+    WaveZ:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceZ: 0
+  ScaleAnimation:
+    Initial: {x: 0, y: 0, z: 0}
+    WaveXYZ:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceXYZ: {x: 0, y: 0, z: 0}
+    WaveX:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceX: 0
+    WaveY:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceY: 0
+    WaveZ:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceZ: 0
+  RotationAnimation:
+    Initial: {x: 0, y: 0, z: 0}
+    WaveXYZ:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceXYZ: {x: 0, y: 0, z: 0}
+    WaveX:
+      Frequency: 1
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 8.15
+      DurationRandom:
+        m_Value: 0
+    DistanceX: 3
+    WaveY:
+      Frequency: 0
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 0
+      DurationRandom:
+        m_Value: 0
+    DistanceY: 0
+    WaveZ:
+      Frequency: 1
+      Method: 0
+      Delay: 0
+      DelayRandom:
+        m_Value: 0
+      Duration: 7.63
+      DurationRandom:
+        m_Value: 0
+    DistanceZ: 3
 --- !u!1 &7603390356705879649
 GameObject:
   m_ObjectHideFlags: 0

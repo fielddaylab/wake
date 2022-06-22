@@ -11,9 +11,9 @@ namespace Aqua
 {
     public struct PhysicsContact
     {
-        public KinematicObject2D Object;
+        public RuntimeObjectHandle<KinematicObject2D> Object;
         public KinematicState2D State;
-        public Collider2D Collider;
+        public RuntimeObjectHandle<Collider2D> Collider;
         public Vector2 Point;
         public Vector2 Normal;
 
