@@ -2011,20 +2011,20 @@ MonoBehaviour:
       AmbientAnimationSpeedMultiplier: 1
     StateEvaluator:
       Temperature:
-        AliveMin: 0
-        AliveMax: 0
-        StressedMin: -Infinity
-        StressedMax: Infinity
+        AliveMin: 15
+        AliveMax: 100
+        StressedMin: 0
+        StressedMax: 115
       Light:
         AliveMin: 0
-        AliveMax: 0
+        AliveMax: 100
         StressedMin: -Infinity
         StressedMax: Infinity
       PH:
-        AliveMin: 0
-        AliveMax: 0
-        StressedMin: -Infinity
-        StressedMax: Infinity
+        AliveMin: 5
+        AliveMax: 9.5
+        StressedMin: 0
+        StressedMax: 10
     AliveEatTargets:
     - TargetId:
         m_HashValue: 722380343
@@ -2036,27 +2036,27 @@ MonoBehaviour:
       FactId:
         m_HashValue: 3955480703
     ParasiteTargets: []
-    SpawnCount: 10
-    SpawnMax: 30
+    SpawnCount: 1
+    SpawnMax: 3
     AliveReproduceRate: 1
     StressedReproduceRate: 0.5
     IsPlant: 0
     IsLivingOrganism: 1
-    IsDistributed: 0
-    TargetLimit: 1
-    FreeOnEaten: 1
+    IsDistributed: 1
+    TargetLimit: 8
+    FreeOnEaten: 0
     EatOffsetRange:
       serializedVersion: 2
-      x: 0.33797842
-      y: 0.29500002
-      width: 0.08961135
-      height: 0.089999974
+      x: -0.050000004
+      y: -0.05
+      width: 0.0995682
+      height: 0.1
     LocalBoundsRect:
       serializedVersion: 2
-      x: 0.333
-      y: 0.29
-      width: 0.09956819
-      height: 0.100000024
+      x: -0.050000004
+      y: -0.05
+      width: 0.0995682
+      height: 0.1
   - Id:
       m_HashValue: 4245174184
     Type: {fileID: 11400000, guid: 01f835774a92d5243a850e1fb6554683, type: 2}
