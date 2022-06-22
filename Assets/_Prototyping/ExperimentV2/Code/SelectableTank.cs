@@ -38,6 +38,7 @@ namespace ProtoAqua.ExperimentV2
         [Required(ComponentLookupDirection.Children)] public CursorInteractionHint InteractionHint = null;
 
         [Required(ComponentLookupDirection.Children)] public NavArrow[] NavArrows = null;
+        [Required(ComponentLookupDirection.Children)] public GameObject NavArrowParent = null;
 
         [Header("Canvas")]
         [Required] public Canvas Interface = null;
