@@ -45,59 +45,86 @@
 $goto .argue.firstQuestion
 
 ::  argue.firstQuestion
-{@profHarper} What caused the communication tower to collapse?
-$if !ArgueIsComplete(bayouBoomArgueFishCriminals)
-    $choice .argue.methaneHere; There's methane here.
-    $choice .argue.fishersFault; Fishers blew it up.
+{@profHarper} Where is energy in {h}Site N{/h} even coming from?
+$if !ArgueIsComplete(bayouAltEnergyHeatFromVents)
+    $choice .argue.1_Methane; It's the methane from the vents
+    $choice .argue.2_Detritus; It's the falling detritus
+    $choice .argue.3_Heat; It's the heat from the vents
     $choice .argue.giveUp; Let me get back to you.
     $choose branch
 $else
-    $choice .argue.methaneHere; There's methane here.
+    $choice .argue.1aMethane; It's the methane from the vents
+    $choice .argue.1bDetritus; It's the falling detritus
     $choice .argue.giveUp; Let me get back to you.
     $choose branch
 $endif
 
-:: argue.methaneHere
-$call ArgueLoad(bayouBoomArgueMethane)
-{@profHarper} Really? What methane did you find at {h}Site N{/h}?
-$goto .argue.chooseFacts
+//Branch 1
+:: argue.1_Methane
+{@profHarper} Well how does the methane fit into the ecosystem?
+$goto .argue.1_Methane_ChooseFacts
 
-:: argue.chooseFacts
-$if ArgueSetClaim(Claim, jobs.bayou-boom-cause.argue.claimLabel1) 
-    $call ArgueFactSlot(N_ThermalVent.Population.Methane) 
+:: argue.1_Methane_ChooseFacts
+/*
+$if ArgueSetClaim(Claim, jobs.bayou-alt-energy.argue.claimLabel_1) 
+    $call ArgueFactSlot(N_ThermalVent.Temperature) 
 $endif
 $call ArgueDisplayClaim()
 $choice #argueFact; Present facts from AQOS
-    $answer N_ThermalVent.Population.Methane, .argue.done
-    $answer N_ThermalVent.Population.Methanogen, .argue.done
-    $answer *, .argue.unrelated
+    $answer N_ThermalVent.Temperature, .argue.1_Heat_ShowMeModel
+    $answer *, .argue.1_Heat_Unrelated
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
+*/
 
-:: argue.fishersFault
-$call ArgueLoad(bayouBoomArgueFishCriminals)
-$if ArgueSetClaim(Claim, jobs.bayou-boom-cause.argue.claimLabel2) 
-    $call ArgueFactSlot(SeaOtter.Eats.Urchin) 
+//Branch 3
+:: argue.3_Heat
+{@profHarper} What makes you think that?
+$goto .argue.3_Heat_ChooseFacts
+
+:: argue.3_Heat_ChooseFacts
+$if ArgueSetClaim(Claim, jobs.bayou-alt-energy.argue.claimLabel_3) 
+    $call ArgueFactSlot(N_ThermalVent.Temperature) 
 $endif
 $call ArgueDisplayClaim()
-{@profHarper} What evidence do you have of foul play?
-$choice #argueFactSet; Present facts from AQOS
-    $answer correct, .argue.unrelatedFishers
-    $answer *, .argue.unrelatedFishers
+$choice #argueFact; Present facts from AQOS
+    $answer N_ThermalVent.Temperature, .argue.3_Heat_ShowMeModel
+    $answer *, .argue.3_Heat_Unrelated
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
-:: argue.unrelatedFishers
-{@profHarper} I don't think this actually indicates human involvement.
+:: argue.3_Heat_Unrelated
+{@profHarper}   That doesn't tell me how much heat is at {h}Site N{/h}.
 $call ArgueRejectIncorrect()
+$goto .argue.3_Heat_Model
+
+:: argue.3_Heat_Model
+{@profHarper} Show me a descriptive model.
+$goto .argue.3_Heat_Model_ChooseFacts
+
+:: argue.3_Heat_Model_ChooseFacts
+$if ArgueSetClaim(Claim, jobs.bayou-alt-energy.argue.claimLabel_3_model) 
+    $call ArgueFactSlot(N_ThermalVent.Model.Visual) 
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFact; Present facts from AQOS
+    $answer N_ThermalVent.Model.Visual, .argue.3_Heat_Complete
+    $answer *, .argue.3_Heat_Model_Unrelated
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.3_Heat_Model_Unrelated
+{@profHarper} That doesn't seem to be the model I'm looking for. 
+$goto .argue.3_Heat_Model_ChooseFacts
+
+:: argue.3_Heat_Complete
+{@profHarper} Interesting, but this doesn't support your claim. 
+              The heat isn't directly supporting life, though it may help the organisms stay alive and unstressed.
+$call ArgueLoad(bayouAltEnergyHeatFromVents)
 $call ArgueComplete()
 $goto .argue.firstQuestion
 
-:: argue.unrelated
-{@profHarper}   That doesn't look like a type of Methane to me...
-$call ArgueRejectIncorrect()
-$goto .argue.chooseFacts
-
+//GiveUp
 :: argue.giveUp
 {@profHarper} OK. Get back to me when you're ready.
 $call ArgueCancelClaim()
@@ -105,7 +132,7 @@ $call ArgueUnload()
 
 // END
 :: argue.done
-$call ArgueLoad(bayouBoomArgue)
+$call ArgueLoad(bayouAltEnergy)
 $call ArgueComplete()
 {@profHarper}   Oh, I hear Methane is very explosive. It must have heated enough to ignite and explode. Good work!
 $call CompleteJob()
