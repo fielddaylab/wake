@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace Aqua
 {
     [RequireComponent(typeof(ToggleGroup))]
-    public class DefaultToggleGroupObject : MonoBehaviour
+    public class DefaultToggleGroupObject : MonoBehaviour, IUpdaterUI
     {
         #region Inspector
 
@@ -24,7 +24,15 @@ namespace Aqua
             OnToggleChanged(!m_ToggleGroup.AnyTogglesOn());
         }
 
-        private void LateUpdate()
+        private void OnEnable() {
+            Services.UI.RegisterUpdate(this);
+        }
+
+        private void OnDisable() {
+            Services.UI?.DeregisterUpdate(this);
+        }
+
+        public void OnUIUpdate()
         {
             bool bDefault = !m_ToggleGroup.AnyTogglesOn();
             if (bDefault != m_Default)

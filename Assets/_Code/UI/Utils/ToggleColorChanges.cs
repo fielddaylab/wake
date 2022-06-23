@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Aqua
 {
-    public sealed class ToggleColorChanges : MonoBehaviour
+    public sealed class ToggleColorChanges : MonoBehaviour, IUpdaterUI
     {
         [NonSerialized] private Toggle m_Toggle;
         [SerializeField] private Graphic m_Graphic = null;
@@ -21,6 +21,14 @@ namespace Aqua
             OnToggleUpdated(m_Toggle.isOn);
         }
 
+        private void OnEnable() {
+            Services.UI.RegisterUpdate(this);
+        }
+
+        private void OnDisable() {
+            Services.UI?.DeregisterUpdate(this);
+        }
+
         private void OnToggleUpdated(bool state) {
             m_LastKnownToggleState = state;
             if (m_Graphic) {
@@ -31,7 +39,7 @@ namespace Aqua
             }
         }
 
-        private void LateUpdate() {
+        public void OnUIUpdate() {
             if (m_Toggle.isOn != m_LastKnownToggleState) {
                 OnToggleUpdated(m_Toggle.isOn);
             }

@@ -57,6 +57,7 @@ namespace Aqua
         [NonSerialized] private TempAlloc<FaderRect> m_SkipFader;
         [NonSerialized] private CursorHintMgr m_CursorHintMgr;
         [NonSerialized] private List<GameObject> m_PersistentUIObjects = new List<GameObject>();
+        [NonSerialized] private BufferedCollection<IUpdaterUI> m_UIUpdates = new BufferedCollection<IUpdaterUI>();
 
         [NonSerialized] private Routine m_PersistentUILoad;
 
@@ -221,6 +222,18 @@ namespace Aqua
 
         #endregion // Additional Panels
 
+        #region Updates
+
+        public void RegisterUpdate(IUpdaterUI updater) {
+            m_UIUpdates.Add(updater);
+        }
+
+        public void DeregisterUpdate(IUpdaterUI updater) {
+            m_UIUpdates.Remove(updater);
+        }
+
+        #endregion // Updates
+
         #region Persistent UI
 
         public IEnumerator LoadPersistentUI()
@@ -277,6 +290,8 @@ namespace Aqua
             m_CursorHintMgr.Process(m_TooltipHoverTime);
             Vector2 cursorPos = m_Cursor.Process();
             m_Tooltip.Process(cursorPos);
+
+            m_UIUpdates.ForEach((o) => o.OnUIUpdate());
         }
 
         public void BindCamera(Camera inCamera)
