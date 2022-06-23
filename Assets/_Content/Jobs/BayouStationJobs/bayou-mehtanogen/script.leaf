@@ -37,9 +37,17 @@
 @when   !ArgueIsComplete(MethanoArg)
 @cutscene
 {@profHarper}   Have you discoverd how these microorganisms survive in such a hostile enviornment?
-    $choice .argue.immune; They're immune to heat.
+$if ArgueIsComplete(MethanoTemp), !ArgueIsComplete(MethanoMeta)
     $choice .argue.metabolize;  They metabolize methane
-    $choose branch 
+    $choose branch
+$elseif ArgueIsComplete(MethanoMeta), !ArgueIsComplete(MethanoTemp)
+    $choice .argue.immune;  They're immune to heat.
+    $choose branch
+$else
+    $choice .argue.immune;  They're immune to heat.
+    $choice .argue.metabolize;  They metabolize methane
+    $choose branch
+$endif
 
 :: argue.immune
 $call ArgueLoad(MethanoTemp)
@@ -63,16 +71,20 @@ $endif
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.completeMeta 
-    $answer *, .argue.unrelated
+    $answer *, .argue.unrelatedMetabolize
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.completeTemp
-$call ArgueComplete(MethanoTemp)
+$call ArgueComplete()
+$call ArgueUnload()
+$call ArgueClearFacts()
 $goto .aruge.swap
 
 :: argue.completeMeta
-$call ArgueComplete(MethanoMeta)
+$call ArgueComplete()
+$call ArgueUnload()
+$call ArgueClearFacts()
 $goto .aruge.swap
 
 :: aruge.swap
