@@ -128,7 +128,93 @@ MonoBehaviour:
       m_HashValue: 3884350846
     - m_Source: findRibbon
       m_HashValue: 2382993726
-  m_OptimizedTaskList: []
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: findHabitat
+      m_HashValue: 626293957
+    IdString: findHabitat
+    Index: 0
+    LabelId:
+      m_Source: jobs.arctic-seal-habbits.task.find2
+      m_HashValue: 2291145815
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: Y_IceCrevice
+        m_HashValue: 296621553
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: findRibbon
+      m_HashValue: 2382993726
+    IdString: findRibbon
+    Index: 1
+    LabelId:
+      m_Source: jobs.arctic-seal-habbits.task.find
+      m_HashValue: 1053574303
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: RibbonSeal
+        m_HashValue: 3868886068
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: findMicro
+      m_HashValue: 3884350846
+    IdString: findMicro
+    Index: 2
+    LabelId:
+      m_Source: jobs.arctic-seal-habbits.task.find3
+      m_HashValue: 2274368196
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Y_IceCrevice.Population.ArcticCopepod
+        m_HashValue: 3762472464
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Y_IceCrevice.Population.ArcticCopepod
+        m_HashValue: 3762472464
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: findPop
+      m_HashValue: 128499209
+    IdString: findPop
+    Index: 3
+    LabelId:
+      m_Source: jobs.arctic-seal-habbits.task.count
+      m_HashValue: 1761522099
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Y_IceCrevice.Population.RibbonSeal
+        m_HashValue: 2325311853
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: report
+      m_HashValue: 431699179
+    IdString: report
+    Index: 4
+    LabelId:
+      m_Source: jobs.arctic-seal-habbits.task.report
+      m_HashValue: 598769310
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Y_IceCrevice.Population.RibbonSeal
+        m_HashValue: 2325311853
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 030002000100
   m_CashReward: 100
   m_ExpReward: 5
   m_Scripting: {fileID: -1942890987711236906, guid: 7d6d7e8e4765ae345981b517d1cabb86,
