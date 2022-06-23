@@ -1,67 +1,46 @@
-:: basePath job.boom-cause
+:: basePath job.alt-energy
 
 // INTRO
 
 :: start
 @trigger    JobStarted
 @cutscene
-$if HasEntity(Methane),HasEntity(Methanogen)
-    {@kevin} I think we already have everything we need. You might want to look over AQOS again before we make any claims to {nameof profHarper}.
-$else
-    {@kevin} Let's just go down to {h}Site N{/h} and start scanning stuff, I guess.
-$endif
+{@kevin} A visual model will show us how energy flows through the ecosystem. But first we'll need to do some experiments to see how these organisms relate to one another.
 
-:: atSiteN
-@trigger SceneStart
+:: modelCompleted
+@trigger JobTaskCompleted
 @when    scene:name == "RS-3N", JobTaskActive(methaneScan)
 @once
 @cutscene
-{@kevin} There must be something here that would indicate how this disaster happened. When you think you've found it, go talk to {nameof profHarper}.
-
-:: methaneScanned
-@trigger JobTaskCompleted
-@when    JobTaskActive(reportBack)
-@once
-@cutscene
-{@kevin}    Looks like there was some different types of methane down here.
-{@kevin}    Let's not stay here longer than we need to, that stuff is explosive!
+{@kevin} Hmm. It seems as though this ecosystem might be powered by more than one source of energy. Talk to {nameof profHarper} and maybe you can figure it out.
 
 // CATCH-ALL GUIDE TEXT
-:: catchGoToSiteN
+:: catchGoObservation
 @trigger    RequestPartnerHelp
-@when 		scene:name != "RS-3N", JobTaskActive(methaneScan)
+@when 		JobTaskActive(wormEat)
 @boostScore -5
 @cutscene
-{@kevin}    Dive at {h}Site N{/h} and scan anything you think might have caused the wreckage.
-            We can get there by diving deep down into {h}Site O{/h}
-            Hope you aren't scared of the dark!
+{@kevin}     Use the observation tank to determine the relationships between organisms from Site N.
 
 :: catchAtSiteNScan
 @trigger    RequestPartnerHelp
-@when 		scene:name == "RS-3N", JobTaskActive(methaneScan)
+@when 		JobTaskActive(getModel)
 @boostScore -5
 @cutscene
-{@kevin}    Scan anything you think might have ruined the communications equipment.
-
-:: catchAtSiteNTag
-@trigger    RequestPartnerHelp
-@when 		scene:name == "RS-3N", JobTaskActive(methaneTag)
-@boostScore -5
-@cutscene
-{@kevin}    Tag the types of methane you found to get their population information.
+{@kevin}    I think it's time to lay out all these facts as a visual model.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		
 @boostScore -10
 @cutscene
-{@kevin}    You're ready to talk it through with {nameof profHarper}, though you might want to review your AQOS first.
+{@kevin}    Go explain to {nameof profHarper} what the sources of energy are for this ecosystem.
 
 
 // ARGUMENTATION
 ::  argue.intro
 @trigger    TryArgumentation
-@when   !ArgueIsComplete(bayouBoomArgue)
+@when   !ArgueIsComplete(bayouAltEnergy)
 @cutscene
 $goto .argue.firstQuestion
 
