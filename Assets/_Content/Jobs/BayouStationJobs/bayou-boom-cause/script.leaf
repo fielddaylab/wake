@@ -70,16 +70,23 @@ $endif
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(bayouBoomArgue)
 @cutscene
-$call ArgueLoad(bayouBoomArgue)
 $goto .argue.firstQuestion
 
 ::  argue.firstQuestion
 {@profHarper} What caused the communication tower to collapse?
+$if !ArgueIsComplete(bayouBoomArgueFishCriminals)
     $choice .argue.methaneHere; There's methane here.
     $choice .argue.fishersFault; Fishers blew it up.
+    $choice .argue.giveUp; Let me get back to you.
     $choose branch
+$else
+    $choice .argue.methaneHere; There's methane here.
+    $choice .argue.giveUp; Let me get back to you.
+    $choose branch
+$endif
 
 :: argue.methaneHere
+$call ArgueLoad(bayouBoomArgueMethane)
 {@profHarper} Really? What methane did you find at {h}Site N{/h}?
 $goto .argue.chooseFacts
 
@@ -96,6 +103,7 @@ $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.fishersFault
+$call ArgueLoad(bayouBoomArgueFishCriminals)
 $if ArgueSetClaim(Claim, jobs.bayou-boom-cause.argue.claimLabel2) 
     $call ArgueFactSlot(SeaOtter.Eats.Urchin) 
 $endif
@@ -110,6 +118,7 @@ $choose branch
 :: argue.unrelatedFishers
 {@profHarper} I don't think this actually indicates human involvement.
 $call ArgueRejectIncorrect()
+$call ArgueComplete()
 $goto .argue.firstQuestion
 
 :: argue.unrelated
@@ -124,6 +133,7 @@ $call ArgueUnload()
 
 // END
 :: argue.done
+$call ArgueLoad(bayouBoomArgue)
 $call ArgueComplete()
 {@profHarper}   Oh, I hear Methane is very explosive. It must have heated enough to ignite and explode. Good work!
 $call CompleteJob()
