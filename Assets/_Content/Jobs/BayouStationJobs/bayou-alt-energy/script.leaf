@@ -5,22 +5,49 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@kevin} A visual model will show us how energy flows through the ecosystem. But first we'll need to do some experiments to see how these organisms relate to one another.
+{@kevin} We'll need to make a visual model will show us how energy flows through the ecosystem. 
+$if HasEntity(RedGorgonian), HasEntity(Detritus), HasEntity(Siphonophore), HasEntity(VentStar), HasEntity(Methanogen), HasEntity(Methane)
+    //Has all entities from Site N
+    $if HasFact(RedGorgonian.Eats.Detritus), HasFact(Siphonophore.Eats.Detritus), HasFact(VentStar.Eats.Detritus), HasFact(Methanogen.Eats.Methane)
+        //Has all eat rules
+        {@kevin}    We should be able to head right over to the {h}Modeling Lab{/h}.
+    $else
+        //Missing some eat rules
+        {@kevin}    But first, we'll need to do some experiments to see how these organisms relate to one another.
+    $endif  
+$else
+    //Missing some entities from Site N
+    {@kevin}    But first, we'll need to finish scanning all the critters at {h}Site N{/h}.
+$endif
+
 
 :: modelCompleted
 @trigger JobTaskCompleted
-@when    scene:name == "RS-3N", JobTaskActive(methaneScan)
+@when    JobTaskActive(reportBack)
 @once
 @cutscene
 {@kevin} Hmm. It seems as though this ecosystem might be powered by more than one source of energy. Talk to {nameof profHarper} and maybe you can figure it out.
 
 // CATCH-ALL GUIDE TEXT
+
+:: catchGoScan
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanCritters)
+@boostScore -5
+@cutscene
+$if scene:name == "RS-3N"
+    {@kevin} Seems like we're still missing some critters here. Make sure you're using that {item}Flashlight{/item}!
+$else
+    {@kevin} We still need to scan some of the critters at {h}Site N{/h}.
+             Let's head back down there through {h}Site O{/h}.
+$endif
+
 :: catchGoObservation
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(wormEat)
 @boostScore -5
 @cutscene
-{@kevin}     Use the observation tank to determine the relationships between organisms from Site N.
+{@kevin}     Use the {h}observation tank{/h} to determine the relationships between organisms from Site N.
 
 :: catchAtSiteNScan
 @trigger    RequestPartnerHelp
@@ -46,40 +73,77 @@ $goto .argue.firstQuestion
 
 ::  argue.firstQuestion
 {@profHarper} Where is energy in {h}Site N{/h} even coming from?
-$if !ArgueIsComplete(bayouAltEnergyHeatFromVents)
+$if !ArgueIsComplete(bayouAltEnergy_Branch3)
     $choice .argue.1_Methane; It's the methane from the vents
     $choice .argue.2_Detritus; It's the falling detritus
     $choice .argue.3_Heat; It's the heat from the vents
     $choice .argue.giveUp; Let me get back to you.
     $choose branch
 $else
-    $choice .argue.1aMethane; It's the methane from the vents
-    $choice .argue.1bDetritus; It's the falling detritus
+    $choice .argue.1_Methane; It's the methane from the vents
+    $choice .argue.2_Detritus; It's the falling detritus
     $choice .argue.giveUp; Let me get back to you.
     $choose branch
 $endif
 
 //Branch 1
 :: argue.1_Methane
-{@profHarper} Well how does the methane fit into the ecosystem?
+$call ArgueLoad(bayouAltEnergy_Branch1)
+{@profHarper} Can you show me your Visual Model? I'd like to see what consumes Methane.
 $goto .argue.1_Methane_ChooseFacts
 
 :: argue.1_Methane_ChooseFacts
-/*
 $if ArgueSetClaim(Claim, jobs.bayou-alt-energy.argue.claimLabel_1) 
-    $call ArgueFactSlot(N_ThermalVent.Temperature) 
+    $call ArgueFactSlot(N_ThermalVent.Model.Visual) 
 $endif
 $call ArgueDisplayClaim()
 $choice #argueFact; Present facts from AQOS
-    $answer N_ThermalVent.Temperature, .argue.1_Heat_ShowMeModel
-    $answer *, .argue.1_Heat_Unrelated
+    $answer N_ThermalVent.Model.Visual, .argue.1_Methane_BranchEnd
+    $answer *, .argue.1_Methane_Unrelated
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
-*/
+
+:: argue.1_Methane_Unrelated
+{@profHarper}   That doesn't look like the right model.
+$call ArgueRejectIncorrect()
+$goto .argue.1_Methane_ChooseFacts
+
+:: argue.1_Methane_BranchEnd
+{@profHarper} Oh, interesting! Based on this model, it looks like it's not just Methane.
+$call ArgueComplete()
+$goto .argue.done
+
+//Branch 2
+:: argue.2_Detritus
+$call ArgueLoad(bayouAltEnergy_Branch2)
+{@profHarper} Can you show me your Visual Model? I'd like to see what eats Detritus.
+$goto .argue.2_Detritus_ChooseFacts
+
+:: argue.2_Detritus_ChooseFacts
+$if ArgueSetClaim(Claim, jobs.bayou-alt-energy.argue.claimLabel_2) 
+    $call ArgueFactSlot(N_ThermalVent.Model.Visual) 
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFact; Present facts from AQOS
+    $answer N_ThermalVent.Model.Visual, .argue.2_Detritus_BranchEnd
+    $answer *, .argue.2_Detritus_Unrelated
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.2_Detritus_Unrelated
+{@profHarper}   That doesn't look like the right model.
+$call ArgueRejectIncorrect()
+$goto .argue.2_Detritus_ChooseFacts
+
+:: argue.2_Detritus_BranchEnd
+{@profHarper} Oh, interesting! Based on this model, it looks like it's not just Detritus.
+$call ArgueComplete()
+$goto .argue.done
 
 //Branch 3
 :: argue.3_Heat
 {@profHarper} What makes you think that?
+$call ArgueLoad(bayouAltEnergy_Branch3)
 $goto .argue.3_Heat_ChooseFacts
 
 :: argue.3_Heat_ChooseFacts
@@ -88,7 +152,7 @@ $if ArgueSetClaim(Claim, jobs.bayou-alt-energy.argue.claimLabel_3)
 $endif
 $call ArgueDisplayClaim()
 $choice #argueFact; Present facts from AQOS
-    $answer N_ThermalVent.Temperature, .argue.3_Heat_ShowMeModel
+    $answer N_ThermalVent.Temperature, .argue.3_Heat_BranchEnd
     $answer *, .argue.3_Heat_Unrelated
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
@@ -96,31 +160,11 @@ $choose branch
 :: argue.3_Heat_Unrelated
 {@profHarper}   That doesn't tell me how much heat is at {h}Site N{/h}.
 $call ArgueRejectIncorrect()
-$goto .argue.3_Heat_Model
+$goto .argue.3_Heat_ChooseFacts
 
-:: argue.3_Heat_Model
-{@profHarper} Show me a descriptive model.
-$goto .argue.3_Heat_Model_ChooseFacts
-
-:: argue.3_Heat_Model_ChooseFacts
-$if ArgueSetClaim(Claim, jobs.bayou-alt-energy.argue.claimLabel_3_model) 
-    $call ArgueFactSlot(N_ThermalVent.Model.Visual) 
-$endif
-$call ArgueDisplayClaim()
-$choice #argueFact; Present facts from AQOS
-    $answer N_ThermalVent.Model.Visual, .argue.3_Heat_Complete
-    $answer *, .argue.3_Heat_Model_Unrelated
-$choice .argue.giveUp; Let me get back to you.
-$choose branch
-
-:: argue.3_Heat_Model_Unrelated
-{@profHarper} That doesn't seem to be the model I'm looking for. 
-$goto .argue.3_Heat_Model_ChooseFacts
-
-:: argue.3_Heat_Complete
-{@profHarper} Interesting, but this doesn't support your claim. 
-              The heat isn't directly supporting life, though it may help the organisms stay alive and unstressed.
-$call ArgueLoad(bayouAltEnergyHeatFromVents)
+:: argue.3_Heat_BranchEnd
+{@profHarper} It does seem hotter than normal here, but heat doesn't directly support life in a food web.
+              Though it may help the organisms stay alive and unstressed.
 $call ArgueComplete()
 $goto .argue.firstQuestion
 
@@ -134,5 +178,5 @@ $call ArgueUnload()
 :: argue.done
 $call ArgueLoad(bayouAltEnergy)
 $call ArgueComplete()
-{@profHarper}   Oh, I hear Methane is very explosive. It must have heated enough to ignite and explode. Good work!
+{@profHarper}   So both Methane and Detritus are primary sources of energy. Great work!
 $call CompleteJob()
