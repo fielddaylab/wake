@@ -29,10 +29,6 @@ namespace Aqua.JobBoard
 
         [Inline(InlineAttribute.DisplayType.HeaderLabel)]
         [SerializeField] private JobButton.ButtonAppearanceConfig m_ButtonAppearance = default;
-        
-        [Header("Station Label")]
-        [SerializeField] private Image m_StationIcon = null;
-        [SerializeField] private LocText m_StationName = null;
 
         [Header("Not Selected")]
         [SerializeField] private LocText m_NotSelectedLabel = null;
@@ -73,10 +69,6 @@ namespace Aqua.JobBoard
             UpdateButtonStatuses();
             OrderButtons();
             UpdateUnselectedLabel();
-
-            MapDesc currentStation = Assets.Map(Save.Map.CurrentStationId());
-            m_StationIcon.sprite = currentStation.Icon();
-            m_StationName.SetText(currentStation.LabelId());
 
             m_Info.Clear();
         }
@@ -127,7 +119,7 @@ namespace Aqua.JobBoard
         {
             StringHash32 id;
             JobButton button;
-            foreach(var job in JobUtils.VisibleJobs(JobUtils.JobQueryFlags.IncludeCompleted))
+            foreach(var job in JobUtils.VisibleJobs())
             {
                 id = job.JobId;
                 if (!m_JobButtonMap.TryGetValue(id, out button))
@@ -174,7 +166,7 @@ namespace Aqua.JobBoard
                 return job.Job.StationId() == Save.Map.CurrentStationId();
             }
 
-            return true;
+            return (job.Status & JobStatusFlags.Completed) == 0;
         }
 
         private void OrderButtons()
@@ -185,7 +177,6 @@ namespace Aqua.JobBoard
             m_HasAvailableJobs = false;
 
             using(PooledList<JobButton> progress = PooledList<JobButton>.Create())
-            using(PooledList<JobButton> completed = PooledList<JobButton>.Create())
             using(PooledList<JobButton> available = PooledList<JobButton>.Create())
             using(PooledList<JobButton> locked = PooledList<JobButton>.Create())
             {
@@ -199,10 +190,6 @@ namespace Aqua.JobBoard
                         case JobProgressCategory.Active:
                             active = button;
                             m_HasAvailableJobs = true;
-                            break;
-
-                        case JobProgressCategory.Completed:
-                            completed.Add(button);
                             break;
 
                         case JobProgressCategory.InProgress:
@@ -227,7 +214,6 @@ namespace Aqua.JobBoard
                 OrderList(JobProgressCategory.InProgress, progress, ref siblingIndex);
                 OrderList(JobProgressCategory.Available, available, ref siblingIndex);
                 OrderList(JobProgressCategory.Locked, locked, ref siblingIndex);
-                OrderList(JobProgressCategory.Completed, completed, ref siblingIndex);
             }
         }
 
