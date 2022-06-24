@@ -6,20 +6,20 @@
 @cutscene
 
 // write an intro to your job
-{@kevin}    The only thing that will clear up this mystery is a {h}visual model{/h}.
+{@guide}    The only thing that will clear up this mystery is a {h}visual model{/h}.
             We'll need to observe the relationships between the species we've discovered at {h}site X{/h}.
 
 ::weDidIt
 @trigger    JobTasksUpdated
 @when   JobTaskCompleted(visualModel)
 @cutscene
-{@kevin}    I think we're ready to show this to {nameof @profWhalen}.
+{@guide}    I think we're ready to show this to {nameof @profWhalen}.
 
 ::helpMe
 @trigger    RequestPartnerHelp
 @when       JobTaskTop(visualModel)
 @cutscene 
-{@kevin}    In order to make a {h}visual model{/h}, we'll need to first understand the interactions of the species at {h}site X{/h}.
+{@guide}    In order to make a {h}visual model{/h}, we'll need to first understand the interactions of the species at {h}site X{/h}.
             These can be discovered using your {h}Observation Tank{/h}. 
             Once you have discovered all the species interactions, head to the {nameof Modeling} to construct the appropriate model.
 
@@ -30,14 +30,14 @@
 @when		JobTaskTop(visualModel)
 @boostScore -5
 @cutscene
-{@kevin}    Make a Visual Model of organism interactions at Site W.
+{@guide}    Make a Visual Model of organism interactions at Site W.
 
 :: catchReport
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(report)
 @boostScore -5
 @cutscene
-{@kevin}	Talk to Professor Whalen in the Office.
+{@guide}	Talk to Professor Whalen in the Office.
 
 // ARGUMENTATION
 ::argue.intro

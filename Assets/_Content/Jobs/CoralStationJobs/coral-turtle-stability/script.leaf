@@ -17,14 +17,14 @@ $set jobs:turtle-stability-visual-model.saved = false
 @when 		scene:name == "Helm", JobTaskTop(scanAll)
 @cutscene
 {@player}   Where should I go from here?
-{@kevin}	Let's exit the ship and head to the sub.
+{@guide}	Let's exit the ship and head to the sub.
 
 :: helpGoToSiteR
 @trigger    RequestPartnerHelp
 @when 		scene:name == "CoralStation", !jobs:coral-turtle-stability.got.scans
 @cutscene
 {@player}   Where should we go next?
-{@kevin}	Site V should be to the East of the ship, let's head over and dive down!
+{@guide}	Site V should be to the East of the ship, let's head over and dive down!
 
 :: diveSite
 @trigger    SceneStart
@@ -32,7 +32,7 @@ $set jobs:turtle-stability-visual-model.saved = false
 @once
 // @cutscene
 $set    	jobs:coral-turtle-stability.seen.bottom = true
-// {@kevin}   Looks like we made it! Time to see what species we can find here.
+// {@guide}   Looks like we made it! Time to see what species we can find here.
 
 :: helpAtSiteR
 @trigger    RequestPartnerHelp
@@ -41,9 +41,9 @@ $set    	jobs:coral-turtle-stability.seen.bottom = true
 {@player}   What do you think? Have we got everything?
 $if HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity(StaghornCoral),  HasEntity(LoggerheadTurtle) 
 	$set    jobs:coral-turtle-stability.got.scans = true
-	{@kevin}   I think so! Head back up to the surface when you're ready to leave.
+	{@guide}   I think so! Head back up to the surface when you're ready to leave.
 $else
-	{@kevin}   Make sure to get all those little things swimming around in the cloudy spots, and the coral too.
+	{@guide}   Make sure to get all those little things swimming around in the cloudy spots, and the coral too.
 $endif
 
 :: navigation.goBackUp
@@ -52,20 +52,20 @@ $endif
 @once
 @cutscene
 $set jobs:coral-turtle-stability.gotScans = true
-{@kevin}    I think that's all the info we need from here for now! Feel free to head back up when you're ready.
+{@guide}    I think that's all the info we need from here for now! Feel free to head back up when you're ready.
 
 :: navigation.return
 @trigger    SceneStart
 @when       scene:name == "CoralStation", jobs:coral-turtle-stability.seen.bottom, jobs:coral-turtle-stability.got.scans == false
 @cutscene
 {@player}   Hmm, do you think we got everything?
-{@kevin}   Let me check...
+{@guide}   Let me check...
 $if HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity(StaghornCoral), HasEntity(LoggerheadTurtle)
 	$set    jobs:coral-turtle-stability.got.scans = true
-	{@kevin}   Yup! That's everything we needed, time to head back to the ship. 
+	{@guide}   Yup! That's everything we needed, time to head back to the ship. 
 $else
-	{@kevin}   Hmm... I think there's more we need to find. Let's head back down.
-	{@kevin}   Make sure to get all those little things swimming around in the cloudy spots, and the coral too.
+	{@guide}   Hmm... I think there's more we need to find. Let's head back down.
+	{@guide}   Make sure to get all those little things swimming around in the cloudy spots, and the coral too.
 $endif
 
 :: helpBackToShip
@@ -73,7 +73,7 @@ $endif
 @when 		scene:name == "CoralStation", jobs:coral-turtle-stability.got.scans
 @cutscene
 {@player} 	Where should we go from here?
-{@kevin}	Let's head west and return to the ship.
+{@guide}	Let's head west and return to the ship.
 
 // BEHAVIOR
 // :: atShip
@@ -82,7 +82,7 @@ $endif
 // @once
 // @cutscene
 // {@player}   We're back. Now what?
-// {@kevin}   	Let's head to the {nameof Experimentation} and see what the turtles eat.
+// {@guide}   	Let's head to the {nameof Experimentation} and see what the turtles eat.
 // {@player}   On it!
 
 :: atShip
@@ -91,7 +91,7 @@ $endif
 @once
 @cutscene
 {@player}   We're back. Now what?
-{@kevin}   	Let's head to the {nameof Experimentation} and see what the turtles eat.
+{@guide}   	Let's head to the {nameof Experimentation} and see what the turtles eat.
 {@player}   On it!
 
 :: helpBackAtShip
@@ -99,7 +99,7 @@ $endif
 @when 		scene:name == "Helm", jobs:coral-turtle-stability.got.scans == true
 @cutscene
 {@player} 	We're back at the ship, but what should we be doing now?
-{@kevin}	Let's head over to the {nameof Experimentation} and see what the turtles eat.
+{@guide}	Let's head over to the {nameof Experimentation} and see what the turtles eat.
 
 :: startExperiment
 @trigger    SceneStart
@@ -107,7 +107,7 @@ $endif
 @once
 @cutscene
 {@player}   What kind of experiment should we be doing this time?
-{@kevin}  	Let's put the organisms in the tank and see what eats what.
+{@guide}  	Let's put the organisms in the tank and see what eats what.
 
 ::helpDoExperiment
 @trigger    RequestPartnerHelp
@@ -124,44 +124,44 @@ $endif
 
 :: helpDoExperiment.InExperiment
 $if ExperimentHasCritter(Copepod)
-    {@kevin}    Is anything interacting with the {pluralnameof Copepod}?
+    {@guide}    Is anything interacting with the {pluralnameof Copepod}?
 $elseif ExperimentHasCritter(QueenConch)
-    {@kevin}    Is anything interacting with the {pluralnameof QueenConch}?
+    {@guide}    Is anything interacting with the {pluralnameof QueenConch}?
 $elseif ExperimentHasCritter(WhiteShrimp)
-    {@kevin}    Is anything interacting with the {pluralnameof WhiteShrimp}?
+    {@guide}    Is anything interacting with the {pluralnameof WhiteShrimp}?
 $else
-    {@kevin}    Is it possible to get any new information from this experiment?
+    {@guide}    Is it possible to get any new information from this experiment?
                 Maybe add some of the swimmers, like {pluralnameof WhiteShrimp} or {pluralnameof Copepod}.
 $endif
 
 :: helpDoExperiment.TankView
-{@kevin}    We have a few new species - let's see which of them the turtle eats.
+{@guide}    We have a few new species - let's see which of them the turtle eats.
 $if ExperimentHasCritter(Copepod)
-    {@kevin}    Well, we've added some {pluralnameof Copepod} - what might it interact with?
+    {@guide}    Well, we've added some {pluralnameof Copepod} - what might it interact with?
 $elseif ExperimentHasCritter(QueenConch)
-    {@kevin}    Well, we've added some {pluralnameof QueenConch} - what might it interact with?
+    {@guide}    Well, we've added some {pluralnameof QueenConch} - what might it interact with?
 $elseif ExperimentHasCritter(WhiteShrimp)
-    {@kevin}    Well, we've added some {pluralnameof WhiteShrimp} - what might it interact with?
+    {@guide}    Well, we've added some {pluralnameof WhiteShrimp} - what might it interact with?
 $else
-    {@kevin}    Maybe we should add some {pluralnameof Copepod}?
+    {@guide}    Maybe we should add some {pluralnameof Copepod}?
 $endif
 
 :: helpDoExperiment.None
-{@kevin}    We have a few new species - let's see which of them the turtle eats.
+{@guide}    We have a few new species - let's see which of them the turtle eats.
             We should be able to run an {h}Observation Tank{/h} experiment for that.
 			
 :: helpReturnExperiment
 @trigger	ExperimentTankExited
 @when		JobTaskTop(behavior)
 @cutscene
-{@kevin}	Maybe we should test turtles individually with each species to make sure we got all the eat rules.
+{@guide}	Maybe we should test turtles individually with each species to make sure we got all the eat rules.
 			
 :: completedExperiment
 @trigger    JobTaskCompleted
 @when       scene:name == "ExperimentV2", JobTaskTop(turtleModel)
 @once
 @cutscene
-{@kevin}   Nice work! I think we know all the facts about what Turtles eat.
+{@guide}   Nice work! I think we know all the facts about what Turtles eat.
 {@profCempaka}	Oh, are you ready to make the model?
 $if !RoomUnlocked("modelingRoom")
     {@profCempaka}	I've unlocked a new room on your Helm, {map-name}the Modeling Lab{/map-name}.
@@ -178,26 +178,26 @@ $endif
 @when 		scene:name == "Modeling", JobTaskTop(turtleModel)
 @cutscene
 {@player}   Any idea what to do here?
-{@kevin}	When we make a food web, the first step is to import our facts into the model.
+{@guide}	When we make a food web, the first step is to import our facts into the model.
 
 :: modelingStart
 @trigger	VisualModelStarted
 @when		!jobs:turtle-stability-visual-model.saved
 @cutscene
-{@kevin}	So this is the {nameof VisualModel}.
-{@kevin}	From here you'll import any new facts you have about the ecosystem.
-{@kevin}	If you have all the facts you need, you'll see a button to {h}Import New Facts{/h}
-{@kevin}	If you don't see the button, you may need to gather more data!
-{@kevin}	You will only be able to {h}Save{/h} a model if your current job requires it and you are working in the correct ecosystem.
-{@kevin}	Always double check that you have the right ecosystem pulled up!
+{@guide}	So this is the {nameof VisualModel}.
+{@guide}	From here you'll import any new facts you have about the ecosystem.
+{@guide}	If you have all the facts you need, you'll see a button to {h}Import New Facts{/h}
+{@guide}	If you don't see the button, you may need to gather more data!
+{@guide}	You will only be able to {h}Save{/h} a model if your current job requires it and you are working in the correct ecosystem.
+{@guide}	Always double check that you have the right ecosystem pulled up!
 
 :: modelingComplete
 @trigger    JobTasksUpdated
 @when		JobTaskTop(reportBack)
 @once		
 @cutscene
-{@kevin}	Huh, turns out turtles eat a lot of things.
-{@kevin}	Let's bring our model back to the {map-name}Office{/map-name}.
+{@guide}	Huh, turns out turtles eat a lot of things.
+{@guide}	Let's bring our model back to the {map-name}Office{/map-name}.
 $set jobs:turtle-stability-visual-model.saved = true
 
 // report back
@@ -208,9 +208,9 @@ $set jobs:turtle-stability-visual-model.saved = true
 @boostScore 1
 @cutscene
 {@player} 	What should we be doing now?
-{@kevin}	That should be everything we need for now. Let's report back to Professor Cempaka.
+{@guide}	That should be everything we need for now. Let's report back to Professor Cempaka.
 $if global:nav.shipRoom == "office"
-	{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
+	{@guide}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
 $endif
 
 // CATCH-ALL GUIDE TEXT
@@ -220,28 +220,28 @@ $endif
 @when 		JobTaskActive(scanAll)
 @boostScore -5
 @cutscene
-{@kevin}    Head to Site V and scan the species there.
+{@guide}    Head to Site V and scan the species there.
 
 :: catchBehavior
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(behavior)
 @boostScore -5
 @cutscene
-{@kevin}    Use the Observation Tank to find what the turtles eat.
+{@guide}    Use the Observation Tank to find what the turtles eat.
 
 :: catchTurtleModel
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(turtleModel)
 @boostScore -5
 @cutscene
-{@kevin}    Head to the Modeling lab and make a Visual Model.
+{@guide}    Head to the Modeling lab and make a Visual Model.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@kevin}    Take your Visual Model to {nameof profCempaka}.
+{@guide}    Take your Visual Model to {nameof profCempaka}.
 
 // ARGUMENTATION
 

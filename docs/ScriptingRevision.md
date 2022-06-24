@@ -73,7 +73,7 @@
 | **Player Ship** |
 | `global:nav.shipRoom` | Id of the last ship room the player was in. |
 | **Help System** |
-| `kevin:help.requests` | Number of times the player has requested help. |
+| `guide:help.requests` | Number of times the player has requested help. |
 | **AQOS** |
 | `portable:app` | Id of the currently open tab in AQOS. |
 | `portable:open` | True if AQOS is currently open. |

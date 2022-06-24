@@ -25,10 +25,10 @@
 // @boostScore 10
 // @once
 // 
-// {@kevin}    So this is a flying shop?
+// {@guide}    So this is a flying shop?
 //             How'd you manage that?
 // {@merchant} I have my ways!
-// {@kevin #confused}  ...That's not exactly an answer.
+// {@guide #confused}  ...That's not exactly an answer.
 
 :: talk.base.1
 @trigger    InspectObject
@@ -53,7 +53,7 @@
 // @cutscene
 // @once
 // 
-// {@kevin}    No, seriously, a |flying| shop??
+// {@guide}    No, seriously, a |flying| shop??
 // {@merchant} Why not? Most of my customers roam the ocean. Staying put didn't make sense.
 
 // credit
@@ -65,7 +65,7 @@
 @cutscene
 @repeat     2
 
-{@kevin}    Any chance we could just| have| the {nameof $shop:lastFailure} for free?
+{@guide}    Any chance we could just| have| the {nameof $shop:lastFailure} for free?
 $if player:shopFreeCoolDown <= 0, player:shopFreeCount < 4
     $branch .generosity
 $elseif player:shopFreeCount >= 4
@@ -81,7 +81,7 @@ $endif //
 @cutscene
 @repeat     2
 
-{@kevin}    Could you just, uh... overlook the fact that we don't have enough {pluralnameof Exp}?
+{@guide}    Could you just, uh... overlook the fact that we don't have enough {pluralnameof Exp}?
 {@merchant} And risk giving you a tool you can't handle yet?| No way.
 
 // purchase
@@ -174,7 +174,7 @@ $set    shop:notEnoughCount + 1
 {@merchant} You should see the {nameof ROVTagger} at the top of your view.  
 {@merchant} If you switch it on and move close to a scanned species, the {nameof ROVTagger} will {h}count{/h} it.
 {@merchant} Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
-{@kevin} That's super convenient! We should definitely get this!
+{@guide} That's super convenient! We should definitely get this!
 $set    jobs:common-dive.seen.tagger-intro = true
 
 $if UpgradeUnlocksJobAtStation(ROVTagger, KelpStation)
@@ -318,7 +318,7 @@ $branch .purchaseAttempt.genericCostLine
 @cutscene
 {@merchant} The {nameof $local:itemId} can be used at the {map-name}Modeling Whiteboard{/map-name}.
             It is used to create visualizations of the different connections between species.
-{@kevin}    Hmmm. I feel like this could come in handy later...
+{@guide}    Hmmm. I feel like this could come in handy later...
             I think we should purchase this item.
 
 $if UpgradeUnlocksJobAtStation(VisualModel, KelpStation)

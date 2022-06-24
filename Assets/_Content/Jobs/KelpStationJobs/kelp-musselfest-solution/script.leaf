@@ -4,7 +4,7 @@
 @trigger    JobStarted
 @cutscene
 
-{@kevin}	We'll need to measure how Mussels reproduce in stressed and unstressed conditions.
+{@guide}	We'll need to measure how Mussels reproduce in stressed and unstressed conditions.
 $set jobs:kelp-mussel-fest-solution.inMeasurement = false
 $set jobs:kelp-mussel-fest-solution.inMeasurementEcosystem = false
 
@@ -60,7 +60,7 @@ $set jobs:kelp-mussel-fest-solution.inMeasurement = false
 @when 		!JobTaskTop(reportChange)
 @cutscene
 {@player}   Hmm, I'm not sure how to approach this job.
-{@kevin}	The {nameof MeasurementTank} in the Experiment room should be your weapon of choice, here.
+{@guide}	The {nameof MeasurementTank} in the Experiment room should be your weapon of choice, here.
 
 :: helpSelectEnvironment
 @trigger    RequestPartnerHelp
@@ -69,10 +69,10 @@ $set jobs:kelp-mussel-fest-solution.inMeasurement = false
 @cutscene
 $if jobs:kelp-mussel-fest-solution.inMeasurementEcosystem
 	{@player}   Which site should we pick?
-	{@kevin}	Do you know which sites the mussels will be stressed in, and which sites they won't be stressed in?
+	{@guide}	Do you know which sites the mussels will be stressed in, and which sites they won't be stressed in?
 $else
 	{@player}   How do we do this again?
-	{@kevin}	Select an ecosystem, organism, and additional controls. Then run the experiment.
+	{@guide}	Select an ecosystem, organism, and additional controls. Then run the experiment.
 $endif
 
 :: helpContinueExperiment
@@ -81,21 +81,21 @@ $endif
 @boostScore 2
 @cutscene
 {@player}   Are we ready to report our findings?
-{@kevin}	Not quite. You still have another Mussel reproduction rate to get.
+{@guide}	Not quite. You still have another Mussel reproduction rate to get.
 
 :: experimentEnd
 @trigger    JobTasksUpdated
 @when 		JobTaskTop(reportChange)
 @once
 @cutscene
-{@kevin}	We have all the information -- if you can interpret it, you'll be able to advise Dr. Kelpurnia.
+{@guide}	We have all the information -- if you can interpret it, you'll be able to advise Dr. Kelpurnia.
 
 :: helpReport
 @trigger    RequestPartnerHelp
 @when 		JobTaskTop(reportChange)
 @cutscene
 {@player}   What now?
-{@kevin}	Ah, now you should be able to tell {nameof drKelp} about the effect stress has on Mussel reproduction.
+{@guide}	Ah, now you should be able to tell {nameof drKelp} about the effect stress has on Mussel reproduction.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -104,21 +104,21 @@ $endif
 @when 		JobTaskActive(unstressedRate)
 @boostScore -5
 @cutscene
-{@kevin}    Put Mussels in the Measurement Tank in an environment that does not stress them.
+{@guide}    Put Mussels in the Measurement Tank in an environment that does not stress them.
 
 :: catchStressedRate
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(stressedRate)
 @boostScore -5
 @cutscene
-{@kevin}    Put Mussels in the Measurement Tank in an environment that stresses them.
+{@guide}    Put Mussels in the Measurement Tank in an environment that stresses them.
 
 :: catchReportChange
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportChange)
 @boostScore -5
 @cutscene
-{@kevin}    Talk to {nameof drKelp} in the Office.
+{@guide}    Talk to {nameof drKelp} in the Office.
 
 // ARGUMENTATION
 

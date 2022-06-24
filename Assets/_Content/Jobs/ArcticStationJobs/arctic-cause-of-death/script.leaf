@@ -5,7 +5,7 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@kevin}    We should check out both of Prof. Whalen's theories, one by one, to see which is most plausible.
+{@guide}    We should check out both of Prof. Whalen's theories, one by one, to see which is most plausible.
             Whether it was the water conditions or a lack of food, we'll need some more information.
 $if JobTaskCompleted(getPopulationData)
     {@profWhalen}   We know for a fact that these whales eat both diatoms and ice algae.
@@ -24,7 +24,7 @@ $endif
 @when   scene:name != "RS-4W", JobTaskTop(getEnvironmentData)
 @cutscene
 {@player}   Hmmm, what are we doing again? 
-{@kevin}    We should check out both of Prof. Whalen's theories, one by one, to see which is most plausible.
+{@guide}    We should check out both of Prof. Whalen's theories, one by one, to see which is most plausible.
             Whether it was the water conditions or a lack of food, we'll need some more information.
             Why don't you check your {h}AQOS{/h} to see where we should go next.
 
@@ -32,13 +32,13 @@ $endif
 @trigger    RequestPartnerHelp
 @when   scene:name == "RS-4W", JobTaskTop(getEnvironmentData)
 @cutscene
-{@kevin} If the water conditions proved deadly for Linda, we'd better scan the {h}water chemistry probe{/h} for more information.
+{@guide} If the water conditions proved deadly for Linda, we'd better scan the {h}water chemistry probe{/h} for more information.
 
 ::helpScanProbP
 @trigger    RequestPartnerHelp
 @when   scene:name == "RS-4W", JobTaskTop(getPopulationData)
 @cutscene
-{@kevin}    If Linda died of starvation, we'd better see if there was a decline in a food population that is just bouncing back.
+{@guide}    If Linda died of starvation, we'd better see if there was a decline in a food population that is just bouncing back.
             I'm not sure what whales eat, so we might just have to count everything.
 
 ::helpReport
@@ -46,7 +46,7 @@ $endif
 @when   JobTaskTop(reportBack)
 @cutscene
 {@player}   Hmmm, what should I do now? 
-{@kevin}    Let's report back to Prof. Whalen. 
+{@guide}    Let's report back to Prof. Whalen. 
 
 ::giveWhaleEat
 @trigger    JobTasksUpdated
@@ -74,21 +74,21 @@ $call GiveFact(BowheadWhale.Temperature.Stressed)
 @when 		JobTaskActive(getEnvironmentData)
 @boostScore -5
 @cutscene
-{@kevin}    Collect water chemistry data from a probe at Site W.
+{@guide}    Collect water chemistry data from a probe at Site W.
 
 :: catchGetPopulationData
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(getPopulationData)
 @boostScore -5
 @cutscene
-{@kevin}    Collect population history data from a probe at Site W, then count the current populations of organisms at the site.
+{@guide}    Collect population history data from a probe at Site W, then count the current populations of organisms at the site.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@kevin}    Talk to Professor Whalen in the Office.
+{@guide}    Talk to Professor Whalen in the Office.
 
 // ARGUMENTATION
 ::argue.intro

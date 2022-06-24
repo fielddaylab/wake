@@ -4,7 +4,7 @@
 @trigger    JobStarted
 @cutscene
 
-{@kevin}	Okay -- to prove that the {critter-name}artificial reefs{/critter-name} are working, you would need evidence that they're still there,
+{@guide}	Okay -- to prove that the {critter-name}artificial reefs{/critter-name} are working, you would need evidence that they're still there,
 			and that the population of {nameof StaghornCoral} has increased. For both things the first step is to go down to {h}Site S{/h}.
 
 // SCANNING
@@ -14,51 +14,51 @@
 @when       scene:name == "RS-2S"
 @once
 @cutscene
-{@kevin} 	We have three things to do while we're down here. Check the job description to see what they are.
+{@guide} 	We have three things to do while we're down here. Check the job description to see what they are.
 			Let's get to it!
 
 :: helpEnterSite
 @trigger	RequestPartnerHelp
 @when		!HasEntity(ArtificialReef), !JobTaskTop(argue), scene:name != "RS-2S"
 @cutscene
-{@kevin}	Go to {h}Site S{/h} to scan the {critter-name}artificial reef{/critter-name} and find the current and historical coral population.
+{@guide}	Go to {h}Site S{/h} to scan the {critter-name}artificial reef{/critter-name} and find the current and historical coral population.
 
 :: helpScanPop
 @trigger	RequestPartnerHelp
 @when		scene:name == "RS-2S", !JobTaskCompleted(scanProbes)
 @cutscene
-{@kevin}	There's another thing to do before we surface: collect the population probe data.
+{@guide}	There's another thing to do before we surface: collect the population probe data.
 
 :: helpCount
 @trigger	RequestPartnerHelp
 @when		scene:name == "RS-2S", !JobTaskCompleted(countPopulation)
 @cutscene
-{@kevin}	There's another thing to do before we surface: count the {nameof StaghornCoral} and {critter-name}artificial reefs{/critter-name} using your Counting tool.
+{@guide}	There's another thing to do before we surface: count the {nameof StaghornCoral} and {critter-name}artificial reefs{/critter-name} using your Counting tool.
 
 :: siteCompleted
 @trigger	JobTasksUpdated
 @when		scene:name == "RS-2S", JobTaskTop(argue)
 @once
 @cutscene
-{@kevin}	All right! You've got enough data here to make an argument about the effectiveness of the artificial reef.
+{@guide}	All right! You've got enough data here to make an argument about the effectiveness of the artificial reef.
 
 :: helpSurface
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(argue), scene:name == "RS-2S"
 @cutscene
-{@kevin}	You're ready to present your findings. Surface and get back to the Comms room on the ship.
+{@guide}	You're ready to present your findings. Surface and get back to the Comms room on the ship.
 
 :: helpReturnArgue
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(argue), scene:name != "Helm"
 @cutscene
-{@kevin}	Get back to the ship so you can make your case.
+{@guide}	Get back to the ship so you can make your case.
 
 :: helpReturnArgue2
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(argue), scene:name == "Helm"
 @cutscene
-{@kevin}	{nameof profCempaka} is waiting to hear your findings about the effectiveness of the coral reef.
+{@guide}	{nameof profCempaka} is waiting to hear your findings about the effectiveness of the coral reef.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -67,28 +67,28 @@
 @when 		JobTaskActive(findReef)
 @boostScore -5
 @cutscene
-{@kevin}    Look for an {critter-name}artificial reef{/critter-name} at {h}Site S{/h}.
+{@guide}    Look for an {critter-name}artificial reef{/critter-name} at {h}Site S{/h}.
 
 :: catchScanProbes
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(scanProbes)
 @boostScore -5
 @cutscene
-{@kevin}    There should be a population probe at {h}Site S{/h}. We need to collect data from it.
+{@guide}    There should be a population probe at {h}Site S{/h}. We need to collect data from it.
 
 :: catchCountPopulations
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(countPopulations)
 @boostScore -5
 @cutscene
-{@kevin}    Count how much {nameof StaghornCoral} and {critter-name}artificial reef{/critter-name} is at {h}Site S{/h}.
+{@guide}    Count how much {nameof StaghornCoral} and {critter-name}artificial reef{/critter-name} is at {h}Site S{/h}.
 
 :: catchArgue
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(argue)
 @boostScore -5
 @cutscene
-{@kevin}    Talk to {nameof profCempaka} in the Office.
+{@guide}    Talk to {nameof profCempaka} in the Office.
 
 // ARGUMENTATION
 

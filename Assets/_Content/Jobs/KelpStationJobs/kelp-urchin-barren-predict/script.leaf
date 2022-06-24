@@ -18,7 +18,7 @@ $set jobs:kelp-urchin-barren-predict.received.facts = false
 @when 	    scene:name != "Modeling", JobTaskTop("predictSiteB"), !jobs:kelp-urchin-barren.upgradedFacts
 @cutscene
 {@player} 	What am I doing again?
-{@kevin}	Let's head back to the {h}Modeling Whiteboard{/h} 
+{@guide}	Let's head back to the {h}Modeling Whiteboard{/h} 
 
 // IN MODELING
 
@@ -47,7 +47,7 @@ $branch common.ringPhone
 @when       modeling:ecosystemSelected != "UrchinBarren" 
 @cutscene
 {@player}   What do I need to do here?
-{@kevin}    Remember, we need to open the {nameof UrchinBarren} {h}Ecosystem{/h}.
+{@guide}    Remember, we need to open the {nameof UrchinBarren} {h}Ecosystem{/h}.
 
 :: ModelingSetupPhase
 @trigger    VisualModelStarted
@@ -90,7 +90,7 @@ $set jobs:kelp-urchin-barren.upgradedFacts = true
 @when 		scene:name == "Modeling", modeling:phase == "visual", JobTaskTop("predictSiteB"), modeling:ecosystemSelected == "UrchinBarren", !jobs:kelp-urchin-barren.upgradedFacts
 @cutscene
 {@player} 	What should I do next?
-{@kevin}	We have to add our facts to the {h}Visual Model{/h}.
+{@guide}	We have to add our facts to the {h}Visual Model{/h}.
             Use the {h}Import New Facts{/h} button to add the behaviors we've noticed so far. 
             
 ::ModelHelp1.B
@@ -98,7 +98,7 @@ $set jobs:kelp-urchin-barren.upgradedFacts = true
 @when 		scene:name == "Modeling", modeling:phase == "visual", modeling:ecosystemSelected == "UrchinBarren", JobTaskTop("predictSiteB"), jobs:kelp-urchin-barren.upgradedFacts, modeling:hasPendingImport
 @cutscene
 {@player} 	What should I do next?
-{@kevin}	They just gave us some new facts to add.
+{@guide}	They just gave us some new facts to add.
             Let's get those imported!
 
 ::ModelHelp1.C
@@ -106,13 +106,13 @@ $set jobs:kelp-urchin-barren.upgradedFacts = true
 @when 		scene:name == "Modeling", modeling:phase == "visual", modeling:ecosystemSelected == "UrchinBarren", JobTaskTop("predictSiteB"), jobs:kelp-urchin-barren.upgradedFacts, !modeling:hasPendingImport
 @cutscene
 {@player} 	What should I do next?
-{@kevin}	We have everything imported. I think we should start up the simulator.
+{@guide}	We have everything imported. I think we should start up the simulator.
             Use the {h}Describe{/h} tab on the top to start it.
 
 :: GetSync
 @trigger	SimulationModelStarted
 @when 		!jobs:kelp-urchin-barren-predict.received.facts
-@boostScore 1060 // trigger before Kevin's sync intro, which is 1051
+@boostScore 1060 // trigger before V1ctor's sync intro, which is 1051
 @once
 @cutscene
 {@drKelp}	Hold on! Before you get started in here, let me just send you the missing data needed for this model...
@@ -135,7 +135,7 @@ $set jobs:kelp-urchin-barren-predict.received.facts = true
 @when 		scene:name == "Modeling", modeling:phase == "sync", JobTaskTop("predictSiteB"), modeling:phase == "describe"
 @cutscene
 {@player} 	What should I do next?
-{@kevin}	Let's try hitting the {h}Simulate{/h} button over there.
+{@guide}	Let's try hitting the {h}Simulate{/h} button over there.
 
 :: ModelSynced
 @trigger	SimulationSyncSuccess
@@ -149,7 +149,7 @@ $set jobs:kelp-urchin-barren-predict.received.facts = true
 @when 		scene:name == "Modeling", modeling:phase == "predict", JobTaskTop("predictSiteB")
 @cutscene
 {@player} 	What should I do next?
-{@kevin}	There seems to be a big {h}Run Prediction{/h} button over there...
+{@guide}	There seems to be a big {h}Run Prediction{/h} button over there...
             Let's give that a test.
 
 :: ModelingGraphComplete
@@ -160,7 +160,7 @@ $set jobs:kelp-urchin-barren-predict.received.facts = true
             Now bring that back to the {map-name}Office{/map-name}.
 {hide-dialog}
 {wait 1}
-{@kevin}    So it looks like the {pluralnameof GiantKelp} and {pluralnameof Urchin} will sort of stay at a low level.
+{@guide}    So it looks like the {pluralnameof GiantKelp} and {pluralnameof Urchin} will sort of stay at a low level.
             That doesn't sound great...
 
 // SUGGEST ARGUMENTATION
@@ -171,13 +171,13 @@ $set jobs:kelp-urchin-barren-predict.received.facts = true
 @cutscene
 $if scene:name == "Argumentation"
     {@player}   What should I be doing again?
-    {@kevin}    Report your findings to {nameof @drKelp}.
+    {@guide}    Report your findings to {nameof @drKelp}.
 $elseif global:nav.shipRoom == "office"
     {@player}   What should we do now?
-    {@kevin}    Let's report our findings to {nameof @drKelp} using the {h}Computer{/h}.
+    {@guide}    Let's report our findings to {nameof @drKelp} using the {h}Computer{/h}.
 $else
     {@player} 	What should we do now?
-	{@kevin}	Well, we've completed the modeling, so let's report back to {nameof @drKelp}.
+	{@guide}	Well, we've completed the modeling, so let's report back to {nameof @drKelp}.
                 We should first head back to the {map-name}Office{/map-name}.
 $endif
 
@@ -188,14 +188,14 @@ $endif
 @when 		JobTaskActive(predictSiteB)
 @boostScore -5
 @cutscene
-{@kevin}   	Head to the Modeling Lab and generate a Prediction Model.
+{@guide}   	Head to the Modeling Lab and generate a Prediction Model.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@kevin}	Let's head back to the Office and tell Dr. Kelpurnia what we found.
+{@guide}	Let's head back to the Office and tell Dr. Kelpurnia what we found.
 
 // ARGUMENTATION
 

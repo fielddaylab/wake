@@ -14,9 +14,9 @@ $set    player:seen.drJules = true
 {@drKelp}	Lovely! Thanks for the help.
             Drive your sub over to {h}site C{/h} to get started. 
 {@player}	Ok, great! The sub, which is located...um... 
-{@kevin}	Right outside the door. 
+{@guide}	Right outside the door. 
 {@player}	Oh, yeah. I knew that. 
-            (Thanks, Kevin.)
+            (Thanks, V1ctor.)
 
 $call hotbar.portable->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.portable)
@@ -34,10 +34,10 @@ $call UnlockRoom("exterior")
 @cutscene
 $if global:nav.shipRoom != "exterior"
 	{@player}   Um... what are we supposed to do, again?
-	{@kevin}	Head out the door and find the sub!
+	{@guide}	Head out the door and find the sub!
 $else
 	{@player}   Where's the sub again?
-	{@kevin}	Bright yellow. Says "sub" on it. You literally can't miss it.
+	{@guide}	Bright yellow. Says "sub" on it. You literally can't miss it.
 $endif
 
 // AT STATION
@@ -59,7 +59,7 @@ $branch common.ringPhone
 @when 		scene:name == "KelpStation", !HasEntity(WarmKelpForest), !HasEntity(Urchin), !HasEntity(GiantKelp), !HasEntity(SeaOtter)
 @boostScore 2 //if the player has collected nothing, this should be seen instead of helpReturnToShip
 @cutscene
-{@kevin}	You need to find {h}site C{/h}, then dive. 
+{@guide}	You need to find {h}site C{/h}, then dive. 
             Unless you'd rather just float here forever.  
 
 // IN DIVE SITE
@@ -84,7 +84,7 @@ $call Player->SetTool(Scanner)
 @when       scene:name == "RS-1C", !jobs:kelp-welcome.got.scans
 @cutscene
 {@player}   What now?  
-{@kevin}    She said to document all the species down here.
+{@guide}    She said to document all the species down here.
             I think we're missing some. Better keep looking. 
 
 :: navigation.goBackUp
@@ -102,8 +102,8 @@ $branch common.ringPhone
 @trigger    RequestPartnerHelp
 @when 		scene:name == "RS-1C", jobs:kelp-welcome.got.scans
 @cutscene
-{@player} 	Um... Kevin? Now what? 
-{@kevin}    We're done here. Head back to the surface! 
+{@player} 	Um... V1ctor? Now what? 
+{@guide}    We're done here. Head back to the surface! 
 
 // BACK AT STATION
 
@@ -131,7 +131,7 @@ $branch common.ringPhone
 @when 		scene:name == "KelpStation", JobTaskActive(returnToShip)
 @cutscene
 {@player} 	What now?
-{@kevin}	We need to head back to the ship. 
+{@guide}	We need to head back to the ship. 
 
 // BACK AT SHIP
 
@@ -145,7 +145,7 @@ $branch common.ringPhone
 {@drKelp}  Great! You scanned some life forms! 
             Now I need you to find out how they interact.
 {@player}   Interact? What's that mean?
-{@kevin}    It's a nice way of saying we need to find out which ones eat each other.
+{@guide}    It's a nice way of saying we need to find out which ones eat each other.
 {@player}   Yikes. Ok. How do we do that? 
 {@drKelp}  Your ship has a built-in {nameof Experimentation}!
 {hide-dialog}
@@ -164,7 +164,7 @@ $call AutoSaveNow()
 @when 		JobTaskActive(runExperiment), scene:name != "ExperimentV2"
 @cutscene
 {@player} 	Now what?
-{@kevin}	Let's head to the {nameof Experimentation}.
+{@guide}	Let's head to the {nameof Experimentation}.
 
 :: firstExperiment
 @trigger    SceneStart
@@ -182,9 +182,9 @@ $branch common.ringPhone
 @once
 
 $if local:factId == "Urchin.Eats.GiantKelp"
-    {@kevin}    Whoa!| That urchin's eating something!
+    {@guide}    Whoa!| That urchin's eating something!
 $else
-    {@kevin}    Whoa!| That sea otter's eating something!
+    {@guide}    Whoa!| That sea otter's eating something!
 $endif
 
 :: firstCaptureSuccess
@@ -194,10 +194,10 @@ $endif
 @boostScore 1000
 
 $if local:factId == "Urchin.Eats.GiantKelp"
-    {@kevin}    Nice one! Looks like {pluralnameof Urchin} eat {pluralnameof GiantKelp}. 
-    {$kevin}    Nice one! Looks like {pluralnameof SeaOtter} eat {pluralnameof Urchin}. 
+    {@guide}    Nice one! Looks like {pluralnameof Urchin} eat {pluralnameof GiantKelp}. 
+    {$guide}    Nice one! Looks like {pluralnameof SeaOtter} eat {pluralnameof Urchin}. 
 $endif
-{@kevin}    That should be recorded in our {item-name}Bestiary{/item-name} now.
+{@guide}    That should be recorded in our {item-name}Bestiary{/item-name} now.
 
 :: firstCaptureCircleExpire
 @trigger    BehaviorCaptureChanceExpired
@@ -205,7 +205,7 @@ $endif
 @chatter
 @once
 
-{@kevin}    Looks like you missed that one. 
+{@guide}    Looks like you missed that one. 
             Try to record that behavior when it happens again.
 
 :: helpFirstExperiment
@@ -215,11 +215,11 @@ $endif
 @cutscene
 {@player}   Ok, now what? 
 $if ExperimentIsRunning()
-    {@kevin}	Humans. So impatient. 
+    {@guide}	Humans. So impatient. 
                 Watch the tank and click to record new behaviors.  
                 We need to find out how these species interact.
 $else
-    {@kevin}    You need to set up the tank. 
+    {@guide}    You need to set up the tank. 
                 You'll need some {nameof SeaOtter}, some {nameof Urchin}, and some {nameof GiantKelp}.
                 And make sure to use a {nameof WarmKelpForest} environment.
 $endif
@@ -244,11 +244,11 @@ $call   UnlockRoom("office")
 @when 		JobTaskActive(reportBack)
 @cutscene
 {@player} 	What now?
-{@kevin}	Let's report back to {nameof @drKelp}.
+{@guide}	Let's report back to {nameof @drKelp}.
 $if global:nav.shipRoom != "office"
-	{@kevin}	We should head back to the {map-name}Office{/map-name}.
+	{@guide}	We should head back to the {map-name}Office{/map-name}.
 $else
-	{@kevin}	Report your findings with the {h}Computer{/h} in front of you.
+	{@guide}	Report your findings with the {h}Computer{/h} in front of you.
 $endif
 
 :: helpReportBackInArgumentation
@@ -256,7 +256,7 @@ $endif
 @when 		JobTaskActive(reportBack), scene:name == "Argumentation"
 @cutscene
 {@player} 	What now?
-{@kevin}	Let's tell {nameof @drKelp} what we found out.
+{@guide}	Let's tell {nameof @drKelp} what we found out.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -265,49 +265,49 @@ $endif
 @when 		JobTaskActive(gotoSiteC)
 @boostScore -5
 @cutscene
-{@kevin}    Head to {h}site C{/h}.
+{@guide}    Head to {h}site C{/h}.
 
 :: catchScanGiantKelp
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(scanGiantKelp)
 @boostScore -5
 @cutscene
-{@kevin}    Make sure to scan all the organisms here. Have you looked at the Kelp yet?
+{@guide}    Make sure to scan all the organisms here. Have you looked at the Kelp yet?
 
 :: catchScanUrchin
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(scanUrchin)
 @boostScore -5
 @cutscene
-{@kevin}    Make sure to scan all the organisms here. Have you looked at the Urchins yet?
+{@guide}    Make sure to scan all the organisms here. Have you looked at the Urchins yet?
 
 :: catchScanOtter
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(scanOtter)
 @boostScore -5
 @cutscene
-{@kevin}    Make sure to scan all the organisms here. Have you looked at the Otters yet?
+{@guide}    Make sure to scan all the organisms here. Have you looked at the Otters yet?
 
 :: catchReturnToShip
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(returnToShip)
 @boostScore -5
 @cutscene
-{@kevin}    Time to head back to the ship!
+{@guide}    Time to head back to the ship!
 
 :: catchRunExperiment
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(runExperiment)
 @boostScore -5
 @cutscene
-{@kevin}    Head to the Observation Tank to find what eats what.
+{@guide}    Head to the Observation Tank to find what eats what.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@kevin}    Talk to {nameof drKelp} in the Office.
+{@guide}    Talk to {nameof drKelp} in the Office.
 
 //ARGUMENTATION
 
@@ -377,8 +377,8 @@ $call CompleteJob()
 @cutscene
 {@drKelp}	Wonderful! Thank you for your help, {player-name}! 
 {@player}   Easy peasy. I was glad to help. 
-{@kevin}    Ahem.
-{@player}   Oh. Uh, Kevin helped too. A little. 
+{@guide}    Ahem.
+{@player}   Oh. Uh, V1ctor helped too. A little. 
 {@drKelp}  Don't suppose you'd like another job?
             I've got work available at other research sites.
             You can find them on the {map-name}Job Board{/map-name}!

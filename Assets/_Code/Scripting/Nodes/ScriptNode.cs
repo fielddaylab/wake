@@ -103,7 +103,7 @@ namespace Aqua.Scripting
         {
             m_Flags |= ScriptNodeFlags.CornerChatter | ScriptNodeFlags.SuppressDuringCutscene;
             if (m_Target.IsEmpty) {
-                m_Target = GameConsts.Target_Kevin;
+                m_Target = GameConsts.Target_V1ctor;
             }
         }
 
@@ -129,10 +129,10 @@ namespace Aqua.Scripting
             }
             m_TriggerOrFunctionId = inTriggerId;
 
-            // Mapping Shortcut - Partner requests are always towards kevin
+            // Mapping Shortcut - Partner requests are always towards guide
             if (inTriggerId == GameTriggers.RequestPartnerHelp)
             {
-                m_Target = GameConsts.Target_Kevin;;
+                m_Target = GameConsts.Target_V1ctor;;
             }
         }
 

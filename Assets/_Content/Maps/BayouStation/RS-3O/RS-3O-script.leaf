@@ -9,18 +9,18 @@
 {@}     Warning: High-pressure area detected.
         Unable to proceed without danger to self and ship.
 {@player}   "High-pressure area"? We are heading pretty deep...
-{@kevin}    Maybe we need a stronger hull?
+{@guide}    Maybe we need a stronger hull?
 
 :: CantDiveSubsequent1
 @trigger    InteractObject
 @when       objectId == "To3NDive", locked
 @repeat 1
 @chatter
-{@kevin}    Let's see if we can get a stronger hull somewhere.
+{@guide}    Let's see if we can get a stronger hull somewhere.
 
 :: CantDiveSubsequent2
 @trigger    InteractObject
 @when       objectId == "To3NDive", locked
 @repeat 1
 @chatter
-{@kevin}    Maybe a better hull will protect us?
+{@guide}    Maybe a better hull will protect us?

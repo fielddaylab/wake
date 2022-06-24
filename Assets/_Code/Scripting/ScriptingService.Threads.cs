@@ -31,7 +31,7 @@ namespace Aqua
             }
             else if ((inNode.Flags() & ScriptNodeFlags.CornerChatter) != 0)
             {
-                thread.Dialog = Services.UI.GetDialog("cornerKevin");
+                thread.Dialog = Services.UI.GetDialog("cornerV1ctor");
             }
 
             if (Services.UI.IsTransitioning())
