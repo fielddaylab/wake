@@ -9,20 +9,7 @@ namespace Aqua
 {
     public class LocNode : IDataBlock
     {
-        private readonly StringHash32 m_Id;
-        [BlockContent, UnityEngine.Scripting.Preserve] private string m_Content = string.Empty;
-
-        public LocNode(StringHash32 inId)
-        {
-            m_Id = inId;
-        }
-
-        public StringHash32 Id() { return m_Id; }
-        public string Content() { return m_Content; }
-
-        static public implicit operator string(LocNode inNode)
-        {
-            return inNode?.m_Content;
-        }
+        public StringHash32 Id;
+        [BlockContent, UnityEngine.Scripting.Preserve] public string Content = string.Empty;
     }
 }

@@ -123,7 +123,7 @@ namespace Aqua {
                 Loc.Find(item.NameTextId()),
                 Loc.Find(item.DescriptionTextId()),
                 item.ImageSet(),
-                PopupFlags.TallImage | PopupFlags.ShowCloseButton,
+                PopupFlags.TallImage | PopupFlags.ShowCloseButton | PopupFlags.ImageTextBG,
                 options);
         }
 
