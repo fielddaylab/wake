@@ -19,19 +19,12 @@ $endif
 {@kevin} There must be something here that would indicate how this disaster happened. When you think you've found it, go talk to {nameof profHarper}.
 
 :: methaneScanned
-@trigger JobTaskUpdated
+@trigger JobTaskCompleted
 @when    JobTaskActive(reportBack)
 @once
 @cutscene
 {@kevin}    Looks like there was some different types of methane down here.
 {@kevin}    Let's not stay here longer than we need to, that stuff is explosive!
-
-:: methaneTagCompleted
-@trigger JobTaskUpdated
-@when    JobTaskActive(methaneTag)
-@once
-@cutscene
-{@kevin}    [TEMP] methaneTag
 
 // CATCH-ALL GUIDE TEXT
 :: catchGoToSiteN
