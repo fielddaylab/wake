@@ -1,0 +1,40 @@
+# basePath stationInterior.common
+
+// Job Board
+
+:: job.base
+@trigger    InspectObject
+@when       objectId == "Job"
+@cutscene
+
+$if player:currentJob
+    $if Lookup($player:currentJob, "StationId") != player:currentStation
+        {@merchant} Looks like you've got a job at another station.
+                    Try talking to the job-giver over there.
+                    But there's no shame in switching jobs.
+                    Want to see the Job Board?
+                    $choice .job.board; Yep!
+                    $choice .job.cancel; Nope!
+                    $choose
+    $else
+        {@merchant} Hey, want to talk to me about your current job?
+                    $choice .job.argue; Sure!
+                    $choice .job.board; Let me see the job board.
+                    $choice .job.cancel; Nah.
+                    $choose
+    $endif
+$else
+    {@merchant} Hey, want to see the Job Board?
+    $choice .job.board; Yep!
+    $choice .job.cancel; Nope!
+$endif
+
+:: job.argue
+{trigger-response TryArgumentation}
+
+:: job.board
+$call InteriorOpenJobBoard()
+
+:: job.cancel
+@cutscene
+{@merchant} Okay, well just let me know if you need me.

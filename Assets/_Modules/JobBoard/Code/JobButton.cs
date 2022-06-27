@@ -131,6 +131,8 @@ namespace Aqua.JobBoard
         void IPoolAllocHandler.OnFree()
         {
             m_Job = null;
+            m_OnSelected = null;
+            m_Toggle.SetIsOnWithoutNotify(false);
         }
     }
 }

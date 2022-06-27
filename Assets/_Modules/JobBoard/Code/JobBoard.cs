@@ -1,19 +1,18 @@
-﻿using System.Collections;
-using System;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using Aqua;
-using BeauUtil;
-using UnityEngine.UI;
-using TMPro;
 using BeauData;
 using BeauPools;
 using BeauRoutine;
+using BeauRoutine.Extensions;
+using BeauUtil;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
-namespace Aqua.JobBoard
-{
-    public class JobBoard : MonoBehaviour, ISceneLoadHandler
-    {
+namespace Aqua.JobBoard {
+    public class JobBoard : BasePanel {
         [Serializable] private class HeaderPool : SerializablePool<ListHeader> { }
         [Serializable] private class ButtonPool : SerializablePool<JobButton> { }
 
@@ -22,7 +21,7 @@ namespace Aqua.JobBoard
         [Header("Pools")]
         [SerializeField] private HeaderPool m_HeaderPool = null;
         [SerializeField] private ButtonPool m_ButtonPool = null;
-        
+
         [Header("Groups")]
         [SerializeField] private ToggleGroup m_JobToggle = null;
         [SerializeField] private JobInfo m_Info = null;
@@ -36,6 +35,12 @@ namespace Aqua.JobBoard
         [SerializeField] private TextId m_NotSelectedLockedJobsText = null;
         [SerializeField] private TextId m_NotSelectedNoJobsText = null;
 
+        [Header("Animation")]
+        [SerializeField] private TweenSettings m_TweenOnAnim = new TweenSettings(0.2f);
+        [SerializeField] private TweenSettings m_TweenOffAnim = new TweenSettings(0.2f);
+        [SerializeField] private float m_OffscreenPos = 0;
+        [SerializeField] private float m_OnscreenPos = 0;
+
         #endregion
 
         [NonSerialized] private JobButton m_SelectedJobButton = null;
@@ -46,84 +51,60 @@ namespace Aqua.JobBoard
 
         #region Unity Events
 
-        private void Awake()
-        {
+        protected override void Awake() {
+            base.Awake();
+
             Services.Events.Register(GameEvents.JobSwitched, RefreshButtons, this)
                 .Register(GameEvents.JobCompleted, RefreshButtons, this);
 
             m_Info.OnActionClicked.AddListener(OnJobAction);
         }
 
-        private void OnDestroy()
-        {
+        private void OnDestroy() {
             Services.Events?.DeregisterAll(this);
         }
 
         #endregion // Unity Events
 
-        #region ISceneLoadHandler
-
-        void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
-        {
-            AllocateButtons();
-            UpdateButtonStatuses();
-            OrderButtons();
-            UpdateUnselectedLabel();
-
-            m_Info.Clear();
-        }
-
-        #endregion // ISceneLoadHandler
-
         #region Handlers
 
-        private void OnButtonSelected(JobButton inJobButton)
-        {
+        private void OnButtonSelected(JobButton inJobButton) {
             m_SelectedJobButton = inJobButton;
             m_Info.Populate(inJobButton.Job, inJobButton.Status);
         }
 
-        private void OnJobAction()
-        {
+        private void OnJobAction() {
             var profileJobData = Save.Jobs;
-            switch(m_SelectedJobButton.Group)
-            {
+            switch (m_SelectedJobButton.Group) {
                 case JobProgressCategory.Available:
-                case JobProgressCategory.InProgress:
-                    {
+                case JobProgressCategory.InProgress: {
                         profileJobData.SetCurrentJob(m_SelectedJobButton.Job.Id());
-                        Routine.Start(WaitToExit()).Tick();
+                        Routine.Start(this, WaitToExit()).ExecuteWhileDisabled().Tick();
                         break;
                     }
             }
         }
 
-        static private IEnumerator WaitToExit()
-        {
-            Services.UI.ShowLetterbox();
-            yield return 0.5f;
-            while(Script.ShouldBlockIgnoreLetterbox())
-            {
-                yield return null;
+        private IEnumerator WaitToExit() {
+            using (Script.Letterbox()) {
+                yield return 0.5f;
+                while (Script.ShouldBlockIgnoreLetterbox()) {
+                    yield return null;
+                }
+                yield return Hide();
             }
-            InlineJobTaskList.RequestDisplayOnSceneLoad();
-            yield return StateUtil.LoadPreviousSceneWithWipe();
-            Services.UI.HideLetterbox();
         }
 
         #endregion // Handlers
 
         #region Job Buttons
 
-        private void AllocateButtons()
-        {
+        private void AllocateButtons() {
             StringHash32 id;
             JobButton button;
-            foreach(var job in JobUtils.VisibleJobs())
-            {
+            foreach (var job in JobUtils.VisibleJobs()) {
                 id = job.JobId;
-                if (!m_JobButtonMap.TryGetValue(id, out button))
-                {
+                if (!m_JobButtonMap.TryGetValue(id, out button)) {
                     button = m_ButtonPool.Alloc();
                     button.Initialize(m_JobToggle, OnButtonSelected);
                     button.Populate(job.Job, JobStatusFlags.Hidden);
@@ -132,10 +113,8 @@ namespace Aqua.JobBoard
             }
         }
 
-        private void RefreshButtons()
-        {
-            if (UpdateButtonStatuses())
-            {
+        private void RefreshButtons() {
+            if (UpdateButtonStatuses()) {
                 OrderButtons();
                 UpdateUnselectedLabel();
 
@@ -144,14 +123,16 @@ namespace Aqua.JobBoard
             }
         }
 
-        private bool UpdateButtonStatuses()
-        {
+        private bool UpdateButtonStatuses() {
+            if (!IsShowing()) {
+                return false;
+            }
+
             bool bUpdated = false;
 
             var profileJobData = Save.Jobs;
             PlayerJob job;
-            foreach(var button in m_ButtonPool.ActiveObjects)
-            {
+            foreach (var button in m_ButtonPool.ActiveObjects) {
                 job = JobUtils.GetJobStatus(button.Job, Save.Current, true);
                 bUpdated |= button.UpdateStatus(job.Status, m_ButtonAppearance);
                 button.gameObject.SetActive(ShouldShowButton(job));
@@ -160,8 +141,7 @@ namespace Aqua.JobBoard
             return bUpdated;
         }
 
-        private bool ShouldShowButton(PlayerJob job)
-        {
+        private bool ShouldShowButton(PlayerJob job) {
             if ((job.Status & JobStatusFlags.InProgress) != 0 && (job.Status & JobStatusFlags.Active) == 0) {
                 return job.Job.StationId() == Save.Map.CurrentStationId();
             }
@@ -169,24 +149,20 @@ namespace Aqua.JobBoard
             return (job.Status & JobStatusFlags.Completed) == 0;
         }
 
-        private void OrderButtons()
-        {
+        private void OrderButtons() {
             JobButton active = null;
 
             m_HasLockedJobs = false;
             m_HasAvailableJobs = false;
 
-            using(PooledList<JobButton> progress = PooledList<JobButton>.Create())
-            using(PooledList<JobButton> available = PooledList<JobButton>.Create())
-            using(PooledList<JobButton> locked = PooledList<JobButton>.Create())
-            {
-                foreach(var button in m_ButtonPool.ActiveObjects)
-                {
+            using (PooledList<JobButton> progress = PooledList<JobButton>.Create())
+            using (PooledList<JobButton> available = PooledList<JobButton>.Create())
+            using (PooledList<JobButton> locked = PooledList<JobButton>.Create()) {
+                foreach (var button in m_ButtonPool.ActiveObjects) {
                     if (!button.gameObject.activeSelf)
                         continue;
-                    
-                    switch(button.Group)
-                    {
+
+                    switch (button.Group) {
                         case JobProgressCategory.Active:
                             active = button;
                             m_HasAvailableJobs = true;
@@ -217,10 +193,8 @@ namespace Aqua.JobBoard
             }
         }
 
-        private void OrderList(JobProgressCategory inGroup, JobButton inButton, ref int ioSiblingIndex)
-        {
-            if (inButton == null)
-            {
+        private void OrderList(JobProgressCategory inGroup, JobButton inButton, ref int ioSiblingIndex) {
+            if (inButton == null) {
                 FindHeader(inGroup, false)?.gameObject.SetActive(false);
                 return;
             }
@@ -232,10 +206,8 @@ namespace Aqua.JobBoard
             inButton.Transform.SetSiblingIndex(ioSiblingIndex++);
         }
 
-        private void OrderList(JobProgressCategory inGroup, List<JobButton> inButtons, ref int ioSiblingIndex)
-        {
-            if (inButtons.Count <= 0)
-            {
+        private void OrderList(JobProgressCategory inGroup, List<JobButton> inButtons, ref int ioSiblingIndex) {
+            if (inButtons.Count <= 0) {
                 FindHeader(inGroup, false)?.gameObject.SetActive(false);
                 return;
             }
@@ -244,20 +216,16 @@ namespace Aqua.JobBoard
             header.gameObject.SetActive(true);
             header.Transform.SetSiblingIndex(ioSiblingIndex++);
 
-            foreach(var button in inButtons)
-            {
+            foreach (var button in inButtons) {
                 button.Transform.SetSiblingIndex(ioSiblingIndex++);
             }
         }
 
-        private ListHeader FindHeader(JobProgressCategory inGroup, bool inbCreate)
-        {
-            ref ListHeader header = ref m_GroupHeaderMap[(int) inGroup];
-            if (header == null && inbCreate)
-            {
+        private ListHeader FindHeader(JobProgressCategory inGroup, bool inbCreate) {
+            ref ListHeader header = ref m_GroupHeaderMap[(int)inGroup];
+            if (header == null && inbCreate) {
                 header = m_HeaderPool.Alloc();
-                switch(inGroup)
-                {
+                switch (inGroup) {
                     case JobProgressCategory.Active:
                         header.SetText("ui.jobBoard.group.active");
                         break;
@@ -294,5 +262,50 @@ namespace Aqua.JobBoard
         }
 
         #endregion // Job Buttons
+
+        #region BasePanel
+
+        protected override void OnShow(bool inbInstant) {
+            base.OnShow(inbInstant);
+
+            AllocateButtons();
+            UpdateButtonStatuses();
+            OrderButtons();
+            UpdateUnselectedLabel();
+
+            m_Info.Clear();
+        }
+
+        protected override void OnHideComplete(bool _) {
+            base.OnHideComplete(_);
+
+            m_ButtonPool.Reset();
+            m_HeaderPool.Reset();
+            m_JobButtonMap.Clear();
+            m_JobToggle.SetAllTogglesOff(false);
+            Array.Clear(m_GroupHeaderMap, 0, m_GroupHeaderMap.Length);
+        }
+
+        protected override void InstantTransitionToHide() {
+            Root.SetAnchorPos(m_OffscreenPos, Axis.Y);
+            CanvasGroup.Hide();
+        }
+
+        protected override void InstantTransitionToShow() {
+            Root.SetAnchorPos(m_OnscreenPos, Axis.Y);
+            CanvasGroup.Show();
+        }
+
+        protected override IEnumerator TransitionToHide() {
+            yield return Root.AnchorPosTo(m_OffscreenPos, m_TweenOffAnim, Axis.Y);
+            CanvasGroup.Hide();
+        }
+
+        protected override IEnumerator TransitionToShow() {
+            CanvasGroup.Show();
+            yield return Root.AnchorPosTo(m_OnscreenPos, m_TweenOnAnim, Axis.Y);
+        }
+
+        #endregion // BasePanel
     }
 }

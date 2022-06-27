@@ -15,6 +15,7 @@ namespace Aqua.View
         public TweenSettings Transition = new TweenSettings(0.3f, Curve.Smooth);
         public Transform TransitionControlPoint;
         public ActiveGroup Group;
+        public SerializedHash32 GroupId;
         public bool AlwaysAvailable = false;
 
         [NonSerialized] public ScriptInspectable Inspectable;
