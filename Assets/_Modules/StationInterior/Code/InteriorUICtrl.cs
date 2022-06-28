@@ -29,7 +29,7 @@ namespace Aqua.StationInterior
 
         [Header("Panels")]
         [SerializeField] private BasePanel m_JobBoard = null;
-        // [SerializeField] private BasePanel m_ShopPanel = null;
+        [SerializeField] private BasePanel m_ShopPanel = null;
 
         #endregion // Inspector
 
@@ -45,7 +45,7 @@ namespace Aqua.StationInterior
             m_CurrencyUI.SetAnchorPos(m_CurrencyOffscreenPos, Axis.Y);
 
             m_JobBoard.OnHideEvent.AddListener((_) => OnPanelHide(m_JobBoard));
-            // m_ShopPanel.OnHideEvent.AddListener((_) => OnPanelHide(m_JobBoard));
+            m_ShopPanel.OnHideEvent.AddListener((_) => OnPanelHide(m_ShopPanel));
 
             m_BackButton.onClick.AddListener(OnBackClicked);
 
@@ -120,6 +120,12 @@ namespace Aqua.StationInterior
             ctrl.SetPanel(ctrl.m_JobBoard);
         }
 
+        [LeafMember("InteriorOpenShopBoard"), Preserve]
+        static private void LeafOpenShopBoard() {
+            var ctrl = Services.State.FindManager<InteriorUICtrl>();
+            Assert.NotNull(ctrl);
+            ctrl.SetPanel(ctrl.m_ShopPanel);
+        }
         #endregion // Leaf
     }
 }
