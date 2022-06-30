@@ -11,6 +11,7 @@ namespace Aqua.View {
         public CameraPose Camera;
         public ActiveGroup Group;
         public Canvas UI;
+        public SerializedHash32[] GroupIds;
 
         public Action OnLoad;
         public Action OnEnter;

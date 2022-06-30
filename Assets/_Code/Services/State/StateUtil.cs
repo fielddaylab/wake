@@ -16,7 +16,7 @@ namespace Aqua {
         static private bool s_IsLoading = false;
 
         static public bool IsLoading {
-            get { return s_IsLoading || Services.State.IsLoadingScene(); }
+            get { return s_IsLoading || (Services.Valid && Services.State.IsLoadingScene()); }
         }
 
         static public IEnumerator LoadSceneWithFader(string inSceneName, StringHash32 inEntrance = default(StringHash32), object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default) {

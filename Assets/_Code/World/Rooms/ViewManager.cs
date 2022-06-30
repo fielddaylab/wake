@@ -70,6 +70,7 @@ namespace Aqua.View {
 
             node.OnLoad?.Invoke();
             ActivateNode(m_Current, false, true);
+            ActivateLinks(m_AllLinks, m_Current.GroupIds, false);
 
             Services.Camera.SnapToPose(m_Current.Camera);
             Services.Events.Dispatch(GameEvents.ViewChanged, m_Current.Id.Source());
@@ -113,6 +114,8 @@ namespace Aqua.View {
                     cameraTransition = Services.Camera.MoveToPose(node.Camera, settings.Time, settings.Curve, Cameras.CameraPoseProperties.All, Axis.XYZ);
                 }
 
+                DeactivateLinks(m_AllLinks, false);
+
                 ViewNode old = m_Current;
                 m_Current = node;
 
@@ -124,6 +127,8 @@ namespace Aqua.View {
 
                 DeactivateNode(old, false, false);
                 ActivateNode(m_Current, false, true);
+
+                ActivateLinks(m_AllLinks, m_Current.GroupIds, false);
 
                 using(var table = TempVarTable.Alloc()) {
                     table.Set("viewId", m_Current.Id);
@@ -166,20 +171,42 @@ namespace Aqua.View {
             Script.WriteVariable(GameVars.ViewId, node.Id);
         }
 
+        static private void DeactivateLinks(ViewLink[] links, bool force) {
+            MapData map = Save.Map;
+
+            foreach(var link in links) {
+                if (link.Group.Empty) {
+                    link.gameObject.SetActive(false);
+                } else {
+                    link.Group.SetActive(false, force);
+                }
+            }
+        }
+
+        static private void ActivateLinks(ViewLink[] links, SerializedHash32[] activeGroups,  bool force) {
+            if (activeGroups == null) {
+                DeactivateLinks(links, force);
+                return;
+            }
+
+            MapData map = Save.Map;
+
+            foreach(var link in links) {
+                bool isActive = ArrayUtils.Contains(activeGroups, link.GroupId) && (link.AlwaysAvailable || map.IsRoomUnlocked(link.Node.Id));
+                if (link.Group.Empty) {
+                    link.gameObject.SetActive(isActive);
+                } else {
+                    link.Group.SetActive(isActive, force);
+                }
+            }
+        }
+
         #endregion // Nodes
 
         #region Links
 
         private void RefreshLinks(bool force) {
-            MapData map = Save.Map;
-
-            foreach(var link in m_AllLinks) {
-                if (link.AlwaysAvailable || map.IsRoomUnlocked(link.Node.Id)) {
-                    link.Group.SetActive(true, force);
-                } else {
-                    link.Group.SetActive(false, force);
-                }
-            }
+            ActivateLinks(m_AllLinks, m_Current?.GroupIds, force);
         }
 
         #endregion // Links
@@ -212,6 +239,7 @@ namespace Aqua.View {
         bool IBaked.Bake(BakeFlags flags) {
             m_AllNodes = FindObjectsOfType<ViewNode>();
             m_AllLinks = FindObjectsOfType<ViewLink>();
+            Array.Sort(m_AllLinks, (a, b) => a.GroupId.Hash().CompareTo(b.GroupId.Hash()));
 
             return true;
         }
