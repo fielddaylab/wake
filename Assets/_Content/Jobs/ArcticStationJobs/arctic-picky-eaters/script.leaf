@@ -1,9 +1,159 @@
 :: basePath job.arctic-picky-eaters
 
-
 // INTRO
 :: start
 @trigger    JobStarted
 @cutscene
 
-{@kevin}    
+{@profWhalen}   We're trying to feed the Cod equal amounts of what they eat, but they seem to want only Diatoms.
+                A trip to the Measurement Tank should be all you need.
+
+:: measureAlgaeOnly
+@trigger    JobTaskCompleted
+@when       taskId == "obtainRateAlgae", !JobTaskCompleted(obtainRateDiatoms)
+@once
+@cutscene
+{@kevin}   One down, one to go!
+
+:: measureDiatomsOnly
+@trigger    JobTaskCompleted
+@when       taskId == "obtainRateDiatoms", !JobTaskCompleted(obtainRateAlgae)
+@once
+@cutscene
+{@kevin}   One down, one to go!
+
+:: measureBoth
+@trigger    JobTasksUpdated
+@when       JobTaskCompleted(obtainRateAlgae), JobTaskCompleted(obtainRateDiatoms)
+@once
+@cutscene
+{@kevin}    That's everything we need to figure out which species Cod eats more of! Let's head back to Prof. Whalen.
+
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchObtainRateAlgae
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(obtainRateAlgae)
+@boostScore -5
+@cutscene
+{@kevin}     Place Cod in the Measurement Tank with things it eats.
+
+:: catchObtainRateDiatoms
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(obtainRateDiatoms)
+@boostScore -5
+@cutscene
+{@kevin}	 Place Cod in the Measurement Tank with things it eats.
+
+:: catchReportBack
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(reportBack)
+@boostScore -5
+@cutscene
+{@kevin}	 Compare the rates you just got and talk to Prof. Whalen about what you figured out.
+
+
+// ARGUMENTATION
+::argue.intro
+@trigger    TryArgumentation
+@when       !ArgueIsComplete(pickyArgue) 
+@cutscene
+$call ArgueLoad(pickyArgue)
+{@profWhalen}   Feeding rates can tell us a lot about how much energy a species needs.
+$branch .argue.firstQuery
+
+:: argue.firstQuery
+{@profWhalen}   If a species eats more of one species, it usually means it's low in nutrition. Which species is more nutritious?
+$branch .argue.chooseClaim
+
+:: argue.chooseClaim
+$if ArgueCancelClaim()
+$endif
+$choice .argue.setDiatom; Diatoms
+$choice .argue.setAlgae; IceAlgae
+$choice .argue.notSure; Not sure yet
+$choose branch
+
+// DIATOM branch
+:: argue.setDiatom
+$if ArgueSetClaim(Claim, jobs.arctic-picky-eaters.argue.claimLabelDiatoms)
+    $call ArgueFactSlot(ArcticCod.Eats.IceAlgae)
+    $call ArgueFactSlot(ArcticCod.Eats.Diatoms)
+$endif
+$call ArgueDisplayClaim()
+$branch .argue.diatomQuery
+
+:: argue.diatomQuery
+{@profWhalen}   How do the rates compare?
+$branch .argue.chooseFactsDiatoms
+
+:: argue.chooseFactsDiatoms
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.revise
+    $answer *, .argue.unrelatedDiatoms
+$choice .argue.notSure; Let me get back to you.
+$choose branch
+
+:: argue.revise
+$if IsFactFullyUpgraded(ArcticCod.Eats.IceAlgae), IsFactFullyUpgraded(ArcticCod.Eats.Diatoms)
+    {@profWhalen}   Oh, I think these facts show the opposite of what you claimed, actually.
+                    High nutrition means lower rates, low nutrition means higher rates.
+                    Want to revise your claim?
+    $call ArgueHideClaim()
+    $call ArgueClearFacts()
+    $branch .argue.firstQuery
+$else
+    {@profWhalen}   You seem to be missing the rates for at least one of these facts.
+                    Come back once you have the rates.
+    $call ArgueHideClaim()
+    $call ArgueClearFacts()
+$endif
+
+
+:: argue.unrelatedDiatoms
+{@profWhalen}   I'm not following how this relates to Cod eating rates.
+$call ArgueRejectIncorrect()
+$branch .argue.diatomQuery
+
+// ALGAE branch
+:: argue.setAlgae
+$if ArgueSetClaim(Claim, jobs.arctic-picky-eaters.argue.claimLabelAlgae)
+    $call ArgueFactSlot(ArcticCod.Eats.IceAlgae)
+    $call ArgueFactSlot(ArcticCod.Eats.Diatoms)
+$endif
+$call ArgueDisplayClaim()
+$branch .argue.algaeQuery
+
+:: argue.algaeQuery
+{@profWhalen}   How do the rates compare?
+$branch .argue.chooseFactsAlgae
+
+:: argue.chooseFactsAlgae
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.complete
+    $answer *, .argue.unrelatedAlgae
+$choice .argue.notSure; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedAlgae
+{@profWhalen}   I'm not following how this relates to Cod eating rates.
+$call ArgueRejectIncorrect()
+$branch .argue.algaeQuery
+
+// COMMON branch
+:: argue.notSure
+{@profWhalen}   That's okay, there's no rush here. Let me know when you're ready.
+
+:: argue.complete
+$if IsFactFullyUpgraded(ArcticCod.Eats.IceAlgae), IsFactFullyUpgraded(ArcticCod.Eats.Diatoms)
+    $call ArgueComplete()
+    {@profWhalen}   Wow! The nutritional potency of the Ice Algae must really be something.
+                    I wonder if this has anything to do with what happened to that missing whale.
+    $call CompleteJob()
+$else
+    {@profWhalen}   You seem to be missing the rates for at least one of these facts.
+                    Come back once you have the rates.
+    $call ArgueHideClaim()
+    $call ArgueClearFacts()
+$endif
