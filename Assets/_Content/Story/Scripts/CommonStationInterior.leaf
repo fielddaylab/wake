@@ -4,7 +4,7 @@
 
 :: job.base
 @trigger    InspectObject
-@when       objectId == "Job"
+@when       objectId == "Job", player:startSequence == false
 @cutscene
 
 $if player:currentJob
@@ -41,9 +41,28 @@ $call InteriorOpenJobBoard()
 
 // Shop
 
+:: momMad
+@trigger    InspectObject
+@when       objectId == "Shop", player:startSequence == true
+@cutscene
+@once
+{@merchant} {nameof Player}!
+            Phew, you had me worried for a bit. How's the sub?
+{@player}   The Sub's fine Dad, I'm a good pilot.
+{@merchant} You better go talk to your Mom. She's pretty upset right now.
+{@player}   Can't you talk to her? 
+{@merchant} Sorry kiddo. You got yourself into this mess.
+{@player}   Ughh...
+
+:: momMad2
+@trigger    InspectObject
+@when       objectId == "Shop", player:startSequence == true
+@cutscene
+{@merchant} You better go talk to your Mom. She's pretty upset right now.
+
 :: shop.base
 @trigger    InspectObject
-@when       objectId == "Shop"
+@when       objectId == "Shop", player:startSequence == false
 @cutscene
 {@merchant} How's it going out there kiddo? Need any upgrades from dear ol' dad?
 $choice .shop.board; Sure do!
