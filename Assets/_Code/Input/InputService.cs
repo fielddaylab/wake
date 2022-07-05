@@ -206,6 +206,14 @@ namespace Aqua
             return m_InputModule.IsEditingText();
         }
 
+        public Vector2 PointerOffsetFromCenter()
+        {
+            Vector2 pos = Input.mousePosition;
+            pos.x = (pos.x / Screen.width) - 0.5f;
+            pos.y = (pos.y / Screen.height) - 0.5f;
+            return pos;
+        }
+
         public bool ExecuteClick(GameObject inRoot)
         {
             RectTransform rectTransform = inRoot.transform as RectTransform;
