@@ -51982,7 +51982,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff09b0b9689b8a743896b388ea3e48e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Conditions: startSequence == true
+  m_Conditions: '!JobStartedOrComplete(kelp-welcome)'
   m_ToShow: []
   m_ToHide:
   - {fileID: 5490044789513577832}
@@ -51999,7 +51999,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b90de7f5b9dfc8042ace7b79a50dccaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Condition: startSequence == true
+  m_Condition: '!JobStartedOrComplete(kelp-welcome)'
 --- !u!4 &5512886787166161525
 Transform:
   m_ObjectHideFlags: 0

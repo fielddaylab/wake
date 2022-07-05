@@ -1,7 +1,5 @@
 # basePath   act1
 
-$set player:startSequence = true
-
 :: Intro
 @trigger    SceneStart
 @when       scene:name == "RS-1C-Tutorial", player:currentStation == "KelpStation"
@@ -36,8 +34,8 @@ $goto .tutorialMove
 {@}
 {style center}
 
-$call player->ForceOnTop()
-$call FocusHighlight->Focus(player)
+$call Player->ForceOnTop()
+$call FocusHighlight->Focus(Player)
     Use the {h}Mouse{/h} \ or \ the {h}[W][A][S][D]{/h} keys to move your Sub
 $call hotbar.guide->ResetSorting()
 $call FocusHighlight->Clear()
