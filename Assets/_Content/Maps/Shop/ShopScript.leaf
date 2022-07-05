@@ -176,24 +176,52 @@ $set    shop:notEnoughCount + 1
 {@merchant} Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
 {@kevin} That's super convenient! We should definitely get this!
 $set    jobs:common-dive.seen.tagger-intro = true
+
+$if UpgradeUnlocksJobAtStation(ROVTagger, KelpStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}KelpForest{/h}!
+$elseif UpgradeUnlocksJobAtStation(ROVTagger, CoralStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Coral Reef{/h}!
+$elseif UpgradeUnlocksJobAtStation(ROVTagger, BayouStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Bayou{/h}!
+$elseif UpgradeUnlocksJobAtStation(ROVTagger, ArcticStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs at the {h}Arctic Station{/h}!
+$endif
 $branch .purchaseAttempt.genericCostLine
 
 :: purchaseAttempt.propGuard
 @trigger    ShopAttemptBuy
 @when       itemId == "PropGuard"
 @cutscene
-
 {@merchant} The {nameof PropGuard}! A wise choice!
             You don't want your propeller getting tangled up out there when moving through thick vegetation!
+
+$if UpgradeUnlocksJobAtStation(PropGuard, KelpStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}KelpForest{/h}!
+$elseif UpgradeUnlocksJobAtStation(PropGuard, CoralStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Coral Reef{/h}!
+$elseif UpgradeUnlocksJobAtStation(PropGuard, BayouStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Bayou{/h}!
+$elseif UpgradeUnlocksJobAtStation(PropGuard, ArcticStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs at the {h}Arctic Station{/h}!
+$endif
 $branch .purchaseAttempt.genericCostLine
 
 :: purchaseAttempt.flashlight
 @trigger    ShopAttemptBuy
 @when       itemId == "Flashlight"
 @cutscene
-
 {@merchant} Nice, I see you're looking at the {nameof Flashlight}!
             The ocean can get pretty dark out there, and who knows what's hiding in it?
+
+$if UpgradeUnlocksJobAtStation(Flashlight, KelpStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}KelpForest{/h}!
+$elseif UpgradeUnlocksJobAtStation(Flashlight, CoralStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Coral Reef{/h}!
+$elseif UpgradeUnlocksJobAtStation(Flashlight, BayouStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Bayou{/h}!
+$elseif UpgradeUnlocksJobAtStation(Flashlight, ArcticStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs at the {h}Arctic Station{/h}!
+$endif
 $branch .purchaseAttempt.genericCostLine
 
 :: purchaseAttempt.probeHacker
@@ -202,82 +230,163 @@ $branch .purchaseAttempt.genericCostLine
 @cutscene
 {@merchant} I see you're looking at the {nameof ProbeHacker}!
             This little gizmo will allow you to read data from any probes you find at the dive sites.
+
+$if UpgradeUnlocksJobAtStation(ProbeHacker, KelpStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}KelpForest{/h}!
+$elseif UpgradeUnlocksJobAtStation(ProbeHacker, CoralStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Coral Reef{/h}!
+$elseif UpgradeUnlocksJobAtStation(ProbeHacker, BayouStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Bayou{/h}!
+$elseif UpgradeUnlocksJobAtStation(ProbeHacker, ArcticStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs at the {h}Arctic Station{/h}!
+$endif
 $branch .purchaseAttempt.genericCostLine
 
 :: purchaseAttempt.engine
 @trigger    ShopAttemptBuy
 @when       itemId == "Engine"
 @cutscene
-
 {@merchant} I see you're a person of taste! The {nameof Engine} is a very powerful engine!
             With it, you'll be able to move against strong undersea currents!
+
+$if UpgradeUnlocksJobAtStation(Engine, KelpStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}KelpForest{/h}!
+$elseif UpgradeUnlocksJobAtStation(Engine, CoralStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Coral Reef{/h}!
+$elseif UpgradeUnlocksJobAtStation(Engine, BayouStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Bayou{/h}!
+$elseif UpgradeUnlocksJobAtStation(Engine, ArcticStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs at the {h}Arctic Station{/h}!
+$endif
 $branch .purchaseAttempt.genericCostLine
 
 :: purchaseAttempt.hull
 @trigger    ShopAttemptBuy
 @when       itemId == "Hull"
 @cutscene
-
 {@merchant} Oh, you're looking to venture {h}deep{/h}? Then the {nameof Hull} should be your next purchase!
             With this plating, your sub will be able to withstand much more pressure!
+
+$if UpgradeUnlocksJobAtStation(Hull, KelpStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}KelpForest{/h}!
+$elseif UpgradeUnlocksJobAtStation(Hull, CoralStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Coral Reef{/h}!
+$elseif UpgradeUnlocksJobAtStation(Hull, BayouStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Bayou{/h}!
+$elseif UpgradeUnlocksJobAtStation(Hull, ArcticStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs at the {h}Arctic Station{/h}!
+$endif
 $branch .purchaseAttempt.genericCostLine
 
 :: purchaseAttempt.stressTank
 @trigger    ShopAttemptBuy
 @when       itemId == "StressTank"
 @cutscene
-
 {@merchant} Oh, the {nameof $local:itemId} can be used to measure the stress ranges of different creatures.
 
+$if UpgradeUnlocksJobAtStation(StressTank, KelpStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}KelpForest{/h}!
+$elseif UpgradeUnlocksJobAtStation(StressTank, CoralStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Coral Reef{/h}!
+$elseif UpgradeUnlocksJobAtStation(StressTank, BayouStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Bayou{/h}!
+$elseif UpgradeUnlocksJobAtStation(StressTank, ArcticStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs at the {h}Arctic Station{/h}!
+$endif
 $branch .purchaseAttempt.genericCostLine
 
 :: purchaseAttempt.measurementTank
 @trigger    ShopAttemptBuy
 @when       itemId == "MeasurementTank"
 @cutscene
-
 {@merchant} Ah, the {nameof $local:itemId} can be used to measure the eating and reproduction rates of different creatures.
+
+$if UpgradeUnlocksJobAtStation(MeasurementTank, KelpStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}KelpForest{/h}!
+$elseif UpgradeUnlocksJobAtStation(MeasurementTank, CoralStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Coral Reef{/h}!
+$elseif UpgradeUnlocksJobAtStation(MeasurementTank, BayouStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Bayou{/h}!
+$elseif UpgradeUnlocksJobAtStation(MeasurementTank, ArcticStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs at the {h}Arctic Station{/h}!
+$endif
 $branch .purchaseAttempt.genericCostLine
 
 :: purchaseAttempt.visualModel
 @trigger    ShopAttemptBuy
 @when       itemId == "VisualModel"
 @cutscene
-
 {@merchant} The {nameof $local:itemId} can be used at the {map-name}Modeling Whiteboard{/map-name}.
             It is used to create visualizations of the different connections between species.
 {@kevin}    Hmmm. I feel like this could come in handy later...
             I think we should purchase this item.
+
+$if UpgradeUnlocksJobAtStation(VisualModel, KelpStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}KelpForest{/h}!
+$elseif UpgradeUnlocksJobAtStation(VisualModel, CoralStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Coral Reef{/h}!
+$elseif UpgradeUnlocksJobAtStation(VisualModel, BayouStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Bayou{/h}!
+$elseif UpgradeUnlocksJobAtStation(VisualModel, ArcticStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs at the {h}Arctic Station{/h}!
+$endif
 $branch .purchaseAttempt.genericCostLine
 
 :: purchaseAttempt.predictionModel
 @trigger    ShopAttemptBuy
 @when       itemId == "PredictionModel"
 @cutscene
-
 {@merchant} The {nameof $local:itemId} can be used at the {map-name}Modeling Whiteboard{/map-name}.
             It is used to create predictions for creatures in different ecosystems.
+
+$if UpgradeUnlocksJobAtStation(PredictionModel, KelpStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}KelpForest{/h}!
+$elseif UpgradeUnlocksJobAtStation(PredictionModel, CoralStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Coral Reef{/h}!
+$elseif UpgradeUnlocksJobAtStation(PredictionModel, BayouStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Bayou{/h}!
+$elseif UpgradeUnlocksJobAtStation(PredictionModel, ArcticStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs at the {h}Arctic Station{/h}!
+$endif
 $branch .purchaseAttempt.genericCostLine
 
 :: purchaseAttempt.interveneModel
 @trigger    ShopAttemptBuy
 @when       itemId == "InterveneModel"
 @cutscene
-
 {@merchant} Ah, the {nameof $local:itemId} can be used at the {map-name}Modeling Whiteboard{/map-name}.
             It is used to model the outcomes of potential interventions for different ecosystems.
+
+$if UpgradeUnlocksJobAtStation(InterveneModel, KelpStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}KelpForest{/h}!
+$elseif UpgradeUnlocksJobAtStation(InterveneModel, CoralStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Coral Reef{/h}!
+$elseif UpgradeUnlocksJobAtStation(InterveneModel, BayouStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Bayou{/h}!
+$elseif UpgradeUnlocksJobAtStation(InterveneModel, ArcticStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs at the {h}Arctic Station{/h}!
+$endif
 $branch .purchaseAttempt.genericCostLine
 
 :: purchaseAttempt.iceBreaker
 @trigger    ShopAttemptBuy
 @when       itemId == "Icebreaker"
 @cutscene
-
 {@merchant} Been wondering when you'd take a look at that! The {nameof Icebreaker} is a powerful drill!
 $if player:currentStation != "ArcticStation"
             It can destroy chunks of ice and open passageways for you. A wise choice if you plan on visiting the {nameof ArcticStation}!
 $else
             It can destroy chunks of ice and open passageways for you. A wise choice if you're going to explore the chilly waters below us!
+$endif
+
+$if UpgradeUnlocksJobAtStation(Icebreaker, KelpStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}KelpForest{/h}!
+$elseif UpgradeUnlocksJobAtStation(Icebreaker, CoralStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Coral Reef{/h}!
+$elseif UpgradeUnlocksJobAtStation(Icebreaker, BayouStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs in the {h}Bayou{/h}!
+$elseif UpgradeUnlocksJobAtStation(Icebreaker, ArcticStation)
+    {@merchant} {random Woah,|As an added bonus,|And I happen to know that} this would unlock some jobs at the {h}Arctic Station{/h}!
 $endif
 $branch .purchaseAttempt.genericCostLine
 

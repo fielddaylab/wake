@@ -402,6 +402,7 @@ namespace Aqua
                 {
                     Log.Error("[DataService] Failed to declare name to server: {0}", future.GetFailure().Object);
                     ioFuture.Fail(future.GetFailure());
+                    yield break;
                 }
             }
 
@@ -428,6 +429,7 @@ namespace Aqua
                 {
                     Log.Error("[DataService] Failed to save to server: {0}", future.GetFailure().Object);
                     ioFuture.Fail(future.GetFailure());
+                    yield break;
                 }
             }
         }

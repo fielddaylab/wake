@@ -27,7 +27,7 @@ namespace Aqua.Shop {
             m_OriginalPos = transform.position;
             m_OriginalRendererYOffset = m_RendererTransform.localPosition.y;
 
-            GetComponent<ScriptInspectable>().OnInspect = (_) => OnTalkToShopkeep();
+            GetComponent<ScriptInspectable>().OnInspect = (_, __) => OnTalkToShopkeep();
         }
 
         public void SetTable(ShopTable table) {
@@ -97,8 +97,9 @@ namespace Aqua.Shop {
             }
         }
 
-        private void OnTalkToShopkeep() {
+        private IEnumerator OnTalkToShopkeep() {
             Services.Events.Dispatch(ShopConsts.Event_TalkToShopkeep);
+            return null;
         }
     }
 }

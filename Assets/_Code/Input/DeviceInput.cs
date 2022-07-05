@@ -91,6 +91,11 @@ namespace Aqua
             return IsActive() ? Services.Camera.ScreenToGameplayPosition(Input.mousePosition) : default(Vector3);
         }
 
+        public Vector3? WorldMousePosition(Plane inPlane)
+        {
+            return IsActive() ? Services.Camera.ScreenToPlanePosition(Input.mousePosition, inPlane) : null;
+        }
+
         public bool KeyDown(KeyCode inKeyCode)
         {
             return IsActive() && Input.GetKey(inKeyCode);

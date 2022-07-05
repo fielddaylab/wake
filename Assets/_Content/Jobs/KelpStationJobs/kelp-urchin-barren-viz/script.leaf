@@ -19,7 +19,7 @@ $call UnlockSite(RS-1B)
 
 :: helpGoOutside
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", JobTaskTop(gotoSiteB)
+@when 		scene:name == "Helm", JobTaskTop(gotoSiteB)
 @cutscene
 {@player}   Any idea where I should go next?
 {@kevin}	I think we need to head over to Site B.
@@ -83,14 +83,14 @@ $endif
 
 :: helpToModeling
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", JobTaskTop(visualSiteB)
+@when 		scene:name == "Helm", JobTaskTop(visualSiteB)
 @cutscene
 {@player} 	Where should I be going again?
 {@kevin}	We need to go to the {map-name}Modeling Whiteboard{/map-name} in the {nameof Modeling}.
 
 :: atShip
 @trigger    SceneStart
-@when       scene:name == "Ship", JobTaskTop(visualSiteB)
+@when       scene:name == "Helm", JobTaskTop(visualSiteB)
 @once
 @cutscene
 $branch common.ringPhone
@@ -100,7 +100,7 @@ $branch common.ringPhone
 
 :: helpGoToModeling
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", JobTaskTop(predictSiteB)
+@when 		scene:name == "Helm", JobTaskTop(predictSiteB)
 @cutscene
 $if global:nav.shipRoom != "Modeling"
 	{@player} 	I'm back on the ship, what should I do next?

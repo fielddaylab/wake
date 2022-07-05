@@ -194,7 +194,7 @@ namespace Aqua
 
         private struct Handler
         {
-            private UnityEngine.Object m_Binding;
+            private RuntimeObjectHandle m_Binding;
             private CastableAction<object> m_Action;
 
             public string Name;
@@ -215,7 +215,7 @@ namespace Aqua
 
             public bool Match(UnityEngine.Object inBinding)
             {
-                return m_Binding.IsReferenceEquals(inBinding);
+                return m_Binding.Equals(inBinding);
             }
 
             public bool Match(Action inAction)
@@ -245,7 +245,7 @@ namespace Aqua
 
             public bool ShouldDelete(out bool outReferenceDestroyed)
             {
-                outReferenceDestroyed = m_Binding.IsReferenceDestroyed();
+                outReferenceDestroyed = m_Binding.WasDestroyed();
                 return Delete || outReferenceDestroyed;
             }
         }

@@ -114,6 +114,7 @@ namespace Aqua.Modeling {
         [SerializeField] private Sprite m_MissingEatStressedIcon = null;
         [SerializeField] private Sprite m_MissingChemIcon = null;
         [SerializeField] private Sprite m_MissingChemStressedIcon = null;
+        [SerializeField] private Sprite m_MissingStressRangeIcon = null;
         [SerializeField] private Sprite m_MissingParasiteIcon = null;
         [SerializeField] private Sprite m_MissingHistoryIcon = null;
 
@@ -354,7 +355,7 @@ namespace Aqua.Modeling {
                 WaterPropertyId ownerProperty = missing.PropertyId;
 
                 MissingFactTypes mask;
-                for(int i = 0; i < 9; i++) {
+                for(int i = 0; i < 10; i++) {
                     mask = (MissingFactTypes) (1 << i);
                     if ((missing.FactTypes & mask) == mask) {
                         if (ownerProperty != WaterPropertyId.NONE) {
@@ -628,6 +629,12 @@ namespace Aqua.Modeling {
                 case MissingFactTypes.WaterChem_Stressed: {
                     attachment.Mask |= WorldFilterMask.AnyWaterChem;
                     attachment.Icon.sprite = m_MissingChemStressedIcon;
+                    break;
+                }
+
+                case MissingFactTypes.StressRange: {
+                    attachment.Mask |= WorldFilterMask.AnyWaterChem;
+                    attachment.Icon.sprite = m_MissingStressRangeIcon;
                     break;
                 }
 
