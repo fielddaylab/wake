@@ -103,8 +103,7 @@ namespace Aqua.Title
             }
         }
 
-        private IEnumerator NewGame()
-        {
+        private IEnumerator NewGame() {
             m_GameStartingSpinner.SetActive(true);
 
             string profileName = m_ProfileName.text;
@@ -114,8 +113,7 @@ namespace Aqua.Title
 
             m_GameStartingSpinner.SetActive(false);
 
-            if (!newProfile.IsComplete())
-            {
+            if (!newProfile.IsComplete()) {
                 Services.Input.ResumeAll();
                 Services.UI.Popup.DisplayWithClose(
                     Loc.Find("ui.title.saveError.header"),
@@ -124,7 +122,7 @@ namespace Aqua.Title
             else
             {
                 Services.Input.ResumeAll();
-                Services.Data.StartPlaying("Helm");
+                Services.Data.StartPlaying("RS-1C-Tutorial");
             }
         }
 
@@ -139,8 +137,7 @@ namespace Aqua.Title
 
             m_GameStartingSpinner.SetActive(false);
 
-            if (!load.IsComplete())
-            {
+            if (!load.IsComplete()) {
                 Services.Input.ResumeAll();
 
                 switch(DataService.ReturnStatus(load)) {
@@ -165,9 +162,7 @@ namespace Aqua.Title
                         break;
                     }
                 }
-            }
-            else
-            {
+            } else {
                 Services.Input.ResumeAll();
                 Services.Data.StartPlaying();
             }

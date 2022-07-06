@@ -1,0 +1,44 @@
+:: basePath job.arctic-seal-habbits
+
+// INTRO
+:: start
+@trigger    JobStarted
+@cutscene
+{@profWhalen}   Ooh, you're tackling the Ribbon Seal job. Those creatures are pretty rare.
+                They're loners,| like me. If you're gonna find one, you'll need the {nameof IceBreaker} to reach the {m}ice crevices{/m}.
+
+// ARGUMENTATION
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete() // TODO: NAME ME
+@cutscene
+$call ArgueLoad() // TODO: SAME NAME HERE
+// TODO: add your claim label to jobs.aqloc
+$if ArgueSetClaim(Claim, jobs.station-job-name.argue.claimLabel) 
+    $call ArgueFactSlot() // TODO: put fact slot info here 
+$endif
+
+:: argue.showClaim
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.complete 
+    $answer *, .argue.unrelated
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelated
+$call ArgueRejectIncorrect()
+{@kevin} Ok, that's interesting, but it's not answering my question.
+$goto .argue.showClaim
+
+:: argue.giveUp
+{@kevin} OK. Get back to me when you're ready.
+$call ArgueCancelClaim()
+
+// END
+:: argue.complete
+$call ArgueComplete()
+{@kevin} This looks great!
+         This is the conclusion to the arctic-seal-habbits job!
+
+$call CompleteJob()

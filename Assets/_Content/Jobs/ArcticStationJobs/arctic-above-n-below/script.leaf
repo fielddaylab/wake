@@ -1,0 +1,44 @@
+:: basePath job.above-n-below
+
+// INTRO
+:: start
+@trigger    JobStarted
+@cutscene
+{@profWhalen}   Oh good, I've been curious about some of the other species in the {m}Ice Crevice{/m}.
+                Could you make a {nameof VisualModel} of how all the species interact?
+
+// ARGUMENTATION
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete() // TODO: NAME ME
+@cutscene
+$call ArgueLoad() // TODO: SAME NAME HERE
+// TODO: add your claim label to jobs.aqloc
+$if ArgueSetClaim(Claim, jobs.station-job-name.argue.claimLabel) 
+    $call ArgueFactSlot() // TODO: put fact slot info here 
+$endif
+
+:: argue.showClaim
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.complete 
+    $answer *, .argue.unrelated
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelated
+$call ArgueRejectIncorrect()
+{@kevin} Ok, that's interesting, but it's not answering my question.
+$goto .argue.showClaim
+
+:: argue.giveUp
+{@kevin} OK. Get back to me when you're ready.
+$call ArgueCancelClaim()
+
+// END
+:: argue.complete
+$call ArgueComplete()
+{@kevin} This looks great!
+         This is the conclusion to the above-n-below job!
+
+$call CompleteJob()
