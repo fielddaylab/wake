@@ -5,19 +5,19 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@kevin} We'll need to make a visual model will show us how energy flows through the ecosystem. 
+{@guide} We'll need to make a visual model will show us how energy flows through the ecosystem. 
 $if HasEntity(RedGorgonian), HasEntity(Detritus), HasEntity(Siphonophore), HasEntity(VentStar), HasEntity(Methanogen), HasEntity(Methane)
     //Has all entities from Site N
     $if HasFact(RedGorgonian.Eats.Detritus), HasFact(Siphonophore.Eats.Detritus), HasFact(VentStar.Eats.Detritus), HasFact(Methanogen.Eats.Methane)
         //Has all eat rules
-        {@kevin}    We should be able to head right over to the {h}Modeling Lab{/h}.
+        {@guide}    We should be able to head right over to the {h}Modeling Lab{/h}.
     $else
         //Missing some eat rules
-        {@kevin}    But first, we'll need to do some experiments to see how these organisms relate to one another.
+        {@guide}    But first, we'll need to do some experiments to see how these organisms relate to one another.
     $endif  
 $else
     //Missing some entities from Site N
-    {@kevin}    But first, we'll need to finish scanning all the critters at {h}Site N{/h}.
+    {@guide}    But first, we'll need to finish scanning all the critters at {h}Site N{/h}.
 $endif
 
 
@@ -26,7 +26,7 @@ $endif
 @when    JobTaskActive(reportBack)
 @once
 @cutscene
-{@kevin} Hmm. It seems as though this ecosystem might be powered by more than one source of energy. Talk to {nameof profHarper} and maybe you can figure it out.
+{@guide} Hmm. It seems as though this ecosystem might be powered by more than one source of energy. Talk to {nameof profHarper} and maybe you can figure it out.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -36,9 +36,9 @@ $endif
 @boostScore -5
 @cutscene
 $if scene:name == "RS-3N"
-    {@kevin} Seems like we're still missing some critters here. Make sure you're using that {item}Flashlight{/item}!
+    {@guide} Seems like we're still missing some critters here. Make sure you're using that {item}Flashlight{/item}!
 $else
-    {@kevin} We still need to scan some of the critters at {h}Site N{/h}.
+    {@guide} We still need to scan some of the critters at {h}Site N{/h}.
              Let's head back down there through {h}Site O{/h}.
 $endif
 
@@ -47,21 +47,21 @@ $endif
 @when 		JobTaskActive(wormEat)
 @boostScore -5
 @cutscene
-{@kevin}     Use the {h}observation tank{/h} to determine the relationships between organisms from Site N.
+{@guide}     Use the {h}observation tank{/h} to determine the relationships between organisms from Site N.
 
 :: catchAtSiteNScan
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(getModel)
 @boostScore -5
 @cutscene
-{@kevin}    I think it's time to lay out all these facts as a visual model.
+{@guide}    I think it's time to lay out all these facts as a visual model.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		
 @boostScore -10
 @cutscene
-{@kevin}    Go explain to {nameof profHarper} what the sources of energy are for this ecosystem.
+{@guide}    Go explain to {nameof profHarper} what the sources of energy are for this ecosystem.
 
 
 // ARGUMENTATION

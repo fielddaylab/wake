@@ -11,13 +11,13 @@ $call GiveFact(ChinookSalmon.Eats.Clione)
 $call GiveFact(ChinookSalmon.Reproduce)
 $call GiveFact(ChinookSalmon.Reproduce.Stressed)
 // TODO: give additional stressed rules?
-{@kevin}        This is a good start! Let's find out more about Cod and the things they eat.
+{@guide}        This is a good start! Let's find out more about Cod and the things they eat.
 
 :: allSet
 @trigger    JobTaskCompleted
 @when       taskId == "observeCod"
 @once
-{@kevin}    With that, we should be set. To the Modeling Lab!
+{@guide}    With that, we should be set. To the Modeling Lab!
 
 // potential TODO: add task and explicit prompts for Clione rules
 
@@ -25,7 +25,7 @@ $call GiveFact(ChinookSalmon.Reproduce.Stressed)
 @trigger    JobTaskCompleted
 @when       taskId == "modelFish"
 @once
-{@kevin}    Let's show the researchers how we were able to update their model.
+{@guide}    Let's show the researchers how we were able to update their model.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -34,21 +34,21 @@ $call GiveFact(ChinookSalmon.Reproduce.Stressed)
 @when		JobTaskTop(observeCod)
 @boostScore -5
 @cutscene
-{@kevin}     We need more information about Arctic Cod and what they eat.
+{@guide}     We need more information about Arctic Cod and what they eat.
 
 :: catchModelFish
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(modelFish)
 @boostScore -5
 @cutscene
-{@kevin}	 Take your new facts to the modeling lab. There you can make a {nameof VisualModel} and a {nameof SyncModel}.
+{@guide}	 Take your new facts to the modeling lab. There you can make a {nameof VisualModel} and a {nameof SyncModel}.
 
 :: catchReportBack
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(reportBack)
 @boostScore -5
 @cutscene
-{@kevin}	 Head to the station to report what you found.
+{@guide}	 Head to the station to report what you found.
 
 // ARGUMENTATION
 
