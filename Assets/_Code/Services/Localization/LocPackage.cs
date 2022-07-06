@@ -75,6 +75,7 @@ namespace Aqua
             }
 
             public override void CompleteBlock(IBlockParserUtil inUtil, LocPackage inPackage, LocNode inBlock, bool inbError) {
+                Assert.False(inPackage.m_Nodes.ContainsKey(inBlock.Id), "Duplicate localization key {0}", inBlock.Id);
                 inPackage.m_Nodes.Add(inBlock.Id, inBlock.Content);
                 if (inBlock.Content.IndexOf('{') >= 0)
                 {

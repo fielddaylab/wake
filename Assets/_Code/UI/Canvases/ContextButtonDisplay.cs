@@ -12,68 +12,87 @@ namespace Aqua {
 
         #region Inspector
 
-        [Header("Components")]
-        [SerializeField] private Button m_InteractButton = null;
-        [SerializeField] private LocText m_InteractLabel = null;
-        [SerializeField] private Image m_InteractButtonIcon = null;
+        [Header("Label")]
+        [SerializeField] private LocText m_Label = null;
+
+        [Header("Button")]
+        [SerializeField] private Button m_ActionButton = null;
+        [SerializeField] private ColorGroup m_ActionButtonColor = null;
+        [SerializeField] private ColorGroup m_ActionLabelColor = null;
+        [SerializeField] private LocText m_ActionLabel = null;
         [SerializeField] private CursorInteractionHint m_HoverHint = null;
+        
+        [Header("Pin")]
         [SerializeField] private RectTransformPinned m_PinGroup = null;
         [SerializeField] private RectTransform m_AdjustGroup = null;
+        
+        [Header("Colors")]
+        [SerializeField] private ColorPalette2 m_ActiveButtonPalette = default;
+        [SerializeField] private ColorPalette2 m_LockedButtonPalette = default;
 
         [Header("Defaults")]
-        [SerializeField] private Sprite m_MapIcon = null;
         [SerializeField] private TextId m_MapLabel = null;
-        [SerializeField] private Sprite m_InspectIcon = null;
+        [SerializeField] private TextId m_MapActionLabel = null;
+        [SerializeField] private TextId m_MapActionLockedLabel = null;
         [SerializeField] private TextId m_InspectLabel = null;
-        [SerializeField] private Sprite m_BackIcon = null;
+        [SerializeField] private TextId m_InspectActionLabel = null;
+        [SerializeField] private TextId m_InspectActionLockedLabel = null;
         [SerializeField] private TextId m_BackLabel = null;
-        [SerializeField] private TextId m_LockedLabel = null;
+        [SerializeField] private TextId m_BackActionLabel = null;
+        [SerializeField] private TextId m_BackActionLockedLabel = null;
 
         #endregion // Inspector
 
-        [NonSerialized] private SceneInteractable m_TargetInteract;
-        private Routine m_BumpAnimation;
+        [NonSerialized] private RuntimeObjectHandle<SceneInteractable> m_TargetInteract;
 
         protected override void Start() {
             base.Start();
 
-            m_InteractButton.onClick.AddListener(OnButtonClicked);
+            m_ActionButton.onClick.AddListener(OnButtonClicked);
         }
 
         public void DisplayInteract(SceneInteractable inObject) {
             m_TargetInteract = inObject;
             Script.WriteVariable(GameVars.InteractObject, inObject.Parent.Id());
 
-            Sprite icon = null;
             string label = null;
+            TextId actionLabel = null;
+            bool locked = inObject.Locked();
 
             switch(inObject.Mode()) {
                 case SceneInteractable.InteractionMode.GoToMap: {
-                    icon = inObject.Icon(m_MapIcon);
                     Assert.True(!inObject.TargetMapId().IsEmpty, "Interaction {0} has no assigned map", inObject);
                     label = Loc.Format(inObject.Label(m_MapLabel), Assets.Map(inObject.TargetMapId()).ShortLabelId());
+                    actionLabel = locked ? inObject.LockedActionLabel(m_MapActionLockedLabel) : inObject.ActionLabel(m_MapActionLabel);
                     break;
                 }
 
                 case SceneInteractable.InteractionMode.GoToPreviousScene: {
-                    icon = inObject.Icon(m_BackIcon);
                     label = Loc.Find(inObject.Label(m_BackLabel));
+                    actionLabel = locked ? inObject.LockedActionLabel(m_BackActionLockedLabel) : inObject.ActionLabel(m_BackActionLabel);
                     break;
                 }
 
                 case SceneInteractable.InteractionMode.Inspect: {
-                    icon = inObject.Icon(m_InspectIcon);
                     label = Loc.Find(inObject.Label(m_InspectLabel));
+                    actionLabel = locked ? inObject.LockedActionLabel(m_InspectActionLockedLabel) : inObject.ActionLabel(m_InspectActionLabel);
                     break;
                 }
             }
 
-            m_InteractButtonIcon.sprite = icon;
-            m_InteractButtonIcon.gameObject.SetActive(icon);
-            m_InteractButton.interactable = inObject.CanInteract();
+            if (locked) {
+                m_ActionButtonColor.Color = m_LockedButtonPalette.Background;
+                m_ActionLabelColor.Color = m_LockedButtonPalette.Content;
+            } else {
+                m_ActionButtonColor.Color = m_ActiveButtonPalette.Background;
+                m_ActionLabelColor.Color = m_ActiveButtonPalette.Content;
+            }
+
+            m_Label.SetTextFromString(label);
+            m_ActionLabel.SetText(actionLabel);
+            m_ActionButton.interactable = inObject.CanInteract();
             m_HoverHint.TooltipOverride = label;
             m_HoverHint.TooltipId = null;
-            m_InteractLabel.SetTextFromString(label);
 
             inObject.ConfigurePin(m_PinGroup);
 
@@ -81,24 +100,8 @@ namespace Aqua {
             SetInputState(true);
         }
 
-        public void DisplayLocked(SceneInteractable inObject) {
-            if (m_TargetInteract != inObject)
-                return;
-
-            string label = Loc.Find(inObject.LockedLabel(m_LockedLabel));
-
-            m_InteractButtonIcon.gameObject.SetActive(false);
-            m_InteractButton.interactable = false;
-            m_HoverHint.TooltipOverride = label;
-            m_InteractLabel.SetTextFromString(label);
-
-            if (!IsTransitioning()) {
-                m_BumpAnimation.Replace(this, BumpAnimation());
-            }
-        }
-
         public void ClearInteract(SceneInteractable inObject) {
-            if (!m_TargetInteract.IsReferenceEquals(inObject)) {
+            if (m_TargetInteract != inObject) {
                 return;
             }
 
@@ -110,7 +113,7 @@ namespace Aqua {
         #region Handlers
 
         private void OnButtonClicked() {
-            m_TargetInteract?.Interact();
+            m_TargetInteract.Object?.Interact();
         }
 
         #endregion // Handlers
@@ -119,7 +122,6 @@ namespace Aqua {
 
         protected override void OnHide(bool inbInstant) {
             base.OnHide(inbInstant);
-            m_BumpAnimation.Stop();
         }
 
         protected override void OnHideComplete(bool inbInstant) {
@@ -128,14 +130,12 @@ namespace Aqua {
             m_PinGroup.Unpin();
             m_AdjustGroup.SetAnchorPos(-16, Axis.Y);
             m_RootGroup.alpha = 0;
-            m_InteractButtonIcon.sprite = null;
 
             base.OnHideComplete(inbInstant);
         }
 
         protected override void OnShow(bool inbInstant) {
             base.OnShow(inbInstant);
-            m_BumpAnimation.Stop();
         }
 
         protected override IEnumerator TransitionToShow() {
@@ -156,25 +156,10 @@ namespace Aqua {
             m_RootTransform.gameObject.SetActive(false);
         }
 
-        private IEnumerator BumpAnimation() {
-            m_RootTransform.gameObject.SetActive(true);
-            m_AdjustGroup.SetAnchorPos(-8, Axis.Y);
-            m_RootGroup.alpha = 0.5f;
-
-            yield return Routine.Combine(
-                m_RootGroup.FadeTo(1, 0.2f).Ease(Curve.QuadOut),
-                m_AdjustGroup.AnchorPosTo(0, 0.2f, Axis.Y).Ease(Curve.QuadOut)
-            );
-        }
-
         #endregion // Panel
     
         static public void Display(SceneInteractable inObject) {
             Services.UI.FindPanel<ContextButtonDisplay>()?.DisplayInteract(inObject);
-        }
-
-        static public void Locked(SceneInteractable inObject) {
-            Services.UI.FindPanel<ContextButtonDisplay>()?.DisplayLocked(inObject);
         }
 
         static public void Clear(SceneInteractable inObject) {

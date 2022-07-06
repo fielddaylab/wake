@@ -188,13 +188,9 @@ namespace Aqua {
 
             ScriptThreadHandle thread;
 
-            thread = ScriptObject.Interact(inParams.Source.Parent, !inParams.Available, inParams.Config.TargetId);
+            thread = ScriptObject.Interact(inParams.Source.Object.Parent, !inParams.Available, inParams.Config.TargetId);
 
             if (!inParams.Available) {
-                SceneInteractable context = inParams.Source as SceneInteractable;
-                if (context) {
-                    ContextButtonDisplay.Locked(context);
-                }
                 IEnumerator locked = inParams.Config.OnLocked?.Invoke(inParams, thread);
                 if (locked != null)
                     yield return null;
@@ -216,7 +212,7 @@ namespace Aqua {
 
             switch (inParams.Config.Action) {
                 case ScriptInteractAction.Inspect: {
-                        thread = ScriptObject.Inspect(inParams.Source.Parent);
+                        thread = ScriptObject.Inspect(inParams.Source.Object.Parent);
                         yield return thread.Wait();
                         break;
                     }
@@ -232,7 +228,7 @@ namespace Aqua {
                     }
 
                 case ScriptInteractAction.GoToView: {
-                        ViewManager.Find<ViewManager>().GoToNode(inParams.Source.GetComponent<ViewLink>());
+                        ViewManager.Find<ViewManager>().GoToNode(inParams.Source.Object.GetComponent<ViewLink>());
                         break;
                     }
             }
