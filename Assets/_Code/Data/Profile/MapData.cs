@@ -6,7 +6,6 @@ using BeauUtil;
 using BeauUtil.Debugger;
 using EasyBugReporter;
 using UnityEngine;
-using LogMask = Aqua.Debugging.LogMask;
 
 namespace Aqua.Profile
 {
@@ -146,7 +145,7 @@ namespace Aqua.Profile
             if (m_UnlockedRoomIds.Add(inRoomId))
             {
                 m_HasChanges = true;
-                Services.Events.Queue(GameEvents.RoomLockChanged);
+                Services.Events.Queue(GameEvents.ViewLockChanged);
                 return true;
             }
 
@@ -158,7 +157,7 @@ namespace Aqua.Profile
             if (m_UnlockedRoomIds.Remove(inRoomId))
             {
                 m_HasChanges = true;
-                Services.Events.Queue(GameEvents.RoomLockChanged);
+                Services.Events.Queue(GameEvents.ViewLockChanged);
                 return true;
             }
 
@@ -300,7 +299,7 @@ namespace Aqua.Profile
                 }
             }
 
-            if (ioSerializer.ObjectVersion > 6)
+            if (ioSerializer.ObjectVersion >= 6)
             {
                 ioSerializer.UInt32ProxySet("visitedLocations", ref m_VisitedLocations);
             }

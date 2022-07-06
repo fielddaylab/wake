@@ -14,7 +14,7 @@ $set	jobs:coral-stressed.struggling = false
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", !jobs:coral-stressed.seen.bottom
+@when 		scene:name == "Helm", !jobs:coral-stressed.seen.bottom
 @cutscene
 {@player}   Where should I go from here?
 {@kevin}	Let's exit the ship and head to the sub.
@@ -75,7 +75,7 @@ $set jobs:coral-stressed.gotScans = true
 
 :: atShip
 @trigger    SceneStart
-@when       scene:name == "Ship", JobTaskCompleted(siteR), JobTaskActive(stressCoral)
+@when       scene:name == "Helm", JobTaskCompleted(siteR), JobTaskActive(stressCoral)
 @once
 @cutscene
 {@player}   We're back. Now what?
@@ -84,7 +84,7 @@ $set jobs:coral-stressed.gotScans = true
 	
 :: helpBackAtShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", JobTaskActive(stressCoral)
+@when 		scene:name == "Helm", JobTaskActive(stressCoral)
 @cutscene
 {@player} 	What should we be doing now?
 {@kevin}	Let's head over to the {nameof Experimentation} and try to learn more about the coral's condition. 

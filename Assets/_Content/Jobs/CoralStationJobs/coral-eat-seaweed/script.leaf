@@ -12,7 +12,7 @@ $set jobs:coral-clear-sarg.siteRScans = 0
 
 :: helpBackAtShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", !HasFact(Urchin.Eats.Sargassum.Stressed)
+@when 		scene:name == "Helm", !HasFact(Urchin.Eats.Sargassum.Stressed)
 @cutscene
 {@player} 	Where should I be going again?
 {@kevin}	Let's head over to the {nameof Experimentation} and try to find something that can deal with the Sargassum. 

@@ -11,6 +11,7 @@ namespace Aqua
         // temporary
         static public readonly TableKeyPair CameraRegion = TableKeyPair.Parse("temp:camera.region");
         static public readonly TableKeyPair InteractObject = TableKeyPair.Parse("temp:interact.object");
+        static public readonly TableKeyPair ViewId = TableKeyPair.Parse("temp:view");
 
         // session
 

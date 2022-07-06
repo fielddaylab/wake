@@ -4,7 +4,7 @@
 
 :: start
 @trigger    SceneStart
-@when       scene:name == "Ship"
+@when       scene:name == "Helm"
 @once
 @cutscene
 
@@ -30,7 +30,7 @@ $call UnlockRoom("exterior")
 
 :: helpGoOutsideToSubShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", !jobs:kelp-welcome.got.scans
+@when 		scene:name == "Helm", !jobs:kelp-welcome.got.scans
 @cutscene
 $if global:nav.shipRoom != "exterior"
 	{@player}   Um... what are we supposed to do, again?
@@ -137,7 +137,7 @@ $branch common.ringPhone
 
 :: atShip
 @trigger    SceneStart
-@when       scene:name == "Ship", JobTaskActive(runExperiment)
+@when       scene:name == "Helm", JobTaskActive(runExperiment)
 @once
 @cutscene
 $branch common.ringPhone

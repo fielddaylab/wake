@@ -434,7 +434,7 @@ namespace Aqua.Debugging
 
             DumpSourceCollection src = new DumpSourceCollection();
             src.Add(new ScreenshotContext());
-            src.Add(new LogContext(EasyBugReporter.LogMask.Development | EasyBugReporter.LogMask.Log));
+            src.Add(new LogContext(EasyBugReporter.LogTypeMask.Development | EasyBugReporter.LogTypeMask.Log));
             src.Add(new UnityContext());
             src.Add(new SystemInfoContext());
             BugReporter.DefaultSources = src;

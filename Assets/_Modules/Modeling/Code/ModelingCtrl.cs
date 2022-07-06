@@ -593,6 +593,7 @@ namespace Aqua.Modeling {
         WaterChem_Stressed = 0x020,
         Parasite = 0x040,
         PopulationHistory = 0x080,
-        WaterChemHistory = 0x100
+        WaterChemHistory = 0x100,
+        StressRange = 0x200
     }
 }

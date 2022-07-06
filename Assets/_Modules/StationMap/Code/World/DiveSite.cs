@@ -20,8 +20,8 @@ namespace Aqua.StationMap
         [SerializeField] private bool m_HideIfLocked = false;
 
         [Header("Components")]
-        [SerializeField, Required] private ColorGroup m_RenderGroup = null;
         [SerializeField, Required] private Collider2D m_Collider = null;
+        [SerializeField, Required] private Collider2D m_DistantCollider = null;
 
         #endregion // Inspector
 
@@ -46,7 +46,7 @@ namespace Aqua.StationMap
                 {
                     m_Collider.enabled = false;
                     m_Highlighted = false;
-                    m_RenderGroup.Visible = false;
+                    // m_RenderGroup.Visible = false;
                 }
 
                 return;
@@ -55,12 +55,12 @@ namespace Aqua.StationMap
             if (inCurrentJob != null && inCurrentJob.DiveSiteIds().Contains(m_MapId))
             {
                 m_Highlighted = true;
-                m_RenderGroup.SetAlpha(1);
+                // m_RenderGroup.SetAlpha(1);
             }
             else
             {
                 m_Highlighted = false;
-                m_RenderGroup.SetAlpha(0.25f);
+                // m_RenderGroup.SetAlpha(0.25f);
             }
 
             WorldUtils.ListenForPlayer(m_Collider, OnPlayerEnter, null);
@@ -76,14 +76,29 @@ namespace Aqua.StationMap
             }
         }
 
+        private void OnPlayerEnterDistant(Collider2D other)
+        {
+
+        }
+
+        private void OnPlayerExitDistant(Collider2D other)
+        {
+
+        }
+
         static private IEnumerator Dive(SceneInteractable inspectable, PlayerBody player, ScriptThreadHandle thread) {
             player.Kinematics.State.Velocity *= 0.4f;
             player.Kinematics.Config.Drag *= 4;
             yield return thread.Wait();
+            if (Script.PopCancel()) {
+                player.Kinematics.Config.Drag /= 4;
+                yield break;
+            }
+            
             Services.Events.Dispatch(Event_Dive);
             Services.UI.ShowLetterbox();
             Services.Events.Dispatch(GameEvents.BeginDive, Assets.Map(inspectable.TargetMapId()).name);
-            yield return 2;
+            yield return 6;
             Services.UI.HideLetterbox();
         }
     }

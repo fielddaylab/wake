@@ -51,9 +51,6 @@ namespace ProtoAqua.ExperimentV2 {
             var downParticleTrigger = m_SplashDownParticles.trigger;
             downParticleTrigger.SetCollider(0, inTank.WaterCollider3D);
 
-            var uwParticleTrigger = m_UnderwaterParticles.trigger;
-            uwParticleTrigger.SetCollider(0, inTank.WaterCollider3D);
-
             var fillImpactParticleTrigger = m_FillImpactParticles.trigger;
             fillImpactParticleTrigger.SetCollider(0, inTank.WaterCollider3D);
         }
@@ -166,6 +163,8 @@ namespace ProtoAqua.ExperimentV2 {
 
             pourAudio.Stop(0.1f);
 
+            inTank.WaterRippleRenderer.enabled = true;
+
             while (m_FillParticles.particleCount > 0) {
                 yield return null;
             }
@@ -179,6 +178,9 @@ namespace ProtoAqua.ExperimentV2 {
             float fillAmount = 0.5f * Routine.DeltaTime;
             float newHeightProportion = Math.Min(inTank.WaterFillProportion + fillAmount, 1);
             SetWaterHeightImpl(inTank, newHeightProportion, false);
+
+            m_UnderwaterParticles.transform.SetPosition(inTank.transform.position.x, Axis.X, Space.World);
+            m_UnderwaterParticles.gameObject.SetActive(true);
         }
 
         #endregion // Fill
@@ -248,8 +250,12 @@ namespace ProtoAqua.ExperimentV2 {
                 inTank.WaterAudioLoop.Stop();
             }
 
-            inTank.WaterRenderer.SetPosition(newCenter, Axis.Y, Space.Self);
-            inTank.WaterRenderer.SetScale(newHeight, Axis.Y);
+            // match the water level with the water collider
+            Vector3 matchedPos = inTank.WaterTransform3D.position + inTank.WaterCollider3D.center * inTank.WaterTransform3D.localScale.y;
+            float matchedScale = collider3dSize.y * inTank.WaterTransform3D.localScale.y;
+
+            inTank.WaterRenderer.SetPosition(matchedPos, Axis.Y);
+            inTank.WaterRenderer.SetScale(matchedScale, Axis.Y);
 
             if (inKillAnimation) {
                 inTank.WaterTransition.Stop();
@@ -270,9 +276,12 @@ namespace ProtoAqua.ExperimentV2 {
                 inTank.CurrentState |= TankState.Draining;
                 inTank.WaterDrainParticles.Play();
                 m_RippleParticles.Clear();
+                inTank.WaterRippleRenderer.enabled = false;
+                m_UnderwaterParticles.gameObject.SetActive(false);
                 yield return Tween.Float(inTank.WaterFillProportion, 0, (f) => SetWaterHeightImpl(inTank, f, false), inDuration * inTank.WaterFillProportion)
                     .OnUpdate((f) => audio.SetPitch(Mathf.Lerp(MaxWaterPitch, 1, WaterPitchCurve.Evaluate(f))));
                 inTank.CurrentState &= ~TankState.Draining;
+
                 inTank.WaterDrainParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             } finally {
                 inTank.WaterDrainParticles.Stop();

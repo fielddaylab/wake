@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Aqua.Debugging;
 using BeauUtil;
 using BeauUtil.Debugger;
@@ -54,6 +55,7 @@ namespace Aqua
         /// <summary>
         /// Returns the KinematicObject2D for the given Rigidbody2D
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public KinematicObject2D Lookup(Rigidbody2D inBody)
         {
             KinematicObject2D kinematic;
@@ -95,7 +97,7 @@ namespace Aqua
                 for(int i = 0; i < contactCount; i++)
                 {
                     ref PhysicsContact contact = ref m_Contacts[i];
-                    contact.Object.Contacts.PushBack(contact);
+                    contact.Object.Object.Contacts.PushBack(contact);
                 }
             }
 
@@ -375,6 +377,7 @@ namespace Aqua
         /// <summary>
         /// Smoothly deflects a vector off of a normal.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static public Vector2 SmoothDeflect(Vector2 inDirection, Vector2 inNormal, float inBounce = 0)
         {
             AdjustVelocity(ref inDirection, inNormal, inBounce);
@@ -384,6 +387,7 @@ namespace Aqua
         /// <summary>
         /// Smooths velocity additions.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static public Vector2 SmoothVelocity(Vector2 inDirection)
         {
             if (inDirection.x > -DefaultContactOffset && inDirection.x < DefaultContactOffset)
@@ -395,8 +399,22 @@ namespace Aqua
         }
 
         /// <summary>
+        /// Returns a unit offset for the given vector.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static public Vector2 UnitOffset(Vector2 inVector)
+        {
+            Vector2 vec = inVector.normalized;
+            float invMag = DefaultContactOffset / inVector.magnitude;
+            vec.x *= invMag;
+            vec.y *= invMag;
+            return vec;
+        }
+
+        /// <summary>
         /// Performs collision checks but does not update positions.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static public void PerformCollisionChecks()
         {
             Physics2D.Simulate(CollisionCheckTick);

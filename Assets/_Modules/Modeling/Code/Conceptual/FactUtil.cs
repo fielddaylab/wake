@@ -180,6 +180,11 @@ namespace Aqua.Modeling {
                     FindMissingRecord(missingRecords, BFType.Target(fact).Id()).FactTypes |= MissingFactTypes.PopulationHistory;
                     break;
                 }
+
+                case BFTypeId.State: {
+                    FindMissingRecord(missingRecords, BFType.Target(fact).Id()).FactTypes |= MissingFactTypes.StressRange;
+                    break;
+                }
             }
         }
 

@@ -32,6 +32,8 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
+        private bool m_RefreshQueued;
+
         private void Reset()
         {
             m_Colliders = GetComponents<BoxCollider2D>();
@@ -49,12 +51,17 @@ namespace Aqua
 
         private void OnValidate()
         {
-            UnityEditor.EditorApplication.delayCall += () => {
-                if (!this)
-                    return;
+            if (!m_RefreshQueued)
+            {
+                m_RefreshQueued = true;
+                UnityEditor.EditorApplication.delayCall += () => {
+                    if (!this)
+                        return;
 
-                RefreshColliders();
-            };
+                    m_RefreshQueued = false;
+                    RefreshColliders();
+                };
+            }
         }
 
         #endif // UNITY_EDITOR
