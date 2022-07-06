@@ -2,31 +2,62 @@
 
 // INTRO
 
-:: start
+:: diveSite
 @trigger    SceneStart
-@when       scene:name == "Helm"
+@when       scene:name == "RS-1C"
 @once
 @cutscene
-
 $branch common.ringPhone
 
-$set    player:seen.drJules = true
-{@drKelp}	Lovely! Thanks for the help.
-            Drive your sub over to {h}site C{/h} to get started. 
-{@player}	Ok, great! The sub, which is located...um... 
-{@kevin}	Right outside the door. 
-{@player}	Oh, yeah. I knew that. 
-            (Thanks, Kevin.)
+$call Hotbar->Activate()
+{@drKelp}  Before you head up to the surface, use your {item-name}Scanner{/item-name} to ID all the species down here.
+$call GiveUpgrade(ROVScanner, Silent)
+$call Player->SetTool(Scanner)
+{@drKelp}  The {item-name}Scanner{/item-name} searches for life forms automatically. 
+            Click the red targets to ID a new plant or animal species! 
+{@player}   I know Mom...
+{@drKelp}   If you need help, you can always ask Kevin for a reminder or a hint.
+{wait 0.5}
+
+{fade-out black.60, 0.5, wait}
+{@}
+{style center}
+
+$call hotbar.guide->ForceOnTop()
+$call FocusHighlight->Focus(hotbar.guide)
+    Talk to Kevin by clicking the {h}button with the jellyfish{/h} up here.
+    They can help if you get stuck!
+$call hotbar.guide->ResetSorting()
+$call FocusHighlight->Clear()
 
 $call hotbar.portable->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.portable)
-{@drKelp}   One more tip! You can check your {item-name}AQOS Tablet{/item-name} to see all the info about your active job!
+    One more tip! You can check your {item-name}AQOS Tablet{/item-name} to see all the info about your active job!
 $call hotbar.portable->ResetSorting()
 $call FocusHighlight->Clear()
 
 $call UnlockSite("RS-1C")
 $call UnlockRoom("nav")
 $call UnlockRoom("exterior")
+
+{hide-dialog}{fade-in 0.5, wait}
+
+// :: start
+// @trigger    SceneStart
+// @when       scene:name == "Helm"
+// @once
+// @cutscene
+
+// $branch common.ringPhone
+
+// $set    player:seen.drJules = true
+// {@drKelp}	Lovely! Thanks for the help.
+//             Drive your sub over to {h}site C{/h} to get started. 
+// {@player}	Ok, great! The sub, which is located...um... 
+// {@kevin}	Right outside the door. 
+// {@player}	Oh, yeah. I knew that. 
+//             (Thanks, Kevin.)
+
 
 :: helpGoOutsideToSubShip
 @trigger    RequestPartnerHelp
@@ -62,23 +93,6 @@ $branch common.ringPhone
 {@kevin}	You need to find {h}site C{/h}, then dive. 
             Unless you'd rather just float here forever.  
 
-// IN DIVE SITE
-
-:: diveSite
-@trigger    SceneStart
-@when       scene:name == "RS-1C"
-@once
-@cutscene
-$branch common.ringPhone
-
-{@drKelp}  Welcome to the kelp forest! Beautiful, isn't it?
-{@player}   Totally beautiful. Not creepy at all. 
-{@drKelp}  Use your {item-name}Scanner{/item-name} to ID all the species down here.
-$call GiveUpgrade(ROVScanner, Silent)
-$call Player->SetTool(Scanner)
-{@drKelp}  The {item-name}Scanner{/item-name} searches for life forms automatically. 
-            Click the red targets to ID a new plant or animal species! 
-
 :: helpAtSiteC
 @trigger    RequestPartnerHelp
 @when       scene:name == "RS-1C", !jobs:kelp-welcome.got.scans
@@ -96,7 +110,7 @@ $set    jobs:kelp-welcome.got.scans = true
 $branch common.ringPhone
 
 {@drKelp}  Excellent work! Looks like you found everything you need for now.
-            Meet me back up at the surface!
+            Head up to the surface, to continue this job at the ship.
 
 :: helpAtSiteCCompleted
 @trigger    RequestPartnerHelp
@@ -232,8 +246,9 @@ $endif
 
 $branch common.ringPhone
 {@drKelp}  Excellent work, {player-name}! 
-            Head to your {map-name}Office{/map-name} and use your {h}Computer{/h} to send me your findings.
-            There we'll discuss your findings using argumentation with the facts you've collected.
+            Report back to the {m}research station{/m} at once, so we can discuss your findings.
+            // Head to your {map-name}Office{/map-name} and use your {h}Computer{/h} to send me your findings.
+            // There we'll discuss your findings using argumentation with the facts you've collected.
 
 $call   UnlockRoom("office")
 
@@ -246,7 +261,7 @@ $call   UnlockRoom("office")
 {@player} 	What now?
 {@kevin}	Let's report back to {nameof @drKelp}.
 $if global:nav.shipRoom != "office"
-	{@kevin}	We should head back to the {map-name}Office{/map-name}.
+	{@kevin}	We should head back to your Sub to return to the {map-name}research station{/map-name} where we got this job.
 $else
 	{@kevin}	Report your findings with the {h}Computer{/h} in front of you.
 $endif

@@ -122,7 +122,7 @@ namespace Aqua.Title
             else
             {
                 Services.Input.ResumeAll();
-                Services.Data.StartPlaying("RS-1C-Tutorial");
+                Services.Data.StartPlaying("RS-1C");
             }
         }
 

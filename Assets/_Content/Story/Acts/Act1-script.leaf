@@ -1,18 +1,27 @@
 # basePath   act1
 
+:: EarlyRestart
+@trigger    SceneStart
+@when       scene:name == "RS-1C"
+$if !JobStartedOrComplete(kelp-welcome)
+    $call AutoFactThing->Suppress()
+$endif
+
 :: Intro
 @trigger    SceneStart
-@when       scene:name == "RS-1C-Tutorial", player:currentStation == "KelpStation"
+@when       scene:name == "RS-1C"
 @once
 @boostScore 100
 @cutscene
 
+$call Hotbar->Deactivate()
+$call AutoFactThing->Suppress()
 {@player}   Isn't this nice {nameof @kevin}?
 {@kevin}    {nameof @player} You are unauthorized to be using this submarine without explicit approval from {nameof @drKelp}.
 {@player}   Relax, there is no way she's going to find out.
 {@kevin}    ...
 {@player}   Isn't that right, {nameof @kevin}?
-{@kevin}    Negative, I have alerted all personal at the {m}Kelp Station{/m} to the missing sub...
+{@kevin}    I'm sorry {nameof @player}, I have alerted all personal at the {m}Kelp Station{/m} to the missing sub...
 {@player}   What!?
 
 $branch common.ringPhone
@@ -28,35 +37,17 @@ $branch common.ringPhone
 $goto .tutorialMove
 
 // Intro tutorial
+
 :: tutorialMove
 @cutscene
 {fade-out black.60, 0.5, wait}
 {@}
 {style center}
-
-$call Player->ForceOnTop()
-$call FocusHighlight->Focus(Player)
+// $call Player->ForceOnTop()
+// $call FocusHighlight->Focus(Player)
     Use the {h}Mouse{/h} \ or \ the {h}[W][A][S][D]{/h} keys to move your Sub
-$call hotbar.guide->ResetSorting()
-$call FocusHighlight->Clear()
-
 {hide-dialog}{fade-in 0.5, wait}
 
-// :: tutorial
-// @cutscene
-// {fade-out black.60, 0.5, wait}
-
-// {@}
-// {style center}
-
-// $call hotbar.guide->ForceOnTop()
-// $call FocusHighlight->Focus(hotbar.guide)
-//     Talk to Kevin by clicking the {h}button with the jellyfish{/h} up here.
-//     They can help if you get stuck!
-// $call hotbar.guide->ResetSorting()
-// $call FocusHighlight->Clear()
-
-// {hide-dialog}{fade-in 0.5, wait}
 
 // On unlocking world map
 :: afterUnlockWorldMap
@@ -118,3 +109,56 @@ $call GiveEntity(BowheadWhale)
 {@profWhalen}	Oh! | Well... | let me see if I can find some jobs to put on the Job Board.
                 Fell free to give me a ring if you ever want to talk more about whales!
 
+// Intro
+
+:: momMadEnd
+@trigger    InspectObject
+@when       objectId == "Job", !JobStartedOrComplete(kelp-welcome)
+@boostScore 100
+@once
+@cutscene
+{@drKelp}   {nameof @player}! How many times have I told you not to play with the Sub!?
+{@player}   Mom,| I'm ready to handle more responsability around here! I've practicly been living here since I could walk.
+{@drKelp}   Hmmm...| You wanna help out? I might have a simple job you can help out with...
+{@player}   Really!?
+{@drKelp}   You think you're ready to handle more responsability? Complete this task for me and we'll see about giving you more to do around here. 
+{@player}   I won't let you down!
+{@drKelp}   {nameof @kevin}, make sure that {nameof @player} stays out of trouble, will you?
+{@kevin}    Updating prime directives to: "Make sure that {nameof @player} stays out of trouble".
+{@player}   Really? 
+{@drKelp}   You will find your research ship waiting for you on the surface.
+            Don't make me regret this {nameof @player}...
+$call InteriorOpenJobBoard()
+{wait 0.5}
+{@kevin}   This is your {map-name}Job Board{/map-name}.
+            Select the job on the left. 
+            Then accept it on the right!
+$set    kevin:knowsJobs = true
+
+:: LoopKelpWelcome
+@trigger    InspectObject
+@when       objectId == "Job", !JobStartedOrComplete(kelp-welcome)
+@cutscene
+{@drKelp}   You think you're ready to handle more responsability? Complete this task for me and we'll see about giving you more to do around here. 
+$call InteriorOpenJobBoard()
+
+:: momMad
+@trigger    InspectObject
+@when       objectId == "Shop", !JobStartedOrComplete(kelp-welcome)
+@cutscene
+@boostScore 100
+@once
+{@merchant} {nameof @player}!
+            Phew, you had me worried for a bit. How's the sub?
+{@player}   The Sub's fine Dad, I'm a good pilot.
+{@merchant} You better go talk to your Mom. She's pretty upset right now.
+{@player}   Can't you talk to her? 
+{@merchant} Sorry kiddo. You got yourself into this mess.
+{@player}   Ughh...
+
+:: momMad2
+@trigger    InspectObject
+@when       objectId == "Shop", !JobStartedOrComplete(kelp-welcome)
+@cutscene
+{@merchant} Sorry kiddo. You got yourself into this mess.
+            You better go talk to Mom.
