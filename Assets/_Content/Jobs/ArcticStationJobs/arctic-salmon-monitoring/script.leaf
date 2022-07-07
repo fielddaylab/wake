@@ -4,14 +4,14 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@kevin}   Well, not the most exciting job, but work is work.
+{@guide}   Well, not the most exciting job, but work is work.
 
 :: countsComplete
 @trigger	JobTaskCompleted
 @when		JobTaskTop(reportBack)
 @once
 @cutscene
-{@kevin}	 Time to verify that our counts match the researchers' records.
+{@guide}	 Time to verify that our counts match the researchers' records.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -20,14 +20,14 @@
 @when		JobTaskTop(countSalmon)
 @boostScore -5
 @cutscene
-{@kevin}	Turn on your population count mode when you are close to the salmon in the Frosted Sea.
+{@guide}	Turn on your population count mode when you are close to the salmon in the Frosted Sea.
 
 :: catchReportBack
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(reportBack)
 @boostScore -5
 @cutscene
-{@kevin}	Report back at the station.
+{@guide}	Report back at the station.
 
 // ARGUMENTATION
 

@@ -31,7 +31,7 @@ $endif
 @when       JobTaskActive(makeModel), scene:name == "Ship"
 @once
 @cutscene
-{@kevin}    Let's head to our ship's modeling room to compile our data into a report for {nameof @profHarper}.
+{@guide}    Let's head to our ship's modeling room to compile our data into a report for {nameof @profHarper}.
 $call UnlockRoom("modelingRoom")
 $call UnlockRoom("Modeling")
 
@@ -42,21 +42,21 @@ $call UnlockRoom("Modeling")
 @when 		JobTaskActive(visitSiteO)
 @boostScore -5
 @cutscene
-{@kevin}    Head to {h}site O{/h}, it's just South of us!
+{@guide}    Head to {h}site O{/h}, it's just South of us!
 
 :: catchGetScans
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(getScans)
 @boostScore -5
 @cutscene
-{@kevin}    Scan and count the species at {h}site O{/h}.
+{@guide}    Scan and count the species at {h}site O{/h}.
 
 :: catchGetCounts
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(getCounts)
 @boostScore -5
 @cutscene
-{@kevin}    Count the species at {h}site O{/h}.
+{@guide}    Count the species at {h}site O{/h}.
 
 :: catchMakeModel
 @trigger    RequestPartnerHelp
@@ -64,9 +64,9 @@ $call UnlockRoom("Modeling")
 @boostScore -5
 @cutscene
 $if IsPlayerOnShip()
-    {@kevin}    We need to head to the {map-name}Modeling Lab{/map-name} to construct a {nameof VisualModel}.
+    {@guide}    We need to head to the {map-name}Modeling Lab{/map-name} to construct a {nameof VisualModel}.
 $else
-    {@kevin}    Let's head back to our ship!
+    {@guide}    Let's head back to our ship!
 $endif
 
 :: catchReportback
@@ -74,7 +74,7 @@ $endif
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@kevin}    Report back to {nameof profHarper}.
+{@guide}    Report back to {nameof profHarper}.
 
 // ARGUMENTATION
 ::argue.intro

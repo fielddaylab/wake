@@ -1,12 +1,5 @@
 # basePath   act1
 
-:: EarlyRestart
-@trigger    SceneStart
-@when       scene:name == "RS-1C"
-$if !JobStartedOrComplete(kelp-welcome)
-    $call AutoFactThing->Suppress()
-$endif
-
 :: Intro
 @trigger    SceneStart
 @when       scene:name == "RS-1C"
@@ -15,13 +8,12 @@ $endif
 @cutscene
 
 $call Hotbar->Deactivate()
-$call AutoFactThing->Suppress()
-{@player}   Isn't this nice {nameof @kevin}?
-{@kevin}    {nameof @player} You are unauthorized to be using this submarine without explicit approval from {nameof @drKelp}.
+{@player}   Isn't this nice {nameof @guide}?
+{@guide}    {nameof @player} You are unauthorized to be using this submarine without explicit approval from {nameof @drKelp}.
 {@player}   Relax, there is no way she's going to find out.
-{@kevin}    ...
-{@player}   Isn't that right, {nameof @kevin}?
-{@kevin}    I'm sorry {nameof @player}, I have alerted all personal at the {m}Kelp Station{/m} to the missing sub...
+{@guide}    ...
+{@player}   Isn't that right, {nameof @guide}?
+{@guide}    I'm sorry {nameof @player}, I have alerted all personal at the {m}Kelp Station{/m} to the missing sub...
 {@player}   What!?
 
 $branch common.ringPhone
@@ -30,8 +22,8 @@ $branch common.ringPhone
 {@drKelp}   No buts. You are to return at once.
             That is an order!
 {hide-dialog}{wait 0.5}
-{@player}   Geez, thanks a lot {nameof @kevin}...
-{@kevin}    You are most welcome!
+{@player}   Geez, thanks a lot {nameof @guide}...
+{@guide}    You are most welcome!
 
 {hide-dialog}
 $goto .tutorialMove
@@ -57,7 +49,7 @@ $goto .tutorialMove
 @cutscene
 @boostScore 100
 
-{@kevin}    Hey, Kel gave us coordinates to some new stations!
+{@guide}    Hey, Kel gave us coordinates to some new stations!
             We could stay here and keep doing jobs for them...{wait 0.5} or we could check out the {map-name}Map{/map-name} and explore a new station!
 
 // Coral Station
@@ -105,7 +97,7 @@ $branch common.ringPhone
                 The first thing to know about Bowhead whales is...
                 [ Many| hours| later| .|.|.| ]
 $call GiveEntity(BowheadWhale)
-{@kevin}        Listen, I'm sure we'd love to hear more about Bowhead whales, but we were actually wondering if you had any work for us.
+{@guide}        Listen, I'm sure we'd love to hear more about Bowhead whales, but we were actually wondering if you had any work for us.
 {@profWhalen}	Oh! | Well... | let me see if I can find some jobs to put on the Job Board.
                 Fell free to give me a ring if you ever want to talk more about whales!
 
@@ -123,17 +115,18 @@ $call GiveEntity(BowheadWhale)
 {@player}   Really!?
 {@drKelp}   You think you're ready to handle more responsability? Complete this task for me and we'll see about giving you more to do around here. 
 {@player}   I won't let you down!
-{@drKelp}   {nameof @kevin}, make sure that {nameof @player} stays out of trouble, will you?
-{@kevin}    Updating prime directives to: "Make sure that {nameof @player} stays out of trouble".
+{@drKelp}   {nameof @guide}, make sure that {nameof @player} stays out of trouble, will you?
+{@guide}    Updating prime directives to: "Make sure that {nameof @player} stays out of trouble".
 {@player}   Really? 
 {@drKelp}   You will find your research ship waiting for you on the surface.
             Don't make me regret this {nameof @player}...
 $call InteriorOpenJobBoard()
+{hide-dialog}
 {wait 0.5}
-{@kevin}   This is your {map-name}Job Board{/map-name}.
+{@guide}   This is your {map-name}Job Board{/map-name}.
             Select the job on the left. 
             Then accept it on the right!
-$set    kevin:knowsJobs = true
+$set    guide:knowsJobs = true
 
 :: LoopKelpWelcome
 @trigger    InspectObject

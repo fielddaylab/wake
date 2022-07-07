@@ -2,43 +2,43 @@
 
 // HELM
 
-:: inside.helm.inspect.kevin.1
+:: inside.helm.inspect.guide.1
 @trigger    InspectObject
-@who        kevin
-@when       objectId == "helm.kevin"
+@who        guide
+@when       objectId == "helm.guide"
 @once
 @boostScore 10
 @cutscene
-{@kevin #happy}    I'm impressed. You're pretty good at pretending you know what you're doing. 
+{@guide #happy}    I'm impressed. You're pretty good at pretending you know what you're doing. 
 {@player}   Thanks. Um.... I think. 
 
-:: inside.helm.inspect.kevin.2
+:: inside.helm.inspect.guide.2
 @trigger    InspectObject
-@who        kevin
-@when       objectId == "helm.kevin"
+@who        guide
+@when       objectId == "helm.guide"
 @once
 @cutscene
 @boostScore 9
-{@kevin #narrow}    You know, it's kinda cramped up here. 
+{@guide #narrow}    You know, it's kinda cramped up here. 
                     {#tired}Maybe you could {wait 0.5}consider|{#happy} expanding this sometime?
 {@player}   Sure. We'll double your fee, and I'll get right on that.   
-{@kevin}    You know..... now that I'm thinking about it, this isn't bad. It's actually pretty cozy. 
+{@guide}    You know..... now that I'm thinking about it, this isn't bad. It's actually pretty cozy. 
 
-:: inside.helm.inspect.kevin.3
+:: inside.helm.inspect.guide.3
 @trigger    InspectObject
-@who        kevin
-@when       objectId == "helm.kevin"
+@who        guide
+@when       objectId == "helm.guide"
 @cutscene
-{@player}   That's Kevin, chilling up in their bulb.
-{@kevin}    Yep, that's me!
+{@player}   That's V1ctor, chilling up in their bulb.
+{@guide}    Yep, that's me!
 
 :: inside.office.argue
 @trigger    RequestPartnerHelp
-@who        kevin
-@when       global:nav.shipRoom == "office", kevin:seenShipOffice, player:currentJob
+@who        guide
+@when       global:nav.shipRoom == "office", guide:seenShipOffice, player:currentJob
 @chatter
-{@kevin}    Let's use the computer when we're ready to talk to the client.
-$set    kevin:seenShipOffice = true
+{@guide}    Let's use the computer when we're ready to talk to the client.
+$set    guide:seenShipOffice = true
 
 :: office.computer.interact
 @trigger    InspectObject

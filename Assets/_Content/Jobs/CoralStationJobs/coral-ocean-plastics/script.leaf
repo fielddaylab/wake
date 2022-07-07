@@ -25,21 +25,21 @@ $endif
 @when 		scene:name == "Helm", !jobs:coral-ocean-plastic.task.speciesReefEdge, JobTaskTop(scanReefEdge)
 @cutscene
 {@player}   Where should I go from here?
-{@kevin}	Let's head to Site V and scan the things that the Loggerhead Turtle might eat.
+{@guide}	Let's head to Site V and scan the things that the Loggerhead Turtle might eat.
 
 :: navigation
 @trigger    SceneStart
 @when       scene:name == "Station2"
 @once
 @cutscene
-{@kevin}	Let's head to Site V and scan the things that the Loggerhead Turtle might eat.
+{@guide}	Let's head to Site V and scan the things that the Loggerhead Turtle might eat.
 					
 :: helpGoToSiteV
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Station2", !jobs:coral-ocean-plastic.task.speciesReefEdge
 @cutscene
 {@player}   I think I'm lost?
-{@kevin}	Site V should be just East of the ship.
+{@guide}	Site V should be just East of the ship.
 
 :: diveSite
 @trigger    SceneStart
@@ -47,14 +47,14 @@ $endif
 @once
 @cutscene
 $set    	jobs:coral-turtle-population.seen.bottom = true
-{@kevin}   Let's look around for anything a Loggerhead Turtle might eat.
+{@guide}   Let's look around for anything a Loggerhead Turtle might eat.
 
 :: navigation.goBackUp
 @trigger    JobTasksUpdated
 @when       JobTaskCompleted(scanReefEdge)
 @once
 @cutscene
-{@kevin}   Seems like we've gotten everything we need from here. Let's head back up.
+{@guide}   Seems like we've gotten everything we need from here. Let's head back up.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -63,28 +63,28 @@ $set    	jobs:coral-turtle-population.seen.bottom = true
 @when 		JobTaskActive(scanReef)
 @boostScore -5
 @cutscene
-{@kevin}    Scan the Organisms at Site V.
+{@guide}    Scan the Organisms at Site V.
 
 :: catchWhatTurtlesEat
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(whatTurtlesEat)
 @boostScore -5
 @cutscene
-{@kevin}    Using the Observation Tank, figure out what Turtles eat.
+{@guide}    Using the Observation Tank, figure out what Turtles eat.
 
 :: catchMakeModel
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(makeModel)
 @boostScore -5
 @cutscene
-{@kevin}    Head to the Modeling Lab to make a Visual Model.
+{@guide}    Head to the Modeling Lab to make a Visual Model.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@kevin}    Talk to {nameof profCempaka} in the Office.
+{@guide}    Talk to {nameof profCempaka} in the Office.
 
 // ARGUMENTATION
 
@@ -155,7 +155,7 @@ $call ArgueComplete()
 {@profCempaka}  So if the turtles eat the plastic, then the other species will get thrown out of balance?
                 We need to get ahead of this plastic thing.
                 For the turtles!
-{@kevin}   ...
+{@guide}   ...
 {@profCempaka}  ...and the other critters too!
 
 $call CompleteJob()

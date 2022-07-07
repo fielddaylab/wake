@@ -4,7 +4,7 @@
 @trigger    JobStarted
 @cutscene
 
-{@kevin}	The Predictive Modeling tool should basically handle this for us.
+{@guide}	The Predictive Modeling tool should basically handle this for us.
 			Let's go to the {nameof Modeling}.
 
 :: helpGoToModeling
@@ -12,11 +12,11 @@
 @when 		JobTaskTop(createModel)
 @cutscene
 {@player}   Where should I go from here?
-{@kevin}	You purchased the predictive modeling tool just for this kind of job.
+{@guide}	You purchased the predictive modeling tool just for this kind of job.
 $if scene:name == "Modeling"
 
 $else
-	{@kevin}	Let's head to the {nameof Modeling}
+	{@guide}	Let's head to the {nameof Modeling}
 $endif
 
 // MODELING
@@ -26,13 +26,13 @@ $endif
 @when 		JobTaskTop(createModel), scene:name == "Modeling"
 @once
 @cutscene
-{@kevin}	OK, let's let the predictive modeling tool do its thing.
+{@guide}	OK, let's let the predictive modeling tool do its thing.
 
 :: modelComplete
 @trigger	SimulationSyncSuccess
 @once
 @cutscene
-{@kevin}	It appears you will be the bearer of bad news.
+{@guide}	It appears you will be the bearer of bad news.
 			Let's go bear it back to {nameof drKelp}.
 
 :: helpShareModel
@@ -40,7 +40,7 @@ $endif
 @when 		JobTaskTop(shareModel)
 @cutscene
 {@player}   What now?
-{@kevin}	Submit your predictive model to {nameof drKelp} as soon as you can in the {nameof Office}.
+{@guide}	Submit your predictive model to {nameof drKelp} as soon as you can in the {nameof Office}.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -49,14 +49,14 @@ $endif
 @when 		JobTaskActive(createModel)
 @boostScore -5
 @cutscene
-{@kevin}   	Create a Prediction Model at the Modeling Lab.
+{@guide}   	Create a Prediction Model at the Modeling Lab.
 
 :: catchShareModel
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(shareModel)
 @boostScore -5
 @cutscene
-{@kevin}	Show your model to {nameof drKelp}!
+{@guide}	Show your model to {nameof drKelp}!
 
 // ARGUMENTATION
 

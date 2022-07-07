@@ -23,7 +23,7 @@ $set jobs:kelp-energy-visual-model.saved = false
 @when 		scene:name == "Helm", JobTaskTop(foodweb)
 @cutscene
 {@player}   Any idea where I should go next?
-{@kevin}	Let's head to the {nameof Modeling} to model the food web.
+{@guide}	Let's head to the {nameof Modeling} to model the food web.
 
 // IN MODELING
 
@@ -32,13 +32,13 @@ $set jobs:kelp-energy-visual-model.saved = false
 @when 		scene:name == "Modeling", JobTaskTop(foodweb)
 @cutscene
 {@player}   Any idea what to do here?
-{@kevin}	When we make a food web, the first step is to import our facts into the model.
+{@guide}	When we make a food web, the first step is to import our facts into the model.
 
 :: ModelingSetup-Wrong
 @trigger	VisualModelStarted
 @when       modeling:ecosystemSelected != "WarmKelpForest", !HasFact(WarmKelpForest.Model.Conceptual)
 @cutscene
-{@kevin}	Ah, hang on, this isn't the right ecosystem.
+{@guide}	Ah, hang on, this isn't the right ecosystem.
             Head back to the {h}Ecosystem{/h} tab and select the {nameof WarmKelpForest}.
 
 :: generic.visual-model.opened
@@ -46,14 +46,14 @@ $set jobs:kelp-energy-visual-model.saved = false
 @when		scene:name == "Modeling"
 @once
 @cutscene
-{@kevin}	Start by clicking the {h}Import New Facts{/h} button to bring all the facts we know about this ecosystem into the model.
+{@guide}	Start by clicking the {h}Import New Facts{/h} button to bring all the facts we know about this ecosystem into the model.
 
 :: generic.visual-model.imported
 @trigger	VisualModelUpdated
 @when		scene:name == "Modeling"
 @once
 @cutscene
-{@kevin}	This is a visual model of all the species that exist at the site.
+{@guide}	This is a visual model of all the species that exist at the site.
             Arrows show any relationships you've discovered from experiments. Arrows showing eating relations point toward the thing doing the consuming.
 			If you are in a job, and the Visual Model meets all the requirements, you will be able to save the model.
 	
@@ -62,7 +62,7 @@ $set jobs:kelp-energy-visual-model.saved = false
 @when       JobTaskTop(reportBack)
 @once
 @cutscene
-{@kevin}    Looks like you've successfully created a visual model of the warm kelp forest!
+{@guide}    Looks like you've successfully created a visual model of the warm kelp forest!
             Let's bring it back to the {map-name}Office{/map-name}, where we can discuss it with {nameof drKelp}.
 $set jobs:kelp-energy-visual-model.saved = true
 
@@ -74,12 +74,12 @@ $set jobs:kelp-energy-visual-model.saved = true
 @boostScore 2
 @cutscene
 {@player} 	What should we do now?
-{@kevin}	We've modeled the relationships between {pluralnameof Urchin}, {pluralnameof GiantKelp}, and {pluralnameof SeaOtter}.
+{@guide}	We've modeled the relationships between {pluralnameof Urchin}, {pluralnameof GiantKelp}, and {pluralnameof SeaOtter}.
 			So let's report back to Kel.
 $if global:nav.shipRoom != "office"
-	{@kevin}	We should first head back to the {map-name}Office{/map-name}.
+	{@guide}	We should first head back to the {map-name}Office{/map-name}.
 $else
-	{@kevin}	Same as before, you can report your findings using the {h}Computer{/h}.
+	{@guide}	Same as before, you can report your findings using the {h}Computer{/h}.
 $endif
 
 // SUGGEST ARGUMENTATION
@@ -90,13 +90,13 @@ $endif
 @cutscene
 $if scene:name == "Argumentation"
     {@player}   What should I be doing again?
-    {@kevin}    Report your findings to {nameof @drKelp}.
+    {@guide}    Report your findings to {nameof @drKelp}.
 $elseif global:nav.shipRoom == "office"
     {@player}   What should we do now?
-    {@kevin}    Let's report our findings to {nameof @drKelp} using the {h}Computer{/h}.
+    {@guide}    Let's report our findings to {nameof @drKelp} using the {h}Computer{/h}.
 $else
     {@player} 	What should we do now?
-	{@kevin}	Well, we've completed the modeling, so let's report back to {nameof @drKelp}.
+	{@guide}	Well, we've completed the modeling, so let's report back to {nameof @drKelp}.
                 We should first head back to the {map-name}Office{/map-name}.
 $endif
 
@@ -107,14 +107,14 @@ $endif
 @when 		JobTaskActive(foodWeb)
 @boostScore -5
 @cutscene
-{@kevin}    Create a Visual Model of the Warm Kelp Forest.
+{@guide}    Create a Visual Model of the Warm Kelp Forest.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@kevin}    Talk to {nameof drKelp} in the Office.
+{@guide}    Talk to {nameof drKelp} in the Office.
 
 // ARGUMENTATION
 

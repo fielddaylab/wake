@@ -4,17 +4,17 @@
 @trigger    JobStarted
 @cutscene
 
-{@kevin}	Professor Cempaka sounds like they've got a real issue with the Lionfish. Let's help them out with this puzzle.
+{@guide}	Professor Cempaka sounds like they've got a real issue with the Lionfish. Let's help them out with this puzzle.
 $if HasEntity(Lionfish), HasEntity(BlueheadWrasse), HasEntity(BlueTang), HasEntity(StaghornCoral)
 	$if HasFact(Lionfish.Eats.BlueTang), HasFact(Lionfish.Eats.BlueheadWrasse)
-		{@kevin}	Looks like you already have everything needed, so we can go right to the {h}Office{/h}.
+		{@guide}	Looks like you already have everything needed, so we can go right to the {h}Office{/h}.
 	$else
-		{@kevin}	First we need to make sure we have all the pieces.
-		{@kevin}	Looks like you have all the species scanned, so we can go right to the {h}Observation Tank{/h}.
+		{@guide}	First we need to make sure we have all the pieces.
+		{@guide}	Looks like you have all the species scanned, so we can go right to the {h}Observation Tank{/h}.
 	$endif
 $else
-	{@kevin}	First we need to make sure we have all the pieces.
-	{@kevin}	Go down to Site S and scan everything you can find, especially the Lionfish.
+	{@guide}	First we need to make sure we have all the pieces.
+	{@guide}	Go down to Site S and scan everything you can find, especially the Lionfish.
 $endif
 
 
@@ -25,29 +25,29 @@ $endif
 @when		JobTaskTop(scanNew)
 @cutscene
 $if scene:name == "RS-2S"
-	{@kevin}	There are some key species you haven't found yet. Keep searching.
+	{@guide}	There are some key species you haven't found yet. Keep searching.
 $else
-	{@kevin}	Go to Site S and scan as many species there as you can.
+	{@guide}	Go to Site S and scan as many species there as you can.
 $endif
 
 :: enterSite
 @trigger    SceneStart
 @when       scene:name == "RS-2S", JobTaskTop(scanNew)
 @cutscene
-{@kevin}	No one is sure how the Lionfish interact with other species here, so you'd better scan everything you can find.
+{@guide}	No one is sure how the Lionfish interact with other species here, so you'd better scan everything you can find.
 
 :: scansComplete
 @trigger    JobTasksUpdated
 @when       scene:name = "RS-2S", JobTaskTop(observeInteractions)
 @cutscene
-{@kevin}	Okay, that should be enough to get an idea of how the Lionfish fits into the ecosystem. 
+{@guide}	Okay, that should be enough to get an idea of how the Lionfish fits into the ecosystem. 
 			Let's try to observe some interactions in the observation tank.
 
 :: helpReturnExperiment
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(observeInteractions), scene:name != "ExperimentV2"
 @cutscene
-{@kevin}	Get to the {map-name}Experiment Room{/map-name} and see how the {nameof Lionfish} interacts with other species you've found.
+{@guide}	Get to the {map-name}Experiment Room{/map-name} and see how the {nameof Lionfish} interacts with other species you've found.
 
 
 // EXPERIMENTATION
@@ -56,28 +56,28 @@ $endif
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(observeInteractions), scene:name == "ExperimentV2"
 @cutscene
-{@kevin}	Use the Observation Tank to see how the Lionfish interacts with other species you found.
+{@guide}	Use the Observation Tank to see how the Lionfish interacts with other species you found.
 
 :: beginExperiment
 @trigger	SceneStart
 @when		scene:name == "ExperimentV2", JobTaskTop(observeInteractions)
 @once
 @cutscene
-{@kevin}	As I said, no one knows how the Lionfish fits into the ecosystem of the reef, so you'd better observe the Lionfish with as many other species as you can.
+{@guide}	As I said, no one knows how the Lionfish fits into the ecosystem of the reef, so you'd better observe the Lionfish with as many other species as you can.
 			// Especially with the coral.
 			
 :: experimentComplete
 @trigger JobTasksUpdated
 @when	JobTaskTop(arguePredator)
 @cutscene
-{@kevin}	It doesn't seem like the Lionfish interact directly with the coral at all.
+{@guide}	It doesn't seem like the Lionfish interact directly with the coral at all.
 			We know enough to discuss this with {nameof profCempaka}, now. I'm sure they'll be relieved to get some answers.
 
 :: helpReportBack
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(arguePredator)
 @cutscene
-{@kevin}	Report back to Professor Cempaka.
+{@guide}	Report back to Professor Cempaka.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -86,21 +86,21 @@ $endif
 @when 		JobTaskActive(scanNew)
 @boostScore -5
 @cutscene
-{@kevin}    Head to Site S and scan any new species.
+{@guide}    Head to Site S and scan any new species.
 
 :: catchObserveInteractions
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(observeInteractions)
 @boostScore -5
 @cutscene
-{@kevin}    Throw some Lionfish in the Observation Tank with other Site S organisms and see what happens.
+{@guide}    Throw some Lionfish in the Observation Tank with other Site S organisms and see what happens.
 
 :: catchArguePredator
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(arguePredator)
 @boostScore -5
 @cutscene
-{@kevin}    Report back to {nameof profCempaka}.
+{@guide}    Report back to {nameof profCempaka}.
 
 // ARGUMENTATION
 

@@ -33,10 +33,12 @@ namespace Aqua.Character {
         [SerializeField] private bool m_AutoExecute = false;
 
         [Header("Display")]
-        [SerializeField] private Sprite m_IconOverride = null;
         [SerializeField] private TextId m_LabelOverride = null;
-        [SerializeField] private Transform m_PinLocationOverride = null;
+        [SerializeField] private TextId m_ActionLabelOverride = null;
         [SerializeField] private TextId m_LockMessageOverride = null;
+
+        [Header("Pin")]
+        [SerializeField] private Transform m_PinLocationOverride = null;
         [SerializeField] private bool m_PinToPlayer = false;
         [SerializeField] private TransformOffset m_LocationOffset = default;
 
@@ -71,15 +73,15 @@ namespace Aqua.Character {
             m_AutoExecute = newAuto;
         }
 
-        public Sprite Icon(Sprite defaultIcon) {
-            return m_IconOverride != null ? m_IconOverride : defaultIcon;
-        }
-
         public TextId Label(TextId defaultLabel) {
             return !m_LabelOverride.IsEmpty ? m_LabelOverride : defaultLabel;
         }
 
-        public TextId LockedLabel(TextId defaultLabel) {
+        public TextId ActionLabel(TextId defaultLabel) {
+            return !m_ActionLabelOverride.IsEmpty ? m_ActionLabelOverride : defaultLabel;
+        }
+
+        public TextId LockedActionLabel(TextId defaultLabel) {
             return !m_LockMessageOverride.IsEmpty ? m_LockMessageOverride : defaultLabel;
         }
 

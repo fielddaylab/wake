@@ -6,9 +6,9 @@
 @trigger    JobStarted
 @cutscene
 $if HasEntity(Methane),HasEntity(Methanogen)
-    {@kevin} I think we already have everything we need. You might want to look over AQOS again before we make any claims to {nameof profHarper}.
+    {@guide} I think we already have everything we need. You might want to look over AQOS again before we make any claims to {nameof profHarper}.
 $else
-    {@kevin} Let's just go down to {h}Site N{/h} and start scanning stuff, I guess.
+    {@guide} Let's just go down to {h}Site N{/h} and start scanning stuff, I guess.
 $endif
 
 :: atSiteN
@@ -16,15 +16,15 @@ $endif
 @when    scene:name == "RS-3N", JobTaskActive(methaneScan)
 @once
 @cutscene
-{@kevin} There must be something here that would indicate how this disaster happened. When you think you've found it, go talk to {nameof profHarper}.
+{@guide} There must be something here that would indicate how this disaster happened. When you think you've found it, go talk to {nameof profHarper}.
 
 :: methaneScanned
 @trigger JobTaskCompleted
 @when    JobTaskActive(reportBack)
 @once
 @cutscene
-{@kevin}    Looks like there was some different types of methane down here.
-{@kevin}    Let's not stay here longer than we need to, that stuff is explosive!
+{@guide}    Looks like there was some different types of methane down here.
+{@guide}    Let's not stay here longer than we need to, that stuff is explosive!
 
 // CATCH-ALL GUIDE TEXT
 :: catchGoToSiteN
@@ -32,7 +32,7 @@ $endif
 @when 		scene:name != "RS-3N", JobTaskActive(methaneScan)
 @boostScore -5
 @cutscene
-{@kevin}    Dive at {h}Site N{/h} and scan anything you think might have caused the wreckage.
+{@guide}    Dive at {h}Site N{/h} and scan anything you think might have caused the wreckage.
             We can get there by diving deep down into {h}Site O{/h}
             Hope you aren't scared of the dark!
 
@@ -41,21 +41,21 @@ $endif
 @when 		scene:name == "RS-3N", JobTaskActive(methaneScan)
 @boostScore -5
 @cutscene
-{@kevin}    Scan anything you think might have ruined the communications equipment.
+{@guide}    Scan anything you think might have ruined the communications equipment.
 
 :: catchAtSiteNTag
 @trigger    RequestPartnerHelp
 @when 		scene:name == "RS-3N", JobTaskActive(methaneTag)
 @boostScore -5
 @cutscene
-{@kevin}    Tag the types of methane you found to get their population information.
+{@guide}    Tag the types of methane you found to get their population information.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		
 @boostScore -10
 @cutscene
-{@kevin}    You're ready to talk it through with {nameof profHarper}, though you might want to review your AQOS first.
+{@guide}    You're ready to talk it through with {nameof profHarper}, though you might want to review your AQOS first.
 
 
 // ARGUMENTATION

@@ -5,11 +5,11 @@
 @trigger    JobStarted
 @cutscene
 
-{@kevin}    We need to figure out why Glass Sponges aren't found at Site Z.
+{@guide}    We need to figure out why Glass Sponges aren't found at Site Z.
 			Usually organisms are missing if they are too stressed to stick around, or something eats all of them.
 			Let's start by seeing if either of those are true in this case.
 $if !HasEntity(GlassSponge)
-	{@kevin}	But first, make sure to scan the Glass Sponge at Site X so we know what we're dealing with.
+	{@guide}	But first, make sure to scan the Glass Sponge at Site X so we know what we're dealing with.
 $endif
 
 :: scanSpongeComplete
@@ -17,7 +17,7 @@ $endif
 @when		JobTaskTop(scanAll)
 @once
 @cutscene
-{@kevin}	All right, you've got the Sponge. Now we'll need to scan any new species out in the Open Ocean, at Site Z.
+{@guide}	All right, you've got the Sponge. Now we'll need to scan any new species out in the Open Ocean, at Site Z.
 
 // PREDATOR THEORY
 
@@ -27,7 +27,7 @@ $endif
 @when		JobTaskTop(experimentPredatorZ)
 @once
 @cutscene
-{@kevin}	Okay, let's use the Observation Tank to see if any of the predators here at Site Z eat Glass Sponges.
+{@guide}	Okay, let's use the Observation Tank to see if any of the predators here at Site Z eat Glass Sponges.
 $set jobs:arctic-isolated-instance.stressTriggered = false
 
 :: experimentCompleteZ
@@ -35,30 +35,30 @@ $set jobs:arctic-isolated-instance.stressTriggered = false
 @when		tankType == "Observation", jobs:arctic-isolated-instance.checkedCrab, jobs:arctic-isolated-instance.checkedSeal, jobs:arctic-isolated-instance.checkedShark
 @once
 @cutscene
-{@kevin}	None of the obvious predators eat Glass Sponges, huh?
+{@guide}	None of the obvious predators eat Glass Sponges, huh?
 			That's weird. I know I've seen half-eaten Glass Sponges lying around. Something must be eating them.
 $if !JobTaskCompleted(determineStress)
-	{@kevin}	So that's one branch. What was the other possibility? That Site Z stressed the sponges, right?
+	{@guide}	So that's one branch. What was the other possibility? That Site Z stressed the sponges, right?
 				Let's see if testing that gives us a better perspective.
 $else
-	{@kevin}	Let's check in with Professor Whalen.
+	{@guide}	Let's check in with Professor Whalen.
 $endif
 // if player has not already tested for Pteraster eating Sponges
 //$if !HasFact(PterasterObscurus.Eats.GlassSponge)
 
 //$else
 	// player has already tested for Pteraster eating Sponges
-	//{@kevin}	Must be the {nameof PterasterObscurus} then.
+	//{@guide}	Must be the {nameof PterasterObscurus} then.
 	//$branch .predatorComplete
 //$endif
 
 	// if player still needs to find the Pteraster
 	//$if !JobTaskCompleted(findPredator)
-		//{@kevin}	Let's try scanning for predators at nearby sites.
+		//{@guide}	Let's try scanning for predators at nearby sites.
 					//The most likely next site would be the Ice Crevice floor, maybe we should check there.
 	//$else
 		// player has already found Pteraster, just needs to find eat rule
-		//{@kevin}	Next let's try dropping in possible predators from nearby sites, like Site X or Y.
+		//{@guide}	Next let's try dropping in possible predators from nearby sites, like Site X or Y.
 	//$endif
 
 
@@ -67,19 +67,19 @@ $endif
 @when		entryId == "PterasterObscurus", JobTaskTop(experimentPredatorAll)
 @once
 @cutscene
-{@kevin}	This could be it! Let's head back to the Observation Tank and check if it likes the taste of Glass Sponges.
+{@guide}	This could be it! Let's head back to the Observation Tank and check if it likes the taste of Glass Sponges.
 
 :: experimentCompleteAll
 @trigger	BestiaryFactAdded
 @when		factId == "PterasterObscurus.Eats.GlassSponge", JobTaskCompleted(experimentPredatorAll)
 @once
 @cutscene
-{@kevin}	Okay! We've finally found something that eats Glass Sponges.
+{@guide}	Okay! We've finally found something that eats Glass Sponges.
 $if HasFact(Y_IceCrevice.Population.PterasterObscurus)
-	{@kevin}	And we've already counted the population of Cushion Stars at Site Y.
+	{@guide}	And we've already counted the population of Cushion Stars at Site Y.
 	$branch .predatorComplete
 $else
-	{@kevin}	Let's get a count of the population so we have evidence there are Cushion Stars at Site Y.
+	{@guide}	Let's get a count of the population so we have evidence there are Cushion Stars at Site Y.
 $endif
 
 :: populationComplete
@@ -87,17 +87,17 @@ $endif
 @when		taskId == "countPopulations", scene:name == "RS-4Y"
 @once
 @cutscene
-{@kevin}	All right! I think that is everything we need to make the case that these {pluralnameof PterasterObscurus} are the reason we don't see {pluralnameof GlassSponge} in Site Z.
+{@guide}	All right! I think that is everything we need to make the case that these {pluralnameof PterasterObscurus} are the reason we don't see {pluralnameof GlassSponge} in Site Z.
 			{h}Site Y{/h} lies between {h}Site X{/h} and {h}Site Z{/h}, so when the {pluralnameof GlassSponge} try to move through, they all get gobbled up by the {pluralnameof PterasterObscurus}!
 $branch .predatorComplete
 
 
 :: predatorComplete
 $if !JobTaskCompleted(determineStress)
-	{@kevin}	So that's one branch. What was the other possibility? That Site Z stressed the sponges, right?
+	{@guide}	So that's one branch. What was the other possibility? That Site Z stressed the sponges, right?
 				Let's see if testing that gives us a better perspective.
 $else
-	{@kevin}	Let's go show {nameof profWhalen} what we've found.
+	{@guide}	Let's go show {nameof profWhalen} what we've found.
 $endif
 
 // STRESS THEORY
@@ -124,7 +124,7 @@ $branch .stressDeterminedFinal
 $branch .stressDeterminedFinal
 
 :: stressDeterminedFinal
-{@kevin}	Be sure to compare those stress results with the conditions at Site Z to see if they are relevant.
+{@guide}	Be sure to compare those stress results with the conditions at Site Z to see if they are relevant.
 			So now we've got our two theories. Should we see what {nameof profWhalen} thinks about them?
 $set jobs:arctic-isolated-instance.stressTriggered = true
 			
@@ -150,11 +150,11 @@ $branch .stressDeterminedFirst
 $branch .stressDeterminedFirst
 
 :: stressDeterminedFirst
-{@kevin}	Be sure to compare those stress results with the conditions at Site Z to see if they are relevant.
+{@guide}	Be sure to compare those stress results with the conditions at Site Z to see if they are relevant.
 //$if JobTaskCompleted(scanProbe)
-	{@kevin}	So that's one piece. What was the other piece? Something could be eating the sponges, right? Let's look into that next.
+	{@guide}	So that's one piece. What was the other piece? Something could be eating the sponges, right? Let's look into that next.
 //$else
-	//{@kevin}	At some point we'll need to scan Site Y's water chemistry probe.
+	//{@guide}	At some point we'll need to scan Site Y's water chemistry probe.
 //$endif
 $set jobs:arctic-isolated-instance.stressTriggered = true
 
@@ -163,7 +163,7 @@ $set jobs:arctic-isolated-instance.stressTriggered = true
 @when		factId == "Z_OpenOcean.Light", JobTaskTop(discussFindings)
 @once
 @cutscene
-{@kevin}	So now we've got our two theories. Should we see what {nameof profWhalen} thinks about them?
+{@guide}	So now we've got our two theories. Should we see what {nameof profWhalen} thinks about them?
 $set jobs:arctic-isolated-instance.stressTriggered = true
 
 :: stressScannedProbeFirst
@@ -171,8 +171,8 @@ $set jobs:arctic-isolated-instance.stressTriggered = true
 @when		factId == "Z_OpenOcean.Light", !JobTaskTop(discussFindings)
 @once
 @cutscene
-{@kevin}	Nice, we can compare this against the Glass Sponge stress levels.
-{@kevin}	So that's one piece. What was the other piece? Something could be eating the sponges, right? Let's look into that next.
+{@guide}	Nice, we can compare this against the Glass Sponge stress levels.
+{@guide}	So that's one piece. What was the other piece? Something could be eating the sponges, right? Let's look into that next.
 $set jobs:arctic-isolated-instance.stressTriggered = true
 
 
@@ -200,84 +200,84 @@ $endif
 @when		JobTaskTop(scanSponge)
 @boostScore -5
 @cutscene
-{@kevin}	Go to Site X and scan a {nameof GlassSponge}.
+{@guide}	Go to Site X and scan a {nameof GlassSponge}.
 
 :: catchScanAll
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(scanAll)
 @boostScore -5
 @cutscene
-{@kevin}	Go to Site Z and scan all the new species.
+{@guide}	Go to Site Z and scan all the new species.
 
 :: catchCheckCrab
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(checkCrab), !jobs:arctic-isolated-instance.checkedCrab
 @boostScore -5
 @cutscene
-{@kevin}	Check if any predators from Site Z eat Glass Sponges by placing them together in the Observation Tank.
+{@guide}	Check if any predators from Site Z eat Glass Sponges by placing them together in the Observation Tank.
 
 :: catchCheckSeal
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(checkSeal), !jobs:arctic-isolated-instance.checkedSeal
 @boostScore -5
 @cutscene
-{@kevin}	Check if any predators from Site Z eat Glass Sponges by placing them together in the Observation Tank.
+{@guide}	Check if any predators from Site Z eat Glass Sponges by placing them together in the Observation Tank.
 
 :: catchCheckShark
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(checkShark), !jobs:arctic-isolated-instance.checkedShark
 @boostScore -5
 @cutscene
-{@kevin}	Check if any predators from Site Z eat Glass Sponges by placing them together in the Observation Tank.
+{@guide}	Check if any predators from Site Z eat Glass Sponges by placing them together in the Observation Tank.
 
 :: catchChecksBeforeTaskUpdate
 @trigger	RequestPartnerHelp
 @when		!JobTaskCompleted(findPredator)
 @boostScore -6
 @cutscene
-{@kevin}	We can probably wrap up this experiment...
+{@guide}	We can probably wrap up this experiment...
 
 :: catchDiscussFindings
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(discussFindings)
 @boostScore -5
 @cutscene
-{@kevin}	Talk to Professor Whalen in the Office.
+{@guide}	Talk to Professor Whalen in the Office.
 
 :: catchFindPredator
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(findPredator)
 @boostScore -5
 @cutscene
-{@kevin}	Scan Sites X and Y for potential predators of Glass Sponges.
+{@guide}	Scan Sites X and Y for potential predators of Glass Sponges.
 
 :: catchExperimentPredatorAll
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(experimentPredatorAll)
 @boostScore -5
 @cutscene
-{@kevin}	Use the Observation tank to see if the {nameof PterasterObscurus} eats Glass Sponges.
+{@guide}	Use the Observation tank to see if the {nameof PterasterObscurus} eats Glass Sponges.
 
 :: catchCountPopulations
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(countPopulations)
 @boostScore -5
 @cutscene
-{@kevin}	Head back to Site Y and count how many {pluralnameof PterasterObscurus} there are.
+{@guide}	Head back to Site Y and count how many {pluralnameof PterasterObscurus} there are.
 
 :: catchDetermineStress
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(determineStress)
 @boostScore -5
 @cutscene
-{@kevin}	Find the Glass Sponge's stress levels using the Stress Tank.
+{@guide}	Find the Glass Sponge's stress levels using the Stress Tank.
 
 :: catchReportFinal
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(reportFinal)
 @boostScore -5
 @cutscene
-{@kevin}	Talk to Professor Whalen again in the Office.
+{@guide}	Talk to Professor Whalen again in the Office.
 
 
 // ARGUMENTATION

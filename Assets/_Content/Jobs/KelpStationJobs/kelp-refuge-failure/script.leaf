@@ -24,7 +24,7 @@ $branch common.ringPhone
 @when 		scene:name == "Helm", !jobs:kelp-refuge-failure.seen.bottom
 @cutscene
 {@player}   Where should I go from here?
-{@kevin}	Let's dive into the kelp refuge site and see what's happening.
+{@guide}	Let's dive into the kelp refuge site and see what's happening.
 
 :: diveSite
 @trigger    SceneStart
@@ -32,26 +32,26 @@ $branch common.ringPhone
 @once
 @cutscene
 $set    	jobs:coral-stressed.seen.bottom = true
-{@kevin}	Dr. Kelpurnia was right, there are very few Bull Kelp compared to Giant Kelp.
+{@guide}	Dr. Kelpurnia was right, there are very few Bull Kelp compared to Giant Kelp.
 			Let's see what the population history has been like since the refuge was created. We'll need to scan the population probe.
-{@kevin}   	Do you see it anywhere?
+{@guide}   	Do you see it anywhere?
 
 :: helpHistorical
 @trigger    RequestPartnerHelp
 @when 		JobTaskTop(histPop)
 @cutscene
 {@player}   Where should I go from here?
-{@kevin}	We'll need the historical population - check the population probe.
+{@guide}	We'll need the historical population - check the population probe.
 
 
 :: probeCollectionComplete
 @trigger	JobTaskCompleted
-@who		kevin
+@who		guide
 @when		HasFact(MixedKelp.PopulationHistory.BullKelp), HasFact(MixedKelp.PopulationHistory.GiantKelp), HasFact(MixedKelp.Light.History)
 @once
 @chatter
 
-{@kevin}	Measuring the reproduction rates of kelp is our next priority. Let's surface and get to the Experiment Room.
+{@guide}	Measuring the reproduction rates of kelp is our next priority. Let's surface and get to the Experiment Room.
 $set    	jobs:kelp-refuge-failure.collected.probe = true
 
 
@@ -62,14 +62,14 @@ $set    	jobs:kelp-refuge-failure.collected.probe = true
 @when 		scene:name != "ExperimentV2", jobs:kelp-refuge-failure.collected.probe == true, !JobTaskTop(newModel), !JobTaskTop(getPaid)
 @cutscene
 {@player}   Where should I go from here?
-{@kevin}	Let's head to the {h}Measurement Tank{/h} to measure Kelp reproduction rates.
+{@guide}	Let's head to the {h}Measurement Tank{/h} to measure Kelp reproduction rates.
 
 :: startExperiment
 @trigger	ExperimentTankViewed
 @when		tankType == "Measurement"
 @once
 @cutscene
-{@kevin}	We need the reproduction rates of kelp when stressed and unstressed.
+{@guide}	We need the reproduction rates of kelp when stressed and unstressed.
 			Reproduction rate means put in only one species and make sure it's fed and stabilized.
 			You will need to put the kelp in multiple ecosystems to obtain both stressed and unstressed rules. 
 
@@ -78,7 +78,7 @@ $set    	jobs:kelp-refuge-failure.collected.probe = true
 @when 		scene:name == "ExperimentV2", !JobTaskTop(newModel), !JobTaskTop(getPaid)
 @cutscene
 {@player} 	How should I do this again?
-{@kevin}	We need the reproduction rates of kelp when stressed and unstressed.
+{@guide}	We need the reproduction rates of kelp when stressed and unstressed.
 			You will need to put the kelp in multiple ecosystems to obtain both types of rules.
 			What sites do we know they are stressed in, and which do we know they're not stressed in?
 
@@ -87,13 +87,13 @@ $set    	jobs:kelp-refuge-failure.collected.probe = true
 @when 		JobTaskCompleted(growthRates), JobTaskCompleted(growthRatesBull)
 @once
 @cutscene
-{@kevin}	Nice work!
+{@guide}	Nice work!
 $if JobTaskCompleted(lightRatesGiant), JobTaskCompleted(lightRatesBull)
-	{@kevin}	And you already measured how {nameof GiantKelp} and {nameof BullKelp} consume light.
+	{@guide}	And you already measured how {nameof GiantKelp} and {nameof BullKelp} consume light.
 				Way to be proactive!
 	$goto .experimentsCompleted
 $else
-	{@kevin}	We will also need to measure how {nameof GiantKelp} and {nameof BullKelp} affect the light levels.
+	{@guide}	We will also need to measure how {nameof GiantKelp} and {nameof BullKelp} affect the light levels.
 				Add them to the Measurement Tank again separately, only this time turn off the Stabilizer Controls and turn the Auto Feeder on.
 $endif
 
@@ -102,11 +102,11 @@ $endif
 @when 		JobTaskTop(newModel)
 @once
 @cutscene
-{@kevin}	Fantastic! The {h}Measurement Tank{/h} gave us some new clues.
+{@guide}	Fantastic! The {h}Measurement Tank{/h} gave us some new clues.
 $goto .experimentsCompleted
 
 :: experimentsCompleted
-{@kevin}	Now we need to build a model that incorporates all of this data so we can be certain of what's causing {nameof BullKelp} to reproduce more slowly.
+{@guide}	Now we need to build a model that incorporates all of this data so we can be certain of what's causing {nameof BullKelp} to reproduce more slowly.
 			We should head to the Modeling room for that.
 
 // MODELING	
@@ -117,27 +117,27 @@ $goto .experimentsCompleted
 @when 		JobTaskTop(newModel)
 @cutscene
 {@player} 	What do we need to do now?
-{@kevin}	Now we need to build a model.
+{@guide}	Now we need to build a model.
 
 :: modelingStart
 @trigger    SceneStart
 @when 		JobTaskTop(newModel), scene:name == "Modeling"
 @once
 @cutscene
-{@kevin}	Let's input the data we've gathered and see if we can get a model that matches historical data.
+{@guide}	Let's input the data we've gathered and see if we can get a model that matches historical data.
 
 :: lightDeecreaseModelingComplete
 @trigger	SimulationSyncSuccess
 @once
 @cutscene
-{@kevin}	We've solved it! Let's tell Dr. Kelpurnia the good news.
+{@guide}	We've solved it! Let's tell Dr. Kelpurnia the good news.
 
 :: helpReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskTop(getPaid)
 @cutscene
 {@player} 	What do we need to do now?
-{@kevin}	The communications room is where we should go to share your findings.
+{@guide}	The communications room is where we should go to share your findings.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -146,56 +146,56 @@ $goto .experimentsCompleted
 @when 		JobTaskActive(visitSite)
 @boostScore -5
 @cutscene
-{@kevin}   	Head to Site D. We need to take a look around.
+{@guide}   	Head to Site D. We need to take a look around.
 
 :: catchHistPop
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(histPop)
 @boostScore -5
 @cutscene
-{@kevin}	There should be a population probe we can collect data from at Site D.
+{@guide}	There should be a population probe we can collect data from at Site D.
 
 :: catchGrowthRates
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(growthRates)
 @boostScore -5
 @cutscene
-{@kevin}    Place some {nameof GiantKelp} into the Measurement Tank using water from different ecosystems, then focus on the reproductive rates.
+{@guide}    Place some {nameof GiantKelp} into the Measurement Tank using water from different ecosystems, then focus on the reproductive rates.
 
 :: catchGrowthRatesBull
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(growthRatesBull)
 @boostScore -5
 @cutscene
-{@kevin}	Place some {nameof BullKelp} into the Measurement Tank using water from different ecosystems, then focus on the reproduction rates.
+{@guide}	Place some {nameof BullKelp} into the Measurement Tank using water from different ecosystems, then focus on the reproduction rates.
 
 :: catchLightRatesGiant
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(lightRatesGiant)
 @boostScore -5
 @cutscene
-{@kevin}	Place some {nameof GiantKelp} into the Measurement Tank using water from different ecosystems, then focus on how much light they consume.
+{@guide}	Place some {nameof GiantKelp} into the Measurement Tank using water from different ecosystems, then focus on how much light they consume.
 
 :: catchLightRatesBull
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(lightRatesBull)
 @boostScore -5
 @cutscene
-{@kevin}	Place some {nameof BullKelp} into the Measurement Tank using water from different ecosystems, then focus on how much light they consume.
+{@guide}	Place some {nameof BullKelp} into the Measurement Tank using water from different ecosystems, then focus on how much light they consume.
 
 :: catchNewModel
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(newModel)
 @boostScore -5
 @cutscene
-{@kevin}	Create a Sync Model of {nameof GiantKelp} and {nameof BullKelp} at the site.
+{@guide}	Create a Sync Model of {nameof GiantKelp} and {nameof BullKelp} at the site.
 
 :: catchGetPaid
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(getPaid)
 @boostScore -5
 @cutscene
-{@kevin}	Let's head back to the Office and tell Dr. Kelpurnia what we found.
+{@guide}	Let's head back to the Office and tell Dr. Kelpurnia what we found.
 
 // ARGUMENTATION
 

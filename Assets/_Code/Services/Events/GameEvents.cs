@@ -33,8 +33,8 @@ namespace Aqua
         static public readonly StringHash32 ScriptChoicePresented = "script:choice-presented"; // DialogRecord lastLine
         static public readonly StringHash32 ScriptFired = "script:fired"; // string nodeId
 
-        static public readonly StringHash32 KevinChatterStart = "kevin:chatter-start"; // no args
-        static public readonly StringHash32 KevinChatterEnd = "kevin:chatter-end"; // no args
+        static public readonly StringHash32 GuideChatterStart = "guide:chatter-start"; // no args
+        static public readonly StringHash32 GuideChatterEnd = "guide:chatter-end"; // no args
 
         static public readonly StringHash32 BestiaryUpdated = "bestiary:updated"; // BestiaryUpdateParams bestiaryParams
         static public readonly StringHash32 InventoryUpdated = "inventory:updated"; // StringHash32 itemId

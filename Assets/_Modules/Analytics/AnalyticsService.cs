@@ -263,7 +263,7 @@ namespace Aqua
 
         private void GuideHandler(ScriptThreadHandle inThread)
         {
-            if (inThread.TargetId() != GameConsts.Target_Kevin)
+            if (inThread.TargetId() != GameConsts.Target_V1ctor)
             {
                 return;
             }

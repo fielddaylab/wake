@@ -231,7 +231,7 @@ namespace Aqua
             m_VariableResolver.SetTable("jobs", inData.Script.JobsTable);
             m_VariableResolver.SetTable("world", inData.Script.PartnerTable);
             m_VariableResolver.SetTable("player", inData.Script.PlayerTable);
-            m_VariableResolver.SetTable("kevin", inData.Script.PartnerTable);
+            m_VariableResolver.SetTable("guide", inData.Script.PartnerTable);
         }
 
         #region Callbacks

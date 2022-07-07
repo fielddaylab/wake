@@ -5,4 +5,100 @@
 @trigger    JobStarted
 @cutscene
 
-{@kevin}    
+{@guide}    Time to discover the inner motivations of {nameof ArcticCod}.
+$set jobs:arctic-in-ice.triedScan = false
+
+:: tryScanAlgaeNew
+@trigger    ScannedNewObject
+@when       scanId == "tools.microscope.disabled", scene:name == "RS-4Y"
+@cutscene
+{@guide}    We may need to get a microscope before we can fully investigate this organism.
+$set jobs:arctic-in-ice.triedScan = true
+
+:: tryScanAlgae
+@trigger    ScannedObject
+@when       scanId == "tools.microscope.disabled", scene:name == "RS-4Y"
+@cutscene
+{@guide}    We may need to get a microscope before we can fully investigate this organism.
+$set jobs:arctic-in-ice.triedScan = true
+
+:: tryScanAlgaeNewMicroscope
+@trigger    ScannedNewObject
+@when       scanId == "tools.microscope", scene:name == "RS-4Y"
+@cutscene
+{@guide}    We should be able to use our microscope to scan this organism.
+$set jobs:arctic-in-ice.triedScan = true
+
+:: tryScanAlgaeMicroscope
+@trigger    ScannedObject
+@when       scanId == "tools.microscope", scene:name == "RS-4Y"
+@cutscene
+{@guide}    We should be able to use our microscope to scan this organism.
+$set jobs:arctic-in-ice.triedScan = true
+
+:: scannedAlgae
+@trigger    JobTasksUpdated
+@when       JobTaskTop(countAlgae)
+@once
+@cutscene
+{@guide}    You know the drill, it'll be good to count them too.
+
+:: countedAlgae
+@trigger    JobTasksUpdated
+@when       JobTaskTop(observeEat)
+@once
+@cutscene
+{@guide}    Let's place some Cod in the Observation Tank with this Ice Algae and see if there is any connection.
+
+:: observedEatRules
+@trigger    JobTasksUpdated
+@when       JobTaskTop(reportback)
+@once
+@cutscene
+{@guide}    The researchers will be glad to learn what we found. Well, maybe.
+
+:: helpScanWithoutMicroscope
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(scanAlgae), !HasUpgrade(Microscope), jobs:arctic-in-ice.triedScan
+@cutscene
+{@guide}    We'll need to pick up a microscope before we can make any headway on learning about the Cod.
+
+
+:: helpScanWithMicroscope
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(scanAlgae), HasUpgrade(Microscope), jobs:arctic-in-ice.triedScan
+@cutscene
+{@guide}    Now that you've got the microscope, let's take another look at that organism you couldn't scan.
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchScanAlgae
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(scanAlgae)
+@boostScore -5
+@cutscene
+{@guide}     Let's find the Ice Algae in the Frosted Sea.
+
+:: catchCountAlgae
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(countAlgae)
+@boostScore -5
+@cutscene
+{@guide}	 Don't forget to count the Ice Algae too. Make sure you're using your microscope.
+
+:: catchObserveEat
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(observeEat)
+@boostScore -5
+@cutscene
+{@guide}	 Head to the Observation Tank and stick some Arctic Cod and Ice Algae in there.
+
+:: catchReportBack
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(reportBack)
+@boostScore -5
+@cutscene
+{@guide}	 Nothing more for us to learn about the Cod, it's time to show the researchers what we found.
+
+// ARGUMENTATION
+

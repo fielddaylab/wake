@@ -14,7 +14,7 @@ namespace Aqua.Ship
     [RequireComponent(typeof(ScriptInspectable))]
     public sealed class PartnerInteractLink : ScriptComponent
     {
-        static public readonly TableKeyPair RequestCounter = TableKeyPair.Parse("kevin:help.requests");
+        static public readonly TableKeyPair RequestCounter = TableKeyPair.Parse("guide:help.requests");
 
         public ScriptInspectable Inspectable {
             get { return this.CacheComponent(ref m_Inspectable); }
@@ -35,7 +35,7 @@ namespace Aqua.Ship
 
         private void Interact() {
             Services.Data.AddVariable(RequestCounter, 1);
-            Services.Script.TriggerResponse(GameTriggers.RequestPartnerHelp, GameConsts.Target_Kevin);
+            Services.Script.TriggerResponse(GameTriggers.RequestPartnerHelp, GameConsts.Target_V1ctor);
         }
     }
 }
