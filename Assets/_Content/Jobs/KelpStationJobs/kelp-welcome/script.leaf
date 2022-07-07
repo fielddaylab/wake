@@ -7,7 +7,6 @@
 @when       scene:name == "RS-1C"
 @once
 @cutscene
-$call Hotbar->Activate()
 $branch common.ringPhone
 
 {@drKelp}  Before you head up to the surface, use your {item-name}Scanner{/item-name} to ID all the species down here.
@@ -23,6 +22,7 @@ $call Player->SetTool(Scanner)
 {@}
 {style center}
 
+$call hotbar.guide->Show()
 $call hotbar.guide->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.guide)
     Talk to Kevin by clicking the {h}button with the jellyfish{/h} up here.
@@ -30,6 +30,7 @@ $call FocusHighlight->Focus(hotbar.guide)
 $call hotbar.guide->ResetSorting()
 $call FocusHighlight->Clear()
 
+$call hotbar.portable->Show()
 $call hotbar.portable->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.portable)
     One more tip! You can check your {item-name}AQOS Tablet{/item-name} to see all the info about your active job!

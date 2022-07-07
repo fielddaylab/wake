@@ -7,7 +7,9 @@
 @boostScore 100
 @cutscene
 
-$call Hotbar->Deactivate()
+$call hotbar.guide->Hide()
+$call hotbar.portable->Hide()
+
 {@player}   Isn't this nice {nameof @guide}?
 {@guide}    {nameof @player} You are unauthorized to be using this submarine without explicit approval from {nameof @drKelp}.
 {@player}   Relax, there is no way she's going to find out.
@@ -35,8 +37,6 @@ $goto .tutorialMove
 {fade-out black.60, 0.5, wait}
 {@}
 {style center}
-// $call Player->ForceOnTop()
-// $call FocusHighlight->Focus(Player)
     Use the {h}Mouse{/h} \ or \ the {h}[W][A][S][D]{/h} keys to move your Sub
 {hide-dialog}{fade-in 0.5, wait}
 
