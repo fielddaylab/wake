@@ -1,14 +1,18 @@
 # basePath   act1
 
-:: Intro
+:: checkIntro
 @trigger    SceneStart
 @when       scene:name == "RS-1C"
-@once
+$if !JobStartedOrComplete(kelp-welcome)
+    $call hotbar.guide->Hide()
+    $call hotbar.portable->Hide()
+    $goto Intro
+$endif
+
+:: Intro
 @boostScore 100
 @cutscene
-
-$call hotbar.guide->Hide()
-$call hotbar.portable->Hide()
+@once
 
 {@player}   Isn't this nice {nameof @guide}?
 {@guide}    {nameof @player} You are unauthorized to be using this submarine without explicit approval from {nameof @drKelp}.
