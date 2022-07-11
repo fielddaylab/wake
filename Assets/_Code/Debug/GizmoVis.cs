@@ -39,5 +39,12 @@ namespace Aqua.Debugging {
                 }
             }
         }
+
+        static public void Frustum(Camera referenceCam, Vector3 center, Quaternion rotation, Color boxColor, Color outlineColor, float distance, float heightAtDistance, float alpha) {
+            Gizmos.color = boxColor.WithAlpha(0.4f * alpha);
+            Gizmos.matrix = Matrix4x4.Rotate(rotation);
+            float fov = 2.0f * Mathf.Atan(heightAtDistance * 0.5f / distance) * Mathf.Rad2Deg;
+            Gizmos.DrawFrustum(center, fov, referenceCam.farClipPlane, referenceCam.nearClipPlane, referenceCam.aspect);
+        }
     }
 }

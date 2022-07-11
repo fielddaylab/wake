@@ -114,10 +114,10 @@ $call GiveEntity(BowheadWhale)
 @once
 @cutscene
 {@drKelp}   {nameof @player}! How many times have I told you not to play with the Sub!?
-{@player}   Mom,| I'm ready to handle more responsability around here! I've practicly been living here since I could walk.
+{@player}   Mom,| I'm ready to handle more responsibility around here! I've practicals been living here since I could walk.
 {@drKelp}   Hmmm...| You wanna help out? I might have a simple job you can help out with...
 {@player}   Really!?
-{@drKelp}   You think you're ready to handle more responsability? Complete this task for me and we'll see about giving you more to do around here. 
+{@drKelp}   You think you're ready to handle more responsibility? Complete this task for me and we'll see about giving you more to do around here. 
 {@player}   I won't let you down!
 {@drKelp}   {nameof @guide}, make sure that {nameof @player} stays out of trouble, will you?
 {@guide}    Updating prime directives to: "Make sure that {nameof @player} stays out of trouble".
@@ -136,7 +136,7 @@ $set    guide:knowsJobs = true
 @trigger    InspectObject
 @when       objectId == "Job", !JobStartedOrComplete(kelp-welcome)
 @cutscene
-{@drKelp}   You think you're ready to handle more responsability? Complete this task for me and we'll see about giving you more to do around here. 
+{@drKelp}   You think you're ready to handle more responsibility? Complete this task for me and we'll see about giving you more to do around here. 
 $call InteriorOpenJobBoard()
 
 :: momMad

@@ -60,6 +60,7 @@ namespace Aqua.JobBoard
             m_Job = inJob;
             m_Status = inStatus;
             m_Group = PlayerJob.StatusToCategory(inStatus);
+            m_Toggle.SetIsOnWithoutNotify(false);
 
             m_NameLabel.SetText(inJob.NameId());
         }

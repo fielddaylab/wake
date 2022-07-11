@@ -4,85 +4,33 @@
 // player:shopFreeCount = 0
 // shop:hasDonated = false
 
-// entrance
-
-:: welcome
-@trigger    ShopReady
-@cutscene
-@once
-
-{@merchant} Oh, welcome! Haven't seen your face before!
-            {nameof @merchant} at your service!
-            Feel free to browse at your leisure!
-		    When you're done looking around, press the "X" button in the top left to leave.
-            
-// inspect shopkeeper
-
-// :: talk.flyingShip
-// @trigger    InspectObject
-// @when       objectId == "shopkeeper"
-// @cutscene
-// @boostScore 10
-// @once
-// 
-// {@guide}    So this is a flying shop?
-//             How'd you manage that?
-// {@merchant} I have my ways!
-// {@guide #confused}  ...That's not exactly an answer.
-
-:: talk.base.1
-@trigger    InspectObject
-@when       objectId == "shopkeeper"
-@cutscene
-@repeat 1
-
-{@merchant} See anything you like? Just give it a tap and I'll give you the details.
-
-:: talk.base.2
-@trigger    InspectObject
-@when       objectId == "shopkeeper"
-@cutscene
-@repeat 1
-
-{@merchant} Just let me know if there's anything that catches your eye.
-
-// :: talk.rare.1
-// @trigger    InspectObject
-// @when       objectId == "shopkeeper"
-// @when       Random(common)
-// @cutscene
-// @once
-// 
-// {@guide}    No, seriously, a |flying| shop??
-// {@merchant} Why not? Most of my customers roam the ocean. Staying put didn't make sense.
-
 // credit
 
-:: talk.credit.1
-@trigger    InspectObject
-@when       objectId == "shopkeeper"
-@when       shop:lastFailure, shop:lastFailureReason == "cash", !shop:hasDonated
-@cutscene
-@repeat     2
+// :: talk.credit.1
+// @trigger    InspectObject
+// @when       objectId == "Shop"
+// @when       shop:lastFailure, shop:lastFailureReason == "cash", !shop:hasDonated
+// @cutscene
+// @repeat     2
 
-{@guide}    Any chance we could just| have| the {nameof $shop:lastFailure} for free?
-$if player:shopFreeCoolDown <= 0, player:shopFreeCount < 4
-    $branch .generosity
-$elseif player:shopFreeCount >= 4
-    {@merchant} ...
-$else
-    {@merchant} Not| a| chance.
-$endif // 
+// {@guide}    Any chance we could just| have| the {nameof $shop:lastFailure} for free?
+// $if player:shopFreeCoolDown <= 0, player:shopFreeCount < 4
+//     $branch .generosity
+// $elseif player:shopFreeCount >= 4
+//     {@merchant} ...
+// $else
+//     {@merchant} Not| a| chance.
+// $endif // 
 
-:: talk.credit.2
-@trigger    InspectObject
-@when       objectId == "shopkeeper"
-@when       shop:lastFailure, shop:lastFailureReason == "exp"
-@cutscene
-@repeat     2
+// :: talk.credit.2
+// @trigger    InspectObject
+// @when       objectId == "Shop"
+// @when       shop:lastFailure, shop:lastFailureReason == "exp"
+// @cutscene
+// @repeat     2
 
-{@guide}    Could you just, uh... overlook the fact that we don't have enough {pluralnameof Exp}?
-{@merchant} And risk giving you a tool you can't handle yet?| No way.
+// {@guide}    Could you just, uh... overlook the fact that we don't have enough {pluralnameof Exp}?
+// {@merchant} And risk giving you a tool you can't handle yet?| No way.
 
 // purchase
 
@@ -422,51 +370,36 @@ $choice .purchaseAttempt.generic.refused; Just looking!
 
 // generosity
 
-:: generosity
+// :: generosity
 
-$set    local:donation = -50
-$set    local:donation * player:shopFreeCount
-$set    local:donation + 300
+// $set    local:donation = -50
+// $set    local:donation * player:shopFreeCount
+// $set    local:donation + 300
 
-$if player:shopFreeCount == 0
-    {@merchant} Not for free, but... ah, you look trustworthy enough.
-    $branch .giveCash
-        Here, take {cash}{$local:donation}{/cash}.
-        Just, uh, don't tell anyone. It'd be bad for business.
-$elseif player:shopFreeCount == 2
-    {@merchant} Ehhhh... okay. You're fairly loyal customers.
-    $branch .giveCash
-        Here's {cash}{$local:donation}{/cash}. Don't spend it anywhere else.
-$elseif player:shopFreeCount == 3
-    {@merchant} ...Okay. Sure. You're a recurring customer.
-    $branch .giveCash
-        Take this. It's {cash}{$local:donation}{/cash}. But please don't ask me again.
-$else
-    {@merchant} ...
-    $branch .giveCash
-        Here's {cash}{$local:donation}{/cash}.
-        Don't ever ask me again.
-$endif
+// $if player:shopFreeCount == 0
+//     {@merchant} Not for free, but... ah, you look trustworthy enough.
+//     $branch .giveCash
+//         Here, take {cash}{$local:donation}{/cash}.
+//         Just, uh, don't tell anyone. It'd be bad for business.
+// $elseif player:shopFreeCount == 2
+//     {@merchant} Ehhhh... okay. You're fairly loyal customers.
+//     $branch .giveCash
+//         Here's {cash}{$local:donation}{/cash}. Don't spend it anywhere else.
+// $elseif player:shopFreeCount == 3
+//     {@merchant} ...Okay. Sure. You're a recurring customer.
+//     $branch .giveCash
+//         Take this. It's {cash}{$local:donation}{/cash}. But please don't ask me again.
+// $else
+//     {@merchant} ...
+//     $branch .giveCash
+//         Here's {cash}{$local:donation}{/cash}.
+//         Don't ever ask me again.
+// $endif
 
-$set player:shopFreeCoolDown = 0
-$set player:shopFreeCount + 1
+// $set player:shopFreeCoolDown = 0
+// $set player:shopFreeCount + 1
 
-:: giveCash
-$call AudioOneShot(ShopPurchase)
-$call GiveItem(Cash, $local:donation)
-$set  shop:hasDonated = true
-
-// exit
-
-:: exit
-@trigger    ShopExit
-@cutscene
-
-{@merchant} Come again! You know where to find me!
-
-:: exit.purchasedSomething
-@trigger    ShopExit
-@when   shop:purchaseCount > 0
-@cutscene
-
-{@merchant} Thank you so much for your patronage!
+// :: giveCash
+// $call AudioOneShot(ShopPurchase)
+// $call GiveItem(Cash, $local:donation)
+// $set  shop:hasDonated = true

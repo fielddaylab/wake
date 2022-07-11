@@ -100,7 +100,7 @@ namespace Aqua
             DebugService.Log(LogMask.Input, "[InputService] Pushed priority {0} with context '{1}'", inPriority, inContext);
 
             m_PriorityStack.Add(new PriorityRecord(inPriority, inContext));
-            m_CurrentPriority = inPriority;
+            m_CurrentPriority = Math.Max(inPriority, m_CurrentPriority);
 
             BroadcastSystemUpdate();
         }
@@ -114,15 +114,9 @@ namespace Aqua
                     if (m_PriorityStack[i].Context == inContext)
                     {
                         m_PriorityStack.RemoveAt(i);
-                        if (i == m_PriorityStack.Count)
-                        {
-                            m_CurrentPriority = i > 0 ? m_PriorityStack[i - 1].Priority : DefaultPriority;
-                            DebugService.Log(LogMask.Input, "[InputService] Popped priority with context '{0}', new priority is {1} with context '{2}'", inContext, m_CurrentPriority, i == 0 ? "null" : m_PriorityStack[i - 1].Context);
-                        }
-                        else
-                        {
-                            DebugService.Log(LogMask.Input, "[InputService] Popped priority with context '{0}'", inContext);
-                        }
+                        int end = m_PriorityStack.Count - 1;
+                        m_CurrentPriority = end >= 0 ? m_PriorityStack[end].Priority : DefaultPriority;
+                        DebugService.Log(LogMask.Input, "[InputService] Popped priority with context '{0}', new priority is {1} with context '{2}'", inContext, m_CurrentPriority, end < 0 ? "null" : m_PriorityStack[end].Context);
 
                         BroadcastSystemUpdate();
                         return;

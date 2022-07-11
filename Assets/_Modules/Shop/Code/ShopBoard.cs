@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using Aqua;
+using Aqua.Cameras;
+using Aqua.Scripting;
 using BeauData;
 using BeauPools;
 using BeauRoutine;
@@ -11,29 +13,44 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Aqua.JobBoard {
+namespace Aqua.Shop {
     public class ShopBoard : BasePanel {
-        [Serializable] private class HeaderPool : SerializablePool<ListHeader> { }
-        [Serializable] private class ButtonPool : SerializablePool<JobButton> { }
+
+        #region Types
+
+        public enum ItemStatus {
+            Available,
+            Locked,
+            Purchased,
+            CantAfford
+        }
+
+        #endregion // Types
 
         #region Inspector
 
-        // [Header("Pools")]
-        // [SerializeField] private HeaderPool m_HeaderPool = null;
-        // [SerializeField] private ButtonPool m_ButtonPool = null;
+        [SerializeField] private CameraPose m_DefaultPose = null;
 
-        [Header("Groups")]
-        [SerializeField] private ToggleGroup m_JobToggle = null;
-        [SerializeField] private JobInfo m_Info = null;
+        [Header("Categories")]
+        [SerializeField] private ShopCategoryButton m_ExplorationCategory = null;
+        [SerializeField] private ShopCategoryButton m_ScienceCategory = null;
 
-        [Inline(InlineAttribute.DisplayType.HeaderLabel)]
-        [SerializeField] private JobButton.ButtonAppearanceConfig m_ButtonAppearance = default;
+        [Header("Left Column")]
+        [SerializeField] private LayoutGroup m_LeftColumnLayout = null;
+        [SerializeField] private LocText m_LeftColumnHeader = null;
+        [SerializeField] private ShopItemButton[] m_LeftColumnButtons = null;
 
-        // [Header("Not Selected")]
-        // [SerializeField] private LocText m_NotSelectedLabel = null;
-        // [SerializeField] private TextId m_NotSelectedHasJobsText = null;
-        // [SerializeField] private TextId m_NotSelectedLockedJobsText = null;
-        // [SerializeField] private TextId m_NotSelectedNoJobsText = null;
+        [Header("Right Column")]
+        [SerializeField] private LayoutGroup m_RightColumnLayout = null;
+        [SerializeField] private LocText m_RightColumnHeader = null;
+        [SerializeField] private ShopItemButton[] m_RightColumnButtons = null;
+
+        [Header("Button States")]
+        [SerializeField] private Color m_LockedOutlineColor = Color.white;
+        [SerializeField] private Color m_UnavailableOutlineColor = Color.white;
+        [SerializeField] private Color m_AvailableOutlineColor = Color.white;
+        [SerializeField] private Color m_SelectedOutlineColor = Color.white;
+        [SerializeField] private Color m_PurchasedOutlineColor = Color.white;
 
         [Header("Animation")]
         [SerializeField] private TweenSettings m_TweenOnAnim = new TweenSettings(0.2f);
@@ -43,21 +60,44 @@ namespace Aqua.JobBoard {
 
         #endregion
 
-        [NonSerialized] private JobButton m_SelectedJobButton = null;
-        [NonSerialized] private ListHeader[] m_GroupHeaderMap = new ListHeader[5];
-        [NonSerialized] private Dictionary<StringHash32, JobButton> m_JobButtonMap = new Dictionary<StringHash32, JobButton>(32);
-        [NonSerialized] private bool m_HasLockedJobs = false;
-        [NonSerialized] private bool m_HasAvailableJobs = false;
+        [NonSerialized] private InvItem m_SelectedItem;
 
         #region Unity Events
 
         protected override void Awake() {
             base.Awake();
 
-            Services.Events.Register(GameEvents.JobSwitched, RefreshButtons, this)
-                .Register(GameEvents.JobCompleted, RefreshButtons, this);
+            m_ExplorationCategory.Group.ForceActive(false);
+            m_ScienceCategory.Group.ForceActive(false);
 
-            // m_Info.OnActionClicked.AddListener(OnJobAction);
+            m_ExplorationCategory.Toggle.onValueChanged.AddListener((_) => UpdateCategory(m_ExplorationCategory));
+            m_ScienceCategory.Toggle.onValueChanged.AddListener((_) => UpdateCategory(m_ScienceCategory));
+
+            Services.Events.Register(GameEvents.InventoryUpdated, RefreshButtons, this);
+
+            foreach(var button in m_LeftColumnButtons) {
+                var cachedBtn = button;
+                cachedBtn.Button.onClick.AddListener(() => OnButtonClicked(cachedBtn));
+            }
+
+            foreach(var button in m_RightColumnButtons) {
+                var cachedBtn = button;
+                cachedBtn.Button.onClick.AddListener(() => OnButtonClicked(cachedBtn));
+            }
+        }
+
+        protected override void OnEnable() {
+            base.OnEnable();
+
+            if (!IsShowing()) {
+                return;
+            }
+
+            m_ExplorationCategory.Toggle.SetIsOnWithoutNotify(true);
+            Async.InvokeAsync(() => {
+                UpdateCategory(m_ExplorationCategory);
+                UpdateCategory(m_ScienceCategory);
+            });
         }
 
         private void OnDestroy() {
@@ -66,200 +106,179 @@ namespace Aqua.JobBoard {
 
         #endregion // Unity Events
 
-        #region Handlers
-
-        private void OnButtonSelected(JobButton inJobButton) {
-            // m_SelectedJobButton = inJobButton;
-            // m_Info.Populate(inJobButton.Job, inJobButton.Status);
-        }
-
-        private IEnumerator WaitToExit() {
-            using (Script.Letterbox()) {
-                yield return 0.5f;
-                while (Script.ShouldBlockIgnoreLetterbox()) {
-                    yield return null;
-                }
-                yield return Hide();
-            }
-        }
-
-        #endregion // Handlers
-
         #region Buttons
 
-        private void AllocateButtons() {
-            StringHash32 id;
-            JobButton button;
-            foreach (var job in JobUtils.VisibleJobs()) {
-                // id = job.JobId;
-                // if (!m_JobButtonMap.TryGetValue(id, out button)) {
-                //     // button = m_ButtonPool.Alloc();
-                //     button.Initialize(m_JobToggle, OnButtonSelected);
-                //     button.Populate(job.Job, JobStatusFlags.Hidden);
-                //     m_JobButtonMap[id] = button;
-                // }
+        private void OnButtonClicked(ShopItemButton button) {
+            button.Outline.Color = m_SelectedOutlineColor;
+            m_SelectedItem = button.CachedItem;
+            Routine.Start(this, ButtonClickRoutine(button));
+        }
+
+        private IEnumerator ButtonClickRoutine(ShopItemButton button) {
+            try {
+                using(var table = TempVarTable.Alloc()) {
+                    
+                    bool canAfford = button.CachedStatus == ItemStatus.Available;
+
+                    table.Set("itemId", button.CachedItem.Id());
+                    table.Set("canAfford", canAfford);
+                    table.Set("cashCost", button.CachedItem.CashCost());
+                    table.Set("expCost", button.CachedItem.RequiredExp());
+                    var thread = Services.Script.TriggerResponse(ShopConsts.Trigger_AttemptBuy, table);
+
+                    if (!canAfford) {
+                        Services.Events.Dispatch(ShopConsts.Event_InsufficientFunds, button.CachedItem.Id());
+                    }
+
+                    yield return thread.Wait();
+                }
+            } finally {
+                m_SelectedItem = null;
+                UpdateButtonState(button);
             }
+        }
+
+        #endregion // Buttons
+
+        #region Categories
+
+        private void UpdateCategory(ShopCategoryButton category) {
+            if (!IsShowing()) {
+                return;
+            }
+
+            if (!category.Toggle.isOn) {
+                category.Group.Deactivate();
+                return;
+            }
+
+            if (category.Group.Activate()) {
+                if (category.CameraPose) {
+                    Services.Camera.MoveToPose(category.CameraPose, 0.5f, Curve.Smooth, Cameras.CameraPoseProperties.All);
+                }
+
+                PopulateColumn(m_LeftColumnHeader, category.LeftHeader, m_LeftColumnButtons, category.LeftItems);
+                PopulateColumn(m_RightColumnHeader, category.RightHeader, m_RightColumnButtons, category.RightItems);
+            }
+
+            m_LeftColumnLayout.ForceRebuild();
+            m_RightColumnLayout.ForceRebuild();
+        }
+
+        private void PopulateColumn(LocText header, TextId headerId, ShopItemButton[] buttons, StringHash32[] itemIds) {
+            header.SetText(headerId);
+
+            ShopItemButton button;
+            InvItem item;
+            for(int i = 0; i < itemIds.Length; i++) {
+                item = Assets.Item(itemIds[i]);
+                button = buttons[i];
+                PopulateButton(button, item);
+            }
+
+            for(int i = itemIds.Length; i < buttons.Length; i++) {
+                button = buttons[i];
+                button.CachedItem = null;
+                button.gameObject.SetActive(false);
+            }
+        }
+
+        private void PopulateButton(ShopItemButton button, InvItem item) {
+            button.CachedItem = item;
+            button.Title.SetText(item.NameTextId());
+            button.Icon.sprite = item.Icon();
+            button.Cursor.TooltipId = item.NameTextId();
+
+            int cashCost = button.CachedItem.CashCost();
+            int expCost = button.CachedItem.RequiredExp();
+
+            button.CostDivider.SetActive(cashCost > 0 && expCost > 0);
+            button.CashIcon.SetActive(cashCost > 0);
+            button.CashCost.gameObject.SetActive(cashCost > 0);
+            button.CashCost.SetTextFromString(cashCost.ToStringLookup());
+            button.LevelRequirementObject.gameObject.SetActive(expCost > 0);
+            button.LevelRequirementObject.SetTextFromString(expCost.ToStringLookup());
+
+            button.gameObject.SetActive(false);
+            UpdateButtonState(button);
+            button.gameObject.SetActive(true);
+        }
+
+        private void UpdateButtonState(ShopItemButton button) {
+            ItemStatus status = GetStatus(button.CachedItem);
+            button.PurchasedRoot.SetActive(status == ItemStatus.Purchased);
+            button.UnavailableRoot.SetActive(status == ItemStatus.Locked);
+
+            bool interactable = status == ItemStatus.CantAfford || status == ItemStatus.Available;
+            button.Button.interactable = interactable;
+            button.CostRoot.SetActive(interactable);
+
+            bool selected = m_SelectedItem == button.CachedItem;
+            switch(status) {
+                case ItemStatus.CantAfford: {
+                    button.Outline.Color = selected ? m_SelectedOutlineColor : m_UnavailableOutlineColor;
+                    break;
+                }
+                case ItemStatus.Available: {
+                    button.Outline.Color = selected ? m_SelectedOutlineColor : m_AvailableOutlineColor;
+                    break;
+                }
+                case ItemStatus.Locked: {
+                    button.Outline.Color = m_LockedOutlineColor;
+                    break;
+                }
+                case ItemStatus.Purchased: {
+                    button.Outline.Color = m_PurchasedOutlineColor;
+                    break;
+                }
+            }
+
+            button.CachedStatus = status;
         }
 
         private void RefreshButtons() {
-            if (UpdateButtonStatuses()) {
-                OrderButtons();
-                // UpdateUnselectedLabel();
-
-                if (m_SelectedJobButton != null)
-                    m_Info.UpdateStatus(m_SelectedJobButton.Job, m_SelectedJobButton.Status);
-            }
-        }
-
-        private bool UpdateButtonStatuses() {
-            if (!IsShowing()) return false;
-
-            bool bUpdated = false;
-
-            var profileJobData = Save.Jobs;
-            PlayerJob job;
-            // foreach (var button in m_ButtonPool.ActiveObjects) {
-                // job = JobUtils.GetJobStatus(button.Job, Save.Current, true);
-                // bUpdated |= button.UpdateStatus(job.Status, m_ButtonAppearance);
-                // button.gameObject.SetActive(ShouldShowButton(job));
-            // }
-
-            return bUpdated;
-        }
-
-        private bool ShouldShowButton(PlayerJob job) {
-            if ((job.Status & JobStatusFlags.InProgress) != 0 && (job.Status & JobStatusFlags.Active) == 0) {
-                return job.Job.StationId() == Save.Map.CurrentStationId();
-            }
-
-            return (job.Status & JobStatusFlags.Completed) == 0;
-        }
-
-        private void OrderButtons() {
-            JobButton active = null;
-
-            m_HasLockedJobs = false;
-            m_HasAvailableJobs = false;
-
-            using (PooledList<JobButton> progress = PooledList<JobButton>.Create())
-            using (PooledList<JobButton> available = PooledList<JobButton>.Create())
-            using (PooledList<JobButton> locked = PooledList<JobButton>.Create()) {
-                // foreach (var button in m_ButtonPool.ActiveObjects) {
-                //     if (!button.gameObject.activeSelf)
-                //         continue;
-
-                //     switch (button.Group) {
-                //         case JobProgressCategory.Active:
-                //             active = button;
-                //             m_HasAvailableJobs = true;
-                //             break;
-
-                //         case JobProgressCategory.InProgress:
-                //             progress.Add(button);
-                //             m_HasAvailableJobs = true;
-                //             break;
-
-                //         case JobProgressCategory.Available:
-                //             available.Add(button);
-                //             m_HasAvailableJobs = true;
-                //             break;
-
-                //         case JobProgressCategory.Locked:
-                //             locked.Add(button);
-                //             m_HasLockedJobs = false;
-                //             break;
-                //     }
-                // }
-
-                int siblingIndex = 0;
-                OrderList(JobProgressCategory.Active, active, ref siblingIndex);
-                OrderList(JobProgressCategory.InProgress, progress, ref siblingIndex);
-                OrderList(JobProgressCategory.Available, available, ref siblingIndex);
-                OrderList(JobProgressCategory.Locked, locked, ref siblingIndex);
-            }
-        }
-
-        private void OrderList(JobProgressCategory inGroup, JobButton inButton, ref int ioSiblingIndex) {
-            if (inButton == null) {
-                FindHeader(inGroup, false)?.gameObject.SetActive(false);
-                return;
-            }
-
-            ListHeader header = FindHeader(inGroup, true);
-            header.gameObject.SetActive(true);
-            header.Transform.SetSiblingIndex(ioSiblingIndex++);
-
-            inButton.Transform.SetSiblingIndex(ioSiblingIndex++);
-        }
-
-        private void OrderList(JobProgressCategory inGroup, List<JobButton> inButtons, ref int ioSiblingIndex) {
-            if (inButtons.Count <= 0) {
-                FindHeader(inGroup, false)?.gameObject.SetActive(false);
-                return;
-            }
-
-            ListHeader header = FindHeader(inGroup, true);
-            header.gameObject.SetActive(true);
-            header.Transform.SetSiblingIndex(ioSiblingIndex++);
-
-            foreach (var button in inButtons) {
-                button.Transform.SetSiblingIndex(ioSiblingIndex++);
-            }
-        }
-
-        private ListHeader FindHeader(JobProgressCategory inGroup, bool inbCreate) {
-            ref ListHeader header = ref m_GroupHeaderMap[(int)inGroup];
-            if (header == null && inbCreate) {
-                // header = m_HeaderPool.Alloc();
-                switch (inGroup) {
-                    case JobProgressCategory.Active:
-                        header.SetText("ui.jobBoard.group.active");
-                        break;
-
-                    case JobProgressCategory.Completed:
-                        header.SetText("ui.jobBoard.group.completed");
-                        break;
-
-                    case JobProgressCategory.Available:
-                        header.SetText("ui.jobBoard.group.available");
-                        break;
-
-                    case JobProgressCategory.InProgress:
-                        header.SetText("ui.jobBoard.group.inProgress");
-                        break;
-
-                    case JobProgressCategory.Locked:
-                        header.SetText("ui.jobBoard.group.locked");
-                        break;
+            foreach(var button in m_LeftColumnButtons) {
+                if (button.isActiveAndEnabled) {
+                    UpdateButtonState(button);
                 }
             }
 
-            return header;
+            foreach(var button in m_RightColumnButtons) {
+                if (button.isActiveAndEnabled) {
+                    UpdateButtonState(button);
+                }
+            }
         }
 
-        // private void UpdateUnselectedLabel() {
-        //     if (m_HasAvailableJobs) {
-        //         m_NotSelectedLabel.SetText(m_NotSelectedHasJobsText);
-        //     } else if (m_HasLockedJobs) {
-        //         m_NotSelectedLabel.SetText(m_NotSelectedLockedJobsText);
-        //     } else {
-        //         m_NotSelectedLabel.SetText(m_NotSelectedNoJobsText);
-        //     }
-        // }
+        static private ItemStatus GetStatus(InvItem item) {
+            if (Save.Inventory.HasUpgrade(item.Id())) {
+                return ItemStatus.Purchased;
+            }
+            if (item.Prerequisite() != null && !Save.Inventory.HasUpgrade(item.Prerequisite().Id())) {
+                return ItemStatus.Locked;
+            }
+            if (Save.Cash < item.CashCost() || Save.Exp < item.RequiredExp()) {
+                return ItemStatus.CantAfford;
+            }
+            return ItemStatus.Available;
+        }
 
-        #endregion // Buttons
+        #endregion // Categories
 
         #region BasePanel
 
         protected override void OnShow(bool inbInstant) {
             base.OnShow(inbInstant);
 
-            AllocateButtons();
-            UpdateButtonStatuses();
-            OrderButtons();
-            // UpdateUnselectedLabel();
-
             // m_Info.Clear();
+        }
+
+        protected override void OnHide(bool inbInstant) {
+            base.OnHide(inbInstant);
+
+            if (!inbInstant) {
+                Services.Camera.MoveToPose(m_DefaultPose, 0.5f, Curve.Smooth, CameraPoseProperties.All);
+            }
         }
 
         protected override void OnHideComplete(bool _) {
@@ -267,9 +286,6 @@ namespace Aqua.JobBoard {
 
             // m_ButtonPool.Reset();
             // m_HeaderPool.Reset();
-            m_JobButtonMap.Clear();
-            m_JobToggle.SetAllTogglesOff(false);
-            Array.Clear(m_GroupHeaderMap, 0, m_GroupHeaderMap.Length);
         }
 
         protected override void InstantTransitionToHide() {
