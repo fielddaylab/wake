@@ -3,19 +3,20 @@
 :: checkIntro
 @trigger    SceneStart
 @when       scene:name == "RS-1C"
+@triggerPriority   High
 $if !JobStartedOrComplete(kelp-welcome)
     $call hotbar.guide->Hide()
     $call hotbar.portable->Hide()
-    $goto Intro
+    $goto .intro
 $endif
 
-:: Intro
+:: intro
 @boostScore 100
 @cutscene
 @once
 
 {@player}   Isn't this nice {nameof @guide}?
-{@guide}    {nameof @player} You are unauthorized to be using this submarine without explicit approval from {nameof @drKelp}.
+{@guide}    {nameof @player}, you are unauthorized to be using this submarine without explicit approval from {nameof @drKelp}.
 {@player}   Relax, there is no way she's going to find out.
 {@guide}    ...
 {@player}   Isn't that right, {nameof @guide}?
@@ -114,7 +115,7 @@ $call GiveEntity(BowheadWhale)
 @once
 @cutscene
 {@drKelp}   {nameof @player}! How many times have I told you not to play with the Sub!?
-{@player}   Mom,| I'm ready to handle more responsibility around here! I've practicals been living here since I could walk.
+{@player}   Mom,| I'm ready to handle more responsibility around here! I've practically been living here since I could walk.
 {@drKelp}   Hmmm...| You wanna help out? I might have a simple job you can help out with...
 {@player}   Really!?
 {@drKelp}   You think you're ready to handle more responsibility? Complete this task for me and we'll see about giving you more to do around here. 
@@ -147,7 +148,7 @@ $call InteriorOpenJobBoard()
 @once
 {@merchant} {nameof @player}!
             Phew, you had me worried for a bit. How's the sub?
-{@player}   The Sub's fine Dad, I'm a good pilot.
+{@player}   The Sub's fine, I'm a good pilot.
 {@merchant} You better go talk to your Mom. She's pretty upset right now.
 {@player}   Can't you talk to her? 
 {@merchant} Sorry kiddo. You got yourself into this mess.
