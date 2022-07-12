@@ -67,6 +67,7 @@ $call GiveUpgrade(ProbeHacker)
 :: probeScanned
 @trigger    JobTasksUpdated
 @when		HasFact(SargassumCoveredReef.PopulationHistory.Sargassum), !HasFact(SargassumCoveredReef.WaterChemHistory.Light)
+@cutscene
 {@guide} There should be another probe around here with the Light History. Let's scan that one, too.
 
 :: gotPopHistory
