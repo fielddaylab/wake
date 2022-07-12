@@ -4,8 +4,8 @@
 
 :: diveSite
 @trigger    SceneStart
-@triggerPriority   High
 @when       scene:name == "RS-1C"
+@triggerPriority   High
 @once
 @cutscene
 $branch common.ringPhone
@@ -16,7 +16,7 @@ $call Player->SetTool(Scanner)
 {@drKelp}  The {item-name}Scanner{/item-name} searches for life forms automatically. 
             Click the red targets to ID a new plant or animal species! 
 {@player}   I know Mom...
-{@drKelp}   If you need help, you can always ask Kevin for a reminder or a hint.
+{@drKelp}   If you need help, you can always ask {nameof @guide} for a reminder or a hint.
 {wait 0.5}
 
 {fade-out black.60, 0.5, wait}
@@ -26,7 +26,7 @@ $call Player->SetTool(Scanner)
 $call hotbar.guide->Show()
 $call hotbar.guide->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.guide)
-    Talk to Kevin by clicking the {h}button with the jellyfish{/h} up here.
+    Talk to {nameof @guide} by clicking the {h}button with the jellyfish{/h} up here.
     They can help if you get stuck!
 $call hotbar.guide->ResetSorting()
 $call FocusHighlight->Clear()
@@ -127,9 +127,17 @@ $branch common.ringPhone
 @when       scene:name == "KelpStation", jobs:kelp-welcome.got.scans
 @once
 @cutscene
-$branch common.ringPhone
 
+$branch common.ringPhone
 {@drKelp}  Head back to the ship for your next task!
+
+$call hotbar.guide->Show()
+$call hotbar.guide->ForceOnTop()
+$call FocusHighlight->Focus(hotbar.guide)
+    Talk to {nameof @guide} by clicking the {h}button with the jellyfish{/h} up here.
+    They can help if you get stuck!
+$call hotbar.guide->ResetSorting()
+$call FocusHighlight->Clear()
 
 :: navigation.return.incomplete
 @trigger    SceneStart
