@@ -29,5 +29,6 @@ namespace Aqua
 
             GetComponent<Canvas>().worldCamera = null;
         }
+
     }
 }

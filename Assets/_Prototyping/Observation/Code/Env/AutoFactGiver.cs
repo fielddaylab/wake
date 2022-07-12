@@ -5,15 +5,18 @@ using Aqua.Scripting;
 using Aqua;
 using System.Collections;
 using BeauRoutine;
+using Leaf.Runtime;
 
 namespace ProtoAqua.Observation
 {
-    public class AutoFactGiver : MonoBehaviour, ISceneLoadHandler {
+    public class AutoFactGiver : MonoBehaviour, ISceneLoadHandler, IScriptComponent {
         [FilterBestiaryId] public SerializedHash32[] EntityIds;
         [FactId] public SerializedHash32[] FactIds;
 
+        private Routine m_GiveRoutine;
+
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext) {
-            Routine.Start(this, GiveRoutine());
+            m_GiveRoutine = Routine.Start(this, GiveRoutine());
         }
 
         private IEnumerator GiveRoutine() {
@@ -40,5 +43,14 @@ namespace ProtoAqua.Observation
                 Script.PopupNewEntity(newEnvironment);
             }
         }
+
+        [LeafMember("Suppress")]
+        public void Suppress() {
+            m_GiveRoutine.Stop();
+        }
+
+        ScriptObject IScriptComponent.Parent { get { return null; } }    
+        void IScriptComponent.OnRegister(ScriptObject inObject) { }
+        void IScriptComponent.OnDeregister(ScriptObject inObject) { }
     }
 }

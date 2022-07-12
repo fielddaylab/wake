@@ -2,93 +2,93 @@
 
 :: behavior.newObservation.1
 @trigger    NewBehaviorObserved
-@who        kevin
+@who        guide
 @repeat 1
 @chatter
 $set temp:newObservationTimer = 0
-{@kevin}    Nice one! 
+{@guide}    Nice one! 
 
 :: behavior.newObservation.2
 @trigger    NewBehaviorObserved
-@who        kevin
+@who        guide
 @repeat 1
 @chatter
 $set temp:newObservationTimer = 0
-{@kevin}    Good catch.
+{@guide}    Good catch.
 
 :: behavior.idle.nothingLeft.1
 @trigger    ExperimentIdle
 @when       newFactsLeft == 0
-@who        kevin
+@who        guide
 @repeat 1
 @chatter
-{@kevin}    I think we might be done here?
+{@guide}    I think we might be done here?
 
 :: behavior.idle.nothingLeft.2
 @trigger    ExperimentIdle
 @when       newFactsLeft == 0
-@who        kevin
+@who        guide
 @repeat 1
 @chatter
-{@kevin}    I don't think there's anything left for us to observe.
+{@guide}    I don't think there's anything left for us to observe.
 
 :: behavior.idle.nothingLeft.missedSome.1
 @trigger    ExperimentIdle
 @when       newFactsLeft == 0, missedFacts > 0
-@who        kevin
+@who        guide
 @repeat 1
 @chatter
-{@kevin}    Well, we might have missed something... we should finish up and restart this experiment.
+{@guide}    Well, we might have missed something... we should finish up and restart this experiment.
 
 :: behavior.idle.nothingLeft.missedSome.2
 @trigger    ExperimentIdle
 @when       newFactsLeft == 0, missedFacts > 0
-@who        kevin
+@who        guide
 @repeat 1
 @chatter
-{@kevin}    I feel like we missed something... we should finish this up and restart the experiment.
+{@guide}    I feel like we missed something... we should finish this up and restart the experiment.
 
 :: behavior.idle.somethingLeft.noCircles.1
 @trigger    ExperimentIdle
 @when       newFactsLeft > 0, temp:behaviorCirclesSeen == 0
-@who        kevin
+@who        guide
 @repeat 1
 @chatter
-{@kevin}    Let's be patient, I think there might be something here to observe.
+{@guide}    Let's be patient, I think there might be something here to observe.
 
 :: behavior.idle.somethingLeft.noCircles.2
 @trigger    ExperimentIdle
 @when       newFactsLeft > 0
-@who        kevin
+@who        guide
 @repeat 1
 @chatter
-{@kevin}    I'm pretty sure there's something new here to observe...
+{@guide}    I'm pretty sure there's something new here to observe...
 
 :: behavior.idle.somethingLeft.1
 @trigger    ExperimentIdle
 @when       newFactsLeft > 0
-@who        kevin
+@who        guide
 @repeat 1
 @chatter
-{@kevin}    Let's wait for another opportunity to observe a behavior.
+{@guide}    Let's wait for another opportunity to observe a behavior.
 
 :: behavior.idle.somethingLeft.2
 @trigger    ExperimentIdle
 @when       newFactsLeft > 0
-@who        kevin
+@who        guide
 @repeat 1
 @chatter
-{@kevin}    We've already seen something - maybe there's something else to observe?
+{@guide}    We've already seen something - maybe there's something else to observe?
 
 // intro scripts
 
 :: generic.observation-tank.intro
 @trigger	ExperimentTankViewed
-@boostScore 1052 // arbitraryily high number
+@boostScore 1052 // arbitrarily high number
 @when		tankType == "Observation"
 @once
 @cutscene
-{@kevin}	This is the {h}{nameof ObservationTank}{/h}. 
+{@guide}	This is the {h}{nameof ObservationTank}{/h}. 
             Click the {h}Add Water{/h} button to fill the tank.
             Then you'll select an {h}Environment{/h}, click {h}Add Organisms{/h}, and select each organism you want to observe interacting.
 			Once you have things how you like it, click the {h}Run Experiment{/h} button.
@@ -96,23 +96,23 @@ $set temp:newObservationTimer = 0
 
 :: generic.stress-tank.intro
 @trigger	ExperimentTankViewed
-@boostScore 1051 // arbitraryily high number
+@boostScore 1051 // arbitrarily high number
 @when		tankType == "Stress"
 @once
 @cutscene
-{@kevin}	This is the {h}{nameof StressTank}{/h}.
-			Once you start an experiment, there will be dials on the bottom.
-			Turning the dials affects the tank conditions.
+{@guide}	This is the {h}{nameof StressTank}{/h}.
+			Once you start an experiment, there will be sliders on the bottom.
+			Moving the sliders affects the tank conditions.
 			They will auto adjust to make sure the organisms don't get hurt.
 
 :: generic.measurement-tank.intro
 @trigger	ExperimentTankViewed
-@boostScore 1050 // arbitraryily high number
+@boostScore 1050 // arbitrarily high number
 @when		tankType == "Measurement"
 @once
 @cutscene
-{@kevin}	This is the {h}{nameof MeasurementTank}{/h}.
-			We can use it to gather numberical facts that we'll need to run simulations in the Modeling Lab.
+{@guide}	This is the {h}{nameof MeasurementTank}{/h}.
+			We can use it to gather numerical facts that we'll need to run simulations in the Modeling Lab.
 			First you will select an {h}Environment{/h}.
 			Some environments will stress organisms, others will not. Don't be afraid to select ecosystems outside of your current job!
 			Then you will select the {h}Organisms{/h} you are trying to measure something about.
@@ -121,28 +121,33 @@ $set temp:newObservationTimer = 0
 $if JobInProgress(kelp-musselfest-solution)
 	$set jobs:kelp-mussel-fest-solution.inMeasurement = true
 $endif
-			
-:: generic.stabilizer.intro
-@trigger	ExperimentScreenViewed
-@boostScore 1049 // arbitraryily high number
-@when		screenId == "measurement.features", HasUpgrade(WaterStabilizer)
-@once
-@cutscene
-{@kevin}	You have {h}{nameof WaterStabilizer}{/h} now! That's cool.
-			When it's activated, {h}{nameof WaterStabilizer}{/h} will keep the tank conditions stable.
-			You can deactivate it if you want to see how an organism affects its environment.
-$if HasUpgrade(AutoFeeder), !jobs:experiment-responses.seen.auto-feeder-intro
-	{@kevin}	Also...
-	$goto .generic.auto-feeder.intro
-$endif
 
-:: generic.auto-feeder.intro
+:: generic.measurement-tank.request-intro
+@trigger	RequestPartnerHelp
+@boostScore -2
+@when		!jobs:generic.measurementCompleted, ExperimentViewed(2) // 2 = Measurement
+@cutscene
+{@guide}	This is the {h}{nameof MeasurementTank}{/h}.
+			We can use it to gather numerical facts that we'll need to run simulations in the Modeling Lab.
+			First you will select an {h}Environment{/h}.
+			Some environments will stress organisms, others will not. Don't be afraid to select ecosystems outside of your current job!
+			Then you will select the {h}Organisms{/h} you are trying to measure something about.
+			After that, you can set the {nameof WaterStabilizer} or the {nameof AutoFeeder} if you have them.
+
+:: generic.measurement-tank.track-complete
+@trigger	ExperimentFinished
+@boostScore -5
+@when		tankType == "Measurement"
+@cutscene
+$set jobs:generic.measurementCompleted = true
+			
+:: generic.features.intro
 @trigger	ExperimentScreenViewed
-@boostScore 1048 // arbitraryily high number
-@when		screenId == "measurement.features", HasUpgrade(AutoFeeder)
+@boostScore 1049 // arbitrarily high number
+@when		screenId == "measurement.features"//, HasUpgrade(WaterStabilizer)
 @once
 @cutscene
-{@kevin}	Now that you have the {nameof AutoFeeder}, you can control how organisms are fed.
-{@kevin}	With the {nameof AutoFeeder} on, organisms will leave each other alone.
-{@kevin}	Turn off the {nameof AutoFeeder} to find out the rate at which one organism eats another.
-$set	jobs:experiment-responses.seen.auto-feeder-intro = true
+{@guide}	Here is where you can modify tank features to measure different types of facts.
+			Deactivate the {h}{nameof WaterStabilizer}{/h} if you want to see how an organism affects its environment,
+			or turn off the {nameof AutoFeeder} if you want to measure eating rates.
+			Leaving both active will allow you to measure reproduction rates.

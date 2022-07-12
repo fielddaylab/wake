@@ -1,7 +1,7 @@
 # basePath experiment
 
 :: backToShip.tooltip
-Return to Ship Exterior
+Return to Helm Exterior
 
 :: env.none
 <color=yellow>No Environment Set</color>
@@ -65,6 +65,12 @@ Eating interactions can only occur if one of the organisms in the tank is living
 
 :: summary.eatNeedsObserveFirst
 Eating interactions must be observed in the {nameof ObservationTank} before they can be measured.
+
+:: summary.hadRemainingObservations
+New observations are more likely to occur if you're patient and wait for organisms to interact.
+
+:: summary.parasiteNeedsObserveFirst
+Parasitic interactions must be observed in the {nameof ObservationTank} before they can be measured.
 
 :: summary.noteHeader
 <b>Note:</b><margin-left=1.5em>
@@ -142,8 +148,8 @@ ERROR: Unable to isolate variable
 Isolated: Reproduction rates
 
 :: chemVar
-Isolated: Water Chemistry interactions
+Isolated: Environmental interactions
 
 :: eatVar
-Isolated: Eating rates
+Isolated: Eating/interaction rates
 

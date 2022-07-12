@@ -141,6 +141,36 @@ namespace ScriptableBake {
 
         #endregion // Assets
 
+        #region Manual Selection
+
+        /// <summary>
+        /// Bakes a list of objects.
+        /// </summary>
+        static public void Objects(IReadOnlyList<UnityEngine.Object> objects, BakeFlags flags = 0) {
+            IEnumerator iter = ObjectsAsync(objects, flags);
+            using (iter as IDisposable) {
+                while (iter.MoveNext()) ;
+            }
+        }
+
+        /// <summary>
+        /// Bakes a list of objects asynchronously.
+        /// Use this in a coroutine.
+        /// </summary>
+        static public IEnumerator ObjectsAsync(IReadOnlyList<UnityEngine.Object> objects, BakeFlags flags = 0) {
+            List<IBaked> bakeAssets = new List<IBaked>(objects.Count);
+            for (int i = 0; i < objects.Count; i++) {
+                IBaked baked = objects[i] as IBaked;
+                if (baked != null) {
+                    bakeAssets.Add(baked);
+                }
+            }
+
+            return Process(bakeAssets, "Objects", flags, null);
+        }
+
+        #endregion // Manual Selection
+
         #region Prefabs
 
         // static public IEnumerator PrefabsAsync(string[] directories, BakeFlags flags = 0) {
@@ -204,6 +234,135 @@ namespace ScriptableBake {
 
         #endregion // Hierarchy
 
+        #region Static Flags
+
+        #if UNITY_EDITOR
+
+        public delegate StaticEditorFlags ModifyStaticFlagsDelegate(StaticEditorFlags current);
+
+        /// <summary>
+        /// Resets the static editor flags for a given hierarchy.
+        /// </summary>
+        static public void ResetStaticFlags(GameObject go, bool recursive = false) {
+            GameObjectUtility.SetStaticEditorFlags(go, 0);
+            if (recursive) {
+                SetStaticFlagsRecursive(go, 0);
+            }
+        }
+
+        /// <summary>
+        /// Sets the static editor flags for a given hierarchy.
+        /// </summary>
+        static public void SetStaticFlags(GameObject go, StaticEditorFlags flags, bool recursive = false) {
+            GameObjectUtility.SetStaticEditorFlags(go, flags);
+            if (recursive) {
+                SetStaticFlagsRecursive(go, flags);
+            }
+        }
+
+        /// <summary>
+        /// Adds the static editor flags for a given hierarchy.
+        /// </summary>
+        static public void AddStaticFlags(GameObject go, StaticEditorFlags flags, bool recursive = false) {
+            GameObjectUtility.SetStaticEditorFlags(go, GameObjectUtility.GetStaticEditorFlags(go) | flags);
+            if (recursive) {
+                AddStaticFlagsRecursive(go, flags);
+            }
+        }
+
+        /// <summary>
+        /// Removes the static editor flags for a given hierarchy.
+        /// </summary>
+        static public void RemoveStaticFlags(GameObject go, StaticEditorFlags flags, bool recursive = false) {
+            GameObjectUtility.SetStaticEditorFlags(go, GameObjectUtility.GetStaticEditorFlags(go) & ~flags);
+            if (recursive) {
+                RemoveStaticFlagsRecursive(go, flags);
+            }
+        }
+
+        /// <summary>
+        /// Modifies the static editor flags for a given hierarchy.
+        /// </summary>
+        static public void ModifyStaticFlags(GameObject go, ModifyStaticFlagsDelegate modifier, bool recursive = false) {
+            GameObjectUtility.SetStaticEditorFlags(go, modifier(GameObjectUtility.GetStaticEditorFlags(go)));
+            if (recursive) {
+                ModifyStaticFlags(go, modifier);
+            }
+        }
+
+        static private void SetStaticFlagsRecursive(GameObject go, StaticEditorFlags flags) {
+            Transform transform = go.transform;
+            if (!Application.isPlaying) {
+                GameObject root = PrefabUtility.GetOutermostPrefabInstanceRoot(transform);
+                if (root != null)
+                    PrefabUtility.UnpackPrefabInstance(root, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+            }
+
+            GameObject child;
+            int childCount = transform.childCount;
+            for(int i = 0; i < childCount; i++) {
+                child = transform.GetChild(i).gameObject;
+                GameObjectUtility.SetStaticEditorFlags(child, flags);
+                SetStaticFlagsRecursive(child, flags);
+            }
+        }
+
+        static private void AddStaticFlagsRecursive(GameObject go, StaticEditorFlags flags) {
+            Transform transform = go.transform;
+            if (!Application.isPlaying) {
+                GameObject root = PrefabUtility.GetOutermostPrefabInstanceRoot(transform);
+                if (root != null)
+                    PrefabUtility.UnpackPrefabInstance(root, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+            }
+
+            GameObject child;
+            int childCount = transform.childCount;
+            for(int i = 0; i < childCount; i++) {
+                child = transform.GetChild(i).gameObject;
+                GameObjectUtility.SetStaticEditorFlags(child, GameObjectUtility.GetStaticEditorFlags(child) | flags);
+                AddStaticFlagsRecursive(child, flags);
+            }
+        }
+
+        static private void RemoveStaticFlagsRecursive(GameObject go, StaticEditorFlags flags) {
+            Transform transform = go.transform;
+            if (!Application.isPlaying) {
+                GameObject root = PrefabUtility.GetOutermostPrefabInstanceRoot(transform);
+                if (root != null)
+                    PrefabUtility.UnpackPrefabInstance(root, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+            }
+
+            GameObject child;
+            int childCount = transform.childCount;
+            for(int i = 0; i < childCount; i++) {
+                child = transform.GetChild(i).gameObject;
+                GameObjectUtility.SetStaticEditorFlags(child, GameObjectUtility.GetStaticEditorFlags(child) & ~flags);
+                RemoveStaticFlagsRecursive(child, flags);
+            }
+        }
+
+        static private void ModifyStaticFlagsRecursive(GameObject go, ModifyStaticFlagsDelegate modifier) {
+            Transform transform = go.transform;
+            if (!Application.isPlaying) {
+                GameObject root = PrefabUtility.GetOutermostPrefabInstanceRoot(transform);
+                if (root != null)
+                    PrefabUtility.UnpackPrefabInstance(root, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+            }
+
+            GameObject child;
+            int childCount = transform.childCount;
+            for(int i = 0; i < childCount; i++) {
+                child = transform.GetChild(i).gameObject;
+                GameObjectUtility.SetStaticEditorFlags(child, modifier(GameObjectUtility.GetStaticEditorFlags(child)));
+                ModifyStaticFlagsRecursive(child, modifier);
+            }
+        }
+
+
+        #endif // UNITY_EDITOR
+
+        #endregion // Static Flags
+
         /// <summary>
         /// Destroys an object.
         /// </summary>
@@ -257,6 +416,9 @@ namespace ScriptableBake {
                                 if (unityObj) {
                                     EditorUtility.SetDirty(unityObj);
                                     onModify?.Invoke(unityObj);
+                                    if (bVerbose) {
+                                        Debug.LogFormat("[Bake] baked changes to '{0}'", bakedObj.ToString());
+                                    }
                                 } else {
                                     baked.RemoveAt(i--);
                                 }

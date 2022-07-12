@@ -16,6 +16,9 @@ using BeauUtil.Tags;
 using BeauUtil.IO;
 using UnityEditor.SceneManagement;
 using BeauUtil.Debugger;
+using BeauData;
+using Aqua.Profile;
+using ScriptableBake;
 
 namespace Aqua.Editor
 {
@@ -126,6 +129,39 @@ namespace Aqua.Editor
             DBObject.RefreshCollection<WaterPropertyDesc, WaterPropertyDB>();
             DBObject.RefreshCollection<ScriptCharacterDef, ScriptCharacterDB>();
             DBObject.RefreshCollection<InvItem, InventoryDB>();
+        }
+
+        [MenuItem("Optimize/Bake Selection", false, 51)]
+        static private void BakeAllAssets()
+        {
+            using(Profiling.Time("bake assets"))
+            {
+                using(Log.DisableMsgStackTrace())
+                {
+                    Bake.Objects(Selection.objects, BakeFlags.Verbose | BakeFlags.ShowProgressBar);
+                }
+            }
+            using(Profiling.Time("post-bake save assets"))
+            {
+                AssetDatabase.SaveAssets();
+            }
+        }
+
+        static public void ConvertToBeauDataBinary<T>(TextAsset asset, bool rename) where T : ISerializedObject
+        {
+            T data = Serializer.Read<T>(asset);
+            string path = AssetDatabase.GetAssetPath(asset);
+            string outputPath = Path.ChangeExtension(path, ".bytes");
+            if (rename) {
+                string error = AssetDatabase.MoveAsset(path, outputPath);
+                if (!string.IsNullOrEmpty(error)) {
+                    Log.Error(error);
+                    return;
+                }
+            }
+            Serializer.WriteFile(data, outputPath, OutputOptions.None, Serializer.Format.Binary);
+            AssetDatabase.ImportAsset(outputPath);
+            Log.Msg("[PrefabTools] Compressed file '{0}' to '{1}'", path, outputPath);
         }
     }
 }

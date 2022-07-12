@@ -53,6 +53,10 @@ namespace Aqua.Modeling {
         }
 
         [SerializeField] private float m_ErrorScale = 2;
+        [Header("Accuracy Stars")]
+        [SerializeField, Range(1, 100)] private int m_AccuracyStars1 = 20;
+        [SerializeField, Range(1, 100)] private int m_AccuracyStars2 = 40;
+        [SerializeField, Range(1, 100)] private int m_AccuracyStars3 = 85;
         
         private Unsafe.ArenaHandle m_Allocator;
 
@@ -81,6 +85,7 @@ namespace Aqua.Modeling {
 
         private readonly HashSet<BestiaryDesc> m_RelevantCritters = new HashSet<BestiaryDesc>();
         private readonly HashSet<StringHash32> m_RelevantCritterIds = new HashSet<StringHash32>();
+        private readonly List<StringHash32> m_RelevantCritterIdsList = new List<StringHash32>();
         private WaterPropertyMask m_RelevantWaterProperties = default;
         private readonly HashSet<StringHash32> m_CrittersWithHistoricalData = new HashSet<StringHash32>();
         private WaterPropertyMask m_WaterPropertiesWithHistoricalData = default;
@@ -106,6 +111,12 @@ namespace Aqua.Modeling {
             ShouldGraphWaterProperty = (WaterPropertyId id) => {
                 return m_RelevantWaterProperties[id] && m_WaterPropertiesWithHistoricalData[id];
             };
+            IsOrganismRelevant = (StringHash32 id) => {
+                return m_RelevantCritterIds.Contains(id) || (Intervention.Target != null && Intervention.Target.Id() == id);
+            };
+            IsWaterPropertyRelevant = (WaterPropertyId id) => {
+                return m_RelevantWaterProperties[id];
+            };
         }
 
         private void Awake() {
@@ -122,11 +133,11 @@ namespace Aqua.Modeling {
             m_PlayerOutput = new ResultWrapper(m_Allocator, 2);
             m_PredictProfile = new SimProfile(m_Allocator);
 
-            Log.Msg("Simulation arena spare bytes = {0} / {1}", Unsafe.ArenaFreeBytes(m_Allocator), Unsafe.ArenaSize(m_Allocator));
+            Log.Msg("Simulation arena spare bytes = {0} / {1}", m_Allocator.FreeBytes(), m_Allocator.Size());
         }
 
         private void OnDestroy() {
-            Unsafe.TryFreeArena(ref m_Allocator);
+            Unsafe.TryDestroyArena(ref m_Allocator);
 
             m_HistoricalProfile.Dispose();
             m_PlayerProfile.Dispose();
@@ -158,6 +169,7 @@ namespace Aqua.Modeling {
 
             m_RelevantCritters.Clear();
             m_RelevantCritterIds.Clear();
+            m_RelevantCritterIdsList.Clear();
             m_RelevantWaterProperties.Mask = 0;
 
             bool bHasUpgrade = Save.Inventory.HasUpgrade(ItemIds.WaterModeling);
@@ -166,6 +178,7 @@ namespace Aqua.Modeling {
                 foreach(var organismId in m_ProgressInfo.Scope.OrganismIds) {
                     m_RelevantCritters.Add(Assets.Bestiary(organismId));
                     m_RelevantCritterIds.Add(organismId);
+                    m_RelevantCritterIdsList.Add(organismId);
                 }
                 if (m_ProgressInfo.Scope.IncludeWaterChemistryInAccuracy && bHasUpgrade) {
                     m_RelevantWaterProperties = GraphedPropertyMask;
@@ -175,6 +188,7 @@ namespace Aqua.Modeling {
                     if (organism.Category() == BestiaryDescCategory.Critter) {
                         m_RelevantCritters.Add(organism);
                         m_RelevantCritterIds.Add(organism.Id());
+                        m_RelevantCritterIdsList.Add(organism.Id());
                     }
                 }
                 if (bHasUpgrade) {
@@ -197,6 +211,18 @@ namespace Aqua.Modeling {
 
                 StringHash32 id = entity.Id();
                 BFPopulationHistory popHistory = BestiaryUtils.FindPopulationHistoryRule(m_State.Environment, id);
+                if (m_State.Conceptual.GraphedFacts.Contains(popHistory)) {
+                    m_CrittersWithHistoricalData.Add(id);
+                }
+            }
+
+            foreach(var id in m_RelevantCritterIds) {
+                var entity = Assets.Bestiary(id);
+                if (m_CrittersWithHistoricalData.Contains(id) || m_State.Conceptual.GraphedEntities.Contains(entity)) {
+                    continue;
+                }
+
+                BFPopulationHistory popHistory = BestiaryUtils.FindPopulationHistoryRule(m_State.Environment, entity);
                 if (m_State.Conceptual.GraphedFacts.Contains(popHistory)) {
                     m_CrittersWithHistoricalData.Add(id);
                 }
@@ -232,6 +258,19 @@ namespace Aqua.Modeling {
             m_State.Conceptual.SimulatedEntities.Clear();
             m_State.Conceptual.SimulatedFacts.Clear();
             FactUtil.GatherSimulatedSubset(m_RelevantCritters, m_State.Conceptual.GraphedEntities, m_State.Conceptual.GraphedFacts, m_State.Conceptual.SimulatedEntities, m_State.Conceptual.SimulatedFacts);
+        }
+
+        private void GenerateMissingFacts() {
+            m_State.Conceptual.MissingFacts.Clear();
+            FactUtil.GatherMissingFacts(m_State.Environment, IsOrganismRelevant, IsWaterPropertyRelevant, m_ProgressInfo.RequiredFacts, m_State.Conceptual.GraphedEntities, m_State.Conceptual.GraphedFacts, m_State.Conceptual.MissingFacts);
+        }
+
+        public ListSlice<StringHash32> RelevantCritterIds() {
+            return m_RelevantCritterIdsList;
+        }
+
+        public WaterPropertyMask RelevantWaterProperties() {
+            return m_RelevantWaterProperties;
         }
 
         #region Historical Data
@@ -365,6 +404,7 @@ namespace Aqua.Modeling {
         public void EnsurePlayerProfile() {
             if ((m_PlayerReady & DataReadyFlags.Profile) == 0 && !m_PlayerProfileTask.IsRunning()) {
                 GenerateSimulatedSubset();
+                GenerateMissingFacts();
                 m_PlayerProfileTask = Async.Schedule(PlayerProfileTask(m_PlayerProfile, m_ProgressInfo, m_State.Conceptual, null, SectionType.Player), AsyncFlags.HighPriority);
                 m_PlayerReady &= ~DataReadyFlags.Data;
 
@@ -379,6 +419,7 @@ namespace Aqua.Modeling {
         public void EnsurePlayerData() {
             if ((m_PlayerReady & DataReadyFlags.Profile) == 0 && !m_PlayerProfileTask.IsRunning()) {
                 GenerateSimulatedSubset();
+                GenerateMissingFacts();
                 m_PlayerProfileTask = Async.Schedule(PlayerProfileTask(m_PlayerProfile, m_ProgressInfo, m_State.Conceptual, null, SectionType.Player), AsyncFlags.HighPriority);
                 m_PlayerDataTask.Cancel();
                 m_PlayerDataTask = Async.Schedule(DescriptiveDataTask(m_PlayerProfile, m_PlayerBuffer, m_ProgressInfo, m_PlayerOutput, SectionType.Player, ShouldGraphHistorical), AsyncFlags.HighPriority);
@@ -403,6 +444,7 @@ namespace Aqua.Modeling {
             m_PlayerReady = 0;
 
             GenerateSimulatedSubset();
+            GenerateMissingFacts();
             m_PlayerProfileTask = Async.Schedule(PlayerProfileTask(m_PlayerProfile, m_ProgressInfo, m_State.Conceptual, null, SectionType.Player), AsyncFlags.HighPriority);
             
             // prediction data depends on player data
@@ -416,6 +458,7 @@ namespace Aqua.Modeling {
             // if profile is not ready, we also need to rebuild that
             if ((m_PlayerReady & DataReadyFlags.Profile) == 0 && !m_PlayerProfileTask.IsRunning()) {
                 GenerateSimulatedSubset();
+                GenerateMissingFacts();
                 m_PlayerProfileTask = Async.Schedule(PlayerProfileTask(m_PlayerProfile, m_ProgressInfo, m_State.Conceptual, null, SectionType.Player), AsyncFlags.HighPriority);
                 ClearPredict();
             }
@@ -434,6 +477,21 @@ namespace Aqua.Modeling {
         /// </summary>
         public int CalculateAccuracy(uint snapshotCount) {
             return 100 - (int) (m_ErrorScale * Simulation.CalculateAverageError(m_PlayerOutput.Ptr, m_PlayerProfile, m_HistoricalOutput.Ptr, m_HistoricalProfile, snapshotCount, ShouldGraphHistorical, m_RelevantCritterIds.Count, m_RelevantWaterProperties));
+        }
+
+        /// <summary>
+        /// Returns the number of stars associated with the given accuracy value.
+        /// </summary>
+        public int CalculateAccuracyStars(int accuracy) {
+            if (accuracy >= m_AccuracyStars3) {
+                return 3;
+            } else if (accuracy >= m_AccuracyStars2) {
+                return 2;
+            } else if (accuracy >= m_AccuracyStars1) {
+                return 1;
+            } else {
+                return 0;
+            }
         }
 
         #endregion // Player Data
@@ -771,7 +829,7 @@ namespace Aqua.Modeling {
             }
 
             using(Profiling.Time("generating prediction data")) {
-                SimSnapshot initialSnapshot = InitializePredictSnapshot(output, intervention);
+                SimSnapshot initialSnapshot = InitializePredictSnapshot(output, m_HistoricalOutput, (int) info.Sim.SyncTickCount, intervention);
                 Simulation.Prepare(buffer, profile, initialSnapshot);
                 yield return null;
 
@@ -788,11 +846,12 @@ namespace Aqua.Modeling {
         }
 
         /// <summary>
-        /// Initializes the prediction snapshot..
+        /// Initializes the prediction snapshot.
         /// </summary>
-        private SimSnapshot InitializePredictSnapshot(ResultWrapper output, InterventionData intervention) {
+        private SimSnapshot InitializePredictSnapshot(ResultWrapper output, ResultWrapper input, int inputOffset, InterventionData intervention) {
+            SimSnapshot* src = input.Ptr + inputOffset;
             SimSnapshot* ptr = output.Ptr;
-            Simulation.CopyTo(ptr - 1, m_PlayerProfile, ptr, m_PredictProfile);
+            Simulation.CopyTo(src, m_HistoricalProfile, ptr, m_PredictProfile);
             if (intervention.Target) {
                 int index = m_PredictProfile.IndexOfActorType(intervention.Target.Id());
                 if (index >= 0) {
@@ -819,6 +878,8 @@ namespace Aqua.Modeling {
         public readonly Predicate<StringHash32> HasHistoricalPopulation;
         public readonly Predicate<StringHash32> ShouldGraphHistorical;
         public readonly Predicate<WaterPropertyId> ShouldGraphWaterProperty;
+        public readonly Predicate<StringHash32> IsOrganismRelevant;
+        public readonly Predicate<WaterPropertyId> IsWaterPropertyRelevant;
 
         #endregion // Evaluation
     }

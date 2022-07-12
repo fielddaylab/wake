@@ -4,10 +4,8 @@
 @trigger    JobStarted
 @cutscene
 
-$branch common.ringPhone
-
-{@kevin}	Okay -- to prove that the artifical reefs are working, you would need evidence that the artificial reefs are still there,
-			and that the population of {nameof StaghornCoral} has increased. For both things the first step is to go down to Site S.
+{@guide}	Okay -- to prove that the {critter-name}artificial reefs{/critter-name} are working, you would need evidence that they're still there,
+			and that the population of {nameof StaghornCoral} has increased. For both things the first step is to go down to {h}Site S{/h}.
 
 // SCANNING
 
@@ -16,59 +14,81 @@ $branch common.ringPhone
 @when       scene:name == "RS-2S"
 @once
 @cutscene
-{@kevin} 	We have three things to do while we're down here. Check the job description to see what they are.
+{@guide} 	We have three things to do while we're down here. Check the job description to see what they are.
 			Let's get to it!
-			
-:: grantPopulation
-@trigger	BestiaryEntryAdded
-@when		HasEntity(ArtificialReef)
-@once
-@cutscene
-$call GiveFact(LionfishInvasion.Population.ArtificialReef)
 
 :: helpEnterSite
 @trigger	RequestPartnerHelp
 @when		!HasEntity(ArtificialReef), !JobTaskTop(argue), scene:name != "RS-2S"
 @cutscene
-{@kevin}	Go to Site S to scan the artificial reef and find the current and historical coral population.
+{@guide}	Go to {h}Site S{/h} to scan the {critter-name}artificial reef{/critter-name} and find the current and historical coral population.
 
 :: helpScanPop
 @trigger	RequestPartnerHelp
 @when		scene:name == "RS-2S", !JobTaskCompleted(scanProbes)
 @cutscene
-{@kevin}	There's another thing to do before we surface: collect the population probe data.
+{@guide}	There's another thing to do before we surface: collect the population probe data.
 
 :: helpCount
 @trigger	RequestPartnerHelp
 @when		scene:name == "RS-2S", !JobTaskCompleted(countPopulation)
 @cutscene
-{@kevin}	There's another thing to do before we surface: count the {nameof StaghornCoral} and artificial reefs using your Counting tool.
+{@guide}	There's another thing to do before we surface: count the {nameof StaghornCoral} and {critter-name}artificial reefs{/critter-name} using your Counting tool.
 
 :: siteCompleted
 @trigger	JobTasksUpdated
 @when		scene:name == "RS-2S", JobTaskTop(argue)
 @once
 @cutscene
-{@kevin}	All right! You've got enough data here to make an argument about the effectiveness of the artificial reef.
+{@guide}	All right! You've got enough data here to make an argument about the effectiveness of the artificial reef.
 
 :: helpSurface
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(argue), scene:name == "RS-2S"
 @cutscene
-{@kevin}	You're ready to present your findings. Surface and get back to the Comms room on the ship.
+{@guide}	You're ready to present your findings. Surface and get back to the Comms room on the ship.
 
 :: helpReturnArgue
 @trigger	RequestPartnerHelp
-@when		JobTaskTop(argue), scene:name != "Ship"
+@when		JobTaskTop(argue), scene:name != "Helm"
 @cutscene
-{@kevin}	Get back to the ship so you can make your case.
+{@guide}	Get back to the ship so you can make your case.
 
 :: helpReturnArgue2
 @trigger	RequestPartnerHelp
-@when		JobTaskTop(argue), scene:name == "Ship"
+@when		JobTaskTop(argue), scene:name == "Helm"
 @cutscene
-{@kevin}	{nameof profCempaka} is waiting to hear your findings about the effectiveness of the coral reef.
+{@guide}	{nameof profCempaka} is waiting to hear your findings about the effectiveness of the coral reef.
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchFindReef
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(findReef)
+@boostScore -5
+@cutscene
+{@guide}    Look for an {critter-name}artificial reef{/critter-name} at {h}Site S{/h}.
+
+:: catchScanProbes
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanProbes)
+@boostScore -5
+@cutscene
+{@guide}    There should be a population probe at {h}Site S{/h}. We need to collect data from it.
+
+:: catchCountPopulations
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(countPopulations)
+@boostScore -5
+@cutscene
+{@guide}    Count how much {nameof StaghornCoral} and {critter-name}artificial reef{/critter-name} is at {h}Site S{/h}.
+
+:: catchArgue
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(argue)
+@boostScore -5
+@cutscene
+{@guide}    Talk to {nameof profCempaka} in the Office.
 
 // ARGUMENTATION
 
@@ -79,9 +99,11 @@ $call GiveFact(LionfishInvasion.Population.ArtificialReef)
 $branch .argue.chooseClaim
 
 :: argue.chooseClaim
-{@profCempaka}	Have the artificial reefs improved coral populations?
-	$choice .argue.claimNoHelp; The artificial reefs have not helped.
-	$choice .argue.claimHelp; The artificial reefs helped!
+$call ArgueCancelClaim()
+{@profCempaka}	Have the artificial reefs increased coral populations?
+	$choice .argue.claimNoHelp; No, the artificial reefs have not helped.
+	$choice .argue.claimHelp; Yes, the artificial reefs helped!
+	$choice .argue.giveUp; Let me check my notes and get back to you
 $choose branch	
 
 // BRANCH: NO HELP
@@ -127,7 +149,8 @@ $else
 		{@profCempaka}	I don't think that is important for answering this question.
 		$call ArgueRejectIncorrect()
 		$call ArgueClearFacts()
-		$call ArgueHideClaim()
+        $goto .argue.chooseFactsNoHelp
+		// $call ArgueHideClaim()
 	$endif
 $endif
 
@@ -140,7 +163,7 @@ $endif
 {@profCempaka}	Can you show me the historic coral populations?
 $call ArgueLoad(coralFakeFixIncorrectArgue)
 $if ArgueSetClaim(coralFakeFixIncorrectArgueClaim, jobs.coral-fake-fix.argue.claimLabelIncorrect)
-			$call ArgueFactSlot(LionfishInvasion.PopulationHistory.StaghornCoral)
+	$call ArgueFactSlot(LionfishInvasion.PopulationHistory.StaghornCoral)
 $endif
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
@@ -156,8 +179,18 @@ $call ArgueHideClaim()
 $goto .argue.chooseClaim
 
 :: argue.incorrectFactsIncorrect
-{@profCempaka}	These aren't the historic coral populations. Are you reconsidering your claim?
-$call ArgueRejectIncorrect()
-$call ArgueClearFacts()
-$call ArgueHideClaim()
+$if ArgueIsFactSubmitted(LionfishInvasion.PopulationHistory.ArtificialReef) 
+    {@profCempaka}  Actually, I'm looking for the population history of the {h}{nameof StaghornCoral}{/h}
+    $call ArgueRejectIncorrect()
+    $call ArgueClearFacts()
+    $goto .argue.claimHelp
+$else
+    $call ArgueRejectIncorrect()
+    $call ArgueClearFacts()
+    {@profCempaka}	Hmmm... That's not the fact I was looking for, Are you reconsidering your claim?
+        $choice #argue.argue.chooseClaim; Let me amend my claim
+        $choice .argue.giveUp; Let me get back to you
+        $choose branch
+$endif
+
 $goto .argue.chooseClaim

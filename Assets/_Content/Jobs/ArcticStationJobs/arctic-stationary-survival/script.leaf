@@ -6,21 +6,38 @@
 @cutscene
 
 // write an intro to your job
-{@kevin}    The only thing that will clear up this mystery is a {h}visual model{/h}.
+{@guide}    The only thing that will clear up this mystery is a {h}visual model{/h}.
             We'll need to observe the relationships between the species we've discovered at {h}site X{/h}.
 
 ::weDidIt
 @trigger    JobTasksUpdated
 @when   JobTaskCompleted(visualModel)
 @cutscene
-{@kevin}    I think we're ready to show this to {nameof @profWhalen}.
+{@guide}    I think we're ready to show this to {nameof @profWhalen}.
 
 ::helpMe
-@trigger RequestPartnerHelp
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(visualModel)
 @cutscene 
-{@kevin}    In order to make a {h}visual model{/h}, we'll need to first understand the interatctions of the species at {h}site X{/h}.
+{@guide}    In order to make a {h}visual model{/h}, we'll need to first understand the interactions of the species at {h}site X{/h}.
             These can be discovered using your {h}Observation Tank{/h}. 
             Once you have discovered all the species interactions, head to the {nameof Modeling} to construct the appropriate model.
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchVisualModel
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(visualModel)
+@boostScore -5
+@cutscene
+{@guide}    Make a Visual Model of organism interactions at Site W.
+
+:: catchReport
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(report)
+@boostScore -5
+@cutscene
+{@guide}	Talk to Professor Whalen in the Office.
 
 // ARGUMENTATION
 ::argue.intro
@@ -56,7 +73,9 @@ $call ArgueCancelClaim()
 :: argue.complete
 $call ArgueComplete()
 {@profWhalen}   Detritus... Of course!
-                There must be some strong currents under the ice.
-                You never cease to amaze {nameof @player}!
+                No plants could grow down there to feed the other species,
+                but instead, they all eat the Detritus that is pulled in by that current.
+                It seems old Linda's death gives energy to a whole ecosystem!
+                Your discoveries never cease to amaze {nameof @player}!
 
 $call CompleteJob()

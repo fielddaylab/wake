@@ -100,6 +100,10 @@ namespace Aqua.Option
             m_HasChanges = false;
         }
 
+        public void Dump(EasyBugReporter.IDumpWriter writer) {
+            
+        }
+
         #endregion // IProfileChunk
     }
 }

@@ -18,6 +18,7 @@ using Leaf.Runtime;
 using EasyAssetStreaming;
 using ScriptableBake;
 using Aqua.Character;
+using Aqua.Scripting;
 
 namespace Aqua
 {
@@ -248,11 +249,11 @@ namespace Aqua
 
             DebugService.Log(LogMask.Loading, "[StateMgr] Initial load of '{0}' finished", active.Path);
 
+            ProcessCallbackQueue();
             active.BroadcastLoaded();
             Services.Input.ResumeAll();
             Services.Physics.Enabled = true;
 
-            ProcessCallbackQueue();
             Services.Events.Dispatch(GameEvents.SceneLoaded);
             Services.Script.TriggerResponse(GameTriggers.SceneStart);
         }
@@ -268,6 +269,16 @@ namespace Aqua
             if (bShowCutscene)
             {
                 Services.UI.ShowLetterbox();
+            }
+
+            if ((inFlags & SceneLoadFlags.StopMusic) != 0)
+            {
+                Services.Audio.StopMusic();
+            }
+
+            if ((inFlags & SceneLoadFlags.SuppressAutoSave) != 0)
+            {
+                AutoSave.Suppress();
             }
 
             if ((inFlags & SceneLoadFlags.DoNotDispatchPreUnload) == 0)
@@ -338,6 +349,7 @@ namespace Aqua
             }
 
             DebugService.Log(LogMask.Loading, "[StateMgr] Finished loading scene '{0}'", inNextScene.Path);
+            ProcessCallbackQueue();
             inNextScene.BroadcastLoaded(inContext);
             if (!m_SceneLock)
             {
@@ -345,7 +357,6 @@ namespace Aqua
                 Services.Physics.Enabled = true;
                 m_SceneLock = false;
 
-                ProcessCallbackQueue();
                 Services.Events.Dispatch(GameEvents.SceneLoaded);
                 Services.Script.TriggerResponse(GameTriggers.SceneStart);
             }
@@ -482,7 +493,7 @@ namespace Aqua
             }
 
             yield return LoadConditionalSubscenes(inBinding, inContext);
-            yield return Routine.Amortize(Bake.SceneAsync(inBinding, BakeFlags.Verbose), 5);
+            yield return Routine.Amortize(Bake.SceneAsync(inBinding, 0), 5);
         }
 
         static private IEnumerator LoadSubScene(SubScene inSubScene, SceneBinding inActiveScene)
@@ -506,6 +517,10 @@ namespace Aqua
             {
                 SceneManager.MoveGameObjectToScene(root, inActiveScene);
             }
+            // if (inSubScene.ImportLighting)
+            // {
+            //     LightUtils.CopySettings(unityScene, inActiveScene);
+            // }
             yield return SceneManager.UnloadSceneAsync(unityScene);
         }
 
@@ -681,11 +696,23 @@ namespace Aqua
             //     Services.UI.ForceLoadingScreen();
 
             m_SharedManagers = new Dictionary<Type, SharedManager>(8);
+
+            Frame.CreateBuffer();
+            StartCoroutine(EndOfFrame());
+        }
+
+        private IEnumerator EndOfFrame() {
+            while(true) {
+                yield return Routine.WaitForEndOfFrame();
+                Frame.ResetBuffer();
+            }
         }
 
         protected override void Shutdown()
         {
             m_SceneLoadRoutine.Stop();
+
+            Frame.DestroyBuffer();
         }
 
         #endregion // IService
@@ -810,6 +837,7 @@ namespace Aqua
         #endregion // Leaf
     }
 
+    [Flags]
     public enum SceneLoadFlags
     {
         [Hidden]
@@ -819,6 +847,8 @@ namespace Aqua
         DoNotModifyHistory = 0x02,
         Cutscene = 0x04,
         DoNotDispatchPreUnload = 0x08,
-        DoNotOverrideEntrance = 0x10
+        DoNotOverrideEntrance = 0x10,
+        StopMusic = 0x20,
+        SuppressAutoSave = 0x40
     }
 }

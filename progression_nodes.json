@@ -153,7 +153,7 @@
                     "id": "Shop"
                 }, {
                     "id": "Cash",
-                    "amount": 200,
+                    "amount": 50,
                     "consume": true
                 }, {
                     "id": "Exp",
@@ -1343,49 +1343,6 @@
         },
         "KelpStation": {
             "type": "map"
-        },
-
-        "ShopCharity1": {
-            "type": "intervention",
-            "requires": [{
-                    "id": "Shop"
-                }
-            ],
-            "results": [{
-                    "id": "Cash",
-                    "amount": 300
-                }
-            ]
-        },
-        "ShopCharity2": {
-            "type": "intervention",
-            "requires": [{
-                    "id": "ShopCharity1"
-                }, {
-                    "id": "Exp",
-                    "amount": 75
-                }
-            ],
-            "results": [{
-                    "id": "Cash",
-                    "amount": 250
-                }
-            ]
-        },
-        "ShopCharity3": {
-            "type": "intervention",
-            "requires": [{
-                    "id": "ShopCharity2"
-                }, {
-                    "id": "Exp",
-                    "amount": 150
-                }
-            ],
-            "results": [{
-                    "id": "Cash",
-                    "amount": 200
-                }
-            ]
         }
     },
     "startWith": {

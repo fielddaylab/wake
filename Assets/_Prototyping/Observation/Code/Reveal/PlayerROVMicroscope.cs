@@ -5,9 +5,11 @@ using Aqua.Cameras;
 using BeauUtil;
 using Aqua.Character;
 using System;
+using ScriptableBake;
+using System.Collections.Generic;
 
 namespace ProtoAqua.Observation {
-    public sealed class PlayerROVMicroscope : MonoBehaviour, PlayerROV.ITool {
+    public sealed class PlayerROVMicroscope : MonoBehaviour, PlayerROV.ITool, IBaked {
         #region Inspector
 
         [SerializeField] private ActiveGroup m_VisualRoots = null;
@@ -22,6 +24,9 @@ namespace ProtoAqua.Observation {
         [SerializeField] private Transform m_ProjectionCenter = null;
         [SerializeField] private Camera m_ProjectionCamera = null;
         [SerializeField] private float m_ProjectionRadius = 1;
+        [SerializeField] private float m_ProjectionMultiplier = 0.5f;
+
+        [HideInInspector] private ActiveGroup m_WorldMicroscopeLayer = new ActiveGroup();
 
         #endregion // Inspector
 
@@ -31,8 +36,8 @@ namespace ProtoAqua.Observation {
         private PlayerROVMicroscope() {
             ProjectPosition = (Visual2DTransform transform, Vector3 position, in CameraService.PlanePositionHelper positionHelper, out float scale) => {
                 Vector2 viewport = m_ProjectionCamera.WorldToViewportPoint(transform.Source.position, Camera.MonoOrStereoscopicEye.Mono);
-                viewport.x = (viewport.x - 0.5f) * 2;
-                viewport.y = (viewport.y - 0.5f) * 2;
+                viewport.x = (viewport.x - 0.5f) * 2 * m_ProjectionMultiplier;
+                viewport.y = (viewport.y - 0.5f) * 2 * m_ProjectionMultiplier;
                 if (viewport.sqrMagnitude > 1) {
                     viewport.Normalize();
                 }
@@ -47,6 +52,10 @@ namespace ProtoAqua.Observation {
         private void Awake() {
             WorldUtils.TrackLayerMask(m_Collider, GameLayers.Microscope_Mask, HandleEnter, HandleExit);
             m_VisualRoots.ForceActive(false);
+
+            Script.OnSceneLoad(() => {
+                m_WorldMicroscopeLayer.ForceActive(false);
+            });
         }
 
         #region ITool
@@ -64,12 +73,16 @@ namespace ProtoAqua.Observation {
             Visual2DSystem.Deactivate(GameLayers.Microscope_Mask);
             Services.Camera.RemoveHint(m_CameraHint);
             m_CameraHint = 0;
+
+            m_WorldMicroscopeLayer.SetActive(false);
         }
 
         public void Enable(PlayerBody inBody) {
             m_VisualRoots.Activate();
             Visual2DSystem.Activate(GameLayers.Microscope_Mask);
             m_CameraHint = Services.Camera.AddHint(m_ProjectionCenter, m_CameraHintStrength, m_CameraHintWeight, m_CameraHintZoom).Id;
+
+            m_WorldMicroscopeLayer.SetActive(true);
         }
 
         public void GetTargetPosition(bool inbOnGamePlane, out Vector3? outWorld, out Vector3? outCursor) {
@@ -82,6 +95,9 @@ namespace ProtoAqua.Observation {
 
         public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
             return false;
+        }
+
+        public void UpdateActive() {
         }
 
         #endregion // ITool
@@ -120,5 +136,28 @@ namespace ProtoAqua.Observation {
                 region.OnUnviewed?.Invoke(region);
             }
         }
+
+        #if UNITY_EDITOR
+
+        int IBaked.Order { get { return 15; }}
+
+        bool IBaked.Bake(BakeFlags flags) {
+            List<GameObject> microscopeViewGO = new List<GameObject>();
+            List<Behaviour> microscopeViewComp = new List<Behaviour>();
+
+            var allRegions = FindObjectsOfType<MicroscopeRegion>();
+            foreach(var region in allRegions) {
+                if (!region.Visuals.Empty) {
+                    microscopeViewGO.AddRange(region.Visuals.GameObjects);
+                    microscopeViewComp.AddRange(region.Visuals.Behaviours);
+                }
+            }
+
+            m_WorldMicroscopeLayer.GameObjects = microscopeViewGO.ToArray();
+            m_WorldMicroscopeLayer.Behaviours = microscopeViewComp.ToArray();
+            return true;
+        }
+
+        #endif // UNITY_EDITOR
     }
 }

@@ -3,7 +3,7 @@
 :: probe
 @scanDuration 2
 @important
-@header Lionfish Invasion
+@header Lost Lagoon
 @bestiary   LionfishInvasion
 @factsOfType    WaterPropertyHistory
 @requires HasUpgrade("ProbeHacker")
@@ -11,15 +11,23 @@
 AQ-EV Probe S271
 Downloaded ecosystem data.
 
-Classification: Lionfish Invasion
+Classification: Lost Lagoon
 
 :: populationProbe
 @scanDuration 2
 @important
-@header Lionfish Invasion
+@header Lost Lagoon
 @bestiary   LionfishInvasion
 @factsOfType    PopulationHistory
 @requires HasUpgrade("ProbeHacker")
 @fallback tools.probeHacker.disabled
 AQ-EV Probe S274
 Downloaded ecosystem data.
+
+:: spearedLionfish
+@scanDuration 1
+@important
+@header Speared Lionfish
+@facts   LionfishInvasion.PopulationHistory.Fishers, LionfishInvasion.Population.Fishers, Fishers.Eats.Lionfish
+
+Lionfish on a stick.

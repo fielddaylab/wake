@@ -13,7 +13,7 @@ namespace Aqua
         [SerializeField, HideInInspector] public StringHash32 Id;
         public readonly BFTypeId Type;
         
-        [SerializeField, HideInInspector] public BestiaryDesc Parent;
+        [SerializeField, HideInEditor] public BestiaryDesc Parent;
         [SerializeField, HideInInspector] public Sprite Icon;
         [SerializeField, HideInInspector] public BFMode Mode;
 
@@ -78,6 +78,7 @@ namespace Aqua
             BFProduce.Configure();
             BFGrow.Configure();
             BFEat.Configure();
+            BFParasite.Configure();
             BFDeath.Configure();
             BFConsume.Configure();
             BFBody.Configure();
@@ -124,7 +125,8 @@ namespace Aqua
         IsGraphable = 0x01,
         IsBehavior = 0x02,
         HideFactInDetails = 0x04,
-        EnvironmentFact = 0x08
+        EnvironmentFact = 0x08,
+        SelfTarget = 0x10
     }
 
     public struct BFDetails

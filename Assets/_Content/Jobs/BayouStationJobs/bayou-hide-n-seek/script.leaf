@@ -5,42 +5,162 @@
 :: start
 @trigger    JobStarted
 @cutscene
+{@profHarper}   We are working on generating a model to predict the future health of turtles at {h}Site O{/h}.
+                However, the models based on our current information are not accurate enough.
+{@player}       What is wrong with our model?
+{@profHarper}   It could be that we missed some organism when we {item}scanned{/item} the life at the {m}Oil Rig{/m}.
+                For this job, we need you to gather more organism data from the {h}Site O{/h} to build a higher accuracy model.
 
-// write an intro to your job
-{@profHarper}    This is the intro to the hide-n-seek job!
+// CATCH-ALL GUIDE TEXT
+:: catchJellyScan
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(jellyScan)
+@boostScore -5
+@cutscene
+{@guide}    Revisit {h}Site O{/h}, this time keeping an eye out for any critters we might have missed.
+
+:: catchJellyObservation
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(jellyObservation)
+@boostScore -5
+@cutscene
+{@guide}    We need to {item}observe{/item} how the {pluralnameof MoonJelly} interact with their enviornment.
+
+:: catchJellyRates
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(jellyRates)
+@boostScore -5
+@cutscene
+{@guide}    Use the {item}Measurement Tank{/item} to find how quickly turtles eat the jellyfish.
+
+:: catchJellyPrediction
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(jellyPrediction)
+@boostScore -5
+@cutscene
+{@guide}    Create a {item}Prediction Model{/item} using your information about {pluralnameof MoonJelly}.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@guide}    Report back to {nameof profHarper}.
+
+:: catchVisualize
+@trigger    RequestPartnerHelp
+@when       scene:name == "Modeling",modeling:phase == "visual"   
+@cutscene
+{@player}   Got any idea what I might be missing, V1ctor?
+$if HasEntity(AngelFish),HasEntity(Cyanobacteria),HasEntity(ElkhornCoral),HasEntity(MoonJelly),HasEntity(SeaPearl),HasEntity(RedGrouper),HasEntity(LoggerheadTurtle)
+    //Player has all required critters
+    $if HasFact(MoonJelly.Reproduce),HasFact(LoggerheadTurtle.Reproduce),HasFact(Cyanobacteria.Reproduce),HasFact(AngelFish.Reproduce.Stressed),HasFact(ElkhornCoral.Reproduce),HasFact(RedGrouper.Reproduce)
+        //Has all reproduce facts
+
+        $if HasFact(LoggerheadTurtle.Eats.MoonJelly),HasFact(LoggerheadTurtle.Eats.Cyanobacteria),HasFact(RedGrouper.Eats.Cyanobacteria)
+            //Has all eat facts
+            {@guide}    That should be all the rules we need, make sure you have all the rates and let's go!
+        $else
+            {@guide}    Seems like we still are missing some consumption rules. Maybe take another look at the Observation Tank?
+        $endif
+    $else
+        //Missing at least 1 reproduction fact
+        {@guide}    It seems like we're missing some of the reproduction rates, how about you take a trip over to the Measurement Tank?
+        {@guide}    Make sure you get both the stressed and unstressed rates!
+    $endif
+$else
+    //Player is missing at least 1 critter
+    {@guide}    Looks like we're still missing some critters.
+    $if !HasEntity(AngelFish)
+        {@guide}    Have you tried scanning the Angelfish yet?
+    $else
+        $if !HasEntity(Cyanobacteria)
+            {@guide}    Have you tried scanning some Cyanobacteria yet?
+        $else
+            $if !HasEntity(ElkhornCoral)
+                {@guide}    Have you tried scanning some Elkhorn Coral yet?
+            $else
+                $if !HasEntity(SeaPearl)
+                    {@guide}    Have you tried scanning any Sea Pearls yet?
+                $else
+                    $if !HasEntity(LoggerheadTurtle)
+                        {@guide}    Have you tried scanning some Loggerhead Turtles yet?
+                    $else
+                        $if !HasEntity(RedGrouper)
+                            {@guide}    Have you tried scanning some Red Grouper yet?
+                        $else                 
+                            $if !HasEntity(MoonJelly)
+                                {@guide}    Have you tried scanning some Moon Jellies yet?
+                            $endif
+                        $endif
+                    $endif
+                $endif
+            $endif
+        $endif
+    $endif
+$endif
+
+:: catchDescribe
+@trigger    RequestPartnerHelp
+@when       scene:name == "Modeling",modeling:phase == "sync"   
+@cutscene
+{@player}   Hey V1ctor, could you help me out here?
+{@guide}    Sure thing, let me take a look...
+$if HasFact(AngelFish.PH.Stressed),HasFact(Cyanobacteria.PH.Stressed),HasFact(ElkhornCoral.PH.Stressed),HasFact(SeaPearl.PH.Stressed),HasFact(LoggerheadTurtle.PH.Stressed)
+    //player most likely has all stress ranges 
+    {@guide}    Have you measured the rate of all the interactions on the graph?
+    {@guide}    If you see any dotted lines, that means you haven't measured that fact yet. 
+    {@guide}    Head back to the measurement tank if that's the case!
+$else
+    {@guide}    Did you make sure to get all the stress ranges for the critters in the graph?
+    {@guide}    Without those, your model won't be able to match the historical data as accurately.
+$endif
 
 // ARGUMENTATION
 
 ::argue.intro
 @trigger    TryArgumentation
-@when   !ArgueIsComplete(predictJelly) 
+@when   !ArgueIsComplete(jellyTurtle)
 @cutscene
-$call ArgueCancelClaim()
-$call ArgueClearFacts()
-$call ArgueLoad(predictJelly) 
-{@profHarper} What should we do about the Oil rig in the reef?
-$choice .argue.stableTurtle; Turtle populations remain stable
-$choice .argue.increaseTurtle; Turtle populations will increase
-$choice .argue.decreaseTurtle; Turtle populations will decrease
-$choose branch
+$if !ArgueIsComplete(predictJelly)
+    $call ArgueLoad(predictJelly)
+    {@profHarper} What will happen to turtle populations in the future?
+    $choice .argue.stableTurtle; Turtle populations remain stable
+    $choice .argue.increaseTurtle; Turtle populations will increase
+    $choice .argue.decreaseTurtle; Turtle populations will decrease
+    $choose branch
+$else
+    $call ArgueLoad(jellyTurtle)
+    {@profHarper}   We've already established that the turtle populations will remain stable.
+    $if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1) 
+        $call ArgueFactSlot(LoggerheadTurtle.Eats.MoonJelly)
+    $endif
+    $branch .argue.chooseFacts
+$endif
+
 
 :: argue.stableTurtle
-$call ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1) 
+$if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1)
+    $call ArgueFactSlot(O_OilRig.turtleDangerJellies.Model.Predict)
+$endif
 {@profHarper} Have you increased the accuracy of your model from last time?
-$goto argue.showClaim
+$branch argue.showClaim
 
 :: argue.increaseTurtle
-$call ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel2) 
+$if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel2)
+    $call ArgueFactSlot(O_OilRig.turtleDangerJellies.Model.Predict)
+$endif
 {@profHarper} Can I see your model?
-$goto argue.chooseFactsDummy
+$branch argue.chooseFactsDummy
 
 :: argue.decreaseTurtle
-$call ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel3) 
+$if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel3)
+    $call ArgueFactSlot(O_OilRig.turtleDangerJellies.Model.Predict)
+$endif
 {@profHarper} Can I see your model?
-$goto argue.chooseFactsDummy
+$branch argue.chooseFactsDummy
 
 :: argue.showClaim
-$call ArgueFactSlot(ReefEdge.Model.TurtleVisual) 
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.whatMissing 
@@ -50,73 +170,80 @@ $choose branch
 
 :: argue.whatMissing
 $call ArgueComplete()
-$call ArgueLoad(jellyTurtle) 
-{@profHarper}   I see. Nicely done! How have you increased the accuracy of your model?
-$call ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1) 
-$call ArgueFactSlot(ReefEdge.Population.LoggerheadTurtle) 
-$call ArgueFactSlot(LoggerheadTurtle.Eats.QueenConch) 
-$goto .argue.chooseFacts
+$call ArgueLoad(jellyTurtle)
+{@profHarper}   I see. Nicely done!
+$if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1) 
+    $call ArgueFactSlot(LoggerheadTurtle.Eats.MoonJelly)
+$endif
+$branch .argue.chooseFacts
 
 :: argue.chooseFacts
+How did you increase the accuracy of your model? What was missing?
 $call ArgueDisplayClaim()
 $choice #argueFact; Present facts from AQOS
-    $answer ReefEdge.Population.LoggerheadTurtle, .argue.jellyPop
-    $answer LoggerheadTurtle.Eats.QueenConch, .argue.turtleEat
+    $answer O_OilRig.PopulationHistory.MoonJelly, .argue.jellyPop
+    $answer LoggerheadTurtle.Eats.MoonJelly, .argue.complete
     $answer *, .argue.unrelated3
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.jellyPop
-$if ArgueIsFactSubmitted(LoggerheadTurtle.Eats.QueenConch)
-	$goto .argue.complete
+$if ArgueIsFactSubmitted(LoggerheadTurtle.Eats.MoonJelly)
+	$branch .argue.complete
 $else
 	{@profHarper}	I see. How is this fact related to the Turtles?
-	$goto .argue.chooseFacts
+    $call ArgueClearFacts()
+	$branch .argue.chooseFacts
 $endif
 
 :: argue.turtleEat
 $if ArgueIsFactSubmitted(ReefEdge.Population.LoggerheadTurtle)
-	$goto .argue.complete
+	$branch .argue.complete
 $else
 	{@profHarper}	I see. What is the population of the Jellyfish here?
-	$goto .argue.chooseFacts
+	$branch .argue.chooseFacts
 $endif
 
 :: argue.chooseFactsDummy
-$call ArgueFactSlot(ReefEdge.Model.TurtleVisual) 
 $call ArgueDisplayClaim()
 $choice #argueFact; Present facts from AQOS
-    $answer ReefEdge.Model.TurtleVisual, .argue.rejectClaim
-    $answer incorrect, .argue.unrelated2
+    $answer O_OilRig.turtleDangerJellies.Model.Predict, .argue.clarifyClaim
+    $answer *, .argue.unrelated2
 $choice .argue.giveUp; Let me get back to you
 $choose branch
 
 :: argue.unrelated
-$call ArgueRejectIncorrect()
+$call ArgueClearFacts()
 {@profHarper} Ok, that's interesting, but it's not answering my question.
-$goto .argue.showClaim
+$branch .argue.showClaim
 
 :: argue.unrelated2
-$call ArgueRejectIncorrect()
+$call ArgueClearFacts()
 {@profHarper} Ok, that's interesting, but it's not answering my question.
-$goto .argue.chooseFactsDummy
+$branch .argue.chooseFactsDummy
 
 :: argue.unrelated3
-$call ArgueRejectIncorrect()
+$call ArgueClearFacts()
 {@profHarper} Ok, that's interesting, but it's not answering my question.
-$goto .argue.chooseFacts
+$branch .argue.chooseFacts
+
+:: argue.clarifyClaim
+$call ArgueComplete()
+$call ArgueLoad(jellyTurtle) 
+{@profHarper}   In your model, the turtle population stays within a normal range. They are not in jeopardy.
+                I do see that you increased your accuracy. What did you add to the model?
+$if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1) 
+    $call ArgueFactSlot(LoggerheadTurtle.Eats.MoonJelly)
+$endif
+$branch .argue.chooseFacts
 
 :: argue.giveUp
 {@profHarper} OK. Get back to me when you're ready.
+$call ArgueClearFacts()
 $call ArgueCancelClaim()
+$call ArgueUnload()
 
 // END
-:: argue.rejectClaim
-{@profHarper}   Hmmm... I'm not sure the data matches up with your claim.
-               ?Why don't you double check your observations and revisit your claim.
-$call ArgueRejectIncorrect()
-$call ArgueCancelClaim()
-
 :: argue.complete
 $call ArgueComplete()
 {@profHarper}   Nicely done! Nothing like a little Hide n' Seek to spice you our science.

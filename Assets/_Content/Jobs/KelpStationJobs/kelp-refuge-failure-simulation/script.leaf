@@ -4,9 +4,7 @@
 @trigger    JobStarted
 @cutscene
 
-$branch common.ringPhone
-
-{@kevin}	The Predictive Modeling tool should basically handle this for us.
+{@guide}	The Predictive Modeling tool should basically handle this for us.
 			Let's go to the {nameof Modeling}.
 
 :: helpGoToModeling
@@ -14,11 +12,11 @@ $branch common.ringPhone
 @when 		JobTaskTop(createModel)
 @cutscene
 {@player}   Where should I go from here?
-{@kevin}	You purchased the predictive modeling tool just for this kind of job.
+{@guide}	You purchased the predictive modeling tool just for this kind of job.
 $if scene:name == "Modeling"
 
 $else
-	{@kevin}	Let's head to the {nameof Modeling}
+	{@guide}	Let's head to the {nameof Modeling}
 $endif
 
 // MODELING
@@ -28,24 +26,37 @@ $endif
 @when 		JobTaskTop(createModel), scene:name == "Modeling"
 @once
 @cutscene
-{@kevin}	OK, let's let the predictive modeling tool do its thing.
+{@guide}	OK, let's let the predictive modeling tool do its thing.
 
 :: modelComplete
 @trigger	SimulationSyncSuccess
 @once
 @cutscene
-{@kevin}	It appears you will be the bearer of bad news.
-			Let's go bear it back to (nameof drKelp}.
+{@guide}	It appears you will be the bearer of bad news.
+			Let's go bear it back to {nameof drKelp}.
 
 :: helpShareModel
 @trigger    RequestPartnerHelp
 @when 		JobTaskTop(shareModel)
 @cutscene
 {@player}   What now?
-{@kevin}	Submit your predictive model to {nameof drKelp} as soon as you can in the {nameof Office}.
+{@guide}	Submit your predictive model to {nameof drKelp} as soon as you can in the {nameof Office}.
 
+// CATCH-ALL GUIDE TEXT
 
+:: catchCreateModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(createModel)
+@boostScore -5
+@cutscene
+{@guide}   	Create a Prediction Model at the Modeling Lab.
 
+:: catchShareModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(shareModel)
+@boostScore -5
+@cutscene
+{@guide}	Show your model to {nameof drKelp}!
 
 // ARGUMENTATION
 
@@ -53,7 +64,7 @@ $endif
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(refugeFailureSimulationArgue)
 @cutscene
-$call ArgueLoad(refugeFailureArgue)
+$call ArgueLoad(refugeFailureSimulationArgue)
 {@drKelp} So how bad is it going to be?
 $if ArgueSetClaim(refugeFailureSimulationArgueClaim, jobs.kelp-refuge-failure-simulation.argue.claimLabel)
 			$call ArgueFactSlot(MixedKelp.Model.RefugeFailPredict)

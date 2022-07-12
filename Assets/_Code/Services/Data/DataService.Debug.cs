@@ -169,6 +169,8 @@ namespace Aqua
                     submenu = new DMInfo(submenuKey.ToDebugString());
                     factSubmenus.Add(submenuKey, submenu);
                     factMenu.AddSubmenu(submenu);
+
+                    RegisterFactGroupButton(submenu, submenuKey);
                 }
 
                 RegisterFactToggle(submenu, fact.Id, BFType.DefaultDiscoveredFlags(fact));
@@ -196,6 +198,13 @@ namespace Aqua
             foreach(var map in Services.Assets.Map.Stations())
             {
                 RegisterStationToggle(mapMenu, map.Id());
+            }
+
+            mapMenu.AddDivider();
+
+            foreach(var map in Services.Assets.Map.Stations())
+            {
+                RegisterStationSwitchToggle(mapMenu, map.Id());
             }
 
             yield return mapMenu;
@@ -363,6 +372,19 @@ namespace Aqua
             );
         }
 
+        static private void RegisterFactGroupButton(DMInfo inMenu, StringHash32 inGroupId)
+        {
+            inMenu.AddButton("Unlock All", 
+                () => { 
+                    BestiaryDesc entry = Assets.Bestiary(inGroupId);
+                    foreach(var fact in entry.PlayerFacts) {
+                        Save.Bestiary.DebugRegisterFactNoEvent(fact.Id, true);
+                        Save.Bestiary.DebugRegisterFactFlagsNoEvent(fact.Id, BFDiscoveredFlags.Rate);
+                    }
+                });
+            inMenu.AddDivider();
+        }
+
         static private void RegisterFactToggle(DMInfo inMenu, StringHash32 inFactId, BFDiscoveredFlags inDefaultFlags)
         {
             inMenu.AddToggle(inFactId.ToDebugString(),
@@ -408,7 +430,7 @@ namespace Aqua
             }
             if (bChanged)
             {
-                Services.Events.QueueForDispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Unknown, StringHash32.Null));
+                Services.Events.Queue(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Unknown, StringHash32.Null));
             }
         }
 
@@ -454,6 +476,19 @@ namespace Aqua
                     else
                         Save.Map.LockStation(inStationId);
                 }
+            );
+        }
+
+        static private void RegisterStationSwitchToggle(DMInfo inMenu, StringHash32 inStationId)
+        {
+            inMenu.AddToggle("Switch to " + inStationId.ToDebugString(),
+                () => { return Save.Map.CurrentStationId() == inStationId; },
+                (b) =>
+                {
+                    if (b)
+                        Save.Map.SetCurrentStationId(inStationId);
+                },
+                () => { return Save.Map.IsStationUnlocked(inStationId); }
             );
         }
 
@@ -514,6 +549,18 @@ namespace Aqua
             PlayerPrefs.DeleteAll();
             PlayerPrefs.Save();
             Log.Warn("[DataService] All local save data has been cleared");
+        }
+
+        static internal void UnlockAllDefaults(bool allFacts) {
+            UnlockAllRooms();
+            UnlockAllSites();
+            UnlockAllStations();
+            UnlockAllUpgrades();
+            UnlockAllBestiaryEntries(allFacts);
+
+            foreach(var map in Services.Assets.Map.Stations()) {
+                Save.Map.RecordVisitedLocation(map.Id());
+            }
         }
 
         #endregion // IDebuggable

@@ -11,6 +11,10 @@ namespace Aqua {
 
         [NonSerialized] public bool Active;
 
+        public bool Empty {
+            get { return GameObjects.Length == 0 && Behaviours.Length == 0; }
+        }
+
         public bool Activate() {
             if (Active) {
                 return false;
@@ -47,6 +51,15 @@ namespace Aqua {
 
         public bool SetActive(bool active) {
             return active ? Activate() : Deactivate();
+        }
+
+        public bool SetActive(bool active, bool force) {
+            if (force) {
+                ForceActive(active);
+                return true;
+            } else {
+                return active ? Activate() : Deactivate();
+            }
         }
 
         public void ForceActive(bool active) {

@@ -35,6 +35,9 @@ MonoBehaviour:
   m_PrereqConditions: HasEntity("PlasticBag")
   m_PrereqUpgrades:
   - m_HashValue: 1203385870
+  - m_HashValue: 3082617054
+  - m_HashValue: 3940469741
+  - m_HashValue: 313138705
   m_PrereqExp: 0
   m_StationId:
     m_HashValue: 707943182
@@ -114,15 +117,37 @@ MonoBehaviour:
     - m_Source: scanReefEdge
       m_HashValue: 1118130279
   - Id:
+      m_Source: makeModel
+      m_HashValue: 248199788
+    LabelId:
+      m_Source: jobs.coral-ocean-plastics.task.makeModel
+      m_HashValue: 3782278713
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Model.PlasticsVisual
+        m_HashValue: 3763740320
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: whatTurtlesEat
+      m_HashValue: 1168730728
+  - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
     LabelId:
       m_Source: jobs.coral-ocean-plastics.task.reportBack
       m_HashValue: 4040639279
-    Steps: []
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
     PrerequisiteTaskIds:
-    - m_Source: whatTurtlesEat
-      m_HashValue: 1168730728
+    - m_Source: makeModel
+      m_HashValue: 248199788
   m_OptimizedTaskList:
   - Id:
       m_Source: scanReefEdge
@@ -199,17 +224,40 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 0000
   - Id:
+      m_Source: makeModel
+      m_HashValue: 248199788
+    IdString: makeModel
+    Index: 2
+    LabelId:
+      m_Source: jobs.coral-ocean-plastics.task.makeModel
+      m_HashValue: 3782278713
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: ReefEdge.Model.PlasticsVisual
+        m_HashValue: 3763740320
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0100
+  - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
     IdString: reportBack
-    Index: 2
+    Index: 3
     LabelId:
       m_Source: jobs.coral-ocean-plastics.task.reportBack
       m_HashValue: 4040639279
-    Steps: []
-    PrerequisiteTaskIndices: 0100
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0200
   m_CashReward: 100
   m_ExpReward: 5
   m_Scripting: {fileID: -1942890987711236906, guid: db28d95ee7dceb245a059dac9b1b13d7,
     type: 3}
-  m_ExtraAssets: []
+  m_ExtraAssets:
+  - {fileID: 11400000, guid: 9ffb8205d5ff45348bc09bc8b9b4c7f7, type: 2}

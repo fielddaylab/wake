@@ -11,6 +11,7 @@ namespace Aqua
         // temporary
         static public readonly TableKeyPair CameraRegion = TableKeyPair.Parse("temp:camera.region");
         static public readonly TableKeyPair InteractObject = TableKeyPair.Parse("temp:interact.object");
+        static public readonly TableKeyPair ViewId = TableKeyPair.Parse("temp:view");
 
         // session
 
@@ -34,7 +35,7 @@ namespace Aqua
 
     static public class GameConsts
     {
-        static public readonly StringHash32 Target_Kevin = "kevin";
+        static public readonly StringHash32 Target_V1ctor = "guide";
         static public readonly StringHash32 Target_Player = "player";
 
         static public readonly StringHash32 DayPhase_Morning = "morning";

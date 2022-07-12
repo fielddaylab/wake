@@ -6,31 +6,40 @@
 
 $branch common.ringPhone
 
-{@profCempaka}	You scanned plastic!? In the Reef? This won't do.
+{@profCempaka}	You scanned plastic!? In the reef? This won't do.
 {@profCempaka}  What will happen if the makes its way to the Reef Edge?
-{@profCempaka}  Head to the Reef Edge at Site V to construct a food web for the Loggerhead Turtle.
-{@player} 	We're on our way!
+$if JobTaskTop(scanReefEdge)
+    {@profCempaka}  Head to the Reef Edge at Site V to construct a food web for the Loggerhead Turtle.
+    {@player}       We're on our way!
+$elseif JobTaskTop(whatTurtlesEat)
+    {@profCempaka}  Experiment in the Observation tank with the organisms you've scanned in the Reef Edge at Site V.
+    {@player}       On it!
+$else
+    {@profCempaka}  Take what you know about the Reef Edge at Site V interactions and construct a food web for the Loggerhead Turtle.
+    {@player}       Copy that!
+$endif
+
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", !jobs:coral-ocean-plastic.task.speciesReefEdge, JobTaskTop(scanReefEdge)
+@when 		scene:name == "Helm", !jobs:coral-ocean-plastic.task.speciesReefEdge, JobTaskTop(scanReefEdge)
 @cutscene
 {@player}   Where should I go from here?
-{@kevin}	Let's head to Site V and scan the things that the Loggerhead Turtle might eat.
+{@guide}	Let's head to Site V and scan the things that the Loggerhead Turtle might eat.
 
 :: navigation
 @trigger    SceneStart
 @when       scene:name == "Station2"
 @once
 @cutscene
-{@kevin}	Let's head to Site V and scan the things that the Loggerhead Turtle might eat.
+{@guide}	Let's head to Site V and scan the things that the Loggerhead Turtle might eat.
 					
 :: helpGoToSiteV
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Station2", !jobs:coral-ocean-plastic.task.speciesReefEdge
 @cutscene
 {@player}   I think I'm lost?
-{@kevin}	Site V should be just East of the ship.
+{@guide}	Site V should be just East of the ship.
 
 :: diveSite
 @trigger    SceneStart
@@ -38,14 +47,44 @@ $branch common.ringPhone
 @once
 @cutscene
 $set    	jobs:coral-turtle-population.seen.bottom = true
-{@kevin}   Let's look around for anything a Loggerhead Turtle might eat.
+{@guide}   Let's look around for anything a Loggerhead Turtle might eat.
 
 :: navigation.goBackUp
 @trigger    JobTasksUpdated
-@when       !jobs:coral-ocean-plastic.task.speciesReefEdge
+@when       JobTaskCompleted(scanReefEdge)
 @once
 @cutscene
-{@kevin}   Seems like we've gotten everything we need from here. Head back up to the surface when you're ready to leave.
+{@guide}   Seems like we've gotten everything we need from here. Let's head back up.
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchScanReef
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanReef)
+@boostScore -5
+@cutscene
+{@guide}    Scan the Organisms at Site V.
+
+:: catchWhatTurtlesEat
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(whatTurtlesEat)
+@boostScore -5
+@cutscene
+{@guide}    Using the Observation Tank, figure out what Turtles eat.
+
+:: catchMakeModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(makeModel)
+@boostScore -5
+@cutscene
+{@guide}    Head to the Modeling Lab to make a Visual Model.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@guide}    Talk to {nameof profCempaka} in the Office.
 
 // ARGUMENTATION
 
@@ -65,21 +104,21 @@ $choose branch
 
 ::argue.turtles
 $if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimLabel1)
-		$call ArgueFactSlot(LoggerheadTurtle.Eats.PlasticBag)
+    $call ArgueFactSlot(LoggerheadTurtle.Eats.PlasticBag)
 $endif
 {@profCempaka}	Not the turtles! Do you have evidence for this claim?	
 $goto .argue.chooseFacts
 
 ::argue.all
 $if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimLabel4)
-		$call ArgueFactSlot(ReefEdge.Model.Visual)
+    $call ArgueFactSlot(ReefEdge.Model.PlasticsVisual)
 $endif
 {@profCempaka}	Well that doesn't sound good. What evidence do you have for that claim?	
 $goto .argue.chooseFacts
 
 ::argue.queen
 $if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimLabel3)
-		$call ArgueFactSlot(LoggerheadTurtle.Eats.PlasticBag)
+    $call ArgueFactSlot(LoggerheadTurtle.Eats.PlasticBag)
 $endif
 {@profCempaka}	Well that doesn't sound good. What evidence do you have for that claim?	
 $goto .argue.chooseFactsDummy
@@ -98,7 +137,7 @@ $goto .argue.chooseFactsDummy
 ::argue.chooseFacts
 $call ArgueDisplayClaim()
 $choice #argueFact; Present facts from AQOS
-    $answer ReefEdge.Model.Prediction, .argue.done
+    $answer ReefEdge.Model.PlasticsVisual, .argue.done
     $answer LoggerheadTurtle.Eats.PlasticBag, .argue.done2
     $answer *, .argue.unrelated
 $choice .argue.giveUp; Let me get back to you
@@ -116,7 +155,7 @@ $call ArgueComplete()
 {@profCempaka}  So if the turtles eat the plastic, then the other species will get thrown out of balance?
                 We need to get ahead of this plastic thing.
                 For the turtles!
-{@kevin}   ...
+{@guide}   ...
 {@profCempaka}  ...and the other critters too!
 
 $call CompleteJob()
@@ -131,8 +170,10 @@ $call CompleteJob()
 $call ArgueRejectIncorrect()
 {@profCempaka}  I'm not seeing a clear relationship between that species and the plastic.
                 Can you head back and double check your observations?
+$call ArgueCancelClaim()
 
 :: argue.giveUp
 {@profCempaka} OK. Get back to me when you're ready.
+$call ArgueCancelClaim()
 
 ::end

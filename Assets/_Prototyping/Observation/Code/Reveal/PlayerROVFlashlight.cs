@@ -24,12 +24,18 @@ namespace ProtoAqua.Observation {
         }
 
         public void Disable() {
-            m_FlashlightRoot.SetActive(false);
+            if (m_FlashlightRoot.activeSelf) {
+                m_FlashlightRoot.SetActive(false);
+                Services.Audio?.PostEvent("ROV.Flashlight.Off");
+            }
             Visual2DSystem.Deactivate(GameLayers.Flashlight_Mask);
         }
 
         public void Enable(PlayerBody inBody) {
-            m_FlashlightRoot.SetActive(true);
+            if (!m_FlashlightRoot.activeSelf) {
+                m_FlashlightRoot.SetActive(true);
+                Services.Audio?.PostEvent("ROV.Flashlight.On");
+            }
             Visual2DSystem.Activate(GameLayers.Flashlight_Mask);
         }
 
@@ -43,6 +49,9 @@ namespace ProtoAqua.Observation {
 
         public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
             return false;
+        }
+
+        public void UpdateActive() {
         }
 
         #endregion // ITool

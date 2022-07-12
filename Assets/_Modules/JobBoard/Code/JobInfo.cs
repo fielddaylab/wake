@@ -23,6 +23,7 @@ namespace Aqua.JobBoard
         [SerializeField] private RectTransform m_LockedGroup = null;
         [SerializeField] private RectTransform m_NoJobDisplay = null;
         [SerializeField] private RectTransform m_HasRequiredUpgradesGroup = null;
+        [SerializeField] private LayoutGroup m_Layout = null;
 
         #endregion // Inspector
 
@@ -47,6 +48,8 @@ namespace Aqua.JobBoard
             m_JobInfo.Populate(inJob, inStatus);
             PopulateRequiredUpgrades(inJob, Save.Current);
             UpdateStatus(inJob, inStatus, false);
+
+            m_Layout.ForceRebuild();
         }
 
         private void PopulateRequiredUpgrades(JobDesc inJob, SaveData inSave)

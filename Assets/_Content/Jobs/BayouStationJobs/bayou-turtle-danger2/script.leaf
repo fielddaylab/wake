@@ -1,19 +1,114 @@
 :: basePath job.turtle-danger2
 
 // INTRO
-
 :: start
 @trigger    JobStarted
 @cutscene
 
 {@profHarper}   We want to figure out how the turtles are responding to the reef that has grown all around the oil rig.
                 Specifically, we want you to collect the historic population data and develop a model using what you know about the food web.
-{@player}       I'm happy to help, but why build a model if we can easily get the historic population date? Can we just look at the trend?
+{@player}       I'm happy to help, but why build a model if we can easily get the historic population data? Can we just look at the trend?
 {@profHarper}   We need a model so we can understand why the populations are changing the way they are.
                 If you can build a model that outputs populations that match the historic data,
                 then we can start to assume that our model is describing how the ecosystem works. 
 {@player}       Got it. So the model is tested against the world?
 {@profHarper}   Exactly!  
+
+// CATCH-ALL GUIDE TEXT
+:: catchHistoricalData
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(historicalData)
+@boostScore -5
+@cutscene
+{@guide}    The first task for this job can be found in your trusty {item}AQOS{/item}.
+
+:: helpProbe
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(historicalData), scene:name == "RS-3O"
+@boostScore -5
+@cutscene
+{@guide}    Remember, we can collect historic population data for a site from a {item}probe{/item} at the site.
+
+:: backToShip
+@trigger    RequestPartnerHelp
+@when 		JobTaskCompleted(measureStress), !IsPlayerOnShip()
+@cutscene
+{@guide}    Let's head back to the {m}ship{/m} to conduct our experiments.
+
+:: catchStressRanges
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(measureStress), IsPlayerOnShip(), scene:name != "ExperimentV2"
+@cutscene
+{@guide}    {item}Stress ranges{/item} can be studies with in the {m}Experimentation Lab{/m}
+
+:: catchSyncModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(syncModel)
+@boostScore -5
+@cutscene
+{@guide}    We need to do some {m}experimenting{/m} to obtain rules about {h}Site O{/h} organisms. 
+            Then, head to the {m}Modeling Lab{/m} and make a {item}Descriptive Model{/item}, which should match the population history data you collected.
+            You can view missing rules by viewing your {item}Visual Model{/item} 
+
+:: catchVisualize
+@trigger    RequestPartnerHelp
+@when       scene:name == "Modeling", modeling:phase == "visual", JobTaskTop(syncModel) 
+@cutscene
+@boostScore 100
+{@player}   Got any ideas what to do next, V1ctor?
+$if HasEntity(AngelFish),HasEntity(Cyanobacteria),HasEntity(ElkhornCoral),HasEntity(SeaPearl),HasEntity(LoggerheadTurtle),HasEntity(RedGrouper)
+    //Player has all required critters
+    $if HasFact(AngelFish.Reproduce.Stressed),HasFact(Cyanobacteria.Reproduce),HasFact(ElkhornCoral.Reproduce),HasFact(SeaPearl.Reproduce.Stressed),HasFact(LoggerheadTurtle.Reproduce),HasFact(RedGrouper.Reproduce)
+        //Has all reproduce facts
+
+        $if HasFact(AngelFish.Eats.SeaPearl.Stressed),HasFact(LoggerheadTurtle.Eats.Cyanobacteria),HasFact(LoggerheadTurtle.Eats.AngelFish),HasFact(RedGrouper.Eats.Cyanobacteria),HasFact(RedGrouper.Eats.AngelFish)
+            //Has all eat facts
+            {@guide}    That should be all the rules we need, make sure you have all the rates and let's go!
+        $else
+            {@guide}    Seems like we still are missing some consumption rules. Maybe take another look at the Observation Tank?
+        $endif
+    $else
+        $if HasFact(O_OilRig.turtleDanger.Model.Visual)
+            {@guide}    Head to the next tab to continue building your model.
+        $else
+            //Missing at least 1 reproduction fact
+            {@guide}    It seems like we're missing some of the reproduction rates, how about you take a trip over to the Measurement Tank?
+        $endif
+    $endif
+$else
+    //Player is missing at least 1 critter
+    {@guide}    Looks like we're still missing some critters.
+    $if !HasEntity(AngelFish)
+        {@guide}    Have you tried scanning the Angelfish yet?
+    $else
+        $if !HasEntity(Cyanobacteria)
+            {@guide}    Have you tried scanning some Cyanobacteria yet?
+        $else
+            $if !HasEntity(ElkhornCoral)
+                {@guide}    Have you tried scanning some Elkhorn Coral yet?
+            $else
+                $if !HasEntity(SeaPearl)
+                    {@guide}    Have you tried scanning any Sea Pearls yet?
+                $else
+                    $if !HasEntity(LoggerheadTurtle)
+                        {@guide}    Have you tried scanning some Loggerhead Turtles yet?
+                    $else
+                        $if !HasEntity(RedGrouper)
+                            {@guide}    Have you tried scanning some Red Grouper yet?
+                        $endif
+                    $endif
+                $endif
+            $endif
+        $endif
+    $endif
+$endif
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@guide}    Report back to {nameof profHarper}.
 
 // ARGUMENTATION
 
@@ -31,7 +126,7 @@ $choose branch
 $if ArgueSetClaim(Claim, jobs.bayou-turtle-danger2.argue.claimLabel) 
 	$call ArgueFactSlot(O_OilRig.turtleDanger.Model.Describe)
 $endif
-{@profHarper} Were you able to obtain a descriptive model showing that?
+{@profHarper} Were you able to obtain a numerical model that describes the populations?
 $goto .argue.showClaim
 
 :: argue.showClaim

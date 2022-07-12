@@ -8,13 +8,13 @@
 | ---- | --------- | ----------- | ------- |
 | **Scripting** |
 | `@entrypoint` | N/a | Exposes this node as an entrypoint to the script file. Accessing nodes from other script files requires those nodes be set as entrypoints. |
-| `@tags [tag1], [tag2], [tag3]...` | String Tags (comma-separated) | Tags the node with the given tags. (unused?) | `@tag KevinNameConvo` |
+| `@tags [tag1], [tag2], [tag3]...` | String Tags (comma-separated) | Tags the node with the given tags. (unused?) | `@tag V1ctorNameConvo` |
 | **Initial State** |
 | `@cutscene` | N/a | Sets the node to be run as a cutscene. | `@cutscene` |
 | `@chatter` | N/a | Sets the node to be run as a corner chatter, using the corner dialog box instead of the default one. | `@chatter` |
 | **Triggers** |
 | `@trigger [triggerId]` | Trigger Id (see trigger table) | Sets this node to be evaluated for execution when the given trigger fires | `@trigger RequestPartnerHelp`, `@trigger SceneStart` |
-| `@who [charId]` | Character Id (currently only accepts `kevin`) | Sets the character this node is associated with. If that character is already executing a higher-priority node, this node cannot be executed.<br/>Note that nodes with the trigger `RequestPartnerHelp` will default to using `kevin` so this command is optional. | `@who kevin` |
+| `@who [charId]` | Character Id (currently only accepts `guide`) | Sets the character this node is associated with. If that character is already executing a higher-priority node, this node cannot be executed.<br/>Note that nodes with the trigger `RequestPartnerHelp` will default to using `guide` so this command is optional. | `@who guide` |
 | `@when [condition1], [condition2], ...` | Conditions (comma-separated) | This node can only be executed once all the given conditions are met.Note that this also sets the "specificity score" of the node based on the number of conditions. Nodes with a higher score are given a chance to execute before nodes with a lower score. | `@when scene:name == "ExperimentPrototype, !player:entered.helm` |
 | `@boostScore [value]` | Score Value | Adjusts this node's specificity score. Use this to make nodes more or less likely to be triggered. | `@boostScore 2`, `@boostScore -5` |
 | `@once [mode]` | Mode (optional, accepted values are `session` and empty) | This node can only run once. If `session` is specified, this node can be run again after reloading the page. | `@once`, `@once session` |
@@ -30,7 +30,7 @@
 | `global` | Profile | Global table | Use for anything saved but not suitable for other saved tables |
 | `jobs` | Profile | Jobs table | Use for anything related to jobs or job progress |
 | `player` | Profile | Player table | Use for anything related to the player |
-| `kevin` | Profile | Partner table | Use for anything related to the partner character |
+| `guide` | Profile | Partner table | Use for anything related to the partner character |
 | **Session** | | | |
 | `session` | Session | Session table | Use for anything that needs to persist for a local session |
 | **Temp** | | | |
@@ -48,7 +48,7 @@
 
 | Name | Description | Example
 | --- | --- | --- |
-| `kevin:help.requests` | Number of times the player has requested help from their partner character | `kevin:help.requests > 15` |
+| `guide:help.requests` | Number of times the player has requested help from their partner character | `guide:help.requests > 15` |
 | **Experimentation** |
 | `experiment:setup.on` | If the player has the experiment setup panel active | `!experiment:setup.on` |
 | `experiment:setup.screen` | Id of the current setup screen | `experiment:setup.screen == "boot"` |
@@ -179,18 +179,18 @@
 | `{continue}` | N/a | Dialog | Waits for player input before continuing the line. | `The first half of the message.{continue} And the second half of the message, after user input.` |
 | `{auto}` | N/a | Dialog | Automatically continues to the next line of script without player input. | `Some text that goes away fast {wait 0.5}{auto}` |
 | **Dialog** |
-| `{*[characterId] #[poseId]}` | Character Id<br/>Pose Id (optional) | Dialog | Sets the current character for the dialog. This will load in their default name and typing sounds. If a pose is specified, that pose portrait will be used as well. | `{@kevin} Some kevin text yeah`, `{@kevin #confused}	Kevin is... confused?` |
+| `{*[characterId] #[poseId]}` | Character Id<br/>Pose Id (optional) | Dialog | Sets the current character for the dialog. This will load in their default name and typing sounds. If a pose is specified, that pose portrait will be used as well. | `{@guide} Some guide text yeah`, `{@guide #confused}	V1ctor is... confused?` |
 | `{#[poseId]` | Pose Id (optional) | Dialog | Sets the current character pose portrait. If no pose is passed in, the default pose will be used. | `{#confused} This is confused text I guess. {#} and back to default pose` |
-| `{speaker [speaker text]` | Speaker Text | Dialog | Sets a custom string for the speaker name | `{speaker Kevin, Who Just Stole Some Of Your Blood} Haha I just stole your blood` |
+| `{speaker [speaker text]` | Speaker Text | Dialog | Sets a custom string for the speaker name | `{speaker V1ctor, Who Just Stole Some Of Your Blood} Haha I just stole your blood` |
 | `{type [soundId]` | Type Sound Id | Dialog | Sets a custom text typing sound | `{type someSquishySoundId} This text types out with squishy sounds` |
 | `{hide-dialog}` | N/a | Always | Manually hides the dialog box. Good for separating sections of a conversation. | `And here is some text`<br/>`{hide-dialog}{wait 1}`<br/>`And now here's a separate but connected conversation`
 | `{show-dialog}` | N/a | Always | Manually shows the dialog box. | `{show-dialog}` |
-| `{style [dialogStyleId]}` | Dialog Style Id | Always | Sets the textbox style. Available styles are `default`, `center`, and `cornerKevin` | `{style center}`<br/>`And this text appears in the center textbox instead.` |
+| `{style [dialogStyleId]}` | Dialog Style Id | Always | Sets the textbox style. Available styles are `default`, `center`, and `cornerV1ctor` | `{style center}`<br/>`And this text appears in the center textbox instead.` |
 | **Audio** |
 | `{bgm [musicId], [crossfade]}` | Music Event Id<br/>Crossfade Duration (seconds) (optional, default value 0.5) | Always | Crossfades to a new piece of background music | `{bgm SomeMusicEvent}`, `{bgm AnotherMusicEvent, 0}` |
 | `{bgm-pitch [pitch], [transitionDuration]}` | Pitch Multiplier<br/>Transition Duration (seconds) (optional, default value 0.5) | Always | Fades the current background music to a new pitch | `{bgm-pitch 0.16}Now the music is positively demonic` |
 | `{bgm-stop [fadeDuration]}` | Fade Duration (seconds) (optional, default value 0.5) | Always | Stops the current background music with the given fade-out time | `{bgm-stop 2}` |
-| `{sfx [soundId], [wait?]}` | Sound Event Id<br/>Wait (optional) | Always | Plays a sound event. If `wait` is provided as second argument, script execution waits for the sound to complete before continuing | `{sfx KevinShocked}`, `{sfx Clatter, wait}` |
+| `{sfx [soundId], [wait?]}` | Sound Event Id<br/>Wait (optional) | Always | Plays a sound event. If `wait` is provided as second argument, script execution waits for the sound to complete before continuing | `{sfx V1ctorShocked}`, `{sfx Clatter, wait}` |
 | **Screen** |
 | `{letterbox} {/letterbox}` | N/a | Always | Activates screen letterbox (cutscene mode) for the duration of this tag. | `And then {letterbox} this part is really cinematic {/letterbox} but we're back to normal now` |
 | `{fade-out [color], [duration], [layer], [wait]}` | Color<br/>Duration (seconds)<br/>Layer (optional, accepted values are empty or `above-ui`)<br/>Wait (optional, accepted values are empty or `wait`) | Always | Fades the screen to a given color over a the given period of time. If `above-ui` is specified, this fader will appear above the UI. If `wait` is specified, this will wait for the fader to finish its fade before continuing | `{fade-out black, 0.5}` | `{fade-out red.50, 0.2}` |
@@ -202,7 +202,7 @@
 | `{enable-object [objectId], [objectId2], [objectId3], ...}` | Script Object Ids (comma separated) | Always | Enables the Script Objects with the given ids | `{enable-object CameraRegion2}`, `{enable-object CameraRegion0, CameraRegion2, ScaryBackgroundThing}` |
 | `{disable-object [objectId], [objectId2], [objectId3], ...}` | Script Object Ids (comma separated) | Always | Disables the Script Objects with the given ids | `{disable-object CameraRegion2}`, `{disable-object CameraRegion0, CameraRegion2, ScaryBackgroundThing}` |
 | `{broadcast-event [eventId]}` | Event Id | Always | Dispatches the given game event within the scene | `{broadcast-event experiment:badEvent}` |
-| `{trigger-response [triggerId], [targetId]}` | Trigger Id (see table)<br/>Target Id (optional) | Always| Sends a Trigger to the scripting system, which can provoke a response. See the table above for a list of in-game triggers. Note you can also create your own trigger ids if necessary simply by using them in script | `{trigger-response RequestPartnerHelp}`, `{trigger-response SomeNewResponse, kevin}` |
+| `{trigger-response [triggerId], [targetId]}` | Trigger Id (see table)<br/>Target Id (optional) | Always| Sends a Trigger to the scripting system, which can provoke a response. See the table above for a list of in-game triggers. Note you can also create your own trigger ids if necessary simply by using them in script | `{trigger-response RequestPartnerHelp}`, `{trigger-response SomeNewResponse, guide}` |
 | `{load-scene [sceneName], [mode], [context]` | Scene Name<br/>Mode (optional, accepted values are empty and `no-loading-screen`)<br/>Context String (optional) | Always | Loads into another scene. If `no-loading-screen` is provided, the game will assume something else is serving as a loading screen instead (like a fader or screen wipe) | `{load-scene ExperimentPrototype}`, `{load-scene Ship, no-loading-screen}` |
 | **Player** |
 | `{give-fact [factId]}` | Fact Id | Always | Adds a fact to the player's bestiary | `{give-fact Urchins.Eat.BullKelp}` |

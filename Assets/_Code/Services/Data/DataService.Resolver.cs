@@ -6,6 +6,7 @@ using Aqua.Debugging;
 using BeauUtil.Debugger;
 using Leaf.Runtime;
 using System.Collections;
+using UnityEngine;
 
 namespace Aqua
 {
@@ -64,7 +65,7 @@ namespace Aqua
             }
             else
             {
-                Services.Events.QueueForDispatch(GameEvents.VariableSet, keyPair);
+                Services.Events.Queue(GameEvents.VariableSet, keyPair);
             }
         }
 
@@ -79,7 +80,7 @@ namespace Aqua
             }
             else
             {
-                Services.Events.QueueForDispatch(GameEvents.VariableSet, inId);
+                Services.Events.Queue(GameEvents.VariableSet, inId);
             }
         }
 
@@ -96,7 +97,7 @@ namespace Aqua
             }
             else
             {
-                Services.Events.QueueForDispatch(GameEvents.VariableSet, keyPair);
+                Services.Events.Queue(GameEvents.VariableSet, keyPair);
             }
         }
 
@@ -111,7 +112,7 @@ namespace Aqua
             }
             else
             {
-                Services.Events.QueueForDispatch(GameEvents.VariableSet, inId);
+                Services.Events.Queue(GameEvents.VariableSet, inId);
             }
         }
 
@@ -230,7 +231,7 @@ namespace Aqua
             m_VariableResolver.SetTable("jobs", inData.Script.JobsTable);
             m_VariableResolver.SetTable("world", inData.Script.PartnerTable);
             m_VariableResolver.SetTable("player", inData.Script.PlayerTable);
-            m_VariableResolver.SetTable("kevin", inData.Script.PartnerTable);
+            m_VariableResolver.SetTable("guide", inData.Script.PartnerTable);
         }
 
         #region Callbacks
@@ -511,13 +512,22 @@ namespace Aqua
 
                 if (Services.UI.IsSkippingCutscene())
                     return null;
-                
+
                 Services.Audio.PostEvent("item.popup.new");
-                return Services.UI.Popup.Display(
-                    Loc.Format("ui.popup.newItem.header", itemDesc.NameTextId()),
-                    Loc.Find(itemDesc.DescriptionTextId()),
-                    itemDesc.ImageSet(),
-                    PopupFlags.TallImage
+                
+                TextId headerId = itemDesc.Category() == InvItemCategory.Upgrade ? "ui.popup.newUpgrade.header" : "ui.popup.newItem.header";
+                Color itemColor = Parsing.HexColor(ScriptingService.ColorTags.ItemColorString);
+                
+                PopupContent content = default;
+                content.Header = Loc.Find(headerId);
+                content.Subheader = Loc.Find(itemDesc.NameTextId());
+                content.SubheaderColorOverride = itemColor;
+                content.Text = Loc.Find(itemDesc.DescriptionTextId());
+                content.Image = itemDesc.ImageSet();
+                content.Options = PopupPanel.DefaultOkay;
+                return Services.UI.Popup.Present(
+                    content,
+                    PopupFlags.TallImage | PopupFlags.ImageTextBG
                 ).Wait();
             }
 
@@ -558,13 +568,20 @@ namespace Aqua
                     if (Services.UI.IsSkippingCutscene())
                         return null;
                     
-                    InvItem item = Assets.Item(inUpgradeId);
+                    InvItem itemDesc = Assets.Item(inUpgradeId);
                     Services.Audio.PostEvent("item.popup.new");
-                    return Services.UI.Popup.Display(
-                        Loc.Format("ui.popup.newUpgrade.header", item.NameTextId()),
-                        Loc.Find(item.DescriptionTextId()),
-                        item.ImageSet(),
-                        PopupFlags.TallImage
+                    Color itemColor = Parsing.HexColor(ScriptingService.ColorTags.ItemColorString);
+                
+                    PopupContent content = default;
+                    content.Header = Loc.Find("ui.popup.newUpgrade.header");
+                    content.Subheader = Loc.Find(itemDesc.NameTextId());
+                    content.SubheaderColorOverride = itemColor;
+                    content.Text = Loc.Find(itemDesc.DescriptionTextId());
+                    content.Image = itemDesc.ImageSet();
+                    content.Options = PopupPanel.DefaultOkay;
+                    return Services.UI.Popup.Present(
+                        content,
+                        PopupFlags.TallImage | PopupFlags.ImageTextBG
                     ).Wait();
                 }
 
@@ -660,6 +677,12 @@ namespace Aqua
             static private int AnyJobsCompleted()
             {
                 return Save.Jobs.CompletedJobIds().Count;
+            }
+
+            [LeafMember("UpgradeUnlocksJobAtStation"), UnityEngine.Scripting.Preserve]
+            static private bool UpgradeUnlocksJobAtStation(StringHash32 inUpgradeId = default(StringHash32), StringHash32 inStationId = default(StringHash32))
+            {
+                return JobUtils.UpgradeUnlocksJobAtStation(inUpgradeId, inStationId);
             }
 
             [LeafMember("UnlockJob"), UnityEngine.Scripting.Preserve]

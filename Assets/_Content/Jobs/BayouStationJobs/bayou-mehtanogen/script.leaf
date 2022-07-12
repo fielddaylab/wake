@@ -1,0 +1,127 @@
+:: basePath job.bayou-methanogen
+
+// INTRO
+
+:: start
+@trigger    JobStarted
+@cutscene
+
+// write an intro to your job
+{@guide}    Sounds like we need to do some experiments to find out more about the {pluralnameof Methanogen}' rates of consumption, reproduction, and water chemistry interaction.
+            We'll also need to figure out what stresses {pluralnameof Methanogen} out, if anything. They must be pretty tough, to live at the bottom of {h}Site N{/h}.
+            Which do you want to do first?
+
+
+// HELP
+:: gotoExperiment
+@trigger RequestPartnerHelp
+@when !JobTaskTop(Report), scene:name != "ExperimentV2"
+@cutscene
+{@guide}    Let's head to the {m}Experiment Lab{/m} to get started!
+
+:: helpExperiment
+@trigger RequestPartnerHelp
+@when !JobTaskTop(Report)
+@cutscene
+{@guide}    We'll need to use all of our Tanks here to find the facts specified in your {item}AQOS{/item}. 
+
+:: helpReport
+@trigger RequestPartnerHelp
+@when JobTaskTop(Report)
+@cutscene
+{@guide}    I think we're ready to report our findings. 
+
+// ARGUMENTATION
+:: argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(MethanoArg)
+@cutscene
+{@profHarper}   Have you discoverd how these microorganisms survive in such a hostile enviornment?
+$if ArgueIsComplete(MethanoTemp), !ArgueIsComplete(MethanoMeta)
+    $choice .argue.metabolize;  They metabolize methane
+    $choose branch
+$elseif ArgueIsComplete(MethanoMeta), !ArgueIsComplete(MethanoTemp)
+    $choice .argue.immune;  They're immune to heat.
+    $choose branch
+$else
+    $choice .argue.immune;  They're immune to heat.
+    $choice .argue.metabolize;  They metabolize methane
+    $choose branch
+$endif
+
+:: argue.immune
+$call ArgueLoad(MethanoTemp)
+{@profHarper}   Have you been able to measure their temperature tolerance ranges?
+$if ArgueSetClaim(Claim, jobs.bayou-methanogen.argue.claimLabel1) 
+    $call ArgueFactSlot(Methanogen.Temperature.Stressed) 
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.completeTemp 
+    $answer *, .argue.unrelatedImmune
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.metabolize
+$call ArgueLoad(MethanoMeta)
+{@profHarper}   I saw that they eat methane, but can they consume enough to survive and reproduce?
+$if ArgueSetClaim(Claim, jobs.bayou-methanogen.argue.claimLabel2) 
+    $call ArgueFactSlot(Methanogen.Eats.Methane) 
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.completeMeta 
+    $answer *, .argue.unrelatedMetabolize
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.completeTemp
+$call ArgueComplete()
+$call ArgueUnload()
+$call ArgueClearFacts()
+$goto .aruge.swap
+
+:: argue.completeMeta
+$call ArgueComplete()
+$call ArgueUnload()
+$call ArgueClearFacts()
+$goto .aruge.swap
+
+:: aruge.swap
+$call ArgueUnload()
+$if !ArgueIsComplete(MethanoTemp)
+    $goto .argue.immune
+$elseif !ArgueIsComplete(MethanoMeta)
+    $goto .argue.metabolize
+$endif
+$goto .argue.complete
+
+:: argue.unrelatedImmune
+$if ArgueIsFactSubmitted(Methanogen.Light.Stressed) 
+    {@profHarper}   Oops, this appears to be their Light tolerange.
+                We're looking for their {h}Temperature{/h} tolerance.
+$elseif
+    {@profHarper}   Oops, this appears to be their PH tolerange.
+                We're looking for their {h}Temperature{/h} tolerance.
+$else
+    {@profHarper} Hmmm, that's interesting, but it's not answering my question.
+$endif
+$call ArgueRejectIncorrect()
+$goto .argue.immune
+
+:: argue.unrelatedMetabolize
+    {@profHarper} Hmmm, that's interesting, but it's not answering my question.
+$call ArgueRejectIncorrect()
+$goto .argue.metabolize
+
+:: argue.giveUp
+{@profHarper} OK. Get back to me when you're ready.
+$call ArgueCancelClaim()
+$call ArgueUnload()
+
+// END
+:: argue.complete
+$call ArgueComplete(MethanoArg)
+{@profHarper} This looks great!
+
+$call CompleteJob()

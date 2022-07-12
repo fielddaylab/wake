@@ -194,7 +194,7 @@ namespace Aqua
 
         private struct Handler
         {
-            private UnityEngine.Object m_Binding;
+            private RuntimeObjectHandle m_Binding;
             private CastableAction<object> m_Action;
 
             public string Name;
@@ -215,7 +215,7 @@ namespace Aqua
 
             public bool Match(UnityEngine.Object inBinding)
             {
-                return m_Binding.IsReferenceEquals(inBinding);
+                return m_Binding.Equals(inBinding);
             }
 
             public bool Match(Action inAction)
@@ -245,7 +245,7 @@ namespace Aqua
 
             public bool ShouldDelete(out bool outReferenceDestroyed)
             {
-                outReferenceDestroyed = m_Binding.IsReferenceDestroyed();
+                outReferenceDestroyed = m_Binding.WasDestroyed();
                 return Delete || outReferenceDestroyed;
             }
         }
@@ -472,7 +472,7 @@ namespace Aqua
         /// <summary>
         /// Queues the given event to dispatch at the end of the frame.
         /// </summary>
-        public void QueueForDispatch(StringHash32 inEventId, object inContext = null)
+        public void Queue(StringHash32 inEventId, object inContext = null)
         {
             m_QueuedEvents.PushBack(new QueuedEvent(inEventId, inContext));
         }
@@ -498,10 +498,10 @@ namespace Aqua
 
         private void LateUpdate()
         {
-            FlushQueue();
+            Flush();
         }
 
-        public void FlushQueue()
+        public void Flush()
         {
             QueuedEvent evt;
             while(m_QueuedEvents.TryPopFront(out evt))

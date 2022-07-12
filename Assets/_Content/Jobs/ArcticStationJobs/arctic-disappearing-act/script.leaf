@@ -7,7 +7,14 @@
 $if HasEntity(ArcticCod), HasEntity(BristleWorm), HasEntity(ChinookSalmon), HasEntity(Diatoms), HasEntity(IceAlgae), HasEntity(Hagfish), HasEntity(IceAlgae), HasEntity(NorthAtlanticOctopus), HasEntity(SalmonShark), HasEntity(SnowCrab), HasEntity(ZombieWorm), HasEntity(Detritus)    
 // Blah
 $else
-{@kevin}    If we're going to investigate properly, we'll need to know all the species at {h}site W{/h}.
+{@guide}    If we're going to investigate properly, we'll need to know all the species at {h}site W{/h}.
+$endif
+$if !HasUpgrade(VisualModel)
+	{@profWhalen}	I've unlocked a new room on your Helm, {map-name}the Modeling Lab{/map-name}.
+	{@profWhalen}	Head there when you are ready to make a Visual Model of how {h}site W{/h} species interact with each other.
+	$call UnlockRoom("modelingRoom")
+	$call UnlockRoom("Modeling")
+	$call GiveUpgrade(VisualModel)
 $endif
 
 ::gotAllInfo
@@ -15,21 +22,21 @@ $endif
 @when JobTaskCompleted(scanCritters)
 @once
 @cutscene
-{@kevin}    I'd say we know enough to make a {h}visual model{/h} now.
+{@guide}    I'd say we know enough to start making a {h}visual model{/h} now.
 
 :: helpScan
 @trigger    RequestPartnerHelp
 @when   JobTaskTop(scanCritters)
 @cutscene
 {@player}   What should I do next?
-{@kevin}    Remember, you can use your {h}AQOS tablet{/h} to check your next task.     
+{@guide}    Remember, you can use your {h}AQOS tablet{/h} to check your next task.     
 
 :: helpObserve
 @trigger    RequestPartnerHelp
 @when   JobTaskTop(modelInteractions)
 @cutscene
 {@player}   What should I do next? 
-{@kevin}    In order to make a {h}visual model{/h}, we'll need to first understand the interatctions of the species at {h}site W{/h}.
+{@guide}    In order to make a {h}visual model{/h}, we'll need to first understand the interactions of the species at {h}site W{/h}.
             These can be discovered using your {h}Observation Tank{/h}. 
             Once you have discovered all the species interactions, head to the {nameof Modeling} to construct the appropriate model.
 
@@ -37,8 +44,31 @@ $endif
 @trigger    RequestPartnerHelp
 @when JobTaskTop(reportBack)
 @cutscene
-{@kevin}    Let's report back to {nameof profWhalen} with our model.
-            
+{@guide}    Let's report back to {nameof profWhalen} with our model.
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchScanCritters
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanCritters)
+@boostScore -5
+@cutscene
+{@guide}    Scan everything at Site W.
+
+:: catchModelInteractions
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(modelInteractions)
+@boostScore -5
+@cutscene
+{@guide}    Observe Site W species interactions and make a Visual Model from them.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@guide}    Report back to Professor Whalen.
+
 // ARGUMENTATION
 ::argue.intro
 @trigger    TryArgumentation
@@ -68,7 +98,6 @@ $goto .argue.showClaim
 {@profWhalen} OK. Get back to me when you're ready.
 
 // END
-
 :: argue.complete
 $call ArgueComplete()
 {@profWhalen}   It looks like quite a few organisms came to feast on her. 

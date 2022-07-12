@@ -25,9 +25,11 @@ namespace ProtoAqua.Observation
         [Header("Movement Scaling")]
         [SerializeField] private float m_ScanReduceMovementSpeedThreshold = 3;
         [SerializeField] private float m_ScanReduceMovementSpeedMaxMultiplier = 0.6f;
+        [SerializeField] private float m_PowerEngineScanDragIncrease = 2;
 
         #endregion // Inspector
 
+        [NonSerialized] private PlayerBody m_Body;
         [NonSerialized] private ScanSystem m_ScanSystem;
         [NonSerialized] private bool m_ScannerOn = false;
         [NonSerialized] private ScannableRegion m_TargetScannable = null;
@@ -37,6 +39,7 @@ namespace ProtoAqua.Observation
 
         [NonSerialized] private Routine m_ScanEnableRoutine;
         [NonSerialized] private Routine m_ScanRoutine;
+        [NonSerialized] private float m_AdditionalDrag;
 
         [NonSerialized] private readonly Collider2D[] m_ColliderBuffer = new Collider2D[16];
 
@@ -66,6 +69,7 @@ namespace ProtoAqua.Observation
             m_ScannerOn = true;
             m_ScanEnableRoutine.Replace(this, TurnOnAnim());
             Visual2DSystem.Activate(GameLayers.Scannable_Mask);
+            m_Body = inBody;
         }
 
         public void Disable()
@@ -147,6 +151,9 @@ namespace ProtoAqua.Observation
             }
         }
 
+        public void UpdateActive() {
+        }
+
         public bool HasTarget()
         {
             return m_TargetScannable != null;
@@ -177,6 +184,11 @@ namespace ProtoAqua.Observation
                 m_ScanRoutine.Replace(this, ScanRoutine()).Tick();
 
                 Services.Audio.PostEvent("scan_start");
+
+                if ((m_Body.BodyStatus & PlayerBodyStatus.PowerEngineEngaged) != 0) {
+                    m_AdditionalDrag = m_PowerEngineScanDragIncrease;
+                    m_Body.Kinematics.AdditionalDrag += m_AdditionalDrag;
+                }
             }
         }
 
@@ -196,6 +208,9 @@ namespace ProtoAqua.Observation
                 m_TargetScanData = null;
 
                 m_ScanRoutine.Stop();
+
+                m_Body.Kinematics.AdditionalDrag -= m_AdditionalDrag;
+                m_AdditionalDrag = 0;
             }
         }
 

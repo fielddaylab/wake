@@ -12,45 +12,61 @@ $set jobs:coral-clear-sarg.siteRScans = 0
 
 :: helpBackAtShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", !HasFact(Urchin.Eats.Sargassum)
+@when 		scene:name == "Helm", !HasFact(Urchin.Eats.Sargassum.Stressed)
 @cutscene
 {@player} 	Where should I be going again?
-{@kevin}	Let's head over to the {nameof Experimentation} and try to find something that can deal with the Sargassum. 
+{@guide}	Let's head over to the {nameof Experimentation} and try to find something that can deal with the Sargassum. 
 
 :: startExperiment
 @trigger    SceneStart
-@when       scene:name == "ExperimentV2", !HasFact(Urchin.Eats.Sargassum)
+@when       scene:name == "ExperimentV2", !HasFact(Urchin.Eats.Sargassum.Stressed)
 @once
 @cutscene
 {@player}   How should we set up the experiment this time?
-{@kevin}  	We want to find out if there's anything that can help us clear the Sargassum.
-{@kevin} 	Maybe try observing a tank with Sargassum and another organism until you find something interesting?
+{@guide}  	We want to find out if there's anything that can help us clear the Sargassum.
+{@guide} 	Maybe try observing a tank with Sargassum and another organism until you find something interesting?
 
 ::helpAtExperiment
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ExperimentV2", !HasFact(Urchin.Eats.Sargassum)
+@when 		scene:name == "ExperimentV2", !HasFact(Urchin.Eats.Sargassum.Stressed)
 @cutscene
 {@player} 	How should I do this again?
-{@kevin}	We want to figure out if there's anything that eats the Sargassum.
-{@kevin}	Try putting different organisms in a tank with Sargassum and see if there's anything that eats it!
-{@kevin}	Maybe start with organisms that weren't at Site R?
+{@guide}	We want to figure out if there's anything that eats the Sargassum.
+{@guide}	Try putting different organisms in a tank with Sargassum and see if there's anything that eats it!
+{@guide}	Maybe start with organisms that weren't at Site R?
 
 
 :: experimentEnd
 @trigger    JobTasksUpdated
-@when 		HasFact(Urchin.Eats.Sargassum)
+@when 		HasFact(Urchin.Eats.Sargassum.Stressed)
 @once
 @cutscene
-{@kevin}	Looks like we found our solution! Let's report this back to Professor Cempaka.
+{@guide}	Looks like we found our solution! Let's report this back to Professor Cempaka.
+
+:: guideTowardUnstressed
+@trigger    NewBehaviorObserved
+@when 		!HasFact(Urchin.Eats.Sargassum.Stressed), factId == "Urchin.Eats.Sargassum"
+@once
+@cutscene
+{@guide}	Look at that, the Urchins are eating the Sargassum!
+			Let's do that one more time, only this time in the {h}Sargassum Covered Reef{/h}.
+
+::helpAtExperimentUnstressed
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ExperimentV2", !HasFact("Urchin.Eats.Sargassum.Stressed"), HasFact("Urchin.Eats.Sargassum")
+@cutscene
+{@player} 	What do we still need to do here?
+{@guide}	We are so close!
+			This time put the Urchins in with the Sargassum in water from the {h}Sargassum Covered Reef{/h}.
 
 :: helpReportBack
 @trigger    RequestPartnerHelp
-@when 		HasFact(Urchin.Eats.Sargassum)
+@when 		HasFact(Urchin.Eats.Sargassum.Stressed)
 @cutscene
 {@player} 	What should we be doing now?
-{@kevin}	Now that we've finished the experiment, let's report back to the {map-name}Office{/map-name}.
+{@guide}	Now that we've finished the experiment, let's report back to the {map-name}Office{/map-name}.
 $if global:nav.shipRoom == "office"
-	{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
+	{@guide}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
 $endif
 
 // CATCH-ALL GUIDE TEXT
@@ -60,14 +76,14 @@ $endif
 @when 		JobTaskActive(urchinSarg)
 @boostScore -5
 @cutscene
-{@kevin}    Use the Observation Tank to find an organism that eats {nameof Sargassum}.
+{@guide}    Use the Observation Tank to find an organism that eats {nameof Sargassum}.
 
 :: catchUrchinSargArgue
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(urchinSargArgue)
 @boostScore -5
 @cutscene
-{@kevin}    Head back to the Office to talk to Professor Cempaka.
+{@guide}    Head back to the Office to talk to Professor Cempaka.
 
 // ARGUMENTATION
 
@@ -99,12 +115,12 @@ $goto .argue.intro
 $goto .argue.evidence
 
 :: argue.evidence
-$if ArgueSetClaim(coralClearSargArgueClaim, jobs.coral-clear-sarg.argue.claimLabel)
-			$call ArgueFactSlot(Urchin.Eats.Sargassum)
+$if ArgueSetClaim(coralClearSargArgueClaim, jobs.eat-seaweed.argue.claimLabel)
+			$call ArgueFactSlot(Urchin.Eats.Sargassum.Stressed)
 $endif
 $call ArgueDisplayClaim()
 $choice #argueFact; Present facts from AQOS
-		$answer Urchin.Eats.Sargassum, .argue.urchin
+		$answer Urchin.Eats.Sargassum.Stressed, .argue.urchin
     $answer *, .argue.unrelated
 $choice .argue.giveUp; Let me get back to you
 
@@ -117,9 +133,13 @@ $call ArgueComplete()
 $call CompleteJob()
 
 :: argue.unrelated
-{@profCempaka} How does that help the Sargassum situation?
-{@profCempaka} Are you sure you saw Urchins eat Sargassum?
-$call ArgueRejectIncorrect()
-$goto .argue.evidence
+$if ArgueIsFactSubmitted(Urchin.Eats.Sargassum)
+	$branch .argue.urchin
+$else
+	{@profCempaka} How does that help the Sargassum situation?
+	{@profCempaka} Are you sure you saw Urchins eat Sargassum?
+	$call ArgueRejectIncorrect()
+	$goto .argue.evidence
+$endif
 
 :: end

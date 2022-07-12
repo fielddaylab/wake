@@ -72,15 +72,34 @@ Go Back
 :: interact.locked
 Locked
 
+:: staion.exit.tooltip
+Return to Site
+
+:: station.view.station
+Zoom Out
+
+:: station.view.shop
+Upgrade
+
+:: station.view.job
+Job Giver
+
+:: interact.map.button
+Go
+
+:: interact.dive
+Dive
+
+:: interact.blocked
+Blocked
+
 # basePath ui.popup
 
 :: newItem.header
-New Item
-{item-name}{0}{/item-name}
+New Item Acquired!
 
 :: newUpgrade.header
-New Upgrade
-{item-name}{0}{/item-name}
+New Upgrade Acquired
 
 :: newFact.header
 New Fact
@@ -197,6 +216,16 @@ A save with the name {h}{0}{/h} does not exist.
 
 Check that you entered your save name correctly and try again.
 
+:: fileCorrupt.header
+Save Invalid
+
+:: fileCorrupt.description
+Your save was found on the server but could not be loaded.
+
+Your save may have been created with an incompatible version of the game.
+
+This shouldn't occur under normal circumstances, so please report your save name to the developers so we can investigate.
+
 # basePath ui.ship
 
 :: helm.exit.tooltip
@@ -204,9 +233,6 @@ To Ship Exterior
 
 :: helm.jobBoard.tooltip
 Job Board
-
-:: helm.kevin.tooltip
-Kevin, Your Jellyblob Companion
 
 :: helm.settings.tooltip
 Ship Settings
@@ -267,10 +293,31 @@ Dining Table
 :: exterior.shop.tooltip
 Shop
 
+:: modeling.tooltip
+Modeling
+
+:: exterior.shipMap.tooltip
+Ship Map
+
+:: exterior.cabin.tooltip
+Cabin
+
+:: helm.guide.tooltip
+Talk to V1ct0r
+
+:: map.header
+The Monstrum
+
+:: map.subheader
+Research Vessel
+
+:: exterior.toShip.tooltip
+To Helm
+
 # basePath ui.jobBoard
 
 :: setActive.label
-Set as Active
+Set as Current
 
 :: start.label
 Accept Job
@@ -285,19 +332,19 @@ Current Location
 Job List
 
 :: group.active
-Active
+Current Job
 
 :: group.available
-Available
+Available Jobs
 
 :: group.completed
-Completed
+Completed Jobs
 
 :: group.inProgress
-In Progress
+In Progress Jobs
 
 :: group.locked
-Locked
+Locked Jobs
 
 :: selectPrompt
 Select a Job
@@ -336,6 +383,18 @@ No Jobs available
 Check other stations
 for available Jobs
 
+:: difficulty.header
+Difficulty
+
+:: difficulty.experimentation
+Experimentation
+
+:: difficulty.modeling
+Modeling
+
+:: difficulty.argumentation
+Argumentation
+
 # basePath ui.nav
 
 :: dive.tooltip
@@ -368,7 +427,7 @@ Examine
 Return to Surface
 
 :: surface.label
-Surface
+To Surface
 
 :: scan.label
 Scan
@@ -393,4 +452,16 @@ Microscope
 
 :: microscope.tooltip
 Toggle Microscope
+
+:: enter.label
+Enter
+
+:: surface.label.action
+Surface
+
+:: descend
+Descend
+
+:: descend.label
+Descend to {0}
 

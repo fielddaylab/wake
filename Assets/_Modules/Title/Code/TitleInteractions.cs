@@ -103,8 +103,7 @@ namespace Aqua.Title
             }
         }
 
-        private IEnumerator NewGame()
-        {
+        private IEnumerator NewGame() {
             m_GameStartingSpinner.SetActive(true);
 
             string profileName = m_ProfileName.text;
@@ -114,8 +113,7 @@ namespace Aqua.Title
 
             m_GameStartingSpinner.SetActive(false);
 
-            if (!newProfile.IsComplete())
-            {
+            if (!newProfile.IsComplete()) {
                 Services.Input.ResumeAll();
                 Services.UI.Popup.DisplayWithClose(
                     Loc.Find("ui.title.saveError.header"),
@@ -124,7 +122,7 @@ namespace Aqua.Title
             else
             {
                 Services.Input.ResumeAll();
-                Services.Data.StartPlaying("Ship");
+                Services.Data.StartPlaying("RS-1C");
             }
         }
 
@@ -139,15 +137,21 @@ namespace Aqua.Title
 
             m_GameStartingSpinner.SetActive(false);
 
-            if (!load.IsComplete())
-            {
+            if (!load.IsComplete()) {
                 Services.Input.ResumeAll();
 
                 switch(DataService.ReturnStatus(load)) {
-                    case OGD.Core.ReturnStatus.Error_Request: {
+                    case DataService.ErrorStatus.Error_Request: {
                         Services.UI.Popup.DisplayWithClose(
                             Loc.Find("ui.title.fileMissing.header"),
                             Loc.Format("ui.title.fileMissing.description", profileName));
+                        break;
+                    }
+
+                    case DataService.ErrorStatus.DeserializeError: {
+                        Services.UI.Popup.DisplayWithClose(
+                            Loc.Find("ui.title.fileCorrupt.header"),
+                            Loc.Format("ui.title.fileCorrupt.description", profileName));
                         break;
                     }
 
@@ -158,9 +162,7 @@ namespace Aqua.Title
                         break;
                     }
                 }
-            }
-            else
-            {
+            } else {
                 Services.Input.ResumeAll();
                 Services.Data.StartPlaying();
             }

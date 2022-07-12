@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Aqua.Profile;
 using BeauUtil;
@@ -5,23 +6,29 @@ using BeauUtil;
 namespace Aqua {
     static public class JobUtils {
 
+        [Flags]
+        public enum JobQueryFlags : uint {
+            IgnoreLocation = 0x01,
+            IncludeCompleted = 0x02,
+        }
+
         /// <summary>
         /// Iterates over all jobs that should be currently visible for the current save state.
         /// </summary>
-        static public IEnumerable<PlayerJob> VisibleJobs(bool ignoreLocation = false) {
-            return VisibleJobs(Save.Current, ignoreLocation);
+        static public IEnumerable<PlayerJob> VisibleJobs(JobQueryFlags queryFlags = 0) {
+            return VisibleJobs(Save.Current, queryFlags);
         }
 
         /// <summary>
         /// Iterates over all jobs that should be currently visible.
         /// </summary>
-        static public IEnumerable<PlayerJob> VisibleJobs(SaveData saveData, bool ignoreLocation = false) {
+        static public IEnumerable<PlayerJob> VisibleJobs(SaveData saveData, JobQueryFlags queryFlags = 0) {
             JobDB db = Services.Assets.Jobs;
             ListSlice<JobDesc> stationJobs = default;
             ListSlice<JobDesc> commonJobs = default;
             StringHash32 stationId = saveData.Map.CurrentStationId();
 
-            if (!ignoreLocation) {
+            if ((queryFlags & JobQueryFlags.IgnoreLocation) == 0) {
                 stationJobs = db.JobsForStation(stationId);
                 commonJobs = db.CommonJobs();
             } else {
@@ -29,22 +36,23 @@ namespace Aqua {
             }
 
             PlayerJob status;
+            JobStatusFlags ignoreWithFlags = (queryFlags & JobQueryFlags.IncludeCompleted) != 0 ? 0 : JobStatusFlags.Completed; 
             
             foreach(var job in stationJobs) {
                 status = GetJobStatus(job, saveData, true);
-                if ((status.Status & JobStatusFlags.Visible) != 0) {
+                if ((status.Status & JobStatusFlags.Visible) != 0 && ((status.Status & ignoreWithFlags) == 0)) {
                     yield return status;
                 }
             }
 
             foreach(var job in commonJobs) {
                 status = GetJobStatus(job, saveData, true);
-                if ((status.Status & JobStatusFlags.Visible) != 0) {
+                if ((status.Status & JobStatusFlags.Visible) != 0 && ((status.Status & ignoreWithFlags) == 0)) {
                     yield return status;
                 }
             }
 
-            if (!ignoreLocation) {
+            if ((queryFlags & JobQueryFlags.IgnoreLocation) == 0) {
                 status = Save.CurrentJob;
                 if (status.IsValid && status.Job.StationId() != stationId) {
                     status = GetJobStatus(status.Job, saveData, false);
@@ -204,6 +212,57 @@ namespace Aqua {
             }
 
             return status;
+        }
+
+        /// <summary>
+        /// Returns whether unlocking a given upgrade would open up new jobs at the given station
+        /// </summary>
+        public static bool UpgradeUnlocksJobAtStation(StringHash32 upgradeId, StringHash32 stationId) {
+            JobDB db = Services.Assets.Jobs;
+
+            var jobList = db.JobsForStation(stationId);
+
+            PlayerJob status;
+            SaveData saveData = Save.Current;
+
+            foreach (var job in jobList) {
+                status = GetJobStatus(job, saveData, true);
+
+                int exp = (int)saveData.Inventory.ItemCount(ItemIds.Exp);
+
+                // if not required experience, not visible
+                int requiredExp = job.RequiredExp();
+                if (exp < requiredExp) {
+                    continue;
+                }
+
+                // if haven't completed the required jobs, not visible
+                bool completedRequired = true;
+                foreach (var req in job.RequiredJobs()) {
+                    if (!saveData.Jobs.IsComplete(req.Id())) {
+                        completedRequired = false;
+                        break;
+                    }
+                }
+                if (!completedRequired) {
+                    continue;
+                }
+
+                // if special conditions aren't met, not visible
+                StringSlice conditions = job.RequiredConditions();
+                if (!conditions.IsEmpty && !Services.Data.CheckConditions(conditions)) {
+                    continue;
+                }
+
+                // if haven't gotten required upgrades, locked
+                if (job.RequiredUpgrades().Contains(upgradeId) && status.Status != JobStatusFlags.Visible) {
+                    // a job which would be unlocked and is visible was found
+                    return true;
+                }
+            }
+
+            // no job in this station would be unlocked by the upgrade
+            return false;
         }
     }
 

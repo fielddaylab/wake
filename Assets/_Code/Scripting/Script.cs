@@ -1,37 +1,46 @@
 using System;
+using System.Collections;
 using System.Runtime.CompilerServices;
 using Aqua.Character;
+using Aqua.Scripting;
+using Aqua.View;
 using BeauPools;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Variants;
 using Leaf;
 using Leaf.Runtime;
+using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Aqua {
     static public class Script {
         static public ILeafPlugin Plugin {
-            [MethodImpl(256)] get { return Services.Script; }
+            [MethodImpl(256)]
+            get { return Services.Script; }
         }
 
         static public bool IsLoading {
-            [MethodImpl(256)] get { return Services.State.IsLoadingScene(); }
+            [MethodImpl(256)]
+            get { return StateUtil.IsLoading; }
         }
 
         static public bool IsPaused {
-            [MethodImpl(256)] get { return Services.Pause.IsPaused(); }
+            [MethodImpl(256)]
+            get { return Services.Pause.IsPaused(); }
         }
 
         static public bool IsPausedOrLoading {
-            [MethodImpl(256)] get { return Services.State.IsLoadingScene() || Services.Pause.IsPaused(); }
+            [MethodImpl(256)]
+            get { return StateUtil.IsLoading || Services.Pause.IsPaused(); }
         }
 
         static public bool ShouldBlock() {
-            return !Services.Valid || Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.UI.IsLetterboxed() || Services.State.IsLoadingScene();
+            return !Services.Valid || Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.UI.IsLetterboxed() || StateUtil.IsLoading;
         }
 
         static public bool ShouldBlockIgnoreLetterbox() {
-            return Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.State.IsLoadingScene();
+            return Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || StateUtil.IsLoading;
         }
 
         [MethodImpl(256)]
@@ -40,7 +49,8 @@ namespace Aqua {
         }
 
         static public PlayerBody CurrentPlayer {
-            [MethodImpl(256)] get { return Services.State.Player; }
+            [MethodImpl(256)]
+            get { return Services.State.Player; }
         }
 
         #region Argument Parsing
@@ -58,7 +68,7 @@ namespace Aqua {
         #region Popups
 
         static public Future<StringHash32> PopupNewEntity(BestiaryDesc entity, string descriptionOverride = null, ListSlice<BFBase> extraFacts = default) {
-            using(PooledList<BFBase> allFacts = PooledList<BFBase>.Create(entity.AssumedFacts)) {
+            using (PooledList<BFBase> allFacts = PooledList<BFBase>.Create(entity.AssumedFacts)) {
                 allFacts.AddRange(extraFacts);
                 allFacts.Sort(BFType.SortByVisualOrder);
                 if (entity.Category() == BestiaryDescCategory.Critter) {
@@ -93,8 +103,8 @@ namespace Aqua {
             return Services.UI.Popup.PresentFacts(Loc.Find("ui.popup.factsUpdated.header"), textOverride, entity ? entity.ImageSet() : null, new PopupFacts(facts, flags));
         }
 
-        static public Future<StringHash32> PopupFactDetails(BFBase fact, BFDiscoveredFlags flags, params NamedOption[] options) {
-            BFDetails details = BFType.GenerateDetails(fact, flags);
+        static public Future<StringHash32> PopupFactDetails(BFBase fact, BFDiscoveredFlags flags, BestiaryDesc reference, params NamedOption[] options) {
+            BFDetails details = BFType.GenerateDetails(fact, flags, reference);
             bool showFact = (BFType.Flags(fact) & BFFlags.HideFactInDetails) == 0;
 
             if (showFact) {
@@ -113,7 +123,7 @@ namespace Aqua {
                 Loc.Find(item.NameTextId()),
                 Loc.Find(item.DescriptionTextId()),
                 item.ImageSet(),
-                PopupFlags.TallImage | PopupFlags.ShowCloseButton,
+                PopupFlags.TallImage | PopupFlags.ShowCloseButton | PopupFlags.ImageTextBG,
                 options);
         }
 
@@ -157,8 +167,105 @@ namespace Aqua {
 
         #endregion // Variables
 
+        #region Inspection
+
+        /// <summary>
+        /// Interacts with an object.
+        /// </summary>
+        static public Routine Interact(ScriptInteractParams inParams, MonoBehaviour inHost = null) {
+            Routine r = Routine.Start(inHost, InteractRoutine(inParams));
+            r.Tick();
+            return r;
+        }
+
+        /// <summary>
+        /// Routine for interacting with an object.
+        /// </summary>
+        static public IEnumerator InteractRoutine(ScriptInteractParams inParams) {
+            Script.PopCancel();
+
+            inParams.Config.PreTrigger?.Invoke(ref inParams);
+
+            ScriptThreadHandle thread;
+
+            thread = ScriptObject.Interact(inParams.Source.Object.Parent, !inParams.Available, inParams.Config.TargetId);
+
+            if (!inParams.Available) {
+                IEnumerator locked = inParams.Config.OnLocked?.Invoke(inParams, thread);
+                if (locked != null)
+                    yield return null;
+
+                if (thread.IsRunning())
+                    yield return thread.Wait();
+                yield break;
+            }
+
+            IEnumerator execute = inParams.Config.OnPerform?.Invoke(inParams, thread);
+            if (execute != null)
+                yield return execute;
+            if (thread.IsRunning())
+                yield return thread.Wait();
+
+            if (Script.PopCancel()) {
+                yield break;
+            }
+
+            switch (inParams.Config.Action) {
+                case ScriptInteractAction.Inspect: {
+                        thread = ScriptObject.Inspect(inParams.Source.Object.Parent);
+                        yield return thread.Wait();
+                        break;
+                    }
+
+                case ScriptInteractAction.GoToPreviousScene: {
+                        StateUtil.LoadPreviousSceneWithWipe(inParams.Config.TargetEntranceId, null, inParams.Config.LoadFlags);
+                        break;
+                    }
+
+                case ScriptInteractAction.GoToMap: {
+                        StateUtil.LoadMapWithWipe(inParams.Config.TargetId, inParams.Config.TargetEntranceId, null, inParams.Config.LoadFlags);
+                        break;
+                    }
+
+                case ScriptInteractAction.GoToView: {
+                        ViewManager.Find<ViewManager>().GoToNode(inParams.Source.Object.GetComponent<ViewLink>());
+                        break;
+                    }
+            }
+        }
+
+        #endregion // Inspection
+
+        #region Cancelling
+
+        static private bool s_CancelInteraction = false;
+
+        /// <summary>
+        /// Retrieves the current cancel flag and resets it.
+        /// </summary>
+        static public bool PopCancel() {
+            bool cancel = s_CancelInteraction;
+            s_CancelInteraction = false;
+            return cancel;
+        }
+
+        [LeafMember("CancelInteract"), Preserve]
+        static public void QueueCancel() {
+            s_CancelInteraction = true;
+        }
+
+        #endregion // Cancelling
+
         static public void Tick(this Routine routine) {
             routine.TryManuallyUpdate(0);
+        }
+
+        // Added by Xander 06/03/22
+        [LeafMember]
+        static public bool IsPlayerOnShip() {
+            StringHash32 currentMapId = MapDB.LookupCurrentMap();
+            return ((currentMapId == MapIds.Helm) || (currentMapId == MapIds.Modeling) || (currentMapId == MapIds.Experimentation) ||
+            (currentMapId == MapIds.JobBoard) || (currentMapId == MapIds.WorldMap));
         }
     }
 }

@@ -155,7 +155,7 @@ namespace Aqua.Modeling {
         // }
 
         public void Dispose() {
-            Unsafe.TryFreeArena(ref m_Allocator);
+            Unsafe.TryDestroyArena(ref m_Allocator);
             Actors = null;
             Eats = null;
             Parasites = null;
@@ -266,6 +266,14 @@ namespace Aqua.Modeling {
 
         #endregion // Eating
 
+        #region Parasite
+
+        private ParasiteInfo* NewParasite() {
+            return &Parasites[ParasiteCount++];
+        }
+
+        #endregion // Parasite
+
         #region Importing
 
         public void ImportSim(BFSim sim) {
@@ -332,7 +340,7 @@ namespace Aqua.Modeling {
 
                 case BFTypeId.Eat: {
                     // only import if the player has the rate
-                    if ((flags & BFDiscoveredFlags.Rate) != 0) {
+                    if (BFType.HasRate(flags)) {
                         BFEat eat = (BFEat) fact;
                         int targetIdx = IndexOfActorType(eat.Critter.Id());
                         if (targetIdx >= 0) {
@@ -381,8 +389,18 @@ namespace Aqua.Modeling {
                     break;
                 }
             
-                case BFTypeId.Parasites: {
-                    // TODO: add parasite relationship
+                case BFTypeId.Parasite: {
+                    // only import if the player has the rate
+                    if (BFType.HasRate(flags)) {
+                        BFParasite ps = (BFParasite) fact;
+                        int targetIdx = IndexOfActorType(ps.Critter.Id());
+                        if (targetIdx >= 0) {
+                            ParasiteInfo* parasiteInfo = NewParasite();
+                            parasiteInfo->Index = (byte) index;
+                            parasiteInfo->Target = (byte) targetIdx;
+                            parasiteInfo->Affected = ps.Ratio;
+                        }
+                    }
                     break;
                 }
             }
@@ -542,19 +560,11 @@ namespace Aqua.Modeling {
         #region Quicksort
 
         static private void Quicksort(WorkingEatInfo* buffer, int lower, int higher) {
-            if (lower >= 0 && higher >= 0 && lower < higher) {
-                int pivot = Partition(buffer, lower, higher);
-                Quicksort(buffer, lower, pivot);
-                Quicksort(buffer, pivot + 1, higher);
-            }
+            UnsafeExt.Quicksort(buffer, lower, higher, (ptr) => ptr->SortingOrder);
         }
 
         static private void Quicksort(ActorInfo* buffer, int lower, int higher) {
-            if (lower >= 0 && higher >= 0 && lower < higher) {
-                int pivot = Partition(buffer, lower, higher);
-                Quicksort(buffer, lower, pivot);
-                Quicksort(buffer, pivot + 1, higher);
-            }
+            UnsafeExt.Quicksort(buffer, lower, higher, (ptr) => ptr->ActionOrder);
         }
 
         static private int Partition(WorkingEatInfo* buffer, int lower, int higher) {

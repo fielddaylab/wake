@@ -1,45 +1,92 @@
 :: basePath job.bayou-displaced-reef
 
-// INTRO
-
 :: start
 @trigger    JobStarted
 @cutscene
 
 $branch common.ringPhone
 
-{@profHarper}   Have you explored the {h}Bayou Station{/h} yet? There appears to be a new reef growing in the middle of Site O. 
-                Would you be able to go pop over and help us report back on what exactly is growing over there? 
-{@player}   You can count one me!
+{@profHarper}   Have you explored the {h}Bayou Station{/h} yet? There appears to be a new reef growing in the middle of {h}Site O{/h}. 
+                Would you be able to go pop over and help us report back on what exactly is growing over there?
+{@player}   You can count on me!
 
-
-:: diveSite
-@trigger    JobTasksUpdated
-@when       JobTaskActive(getCounts)
+:: giveROVTagger
+@trigger    SceneStart
+@when       scene:name == "BayouStation"
 @once
 @cutscene
 $if !HasUpgrade(ROVTagger)
+	$branch common.ringPhone
 	{@profHarper} When you took this job I had the tech install a population counter tool on your sub.
 	$call GiveUpgrade(ROVTagger)
 	{@profHarper} You should see the {nameof ROVTagger} at the top of your view.  
 	{@profHarper} If you switch it on and move close to a scanned species, the {nameof ROVTagger} will {h}count{/h} it.
 	{@profHarper} Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
 	{@profHarper} Go ahead and give it a try!
+	$set    jobs:common-dive.seen.tagger-intro = true
 $endif
 
-// ARGUMENTATION
+:: makeAModel
+@trigger    SceneStart
+@when       JobTaskActive(makeModel), scene:name == "Ship"
+@once
+@cutscene
+{@guide}    Let's head to our ship's modeling room to compile our data into a report for {nameof @profHarper}.
+$call UnlockRoom("modelingRoom")
+$call UnlockRoom("Modeling")
 
+// CATCH-ALL GUIDE TEXT
+
+:: catchVisitSiteO
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(visitSiteO)
+@boostScore -5
+@cutscene
+{@guide}    Head to {h}site O{/h}, it's just South of us!
+
+:: catchGetScans
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(getScans)
+@boostScore -5
+@cutscene
+{@guide}    Scan and count the species at {h}site O{/h}.
+
+:: catchGetCounts
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(getCounts)
+@boostScore -5
+@cutscene
+{@guide}    Count the species at {h}site O{/h}.
+
+:: catchMakeModel
+@trigger    RequestPartnerHelp
+@when       JobTaskActive(makeModel)
+@boostScore -5
+@cutscene
+$if IsPlayerOnShip()
+    {@guide}    We need to head to the {map-name}Modeling Lab{/map-name} to construct a {nameof VisualModel}.
+$else
+    {@guide}    Let's head back to our ship!
+$endif
+
+:: catchReportback
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@guide}    Report back to {nameof profHarper}.
+
+// ARGUMENTATION
 ::argue.intro
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(siteOAnalysis)
 @cutscene
 $call ArgueLoad(siteOAnalysis)
 $if ArgueSetClaim(Claim, jobs.bayou-displaced-reef.argue.claimLabel)
-		$call ArgueFactSlot(O_OilRig.Population.LoggerheadTurtle)
+    $call ArgueFactSlot(O_OilRig.displacedReef.Model.Viz)
 $endif
-//{@profHarper} Have you collected the population data for the critters at {nameof O_OilRig}?
-{@profHarper} I won't make you show me all the populations you gathered, but
-{@profHarper} What is the current {nameof LoggerheadTurtle} population at {nameof O_OilRig}, for example?
+
+{@profHarper} Have you constructed a {h}visual model{/h} for the critters at {nameof O_OilRig}?
 $branch .argue.showClaim
 
 :: argue.showClaim
@@ -61,17 +108,8 @@ $call ArgueCancelClaim()
 
 ::end
 
-// END
-
 :: argue.correctPopulation
 $call ArgueComplete()
 {@profHarper} That looks great. 
 {@profHarper} It looks like you are getting good at estimating populations with your sub.
 $call CompleteJob()
-
-//:: end
-//@trigger    JobCompleted
-//@cutscene
-
-//// write a conclusion to your job
-//{@kevin}    This is the conclusion to the NewJobDesc job!

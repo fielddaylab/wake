@@ -14,7 +14,7 @@ namespace Aqua
         Eat,
         Consume,
         Produce,
-        Parasites,
+        Parasite,
 
         Death,
         Grow,

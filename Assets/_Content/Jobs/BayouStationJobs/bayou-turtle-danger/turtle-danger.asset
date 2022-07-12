@@ -36,11 +36,42 @@ MonoBehaviour:
   m_PrereqConditions: 
   m_PrereqUpgrades:
   - m_HashValue: 165582993
+  - m_HashValue: 313138705
   m_PrereqExp: 0
   m_StationId:
     m_HashValue: 2992071853
   m_DiveSiteIds: []
   m_Tasks:
+  - Id:
+      m_Source: scanCyano
+      m_HashValue: 3648106592
+    LabelId:
+      m_Source: jobs.bayou-turtle-danger.task.scanCyano
+      m_HashValue: 2164627182
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: Cyanobacteria
+        m_HashValue: 3623197764
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: countCyano
+      m_HashValue: 2612872260
+    LabelId:
+      m_Source: jobs.bayou-turtle-danger.task.countCyano
+      m_HashValue: 2371982670
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: O_OilRig.Population.Cyanobacteria
+        m_HashValue: 3210473031
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: scanCyano
+      m_HashValue: 3648106592
   - Id:
       m_Source: experimentsForSiteO
       m_HashValue: 1846652990
@@ -60,7 +91,9 @@ MonoBehaviour:
         m_HashValue: 3424480027
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds: []
+    PrerequisiteTaskIds:
+    - m_Source: countCyano
+      m_HashValue: 2612872260
   - Id:
       m_Source: visualModelO
       m_HashValue: 1075061939
@@ -95,10 +128,42 @@ MonoBehaviour:
       m_HashValue: 1075061939
   m_OptimizedTaskList:
   - Id:
+      m_Source: scanCyano
+      m_HashValue: 3648106592
+    IdString: scanCyano
+    Index: 0
+    LabelId:
+      m_Source: jobs.bayou-turtle-danger.task.scanCyano
+      m_HashValue: 2164627182
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: Cyanobacteria
+        m_HashValue: 3623197764
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: countCyano
+      m_HashValue: 2612872260
+    IdString: countCyano
+    Index: 1
+    LabelId:
+      m_Source: jobs.bayou-turtle-danger.task.countCyano
+      m_HashValue: 2371982670
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: O_OilRig.Population.Cyanobacteria
+        m_HashValue: 3210473031
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
       m_Source: experimentsForSiteO
       m_HashValue: 1846652990
     IdString: experimentsForSiteO
-    Index: 0
+    Index: 2
     LabelId:
       m_Source: jobs.bayou-turtle-danger.task.modelSiteO
       m_HashValue: 2817148168
@@ -115,12 +180,12 @@ MonoBehaviour:
         m_HashValue: 3424480027
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 
+    PrerequisiteTaskIndices: 0100
   - Id:
       m_Source: visualModelO
       m_HashValue: 1075061939
     IdString: visualModelO
-    Index: 1
+    Index: 3
     LabelId:
       m_Source: jobs.bayou-turtle-danger.task.visualModelO
       m_HashValue: 529884717
@@ -131,12 +196,12 @@ MonoBehaviour:
         m_HashValue: 3653498023
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0000
+    PrerequisiteTaskIndices: 0200
   - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
     IdString: reportBack
-    Index: 2
+    Index: 4
     LabelId:
       m_Source: jobs.bayou-turtle-danger.task.reportBack
       m_HashValue: 586683870
@@ -147,7 +212,7 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0100
+    PrerequisiteTaskIndices: 0300
   m_CashReward: 50
   m_ExpReward: 5
   m_Scripting: {fileID: -1942890987711236906, guid: ce7b39e4973a25243b945325c01c1aef,

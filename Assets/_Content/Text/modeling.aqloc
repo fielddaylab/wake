@@ -40,7 +40,7 @@ Last {0} Years
 Next {0} Years
 
 :: accuracy.label
-Accuracy
+Model Accuracy
 
 :: newConceptualModel.header
 New Visualization Model
@@ -67,7 +67,7 @@ Reset
 Run Intervention
 
 :: interveneAddButton
-Introduce Organism
+Introduce New Organism
 
 :: missing.default
 Missing Data
@@ -78,19 +78,44 @@ Missing Organisms
 :: missing.behaviors
 Missing Behaviors
 
-:: missing.organismsAndBehaviors
-Missing Organisms
-and Behaviors
-
 :: missing.historicalPopulations
 Missing Historical Populations
 
 :: missing.historicalWaterChem
-Missing Historical Water Chemistry
+Missing Historical Environmental Data
 
 :: missing.historicalPopulationsAndWaterChem
-Missing Historical Populations
-and Water Chemistry
+Missing Historical Populations and Water Chemistry
+
+:: missing.reproduction
+Reproduction Rate is Missing
+
+:: missing.reproduction.stressed
+Stressed Reproduction Rate is Missing
+
+:: missing.eat
+Eating Relationship is Missing
+
+:: missing.eat.stressed
+Stressed Eating Relationship is Missing
+
+:: missing.chem
+Environmental Interaction is Missing
+
+:: missing.chem.stressed
+Stressed Environmental Interaction is Missing
+
+:: missing.parasite
+Parasitic Relationship Missing
+
+:: missing.populationHistory
+Historical Population Missing
+
+:: missing.waterChemHistory
+Historical Environment Data Missing
+
+:: missing.stressRange
+Environmental Tolerances Missing
 
 :: noSyncPopup.header
 Low Accuracy
@@ -103,21 +128,79 @@ Your model cannot accurately describe the historical data. You may be missing:
 * Rate measurements when organisms are under stress
 
 :: jobMode.label
-Job Mode
+Active Job at Ecosystem
 
 :: wrongJobMode.label
 Ecosystem Unrelated to Active Job
-Saving Disabled
 
 :: noJobMode.label
-No Job Active
-Saving Disabled
+No Active Job
 
 :: saveToAQOSButton
 Save Model to AQOS
 
 :: importFactsButton
 Import New Facts
+
+:: status.readyForImport
+New Facts Available to Import
+
+:: status.readyForExport
+Model Ready to Save to AQOS
+
+:: filter.header
+Filters
+
+:: filter.behavior
+Behaviors:
+
+:: filter.eats
+Eats
+
+:: filter.repro
+Reproduces
+
+:: filter.parasite
+Stresses
+
+:: filter.waterChem
+Water Chemistry:
+
+:: filter.o2co2
+O2/CO2
+
+:: intervene.target
+Intervention Target
+
+:: syncView.simulate
+Simulation
+
+:: syncView.evaluate
+Evaluation
+
+:: divergence.missingRepro
+Reproduction
+
+:: divergence.missingPredatorStress
+Stress rules on predators
+
+:: divergence.header
+Population Deviation Detected
+
+:: divergence.lower
+A <u>lower</u> population value means we are missing one or more of the following behaviors:
+
+:: divergence.higher
+A <u>higher</u> population value means we are missing one or more of the following behaviors:
+
+:: divergence.missingStress
+Stress behaviors
+
+:: divergence.missingPredatorRepro
+Predator Reproduction behaviors
+
+:: divergence.notEnoughPredators
+Not Enough Predators
 
 # basePath models
 
@@ -149,7 +232,7 @@ Sargassum Covered Reef Light Predition
 Red Grouper population prediction from number of Fishers.
 
 :: coralStation.grouperFishingRate.description
-The {nameof RedGrouper} population can be safely sustained by reducing the number of fishers by 12.
+The {nameof RedGrouper} population can be safely sustained by significantly reducing the number of fishers.
 
 :: bayouStation.deadZoneOxygen.name
 Oxygen Tracking Model in the Dead Zone
@@ -261,8 +344,8 @@ This seems to represent all of the possible behaviors in the system.
 :: bayouStation.turtleNoReefIntervene
 Modelling Reef Removal
 
-:: bayouStation.turtleNoReefDesc
-The turtle populations are maintained when the reef species are removed.
+:: bayouStation.turtleNoReefInterveneDesc
+The turtle populations are maintained when the rig and reef species are removed.
 
 :: O_OilRig.turtleDanger.header
 Descriptive Validated Model of the species found at Site O
@@ -294,3 +377,62 @@ The relationships between organisms at the whale fall.
 :: arcticStation.whaleFall.name
 Yummy Whale Fall
 
+:: coralStation.huntingLionsDescriptive
+EMPTY
+
+:: coralStation.muchAlgaeDescriptive
+The Tang aren't eating enough algae to make the model align with the historical populations
+
+:: coralStation.muchAlgaeVisual
+The only species eating Turf Algae is the Blue Tang
+
+:: bayouStation.turtleNoReefPredict
+Modelling Reef Prediction
+
+:: bayouStation.turtleNoReefPredictDesc
+The turtle populations stay within a normal range based on their current food web
+
+:: O_OilRig.turtleDangerJellies.predict.header
+Prediction Model of Loggerhead and Moon Jellies
+
+:: O_OilRig.turtleDangerJellies.predict.desc
+Loggerhead populations will remain steady due to their ability to eat Moon Jellies
+
+:: O_OilRig.turtleDangerJellies.visual.header
+Site O Food Web with Moon Jellies
+
+:: O_OilRig.turtleDangerJellies.visual.desc
+Loggerhead Turtles also eat Moon Jellies
+
+:: O_OilRig.turtleDangerJellies.describe.header
+Descriptive Model of Site O with Moon Jellies
+
+:: O_OilRig.turtleDangerJellies.describe.desc
+A model of how Loggerhead Turtles respond to the presence of the reef
+
+:: O_OilRig.displacedReef.visual.header
+Displaced Reef
+
+:: O_OilRig.displacedReef.visual.description
+The many creatures of the Displaced Reef
+
+:: coralStation.reefEdge.plasticsVisual
+{pluralnameof LoggerheadTurtle} eat {pluralnameof QueenConch}, {pluralnameof Copepod}, {pluralnameof WhiteShrimp}, and {pluralnameof PlasticBag}
+
+:: coralStation.huntingLionsIntervene
+EMPTY
+
+:: coralStation.huntingLionsPrediction
+EMPTY
+
+:: coralStation.huntingLionsVisual
+EMPTY
+
+:: coralStation.ickStressVisual
+EMPTY
+
+:: coralStation.ickStressDescribe
+EMPTY
+
+:: n_thermalVent.altEnergy.description
+The ecosystem of {h}Site N{/h} has multiple sources of energy.

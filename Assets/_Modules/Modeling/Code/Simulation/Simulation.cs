@@ -87,7 +87,7 @@ namespace Aqua.Modeling
             }
 
             public void Dispose() {
-                Unsafe.TryFreeArena(ref m_Allocator);
+                Unsafe.TryDestroyArena(ref m_Allocator);
                 Populations = null;
                 Unconsumed = null;
                 Hungers = null;
@@ -206,15 +206,15 @@ namespace Aqua.Modeling
 
                 uint desiredAffected = SimMath.FixedMultiply(totalSource, parasite.Affected);
                 uint newAffected = 0;
-                if (desiredAffected > source->Stressed) {
-                    newAffected = Math.Min(desiredAffected - source->Stressed, source->Alive);
+                if (desiredAffected > target->Stressed) {
+                    newAffected = Math.Min(desiredAffected - target->Stressed, target->Alive);
                 }
 
                 target->Alive -= newAffected;
                 target->Stressed += newAffected;
 
                 if (bLogging) {
-                    Report(buffer, "{0} parasited {1} {2}", profile.Actors[parasite.Index].Id.ToDebugString(), desiredAffected, profile.Actors[parasite.Target].Id.ToDebugString());
+                    Report(buffer, "{0} parasited {1} {2}", profile.Actors[parasite.Index].Id.ToDebugString(), newAffected, profile.Actors[parasite.Target].Id.ToDebugString());
                 }
             }
 

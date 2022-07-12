@@ -50,6 +50,8 @@ namespace EasyAssetStreaming {
 
         [NonSerialized] private Texture2D m_LoadedTexture;
         [NonSerialized] private Rect m_ClippedUVs;
+        [NonSerialized] private Vector2 m_AppliedPivot;
+        [NonSerialized] private bool m_ResizeGuard;
         private readonly Streaming.AssetCallback m_OnUpdatedEvent;
         private DrivenRectTransformTracker m_Tracker;
 
@@ -203,6 +205,10 @@ namespace EasyAssetStreaming {
         /// Resizes the mesh to preserve aspect ratio.
         /// </summary>
         public void Resize(AutoSizeMode sizeMode) {
+            if (m_ResizeGuard) {
+                return;
+            }
+
             if (sizeMode == AutoSizeMode.Disabled || !m_LoadedTexture) {
                 m_Tracker.Clear();
                 if (m_ClippedUVs != m_UVRect) {
@@ -229,28 +235,21 @@ namespace EasyAssetStreaming {
                 case AutoSizeMode.FitToParent:
                 case AutoSizeMode.FillParent:
                 case AutoSizeMode.FillParentWithClipping: {
-                    m_Tracker.Add(this, rect, DrivenTransformProperties.SizeDelta);
+                    m_Tracker.Add(this, rect, DrivenTransformProperties.SizeDelta | DrivenTransformProperties.Anchors);
                     break;
                 }
             }
 
-            StreamingHelper.UpdatedResizeProperty updated = StreamingHelper.AutoSize(sizeMode, m_LoadedTexture, m_UVRect, rect.localPosition, rect.pivot, ref size, ref m_ClippedUVs, StreamingHelper.GetParentSize(rect));
+            StreamingHelper.UpdatedResizeProperty updated = StreamingHelper.AutoSize(sizeMode, m_LoadedTexture, m_UVRect, rect.localPosition, rect.pivot, ref size, ref m_ClippedUVs, ref m_AppliedPivot, StreamingHelper.GetParentSize(rect));
             if (updated == 0) {
                 return;
             }
 
-            #if UNITY_EDITOR
-            if (!Application.IsPlaying(this)) {
-                if ((updated & StreamingHelper.UpdatedResizeProperty.Size) != 0) {
-                    UnityEditor.Undo.RecordObject(rect, "Changing size");
-                    UnityEditor.EditorUtility.SetDirty(rect);
-                }
-                if ((updated & StreamingHelper.UpdatedResizeProperty.Clip) != 0) {
-                    UnityEditor.Undo.RecordObject(m_RawImage, "Changing clipping");
-                    UnityEditor.EditorUtility.SetDirty(m_RawImage);
-                }
+            m_ResizeGuard = true;
+
+            if ((updated & StreamingHelper.UpdatedResizeProperty.Pivot) != 0) {
+                LoadAnchors();
             }
-            #endif // UNITY_EDITOR
 
             if ((updated & StreamingHelper.UpdatedResizeProperty.Size) != 0) {
                 switch(sizeMode) {
@@ -275,6 +274,8 @@ namespace EasyAssetStreaming {
             if ((updated & StreamingHelper.UpdatedResizeProperty.Clip) != 0) {
                 LoadClipping();
             }
+
+            m_ResizeGuard = false;
         }
 
         #region Unity Events
@@ -294,9 +295,13 @@ namespace EasyAssetStreaming {
                 if (m_ClippedUVs == default) {
                     m_ClippedUVs = m_UVRect;
                 }
+                if (m_AppliedPivot == default) {
+                    m_AppliedPivot = m_RawImage.rectTransform.pivot;
+                }
 
                 LoadTexture();
                 LoadClipping();
+                LoadAnchors();
                 ApplyVisible();
                 return;
             }
@@ -305,9 +310,13 @@ namespace EasyAssetStreaming {
             if (m_ClippedUVs == default) {
                 m_ClippedUVs = m_UVRect;
             }
+            if (m_AppliedPivot == default) {
+                m_AppliedPivot = m_RawImage.rectTransform.pivot;
+            }
 
             LoadTexture();
             LoadClipping();
+            LoadAnchors();
             ApplyVisible();
         }
 
@@ -354,6 +363,7 @@ namespace EasyAssetStreaming {
         public void Preload() {
             LoadTexture();
             LoadClipping();
+            LoadAnchors();
             ApplyVisible();
         }
 
@@ -370,7 +380,9 @@ namespace EasyAssetStreaming {
                 return;
             }
 
-            m_RawImage.enabled = m_LoadedTexture && m_Visible;
+            bool bHasTexture = m_LoadedTexture;
+
+            m_RawImage.enabled = bHasTexture && m_Visible;
             m_RawImage.texture = m_LoadedTexture;
             m_ClippedUVs = m_UVRect;
 
@@ -380,12 +392,23 @@ namespace EasyAssetStreaming {
             }
             #endif // USING_BEAUUTIL
 
-            if (Streaming.IsLoaded(m_LoadedTexture))
+            Streaming.AssetStatus status = Streaming.Status(m_LoadedTexture);
+            if ((status & Streaming.AssetStatus.Loaded) != 0) {
                 Resize(m_AutoSize);
+            } else {
+                OnUpdated?.Invoke(this, status);
+            }
         }
 
         private void LoadClipping() {
             m_RawImage.uvRect = m_ClippedUVs;
+        }
+
+        private void LoadAnchors() {
+            if (StreamingHelper.ControlsAnchors(m_AutoSize)) {
+                RectTransform rect = m_RawImage.rectTransform;
+                rect.anchorMin = rect.anchorMax = m_AppliedPivot;
+            }
         }
 
         private void ApplyVisible() {
@@ -403,6 +426,7 @@ namespace EasyAssetStreaming {
         public void Unload() {
             if (m_RawImage) {
                 m_RawImage.enabled = false;
+                m_RawImage.texture = null;
             }
 
             #if USING_BEAUUTIL
@@ -411,7 +435,7 @@ namespace EasyAssetStreaming {
             }
             #endif // USING_BEAUUTIL
 
-            if (Streaming.Unload(ref m_LoadedTexture)) {
+            if (Streaming.Unload(ref m_LoadedTexture, m_OnUpdatedEvent)) {
                 OnUpdated?.Invoke(this, Streaming.AssetStatus.Unloaded);
             }
         }
@@ -463,6 +487,7 @@ namespace EasyAssetStreaming {
                 LoadTexture();
                 Resize(m_AutoSize);
                 LoadClipping();
+                LoadAnchors();
                 ApplyVisible();
             };
         }

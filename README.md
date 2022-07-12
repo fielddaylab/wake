@@ -24,29 +24,18 @@ Firebase automatically logs the following meaningful events, documented [here](h
 
 ### Change Log
 1. Initial version (3/14/22)
+2. Update experimentation events (3/22/22)
+3. Add event sequence index (5/17/22)
 
 ### Event Categories
-1. [Init](#Init)
-2. [Progression](#Progression)
-3. [Player Actions](#PlayerActions)
-4. [Game Feedback](#GameFeedback)
-5. [Portable Device Interactions](#PortableDeviceInteractions)
-6. [Modeling](#Modeling)
-7. [Shop](#Shop)
-8. [Experimentation](#Experimentation)
-9. [Argumentation](#Argumentation)
-
-<a name="Init"/>
-
-### Init 
-
-#### user_code_entered
-
-Player starts the game by entering their user code.
-
-| Parameter | Description |
-| --- | --- |
-| usercode | The player's unique save code |
+1. [Progression](#Progression)
+2. [Player Actions](#PlayerActions)
+3. [Game Feedback](#GameFeedback)
+4. [Portable Device Interactions](#PortableDeviceInteractions)
+5. [Modeling](#Modeling)
+6. [Shop](#Shop)
+7. [Experimentation](#Experimentation)
+8. [Argumentation](#Argumentation)
 
 <a name="Progression"/>
 
@@ -67,6 +56,7 @@ Player accepts a job with a given id.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -81,6 +71,7 @@ Player switches jobs by starting a different one.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -96,6 +87,7 @@ A fact is added to the player's bestiary.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -111,6 +103,7 @@ An entity is added to the player's bestiary (ex. scanning a critter in a dive si
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -126,6 +119,7 @@ Player completes a given job.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -140,6 +134,7 @@ Player completes a task for a given job.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -164,6 +159,7 @@ Player loads into a new scene (ex. "Ship").
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -179,6 +175,7 @@ Player enters a new room on the ship.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -194,6 +191,7 @@ Player enters a given dive site.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -209,6 +207,7 @@ Player clicks the hint button.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -222,10 +221,11 @@ Player clicks the hint button.
 
 #### guide_script_triggered
 
-Player triggers conversation with the guide (Kevin).
+Player triggers conversation with the guide (V1ctor).
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -239,6 +239,7 @@ Player triggers a given script node through dialogue or interactions.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -272,6 +273,7 @@ Player opens the bestiary, which defaults to the species tab.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -286,6 +288,7 @@ Player opens the species tab in the bestiary.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -300,6 +303,7 @@ Player opens the environments tab in the bestiary.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -314,6 +318,7 @@ Player opens the models tab in the bestiary.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -328,6 +333,7 @@ Player selects a species from the bestiary.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -343,6 +349,7 @@ Player selects an environment from the bestiary.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -358,6 +365,7 @@ Player selects a model from the bestiary.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -373,6 +381,7 @@ Player closes the bestiary.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -387,6 +396,7 @@ Player opens the portable status app, which defaults to the job tab.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -401,6 +411,7 @@ Player opens the job tab in the portable status app.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -415,6 +426,7 @@ Player opens the item tab in the portable status app.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -429,6 +441,7 @@ Player opens the tech tab in the portable status app.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -443,6 +456,7 @@ Player closes the portable status app.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -476,6 +490,7 @@ Player enters the modeling room.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -490,6 +505,7 @@ Player selects a given modeling phase.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -513,6 +529,7 @@ Player selects an ecosystem for constructing the model.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -528,6 +545,7 @@ Player starts the conceptual modeling phase.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -543,6 +561,7 @@ Player imports new facts / behaviors into the conceptual model.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -566,6 +585,7 @@ Player saves the conceptual model to AQOS.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -581,6 +601,7 @@ Player enters the sync phase of modeling.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -596,6 +617,7 @@ Player attempts to sync the model but fails.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -612,6 +634,7 @@ Player successfully syncs the model.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -627,6 +650,7 @@ Player completes the prediction model.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -642,6 +666,7 @@ Player introduces a new organism or updates an existing organism's population co
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -659,6 +684,7 @@ Player’s intervention model is unsuccessful.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -674,6 +700,7 @@ Player successfully completes the intervention model.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -689,6 +716,7 @@ Player exits the modeling room.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -713,6 +741,7 @@ Player purchases an upgrade from the shop.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -730,6 +759,7 @@ Player attempts to purchase an item but doesn't have enough currency.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -747,6 +777,7 @@ Player talks to the shopkeeper.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -777,7 +808,8 @@ Player talks to the shopkeeper.
 Player selects an environment for running the experiment.
 
 | Parameter | Description |
-| --- | --- |
+| --- | --- |.
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -794,6 +826,7 @@ Player deselects an environment.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -810,6 +843,7 @@ Player adds a critter to the tank.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -827,6 +861,7 @@ Player removes a critter from the tank.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -844,6 +879,7 @@ Player starts an experiment with a given tank type.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -863,6 +899,7 @@ Player ends the current experiment.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -891,6 +928,7 @@ Player begins argumentation for a job.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -905,6 +943,7 @@ Player submits a fact to argumentation.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -920,6 +959,7 @@ Submitted fact is incorrect / rejected by the argumentation script.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -935,6 +975,7 @@ Player clicks "Let me get back to you" during argumentation.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |
@@ -949,6 +990,7 @@ Player completes argumentation for a job.
 
 | Parameter | Description |
 | --- | --- |
+| event_sequence_index | Sequence index of the current event |
 | user_code | The player's unique save code |
 | app_version | Current game build version |
 | app_flavor | Git branch origin for current build |

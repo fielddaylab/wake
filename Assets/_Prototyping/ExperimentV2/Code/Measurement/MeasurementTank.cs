@@ -86,7 +86,8 @@ namespace ProtoAqua.ExperimentV2 {
             m_ParentTank.OnEmitEmoji = (e) => OnEmojiEmit(e);
             m_ParentTank.ActorBehavior.ActionAvailable = (e) => {
                 switch(e) {
-                    case ActorActionId.Hungry: {
+                    case ActorActionId.Hungry: 
+                    case ActorActionId.Parasiting: {
                             return (m_ExperimentData.Settings & RunningExperimentData.Flags.Feeder) == 0;
                         }
 
@@ -94,6 +95,9 @@ namespace ProtoAqua.ExperimentV2 {
                         return true;
                     }
                 }
+            };
+            m_ParentTank.ActorBehavior.ReproAvailable = () => {
+                return m_IsolatedVar == IsolatedVariable.Reproduction || m_IsolatedVar == IsolatedVariable.Unknown;
             };
 
             m_EnvironmentScreen.Panel.OnAdded += OnEnvironmentAdded;
@@ -239,15 +243,16 @@ namespace ProtoAqua.ExperimentV2 {
 
         private IEnumerator StartExperiment() {
             m_ParentTank.CurrentState |= TankState.Running;
-            m_ParentTank.ActorBehavior.Begin();
-            yield return null;
-
             m_ExperimentData = GenerateData();
             m_IsolatedVar = (IsolatedVariable) m_ExperimentData.CustomData;
 
             if ((m_ExperimentData.Settings & RunningExperimentData.Flags.Feeder) != 0) {
                 m_AutoFeederParticles.Play();
             }
+            yield return null;
+
+            m_ParentTank.ActorBehavior.Begin();
+            yield return null;
 
             ScriptThreadHandle thread;
             using (var table = TempVarTable.Alloc()) {
@@ -266,7 +271,8 @@ namespace ProtoAqua.ExperimentV2 {
             }
 
             if (m_CollectingMeasurements) {
-                while(!AddProgressCollection(Routine.DeltaTime / m_BackgroundMeasureTimeRequirement, false)) {
+                float mult = m_World.EnvDeaths > 0 ? 8 : 1;
+                while(!AddProgressCollection(mult * Routine.DeltaTime / m_BackgroundMeasureTimeRequirement, false)) {
                     yield return null;
                 }
             }
@@ -349,7 +355,7 @@ namespace ProtoAqua.ExperimentV2 {
 
             switch(m_IsolatedVar) {
                 case IsolatedVariable.Eating: {
-                    if (id == SelectableTank.Emoji_Eat) {
+                    if (id == SelectableTank.Emoji_Eat || id == SelectableTank.Emoji_Parasite) {
                         AddProgressCollection(0.01f + 1f / m_EatEventMeasureRequirement, true);
                     }
                     break;
@@ -392,16 +398,18 @@ namespace ProtoAqua.ExperimentV2 {
             m_ParentTank.ActorBehavior.End();
 
             ExperimentResult result = Evaluate(m_ExperimentData, m_World);
-            foreach (var fact in result.Facts) {
-                switch (fact.Type) {
-                    case ExperimentFactResultType.NewFact:
-                        Log.Msg("[MeasurementTank] Adding Fact {0}", fact.Id);
-                        Save.Bestiary.RegisterFact(fact.Id);
-                        break;
-                    case ExperimentFactResultType.UpgradedFact:
-                        Log.Msg("[MeasurementTank] Upgrading Fact {0}", fact.Id);
-                        Save.Bestiary.AddDiscoveredFlags(fact.Id, fact.Flags);
-                        break;
+            if (result.Facts != null) {
+                foreach (var fact in result.Facts) {
+                    switch (fact.Type) {
+                        case ExperimentFactResultType.NewFact:
+                            Log.Msg("[MeasurementTank] Adding Fact {0}", fact.Id);
+                            Save.Bestiary.RegisterFact(fact.Id);
+                            break;
+                        case ExperimentFactResultType.UpgradedFact:
+                            Log.Msg("[MeasurementTank] Upgrading Fact {0}", fact.Id);
+                            Save.Bestiary.AddDiscoveredFlags(fact.Id, fact.Flags);
+                            break;
+                    }
                 }
             }
             if (result.Feedback != 0) {
@@ -492,7 +500,7 @@ namespace ProtoAqua.ExperimentV2 {
                         break;
                     }
                     case IsolatedVariable.Eating: {
-                        EvaluateEatResult(inData, ref result.Feedback, newFacts);
+                        EvaluateEatParasiteResult(inData, ref result.Feedback, newFacts);
                         break;
                     }
                     case IsolatedVariable.Reproduction: {
@@ -569,7 +577,7 @@ namespace ProtoAqua.ExperimentV2 {
             }
         }
 
-        static private void EvaluateEatResult(RunningExperimentData inData, ref ExperimentFeedbackFlags ioFeedback, List<ExperimentFactResult> ioFacts) {
+        static private void EvaluateEatParasiteResult(RunningExperimentData inData, ref ExperimentFeedbackFlags ioFeedback, List<ExperimentFactResult> ioFacts) {
             WaterPropertyBlockF32 env = Assets.Bestiary(inData.EnvironmentId).GetEnvironment();
             BestiaryDesc leftCritter = Assets.Bestiary(inData.CritterIds[0]);
             BestiaryDesc rightCritter = Assets.Bestiary(inData.CritterIds[1]);
@@ -581,11 +589,17 @@ namespace ProtoAqua.ExperimentV2 {
 
             ActorStateId leftState = leftCritter.EvaluateActorState(env, out var _);
             ActorStateId rightState = rightCritter.EvaluateActorState(env, out var _);
+
             BFEat leftEatsRight = BestiaryUtils.FindEatingRule(leftCritter, rightCritter, leftState);
             BFEat rightEatsLeft = BestiaryUtils.FindEatingRule(rightCritter, leftCritter, rightState);
+
+            BFParasite leftParasitesRight = BestiaryUtils.FindParasiteRule(leftCritter, rightCritter);
+            BFParasite rightParasitesLeft = BestiaryUtils.FindParasiteRule(rightCritter, leftCritter);
+
             BestiaryData bestiaryData = Save.Bestiary;
 
-            bool bHadFact = leftEatsRight || rightEatsLeft;
+            bool bHadEat = leftEatsRight || rightEatsLeft;
+            bool bHadParasite = leftParasitesRight || rightParasitesLeft;
             bool bAddedFact = false;
 
             if (leftEatsRight != null) {
@@ -604,12 +618,33 @@ namespace ProtoAqua.ExperimentV2 {
                     rightEatsLeft = null;
                 }
             }
+            if (leftParasitesRight) {
+                if (bestiaryData.HasFact(leftParasitesRight.Id)) {
+                    bAddedFact = true;
+                    ioFacts.Add(ExperimentUtil.NewFactFlags(leftParasitesRight.Id, BFDiscoveredFlags.Rate));
+                } else {
+                    leftParasitesRight = null;
+                }
+            }
+            if (rightParasitesLeft) {
+                if (bestiaryData.HasFact(rightParasitesLeft.Id)) {
+                    bAddedFact = true;
+                    ioFacts.Add(ExperimentUtil.NewFactFlags(rightParasitesLeft.Id, BFDiscoveredFlags.Rate));
+                } else {
+                    rightParasitesLeft = null;
+                }
+            }
 
             if (!bAddedFact) {
-                if (!bHadFact) {
+                if (!bHadEat && !bHadParasite) {
                     ioFeedback |= ExperimentFeedbackFlags.NoInteraction;
                 } else {
-                    ioFeedback |= ExperimentFeedbackFlags.EatNeedsObserve;
+                    if (bHadEat) {
+                        ioFeedback |= ExperimentFeedbackFlags.EatNeedsObserve;
+                    }
+                    if (bHadParasite) {
+                        ioFeedback |= ExperimentFeedbackFlags.ParasiteNeedsObserve;
+                    }
                 }
             }
         }

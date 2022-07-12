@@ -153,6 +153,7 @@ MonoBehaviour:
   Scene:
     m_ScenePath: Assets/_Content/Maps/ArcticStation/RS-4X/RS-4X-Visuals.unity
     m_GUID: 3cae80f42a3e64adca253448906c1047
+  ImportLighting: 0
 --- !u!4 &83577892
 Transform:
   m_ObjectHideFlags: 0
@@ -318,6 +319,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bootstrap
       objectReference: {fileID: 0}
+    - target: {fileID: 5662557425664712255, guid: 96ad8e0c3aa2517488b27f20f2837508,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5662557425664712255, guid: 96ad8e0c3aa2517488b27f20f2837508,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5662557425664712255, guid: 96ad8e0c3aa2517488b27f20f2837508,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5662557425664712255, guid: 96ad8e0c3aa2517488b27f20f2837508,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6543468640636713976, guid: 96ad8e0c3aa2517488b27f20f2837508,
         type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -473,6 +494,7 @@ GameObject:
   m_Component:
   - component: {fileID: 383511474}
   - component: {fileID: 383511473}
+  - component: {fileID: 383511475}
   m_Layer: 0
   m_Name: AutoFactGiver
   m_TagString: Untagged
@@ -510,6 +532,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &383511475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 383511472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59b1ae7c1b60dfe439d0b41c7a228e9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ItemName:
+    m_Source: Engine
+    m_HashValue: 3680572763
+  m_ToShow:
+  - {fileID: 383511472}
+  m_ToHide: []
+  m_ContinuousCheck: 1
 --- !u!1 &468511356
 GameObject:
   m_ObjectHideFlags: 0
@@ -698,9 +739,9 @@ GameObject:
   - component: {fileID: 608998485}
   - component: {fileID: 608998488}
   - component: {fileID: 608998487}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Push
-  m_TagString: Untagged
+  m_TagString: WaterCurrent
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1408,7 +1449,7 @@ PrefabInstance:
     - target: {fileID: 56409304757621545, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 167.20001
+      value: 152
       objectReference: {fileID: 0}
     - target: {fileID: 56409304757621545, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
@@ -1468,7 +1509,7 @@ PrefabInstance:
     - target: {fileID: 1015599876088647828, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 78
+      value: 46
       objectReference: {fileID: 0}
     - target: {fileID: 1015599876088647828, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
@@ -1828,7 +1869,7 @@ PrefabInstance:
     - target: {fileID: 4240867273496747505, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 437.2
+      value: 475.985
       objectReference: {fileID: 0}
     - target: {fileID: 4240867273496747505, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
@@ -2178,7 +2219,7 @@ PrefabInstance:
     - target: {fileID: 7416246598153847394, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 295.2
+      value: 303.995
       objectReference: {fileID: 0}
     - target: {fileID: 7416246598153847394, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
@@ -2275,11 +2316,21 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8207051057641419401, guid: 31b4b7ac3ae12274ca6265c0712d7175,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8269101052416560626, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 311261081}
+    - target: {fileID: 8287004809147957416, guid: 31b4b7ac3ae12274ca6265c0712d7175,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8403256673173418500, guid: 31b4b7ac3ae12274ca6265c0712d7175,
         type: 3}
       propertyPath: m_AnchorMax.y

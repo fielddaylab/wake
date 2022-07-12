@@ -1,0 +1,11 @@
+# basePath RS-2S
+
+:: OnScanFishers
+@trigger    ScannedObject
+@when       scanId == "RS-2S.spearedLionfish"
+@cutscene
+@once
+$if !HasEntity(Fishers)
+    $call GiveEntity(Fishers)
+$endif
+$call GiveFact(Fishers.Eats.Lionfish)

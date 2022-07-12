@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BeauData;
 using BeauUtil;
 using BeauUtil.Debugger;
+using EasyBugReporter;
 
 namespace Aqua.Profile
 {
@@ -204,7 +205,7 @@ namespace Aqua.Profile
             ioItem.Count = (uint) (ioItem.Count + inValue);
             if (!inbSuppressEvent)
             {
-                Services.Events.QueueForDispatch(GameEvents.InventoryUpdated, ioItem.ItemId);
+                Services.Events.Queue(GameEvents.InventoryUpdated, ioItem.ItemId);
             }
             return true;
         }
@@ -216,7 +217,7 @@ namespace Aqua.Profile
                 ioItem.Count = (uint) inValue;
                 if (!inbSuppressEvent)
                 {
-                    Services.Events.QueueForDispatch(GameEvents.InventoryUpdated, ioItem.ItemId);
+                    Services.Events.Queue(GameEvents.InventoryUpdated, ioItem.ItemId);
                 }
                 return true;
             }
@@ -238,7 +239,7 @@ namespace Aqua.Profile
             if (m_ScannerIds.Add(inId))
             {
                 m_HasChanges = true;
-                Services.Events.QueueForDispatch(GameEvents.ScanLogUpdated, inId);
+                Services.Events.Queue(GameEvents.ScanLogUpdated, inId);
                 return true;
             }
 
@@ -261,7 +262,7 @@ namespace Aqua.Profile
             if (m_UpgradeIds.Add(inUpgradeId))
             {
                 m_HasChanges = true;
-                Services.Events.QueueForDispatch(GameEvents.InventoryUpdated, inUpgradeId);
+                Services.Events.Queue(GameEvents.InventoryUpdated, inUpgradeId);
                 return true;
             }
 
@@ -274,7 +275,7 @@ namespace Aqua.Profile
             if (m_UpgradeIds.Remove(inUpgradeId))
             {
                 m_HasChanges = true;
-                Services.Events.QueueForDispatch(GameEvents.InventoryUpdated, inUpgradeId);
+                Services.Events.Queue(GameEvents.InventoryUpdated, inUpgradeId);
                 return true;
             }
 
@@ -328,6 +329,12 @@ namespace Aqua.Profile
                 return;
             }
 
+            #if UNITY_EDITOR
+            if (!UnityEditor.EditorApplication.isPlaying) {
+                return;
+            }
+            #endif // UNITY_EDITOR
+
             SavePatcher.PatchIds(m_UpgradeIds);
 
             var invDB = Services.Assets.Inventory;
@@ -364,6 +371,21 @@ namespace Aqua.Profile
         public void MarkChangesPersisted()
         {
             m_HasChanges = false;
+        }
+
+        public void Dump(EasyBugReporter.IDumpWriter writer) {
+            writer.Header("Inventory");
+            foreach(var item in m_Items) {
+                writer.KeyValue(Assets.NameOf(item.ItemId), item.Count);
+            }
+            writer.Header("Upgrade Ids");
+            foreach(var itemId in m_UpgradeIds) {
+                writer.Text(Assets.NameOf(itemId));
+            }
+            writer.Header("Scanner Ids");
+            foreach(var scannerId in m_ScannerIds) {
+                writer.Text(scannerId.ToDebugString());
+            }
         }
 
         #endregion // IProfileChunk

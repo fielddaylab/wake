@@ -9,6 +9,7 @@ using Leaf.Compiler;
 using Leaf.Runtime;
 using BeauUtil.Debugger;
 using BeauUtil.Tags;
+using BeauUtil.Streaming;
 
 namespace Aqua.Scripting
 {
@@ -160,7 +161,7 @@ namespace Aqua.Scripting
             if (inOperation == HotReloadOperation.Modified)
             {
                 var self = this;
-                BlockParser.Parse(ref self, m_Name, inAsset.Source(), Parsing.Block, Generator.Instance);
+                BlockParser.Parse(ref self, CharStreamParams.FromBytes(inAsset.Bytes(), m_Name), Parsing.Block, Generator.Instance);
 
                 if (mgr != null)
                 {
@@ -213,9 +214,9 @@ namespace Aqua.Scripting
                 return new ScriptNode(inPackage, inFullId);
             }
 
-            public override void CompleteBlock(IBlockParserUtil inUtil, ScriptNodePackage inPackage, ScriptNode inBlock, TagData inAdditionalData, bool inbError)
+            public override void CompleteBlock(IBlockParserUtil inUtil, ScriptNodePackage inPackage, ScriptNode inBlock, bool inbError)
             {
-                base.CompleteBlock(inUtil, inPackage, inBlock, inAdditionalData, inbError);
+                base.CompleteBlock(inUtil, inPackage, inBlock, inbError);
                 inBlock.ApplyDefaults(inPackage.m_DefaultWho);
             }
         }

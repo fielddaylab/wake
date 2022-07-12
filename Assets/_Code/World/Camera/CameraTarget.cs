@@ -12,6 +12,8 @@ namespace Aqua.Cameras
         public float Lerp = 5;
         [Range(0.01f, 25)] public float Zoom = 1;
         [AutoEnum] public CameraModifierFlags Flags = CameraModifierFlags.All;
+        public Vector3 Offset = default;
+        public Vector3 Look = Vector3.forward;
 
         #endregion // Inspector
         
@@ -47,7 +49,29 @@ namespace Aqua.Cameras
                 data.Zoom = Zoom;
                 data.Lerp = Lerp;
                 data.Flags = Flags;
+                data.Offset = Offset;
+                data.Look = Look;
             }
         }
+
+        #if UNITY_EDITOR
+
+        private void OnValidate()
+        {
+            if (Application.IsPlaying(this) && m_TargetHandle != 0 && UnityEditor.Selection.Contains(gameObject))
+            {
+                PushChanges();
+            }
+        }
+
+        [ContextMenu("Look from Offset")]
+        private void Editor_LookFromOffset()
+        {
+            UnityEditor.Undo.RecordObject(this, "Setting look from offset");
+            Look = -Offset.normalized;
+            UnityEditor.EditorUtility.SetDirty(this);
+        }
+
+        #endif // UNITY_EDITOR
     }
 }

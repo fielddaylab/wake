@@ -1,81 +1,67 @@
 # basePath   act1
 
-:: atKelpStation
-@trigger    RoomEnter
-@when       roomId == "helm", player:currentStation == "KelpStation"
-@once
+:: checkIntro
+@trigger    SceneStart
+@when       scene:name == "RS-1C"
+@triggerPriority   High
+$if !JobStartedOrComplete(kelp-welcome)
+    $call hotbar.guide->Hide()
+    $call hotbar.portable->Hide()
+    $goto .intro
+$endif
+
+:: intro
 @boostScore 100
 @cutscene
+@once
+
+{@player}   Isn't this nice {nameof @guide}?
+{@guide}    {nameof @player}, you are unauthorized to be using this submarine without explicit approval from {nameof @drKelp}.
+{@player}   Relax, there is no way she's going to find out.
+{@guide}    ...
+{@player}   Isn't that right, {nameof @guide}?
+{@guide}    I'm sorry {nameof @player}, I have alerted all personal at the {m}Kelp Station{/m} to the missing sub...
+{@player}   What!?
 
 $branch common.ringPhone
-
-$set    player:seen.drJules = true
-{@drKelp}  Oh, a visitor! Welcome to my research station.
-            What a gorgeous old ship! 
-{@player}   Um, thanks. Still getting used to it. 
-{@drKelp}   Who's your jellyfish friend?
-{@player}    Not "friend," exactly. They're my new passenger. 
-             I'm {player-name}. You're Dr. Kelpurnia, right?
-{@drKelp}  Please, call me Kel. 
-            What brings you and your not-friend to my little kelpdom?
-{@player}   Well.... I need some cash to pay off my ship.
-            Kevin heard you might have some jobs up for grabs. 
-{@drKelp}  Oh, great! I could use an extra set of hands. 
-            Or, you know, tentacles.
-            Open your {map-name}Job Board{/map-name} on the dash to get started!
-
-
+{@drKelp}  {nameof @player}, return to the Research Station at once! The sub is not a play-thing!
+{@player}   But Mom...
+{@drKelp}   No buts. You are to return at once.
+            That is an order!
 {hide-dialog}{wait 0.5}
-$goto .tutorial
+{@player}   Geez, thanks a lot {nameof @guide}...
+{@guide}    You are most welcome!
 
-// tutorial
+{hide-dialog}
+$goto .tutorialMove
 
-:: tutorial
+// Intro tutorial
+
+:: tutorialMove
 @cutscene
 {fade-out black.60, 0.5, wait}
-
 {@}
 {style center}
-
-$call hotbar.kevin->ForceOnTop()
-$call FocusHighlight->Focus(hotbar.kevin)
-    Talk to Kevin by clicking the {h}button with the jellyfish{/h} up here.
-    They can help if you get stuck!
-$call hotbar.kevin->ResetSorting()
-$call FocusHighlight->Clear()
-
+    Use the {h}Mouse{/h} \ or \ the {h}[W][A][S][D]{/h} keys to move your Sub
 {hide-dialog}{fade-in 0.5, wait}
 
-// on unlocking world map-name
 
+// On unlocking world map
 :: afterUnlockWorldMap
-@trigger    RoomEnter
-@when       roomId == "helm", RoomUnlocked(WorldMap)
+@trigger    ViewEnter
+@when       viewId == "helm", RoomUnlocked(WorldMap)
 @once
 @cutscene
 @boostScore 100
 
-{@kevin}    Hey, Kel gave us coordinates to a new station!
-            We could stay here and keep doing jobs for them...{wait 0.5} or we could check out the {map-name}Map{/map-name} and head over there instead!
-
-// exp   
-   
-:: after30Exp
-@trigger    ExpUp
-@when       player:exp >= 35
-@once
-@cutscene
-
-{@kevin}    You know, I think we've gotten a lot of {pluralnameof Exp}!
-            I hear there's a mechanic right off the dock that can upgrade our ship.
-            Maybe we should check them out?
-$call UnlockRoom("Shop")
+{@guide}    Hey, Kel gave us coordinates to some new stations!
+            We could stay here and keep doing jobs for them...{wait 0.5} or we could check out the {map-name}Map{/map-name} and explore a new station!
 
 // Coral Station
 
 :: atCoralStation
-@trigger    RoomEnter
-@when       roomId == "helm", player:currentStation == "CoralStation"
+@trigger    ViewEnter
+@when       viewId == "helm", player:currentStation == "CoralStation"
 @once
 @boostScore 100
 @cutscene
@@ -87,21 +73,90 @@ $branch common.ringPhone
 				Hope you like turtles. They are all over the coral reef.
 				I have some jobs listed on the Job Board, let me know if you're interested.
 
+:: atBayouStation
+@trigger    ViewEnter
+@when       viewId == "helm", player:currentStation == "BayouStation"
+@boostScore 100
+@once
+@cutscene
+$branch common.ringPhone
+{@player}   Well this is new.
+{@profHarper}   Oh, hello! Welcome to the Bayou Station!
+                This is an exciting time to be a Bayou researcher!
+{@player}   Oh yeah?
+{@profHarper}   I'll be sure to send some jobs your way that will show you how totally mystifying the Bayou can be.
+                I'm looking forward to working with you!
 
 :: atArcticStation
-@trigger    RoomEnter
-@when       roomId == "helm", player:currentStation == "ArcticStation"
-@once
+@trigger    ViewEnter
+@when       viewId == "helm", player:currentStation == "ArcticStation"
 @boostScore 100
+@once
 @cutscene
-
 $branch common.ringPhone
-
-{@player}   Brrrrrrr 
-{@profWhalen}   Oh, hello! You're not a whale...
-				Well... welcome to the Arctic Station!
-                This is so exciting! I never get visitors...
+{@player}   {slow}Brrrrrrr{/slow}{auto}{wait 0.5}
+{@profWhalen}   Oh,| hello!| You're not a whale...
+				Well...| welcome to the Arctic Station!
+                This is so exciting!| I never get visitors...
                 Let me tell you a thing or two about Bowhead whales!
-                (Many hours later)
+                The first thing to know about Bowhead whales is...
+                [ Many| hours| later| .|.|.| ]
 $call GiveEntity(BowheadWhale)
-				I guess I'll find some jobs to put on the Job Board...
+{@guide}        Listen, I'm sure we'd love to hear more about Bowhead whales, but we were actually wondering if you had any work for us.
+{@profWhalen}	Oh! | Well... | let me see if I can find some jobs to put on the Job Board.
+                Fell free to give me a ring if you ever want to talk more about whales!
+
+// Intro
+
+:: momMadEnd
+@trigger    InspectObject
+@when       objectId == "Job", !JobStartedOrComplete(kelp-welcome)
+@boostScore 100
+@once
+@cutscene
+{@drKelp}   {nameof @player}! How many times have I told you not to play with the Sub!?
+{@player}   Mom,| I'm ready to handle more responsibility around here! I've practically been living here since I could walk.
+{@drKelp}   Hmmm...| You wanna help out? I might have a simple job you can help out with...
+{@player}   Really!?
+{@drKelp}   You think you're ready to handle more responsibility? Complete this task for me and we'll see about giving you more to do around here. 
+{@player}   I won't let you down!
+{@drKelp}   {nameof @guide}, make sure that {nameof @player} stays out of trouble, will you?
+{@guide}    Updating prime directives to: "Make sure that {nameof @player} stays out of trouble".
+{@player}   Really? 
+{@drKelp}   You will find your research ship waiting for you on the surface.
+            Don't make me regret this {nameof @player}...
+$call InteriorOpenJobBoard()
+{hide-dialog}
+{wait 0.5}
+{@guide}   This is your {map-name}Job Board{/map-name}.
+            Select the job on the left. 
+            Then accept it on the right!
+$set    guide:knowsJobs = true
+
+:: LoopKelpWelcome
+@trigger    InspectObject
+@when       objectId == "Job", !JobStartedOrComplete(kelp-welcome)
+@cutscene
+{@drKelp}   You think you're ready to handle more responsibility? Complete this task for me and we'll see about giving you more to do around here. 
+$call InteriorOpenJobBoard()
+
+:: momMad
+@trigger    InspectObject
+@when       objectId == "Shop", !JobStartedOrComplete(kelp-welcome)
+@cutscene
+@boostScore 100
+@once
+{@merchant} {nameof @player}!
+            Phew, you had me worried for a bit. How's the sub?
+{@player}   The Sub's fine, I'm a good pilot.
+{@merchant} You better go talk to your Mom. She's pretty upset right now.
+{@player}   Can't you talk to her? 
+{@merchant} Sorry kiddo. You got yourself into this mess.
+{@player}   Ughh...
+
+:: momMad2
+@trigger    InspectObject
+@when       objectId == "Shop", !JobStartedOrComplete(kelp-welcome)
+@cutscene
+{@merchant} Sorry kiddo. You got yourself into this mess.
+            You better go talk to Mom.

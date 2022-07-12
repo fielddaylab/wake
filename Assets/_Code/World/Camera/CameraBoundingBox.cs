@@ -1,4 +1,5 @@
 using System;
+using Aqua.Debugging;
 using Aqua.Scripting;
 using BeauUtil;
 using UnityEngine;
@@ -102,32 +103,12 @@ namespace Aqua.Cameras
         private void RenderBox(float inAlpha)
         {
             Vector3 center = transform.position;
-            Vector3 size = m_Region.size;
+            Vector2 size = m_Region.size;
             Vector2 offset = m_Region.offset;
             center.x += offset.x;
             center.y += offset.y;
-            
-            size.z = 0.01f;
-            Gizmos.color = ColorBank.Red.WithAlpha(0.25f * inAlpha);
-            Gizmos.DrawCube(center, size);
 
-            Gizmos.color = ColorBank.White.WithAlpha(0.8f * inAlpha);
-
-            Vector3 topRight = center + size / 2;
-            Vector3 bottomLeft = center - size / 2;
-            Vector3 topLeft = new Vector3(bottomLeft.x, topRight.y);
-            Vector3 bottomRight = new Vector3(topRight.x, bottomLeft.y);
-
-            topRight.z = topLeft.z = bottomLeft.z = bottomRight.z = center.z - 1;
-
-            if (m_ConstrainLeft != EdgeType.DoNotApply)
-                Gizmos.DrawLine(bottomLeft, topLeft);
-            if (m_ConstrainRight != EdgeType.DoNotApply)
-                Gizmos.DrawLine(bottomRight, topRight);
-            if (m_ConstrainTop != EdgeType.DoNotApply)
-                Gizmos.DrawLine(topLeft, topRight);
-            if (m_ConstrainBottom != EdgeType.DoNotApply)
-                Gizmos.DrawLine(bottomLeft, bottomRight);
+            GizmoViz.Box(center, size, Quaternion.identity, ColorBank.Red, ColorBank.White, SoftEdges() | HardEdges(), inAlpha);
         }
 
         #endif // UNITY_EDITOR

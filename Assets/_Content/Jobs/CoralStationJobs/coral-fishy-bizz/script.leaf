@@ -14,10 +14,10 @@ $set jobs:coral-fishy-bizz.gotScans = false
 
 :: helpGoOutside
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", jobs:coral-fishy-bizz.gotScans == false
+@when 		scene:name == "Helm", jobs:coral-fishy-bizz.gotScans == false
 @cutscene
 {@player}   Any idea where I should go next?
-{@kevin}	First let's exit the ship and head over to Site V.
+{@guide}	First let's exit the ship and head over to Site V.
 
 
 :: navigation
@@ -25,15 +25,15 @@ $set jobs:coral-fishy-bizz.gotScans = false
 @when       scene:name == "Station2"
 @once
 @cutscene
-{@kevin} 	Site V should be to the east of the ship, let's go!
+{@guide} 	Site V should be to the east of the ship, let's go!
 
 :: helpGoToSiteV
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Station2", jobs:coral-fishy-bizz.gotScans == false
 @cutscene
 {@player} 	Where should I be going again?
-{@kevin}	Site V should be to the east of the ship.
-{@kevin}	Let's head over there and dive down. 
+{@guide}	Site V should be to the east of the ship.
+{@guide}	Let's head over there and dive down. 
 
 
 :: gotScans
@@ -41,7 +41,7 @@ $set jobs:coral-fishy-bizz.gotScans = false
 @when 		scene:name == "RS-2V", HasEntity(Fishers), HasFact(RedGrouper.Reproduce), HasFact(ReefEdge.PopulationHistory.Fishers), jobs:coral-fishy-bizz.gotScans == false
 @cutscene
 $set jobs:coral-fishy-bizz.gotScans = true
-{@kevin} 	That should be all the data we need from here for now, back to the ship we go!
+{@guide} 	That should be all the data we need from here for now, back to the ship we go!
 
 :: helpAtSiteV
 @trigger    RequestPartnerHelp
@@ -51,21 +51,21 @@ $set jobs:coral-fishy-bizz.gotScans = true
 $if HasEntity(Fishers)
 	$if HasFact(RedGrouper.Reproduce)
 		$if HasFact(ReefEdge.PopulationHistory.Fishers)
-			{@kevin} 	We've found everything we need from here for now, head back up to the ship when you're ready.
+			{@guide} 	We've found everything we need from here for now, head back up to the ship when you're ready.
 		$else
-			{@kevin} 	Did you try scanning the population probe yet? Some of the data we need should be in there.
+			{@guide} 	Did you try scanning the population probe yet? Some of the data we need should be in there.
 		$endif
 	$else
-		{@kevin} 	Looks like we still need the Red Grouper.
-		{@kevin} 	Try seeing if you can find any swimming around. 
+		{@guide} 	Looks like we still need the Red Grouper.
+		{@guide} 	Try seeing if you can find any swimming around. 
 	$endif
 $else
 	$if HasFact(RedGrouper.Reproduce)
-		{@kevin} 	Looks like we still need some info on the fishers. 
-		{@kevin} 	Try scanning some of those nets near the surface.
+		{@guide} 	Looks like we still need some info on the fishers. 
+		{@guide} 	Try scanning some of those nets near the surface.
 	$else
-		{@kevin} 	First, we need to scan some Red Grouper and the Fisher nets.
-		{@kevin} 	Drive around and see if you can find them!
+		{@guide} 	First, we need to scan some Red Grouper and the Fisher nets.
+		{@guide} 	Drive around and see if you can find them!
 	$endif
 $endif
 
@@ -75,22 +75,22 @@ $endif
 @boostScore 2
 @cutscene
 {@player} 	Where should I be going again?
-{@kevin}	We've got all the scans we need from Site V, so let's head back west to the ship.
+{@guide}	We've got all the scans we need from Site V, so let's head back west to the ship.
 
 
 :: backAtShip
 @trigger    SceneStart
-@when       scene:name == "Ship", jobs:coral-fishy-bizz.gotScans == true
+@when       scene:name == "Helm", jobs:coral-fishy-bizz.gotScans == true
 @once
 @cutscene
-{@kevin}   	Let's head to the {nameof Modeling} and see if we can understand how the Grouper's population and Fisher population interacts.
+{@guide}   	Let's head to the {nameof Modeling} and see if we can understand how the Grouper's population and Fisher population interacts.
 
 :: helpAfterExperiment
 @trigger    RequestPartnerHelp
 @when 		scene:name != "Modeling", jobs:coral-fishy-bizz.gotScans == true, !HasFact(ReefEdge.Model.GrouperFishingRate)
 @cutscene
 {@player} 	What should we be doing next?
-{@kevin}	Let's head to the {nameof Modeling} and figure out how many Fishers we have have at Site V.
+{@guide}	Let's head to the {nameof Modeling} and figure out how many Fishers we have have at Site V.
 
 
 ::ModelHelp1
@@ -98,55 +98,53 @@ $endif
 @when 		scene:name == "Modeling", modeling:phase == "visual", !HasFact(ReefEdge.Model.GrouperFishingRate)
 @cutscene
 {@player} 	What should I do next?
-{@kevin}	Make sure to import the new rule we just learned, and then press "Simulate"
-
+{@guide}	Make sure to import the new rule we just learned, and then press "Import New Facts."
 
 :: modelGetSync
 @trigger	SimulationModelStarted
 @once
 @cutscene
-{@kevin} 	Time to match up the historical data again.
+{@guide} 	Time to match up the historical data again.
 
 ::ModelHelp2
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == "model", !HasFact(ReefEdge.Model.GrouperFishingRate)
+@when 		scene:name == "Modeling", modeling:phase == "sync", !HasFact(ReefEdge.Model.GrouperFishingRate)
 @cutscene
 {@player} 	What should I do next?
-{@kevin}	Drag the sliders on the left to match the historical data, and then press "Sync" to continue.
+{@guide}	Drag the sliders on the left to match the historical data, and then press "Simulate" to continue.
 
 
 :: modelSyncedImmediate
 @trigger	SimulationSyncSuccess
-@who        kevin
+@who        guide
 @once
 @chatter
-{@kevin} 	Nice!
+{@guide} 	Nice!
 
 ::ModelHelp3
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Modeling", modeling:phase == , !HasFact(SargassumCoveredReef.Model.LightPrediction)
+@when 		scene:name == "Modeling", modeling:phase == "intervene", !HasFact(SargassumCoveredReef.Model.LightPrediction)
 @cutscene
 {@player} 	What should I do next?
-{@kevin}	The graph now shows a prediction of how the Fisher population affects the Grouper population. 
-{@kevin}	Try moving things around until the populations match the target on the right.
-{@kevin}	Then, hit "Save Prediction" to move on.
+{@guide}	Adjust the numbers of organisms on the left, or introduce a new organism to the system. 
+{@guide}	Try running interventions until you find one where the populations match the intervention target on the right.
 
 
 :: modelingGraphComplete
 @trigger	SimulationInterveneSuccess
 @once
 @cutscene
-{@kevin} 	Well done! Seems we've found out how many fishers still keep the Grouper population safe. 
-{@kevin}	Let's report this back to Professor Cempaka.
+{@guide} 	Well done! Seems we've found out how many fishers still keep the Grouper population safe. 
+{@guide}	Let's report this back to Professor Cempaka.
 
 :: helpReportBack
 @trigger    RequestPartnerHelp
 @when 		HasFact(Urchin.Eats.Sargassum)
 @cutscene
 {@player} 	What should we be doing now?
-{@kevin}	We know now how many Fishers Site V can safely sustain, so let's report back to Professor Cempaka.
+{@guide}	We know now how many Fishers Site V can safely sustain, so let's report back to Professor Cempaka.
 $if global:nav.shipRoom == "office"
-	{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
+	{@guide}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
 $endif
 
 // CATCH-ALL GUIDE TEXT
@@ -156,28 +154,28 @@ $endif
 @when 		JobTaskActive(getScans)
 @boostScore -5
 @cutscene
-{@kevin}    Site V has Fishers and Grouper we need to scan.
+{@guide}    Site V has Fishers and Grouper we need to scan.
 
 :: catchHistoricalPopulations
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(historicalPopulations)
 @boostScore -5
 @cutscene
-{@kevin}    Head to Site V and get the population probe data.
+{@guide}    Head to Site V and get the population probe data.
 
 :: catchGetModel
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(getModel)
 @boostScore -5
 @cutscene
-{@kevin}    Head to the Modeling Lab. We need to determine how many boats should be able to fish at the same time.
+{@guide}    Head to the Modeling Lab. We need to determine how many boats should be able to fish at the same time.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@kevin}    Take your prediction to Professor Cempaka in the Office.
+{@guide}    Take your prediction to Professor Cempaka in the Office.
 
 //ARGUMENT
 
@@ -190,9 +188,9 @@ $branch .argue.chooseEvidence
 
 :: argue.chooseEvidence
 $if HasFact(ReefEdge.Model.GrouperFishingRate)
-	{@profCempaka} So, how much should we be reducing fishing in the area to increase the Grouper population?
-		$choice .argue.claimSome; We can reduce fishing by 12 fishers.
-		$choice .argue.claimTooMany; We can reduce fishing by 5 fishers.
+	{@profCempaka} So, how can we make the Grouper population sustainable for fishing?
+		$choice .argue.claimSome; We must reducing fishing significanly.
+		$choice .argue.claimTooMany; We must reduce fishing only by a small mount.
 		$choice .argue.claimNone; We can't fish here at all.
 	$choose branch	
 $else

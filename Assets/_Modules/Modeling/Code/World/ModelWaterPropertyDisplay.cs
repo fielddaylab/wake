@@ -7,6 +7,8 @@ namespace Aqua.Modeling {
 
         #region Inspector
 
+        public CanvasGroup CanvasGroup;
+
         [SerializeField] private Graphic m_Background = null;
         [SerializeField] private Image m_Meter = null;
         [SerializeField] private Image m_Icon = null;
@@ -17,6 +19,7 @@ namespace Aqua.Modeling {
         [NonSerialized] public float Value;
 
         [NonSerialized] public int Index;
+        [NonSerialized] public WorldFilterMask Mask;
 
         public void Initialize(WaterPropertyDesc prop) {
             Property = prop;
@@ -27,6 +30,10 @@ namespace Aqua.Modeling {
             m_Icon.sprite = prop.Icon();
 
             SetValue(prop.DefaultValue());
+
+            #if UNITY_EDITOR
+            gameObject.name = prop.name;
+            #endif // UNITY_EDITOR
         }
 
         public void SetValue(float value) {

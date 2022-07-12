@@ -15,14 +15,18 @@ using BeauRoutine;
 using System.Collections;
 using Aqua.Option;
 using UnityEngine;
+using EasyBugReporter;
+
+using LogMask = Aqua.Debugging.LogMask;
 
 namespace Aqua
 {
     [ServiceDependency(typeof(AssetsService), typeof(EventService))]
-    public partial class DataService : ServiceBehaviour, IDebuggable, ILoadable
+    public partial class DataService : ServiceBehaviour, IDebuggable, ILoadable, IDumpSource
     {
         private const string LocalSettingsPrefsKey = "settings/local";
         private const string LastUserNameKey = "settings/last-known-profile";
+        private const string DeserializeError = "deserialize-error";
 
         #if DEVELOPMENT
         private const string DebugSaveId = "__DEBUG";
@@ -35,8 +39,8 @@ namespace Aqua
         [SerializeField] private string m_ServerAddress = null;
         [SerializeField, Required] private TextAsset m_IdRenames = null;
 
-        [Header("Conversation History")]
-        [SerializeField, Range(32, 256)] private int m_DialogHistorySize = 128;
+        // [Header("Conversation History")]
+        // [SerializeField, Range(32, 256)] private int m_DialogHistorySize = 128;
 
         [Header("Defaults")]
         [SerializeField] private string m_DefaultPlayerDisplayName = "Unknown Player";
@@ -56,12 +60,13 @@ namespace Aqua
         [NonSerialized] private string m_ProfileName;
 
         [NonSerialized] private CustomVariantResolver m_VariableResolver;
-        [NonSerialized] private RingBuffer<DialogRecord> m_DialogHistory;
+        // [NonSerialized] private RingBuffer<DialogRecord> m_DialogHistory;
         [NonSerialized] private bool m_PostLoadQueued;
 
         [NonSerialized] private Future<bool> m_SaveResult;
         [NonSerialized] private bool m_AutoSaveEnabled;
         [NonSerialized] private string m_LastKnownProfile;
+        [NonSerialized] private bool m_ForceSavingDisabled;
         
         #if DEVELOPMENT
         [NonSerialized] private bool m_IsDebugProfile;
@@ -234,7 +239,7 @@ namespace Aqua
 
         private bool ClearOldProfile()
         {
-            m_DialogHistory.Clear();
+            // m_DialogHistory.Clear();
             m_SessionTable.Clear();
 
             if (m_CurrentSaveData != null)
@@ -292,8 +297,8 @@ namespace Aqua
                     
                     if (!bSuccess)
                     {
-                        Log.Error("[DataService] Server profile could not be read...");
-                        ioFuture.Complete(null);
+                        UnityEngine.Debug.LogErrorFormat("[DataService] Server profile '{0}' could not be read...", inUserCode);
+                        ioFuture.Fail(DeserializeError);
                     }
                     else
                     {
@@ -302,7 +307,7 @@ namespace Aqua
                 }
                 else
                 {
-                    Log.Error("[DataService] Failed to find profile on server: {0}", future.GetFailure().Object);
+                    UnityEngine.Debug.LogErrorFormat("[DataService] Failed to find profile on server: {0}", future.GetFailure());
                     ioFuture.Fail(future.GetFailure());
                 }
             }
@@ -397,6 +402,7 @@ namespace Aqua
                 {
                     Log.Error("[DataService] Failed to declare name to server: {0}", future.GetFailure().Object);
                     ioFuture.Fail(future.GetFailure());
+                    yield break;
                 }
             }
 
@@ -423,6 +429,7 @@ namespace Aqua
                 {
                     Log.Error("[DataService] Failed to save to server: {0}", future.GetFailure().Object);
                     ioFuture.Fail(future.GetFailure());
+                    yield break;
                 }
             }
         }
@@ -502,7 +509,10 @@ namespace Aqua
                 }
             }
 
-            m_SaveResult = Future.CreateLinked<bool, StringHash32>(SaveRoutine, inLocationId, this);
+            m_SaveResult = Future.Create<bool>();
+            Routine saveRoutine = Routine.Start(this, SaveRoutine(m_SaveResult, inLocationId));
+            m_SaveResult.LinkTo(saveRoutine);
+            saveRoutine.Tick();
             return m_SaveResult;
         }
 
@@ -563,7 +573,7 @@ namespace Aqua
 
         public bool AutosaveEnabled()
         {
-            return m_AutoSaveEnabled;
+            return m_AutoSaveEnabled && !m_ForceSavingDisabled;
         }
 
         public void SetAutosaveEnabled(bool inbEnabled)
@@ -574,6 +584,11 @@ namespace Aqua
                 if (inbEnabled)
                     AutoSave.Force();
             }
+        }
+
+        internal void ForceNoSaving(bool inbNoSave)
+        {
+            m_ForceSavingDisabled = inbNoSave;
         }
 
         static private string GetPrefsKeyForCode(string inUserCode)
@@ -592,12 +607,12 @@ namespace Aqua
 
         public void AddToDialogHistory(in DialogRecord inRecord)
         {
-            m_DialogHistory.PushBack(inRecord);
+            // m_DialogHistory.PushBack(inRecord);
         }
 
         public RingBuffer<DialogRecord> DialogHistory
         {
-            get { return m_DialogHistory; }
+            get { return /* m_DialogHistory */ null; }
         }
 
         #endregion // Dialog History
@@ -654,7 +669,7 @@ namespace Aqua
 
             SavePatcher.InitializeIdPatcher(m_IdRenames);
 
-            m_DialogHistory = new RingBuffer<DialogRecord>(m_DialogHistorySize, RingBufferMode.Overwrite);
+            // m_DialogHistory = new RingBuffer<DialogRecord>(m_DialogHistorySize, RingBufferMode.Overwrite);
 
             OGD.Core.Configure(m_ServerAddress, GameId);
         }
@@ -676,6 +691,22 @@ namespace Aqua
 
         #endregion // ILoadable
 
+        #region IDumpSource
+
+        bool IDumpSource.Dump(EasyBugReporter.IDumpWriter dump) {
+            dump.KeyValue("Profile Name", m_ProfileName);
+            dump.KeyValue("Using Debug Profile", IsDebugProfile());
+            if (m_CurrentSaveData != null) {
+                dump.BeginSection("Save Profile", true);
+                m_CurrentSaveData.Dump(dump);
+                dump.EndSection();
+            }
+
+            return true;
+        }
+
+        #endregion // IDumpSource
+
         #region Utils
 
         static public string ErrorMessage(IFuture future, string defaultValue = "Unknown Error") {
@@ -691,17 +722,33 @@ namespace Aqua
             return defaultValue;
         }
 
-        static public OGD.Core.ReturnStatus ReturnStatus(IFuture future, OGD.Core.ReturnStatus defaultValue = OGD.Core.ReturnStatus.Unknown) {
+        static public ErrorStatus ReturnStatus(IFuture future, ErrorStatus defaultValue = ErrorStatus.Unknown) {
             if (future.TryGetFailure(out Future.Failure failure)) {
                 object obj = failure.Object;
                 if (obj is OGD.Core.ReturnStatus) {
-                    return (OGD.Core.ReturnStatus) obj;
+                    return (ErrorStatus) (OGD.Core.ReturnStatus) obj;
                 } else if (obj is OGD.Core.Error) {
-                    return ((OGD.Core.Error) obj).Status;
+                    return (ErrorStatus) ((OGD.Core.Error) obj).Status;
+                } else if (obj == (object) DeserializeError) {
+                    return ErrorStatus.DeserializeError;
                 }
             }
 
             return defaultValue;
+        }
+
+        public enum ErrorStatus
+        {
+            Success,
+            Error_DB,
+            Error_Request,
+            Error_Server,
+
+            Error_Network,
+            Error_Exception,
+            Unknown,
+
+            DeserializeError
         }
 
         #endregion // Utils

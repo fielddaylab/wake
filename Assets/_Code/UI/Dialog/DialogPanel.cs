@@ -40,6 +40,7 @@ namespace Aqua
             public bool Silent;
             public bool AutoContinue;
             public bool SkipPressed;
+            public bool DoNotClose;
 
             public bool IsCutsceneSkip;
 
@@ -50,6 +51,7 @@ namespace Aqua
                 VisibleText = null;
                 TypeSFX = null;
                 IsCutsceneSkip = false;
+                DoNotClose = false;
                 TargetId = StringHash32.Null;
                 PortraitId = StringHash32.Null;
                 TargetDef = null;
@@ -63,6 +65,7 @@ namespace Aqua
                 SkipPressed = false;
                 AutoContinue = false;
                 IsCutsceneSkip = false;
+                DoNotClose = false;
             }
         }
 
@@ -105,6 +108,7 @@ namespace Aqua
         [SerializeField] private LayoutGroup m_OptionLayout = null;
         [SerializeField] private ContentSizeFitter m_OptionSizer = null;
         [SerializeField] private DialogOptionButton[] m_OptionButtons = null;
+        [SerializeField] private float m_OptionsInset = 0;
 
         #endregion // Inspector
 
@@ -189,6 +193,7 @@ namespace Aqua
                 m_EventHandler.Register(ScriptEvents.Dialog.Auto, () => m_CurrentState.AutoContinue = true);
                 m_EventHandler.Register(ScriptEvents.Dialog.Clear, () => m_TextDisplay.SetText(string.Empty));
                 m_EventHandler.Register(ScriptEvents.Dialog.InputContinue, () => WaitForInput());
+                m_EventHandler.Register(ScriptEvents.Dialog.DoNotClose, () => m_CurrentState.DoNotClose = true);
                 m_EventHandler.Register(ScriptEvents.Dialog.SetTypeSFX, (e, o) => m_CurrentState.TypeSFX = e.Argument0.AsStringHash());
                 m_EventHandler.Register(ScriptEvents.Dialog.SetVoiceType, SetVoiceType);
                 m_EventHandler.Register(ScriptEvents.Dialog.Speaker, (e, o) => SetSpeakerName(e.StringArgument));
@@ -377,6 +382,9 @@ namespace Aqua
         {
             if (IsShowing() && !string.IsNullOrEmpty(m_CurrentState.VisibleText))
             {
+                if (m_CurrentState.DoNotClose)
+                    return Routine.WaitForever();
+
                 switch(m_EndBehavior)
                 {
                     case LineEndBehavior.WaitForInput:
@@ -572,7 +580,7 @@ namespace Aqua
                 m_OptionButtons[i].Prep();
             }
 
-            float width = ((RectTransform) m_OptionSizer.transform).sizeDelta.x / 2;
+            float width = ((RectTransform) m_OptionSizer.transform).sizeDelta.x / 2 + m_OptionsInset;
 
             yield return Root.AnchorPosTo(m_OriginalX - width, 0.2f, Axis.X).Ease(Curve.Smooth);
 

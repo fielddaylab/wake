@@ -14,6 +14,8 @@ using BeauUtil.Debugger;
 using System.Collections.Generic;
 using TMPro;
 using EasyAssetStreaming;
+using EasyBugReporter;
+using BeauUtil.Variants;
 
 namespace Aqua.Debugging
 {
@@ -57,6 +59,7 @@ namespace Aqua.Debugging
 
         [NonSerialized] private uint m_LastKnownStreamingCount;
         [NonSerialized] private long m_LastKnownStreamingMem;
+        [NonSerialized] private long m_UnlockAllLastPress;
 
         private void LateUpdate()
         {
@@ -121,6 +124,10 @@ namespace Aqua.Debugging
                 {
                     SetTimescale(1);
                 }
+                else if (m_Input.KeyPressed(KeyCode.F9) && m_Input.KeyDown(KeyCode.LeftControl))
+                {
+                    BugReporter.DumpContext();
+                }
             }
 
             if (m_Input.KeyDown(KeyCode.LeftControl))
@@ -132,6 +139,18 @@ namespace Aqua.Debugging
                 else if (m_Input.KeyPressed(KeyCode.Space))
                 {
                     SkipCutscene();
+                }
+                else if (m_Input.KeyPressed(KeyCode.Equals))
+                {
+                    long now = Stopwatch.GetTimestamp();
+                    float timeSince = (float) (now - m_UnlockAllLastPress) / TimeSpan.TicksPerSecond;
+                    if (timeSince < 0.5f) {
+                        DataService.UnlockAllDefaults(true);
+                        SkipCutscene();
+                    } else {
+                        DataService.UnlockAllDefaults(false);
+                    }
+                    m_UnlockAllLastPress = now;
                 }
             }
         }
@@ -412,10 +431,25 @@ namespace Aqua.Debugging
             #if DEVELOPMENT
             RootDebugMenu();
             #endif // DEVELOPMENT
+
+            DumpSourceCollection src = new DumpSourceCollection();
+            src.Add(new ScreenshotContext());
+            src.Add(new LogContext(EasyBugReporter.LogTypeMask.Development | EasyBugReporter.LogTypeMask.Log));
+            src.Add(new UnityContext());
+            src.Add(new SystemInfoContext());
+            BugReporter.DefaultSources = src;
+
+            // BugReporter.OnExceptionOrAssert((s) => {
+            //     BugReporter.DumpContextToMemory(DumpFormat.Text, (d) => {
+            //         UnityEngine.Debug.LogError(d.Contents);
+            //     });
+            // });
+            // TODO: on exception, maybe log something with analytics?
         }
 
         protected override void Shutdown()
         {
+            BugReporter.DefaultSources = null;
             SceneHelper.OnSceneLoaded -= OnSceneLoaded;
             Services.Events?.DeregisterAll(this);
         }
@@ -510,6 +544,16 @@ namespace Aqua.Debugging
         static public DMInfo RootDebugMenu() { return s_RootMenu ?? (s_RootMenu = new DMInfo("Debug", 16)); }
 
         #endif // DEVELOPMENT
+
+        /// <summary>
+        /// Dumps the given table.
+        /// </summary>
+        static internal void Dump(VariantTable table, IDumpWriter writer) {
+            foreach(var namedPair in table) {
+                TableKeyPair keyPair = new TableKeyPair(table.Name, namedPair.Id);
+                writer.KeyValue(keyPair.ToDebugString(), namedPair.Value.ToDebugString());
+            }
+        }
 
         #endregion // Debug Menu
     }

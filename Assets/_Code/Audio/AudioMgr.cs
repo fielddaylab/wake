@@ -523,7 +523,8 @@ namespace AquaAudio
 
         bool ILoadable.IsLoading() {
             for(int i = 0; i < m_ActiveStreams.Count; i++) {
-                if (!m_ActiveStreams[i].Stream.IsReady()) {
+                var stream = m_ActiveStreams[i].Stream;
+                if (!stream.IsReady() && stream.GetError() == UWTStreamPlayer.ErrorCode.NoError) {
                     return true;
                 }
             }

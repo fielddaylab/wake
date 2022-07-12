@@ -60,6 +60,10 @@ static public class GameLayers
 	public const int ScanClickBlock_Index = 17;
 	public const int ScanClickBlock_Mask = 131072;
 
+	// Layer 28: PostProcess
+	public const int PostProcess_Index = 28;
+	public const int PostProcess_Mask = 268435456;
+
 	// Layer 29: Solid
 	public const int Solid_Index = 29;
 	public const int Solid_Mask = 536870912;

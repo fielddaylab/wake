@@ -15,8 +15,11 @@ namespace Aqua {
         static public readonly Color DarkerTeal = Colors.Hex("#003134");
         static public readonly Color DarkestTeal = Colors.Hex("#00272A");
 
-        static public readonly Color Cash = Colors.Hex("#C9C86D");
-        static public readonly Color Exp = Colors.Hex("#A6C8FF");
+        static public readonly Color LightRed = Colors.Hex("#FF8E6B");
+        static public readonly Color Red = Colors.Hex("#FF6262");
+
+        static public readonly Color Cash = Colors.Hex("#E4CF13");
+        static public readonly Color Exp = Colors.Hex("#A2FE28");
 
         static public Color ForItem(StringHash32 inItemId, Color inDefault)
         {

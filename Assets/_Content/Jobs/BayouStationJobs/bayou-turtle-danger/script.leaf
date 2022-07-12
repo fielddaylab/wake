@@ -6,16 +6,57 @@
 @trigger    JobStarted
 @cutscene
 
-{@profHarper}	People are concerned about the Loggerhead Turtles that live by the Oil Rig Reef.
+{@profHarper}	People are concerned about the {pluralnameof LoggerheadTurtle} that live by the {h}Oil Rig Reef{/h}.
 				For this job, I need you to develop a food web with the species you found there.
-                We want to learn if there are any new predators of the Turtles. 
-$if !HasUpgrade(VisualModel)
-	{@profHarper}	I've unlocked a new room on your Ship, {map-name}the Modeling Lab{/map-name}.
-	{@profHarper}	Head there when you need to model the food web.
-	$call UnlockRoom("modelingRoom")
-	$call UnlockRoom("Modeling")
-	$call GiveUpgrade(VisualModel)
+                We want to learn if there are any new predators of the Turtles.
+$if !HasEntity(Cyanobacteria)
+	{@profHarper}	There is a new organism at the Oil Rig Reef you can research now that you have the {h}Microscope{/h}.
+                    Be sure to scan it and count the population like you did for the other species.
 $endif
+$if !RoomUnlocked("modelingRoom")
+    {@profHarper}	I've unlocked a new room on your Helm, {map-name}the Modeling Lab{/map-name}.
+    {@profHarper}	Head there when you need to model the food web.
+    $call UnlockRoom("modelingRoom")
+    $call UnlockRoom("Modeling")
+    $call GiveUpgrade(VisualModel)
+$endif
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchScanCyano
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanCyano)
+@boostScore -5
+@cutscene
+{@guide}    Head to {h}Site O{/h} and scan the {nameof Cyanobacteria}. Make sure you have your {item}Microscope{/item} pulled out!
+
+:: catchCountCyano
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(countCyano)
+@boostScore -5
+@cutscene
+{@guide}    Head to {h}Site O{/h} and count the {nameof Cyanobacteria} population. Make sure you have your {item}Microscope{/item} pulled out!
+
+:: catchExperimentsForSiteO
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(experimentsForSiteO)
+@boostScore -5
+@cutscene
+{@guide}    Use the {item}Observation Tank{/item} to find what Loggerhead Turtles eat at Site O.
+
+:: catchVisualModelO
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(visualModelO)
+@boostScore -5
+@cutscene
+{@guide}    Make a {item}Visual Model{/item} of what you found out from the Observation Tank.
+
+:: catchReportback
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@guide}    Report back to {nameof profHarper}.
 
 // ARGUMENTATION
 
@@ -23,20 +64,20 @@ $endif
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(siteOModel)
 @cutscene
-$call ArgueLoad(siteOModel) 
+$call ArgueLoad(siteOModel)
 {@profHarper} What can you tell me about the safety of the turtles?
-$choice .argue.turtleSafe; The turtles should be safe 
-$choice .argue.turtleNotSafe; The turtles might not be safe 
+$choice .argue.turtleSafe; The turtles should be safe from predators
+$choice .argue.turtleNotSafe; The turtles might not be safe from predators
 $choose branch
 
 :: argue.turtleSafe
 $call ArgueSetClaim(Claim, jobs.bayou-turtle-danger.argue.claimLabel1) 
-{@profHarper} Do you have a model that shows the turtles are safe?
+{@profHarper} Do you have a model that shows the turtles are safe in {h}Site O{/h}?
 $goto argue.showSafeClaim
 
 :: argue.turtleNotSafe
 $call ArgueSetClaim(Claim, jobs.bayou-turtle-danger.argue.claimLabel2) 
-{@profHarper} Do you have a model that shows the turtles are not safe?
+{@profHarper} Do you have a model that shows the turtles are not safe in {h}Site O{/h}?
 $goto argue.showUnsafeClaim
 
 :: argue.showUnsafeClaim

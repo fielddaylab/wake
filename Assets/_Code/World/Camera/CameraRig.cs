@@ -1,7 +1,12 @@
+using Aqua.Debugging;
 using BeauRoutine;
 using BeauUtil;
 using ScriptableBake;
 using UnityEngine;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif // UNITY_EDITOR
 
 namespace Aqua.Cameras
 {
@@ -18,6 +23,7 @@ namespace Aqua.Cameras
 
         [Header("Settings")]
         public CameraMode DefaultMode = CameraMode.Scripted;
+        public bool ThreeDMode = false;
 
         [SerializeField, HideInInspector] public CameraTarget InitialTarget;
 
@@ -37,6 +43,37 @@ namespace Aqua.Cameras
         public void SetHeight(float inHeight)
         {
             FOVPlane.Height = inHeight;
+        }
+
+        public void ReadData(ref CameraPose.Data data) {
+            data.Position = transform.position;
+            data.Rotation = transform.rotation;
+            if (FOVPlane != null) {
+                data.Target = FOVPlane.Target;
+                data.Height = FOVPlane.Height;
+                data.Zoom = FOVPlane.Zoom;
+            }
+            data.Properties = CameraPoseProperties.All;
+        }
+
+        public void WriteData(in CameraPose.Data data) {
+            #if UNITY_EDITOR
+            Undo.RecordObject(this, "Writing camera pose data");
+            Undo.RecordObject(transform, "Writing camera pose data");
+            if (FOVPlane) {
+                Undo.RecordObject(FOVPlane, "Writing camera pose data");
+                EditorUtility.SetDirty(FOVPlane);
+            }
+            EditorUtility.SetDirty(this);
+            EditorUtility.SetDirty(transform);
+            #endif // UNITY_EDITOR
+
+            transform.SetPositionAndRotation(data.Position, data.Rotation);
+            if (FOVPlane) {
+                FOVPlane.Target = data.Target;
+                FOVPlane.Height = data.Height;
+                FOVPlane.Zoom = data.Zoom;
+            }
         }
 
         #if UNITY_EDITOR
@@ -71,13 +108,25 @@ namespace Aqua.Cameras
             return true;
         }
 
-        [UnityEditor.CustomEditor(typeof(CameraRig))]
+        [CustomEditor(typeof(CameraRig))]
         private class Inspector : UnityEditor.Editor
         {
-            private UnityEditor.Editor m_FOVPlaneEditor;
+            private Editor m_FOVPlaneEditor;
+
+            [SerializeField] private CameraPose m_Pose;
+            [SerializeField] private CameraPose.Data m_DefaultPose;
+            [SerializeField] private bool m_EditMode;
 
             private void OnDisable()
             {
+                if (m_EditMode) {
+                    CameraRig rig = (CameraRig) target;
+                    if (rig) {
+                        rig.WriteData(m_DefaultPose);
+                    }
+                    m_EditMode = false;
+                }
+
                 if (m_FOVPlaneEditor) {
                     DestroyImmediate(m_FOVPlaneEditor);
                     m_FOVPlaneEditor = null;
@@ -91,10 +140,46 @@ namespace Aqua.Cameras
                 CameraRig rig = (CameraRig) target;
                 if (rig.FOVPlane != null)
                 {
-                    UnityEditor.EditorGUILayout.Space();
-                    UnityEditor.EditorGUILayout.LabelField("Plane", UnityEditor.EditorStyles.boldLabel);
+                    EditorGUILayout.Space();
+                    EditorGUILayout.LabelField("Plane", EditorStyles.boldLabel);
                     CreateCachedEditor(rig.FOVPlane, null, ref m_FOVPlaneEditor);
                     m_FOVPlaneEditor.OnInspectorGUI();
+                }
+
+                EditorGUILayout.Space();
+
+                EditorGUILayout.LabelField("Editing", EditorStyles.boldLabel);
+
+                bool wasEditing = m_EditMode;
+                m_EditMode = EditorGUILayout.Toggle("Begin Editing", m_EditMode);
+                if (wasEditing != m_EditMode) {
+                    if (wasEditing) {
+                        rig.WriteData(m_DefaultPose);
+                        m_DefaultPose = default;
+                    } else {
+                        rig.ReadData(ref m_DefaultPose);
+                    }
+                }
+                using(new EditorGUI.DisabledScope(!m_EditMode)) {
+                    m_Pose = (CameraPose)EditorGUILayout.ObjectField("Target Pose", m_Pose, typeof(CameraPose), true);
+                    EditorGUILayout.BeginHorizontal();
+                    using(new EditorGUI.DisabledScope(m_Pose == null)) {
+                        if (GUILayout.Button("Snap To Pose")) {
+                            CameraPose.Data data = default;
+                            m_Pose.ReadData(ref data);
+                            rig.WriteData(data);
+                        }
+                        if (GUILayout.Button("Write Current to Pose")) {
+                            CameraPose.Data data = default;
+                            rig.ReadData(ref data);
+                            m_Pose.WriteData(data);
+                        }
+                    }
+                    EditorGUILayout.EndHorizontal();
+
+                    if (GUILayout.Button("Reset")) {
+                        rig.WriteData(m_DefaultPose);
+                    }
                 }
             }
         }
@@ -107,27 +192,11 @@ namespace Aqua.Cameras
             if (plane.Target != null)
                 center.z = plane.Target.position.z;
             
-            Vector3 size;
+            Vector2 size;
             size.y = plane.Height / plane.Zoom;
             size.x = plane.Height * Camera.aspect / plane.Zoom;
-            size.z = 0.01f;
-            Gizmos.color = ColorBank.Green.WithAlpha(0.25f);
-            Gizmos.matrix = Matrix4x4.Rotate(plane.transform.rotation);
-            Gizmos.DrawCube(center, size);
 
-            Gizmos.color = ColorBank.White.WithAlpha(0.8f);
-
-            Vector3 topRight = center + size / 2;
-            Vector3 bottomLeft = center - size / 2;
-            Vector3 topLeft = new Vector3(bottomLeft.x, topRight.y);
-            Vector3 bottomRight = new Vector3(topRight.x, bottomLeft.y);
-
-            topRight.z = topLeft.z = bottomLeft.z = bottomRight.z = center.z - 0.0001f;
-
-            Gizmos.DrawLine(bottomLeft, topLeft);
-            Gizmos.DrawLine(bottomRight, topRight);
-            Gizmos.DrawLine(topLeft, topRight);
-            Gizmos.DrawLine(bottomLeft, bottomRight);
+            GizmoViz.Box(center, size, plane.transform.rotation, ColorBank.Green, ColorBank.White, RectEdges.All, 1);
         }
 
         #endif // UNITY_EDITOR

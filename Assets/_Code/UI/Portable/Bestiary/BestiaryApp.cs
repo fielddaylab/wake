@@ -22,12 +22,14 @@ namespace Aqua.Portable {
         public delegate void PopulateEntryPageDelegate(BestiaryPage inPage, BestiaryDesc inEntry);
         public delegate void PopulateFactsDelegate(BestiaryPage inPage, BestiaryDesc inEntry, ListSlice<BFBase> inFacts, FinalizeButtonDelegate inFinalizeCallback);
         public delegate void FinalizeButtonDelegate(BFBase inFact, MonoBehaviour inDisplay);
+        public delegate void GetEntryListDelegate(BestiaryDescCategory inCategory, List<TaggedBestiaryDesc> outEntries);
 
         public delegate bool CanSelectFactDelegate(BFBase inFact);
         public delegate bool SelectForSetDelegate(BFBase inFact, Future<StringHash32> ioFuture);
 
         public class DisplayHandler {
             public BestiaryDescCategory Category;
+            public GetEntryListDelegate GetEntries;
             public PopulateEntryToggleDelegate PopulateToggle;
             public PopulateEntryPageDelegate PopulatePage;
             public PopulateFactsDelegate PopulateFacts;
@@ -109,7 +111,7 @@ namespace Aqua.Portable {
                 options = Array.Empty<NamedOption>();
             }
 
-            var request = Script.PopupFactDetails(inFact, Save.Bestiary.GetDiscoveredFlags(inFact.Id), options);
+            var request = Script.PopupFactDetails(inFact, Save.Bestiary.GetDiscoveredFlags(inFact.Id), m_CurrentEntry, options);
             request.OnComplete((o) => {
                 if (!o.IsEmpty) {
                     Assert.True(m_Request.Type == PortableRequestType.SelectFact || m_Request.Type == PortableRequestType.SelectFactSet);
@@ -137,20 +139,24 @@ namespace Aqua.Portable {
         private void LoadEntries() {
             m_ListPools.Clear();
 
-            using(PooledList<BestiaryDesc> entities = PooledList<BestiaryDesc>.Create()) {
-                Save.Bestiary.GetEntities(Handler.Category, entities);
-                entities.Sort(BestiaryDesc.SortByEnvironment);
+            using(PooledList<TaggedBestiaryDesc> entities = PooledList<TaggedBestiaryDesc>.Create()) {
+                if (Handler.GetEntries != null) {
+                    Handler.GetEntries(Handler.Category, entities);
+                } else {
+                    Save.Bestiary.GetEntities(Handler.Category, entities);
+                    entities.Sort((a, b) => BestiaryDesc.SortByEnvironment(a.Entity, b.Entity));
+                }
                 StringHash32 mapId = default;
 
                 m_ListPools.PrewarmEntries(entities.Count);
 
                 foreach (var entry in entities) {
-                    if (entry.HasFlags(BestiaryDescFlags.HideInBestiary)) {
+                    if (entry.Entity.HasFlags(BestiaryDescFlags.HideInBestiary)) {
                         continue;
                     }
                     
-                    if (mapId != entry.StationId()) {
-                        mapId = entry.StationId();
+                    if (mapId != entry.Tag) {
+                        mapId = entry.Tag;
                         PortableStationHeader header = m_ListPools.AllocHeader(m_ListObjectRoot);
                         MapDesc map = Assets.Map(mapId);
                         header.Header.SetText(map.StationHeaderId());
@@ -160,9 +166,9 @@ namespace Aqua.Portable {
                     PortableBestiaryToggle toggle = m_ListPools.AllocEntry(m_ListObjectRoot);
                     toggle.Toggle.group = m_EntryToggleGroup;
                     toggle.Toggle.SetIsOnWithoutNotify(false);
-                    toggle.Data = entry;
+                    toggle.Data = entry.Entity;
                     toggle.Callback = m_CachedToggleDelegate ?? (m_CachedToggleDelegate = OnEntryToggled);
-                    Handler.PopulateToggle(toggle, entry);
+                    Handler.PopulateToggle(toggle, entry.Entity);
                 }
             }
 
@@ -181,6 +187,9 @@ namespace Aqua.Portable {
                 LoadEntryFacts(null);
                 m_EntryToggleGroup.SetAllTogglesOff();
                 Script.WriteVariable("portable:bestiary.currentEntry", null);
+                if (inbSyncToggles) {
+                    m_EntryScroll.verticalNormalizedPosition = 1;
+                }
                 return;
             }
 
@@ -199,6 +208,7 @@ namespace Aqua.Portable {
                 }
             }
 
+            m_InfoPage.FactScroll.verticalNormalizedPosition = 1;
             Handler.PopulatePage(m_InfoPage, inEntry);
             LoadEntryFacts(inEntry);
         }

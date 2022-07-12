@@ -13,6 +13,8 @@ namespace Aqua
         [Hidden]
         All = Base | Rate,
         [Hidden]
-        None = 0
+        None = 0,
+        [Hidden]
+        HasPair = 0x04
     }
 }

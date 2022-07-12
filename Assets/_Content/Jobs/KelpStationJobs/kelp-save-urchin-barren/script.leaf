@@ -13,14 +13,14 @@ $branch common.ringPhone
 
 ::helpGoToModeling
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", JobTaskTop(makeAPlan)
+@when 		scene:name == "Helm", JobTaskTop(makeAPlan)
 @cutscene
 {@player} 	How should we start making a plan to repair Site B?
-{@kevin}	Maybe we could make another model.
+{@guide}	Maybe we could make another model.
 $if global:nav.shipRoom == "modeling"
-    {@kevin}    Let's head into the {h}Modeling Whiteboard{/h}.
+    {@guide}    Let's head into the {h}Modeling Whiteboard{/h}.
 $else
-    {@kevin}    Let's head over to the {nameof Modeling}.
+    {@guide}    Let's head over to the {nameof Modeling}.
 $endif
 
 // in modeling
@@ -39,7 +39,7 @@ $branch common.ringPhone
 @when 		scene:name == "Modeling", modeling:phase == "visual"
 @cutscene
 {@player} 	What should I do again?
-{@kevin}	Let's head to the {h}Intervene{/h} tab.
+{@guide}	Let's head to the {h}Intervene{/h} tab.
 
 :: InterventionModelSynced
 @trigger	SimulationModelStarted
@@ -56,14 +56,14 @@ $branch common.ringPhone
             ...Oh, sorry, I have to go for now. Good luck! Come talk to me in the {map-name}Office{/map-name} when you're done!
 {hide-dialog}
 {wait 1}
-{@kevin}    Looks like we're on our own. Let's see what we can do.
+{@guide}    Looks like we're on our own. Let's see what we can do.
 
 ::ModelHelp3
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Modeling", modeling:phase == "intervene", JobTaskTop("makeAPlan")
 @cutscene
-{@player} 	I'm a bit stuck here - got any tips for me, Kevin?
-{@kevin}	We want to change something so the {critter-name}Kelp{/critter-name} population increases to the target on the right.
+{@player} 	I'm a bit stuck here - got any tips for me, V1ctor?
+{@guide}	We want to change something so the {critter-name}Kelp{/critter-name} population increases to the target on the right.
             It seems like the main problem now is that it keeps getting eaten by {pluralnameof Urchin}.
             I wonder if there's something we could add that would keep the {nameof Urchin} population under control...
 
@@ -71,7 +71,7 @@ $branch common.ringPhone
 @trigger	SimulationInterveneSuccess
 @once
 @cutscene
-{@kevin}    Ok. It looks like we have a plan!
+{@guide}    Ok. It looks like we have a plan!
             I have no idea what adding {pluralnameof SeaOtter} practically means, but let's report back to {nameof @drKelp} at the {map-name}Office{/map-name}.
 
 // to argumentation
@@ -82,12 +82,28 @@ $branch common.ringPhone
 @cutscene
 $if global:nav.shipRoom != "office"
 	{@player} 	What should we do now?
-	{@kevin}	We've got a model now that shows us what might help Site B, so let's report back to Dr. Kelpurnia.
-	{@kevin}	We should first head back to the {map-name}Office{/map-name}.
+	{@guide}	We've got a model now that shows us what might help Site B, so let's report back to Dr. Kelpurnia.
+	{@guide}	We should first head back to the {map-name}Office{/map-name}.
 $else
 	{@player} 	So... now what?
-	{@kevin}	We can report our findings to Dr. Kelpurnia using the {h}Computer{/h}.
+	{@guide}	We can report our findings to Dr. Kelpurnia using the {h}Computer{/h}.
 $endif
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchMakeAPlan
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(makeAPlan)
+@boostScore -5
+@cutscene
+{@guide}    Build an Intervention Model in the Modeling Lab.
+
+:: catchReturn
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(return)
+@boostScore -5
+@cutscene
+{@guide}    Talk to {nameof drKelp} in the Office.
 
 // ARGUMENTATION
 
@@ -205,4 +221,4 @@ $call CompleteJob()
 @trigger    JobCompleted
 @cutscene
 
-$branch common.ringPhone
+// $branch common.ringPhone

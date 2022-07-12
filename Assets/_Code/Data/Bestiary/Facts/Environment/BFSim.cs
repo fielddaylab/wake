@@ -1,11 +1,7 @@
-using System.Collections.Generic;
-using BeauPools;
 using BeauUtil;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Aqua
-{
+namespace Aqua {
     [CreateAssetMenu(menuName = "Aqualab Content/Fact/Simulation")]
     public class BFSim : BFBase
     {

@@ -1,19 +1,13 @@
 mergeInto(LibraryManager.library, {
-    FBStartGameWithUserCode: function(userCode) {
-        var userCode = Pointer_stringify(userCode);
 
-        analytics.logEvent("user_code_entered", {
-            usercode: userCode
-        });
-    },
-
-    FBAcceptJob: function(userCode, appVersion, appFlavor, logVersion, jobName) {
+    FBAcceptJob: function(index, userCode, appVersion, appFlavor, logVersion, jobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("accept_job", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -22,7 +16,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBSwitchJob: function(userCode, appVersion, appFlavor, logVersion, jobName, prevJobName) {
+    FBSwitchJob: function(index, userCode, appVersion, appFlavor, logVersion, jobName, prevJobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -30,6 +24,7 @@ mergeInto(LibraryManager.library, {
         var prevJobName = Pointer_stringify(prevJobName);
 
         analytics.logEvent("switch_job", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -39,7 +34,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBReceiveFact: function(userCode, appVersion, appFlavor, logVersion, jobName, factId) {
+    FBReceiveFact: function(index, userCode, appVersion, appFlavor, logVersion, jobName, factId) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -47,6 +42,7 @@ mergeInto(LibraryManager.library, {
         var factId = Pointer_stringify(factId);
 
         analytics.logEvent("receive_fact", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -56,7 +52,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBReceiveEntity: function(userCode, appVersion, appFlavor, logVersion, jobName, entityId) {
+    FBReceiveEntity: function(index, userCode, appVersion, appFlavor, logVersion, jobName, entityId) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -64,6 +60,7 @@ mergeInto(LibraryManager.library, {
         var entityId = Pointer_stringify(entityId);
 
         analytics.logEvent("receive_entity", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -73,13 +70,14 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBCompleteJob: function(userCode, appVersion, appFlavor, logVersion, jobName) {
+    FBCompleteJob: function(index, userCode, appVersion, appFlavor, logVersion, jobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("complete_job", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -88,7 +86,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBCompleteTask: function(userCode, appVersion, appFlavor, logVersion, jobName, taskId) {
+    FBCompleteTask: function(index, userCode, appVersion, appFlavor, logVersion, jobName, taskId) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -96,6 +94,7 @@ mergeInto(LibraryManager.library, {
         var taskId = Pointer_stringify(taskId);
 
         analytics.logEvent("complete_task", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -106,7 +105,7 @@ mergeInto(LibraryManager.library, {
         console.log("task with Id "+taskId.toString()+" completed.");
     },
 
-    FBSceneChanged: function(userCode, appVersion, appFlavor, logVersion, jobName, sceneName) {
+    FBSceneChanged: function(index, userCode, appVersion, appFlavor, logVersion, jobName, sceneName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -114,6 +113,7 @@ mergeInto(LibraryManager.library, {
         var sceneName = Pointer_stringify(sceneName);
 
         analytics.logEvent("scene_changed", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -123,7 +123,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBRoomChanged: function(userCode, appVersion, appFlavor, logVersion, jobName, roomName) {
+    FBRoomChanged: function(index, userCode, appVersion, appFlavor, logVersion, jobName, roomName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -131,6 +131,7 @@ mergeInto(LibraryManager.library, {
         var roomName = Pointer_stringify(roomName);
 
         analytics.logEvent("room_changed", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -140,7 +141,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBBeginDive: function(userCode, appVersion, appFlavor, logVersion, jobName, siteId) {
+    FBBeginDive: function(index, userCode, appVersion, appFlavor, logVersion, jobName, siteId) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -148,6 +149,7 @@ mergeInto(LibraryManager.library, {
         var siteId = Pointer_stringify(siteId);
 
         analytics.logEvent("begin_dive", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -157,13 +159,14 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBBeginModel: function(userCode, appVersion, appFlavor, logVersion, jobName) {
+    FBBeginModel: function(index, userCode, appVersion, appFlavor, logVersion, jobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("begin_model", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -172,13 +175,14 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBBeginSimulation: function(userCode, appVersion, appFlavor, logVersion, jobName) {
+    FBBeginSimulation: function(index, userCode, appVersion, appFlavor, logVersion, jobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("begin_simulation", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -187,7 +191,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBAskForHelp: function(userCode, appVersion, appFlavor, logVersion, jobName, nodeId) {
+    FBAskForHelp: function(index, userCode, appVersion, appFlavor, logVersion, jobName, nodeId) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -195,6 +199,7 @@ mergeInto(LibraryManager.library, {
         var nodeId = Pointer_stringify(nodeId);
 
         analytics.logEvent("ask_for_help", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -204,7 +209,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBTalkWithGuide: function(userCode, appVersion, appFlavor, logVersion, jobName, nodeId) {
+    FBTalkWithGuide: function(index, userCode, appVersion, appFlavor, logVersion, jobName, nodeId) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -212,6 +217,7 @@ mergeInto(LibraryManager.library, {
         var nodeId = Pointer_stringify(nodeId);
 
         analytics.logEvent("talk_with_guide", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -222,13 +228,14 @@ mergeInto(LibraryManager.library, {
     },
 
 	//Bestiary stuff
-    FBOpenBestiary: function(userCode, appVersion, appFlavor, logVersion, jobName) {
+    FBOpenBestiary: function(index, userCode, appVersion, appFlavor, logVersion, jobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("open_bestiary", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -237,13 +244,14 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBBestiaryOpenSpeciesTab: function(userCode, appVersion, appFlavor, logVersion, jobName) {
+    FBBestiaryOpenSpeciesTab: function(index, userCode, appVersion, appFlavor, logVersion, jobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("bestiary_open_species_tab", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -252,13 +260,14 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBBestiaryOpenEnvironmentsTab: function(userCode, appVersion, appFlavor, logVersion, jobName) {
+    FBBestiaryOpenEnvironmentsTab: function(index, userCode, appVersion, appFlavor, logVersion, jobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("bestiary_open_environments_tab", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -267,13 +276,14 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBBestiaryOpenModelsTab: function(userCode, appVersion, appFlavor, logVersion, jobName) {
+    FBBestiaryOpenModelsTab: function(index, userCode, appVersion, appFlavor, logVersion, jobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("bestiary_open_models_tab", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -282,7 +292,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBBestiarySelectSpecies: function(userCode, appVersion, appFlavor, logVersion, jobName, speciesId) {
+    FBBestiarySelectSpecies: function(index, userCode, appVersion, appFlavor, logVersion, jobName, speciesId) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -290,6 +300,7 @@ mergeInto(LibraryManager.library, {
         var speciesId = Pointer_stringify(speciesId);
 
         analytics.logEvent("bestiary_select_species", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -299,7 +310,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBBestiarySelectEnvironment: function(userCode, appVersion, appFlavor, logVersion, jobName, environmentId) {
+    FBBestiarySelectEnvironment: function(index, userCode, appVersion, appFlavor, logVersion, jobName, environmentId) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -307,6 +318,7 @@ mergeInto(LibraryManager.library, {
         var environmentId = Pointer_stringify(environmentId);
 
         analytics.logEvent("bestiary_select_environment", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -316,7 +328,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 	
-	FBBestiarySelectModel: function(userCode, appVersion, appFlavor, logVersion, jobName, modelId) {
+	FBBestiarySelectModel: function(index, userCode, appVersion, appFlavor, logVersion, jobName, modelId) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -324,6 +336,7 @@ mergeInto(LibraryManager.library, {
         var modelId = Pointer_stringify(modelId);
 
         analytics.logEvent("bestiary_select_model", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -333,13 +346,14 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBCloseBestiary: function(userCode, appVersion, appFlavor, logVersion, jobName) {
+    FBCloseBestiary: function(index, userCode, appVersion, appFlavor, logVersion, jobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("close_bestiary", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -350,13 +364,14 @@ mergeInto(LibraryManager.library, {
 	
 	
 	//Status App 
-	FBOpenStatus: function(userCode, appVersion, appFlavor, logVersion, jobName) {
+	FBOpenStatus: function(index, userCode, appVersion, appFlavor, logVersion, jobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("open_status", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -365,13 +380,14 @@ mergeInto(LibraryManager.library, {
         });
     },
 	
-	FBStatusOpenJobTab: function(userCode, appVersion, appFlavor, logVersion, jobName) {
+	FBStatusOpenJobTab: function(index, userCode, appVersion, appFlavor, logVersion, jobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("status_open_job_tab", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -380,13 +396,14 @@ mergeInto(LibraryManager.library, {
         });
     },
 	
-	FBStatusOpenItemTab: function(userCode, appVersion, appFlavor, logVersion, jobName) {
+	FBStatusOpenItemTab: function(index, userCode, appVersion, appFlavor, logVersion, jobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("status_open_item_tab", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -395,13 +412,14 @@ mergeInto(LibraryManager.library, {
         });
     },
 	
-	FBStatusOpenTechTab: function(userCode, appVersion, appFlavor, logVersion, jobName) {
+	FBStatusOpenTechTab: function(index, userCode, appVersion, appFlavor, logVersion, jobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("status_open_tech_tab", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -410,13 +428,14 @@ mergeInto(LibraryManager.library, {
         });
     },
 	
-	FBCloseStatus: function(userCode, appVersion, appFlavor, logVersion, jobName) {
+	FBCloseStatus: function(index, userCode, appVersion, appFlavor, logVersion, jobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("close_status", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -425,13 +444,14 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBSimulationSyncAchieved: function(userCode, appVersion, appFlavor, logVersion, jobName) {
+    FBSimulationSyncAchieved: function(index, userCode, appVersion, appFlavor, logVersion, jobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("simulation_sync_achieved", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -440,7 +460,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBGuideScriptTriggered: function(userCode, appVersion, appFlavor, logVersion, jobName, nodeId) {
+    FBGuideScriptTriggered: function(index, userCode, appVersion, appFlavor, logVersion, jobName, nodeId) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -448,6 +468,7 @@ mergeInto(LibraryManager.library, {
         var nodeId = Pointer_stringify(nodeId);
 
         analytics.logEvent("guide_script_triggered", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -457,7 +478,7 @@ mergeInto(LibraryManager.library, {
         });
     }, 
 
-    FBScriptFired: function(userCode, appVersion, appFlavor, logVersion, jobName, nodeId) {
+    FBScriptFired: function(index, userCode, appVersion, appFlavor, logVersion, jobName, nodeId) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -465,6 +486,7 @@ mergeInto(LibraryManager.library, {
         var nodeId = Pointer_stringify(nodeId);
 
         analytics.logEvent("script_fired", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -476,13 +498,14 @@ mergeInto(LibraryManager.library, {
 
     // Modeling Events
 
-    FBModelingStart: function(userCode, appVersion, appFlavor, logVersion, jobName) {
+    FBModelingStart: function(index, userCode, appVersion, appFlavor, logVersion, jobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("model_start", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -491,7 +514,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBModelPhaseChanged: function(userCode, appVersion, appFlavor, logVersion, jobName, phase) {
+    FBModelPhaseChanged: function(index, userCode, appVersion, appFlavor, logVersion, jobName, phase) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -499,6 +522,7 @@ mergeInto(LibraryManager.library, {
         var phase = Pointer_stringify(phase);
 
         analytics.logEvent("model_phase_changed", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -508,7 +532,7 @@ mergeInto(LibraryManager.library, {
         });
     }, 
 
-    FBModelEcosystemSelected: function(userCode, appVersion, appFlavor, logVersion, jobName, ecosystem) {
+    FBModelEcosystemSelected: function(index, userCode, appVersion, appFlavor, logVersion, jobName, ecosystem) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -516,6 +540,7 @@ mergeInto(LibraryManager.library, {
         var ecosystem = Pointer_stringify(ecosystem);
 
         analytics.logEvent("model_ecosystem_selected", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -525,7 +550,7 @@ mergeInto(LibraryManager.library, {
         });
     }, 
 
-    FBModelConceptStarted: function(userCode, appVersion, appFlavor, logVersion, jobName, ecosystem) {
+    FBModelConceptStarted: function(index, userCode, appVersion, appFlavor, logVersion, jobName, ecosystem) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -533,6 +558,7 @@ mergeInto(LibraryManager.library, {
         var ecosystem = Pointer_stringify(ecosystem);
 
         analytics.logEvent("model_concept_started", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -542,7 +568,7 @@ mergeInto(LibraryManager.library, {
         });
     }, 
 
-    FBModelConceptUpdated: function(userCode, appVersion, appFlavor, logVersion, jobName, ecosystem, status) {
+    FBModelConceptUpdated: function(index, userCode, appVersion, appFlavor, logVersion, jobName, ecosystem, status) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -551,6 +577,7 @@ mergeInto(LibraryManager.library, {
         var status = Pointer_stringify(status);
 
         analytics.logEvent("model_concept_updated", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -561,7 +588,7 @@ mergeInto(LibraryManager.library, {
         });
     }, 
 
-    FBModelConceptExported: function(userCode, appVersion, appFlavor, logVersion, jobName, ecosystem) {
+    FBModelConceptExported: function(index, userCode, appVersion, appFlavor, logVersion, jobName, ecosystem) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -569,6 +596,7 @@ mergeInto(LibraryManager.library, {
         var ecosystem = Pointer_stringify(ecosystem);
 
         analytics.logEvent("model_concept_exported", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -578,7 +606,7 @@ mergeInto(LibraryManager.library, {
         });
     }, 
 
-    FBModelSyncError: function(userCode, appVersion, appFlavor, logVersion, jobName, ecosystem, sync) {
+    FBModelSyncError: function(index, userCode, appVersion, appFlavor, logVersion, jobName, ecosystem, sync) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -586,6 +614,7 @@ mergeInto(LibraryManager.library, {
         var ecosystem = Pointer_stringify(ecosystem);
 
         analytics.logEvent("model_sync_error", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -596,7 +625,7 @@ mergeInto(LibraryManager.library, {
         });
     }, 
 
-    FBModelPredictCompleted: function(userCode, appVersion, appFlavor, logVersion, jobName, ecosystem) {
+    FBModelPredictCompleted: function(index, userCode, appVersion, appFlavor, logVersion, jobName, ecosystem) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -604,6 +633,7 @@ mergeInto(LibraryManager.library, {
         var ecosystem = Pointer_stringify(ecosystem);
 
         analytics.logEvent("model_predict_completed", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -613,7 +643,7 @@ mergeInto(LibraryManager.library, {
         });
     }, 
 
-    FBModelInterveneUpdate: function(userCode, appVersion, appFlavor, logVersion, jobName, ecosystem, organism, differenceValue) {
+    FBModelInterveneUpdate: function(index, userCode, appVersion, appFlavor, logVersion, jobName, ecosystem, organism, differenceValue) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -622,6 +652,7 @@ mergeInto(LibraryManager.library, {
         var organism = Pointer_stringify(organism);
 
         analytics.logEvent("model_intervene_update", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -633,7 +664,7 @@ mergeInto(LibraryManager.library, {
         });
     }, 
 
-    FBModelInterveneError: function(userCode, appVersion, appFlavor, logVersion, jobName, ecosystem) {
+    FBModelInterveneError: function(index, userCode, appVersion, appFlavor, logVersion, jobName, ecosystem) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -641,6 +672,7 @@ mergeInto(LibraryManager.library, {
         var ecosystem = Pointer_stringify(ecosystem);
 
         analytics.logEvent("model_intervene_error", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -650,7 +682,7 @@ mergeInto(LibraryManager.library, {
         });
     }, 
 
-    FBModelInterveneCompleted: function(userCode, appVersion, appFlavor, logVersion, jobName, ecosystem) {
+    FBModelInterveneCompleted: function(index, userCode, appVersion, appFlavor, logVersion, jobName, ecosystem) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -658,6 +690,7 @@ mergeInto(LibraryManager.library, {
         var ecosystem = Pointer_stringify(ecosystem);
 
         analytics.logEvent("model_intervene_completed", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -667,7 +700,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBModelingEnd: function(userCode, appVersion, appFlavor, logVersion, jobName, phase, ecosystem) {
+    FBModelingEnd: function(index, userCode, appVersion, appFlavor, logVersion, jobName, phase, ecosystem) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -676,6 +709,7 @@ mergeInto(LibraryManager.library, {
         var ecosystem = Pointer_stringify(ecosystem);
 
         analytics.logEvent("model_end", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -686,7 +720,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBPurchaseUpgrade: function(userCode, appVersion, appFlavor, logVersion, jobName, itemId, itemName, cost) {
+    FBPurchaseUpgrade: function(index, userCode, appVersion, appFlavor, logVersion, jobName, itemId, itemName, cost) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -695,6 +729,7 @@ mergeInto(LibraryManager.library, {
         var itemName = Pointer_stringify(itemName);
 
         analytics.logEvent("purchase_upgrade", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -706,7 +741,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBInsufficientFunds: function(userCode, appVersion, appFlavor, logVersion, jobName, itemId, itemName, cost) {
+    FBInsufficientFunds: function(index, userCode, appVersion, appFlavor, logVersion, jobName, itemId, itemName, cost) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -715,6 +750,7 @@ mergeInto(LibraryManager.library, {
         var itemName = Pointer_stringify(itemName);
 
         analytics.logEvent("insufficient_funds", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -726,13 +762,14 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBTalkToShopkeep: function(userCode, appVersion, appFlavor, logVersion, jobName) {
+    FBTalkToShopkeep: function(index, userCode, appVersion, appFlavor, logVersion, jobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("talk_to_shopkeep", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -741,7 +778,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBAddEnvironment: function(userCode, appVersion, appFlavor, logVersion, jobName, tankType, environment) {
+    FBAddEnvironment: function(index, userCode, appVersion, appFlavor, logVersion, jobName, tankType, environment) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -750,6 +787,7 @@ mergeInto(LibraryManager.library, {
         var environment = Pointer_stringify(environment);
 
         analytics.logEvent("add_environment", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -760,7 +798,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBRemoveEnvironment: function(userCode, appVersion, appFlavor, logVersion, jobName, tankType, environment) {
+    FBRemoveEnvironment: function(index, userCode, appVersion, appFlavor, logVersion, jobName, tankType, environment) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -769,6 +807,7 @@ mergeInto(LibraryManager.library, {
         var environment = Pointer_stringify(environment);
 
         analytics.logEvent("remove_environment", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -779,7 +818,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBAddCritter: function(userCode, appVersion, appFlavor, logVersion, jobName, tankType, environment, critter) {
+    FBAddCritter: function(index, userCode, appVersion, appFlavor, logVersion, jobName, tankType, environment, critter) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -789,6 +828,7 @@ mergeInto(LibraryManager.library, {
         var critter = Pointer_stringify(critter);
 
         analytics.logEvent("add_critter", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -800,7 +840,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBRemoveCritter: function(userCode, appVersion, appFlavor, logVersion, jobName, tankType, environment, critter) {
+    FBRemoveCritter: function(index, userCode, appVersion, appFlavor, logVersion, jobName, tankType, environment, critter) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -810,6 +850,7 @@ mergeInto(LibraryManager.library, {
         var critter = Pointer_stringify(critter);
 
         analytics.logEvent("remove_critter", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -821,7 +862,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBBeginExperiment: function(userCode, appVersion, appFlavor, logVersion, jobName, tankType, environment, critters, stabilizerEnabled, autofeederEnabled) {
+    FBBeginExperiment: function(index, userCode, appVersion, appFlavor, logVersion, jobName, tankType, environment, critters, stabilizerEnabled, autofeederEnabled) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -831,6 +872,7 @@ mergeInto(LibraryManager.library, {
         var critters = Pointer_stringify(critters);
 
         analytics.logEvent("begin_experiment", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -844,7 +886,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBEndExperiment: function(userCode, appVersion, appFlavor, logVersion, jobName, tankType, environment, critters, stabilizerEnabled, autofeederEnabled) {
+    FBEndExperiment: function(index, userCode, appVersion, appFlavor, logVersion, jobName, tankType, environment, critters, stabilizerEnabled, autofeederEnabled) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -854,6 +896,7 @@ mergeInto(LibraryManager.library, {
         var critters = Pointer_stringify(critters);
 
         analytics.logEvent("end_experiment", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -867,13 +910,14 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBBeginArgument: function(userCode, appVersion, appFlavor, logVersion, jobName) {
+    FBBeginArgument: function(index, userCode, appVersion, appFlavor, logVersion, jobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("begin_argument", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -882,7 +926,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBFactSubmitted: function(userCode, appVersion, appFlavor, logVersion, jobName, factId) {
+    FBFactSubmitted: function(index, userCode, appVersion, appFlavor, logVersion, jobName, factId) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -890,6 +934,7 @@ mergeInto(LibraryManager.library, {
         var factId = Pointer_stringify(factId);
 
         analytics.logEvent("fact_submitted", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -899,7 +944,7 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBFactRejected: function(userCode, appVersion, appFlavor, logVersion, jobName, factId) {
+    FBFactRejected: function(index, userCode, appVersion, appFlavor, logVersion, jobName, factId) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
@@ -907,6 +952,7 @@ mergeInto(LibraryManager.library, {
         var factId = Pointer_stringify(factId);
 
         analytics.logEvent("fact_rejected", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -916,13 +962,14 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBLeaveArgument: function(userCode, appVersion, appFlavor, logVersion, jobName) {
+    FBLeaveArgument: function(index, userCode, appVersion, appFlavor, logVersion, jobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("leave_argument", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,
@@ -931,13 +978,14 @@ mergeInto(LibraryManager.library, {
         });
     },
 
-    FBCompleteArgument: function(userCode, appVersion, appFlavor, logVersion, jobName) {
+    FBCompleteArgument: function(index, userCode, appVersion, appFlavor, logVersion, jobName) {
         var userCode = Pointer_stringify(userCode);
         var appVersion = Pointer_stringify(appVersion);
         var appFlavor = Pointer_stringify(appFlavor);
         var jobName = Pointer_stringify(jobName);
 
         analytics.logEvent("complete_argument", {
+            event_sequence_index: index,
             user_code: userCode,
             app_version: appVersion,
             app_flavor: appFlavor,

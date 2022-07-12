@@ -83,7 +83,7 @@ namespace ProtoAqua.ExperimentV2 {
             if (m_RequiredReveals.Mask == 0)
                 return;
 
-            if (m_RevealedLeftMask != m_RevealedRightMask || m_RevealedLeftMask != m_RequiredReveals)
+            if ((m_RevealedLeftMask & m_RevealedRightMask & m_RequiredReveals) != m_RequiredReveals)
                 return;
 
             Routine.Start(this, TransitionToDone(GenerateResult())).Tick();
@@ -105,6 +105,12 @@ namespace ProtoAqua.ExperimentV2 {
 
             ExperimentResult result = new ExperimentResult();
             result.Facts = experimentFacts.ToArray();
+
+            if (result.Facts.Length > 0) {
+                using (var table = TempVarTable.Alloc()) {
+                    Services.Script.TriggerResponse(ExperimentTriggers.NewStressResults, table);
+                }
+            }
 
             return result;
         }

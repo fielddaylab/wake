@@ -105,7 +105,7 @@ namespace Aqua.Entity {
 
         bool IBaked.Bake(BakeFlags flags) {
             if (Collider != null) {
-                return false;
+                return Ref.Replace(ref Radius, PhysicsUtils.GetRadius(Collider));
             }
 
             if (Ref.Replace(ref Collider, GetComponent<Collider2D>())) {

@@ -9,32 +9,32 @@
 $branch common.ringPhone
 
 {@drKelp}	Oh, welcome back, {player-name}! 
-            I need you to head over to Site A and see if anything is different there. 
-            When you're done, check in with me at your {map-name}Office{/map-name}!
+{@drKelp}   I need you to head over to {h}site A{/h} and see if anything is different there. 
+{@drKelp}   When you're done, check in with me at your {map-name}Office{/map-name}!
 
 $call UnlockSite(RS-1A)
 
 :: helpGoOutside
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", JobTaskTop(siteA)
+@when 		scene:name == "Helm", JobTaskTop(siteA)
 @cutscene
 {@player}   Any idea where I should go next?
-{@kevin}	Go out to your sub and head over to Site A.
+{@guide}	Go out to your sub and head over to Site A.
 
 :: helpWrongSite
 @trigger    RequestPartnerHelp
 @when       scene:name == "RS-1C", JobTaskTop(siteA)
 @cutscene
-{player}    Is this where we should be?
-{@kevin}    No, I don't think so...
-            Let's surface and head over to Site A.
+{@player}    Is this where we should be?
+{@guide}    No, I don't think so...
+            Let's surface and head over to {h}Site A{/h}.
 
 :: helpGoToSiteA
 @trigger    RequestPartnerHelp
 @when 		scene:name == "KelpStation", JobTaskTop(siteA)
 @cutscene
 {@player} 	Where should we be going again?
-{@kevin}	Site A should be just west of the ship.
+{@guide}	{h}Site A{/h} should be just west of the ship.
             Let's head over!
 
 // at the site
@@ -44,7 +44,7 @@ $call UnlockSite(RS-1A)
 @when 		scene:name == "RS-1A", JobTaskTop(siteA)
 @cutscene
 {@player} 	So... what now?
-{@kevin}	We need to look around for new species. 
+{@guide}	We need to look around for this so called... Bull Kelp. 
 
 // to experimentation
 
@@ -53,12 +53,10 @@ $call UnlockSite(RS-1A)
 @when 		JobTaskTop(foodweb), scene:name != "ExperimentV2"
 @cutscene
 {@player} 	Where should I go next?
-{@kevin}	Now that we've discovered {nameof BullKelp}, let's head back to the {nameof Experimentation}.
+{@guide}	Now that we've discovered {nameof BullKelp}, let's head back to the {nameof Experimentation}.
 
 $if scene:name == "RS-1A"
-	{@kevin}	It's pretty down here and all, but we should head back to the surface. 
-$elseif scene:name != "Ship"
-	{@kevin}	First, let's head back to the ship.
+	{@guide}	It's pretty down here and all, but we should head back to the surface. 
 $endif
 
 ::helpDoExperiment
@@ -76,14 +74,14 @@ $endif
 
 :: helpDoExperiment.InExperiment
 $if ExperimentHasCritter(BullKelp)
-    {@kevin}    Is anything interacting with the {pluralnameof BullKelp}?
+    {@guide}    Is anything interacting with the {pluralnameof BullKelp}?
 $else
-    {@kevin}    Is it possible to get any new information from this experiment?
+    {@guide}    Is it possible to get any new information from this experiment?
                 I don't see any {pluralname BullKelp} in this tank...
 $endif
 
 :: helpDoExperiment.TankView
-{@kevin}    We have a new species - let's see if anything we already have interacts with it.
+{@guide}    We have a new species - let's see if anything we already have interacts with it.
 $if ExperimentHasCritter(BullKelp)
     We've added some {pluralnameof BullKelp} - what might it interact with?
 $else
@@ -91,7 +89,7 @@ $else
 $endif
 
 :: helpDoExperiment.None
-{@kevin}    We have a new species - let's see if anything we already have interacts with it.
+{@guide}    We have a new species - let's see if anything we already have interacts with it.
             We should be able to run an {h}Observation Tank{/h} experiment like last time.
 
 // report back
@@ -102,11 +100,11 @@ $endif
 @boostScore 2
 @cutscene
 {@player} 	What should we do now?
-{@kevin}	We've found a new relationship between {pluralnameof Urchin} and {pluralnameof BullKelp}. So let's report back to Kel.
+{@guide}	We've found a new relationship between {pluralnameof Urchin} and {pluralnameof BullKelp}. So let's report back to Kel.
 $if global:nav.shipRoom != "office"
-	{@kevin}	We should first head back to the {map-name}Office{/map-name}.
+	{@guide}	We should first head back to the {map-name}Office{/map-name}.
 $else
-	{@kevin}	Just like last time, you can report your findings using the {h}Computer{/h}.
+	{@guide}	Just like last time, you can report your findings using the {h}Computer{/h}.
 $endif
 
 // CATCH-ALL GUIDE TEXT
@@ -116,21 +114,21 @@ $endif
 @when 		JobTaskActive(siteA)
 @boostScore -5
 @cutscene
-{@kevin}    Head to Site A to discover any new species.
+{@guide}    Head to Site A to discover any new species.
 
 :: catchFoodWeb
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(foodWeb)
 @boostScore -5
 @cutscene
-{@kevin}    Use the Observation Tank to see how Bull Kelp fits into the food web at Site A.
+{@guide}    Use the Observation Tank to see how Bull Kelp fits into the food web at Site A.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@kevin}    Talk to {nameof drKelp} in the Office.
+{@guide}    Talk to {nameof drKelp} in the Office.
 
 //ARGUMENTATION
 
@@ -179,33 +177,25 @@ $call ArgueComplete()
 And {pluralnameof Urchin} eat the {critter-name}Kelp{/critter-name}!
 $call CompleteJob()
 
-
-
 // END
-
 :: end
 @trigger    JobCompleted
 @cutscene
+@once
 
 {@drKelp}  Nice work!
             You've learned that {pluralnameof BullKelp} power the whole forest at Site A.
 {@player}   Yeah, it's interesting how both {pluralnameof BullKelp} and {pluralnameof GiantKelp} seem to have the same role in their environments.
 {@drKelp}   Indeed! Finding those parallels can be quite rewarding.
             You're doing some excellent work for us! I have some colleagues in other parts of the ocean that would love some help.
-{@kevin}	Oh, the extra cash would be great.
+{@guide}	Oh, the extra cash would be great!
 {@drKelp}	Yep! Maybe they'll have work for you too!
-			I'll mark their stations on your map.
+            I'll reach out to them and get back to you soon with the coordinates of their stations.
+{hide-dialog}
+{wait 1.5}
 
-$branch common.download
-
-$call UnlockStation(CoralStation)
-$call UnlockStation(ArcticStation)
-$call UnlockStation(BayouStation)
-
-$call UnlockRoom(WorldMap)
-$call ShowPopup(map.unlock.shipRoom.header, map.unlock.worldMap.desc)
-$call ShowPopup(map.unlock.stations.header, map.unlock.stations.desc)
-
-{@player}   Thanks, Kel!
-{@drKelp}   No problem! Now if you head back to the {map-name}Job Board{/map-name} I have some more work for you!
-            But don't be afraid to pay my colleagues a visit first!
+{@guide}    You know, I think we've gotten a lot of {pluralnameof Exp}!
+            Before we head out, we might wanna upgrade our ship with some of our earnings.
+            I hear there's a mechanic right off the dock that can upgrade our ship. Maybe we should check them out?
+$call UnlockRoom("Shop")
+$call SetJob(kelp-shop-welcome)

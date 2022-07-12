@@ -8,12 +8,15 @@ using BeauData;
 using BeauPools;
 using BeauUtil;
 using BeauUtil.Debugger;
+using EasyBugReporter;
 using UnityEngine;
 
 namespace Aqua.Profile
 {
     public class BestiaryData : IProfileChunk, ISerializedVersion, ISerializedCallbacks
     {
+        private const BFDiscoveredFlags TempDiscoveredMask = BFDiscoveredFlags.HasPair;
+
         #region Types
 
         private struct FactData : ISerializedObject, IKeyValuePair<StringHash32, FactData>
@@ -53,7 +56,7 @@ namespace Aqua.Profile
             if (m_ObservedEntities.Add(inEntityId))
             {
                 m_HasChanges = true;
-                Services.Events.QueueForDispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Entity, inEntityId));
+                Services.Events.Queue(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Entity, inEntityId));
                 return true;
             }
 
@@ -62,15 +65,15 @@ namespace Aqua.Profile
 
         public IEnumerable<BestiaryDesc> GetEntities()
         {
-            foreach(var entity in m_ObservedEntities)
-                yield return Assets.Bestiary(entity);
+            foreach(var entityId in m_ObservedEntities)
+                yield return Assets.Bestiary(entityId);
         }
 
         public IEnumerable<BestiaryDesc> GetEntities(BestiaryDescCategory inCategory)
         {
-            foreach(var entity in m_ObservedEntities)
+            foreach(var entityId in m_ObservedEntities)
             {
-                BestiaryDesc desc = Assets.Bestiary(entity);
+                BestiaryDesc desc = Assets.Bestiary(entityId);
                 if (desc.HasCategory(inCategory))
                     yield return desc;
             }
@@ -79,12 +82,27 @@ namespace Aqua.Profile
         public int GetEntities(BestiaryDescCategory inCategory, ICollection<BestiaryDesc> outFacts)
         {
             int count = 0;
-            foreach(var entity in m_ObservedEntities)
+            foreach(var entityId in m_ObservedEntities)
             {
-                BestiaryDesc desc = Assets.Bestiary(entity);
+                BestiaryDesc desc = Assets.Bestiary(entityId);
                 if (desc.HasCategory(inCategory))
                 {
                     outFacts.Add(desc);
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        public int GetEntities(BestiaryDescCategory inCategory, ICollection<TaggedBestiaryDesc> outFacts)
+        {
+            int count = 0;
+            foreach(var entityId in m_ObservedEntities)
+            {
+                BestiaryDesc desc = Assets.Bestiary(entityId);
+                if (desc.HasCategory(inCategory))
+                {
+                    outFacts.Add(new TaggedBestiaryDesc(desc));
                     count++;
                 }
             }
@@ -98,7 +116,7 @@ namespace Aqua.Profile
             if (m_ObservedEntities.Remove(inEntityId))
             {
                 m_HasChanges = true;
-                Services.Events.QueueForDispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.RemovedEntity, inEntityId));
+                Services.Events.Queue(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.RemovedEntity, inEntityId));
                 return true;
             }
 
@@ -141,7 +159,7 @@ namespace Aqua.Profile
                 }
                 if (bVisible)
                 {
-                    Services.Events.QueueForDispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Fact, inFactId));
+                    Services.Events.Queue(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Fact, inFactId));
                 }
                 return true;
             }
@@ -210,7 +228,7 @@ namespace Aqua.Profile
                 }
                 
                 m_HasChanges = true;
-                Services.Events.QueueForDispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.RemovedFact, inFactId));
+                Services.Events.Queue(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.RemovedFact, inFactId));
                 return true;
             }
 
@@ -222,15 +240,21 @@ namespace Aqua.Profile
             if (!HasFact(inFactId))
                 return BFDiscoveredFlags.None;
 
-            BFDiscoveredFlags flags = BFType.DefaultDiscoveredFlags(Assets.Fact(inFactId));
+            BFBase fact = Assets.Fact(inFactId);
+            BFDiscoveredFlags flags = BFType.DefaultDiscoveredFlags(fact);
+            StringHash32 pair = BFType.PairId(fact);
             int metaIdx = m_FactMetas.BinarySearch(inFactId);
             if (metaIdx >= 0)
                 flags |= m_FactMetas[metaIdx].Flags;
+            if (!pair.IsEmpty && (m_ObservedFacts.Contains(pair) || Services.Assets.Bestiary.IsAutoFact(pair)))
+                flags |= BFDiscoveredFlags.HasPair;
             return flags;
         }
 
         public bool AddDiscoveredFlags(StringHash32 inFactId, BFDiscoveredFlags inFlags)
         {
+            inFlags &= ~TempDiscoveredMask;
+
             if (inFlags <= 0)
                 return false;
             
@@ -260,7 +284,7 @@ namespace Aqua.Profile
             bool bVisible = m_ObservedEntities.Contains(fact.Parent.Id());
             if (bVisible)
             {
-                Services.Events.QueueForDispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.UpgradeFact, inFactId));
+                Services.Events.Queue(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.UpgradeFact, inFactId));
             }
 
             m_HasChanges = true;
@@ -269,6 +293,8 @@ namespace Aqua.Profile
 
         public bool RemoveDiscoveredFlags(StringHash32 inFactId, BFDiscoveredFlags inFlags)
         {
+            inFlags &= ~TempDiscoveredMask;
+
             if (inFlags <= 0)
                 return false;
             
@@ -292,7 +318,7 @@ namespace Aqua.Profile
                 bool bVisible = m_ObservedEntities.Contains(fact.Parent.Id());
                 if (bVisible)
                 {
-                    Services.Events.QueueForDispatch(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.UpgradeFact, inFactId));
+                    Services.Events.Queue(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.UpgradeFact, inFactId));
                 }
 
                 m_HasChanges = true;
@@ -304,7 +330,7 @@ namespace Aqua.Profile
 
         public bool IsFactFullyUpgraded(StringHash32 inFactId)
         {
-            return GetDiscoveredFlags(inFactId) == BFDiscoveredFlags.All;
+            return (GetDiscoveredFlags(inFactId) & BFDiscoveredFlags.All) == BFDiscoveredFlags.All;
         }
 
         #endregion // Facts
@@ -335,6 +361,12 @@ namespace Aqua.Profile
             if (inMode != Serializer.Mode.Read) {
                 return;
             }
+
+            #if UNITY_EDITOR
+            if (!UnityEditor.EditorApplication.isPlaying) {
+                return;
+            }
+            #endif // UNITY_EDITOR
 
             var bestiary = Services.Assets.Bestiary;
 
@@ -375,6 +407,18 @@ namespace Aqua.Profile
         public void MarkChangesPersisted()
         {
             m_HasChanges = false;
+        }
+
+        public void Dump(EasyBugReporter.IDumpWriter writer) {
+            writer.Header("Bestiary Entities");
+            foreach(var entityId in m_ObservedEntities) {
+                writer.Text(Assets.NameOf(entityId));
+            }
+            
+            writer.Header("Discovered Facts");
+            foreach(var factId in m_ObservedFacts) {
+                writer.KeyValue(Assets.NameOf(factId), GetDiscoveredFlags(factId));
+            }
         }
 
         #endregion // IProfileChunk

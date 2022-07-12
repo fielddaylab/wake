@@ -23,8 +23,8 @@ namespace Aqua
         static public readonly StringHash32 ScenePreloading = "scene:preloading"; // no args
         static public readonly StringHash32 SceneLoaded = "scene:loaded"; // no args
 
-        static public readonly StringHash32 RoomChanged = "room:changed"; // string roomName
-        static public readonly StringHash32 RoomLockChanged = "room:lockChanged"; // no args
+        static public readonly StringHash32 ViewChanged = "view:changed"; // string viewName
+        static public readonly StringHash32 ViewLockChanged = "view:lockChanged"; // no args
 
         static public readonly StringHash32 CutsceneStart = "cutscene:start"; // no args
         static public readonly StringHash32 CutsceneEnd = "cutscene:end"; // no args
@@ -33,8 +33,8 @@ namespace Aqua
         static public readonly StringHash32 ScriptChoicePresented = "script:choice-presented"; // DialogRecord lastLine
         static public readonly StringHash32 ScriptFired = "script:fired"; // string nodeId
 
-        static public readonly StringHash32 KevinChatterStart = "kevin:chatter-start"; // no args
-        static public readonly StringHash32 KevinChatterEnd = "kevin:chatter-end"; // no args
+        static public readonly StringHash32 GuideChatterStart = "guide:chatter-start"; // no args
+        static public readonly StringHash32 GuideChatterEnd = "guide:chatter-end"; // no args
 
         static public readonly StringHash32 BestiaryUpdated = "bestiary:updated"; // BestiaryUpdateParams bestiaryParams
         static public readonly StringHash32 InventoryUpdated = "inventory:updated"; // StringHash32 itemId

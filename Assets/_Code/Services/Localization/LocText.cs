@@ -21,6 +21,10 @@ namespace Aqua
         [SerializeField, HideInEditor] private TMP_Text m_Text = null;
         [SerializeField] internal TextId m_DefaultText = default(TextId);
 
+        [Header("Modifications")]
+        [SerializeField] private string m_Prefix = null;
+        [SerializeField] private string m_Postfix = null;
+
         #endregion // Inspector
 
         [NonSerialized] private TextId m_LastId;
@@ -80,9 +84,9 @@ namespace Aqua
             }
         }
 
-        private void InternalSetText(string inText)
+        internal void InternalSetText(string inText)
         {
-            m_Text.SetText(inText);
+            m_Text.SetText(AssemblePrePostString(inText, m_Prefix, m_Postfix));
             m_CurrentText = inText;
             m_Initialized = true;
         }
@@ -122,6 +126,15 @@ namespace Aqua
         }
 
         #endif // UNITY_EDITOR
+
+        static private unsafe string AssemblePrePostString(string inText, string inPrefix, string inPostfix)
+        {
+            if (string.IsNullOrEmpty(inText)) {
+                return string.Empty;
+            }
+
+            return UnsafeExt.PrePostString(inText, inPrefix, inPostfix);
+        }
 
         #endregion // Unity Events
     }

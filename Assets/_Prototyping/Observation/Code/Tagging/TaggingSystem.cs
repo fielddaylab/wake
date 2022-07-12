@@ -105,10 +105,12 @@ namespace ProtoAqua.Observation {
                 critter = m_RemainingCritters[i];
                 if (IsFinished(critter.CritterId)) {
                     critter.Collider.enabled = false;
+                    critter.ColliderPosition.enabled = false;
                     critter.WasTagged = true;
                     m_RemainingCritters.FastRemoveAt(i);
                 } else if (IsReady(critter.CritterId)) {
                     critter.Collider.enabled = true;
+                    critter.ColliderPosition.enabled = true;
                 }
             }
 
@@ -131,6 +133,7 @@ namespace ProtoAqua.Observation {
         public void Register(TaggableCritter inCritter) {
             if (m_SiteData == null) {
                 m_RemainingCritters.PushBack(inCritter);
+                inCritter.Collider.enabled = false;
                 inCritter.ColliderPosition.enabled = false;
                 return;
             }
@@ -152,7 +155,7 @@ namespace ProtoAqua.Observation {
                 return;
             }
 
-            inCritter.ColliderPosition.enabled = false;
+            inCritter.Collider.enabled = false;
             m_RemainingCritters.PushBack(inCritter);
         }
 
@@ -261,7 +264,7 @@ namespace ProtoAqua.Observation {
             m_SiteData.TaggedCritters.Add(manifest.Id);
             m_SiteData.OnChanged();
 
-            Services.Events.QueueForDispatch(GameEvents.SiteDataUpdated, m_SiteData.MapId);
+            Services.Events.Queue(GameEvents.SiteDataUpdated, m_SiteData.MapId);
             MarkAllAsTagged(manifest.Id);
 
             Services.UI.FindPanel<TaggingUI>().Populate(m_SceneManifest, m_TagCounts);

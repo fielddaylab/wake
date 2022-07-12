@@ -12,20 +12,24 @@ namespace Aqua.JobBoard
 {
     public class JobButton : MonoBehaviour, IPoolAllocHandler
     {
+        private const int NoIconPaddingRight = 10;
+        private const int IconPaddingRight = 28;
+
         [Serializable]
         public struct ButtonAppearanceConfig
         {
             public Sprite ActiveIcon;
-            public Sprite CompletedIcon;
+            public Color ActiveColor;
             public Sprite LockedIcon;
+            public Color LockedColor;
         }
 
         #region Inspector
 
+        [SerializeField, Required] private LayoutGroup m_LayoutGroup = null;
         [SerializeField, Required] private Toggle m_Toggle = null;
         [SerializeField, Required] private Image m_Icon = null;
         [SerializeField, Required] private LocText m_NameLabel = null;
-        [SerializeField] private LocText m_PosterLabel = null;
 
         #endregion // Inspector
 
@@ -56,23 +60,9 @@ namespace Aqua.JobBoard
             m_Job = inJob;
             m_Status = inStatus;
             m_Group = PlayerJob.StatusToCategory(inStatus);
+            m_Toggle.SetIsOnWithoutNotify(false);
 
             m_NameLabel.SetText(inJob.NameId());
-            
-            if (m_PosterLabel)
-                m_PosterLabel.SetText(Assets.Character(inJob.PosterId()).ShortNameId());
-
-            Sprite jobIcon = null; // TODO: REIMPLEMENT
-            if (jobIcon != null)
-            {
-                m_Icon.sprite = jobIcon;
-                m_Icon.gameObject.SetActive(true);
-            }
-            else
-            {
-                m_Icon.gameObject.SetActive(false);
-                m_Icon.sprite = null;
-            }
         }
 
         public bool UpdateStatus(JobStatusFlags inStatus, in ButtonAppearanceConfig inConfig)
@@ -85,8 +75,10 @@ namespace Aqua.JobBoard
                 {
                     case JobProgressCategory.Completed:
                         {
-                            m_Icon.gameObject.SetActive(true);
-                            m_Icon.sprite = inConfig.CompletedIcon;
+                            m_Icon.gameObject.SetActive(false);
+                            RectOffset off = m_LayoutGroup.padding;
+                            off.right = NoIconPaddingRight;
+                            m_LayoutGroup.padding = off;
                             break;
                         }
                     
@@ -94,6 +86,10 @@ namespace Aqua.JobBoard
                         {
                             m_Icon.gameObject.SetActive(true);
                             m_Icon.sprite = inConfig.ActiveIcon;
+                            m_Icon.color = inConfig.ActiveColor;
+                            RectOffset off = m_LayoutGroup.padding;
+                            off.right = IconPaddingRight;
+                            m_LayoutGroup.padding = off;
                             break;
                         }
 
@@ -101,14 +97,19 @@ namespace Aqua.JobBoard
                         {
                             m_Icon.gameObject.SetActive(true);
                             m_Icon.sprite = inConfig.LockedIcon;
+                            m_Icon.color = inConfig.LockedColor;
+                            RectOffset off = m_LayoutGroup.padding;
+                            off.right = IconPaddingRight;
+                            m_LayoutGroup.padding = off;
                             break;
                         }
 
                     default:
                         {
-                            Sprite icon = null; // TODO: REIMPLEMENT
-                            m_Icon.sprite = icon;
-                            m_Icon.gameObject.SetActive(icon);
+                            m_Icon.gameObject.SetActive(false);
+                            RectOffset off = m_LayoutGroup.padding;
+                            off.right = NoIconPaddingRight;
+                            m_LayoutGroup.padding = off;
                             break;
                         }
                 }
@@ -131,6 +132,8 @@ namespace Aqua.JobBoard
         void IPoolAllocHandler.OnFree()
         {
             m_Job = null;
+            m_OnSelected = null;
+            m_Toggle.SetIsOnWithoutNotify(false);
         }
     }
 }

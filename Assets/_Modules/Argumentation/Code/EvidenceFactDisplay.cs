@@ -46,7 +46,7 @@ namespace Aqua.Argumentation {
                 go.SetActive(false);
             }
 
-            FactPools.Populate(Display, inFact, null, inFlags);
+            FactPools.Populate(Display, inFact, inFlags, null);
         }
 
         void IPoolAllocHandler.OnAlloc() {
