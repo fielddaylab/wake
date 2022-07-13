@@ -1,0 +1,102 @@
+// requirements
+// $const MerchantId (must start with @)
+// #const UnlockHintNodeId
+// #const UnlockHintHereNodeId
+// #const LowExpNodeId
+// #const FreeItemPromptId
+// #const CostItemPromptId
+// #const CancelNodeId
+// #const NotEnoughCashNodeId
+// #const PurchaseNodeId
+
+#macro InvokeCallback(custom, default) \
+    $if custom \
+        $branch $$custom \
+    $elseif $default \
+        $branch $$default \
+    $endif
+
+// Checks if the upgrade set with local:itemId
+// will potentially unlock another job
+:: eval.checkUnlocks
+$set local:currentStation = player:currentStation
+
+$if UpgradeUnlocksJobAtStation($local:itemId, $local:currentStation)
+    $set local:hintStation = local:currentStation
+    $goto $UnlockHintHereNodeId
+$elseif local:currentStation != "KelpStation", UpgradeUnlocksJobAtStation($local:itemId, "KelpStation")
+    $set local:hintStation = "KelpStation"
+    $goto $UnlockHintNodeId
+$elseif local:currentStation != "CoralStation", UpgradeUnlocksJobAtStation($local:itemId, "CoralStation")
+    $set local:hintStation = "CoralStation"
+    $goto $UnlockHintNodeId
+$elseif local:currentStation != "BayouStation", UpgradeUnlocksJobAtStation($local:itemId, "BayouStation")
+    $set local:hintStation = "BayouStation"
+    $goto $UnlockHintNodeId
+$elseif local:currentStation != "ArcticStation", UpgradeUnlocksJobAtStation($local:itemId, "ArcticStation")
+    $set local:hintStation = "ArcticStation"
+    $goto $UnlockHintNodeId
+$endif
+
+// Checks if the player has enough experience points
+// to afford this the current local:itemId item
+:: eval.checkLevel
+$if player:exp >= local:expCost
+    $return
+$endif
+
+$set    local:needExp = local:expCost
+$set    local:needExp - player:exp
+
+$set    shop:lastFailure = local:itemId
+$set    shop:lastFailureReason = "exp"
+$set    player:hasAttemptedPurchaseUnderleveled = local:itemId
+
+$InvokeCallback(local:customLowExpNode, "$LowExpNodeId")
+$stop
+
+:: eval.purchasePrompt
+$if local:cashCost > 0
+    $branch $CostItemPromptId
+
+    $choice .purchase.confirm, CanAffordItem($local:itemId); {h}Yes! (Purchase){/h}
+    $choice .purchase.cantAfford, !CanAffordItem($local:itemId); {random ...Yes?|Uh...}
+$else
+    $branch $FreeItemPromptId
+
+    $choice .purchase.confirm; {h}Yes! (Install){/h}
+$endif
+
+$choice .purchase.cancel; {random Just looking!|No.}
+
+:: purchase.confirm
+
+$set    shop:lastFailure = null
+$set    shop:lastFailureReason = null
+
+$if player:hasAttemptedPurchaseNoCash == local:itemId
+    $set player:hasAttemptedPurchaseNoCash = null
+$endif
+
+$if player:hasAttemptedPurchaseUnderleveled == local:itemId
+    $set player:hasAttemptedPurchaseUnderleveled = null
+$endif
+
+$set    shop:purchaseCount + 1
+
+$branch $PurchaseNodeId
+
+$call AudioOneShot(ShopPurchase)
+$call PurchaseItem($local:itemId)
+
+:: purchase.cantAfford
+$set    shop:lastFailure = local:itemId
+$set    shop:lastFailureReason = "cash"
+$set    player:hasAttemptedPurchaseNoCash = local:itemId
+
+$set    shop:notEnoughCount + 1
+
+$branch $NotEnoughCashNodeId
+
+:: purchase.cancel
+$branch $CancelNodeId

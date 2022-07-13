@@ -142,9 +142,13 @@ namespace Aqua.Modeling {
         private GraphSolverState m_SolverState;
 
         private readonly ModelOrganismDisplay.OnAddRemoveDelegate m_OrganismInterventionDelegate;
+        private readonly Predicate<StringHash32> m_HasOrganismPredicate;
 
         private ModelWorldDisplay() {
             m_OrganismInterventionDelegate = OnOrganismRequestAddRemove;
+            m_HasOrganismPredicate = (s) => {
+                return m_OrganismMap.ContainsKey(s);
+            };
         }
 
         ~ModelWorldDisplay() {
@@ -307,7 +311,7 @@ namespace Aqua.Modeling {
 
             m_SolverState.MovedOutputMask = (1u << organismCount) - 1;
             foreach(var fact in m_State.Conceptual.GraphedFacts) {
-                if (!CanGenerateConnection(fact)) {
+                if (!CanGenerateConnection(fact, m_HasOrganismPredicate)) {
                     continue;
                 }
 
@@ -329,7 +333,7 @@ namespace Aqua.Modeling {
             }
 
             foreach(var fact in intervention.AdditionalFacts) {
-                if (m_State.Conceptual.GraphedFacts.Contains(fact) || !CanGenerateConnection(fact)) {
+                if (m_State.Conceptual.GraphedFacts.Contains(fact) || !CanGenerateConnection(fact, m_HasOrganismPredicate)) {
                     continue;
                 }
 
@@ -840,12 +844,12 @@ namespace Aqua.Modeling {
             return current;
         }
     
-        static private bool CanGenerateConnection(BFBase fact) {
+        static private bool CanGenerateConnection(BFBase fact, Predicate<StringHash32> hasEntity) {
             if (!BFType.IsOrganism(fact)) {
                 return false;
             }
 
-            return BFType.IsBehavior(fact);
+            return BFType.IsBehavior(fact) && hasEntity(fact.Parent.Id());
         }
 
         static private int GenerateConnectionKey(int a, int b) {

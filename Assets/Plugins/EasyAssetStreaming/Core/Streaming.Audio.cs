@@ -35,9 +35,9 @@ namespace EasyAssetStreaming {
 
             Manifest.EnsureLoaded();
 
-            StreamingAssetId id = new StreamingAssetId(pathOrUrl, AssetType.Audio);
+            StreamingAssetId id = new StreamingAssetId(pathOrUrl, AssetTypeId.Audio);
             AudioClip loadedClip;
-            AssetMeta meta = AudioClips.GetMeta(id, pathOrUrl, out loadedClip);
+            AssetMeta meta = AudioClips.GetMeta(ref id, pathOrUrl, out loadedClip);
 
             if (assetId != id) {
                 Dereference(assetId, callback);
@@ -62,9 +62,9 @@ namespace EasyAssetStreaming {
 
             Manifest.EnsureLoaded();
 
-            StreamingAssetId id = new StreamingAssetId(pathOrUrl, AssetType.Texture);
+            StreamingAssetId id = new StreamingAssetId(pathOrUrl, AssetTypeId.Texture);
             AudioClip loadedClip;
-            AssetMeta meta = AudioClips.GetMeta(id, pathOrUrl, out loadedClip);
+            AssetMeta meta = AudioClips.GetMeta(ref id, pathOrUrl, out loadedClip);
 
             meta.RefCount++;
             meta.LastModifiedTS = CurrentTimestamp();
@@ -122,7 +122,7 @@ namespace EasyAssetStreaming {
 
             #endregion // State
 
-            static public AssetMeta GetMeta(StreamingAssetId id, string pathOrUrl, out AudioClip clip) {
+            static public AssetMeta GetMeta(ref StreamingAssetId id, string pathOrUrl, out AudioClip clip) {
                 AudioClip loadedClip;
                 AssetMeta meta;
                 if (!s_Metas.TryGetValue(id, out meta)) {
@@ -130,7 +130,7 @@ namespace EasyAssetStreaming {
 
                     UnityEngine.Debug.LogFormat("[Streaming] Loading streamed audio '{0}'...", id);
                     
-                    meta.Type = AssetType.Audio;
+                    meta.Type = AssetTypeId.Audio;
                     meta.Status = AssetStatus.PendingLoad;
                     meta.Path = pathOrUrl;
                     loadedClip = LoadAudioAsync(id, pathOrUrl, meta);
@@ -249,7 +249,7 @@ namespace EasyAssetStreaming {
                         UnityEngine.Debug.LogFormat("[Streaming] Audio memory is over budget by {0:0.00} Kb", over / 1024f);
                         s_OverBudgetFlag = true;
                     }
-                    StreamingAssetId asset = IdentifyOverBudgetToDelete(AssetType.Audio, now, over);
+                    StreamingAssetId asset = IdentifyOverBudgetToDelete(AssetTypeId.Audio, now, over);
                     if (asset) {
                         UnloadSingle(asset, now);
                         s_OverBudgetFlag = false;

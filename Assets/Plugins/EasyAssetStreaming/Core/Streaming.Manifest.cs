@@ -131,25 +131,28 @@ namespace EasyAssetStreaming {
                     }
 
                     ManifestEntry entry;
-                    StreamingAssetId id = new StreamingAssetId(relativePath, default(AssetType));
+                    StreamingAssetId id = new StreamingAssetId(relativePath, default(AssetTypeId));
                     Current.Map.TryGetValue(id, out entry);
 
                     JSON entryJSON = assetsJSON[relativePath] = JSON.CreateObject();
 
                     entry.Path = relativePath;
-                    entry.Type = IdentifyAssetType(ext);
+                    entry.Type = IdentifyAssetTypeFromExt(ext);
 
-                    WriteEnum(entryJSON, "Type", entry.Type);
+                    WriteEnum(entryJSON, "Type", entry.Type.Id);
+                    WriteEnum(entryJSON, "SubType", entry.Type.Sub, AssetSubTypeId.Default);
 
-                    if (entry.Type == AssetType.Texture) {
-                        Texture2D texture = null;
-                        try {
-                            texture = new Texture2D(1, 1);
-                            texture.LoadImage(File.ReadAllBytes(fullPath), false);
-                            entryJSON["Texture"] = Textures.SerializeTextureSettings(entry.Texture, texture);
-                        }
-                        finally {
-                            StreamingHelper.DestroyResource(texture);
+                    if (entry.Type.Id == AssetTypeId.Texture) {
+                        if (entry.Type.Sub == AssetSubTypeId.Default) {
+                            Texture2D texture = null;
+                            try {
+                                texture = new Texture2D(1, 1);
+                                texture.LoadImage(File.ReadAllBytes(fullPath), false);
+                                entryJSON["Texture"] = Textures.SerializeTextureSettings(entry.Texture, texture);
+                            }
+                            finally {
+                                StreamingHelper.DestroyResource(texture);
+                            }
                         }
                     }
 
@@ -246,8 +249,10 @@ namespace EasyAssetStreaming {
                     ManifestEntry entry = new ManifestEntry();
                     entry.Path = entryKV.Key;
                     JSON entryJSON = entryKV.Value;
+                    AssetTypeId assetType = ParseEnum(entryJSON["Type"], AssetTypeId.Unknown);
+                    AssetSubTypeId subType = ParseEnum(entryJSON["SubType"], AssetSubTypeId.Default);
+                    entry.Type = new AssetType(assetType, subType);
                     if (entryJSON["Texture"] != null) {
-                        entry.Type = AssetType.Texture;
                         entry.Texture = Textures.ParseTextureSettings(entryJSON["Texture"]);
                     }
 
@@ -296,21 +301,23 @@ namespace EasyAssetStreaming {
             return (T) Enum.Parse(typeof(T), data.AsString);
         }
 
-        #if UNITY_EDITOR
+        static private AssetType IdentifyAssetTypeFromPath(string filePath) {
+            return IdentifyAssetTypeFromExt(Path.GetExtension(filePath));
+        }
 
-        static private AssetType IdentifyAssetType(string extension) {
+        static private AssetType IdentifyAssetTypeFromExt(string extension) {
             switch(extension) {
                 case ".png":
                 case ".jpg":
                 case ".jpeg":
                 {
-                    return AssetType.Texture;
+                    return AssetTypeId.Texture;
                 }
 
                 case ".webm":
                 case ".mp4":
                 {
-                    return AssetType.Video;
+                    return new AssetType(AssetTypeId.Texture, AssetSubTypeId.VideoTexture);
                 }
 
                 case ".mp3":
@@ -318,15 +325,17 @@ namespace EasyAssetStreaming {
                 case ".wav":
                 case ".aac":
                 {
-                    return AssetType.Audio;
+                    return AssetTypeId.Audio;
                 }
 
                 default:
                 {
-                    return AssetType.Unknown;
+                    return AssetTypeId.Unknown;
                 }
             }
         }
+
+        #if UNITY_EDITOR
 
         static private void WriteEnum<T>(JSON data, string id, T value) {
             data[id].AsString = value.ToString();

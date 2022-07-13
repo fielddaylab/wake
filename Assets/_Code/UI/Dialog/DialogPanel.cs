@@ -383,7 +383,7 @@ namespace Aqua
             if (IsShowing() && !string.IsNullOrEmpty(m_CurrentState.VisibleText))
             {
                 if (m_CurrentState.DoNotClose)
-                    return Routine.WaitForever();
+                    return Routine.Yield(Routine.Command.Pause);
 
                 switch(m_EndBehavior)
                 {
