@@ -10,6 +10,7 @@ using UnityEngine.Scripting;
 
 namespace Aqua
 {
+    [AddComponentMenu("Aqualab/Scripting/Script Object")]
     public sealed class ScriptObject : MonoBehaviour, IPoolAllocHandler, IPoolConstructHandler, IKeyValuePair<StringHash32, ScriptObject>, ILeafActor
     {
         #region Inspector
@@ -20,7 +21,7 @@ namespace Aqua
 
         [NonSerialized] private IScriptComponent[] m_ScriptComponents;
         [NonSerialized] private VariantTable m_Locals;
-        // [NonSerialized] private bool m_Pooled;
+        [NonSerialized] private bool m_Pooled;
 
         #region KeyValue
 
@@ -114,7 +115,7 @@ namespace Aqua
 
         void IPoolConstructHandler.OnConstruct()
         {
-            // m_Pooled = true;
+            m_Pooled = true;
         }
 
         void IPoolConstructHandler.OnDestruct()
@@ -132,6 +133,23 @@ namespace Aqua
         }
 
         #endif // UNITY_EDITOR
+
+        /// <summary>
+        /// Returns the id to use for persisting a value for a ScriptObject.
+        /// </summary>
+        static public StringHash32 MapPersistenceId(ScriptObject inObject, string inKey = null)
+        {
+            var currentMap = Assets.Map(MapDB.LookupCurrentMap());
+            using(PooledStringBuilder psb = PooledStringBuilder.Create())
+            {
+                psb.Builder.Append(currentMap.name).Append('.').Append(inObject.m_Id.Source());
+                if (!string.IsNullOrEmpty(inKey))
+                {
+                    psb.Builder.Append('.').Append(inKey);
+                }
+                return new StringBuilderSlice(psb.Builder).Hash32();
+            }
+        }
 
         static public ScriptThreadHandle Inspect(ScriptObject inObject)
         {

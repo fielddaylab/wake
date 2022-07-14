@@ -40,6 +40,7 @@ namespace ProtoAqua.Observation
             Tagger,
             Flashlight,
             Microscope,
+            Breaker,
 
             NONE
         }
@@ -56,6 +57,8 @@ namespace ProtoAqua.Observation
                     return ItemIds.ROVScanner;
                 case ToolId.Tagger:
                     return ItemIds.ROVTagger;
+                case ToolId.Breaker:
+                    return ItemIds.Icebreaker;
                 case ToolId.Flashlight:
                     return ItemIds.Flashlight;
                 case ToolId.Microscope:
@@ -101,6 +104,7 @@ namespace ProtoAqua.Observation
         [SerializeField, Required] private PlayerROVInput m_Input = null;
         [SerializeField, Required] private PlayerROVScanner m_Scanner = null;
         [SerializeField, Required] private PlayerROVTagger m_Tagger = null;
+        [SerializeField, Required] private PlayerROVBreaker m_Breaker = null;
         [SerializeField, Required] private PlayerROVFlashlight m_Flashlight = null;
         [SerializeField, Required] private PlayerROVMicroscope m_Microscope = null;
         [SerializeField, Required] private PlayerROVAnimator m_Animator = null;
@@ -399,6 +403,8 @@ namespace ProtoAqua.Observation
                     return m_Scanner;
                 case ToolId.Tagger:
                     return m_Tagger;
+                case ToolId.Breaker:
+                    return m_Breaker;
                 case ToolId.Flashlight:
                     return m_Flashlight;
                 case ToolId.Microscope:
@@ -422,6 +428,8 @@ namespace ProtoAqua.Observation
                 SwitchTool(ToolId.Scanner, false);
             else if (inItemId == ItemIds.ROVTagger)
                 SwitchTool(ToolId.Tagger, false);
+            else if (inItemId == ItemIds.Icebreaker)
+                SwitchTool(ToolId.Breaker, false);
             else if (inItemId == ItemIds.Flashlight)
                 SetToolState(ToolId.Flashlight, true, false);
         }

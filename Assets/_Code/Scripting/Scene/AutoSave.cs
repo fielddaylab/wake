@@ -9,6 +9,7 @@ using UnityEngine.Scripting;
 
 namespace Aqua.Scripting
 {
+    [AddComponentMenu("Aqualab/Scripting/Auto Save")]
     [RequireComponent(typeof(ScriptObject))]
     public class AutoSave : ScriptComponent
     {
