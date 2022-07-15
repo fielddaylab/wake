@@ -6,11 +6,11 @@
 @cutscene
 
 {@profWhalen}   Here, take this. It's some information we've already gathered about Salmon.
+$call GiveEntity(ChinookSalmon, Silent)
 $call GiveFact(ChinookSalmon.Eats.IceAlgae)
 $call GiveFact(ChinookSalmon.Eats.Clione)
 $call GiveFact(ChinookSalmon.Reproduce)
 $call GiveFact(ChinookSalmon.Reproduce.Stressed)
-// TODO: give additional stressed rules?
 {@guide}        This is a good start! Let's find out more about Cod and the things they eat.
 
 :: allSet
@@ -18,8 +18,6 @@ $call GiveFact(ChinookSalmon.Reproduce.Stressed)
 @when       taskId == "observeCod"
 @once
 {@guide}    With that, we should be set. To the Modeling Lab!
-
-// potential TODO: add task and explicit prompts for Clione rules
 
 :: modelsComplete
 @trigger    JobTaskCompleted
@@ -60,20 +58,19 @@ $if ArgueIsComplete(competitionArgue1)
     $branch .argue.noImpact
 $else
     $call ArgueLoad(competitionArgue1)
-    {@profWhalen}   Are the Cod and Salmon impacting one another?
+    {@profWhalen}   Is there an ecosystem imbalance when Cod and Salmon are both present?
     $branch .argue.chooseClaim
 $endif
 
 :: argue.chooseClaim
-$choice .argue.noImpact; Cod and Salmon do not impact each other.
-$choice .argue.codHarm; Cod are harming the Salmon.
-$choice .argue.salmonHarm; Salmon are harming the Cod.
+$choice .argue.noImpact; Cod and Salmon are balanced
+$choice .argue.imbalance; Cod and Salmon are unbalanced
 $choose branch
 
 // Cod branch
 
-:: argue.codHarm
-$if ArgueSetClaim(Claim, jobs.arctic-salmon-competition.argue.claimLabelCod)
+:: argue.imbalance
+$if ArgueSetClaim(Claim, jobs.arctic-salmon-competition.argue.claimLabelImbalance)
     $call ArgueFactSlot(ArcticCod.Eats.IceAlgae)
 $endif
 $call ArgueDisplayClaim()
@@ -85,12 +82,8 @@ $choice .argue.notSure; Let me get back to you.
 $choose branch
 
 :: argue.unrelatedCod
-{@profWhalen}   I don't think so. It doesn't seem like this is pointing to Cod harming the Salmon.
-
-// Salmon branch
-
-:: argue.salmonHarm
-{@profWhalen}   No way! I can't believe that. Check your evidence again.
+{@profWhalen}   I don't think so. It doesn't seem like this is pointing to any sort of imbalance.
+$call ArgueClearFacts()
 
 // Neither branch
 
@@ -102,7 +95,7 @@ $else
     $call ArgueLoad(competitionArgue1)
     $if ArgueSetClaim(Claim, jobs.arctic-salmon-competition.argue.claimLabelNoImpact)
         $call ArgueFactSlot(Z_OpenOcean.PopulationHistory.Diatoms)
-        // $call ArgueFactSlot(Y_IceCrevice.PopulationHistory.IceAlgae)
+        $call ArgueFactSlot(Z_OpenOcean.PopulationHistory.IceAlgae)
     $endif
     $call ArgueDisplayClaim()
     {@profWhalen}   Intriguing. Are Salmon's food sources not affected by the Cod growth?

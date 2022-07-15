@@ -8,33 +8,93 @@
 {@guide}    Time to discover the inner motivations of {nameof ArcticCod}.
 $set jobs:arctic-in-ice.triedScan = false
 
-:: tryScanAlgaeNew
+// SCANNING ICE ALGAE
+
+:: tryScanAlgaeNewY
 @trigger    ScannedNewObject
 @when       scanId == "tools.microscope.disabled", scene:name == "RS-4Y"
 @cutscene
 {@guide}    We may need to get a microscope before we can fully investigate this organism.
 $set jobs:arctic-in-ice.triedScan = true
 
-:: tryScanAlgae
+:: tryScanAlgaeY
 @trigger    ScannedObject
 @when       scanId == "tools.microscope.disabled", scene:name == "RS-4Y"
 @cutscene
 {@guide}    We may need to get a microscope before we can fully investigate this organism.
 $set jobs:arctic-in-ice.triedScan = true
 
-:: tryScanAlgaeNewMicroscope
+:: tryScanAlgaeNewMicroscopeY
 @trigger    ScannedNewObject
 @when       scanId == "tools.microscope", scene:name == "RS-4Y"
 @cutscene
 {@guide}    We should be able to use our microscope to scan this organism.
 $set jobs:arctic-in-ice.triedScan = true
 
-:: tryScanAlgaeMicroscope
+:: tryScanAlgaeMicroscopeY
 @trigger    ScannedObject
-@when       scanId == "tools.microscope", scene:name == "RS-4Y"
+@when       scanId == "tools.microscope",  scene:name == "RS-4Y"
 @cutscene
 {@guide}    We should be able to use our microscope to scan this organism.
 $set jobs:arctic-in-ice.triedScan = true
+
+:: tryScanAlgaeNewX
+@trigger    ScannedNewObject
+@when       scanId == "tools.microscope.disabled", scene:name == "RS-4X"
+@cutscene
+{@guide}    We may need to get a microscope before we can fully investigate this organism.
+$set jobs:arctic-in-ice.triedScan = true
+
+:: tryScanAlgaeX
+@trigger    ScannedObject
+@when       scanId == "tools.microscope.disabled", scene:name == "RS-4X"
+@cutscene
+{@guide}    We may need to get a microscope before we can fully investigate this organism.
+$set jobs:arctic-in-ice.triedScan = true
+
+:: tryScanAlgaeNewMicroscopeX
+@trigger    ScannedNewObject
+@when       scanId == "tools.microscope", scene:name == "RS-4X"
+@cutscene
+{@guide}    We should be able to use our microscope to scan this organism.
+$set jobs:arctic-in-ice.triedScan = true
+
+:: tryScanAlgaeMicroscopeX
+@trigger    ScannedObject
+@when       scanId == "tools.microscope",  scene:name == "RS-4X"
+@cutscene
+{@guide}    We should be able to use our microscope to scan this organism.
+$set jobs:arctic-in-ice.triedScan = true
+
+:: tryScanAlgaeNewZ
+@trigger    ScannedNewObject
+@when       scanId == "tools.microscope.disabled", scene:name == "RS-4Z"
+@cutscene
+{@guide}    We may need to get a microscope before we can fully investigate this organism.
+$set jobs:arctic-in-ice.triedScan = true
+
+:: tryScanAlgaeZ
+@trigger    ScannedObject
+@when       scanId == "tools.microscope.disabled", scene:name == "RS-4Z"
+@cutscene
+{@guide}    We may need to get a microscope before we can fully investigate this organism.
+$set jobs:arctic-in-ice.triedScan = true
+
+:: tryScanAlgaeNewMicroscopeZ
+@trigger    ScannedNewObject
+@when       scanId == "tools.microscope", scene:name == "RS-4Z"
+@cutscene
+{@guide}    We should be able to use our microscope to scan this organism.
+$set jobs:arctic-in-ice.triedScan = true
+
+:: tryScanAlgaeMicroscopeZ
+@trigger    ScannedObject
+@when       scanId == "tools.microscope",  scene:name == "RS-4Z"
+@cutscene
+{@guide}    We should be able to use our microscope to scan this organism.
+$set jobs:arctic-in-ice.triedScan = true
+
+// JOB PROGRESSION
 
 :: scannedAlgae
 @trigger    JobTasksUpdated
@@ -102,3 +162,76 @@ $set jobs:arctic-in-ice.triedScan = true
 
 // ARGUMENTATION
 
+::argue.intro
+@trigger    TryArgumentation
+@when       !ArgueIsComplete(inIceArguePop)
+@cutscene
+$if ArgueIsComplete(inIceArgueEat)
+    $branch .argue.alreadyDiscussed
+$else
+    $call ArgueLoad(inIceArgueEat)
+    $if ArgueSetClaim(Claim, jobs.arctic-ince-ice.argue.claimLabelEat)
+        $call ArgueFactSlot(ArcticCod.Eats.IceAlgae)
+    $endif
+    $call ArgueDisplayClaim()
+    {@profWhalen}   Did you figure out what the cod are doing near that ice shelf?
+    $branch .argue.chooseFactsEat
+$endif
+
+// Eat branch
+
+:: argue.chooseFactsEat
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.correctEat
+    $answer *, .argue.unrelatedEat
+$choice .argue.notSure; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedEat
+{@profWhalen}   I'm not seeing how that relates.
+$call ArgueRejectIncorrect()
+$branch .argue.chooseFactsEat
+
+:: argue.notSure
+{@profWhalen}   Okay. Get back to me when you're ready.
+
+:: argue.correctEat
+{@profWhalen}   Interesting.
+$call ArgueComplete()
+$call ArgueCancelClaim()
+$branch .argue.startPop
+
+// Population Branch
+
+:: argue.alreadyDiscussed
+{@profWhalen}   Last time we spoke, you told me the cod were hanging out at the ice shelf because they eat the Ice Algae there.
+$branch .argue.startPop
+
+:: argue.startPop
+$call ArgueLoad(inIceArguePop)
+$if ArgueSetClaim(Claim2, jobs.arctic-salmon-competition.argue.claimLabelPop)
+    $call ArgueFactSlot(Z_OpenOcean.Population.IceAlgae)
+$endif
+$call ArgueDisplayClaim()
+$branch .argue.popQuery
+
+:: argue.popQuery
+{@profWhalen}   Is there a lot of ice algae in the shelf? How much did you count?
+$branch .argue.chooseFactsPop
+
+:: argue.chooseFactsPop
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.correctPop
+    $answer *, .argue.unrelatedPop
+$choice .argue.notSure; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedPop
+{@profWhalen}   I'm not seeing how that relates.
+$call ArgueRejectIncorrect()
+$branch .argue.popQuery
+
+:: argue.correctPop
+$call ArgueComplete()
+{@profWhalen}   Oh! That's certainly enough to draw them in. I wonder if the Salmon interact with them too...
+$call CompleteJob()
