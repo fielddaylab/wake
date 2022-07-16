@@ -15,6 +15,7 @@ namespace Aqua.Entity {
             public ushort FrameIndex;
             public CameraService.PlanePositionHelper PositionCast;
             public Vector2 CenterPos;
+            public float RadiusSq;
         }
 
         #endregion // Types
@@ -25,7 +26,6 @@ namespace Aqua.Entity {
 
         #endregion // Inspector
 
-        [NonSerialized] private float m_RadiusSq;
         [NonSerialized] private int m_UpdateMask;
 
         private readonly EntityActivationSet<Visual2DTransform, UpdateArgs> m_UpdateSet;
@@ -37,7 +37,7 @@ namespace Aqua.Entity {
             m_UpdateSet.UpdateActive = UpdateActive;
         }
 
-        private bool UpdateTransform(Visual2DTransform transform, UpdateArgs updateArgs) {
+        static private bool UpdateTransform(Visual2DTransform transform, in UpdateArgs updateArgs) {
             Vector3 position;
             float scale;
             if (transform.CustomPosition != null) {
@@ -49,10 +49,10 @@ namespace Aqua.Entity {
             transform.WritePosition(updateArgs.FrameIndex, position, scale);
 
             Vector2 dist = (Vector2) position - updateArgs.CenterPos;
-            return dist.sqrMagnitude < (m_RadiusSq + (transform.Radius * transform.Radius));
+            return dist.sqrMagnitude < (updateArgs.RadiusSq + (transform.Radius * transform.Radius));
         }
 
-        static private void UpdateActive(Visual2DTransform transform, UpdateArgs updateArgs) {
+        static private void UpdateActive(Visual2DTransform transform, in UpdateArgs updateArgs) {
             transform.Apply();
         }
 
@@ -81,12 +81,11 @@ namespace Aqua.Entity {
                 return;
             }
 
-            m_RadiusSq = m_CameraRadius * m_CameraRadius;
-
             m_UpdateSet.Update(m_UpdateMask, new UpdateArgs() {
                 FrameIndex = Frame.Index,
                 PositionCast = Services.Camera.GetPositionHelper(),
-                CenterPos = Services.State.Player?.transform.position ?? Services.Camera.Position
+                CenterPos = Services.State.Player?.transform.position ?? Services.Camera.Position,
+                RadiusSq = m_CameraRadius * m_CameraRadius
             });
         }
 

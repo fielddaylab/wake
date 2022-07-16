@@ -73,7 +73,7 @@ namespace ProtoAqua.Observation
             return false;
         }
 
-        public void UpdateActive() {
+        public void UpdateActive(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
             Vector2 myPos = m_RangeCollider.transform.position;
             Vector2 closestPos;
             if (m_System.TryGetClosestCritterGameplayPlane(out closestPos))

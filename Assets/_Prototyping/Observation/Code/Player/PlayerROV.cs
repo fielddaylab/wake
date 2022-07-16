@@ -40,6 +40,7 @@ namespace ProtoAqua.Observation
             Tagger,
             Flashlight,
             Microscope,
+            Breaker,
 
             NONE
         }
@@ -56,6 +57,8 @@ namespace ProtoAqua.Observation
                     return ItemIds.ROVScanner;
                 case ToolId.Tagger:
                     return ItemIds.ROVTagger;
+                case ToolId.Breaker:
+                    return ItemIds.Icebreaker;
                 case ToolId.Flashlight:
                     return ItemIds.Flashlight;
                 case ToolId.Microscope:
@@ -72,7 +75,7 @@ namespace ProtoAqua.Observation
             void Enable(PlayerBody inBody);
             void Disable();
             bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody);
-            void UpdateActive();
+            void UpdateActive(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody);
             bool HasTarget();
             void GetTargetPosition(bool inbOnGamePlane, out Vector3? outWorldPosition, out Vector3? outCursorPosition);
         }
@@ -90,7 +93,7 @@ namespace ProtoAqua.Observation
             }
             public bool HasTarget() { return false; }
             public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) { return false; }
-            public void UpdateActive() { }
+            public void UpdateActive(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) { }
         }
 
         #endregion // Types
@@ -101,6 +104,7 @@ namespace ProtoAqua.Observation
         [SerializeField, Required] private PlayerROVInput m_Input = null;
         [SerializeField, Required] private PlayerROVScanner m_Scanner = null;
         [SerializeField, Required] private PlayerROVTagger m_Tagger = null;
+        [SerializeField, Required] private PlayerROVBreaker m_Breaker = null;
         [SerializeField, Required] private PlayerROVFlashlight m_Flashlight = null;
         [SerializeField, Required] private PlayerROVMicroscope m_Microscope = null;
         [SerializeField, Required] private PlayerROVAnimator m_Animator = null;
@@ -208,7 +212,7 @@ namespace ProtoAqua.Observation
                 UpdateMove(inDeltaTime);
             }
 
-            m_CurrentTool.UpdateActive();
+            m_CurrentTool.UpdateActive(m_LastInputData, m_Kinematics.State.Velocity, this);
         }
 
         private void LateUpdate()
@@ -399,6 +403,8 @@ namespace ProtoAqua.Observation
                     return m_Scanner;
                 case ToolId.Tagger:
                     return m_Tagger;
+                case ToolId.Breaker:
+                    return m_Breaker;
                 case ToolId.Flashlight:
                     return m_Flashlight;
                 case ToolId.Microscope:
@@ -422,6 +428,8 @@ namespace ProtoAqua.Observation
                 SwitchTool(ToolId.Scanner, false);
             else if (inItemId == ItemIds.ROVTagger)
                 SwitchTool(ToolId.Tagger, false);
+            else if (inItemId == ItemIds.Icebreaker)
+                SwitchTool(ToolId.Breaker, false);
             else if (inItemId == ItemIds.Flashlight)
                 SetToolState(ToolId.Flashlight, true, false);
         }

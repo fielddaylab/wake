@@ -15,6 +15,8 @@ using UnityEngine.Scripting;
 
 namespace Aqua {
     static public class Script {
+        static public readonly StringHash32 WorldTableId = "world";
+
         static public ILeafPlugin Plugin {
             [MethodImpl(256)]
             get { return Services.Script; }
@@ -163,6 +165,26 @@ namespace Aqua {
         [MethodImpl(256)]
         static public void WriteVariable(StringSlice id, Variant value) {
             Services.Data?.SetVariable(id, value, null);
+        }
+
+        [MethodImpl(256)]
+        static public Variant ReadWorldVariable(StringHash32 id, Variant defaultVal = default) {
+            return Services.Data.GetVariable(new TableKeyPair(WorldTableId, id), null, defaultVal);
+        }
+
+        [MethodImpl(256)]
+        static public Variant ReadWorldVariable(StringSlice id, Variant defaultVal = default) {
+            return Services.Data.GetVariable(new TableKeyPair(WorldTableId, id), null, defaultVal);
+        }
+
+        [MethodImpl(256)]
+        static public void WriteWorldVariable(StringHash32 id, Variant value) {
+            Services.Data?.SetVariable(new TableKeyPair(WorldTableId, id), value, null);
+        }
+
+        [MethodImpl(256)]
+        static public void WriteWorldVariable(StringSlice id, Variant value) {
+            Services.Data?.SetVariable(new TableKeyPair(WorldTableId, id), value, null);
         }
 
         #endregion // Variables

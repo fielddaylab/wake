@@ -1069,6 +1069,14 @@ namespace Aqua.Cameras
         /// <summary>
         /// Adds a new camera shake.
         /// </summary>
+        public void AddShake(float inDistance, float inPeriod, float inDuration)
+        {
+            AddShake(new Vector2(inDistance, inDistance), new Vector2(inPeriod, inPeriod), inDuration);
+        }
+
+        /// <summary>
+        /// Adds a new camera shake.
+        /// </summary>
         public void AddShake(Vector2 inDistance, Vector2 inPeriod, float inDuration)
         {
             if (Accessibility.ReduceCameraMovement) {
