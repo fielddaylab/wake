@@ -21,10 +21,11 @@ namespace ProtoAqua.Observation
         static private IEnumerator DestructSequence(ScriptDestructible destructible) {
             BreakableRock rock = destructible.GetComponent<BreakableRock>();
             rock.m_SolidCollider.enabled = false;
-            rock.m_Renderer.SetActive(false);
             rock.m_BreakParticles.Play(true);
             Services.Audio.PostEvent(rock.m_BreakSFX);
             Services.Camera.AddShake(0.3f, 0.1f, 0.8f);
+            yield return null;
+            rock.m_Renderer.SetActive(false);
             yield return rock.m_BreakParticles.WaitToComplete();
         }
     }

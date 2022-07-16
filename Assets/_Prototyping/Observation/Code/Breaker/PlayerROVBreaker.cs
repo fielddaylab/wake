@@ -21,7 +21,7 @@ namespace ProtoAqua.Observation {
         static public readonly StringHash32 Trigger_OnRecharge = "IceBreakerRecharged";
         static public readonly StringHash32 Trigger_OnFireFinished = "IceBreakerFireFinished";
 
-        private enum Phase {
+        public enum Phase {
             Ready,
             Charging,
             Bursting,
@@ -52,6 +52,7 @@ namespace ProtoAqua.Observation {
         [NonSerialized] private TriggerListener2D m_BreakListener;
         [NonSerialized] private AudioHandle m_ChargeAudio;
         [NonSerialized] private bool m_Active;
+        [NonSerialized] private BreakerUI m_UI;
 
         private void Awake() {
             m_BreakListener = WorldUtils.TrackLayerMask(m_BreakCollider, GameLayers.Breakable_Mask, HandleBreak, null);
@@ -59,6 +60,7 @@ namespace ProtoAqua.Observation {
 
         private void Start() {
             m_BreakListener.enabled = false;
+            m_UI = Services.UI.FindPanel<BreakerUI>();
         }
 
         #region ITool
@@ -81,6 +83,8 @@ namespace ProtoAqua.Observation {
                 FlushBreakCount();
                 m_BreakListener.enabled = false;
                 m_Active = false;
+
+                m_UI.Disable();
             }
         }
 
@@ -89,6 +93,7 @@ namespace ProtoAqua.Observation {
                 m_Active = true;
                 Services.Audio.PostEvent("ROV.Breaker.On");
                 m_BreakListener.enabled = false;
+                m_UI.Enable(inBody.transform);
             }
         }
 
@@ -108,14 +113,14 @@ namespace ProtoAqua.Observation {
             Log.Msg("[PlayerROVBreaker] Current phase: {0}; Alt Press/Hold: {1}/{2}", m_Phase, inInput.UseAltPress, inInput.UseAltHold);
             switch(m_Phase) {
                 case Phase.Ready: {
-                    if (inInput.UseAltHold) {
+                    if (inInput.UseAltHold || m_UI.IsHeld()) {
                         BeginCharge();
                     }
                     break;
                 }
 
                 case Phase.Charging: {
-                    if (!inInput.UseAltHold) {
+                    if (!inInput.UseAltHold && !m_UI.IsHeld()) {
                         CancelCharge();
                     }
                     break;
@@ -136,6 +141,7 @@ namespace ProtoAqua.Observation {
                 m_ChargeAudio = Services.Audio.PostEvent("ROV.Breaker.Charging");
                 m_ExecuteRoutine.Replace(this, ExecuteRoutine());
                 m_ChargeParticles.Play(true);
+                m_UI.SetPhase(m_Phase, 0);
 
                 if (!Script.ShouldBlock()) {
                     Services.Script.TriggerResponse(Trigger_OnCharging);
@@ -151,6 +157,7 @@ namespace ProtoAqua.Observation {
                 m_ChargeParticles.Stop();
                 m_ChargeAudio.Stop();
                 Services.Audio.PostEvent("ROV.Breaker.Cancel");
+                m_UI.SetPhase(m_Phase, 0);
 
                 if (!Script.ShouldBlock()) {
                     Services.Script.TriggerResponse(Trigger_OnCancel);
@@ -163,6 +170,7 @@ namespace ProtoAqua.Observation {
                 m_Phase = Phase.Bursting;
                 // TODO: Broadcast breaker burst
                 m_BreakListener.enabled = true;
+                m_UI.SetPhase(m_Phase, 0);
                 m_ChargeAudio.Stop();
                 Services.Audio.PostEvent("ROV.Breaker.Discharge");
                 m_BurstParticles.Play(true);
@@ -180,6 +188,7 @@ namespace ProtoAqua.Observation {
             if (m_Phase == Phase.Bursting) {
                 m_Phase = Phase.Recharging;
                 // TODO: Broadcast breaker finished
+                m_UI.SetPhase(m_Phase, 0);
                 m_BurstParticles.Stop(true, ParticleSystemStopBehavior.StopEmitting);
                 m_BreakListener.enabled = false;
                 int totalBroken = m_BrokenThisRun;
@@ -206,6 +215,7 @@ namespace ProtoAqua.Observation {
                 }
 
                 fill += Routine.DeltaTime * delta;
+                m_UI.SetProgress(fill);
                 yield return null;
             }
             
@@ -221,6 +231,7 @@ namespace ProtoAqua.Observation {
                     if (!Script.IsPausedOrLoading) {
                         recharge += Routine.DeltaTime * delta;
                         // TODO: Broadcast breaker recharge progress
+                        m_UI.SetProgress(1 - recharge);
                     }
                     yield return null;
                 }
@@ -233,6 +244,7 @@ namespace ProtoAqua.Observation {
                 m_RechargingBlink.SetColor(AQColors.BrightBlue);
                 // TODO: Broadcast breaker recharge completed
                 m_Phase = Phase.Ready;
+                m_UI.SetPhase(m_Phase);
             }
         }
 
