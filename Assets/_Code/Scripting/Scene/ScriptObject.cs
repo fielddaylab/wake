@@ -132,6 +132,11 @@ namespace Aqua
             }
         }
 
+        [ContextMenu("New Id")]
+        private void ResetId() {
+            m_Id = Guid.NewGuid().ToString();
+        }
+
         #endif // UNITY_EDITOR
 
         /// <summary>

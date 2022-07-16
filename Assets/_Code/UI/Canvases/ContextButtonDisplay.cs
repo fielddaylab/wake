@@ -122,6 +122,10 @@ namespace Aqua {
 
         protected override void OnHide(bool inbInstant) {
             base.OnHide(inbInstant);
+
+            if (WasShowing()) {
+                Services.Events.Dispatch(GameEvents.ContextHide);
+            }
         }
 
         protected override void OnHideComplete(bool inbInstant) {
@@ -136,6 +140,10 @@ namespace Aqua {
 
         protected override void OnShow(bool inbInstant) {
             base.OnShow(inbInstant);
+
+            if (!WasShowing()) {
+                Services.Events.Dispatch(GameEvents.ContextDisplay);
+            }
         }
 
         protected override IEnumerator TransitionToShow() {
@@ -164,6 +172,10 @@ namespace Aqua {
 
         static public void Clear(SceneInteractable inObject) {
             Services.UI?.FindPanel<ContextButtonDisplay>()?.ClearInteract(inObject);
+        }
+
+        static public bool IsDisplaying() {
+            return Services.UI?.FindPanel<ContextButtonDisplay>().IsShowing() ?? false;
         }
     }
 }

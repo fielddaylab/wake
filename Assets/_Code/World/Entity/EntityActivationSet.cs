@@ -12,8 +12,15 @@ namespace Aqua.Entity {
         #region Types
 
         public delegate bool SetStatusDelegate(TEntity entity, EntityActiveStatus status, bool force);
-        public delegate bool UpdateAwakeDelegate(TEntity entity, TUpdateContext context);
-        public delegate void UpdateActiveDelegate(TEntity entity, TUpdateContext context);
+        public delegate bool UpdateAwakeDelegate(TEntity entity, in TUpdateContext context);
+        public delegate void UpdateActiveDelegate(TEntity entity, in TUpdateContext context);
+
+        [Flags]
+        private enum ListModifiedFlags {
+            Sleeping = 0x01,
+            Awake = 0x02,
+            Active = 0x04
+        }
 
         #endregion // Types
 
@@ -34,6 +41,7 @@ namespace Aqua.Entity {
         private readonly HashSet<TEntity> m_All = new HashSet<TEntity>();
 
         [NonSerialized] private bool m_ForceSleep = false;
+        [NonSerialized] private ListModifiedFlags m_DirtyLists;
 
         #endregion // State
 
@@ -53,6 +61,11 @@ namespace Aqua.Entity {
         /// Updates the given active object.
         /// </summary>
         public UpdateActiveDelegate UpdateActive;
+
+        /// <summary>
+        /// Updates a batch of objects.
+        /// </summary>
+        public Batch.ProcessDelegate<TEntity, TUpdateContext> UpdateActiveBatch;
 
         #endregion // Callbacks
 
@@ -80,6 +93,8 @@ namespace Aqua.Entity {
         }
 
         private void HandleAwakeUpdate(TUpdateContext args) {
+             m_DirtyLists &= ~ListModifiedFlags.Awake;
+
             TEntity entity;
             for(int i = 0, length = m_Awake.Count; i < length; i++) {
                 entity = m_Awake[i];
@@ -88,18 +103,34 @@ namespace Aqua.Entity {
                 if (nowActive && !wasActive) {
                     m_Active.PushBack(entity);
                     SetStatus(entity, entity.ActiveStatus | EntityActiveStatus.Active, false);
+                    m_DirtyLists |= ListModifiedFlags.Active;
                 } else if (wasActive && !nowActive) {
                     m_Active.FastRemove(entity);
                     SetStatus(entity, entity.ActiveStatus & ~EntityActiveStatus.Active, false);
+                    m_DirtyLists |= ListModifiedFlags.Active;
                 }
             }
         }
 
         private void HandleActiveUpdate(TUpdateContext args) {
-            TEntity entity;
-            for(int i = 0, length = m_Active.Count; i < length; i++) {
-                entity = m_Active[i];
-                UpdateActive(entity, args);
+            if (UpdateActiveBatch != null) {
+                if ((m_DirtyLists & ListModifiedFlags.Active) != 0) {
+                    Batch.Sort(m_Active);
+                    m_DirtyLists &= ~ListModifiedFlags.Active;
+                }
+                Batch.Processor<TEntity, TUpdateContext> updateContext = default;
+                updateContext.BatchSize = 32;
+                updateContext.Process = UpdateActiveBatch;
+                updateContext.Prep(m_Active, args);
+                updateContext.ProcessAll();
+            } else if (UpdateActive != null) {
+                m_DirtyLists &= ~ListModifiedFlags.Active;
+
+                TEntity entity;
+                for(int i = 0, length = m_Active.Count; i < length; i++) {
+                    entity = m_Active[i];
+                    UpdateActive(entity, args);
+                }
             }
         }
 
@@ -123,13 +154,16 @@ namespace Aqua.Entity {
                     m_Sleeping.FastRemove(entity);
                     m_Awake.PushBack(entity);
                     SetStatus(entity, EntityActiveStatus.Awake, false);
+                    m_DirtyLists |= ListModifiedFlags.Sleeping | ListModifiedFlags.Awake;
                 } else {
                     m_Awake.FastRemove(entity);
                     if ((entity.ActiveStatus & EntityActiveStatus.Active) != 0) {
                         m_Active.FastRemove(entity);
+                        m_DirtyLists |= ListModifiedFlags.Active;
                     }
                     m_Sleeping.PushBack(entity);
                     SetStatus(entity, EntityActiveStatus.Sleeping, false);
+                    m_DirtyLists |= ListModifiedFlags.Sleeping | ListModifiedFlags.Awake;
                 }
             }
         }
@@ -144,9 +178,11 @@ namespace Aqua.Entity {
 
             if (!m_ForceSleep && (entity.UpdateMask & m_LastUpdateMask) != 0) {
                 m_Awake.PushBack(entity);
+                m_DirtyLists |= ListModifiedFlags.Awake;
                 SetStatus(entity, EntityActiveStatus.Awake, true);
             } else {
                 m_Sleeping.PushBack(entity);
+                m_DirtyLists |= ListModifiedFlags.Sleeping;
                 SetStatus(entity, EntityActiveStatus.Sleeping, true);
             }
         }
@@ -161,15 +197,18 @@ namespace Aqua.Entity {
 
             if (entity.ActiveStatus == EntityActiveStatus.Sleeping) {
                 m_Sleeping.FastRemove(entity);
+                m_DirtyLists |= ListModifiedFlags.Sleeping;
                 return;
             }
 
             if ((entity.ActiveStatus & EntityActiveStatus.Active) != 0) {
                 m_Active.FastRemove(entity);
+                m_DirtyLists |= ListModifiedFlags.Active;
             }
 
             if ((entity.ActiveStatus & EntityActiveStatus.Awake) != 0) {
                 m_Awake.FastRemove(entity);
+                m_DirtyLists |= ListModifiedFlags.Awake;
             }
 
             SetStatus(entity, EntityActiveStatus.Sleeping, true);
@@ -208,7 +247,7 @@ namespace Aqua.Entity {
     /// <summary>
     /// Interface for an active entity.
     /// </summary>
-    public interface IActiveEntity {
+    public interface IActiveEntity : IBatchId {
         int UpdateMask { get; }
         EntityActiveStatus ActiveStatus { get; }
     }

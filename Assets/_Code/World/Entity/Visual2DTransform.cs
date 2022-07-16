@@ -88,6 +88,8 @@ namespace Aqua.Entity {
 
         int IActiveEntity.UpdateMask { get { return UpdateMask; } }
 
+        int IBatchId.BatchId { get { return 0; } }
+
         EntityActiveStatus IActiveEntity.ActiveStatus { get { return Status; } }
 
         #endregion // Entity
