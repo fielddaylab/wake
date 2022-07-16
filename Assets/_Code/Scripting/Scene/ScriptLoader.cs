@@ -6,6 +6,7 @@ using Leaf;
 
 namespace Aqua.Scripting
 {
+    [AddComponentMenu("Aqualab/Scripting/Script Loader")]
     public class ScriptLoader : MonoBehaviour, IScenePreloader, ISceneUnloadHandler
     {
         #region Inspector

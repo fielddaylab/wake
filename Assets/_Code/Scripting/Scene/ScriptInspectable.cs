@@ -10,6 +10,7 @@ using UnityEngine.Scripting;
 using UnityEngine.UI;
 
 namespace Aqua.Scripting {
+    [AddComponentMenu("Aqualab/Scripting/Inspectable")]
     public class ScriptInspectable : ScriptComponent, IPointerClickHandler {
         public delegate IEnumerator ExecuteDelegate(ScriptInspectable inspectable, ScriptThreadHandle thread);
 

@@ -31,6 +31,10 @@ namespace Aqua {
             inRect.anchorMin = inRect.anchorMax = inAnchor;
         }
 
+        static public void SetMaxAnchorX(this RectTransform inRect, float inAnchorX) {
+            inRect.anchorMax = new Vector2(inAnchorX, inRect.anchorMax.y);
+        }
+
         static public void SetAnchorsY(this RectTransform inRect, float inY0, float inY1) {
             Vector2 min = inRect.anchorMin,
                 max = inRect.anchorMax;

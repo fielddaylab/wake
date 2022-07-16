@@ -97,7 +97,7 @@ namespace ProtoAqua.Observation {
             return false;
         }
 
-        public void UpdateActive() {
+        public void UpdateActive(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
         }
 
         #endregion // ITool
