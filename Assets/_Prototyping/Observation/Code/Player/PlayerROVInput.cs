@@ -36,7 +36,7 @@ namespace ProtoAqua.Observation
                 return;
             }
 
-            m_MouseFilter.Process(Device, inPlayerTransform, inLockOn, out outInputData.Mouse);
+            m_MouseFilter.Process(Device, inPlayerTransform, inLockOn, null, out outInputData.Mouse);
             m_KeyboardFilter.Process(Device, out outInputData.Keyboard);
 
             bool bAllowInput = (inStatus & PlayerBodyStatus.Stunned) == 0;

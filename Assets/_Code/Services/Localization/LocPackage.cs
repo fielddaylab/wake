@@ -7,48 +7,31 @@ using UnityEngine;
 using System.IO;
 using UnityEngine.Scripting;
 using BeauUtil.Debugger;
+using System.Runtime.CompilerServices;
 
 namespace Aqua
 {
     public class LocPackage : ScriptableDataBlockPackage<LocNode>
     {
-        private readonly Dictionary<StringHash32, LocNode> m_Nodes = new Dictionary<StringHash32, LocNode>(512);
+        private readonly Dictionary<StringHash32, string> m_Nodes = new Dictionary<StringHash32, string>(512);
+        private readonly HashSet<StringHash32> m_IdsWithEvents = new HashSet<StringHash32>();
 
         [BlockMeta("basePath"), Preserve] private string m_RootPath = string.Empty;
 
+        private LocNode m_CachedNode = new LocNode();
+
         #region Retrieve
 
-        public bool TryGetNode(StringHash32 inId, out LocNode outNode)
-        {
-            return m_Nodes.TryGetValue(inId, out outNode);
-        }
-
+        [MethodImpl(256)]
         public bool TryGetContent(StringHash32 inId, out string outString)
         {
-            LocNode node;
-            if (m_Nodes.TryGetValue(inId, out node))
-            {
-                outString = node.Content();
-                return true;
-            }
-
-            outString = null;
-            return false;
+            return m_Nodes.TryGetValue(inId, out outString);
         }
 
-        public string GetContent(StringHash32 inId, string inDefault = null)
+        [MethodImpl(256)]
+        public bool HasEvents(StringHash32 inId)
         {
-            string content;
-            if (!TryGetContent(inId, out content))
-            {
-                content = inDefault;
-            }
-            return content;
-        }
-
-        public string this[StringHash32 inId]
-        {
-            get { return GetContent(inId); }
+            return m_IdsWithEvents.Contains(inId);
         }
 
         #endregion // Retrieve
@@ -59,7 +42,13 @@ namespace Aqua
 
         public override IEnumerator<LocNode> GetEnumerator()
         {
-            return m_Nodes.Values.GetEnumerator();
+            return null;
+        }
+
+        public override void Clear()
+        {
+            m_Nodes.Clear();
+            m_IdsWithEvents.Clear();
         }
 
         #endregion // IDataBlockPackage
@@ -78,10 +67,20 @@ namespace Aqua
                     inUtil.TempBuilder.Append('.');
                 inUtil.TempBuilder.AppendSlice(inId.Id);
                 string fullId = inUtil.TempBuilder.Flush();
-                outBlock = new LocNode(fullId);
-                inPackage.m_Nodes.Add(fullId, outBlock);
+                outBlock = inPackage.m_CachedNode;
+                outBlock.Id = fullId;
+                outBlock.Content = string.Empty;
                 // Log.Msg("adding loc entry {0} ({1})", fullId, ((TextId) fullId).Hash().HashValue);
                 return true;
+            }
+
+            public override void CompleteBlock(IBlockParserUtil inUtil, LocPackage inPackage, LocNode inBlock, bool inbError) {
+                Assert.False(inPackage.m_Nodes.ContainsKey(inBlock.Id), "Duplicate localization key {0}", inBlock.Id);
+                inPackage.m_Nodes.Add(inBlock.Id, inBlock.Content);
+                if (inBlock.Content.IndexOf('{') >= 0)
+                {
+                    inPackage.m_IdsWithEvents.Add(inBlock.Id);
+                }
             }
         }
 
@@ -95,9 +94,9 @@ namespace Aqua
         static internal IEnumerable<KeyValuePair<StringHash32, string>> GatherStrings(LocPackage inPackage)
         {
             inPackage.Parse(Generator.Instance);
-            foreach(var node in inPackage)
+            foreach(var kv in inPackage.m_Nodes)
             {
-                yield return new KeyValuePair<StringHash32, string>(node.Id(), node.Content());
+                yield return new KeyValuePair<StringHash32, string>(kv.Key, kv.Value);
             }
         }
 

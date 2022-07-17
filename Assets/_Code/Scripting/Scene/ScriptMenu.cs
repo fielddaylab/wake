@@ -19,13 +19,13 @@ namespace Aqua.Scripting
 
         #endregion // Inspector
 
-        [LeafMember("ShowMenu"), Preserve]
+        [LeafMember("Show"), Preserve]
         public void Show()
         {
             m_Menu.Show();
         }
 
-        [LeafMember("HideMenu"), Preserve]
+        [LeafMember("Hide"), Preserve]
         public void Hide()
         {
             m_Menu.Hide();

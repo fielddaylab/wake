@@ -26,9 +26,9 @@ static public class MapIds
 	static public readonly StringHash32 RS_1D = new StringHash32(0x7CDDBEF0);
 	static public readonly StringHash32 KelpStation = new StringHash32(0xA262E27F);
 	static public readonly StringHash32 Experimentation = new StringHash32(0x10170103);
+	static public readonly StringHash32 Helm = new StringHash32(0x9D9DC599);
 	static public readonly StringHash32 JobBoard = new StringHash32(0x29C0AFA4);
 	static public readonly StringHash32 Modeling = new StringHash32(0x3CF9A246);
-	static public readonly StringHash32 Ship = new StringHash32(0x2C833D9F);
 	static public readonly StringHash32 WorldMap = new StringHash32(0x9A5B5D43);
 	static public readonly StringHash32 Shop = new StringHash32(0x28742CC9);
 }

@@ -221,7 +221,7 @@ Player clicks the hint button.
 
 #### guide_script_triggered
 
-Player triggers conversation with the guide (Kevin).
+Player triggers conversation with the guide (V1ctor).
 
 | Parameter | Description |
 | --- | --- |

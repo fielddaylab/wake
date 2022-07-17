@@ -10,9 +10,9 @@ namespace EasyBugReporter {
     public class LogContext : IDumpSystem {
         #region Consts
 
-        public const LogMask DefaultMask = 
+        public const LogTypeMask DefaultMask = 
         #if UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
-            LogMask.Development;
+            LogTypeMask.Development;
         #else
             LogMask.Production;
         #endif
@@ -39,20 +39,20 @@ namespace EasyBugReporter {
         private WindowBuffer<LogData> m_WarningErrorBuffer;
         private WindowBuffer<LogData> m_FailureBuffer;
         private long m_FrozenTS;
-        private readonly LogMask m_Mask;
+        private readonly LogTypeMask m_Mask;
 
-        public LogContext(LogMask mask = DefaultMask, int completeLogWindow = 64, int warningErrorWindow = 64, int failureWindow = 32) {
+        public LogContext(LogTypeMask mask = DefaultMask, int completeLogWindow = 64, int warningErrorWindow = 64, int failureWindow = 32) {
             m_Mask = mask;
             if (mask == 0) {
                 return;
             }
 
             m_CompleteBuffer = new WindowBuffer<LogData>(completeLogWindow);
-            if ((m_Mask & LogMask.WarningsAndErrors) != 0) {
+            if ((m_Mask & LogTypeMask.WarningsAndErrors) != 0) {
                 m_WarningErrorBuffer = new WindowBuffer<LogData>(warningErrorWindow);
             }
 
-            if ((m_Mask & LogMask.Failures) != 0) {
+            if ((m_Mask & LogTypeMask.Failures) != 0) {
                 m_FailureBuffer = new WindowBuffer<LogData>(failureWindow);
             }
         }
@@ -64,7 +64,7 @@ namespace EasyBugReporter {
 
             writer.BeginSection("Logs");
 
-            if ((m_Mask & LogMask.Failures) != 0 && m_FailureBuffer.Count > 0) {
+            if ((m_Mask & LogTypeMask.Failures) != 0 && m_FailureBuffer.Count > 0) {
                 writer.Header(string.Format("FAILURES ({0}/{1})", m_FailureBuffer.Count, m_FailureBuffer.Total));
                 writer.BeginTable();
                 WriteTableHeader(writer);
@@ -74,7 +74,7 @@ namespace EasyBugReporter {
                 writer.EndTable();
             }
 
-            if ((m_Mask & LogMask.WarningsAndErrors) != 0 && m_WarningErrorBuffer.Count > 0) {
+            if ((m_Mask & LogTypeMask.WarningsAndErrors) != 0 && m_WarningErrorBuffer.Count > 0) {
                 writer.Header(string.Format("WARNINGS/ERRORS ({0}/{1})", m_WarningErrorBuffer.Count, m_WarningErrorBuffer.Total));
                 writer.BeginTable();
                 WriteTableHeader(writer);
@@ -172,7 +172,7 @@ namespace EasyBugReporter {
 
         private void Application_logMessageReceived(string logString, string stackTrace, LogType type) {
             // if frozen, or this type of log is masked out, then ignore
-            if (m_FrozenTS > 0 || (m_Mask & (LogMask) (1 << (int) type)) == 0) {
+            if (m_FrozenTS > 0 || (m_Mask & (LogTypeMask) (1 << (int) type)) == 0) {
                 return;
             }
 
@@ -200,7 +200,7 @@ namespace EasyBugReporter {
         }
     }
 
-    public enum LogMask {
+    public enum LogTypeMask {
         Error = 1 << LogType.Error,
         Warning = 1 << LogType.Warning,
         Assert = 1 << LogType.Assert,

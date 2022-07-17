@@ -53,11 +53,49 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: ArcticCod.Eats.Copepod
-        m_HashValue: 1119966444
+        m_Source: ArcticCod.Eats.Diatoms
+        m_HashValue: 655963987
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: ArcticCod.Eats.IceAlgae
+        m_HashValue: 3673181089
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
+  - Id:
+      m_Source: modelFish
+      m_HashValue: 648208604
+    LabelId:
+      m_Source: jobs.arctic-salmon-competition.task.modelFish
+      m_HashValue: 1076608634
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Z_OpenOcean.SalmonCompetition.Model.Sync
+        m_HashValue: 2817411281
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: observeCod
+      m_HashValue: 805205151
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    LabelId:
+      m_Source: jobs.arctic-salmon-competition.task.reportBack
+      m_HashValue: 2348588426
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: modelFish
+      m_HashValue: 648208604
   m_OptimizedTaskList:
   - Id:
       m_Source: observeCod
@@ -70,11 +108,49 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: ArcticCod.Eats.Copepod
-        m_HashValue: 1119966444
+        m_Source: ArcticCod.Eats.Diatoms
+        m_HashValue: 655963987
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: ArcticCod.Eats.IceAlgae
+        m_HashValue: 3673181089
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: modelFish
+      m_HashValue: 648208604
+    IdString: modelFish
+    Index: 1
+    LabelId:
+      m_Source: jobs.arctic-salmon-competition.task.modelFish
+      m_HashValue: 1076608634
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Z_OpenOcean.SalmonCompetition.Model.Sync
+        m_HashValue: 2817411281
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    IdString: reportBack
+    Index: 2
+    LabelId:
+      m_Source: jobs.arctic-salmon-competition.task.reportBack
+      m_HashValue: 2348588426
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0100
   m_CashReward: 50
   m_ExpReward: 5
   m_Scripting: {fileID: -1942890987711236906, guid: ba591764514e8354db05d1fd2d519136,

@@ -14,7 +14,7 @@ $set jobs:arctic-missing-whale.foundWhale = 0
 {@player}   Can do!
 {@profWhalen}  A mother whale is called a Cow, so sending you off to find her makes you a cowboy!
 {@player}   When then, I reckon we ought to saddle-up and mosey on over.
-{@kevin}    Oh, brother...
+{@guide}    Oh, brother...
 
 :: helpFindWhale
 @trigger    RequestPartnerHelp
@@ -22,9 +22,9 @@ $set jobs:arctic-missing-whale.foundWhale = 0
 @cutscene
 {@player} 	What should I be doing again?
 $if !HasEntity(Detritus), jobs:arctic-whalefall.num-attempts > 0, !HasUpgrade(Engine)
-    {@kevin}	You'll need to look into Linda's remains. But first, you'll need an engine.
+    {@guide}	You'll need to look into Linda's remains. But first, you'll need an engine.
 $else
-    {@kevin}	We need to see if we can locate the Linda.
+    {@guide}	We need to see if we can locate the Linda.
                 Why don't you check your AQOS to see her last known location?
 $endif
 
@@ -33,7 +33,7 @@ $endif
 @when       scene:name == "RS-4W", JobStartedOrComplete(arctic-missing-whale)
 @once
 @cutscene
-{@kevin}    Look's like we're picking up a faint signal. The tracker is definitely here.
+{@guide}    Look's like we're picking up a faint signal. The tracker is definitely here.
             Either Linda's here somewhere, or her tracker fell off.
 			
 :: LookAround
@@ -42,14 +42,14 @@ $endif
 @cutscene
 {@player}   What should I be doing?
 $if !HasEntity(WhaleTracker)
-{@kevin}    Let's start by seeing if we can find that tracker.
+{@guide}    Let's start by seeing if we can find that tracker.
 $elseif !HasEntity(Detritus), jobs:arctic-whalefall.num-attempts > 0, !HasUpgrade(Engine)
-{@kevin}    Well, you can't do much more here until you get an engine.
+{@guide}    Well, you can't do much more here until you get an engine.
             I bet the shop has one in stock.
 $elseif !HasEntity(Detritus)	
-{@kevin}    Have you found any evidence of Linda herself?
+{@guide}    Have you found any evidence of Linda herself?
 $elseif	HasEntity(Detritus), !HasFact(W_WhaleFall.Population.Detritus)
-{@kevin}	Detritus, huh? How much did you scan? A whale amount? 
+{@guide}	Detritus, huh? How much did you scan? A whale amount? 
 $endif
 
 :: gotDetritus
@@ -57,7 +57,7 @@ $endif
 @once
 @when 		HasEntity(WhaleTracker), HasEntity(Detritus), !HasFact(W_WhaleFall.Population.Detritus) 
 @cutscene
-{@kevin}	Detritus, huh? How much did you scan? A whale amount? 
+{@guide}	Detritus, huh? How much did you scan? A whale amount? 
 
 :: gotScans
 @trigger    JobTasksUpdated
@@ -65,7 +65,7 @@ $endif
 @when 		HasEntity(WhaleTracker), HasEntity(Detritus), HasFact(W_WhaleFall.Population.Detritus) 
 @cutscene
 $set jobs:arctic-missing-whale.foundWhale = 1
-{@kevin} Looks like we were able to find her...
+{@guide} Looks like we were able to find her...
          Let's head back and let Professor Whalen know.
 
 :: helpBackToShip
@@ -73,7 +73,7 @@ $set jobs:arctic-missing-whale.foundWhale = 1
 @when 		JobTaskTop(reportBack)
 @cutscene
 {@player} 	Where should I be going again?
-{@kevin}	We located the whale, so let's report back to Professor Whalen.
+{@guide}	We located the whale, so let's report back to Professor Whalen.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -82,28 +82,28 @@ $set jobs:arctic-missing-whale.foundWhale = 1
 @when		JobTaskTop(findTracker)
 @boostScore -5
 @cutscene
-{@kevin}    Look around Site W. There's a missing tracker somewhere.	
+{@guide}    Look around Site W. There's a missing tracker somewhere.	
 
 :: catchFindWhale
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(findWhale)
 @boostScore -5
 @cutscene
-{@kevin}	Search Site W for signs of the whale named Linda.
+{@guide}	Search Site W for signs of the whale named Linda.
 
 :: catchFoundDetritus
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(foundDetritus)
 @boostScore -5
 @cutscene
-{@kevin}	Count how much detritus is on the whale remains.
+{@guide}	Count how much detritus is on the whale remains.
 
 :: catchReportBack
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(reportBack)
 @boostScore -5
 @cutscene
-{@kevin}	Talk to Professor Whalen in the Office.
+{@guide}	Talk to Professor Whalen in the Office.
 
 // ARGUMENTATION
 ::argue.intro

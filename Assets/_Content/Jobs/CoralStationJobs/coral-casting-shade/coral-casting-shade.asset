@@ -173,6 +173,24 @@ MonoBehaviour:
     - m_Source: popProbe
       m_HashValue: 1454319354
   - Id:
+      m_Source: coralLight
+      m_HashValue: 3561425398
+    LabelId:
+      m_Source: jobs.coral-casting-shade.task.coralLight
+      m_HashValue: 3729462090
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: StaghornCoral.Consume.Light
+        m_HashValue: 3366071054
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: chemHistory
+      m_HashValue: 3712428404
+    - m_Source: popProbe
+      m_HashValue: 1454319354
+  - Id:
       m_Source: sargModel
       m_HashValue: 1151503519
     LabelId:
@@ -346,10 +364,26 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 0600040003000500
   - Id:
+      m_Source: coralLight
+      m_HashValue: 3561425398
+    IdString: coralLight
+    Index: 8
+    LabelId:
+      m_Source: jobs.coral-casting-shade.task.coralLight
+      m_HashValue: 3729462090
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: StaghornCoral.Consume.Light
+        m_HashValue: 3366071054
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 02000100
+  - Id:
       m_Source: sargArgue
       m_HashValue: 2971658416
     IdString: sargArgue
-    Index: 8
+    Index: 9
     LabelId:
       m_Source: jobs.coral-casting-shade.task.sargArgue
       m_HashValue: 68390100

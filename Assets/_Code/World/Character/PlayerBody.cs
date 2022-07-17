@@ -2,16 +2,19 @@ using System;
 using System.Collections.Generic;
 using BeauUtil;
 using Leaf.Runtime;
+using ScriptableBake;
 using UnityEngine;
 
 namespace Aqua.Character
 {
-    public abstract class PlayerBody : CharacterBody
+    public abstract class PlayerBody : CharacterBody, IBaked
     {
         private readonly HashSet<StringHash32> m_CurrentRegionIds = new HashSet<StringHash32>();
         [NonSerialized] protected PlayerBodyStatus m_BodyStatus;
+        [SerializeField, HideInInspector] private SpawnCtrl m_SpawnCtrl;
 
         public PlayerBodyStatus BodyStatus { get { return m_BodyStatus; } }
+        public SpawnCtrl Spawner { get { return m_SpawnCtrl; } }
 
         private void FixedUpdate()
         {
@@ -20,6 +23,8 @@ namespace Aqua.Character
 
             Tick(Time.fixedDeltaTime);
         }
+
+        public virtual void PrepareSpawn() { }
 
         protected abstract void Tick(float inDeltaTime);
 
@@ -51,6 +56,26 @@ namespace Aqua.Character
         }
 
         #endregion // Leaf
+
+        #region IBaked
+
+        #if UNITY_EDITOR
+
+        int IBaked.Order { get; }
+
+        bool IBaked.Bake(BakeFlags flags)
+        {
+            return BakeImpl(flags);
+        }
+
+        protected virtual bool BakeImpl(BakeFlags flags)
+        {
+            return Ref.Replace(ref m_SpawnCtrl, FindObjectOfType<SpawnCtrl>());
+        }
+
+        #endif // UNITY_EDITOR
+
+        #endregion // IBaked
     }
 
     [Flags]

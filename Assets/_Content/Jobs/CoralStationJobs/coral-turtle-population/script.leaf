@@ -13,17 +13,17 @@ $branch common.ringPhone
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", !jobs:coral-turtle-population.got.pop
+@when 		scene:name == "Helm", !jobs:coral-turtle-population.got.pop
 @cutscene
 {@player}   Where should I go from here?
-{@kevin}	Let's exit the ship and head to the sub.
+{@guide}	Let's exit the ship and head to the sub.
 					
 :: helpGoToSiteV
 @trigger    RequestPartnerHelp
 @when 		scene:name == "CoralStation", !jobs:coral-turtle-population.got.pop
 @cutscene
 {@player}   I think I'm lost?
-{@kevin}	{h}Site V{/h} should be just East of the ship.
+{@guide}	{h}Site V{/h} should be just East of the ship.
 
 :: diveSite
 @trigger    SceneStart
@@ -31,7 +31,7 @@ $branch common.ringPhone
 @once
 @cutscene
 $set    	jobs:coral-turtle-population.seen.bottom = true
-{@kevin}   Let's look around for that Loggerhead Turtle.
+{@guide}   Let's look around for that Loggerhead Turtle.
 // $branch common.ringPhone
 // $if !HasUpgrade(ROVTagger)
 // 	{@profCempaka} Once you've scanned a turtle, I'll need you to start counting how many are here.
@@ -39,7 +39,7 @@ $set    	jobs:coral-turtle-population.seen.bottom = true
 // 	{@profCempaka} You should see the {nameof ROVTagger} at the top of your view.  
 // 	{@profCempaka} If you switch it on and move close to a scanned species, the {nameof ROVTagger} will {h}count{/h} it.
 // 	{@profCempaka} Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
-// 	{@kevin} That's really convenient.
+// 	{@guide} That's really convenient.
 // 	$set    jobs:common-dive.seen.tagger-intro = true
 // $endif
 
@@ -53,13 +53,13 @@ $set    	jobs:coral-turtle-population.seen.bottom = true
 @cutscene
 {@player}   What should I be doing here?
 $if !HasEntity(LoggerheadTurtle)
-	{@kevin}   Have you Scanned a Turtle, yet? There should be some around here somewhere...
+	{@guide}   Have you Scanned a Turtle, yet? There should be some around here somewhere...
 $else
 	$if HasFact(ReefEdge.Population.LoggerheadTurtle)
 		$set    jobs:coral-turtle-population.got.pop = true
-		{@kevin}   We've gotten everything we need from here, head back up to the surface when you're ready to leave.
+		{@guide}   We've gotten everything we need from here, head back up to the surface when you're ready to leave.
 	$else
-	{@kevin}   Switch to Count mode and try to get near all the Turtles you can!
+	{@guide}   Switch to Count mode and try to get near all the Turtles you can!
 	$endif
 $endif
 
@@ -69,35 +69,45 @@ $endif
 @once
 @cutscene
 $set jobs:coral-turtle-population.got.pop = true
-{@kevin}    Nice.  We got the estimated population of Turtles at {h}Site V{/h}.  Let's head back.
+{@guide}    Nice.  We got the estimated population of Turtles at {h}Site V{/h}.  Let's head back.
 
 :: navigation.return
 @trigger    SceneStart
 @when       scene:name == "CoralStation", jobs:coral-turtle-population.seen.bottom, !jobs:coral-turtle-population.got.pop
 @once
 @cutscene
-{@kevin}   Looks like you didn't get a representative count of the Turtles.
-{@kevin}   We should head back to {h}Site V{/h} when we can.
+{@guide}   Looks like you didn't get a representative count of the Turtles.
+{@guide}   We should head back to {h}Site V{/h} when we can.
 
 :: navigation.return.again
 @trigger    SceneStart
 @when       scene:name == "CoralStation", jobs:coral-turtle-population.seen.bottom, Seen(job.coral-stressed.navigation.return), !jobs:coral-turtle-population.got.pop
 @cutscene
-{@kevin}   	We still don't have a representative Count of Loggerhead Turtles at {h}Site V{/h}...
+{@guide}   	We still don't have a representative Count of Loggerhead Turtles at {h}Site V{/h}...
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
 @when 		scene:name == "CoralStation", jobs:coral-turtle-population.got.pop
 @cutscene
 {@player} 	Where should we go from here?
-{@kevin}	Let's head West and return to the ship.
+{@guide}	Let's head West and return to the ship.
+
+
+:: atShip
+@trigger    SceneStart
+@when       scene:name == "Helm", jobs:coral-turtle-population.got.pop
+@once
+@cutscene
+{@player}   We're back. Now what?
+{@guide}   	Let's report back with our findings.
+{@player}   OK!
 
 :: helpBackAtShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", jobs:coral-turtle-population.got.pop
+@when 		scene:name == "Helm", jobs:coral-turtle-population.got.pop
 @cutscene
 {@player} 	We're back at the ship, but what should we be doing now?
-{@kevin}	Let's get to the Office so we can report over the Comms.
+{@guide}	Let's get to the Office so we can report over the Comms.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -106,21 +116,21 @@ $set jobs:coral-turtle-population.got.pop = true
 @when 		JobTaskActive(scanTurtle)
 @boostScore -5
 @cutscene
-{@kevin}    Look for a turtle and scan it.
+{@guide}    Look for a turtle and scan it.
 
 :: catchTurtleModel
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(turtleModel)
 @boostScore -5
 @cutscene
-{@kevin}    Count the turtle population at the Reef Edge.
+{@guide}    Count the turtle population at the Reef Edge.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@kevin}    Talk to {nameof profCempaka} in the Office.
+{@guide}    Talk to {nameof profCempaka} in the Office.
 
 // ARGUMENTATION
 // 

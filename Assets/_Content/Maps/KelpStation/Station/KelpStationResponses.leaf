@@ -2,17 +2,17 @@
 
 :: diveSite.locked.noJob
 @trigger    ResearchSiteLocked
-@who        kevin
+@who        guide
 @when       !player:currentJob
 @chatter
 @repeat     2
-{@kevin}    Hold on, let's take a job first before we dive.
+{@guide}    Hold on, let's take a job first before we dive.
 
 :: diveSite.locked.hasJob
 @trigger    ResearchSiteLocked
-@who        kevin
+@who        guide
 @when       player:currentJob
 @chatter
 @repeat     2
-{@kevin}    I don't think our current job requires we dive here.
+{@guide}    I don't think our current job requires we dive here.
             So... let's move on.

@@ -8,8 +8,9 @@ namespace Aqua.StationMap
 {
     public class PlayerAnimator : MonoBehaviour
     {
-        [SerializeField] private Transform m_BoatRenderer = null;
-        [SerializeField] private Color m_DiveColor = Color.black;
+        [SerializeField] private UnityEngine.Animation m_Animation = null;
+        [SerializeField] private ParticleSystem[] m_TrackedParticles = null;
+        [SerializeField] private TrailRenderer[] m_TrackedTrails = null;
 
         private Routine m_DiveRoutine;
 
@@ -28,16 +29,28 @@ namespace Aqua.StationMap
             m_DiveRoutine.Replace(this, DiveRoutine());
         }
 
+        public void OnTeleport()
+        {
+            foreach(var particleSystem in m_TrackedParticles)
+            {
+                if (particleSystem.isPlaying) {
+                    particleSystem.Stop();
+                    particleSystem.Play();
+                }
+            }
+
+            foreach(var trail in m_TrackedTrails)
+            {
+                trail.Clear();
+            }
+        }
+
         private IEnumerator DiveRoutine()
         {
-            ColorGroup group = m_BoatRenderer.GetComponent<ColorGroup>();
-            CameraTarget target = m_BoatRenderer.GetComponentInParent<CameraTarget>();
-
-            yield return Routine.Combine(
-                m_BoatRenderer.MoveTo(5, 3, Axis.Z, Space.Self).Ease(Curve.QuadIn),
-                Tween.Color(group.Color, m_DiveColor, group.SetColor, 3).Ease(Curve.QuadIn),
-                Tween.Float(target.Zoom, 3, (f) => { target.Zoom = f; target.PushChanges(); }, 3).Ease(Curve.QuadIn).DelayBy(0.5f)
-            );
+            Services.Audio.PostEvent("LowerSubFoley");
+            m_Animation.Play();
+            while(m_Animation.isPlaying)
+                yield return null;
         }
     }
 }

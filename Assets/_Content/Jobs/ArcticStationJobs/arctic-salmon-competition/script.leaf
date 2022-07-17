@@ -5,4 +5,156 @@
 @trigger    JobStarted
 @cutscene
 
-{@kevin}    
+{@profWhalen}   Here, take this. It's some information we've already gathered about Salmon.
+$call GiveFact(ChinookSalmon.Eats.IceAlgae)
+$call GiveFact(ChinookSalmon.Eats.Clione)
+$call GiveFact(ChinookSalmon.Reproduce)
+$call GiveFact(ChinookSalmon.Reproduce.Stressed)
+// TODO: give additional stressed rules?
+{@guide}        This is a good start! Let's find out more about Cod and the things they eat.
+
+:: allSet
+@trigger    JobTaskCompleted
+@when       taskId == "observeCod"
+@once
+{@guide}    With that, we should be set. To the Modeling Lab!
+
+// potential TODO: add task and explicit prompts for Clione rules
+
+:: modelsComplete
+@trigger    JobTaskCompleted
+@when       taskId == "modelFish"
+@once
+{@guide}    Let's show the researchers how we were able to update their model.
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchObserveCod
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(observeCod)
+@boostScore -5
+@cutscene
+{@guide}     We need more information about Arctic Cod and what they eat.
+
+:: catchModelFish
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(modelFish)
+@boostScore -5
+@cutscene
+{@guide}	 Take your new facts to the modeling lab. There you can make a {nameof VisualModel} and a {nameof SyncModel}.
+
+:: catchReportBack
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(reportBack)
+@boostScore -5
+@cutscene
+{@guide}	 Head to the station to report what you found.
+
+// ARGUMENTATION
+
+::argue.intro
+@trigger    TryArgumentation
+@when       !ArgueIsComplete(competitionArgue2)
+@cutscene
+$if ArgueIsComplete(competitionArgue1)
+    $branch .argue.noImpact
+$else
+    $call ArgueLoad(competitionArgue1)
+    {@profWhalen}   Are the Cod and Salmon impacting one another?
+    $branch .argue.chooseClaim
+$endif
+
+:: argue.chooseClaim
+$choice .argue.noImpact; Cod and Salmon do not impact each other.
+$choice .argue.codHarm; Cod are harming the Salmon.
+$choice .argue.salmonHarm; Salmon are harming the Cod.
+$choose branch
+
+// Cod branch
+
+:: argue.codHarm
+$if ArgueSetClaim(Claim, jobs.arctic-salmon-competition.argue.claimLabelCod)
+    $call ArgueFactSlot(ArcticCod.Eats.IceAlgae)
+$endif
+$call ArgueDisplayClaim()
+{@profWhalen}   Why do you think that?
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.unrelatedCod
+    $answer *, .argue.unrelatedCod
+$choice .argue.notSure; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedCod
+{@profWhalen}   I don't think so. It doesn't seem like this is pointing to Cod harming the Salmon.
+
+// Salmon branch
+
+:: argue.salmonHarm
+{@profWhalen}   No way! I can't believe that. Check your evidence again.
+
+// Neither branch
+
+:: argue.noImpact
+$if ArgueIsComplete(competitionArgue1)
+    {@profWhalen}   You already showed me the historic populations of Cod's prey.
+    $branch .argue.modelQuery
+$else
+    $call ArgueLoad(competitionArgue1)
+    $if ArgueSetClaim(Claim, jobs.arctic-salmon-competition.argue.claimLabelNoImpact)
+        $call ArgueFactSlot(Z_OpenOcean.PopulationHistory.Diatoms)
+        // $call ArgueFactSlot(Y_IceCrevice.PopulationHistory.IceAlgae)
+    $endif
+    $call ArgueDisplayClaim()
+    {@profWhalen}   Intriguing. Are Salmon's food sources not affected by the Cod growth?
+    $branch .argue.noImpactQuery
+$endif
+
+:: argue.noImpactQuery
+{@profWhalen}   What are historic populations of Cod's prey like?
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.correctPopulations
+    $answer *, .argue.unrelatedPopulations
+$choice .argue.notSure; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedPopulations
+{@profWhalen}   These don't seem like the population histories of Cod's food sources.
+$call ArgueRejectIncorrect()
+$branch .argue.noImpactQuery
+
+:: argue.correctPopulations
+$call ArgueComplete()
+$call ArgueCancelClaim()
+$goto .argue.modelQuery
+
+:: argue.modelQuery
+{@profWhalen}   Did your information on the Cod improve our prior model?
+$call ArgueLoad(competitionArgue2)
+$if ArgueSetClaim(Claim2, jobs.arctic-salmon-competition.argue.claimLabelImproved)
+    $call ArgueFactSlot(Z_OpenOcean.SalmonCompetition.Model.Sync)
+$endif
+$call ArgueDisplayClaim()
+$branch .argue.chooseFactsModel
+
+:: argue.chooseFactsModel
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.correctModel
+    $answer *, .argue.unrelatedModel
+$choice .argue.notSure; Let me get back to you.
+$choose branch
+
+:: argue.correctModel
+$call ArgueComplete()
+{@profWhalen}   Improved! We need to keep working at it, but your efforts have helped unstick us. Thanks!
+$call CompleteJob()
+
+:: argue.unrelatedModel
+{@profWhalen}   We're looking for an updated Numerical model about Salmon and Cod.
+$call ArgueRejectIncorrect()
+{@profWhalen}   Did your information on the Cod improve our prior model?
+$branch .argue.chooseFactsModel
+
+// Shared
+
+:: argue.notSure
+{@profWhalen}   Okay. Get back to me when you're ready.

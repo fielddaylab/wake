@@ -26,10 +26,7 @@ namespace Aqua.Character
                 if (vector.x == 0 && vector.y == 0)
                     return false;
 
-                Vector2 solidCheck = vector;
-                solidCheck.Normalize();
-                solidCheck.x *= PhysicsService.DefaultContactOffset;
-                solidCheck.y *= PhysicsService.DefaultContactOffset;
+                Vector2 solidCheck = PhysicsService.UnitOffset(vector);
 
                 Vector2 collideNormal;
                 if (inKinematics.CheckSolid(solidCheck, out collideNormal))

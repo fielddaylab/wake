@@ -19,6 +19,7 @@ namespace Aqua.Character
     }
     
     static public class Facing {
+
         static public int X(FacingId facing) {
             switch(facing) {
                 case FacingId.Left: {
@@ -90,6 +91,29 @@ namespace Aqua.Character
                 }
             }
             return vec;
+        }
+
+        private const float VectorComponentThreshold = 0.5f;
+
+        static public FacingId FromVector(Vector3 vector) {
+            if (Mathf.Approximately(vector.x, 0) && Mathf.Approximately(vector.y, 0) && Mathf.Approximately(vector.z, 0)) {
+                return FacingId.Invalid;
+            }
+
+            vector.Normalize();
+            if (vector.x < -VectorComponentThreshold) {
+                return FacingId.Left;
+            } else if (vector.x > VectorComponentThreshold) {
+                return FacingId.Right;
+            } else if (vector.y < -VectorComponentThreshold) {
+                return FacingId.Down;
+            } else if (vector.y > VectorComponentThreshold) {
+                return FacingId.Up;
+            } else if (vector.z < -VectorComponentThreshold) {
+                return FacingId.Back;
+            } else {
+                return FacingId.Forward;
+            }
         }
     }
 }

@@ -28,17 +28,17 @@ $choose branch
 
 :: argue.unrelated
 $call ArgueRejectIncorrect()
-{@kevin} Ok, that's interesting, but it's not answering my question.
+{@guide} Ok, that's interesting, but it's not answering my question.
 $goto .argue.showClaim
 
 :: argue.giveUp
-{@kevin} OK. Get back to me when you're ready.
+{@guide} OK. Get back to me when you're ready.
 $call ArgueCancelClaim()
 
 // END
 :: argue.complete
 $call ArgueComplete()
-{@kevin} This looks great!
+{@guide} This looks great!
          This is the conclusion to the above-n-below job!
 
 $call CompleteJob()
