@@ -317,6 +317,14 @@ namespace Aqua
                 UnlockAllBestiaryEntries(false);
             });
 
+            defaultsMenu.AddDivider();
+
+            defaultsMenu.AddButton("Complete Intro Job", () => {
+                Save.Jobs.ForgetJob(JobIds.Kelp_welcome);
+                Save.Jobs.SetCurrentJob(JobIds.Kelp_welcome);
+                Save.Jobs.MarkComplete(JobIds.Kelp_welcome);
+            });
+
             yield return defaultsMenu;
         }
 
@@ -557,6 +565,11 @@ namespace Aqua
             UnlockAllStations();
             UnlockAllUpgrades();
             UnlockAllBestiaryEntries(allFacts);
+
+            if (allFacts && !Save.Jobs.IsComplete(JobIds.Kelp_welcome)) {
+                Save.Jobs.SetCurrentJob(JobIds.Kelp_welcome);
+                Save.Jobs.MarkComplete(JobIds.Kelp_welcome);
+            }
 
             foreach(var map in Services.Assets.Map.Stations()) {
                 Save.Map.RecordVisitedLocation(map.Id());

@@ -25,6 +25,11 @@ namespace Aqua.Shop {
             CantAfford
         }
 
+        private enum CategoryId {
+            Exploration,
+            Science
+        }
+
         #endregion // Types
 
         #region Inspector
@@ -61,6 +66,7 @@ namespace Aqua.Shop {
         #endregion
 
         [NonSerialized] private InvItem m_SelectedItem;
+        [NonSerialized] private CategoryId m_CurrentCategory;
 
         #region Unity Events
 
@@ -70,8 +76,8 @@ namespace Aqua.Shop {
             m_ExplorationCategory.Group.ForceActive(false);
             m_ScienceCategory.Group.ForceActive(false);
 
-            m_ExplorationCategory.Toggle.onValueChanged.AddListener((_) => UpdateCategory(m_ExplorationCategory));
-            m_ScienceCategory.Toggle.onValueChanged.AddListener((_) => UpdateCategory(m_ScienceCategory));
+            m_ExplorationCategory.Toggle.onValueChanged.AddListener((_) => UpdateCategory(m_ExplorationCategory, CategoryId.Exploration, ShopConsts.Trigger_OpenExploration));
+            m_ScienceCategory.Toggle.onValueChanged.AddListener((_) => UpdateCategory(m_ScienceCategory, CategoryId.Science, ShopConsts.Trigger_OpenScience));
 
             Services.Events.Register(GameEvents.InventoryUpdated, RefreshButtons, this);
 
@@ -95,8 +101,10 @@ namespace Aqua.Shop {
 
             m_ExplorationCategory.Toggle.SetIsOnWithoutNotify(true);
             Async.InvokeAsync(() => {
-                UpdateCategory(m_ExplorationCategory);
-                UpdateCategory(m_ScienceCategory);
+                UpdateCategory(m_ExplorationCategory, CategoryId.Exploration);
+                UpdateCategory(m_ScienceCategory, CategoryId.Science);
+
+                Services.Script.TriggerResponse(ShopConsts.Trigger_OpenMenu);
             });
         }
 
@@ -131,6 +139,19 @@ namespace Aqua.Shop {
                     }
 
                     yield return thread.Wait();
+
+                    // bool nowHasItem = Save.Inventory.HasUpgrade(button.CachedItem.Id());
+                    switch(m_CurrentCategory) {
+                        case CategoryId.Exploration: {
+                            Services.Script.TriggerResponse(ShopConsts.Trigger_OpenExploration);
+                            break;
+                        }
+                        case CategoryId.Science: {
+                            Services.Script.TriggerResponse(ShopConsts.Trigger_OpenScience);
+                            break;
+                        }
+                    }
+
                 }
             } finally {
                 m_SelectedItem = null;
@@ -142,7 +163,7 @@ namespace Aqua.Shop {
 
         #region Categories
 
-        private void UpdateCategory(ShopCategoryButton category) {
+        private void UpdateCategory(ShopCategoryButton category, CategoryId id, StringHash32 triggerId = default) {
             if (!IsShowing()) {
                 return;
             }
@@ -152,6 +173,8 @@ namespace Aqua.Shop {
                 return;
             }
 
+            m_CurrentCategory = id;
+
             if (category.Group.Activate()) {
                 if (category.CameraPose) {
                     Services.Camera.MoveToPose(category.CameraPose, 0.5f, Curve.Smooth, Cameras.CameraPoseProperties.All);
@@ -159,6 +182,9 @@ namespace Aqua.Shop {
 
                 PopulateColumn(m_LeftColumnHeader, category.LeftHeader, m_LeftColumnButtons, category.LeftItems);
                 PopulateColumn(m_RightColumnHeader, category.RightHeader, m_RightColumnButtons, category.RightItems);
+
+                if (!triggerId.IsEmpty)
+                    Services.Script.TriggerResponse(triggerId);
             }
 
             m_LeftColumnLayout.ForceRebuild();
@@ -278,6 +304,7 @@ namespace Aqua.Shop {
 
             if (!inbInstant) {
                 Services.Camera.MoveToPose(m_DefaultPose, 0.5f, Curve.Smooth, CameraPoseProperties.All);
+                Services.Script.TriggerResponse(ShopConsts.Trigger_Close);
             }
         }
 

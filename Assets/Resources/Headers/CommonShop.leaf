@@ -1,5 +1,5 @@
 // requirements
-// $const MerchantId (must start with @)
+// $const MerchantId
 // #const UnlockHintNodeId
 // #const UnlockHintHereNodeId
 // #const LowExpNodeId
@@ -9,12 +9,51 @@
 // #const NotEnoughCashNodeId
 // #const PurchaseNodeId
 
-#macro InvokeCallback(custom, default) \
-    $if custom \
-        $branch $$custom \
-    $elseif $default \
-        $branch $$default \
-    $endif
+#macro ItemHandler(itemId, ...conditions) \
+:: item.$itemId \
+@trigger    ShopAttemptBuy \
+@when       itemId == "$itemId", $conditions \
+@who        $MerchantId \
+@cutscene
+
+#macro EvaluateItemPurchase() \
+    $branch .eval.checkUnlocks \
+    $branch .eval.checkLevel \
+    $branch .eval.purchasePrompt
+
+#macro OpenHandler(nodeId, ...conditions) \
+:: open.$nodeId \
+@trigger    ShopOpenMenu \
+@who        $MerchantId \
+@when       $conditions \
+@interrupt \
+@triggerPriority    Medium \
+{sticky}
+
+#macro CloseHandler(nodeId, ...conditions) \
+:: close.$nodeId \
+@trigger    ShopClose \
+@who        $MerchantId \
+@when       $conditions \
+@cutscene
+
+#macro OpenExplorationHandler(nodeId, ...conditions) \
+:: openExplore.$nodeId \
+@trigger    ShopOpenExploration \
+@who        $MerchantId \
+@when       $conditions \
+@interrupt \
+@triggerPriority    Medium \
+{sticky}
+
+#macro OpenScienceHandler(nodeId, ...conditions) \
+:: openScience.$nodeId \
+@trigger    ShopOpenScience \
+@who        $MerchantId \
+@when       $conditions \
+@interrupt \
+@triggerPriority    Medium \
+{sticky}
 
 // Checks if the upgrade set with local:itemId
 // will potentially unlock another job
@@ -52,24 +91,24 @@ $set    shop:lastFailure = local:itemId
 $set    shop:lastFailureReason = "exp"
 $set    player:hasAttemptedPurchaseUnderleveled = local:itemId
 
-$InvokeCallback(local:customLowExpNode, "$LowExpNodeId")
+$branch $LowExpNodeId
 $stop
 
 :: eval.purchasePrompt
 $if local:cashCost > 0
     $branch $CostItemPromptId
 
-    $choice .purchase.confirm, CanAffordItem($local:itemId); {h}Yes! (Purchase){/h}
-    $choice .purchase.cantAfford, !CanAffordItem($local:itemId); {random ...Yes?|Uh...}
+    $choice .eval.purchase.confirm, CanAffordItem($local:itemId); {h}Yes! (Purchase){/h}
+    $choice .eval.purchase.cantAfford, !CanAffordItem($local:itemId); {random ...Yes?|Uh...}
 $else
     $branch $FreeItemPromptId
 
-    $choice .purchase.confirm; {h}Yes! (Install){/h}
+    $choice .eval.purchase.confirm; {h}Yes! (Install){/h}
 $endif
 
-$choice .purchase.cancel; {random Just looking!|No.}
+$choice .eval.purchase.cancel; {random Just looking!|No.}
 
-:: purchase.confirm
+:: eval.purchase.confirm
 
 $set    shop:lastFailure = null
 $set    shop:lastFailureReason = null
@@ -89,7 +128,7 @@ $branch $PurchaseNodeId
 $call AudioOneShot(ShopPurchase)
 $call PurchaseItem($local:itemId)
 
-:: purchase.cantAfford
+:: eval.purchase.cantAfford
 $set    shop:lastFailure = local:itemId
 $set    shop:lastFailureReason = "cash"
 $set    player:hasAttemptedPurchaseNoCash = local:itemId
@@ -98,5 +137,5 @@ $set    shop:notEnoughCount + 1
 
 $branch $NotEnoughCashNodeId
 
-:: purchase.cancel
+:: eval.purchase.cancel
 $branch $CancelNodeId

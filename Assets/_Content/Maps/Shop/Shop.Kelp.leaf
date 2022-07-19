@@ -1,0 +1,139 @@
+# basePath shop.kelp
+
+#include "Headers/Common.leaf"
+
+#const MerchantId = merchant
+#const UnlockHintNodeId = .unlockHintSomewhere
+#const UnlockHintHereNodeId = .unlockHintHere
+#const LowExpNodeId = .lowExp
+#const FreeItemPromptId = .freeItem
+#const CostItemPromptId = .costItem
+#const CancelNodeId = .cancel
+#const NotEnoughCashNodeId = .notEnoughCash
+#const PurchaseNodeId = .purchased
+
+#include "Headers/CommonShop.leaf"
+
+// Generic
+
+:: unlockHintHere
+{@$MerchantId}   {random Oh hey,|You'll be happy to know that|And I can tell you that} this would unlock a {h}Job{/h} right here.
+
+:: unlockHintSomewhere
+{@$MerchantId}   {random Whoa,|Hey,|As a bonus,} this would unlock some jobs over at the {nameof $local:hintStation}!
+
+:: lowExp
+{@$MerchantId}   Oh, {random hang on|I'm sorry}... I can't let you have this just yet. You'll need {exp}{$local:needExp}{/exp} more before I can trust you with it.
+
+:: freeItem
+{@$MerchantId}   So, want the {nameof $local:itemId}? Won't cost you anything.
+
+:: costItem
+{@$MerchantId}   So, want to buy the {nameof $local:itemId}? \
+                {random It'll|That'll} be {cash}{$local:cashCost}{/cash}!
+
+:: cancel
+{@$MerchantId}   Suit yourself! Anything else you want?
+
+:: notEnoughCash
+{@$MerchantId}   Not enough cash, child.
+
+:: purchased
+{@$MerchantId}   {random Good choice!|Good call.|Alright, it's yours!}
+
+// Idle
+
+#OpenHandler(a)
+{@$MerchantId}  What're ya buyin'?
+
+#CloseHandler(a)
+{@$MerchantId}  Thank ya!
+
+#OpenExplorationHandler(a)
+{@$MerchantId}  Any upgrades you want for your sub?
+
+#OpenScienceHandler(a)
+{@$MerchantId}  Any science-type things you want?
+
+// Exploration
+
+#ItemHandler(ROVTagger)
+{@$MerchantId}  Ah, the {nameof ROVTagger}!| A wise choice!
+                You should see the {nameof ROVTagger} at the top of your view.
+                If you switch it on and move close to a species you've already scanned, the {nameof ROVTagger} will {h}count{/h} it.
+                Count enough of them and it'll do the rest and give you a population estimate.
+{@guide}    That's very convenient. We should definitely get this.
+$set    jobs:common-dive.seen.tagger-intro = true
+$EvaluateItemPurchase()
+
+#ItemHandler(Flashlight)
+{@$MerchantId}  Oh, {nameof Flashlight}!
+                The ocean can be pretty dangerous if you can't see what's coming.
+                We should| definitely| get this on your sub as soon as we can.
+$EvaluateItemPurchase()
+
+#ItemHandler(ProbeHacker)
+{@$MerchantId}  The {nameof ProbeHacker}! Helped develop this one myself!
+                It will allow you to read data from any {h}probes{/h} you find out there.
+                Essential for getting any historical data off of them.
+$EvaluateItemPurchase()
+
+#ItemHandler(Microscope)
+{@$MerchantId}  Oh nice, that's the {nameof Microscope}!
+                There are creatures out there that you can't see individually with the naked eye.
+                Sometimes they look like clouds or mist. With this you can see them more closely.
+$EvaluateItemPurchase()
+
+// Navigation
+
+#ItemHandler(PropGuard)
+{@$MerchantId}  The {nameof PropGuard}?| Not a bad idea.
+                You don't want your propeller getting tangled up out there when navigating through thick vegetation.
+$EvaluateItemPurchase()
+
+#ItemHandler(Engine)
+{@$MerchantId}  Hey, that's the {nameof Engine}!
+                It boosts the power of the sub's engine, so it can move against strong currents.
+                It's a little harder to control though, so just be careful with it.
+$EvaluateItemPurchase()
+
+#ItemHandler(Hull)
+{@$MerchantId}  Oh, are you looking to venture {h}deep{/h}? Then the {nameof Hull} might be helpful!
+                With this plating, your sub will be able to withstand much more pressure.
+$EvaluateItemPurchase()
+
+#ItemHandler(Icebreaker)
+{@$MerchantId}  Whoa, careful! That's the {nameof Icebreaker}!
+                It's able to shatter ice by emitting a strong localized electrical field.
+                And it's |not| a toy!
+$EvaluateItemPurchase()
+
+// Experimentation
+
+#ItemHandler(StressTank)
+{@$MerchantId}   The {nameof StressTank} can be used to measure the stress ranges of different creatures.
+$EvaluateItemPurchase()
+
+#ItemHandler(MeasurementTank)
+{@$MerchantId}  The {nameof MeasurementTank} can be used to measure various rates for different creatures.
+                Really handy if you need some eating rates, or reproduction, or respiration.
+$EvaluateItemPurchase()
+
+// Modeling
+
+#ItemHandler(VisualModel)
+{@$MerchantId}  The {nameof VisualModel} can be used at your {map-name}Modeling Station{/map-name}.
+                It is used to create visualizations of the different connections between species.
+{@guide}    Hmmm. I feel like this could come in handy later...
+            I think we should purchase this item.
+$EvaluateItemPurchase()
+
+#ItemHandler(PredictionModel)
+{@$MerchantId}  The {nameof PredictionModel} can be used at the {map-name}Modeling Station{/map-name}.
+            It is used to create predictions for creatures in different ecosystems.
+$EvaluateItemPurchase()
+
+#ItemHandler(InterveneModel)
+{@$MerchantId}  The {nameof InterveneModel} can be used at the {map-name}Modeling Station{/map-name}.
+            It is used to model the outcomes of potential interventions for different ecosystems.
+$EvaluateItemPurchase()
