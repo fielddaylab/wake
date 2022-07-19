@@ -6,7 +6,7 @@
 @chatter
 @repeat     1
 $set    player:noProbeHacker.triedToScan = true
-{@kevin}    I don't think we have the necessary equipment for this yet.
+{@guide}    I don't think we have the necessary equipment for this yet.
 
 :: partner.onScan.probeHackerNotAcquired.2
 @trigger    ScannedObject
@@ -14,7 +14,7 @@ $set    player:noProbeHacker.triedToScan = true
 @chatter
 @repeat     1
 $set    player:noProbeHacker.triedToScan = true
-{@kevin}    Looks like we'll need some new equipment if we're going to scan these probes.
+{@guide}    Looks like we'll need some new equipment if we're going to scan these probes.
 
 
 // intro scripts
@@ -26,12 +26,12 @@ $set    player:noProbeHacker.triedToScan = true
 @once
 @cutscene
 
-{@kevin}	Your new {nameof ROVTagger} allows you to count species populations.
-{@kevin}	Once you've {h}scanned{/h} a species, switch to the {nameof ROVTagger} and move close to one of them to {h}count{/h} it.
+{@guide}	Your new {nameof ROVTagger} allows you to count species populations.
+{@guide}	Once you've {h}scanned{/h} a species, switch to the {nameof ROVTagger} and move close to one of them to {h}count{/h} it.
 			Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
 $set    jobs:common-dive.seen.tagger-intro = true
 $if HasUpgrade(ProbeHacker), !jobs:common-dive.seen.probe-intro
-	{@kevin}	Also...
+	{@guide}	Also...
 	$goto .generic.probe-hacker.intro
 $endif
 			
@@ -42,9 +42,9 @@ $endif
 @once
 @cutscene
 
-{@kevin}	Now that you have the {nameof ProbeHacker}, you can gather additional data from probes!
-{@kevin}	When you see a probe, move close and scan it.
-{@kevin}	The {nameof ProbeHacker} will download the data to your {item-name}AQOS Tablet{/item-name}!
+{@guide}	Now that you have the {nameof ProbeHacker}, you can gather additional data from probes!
+{@guide}	When you see a probe, move close and scan it.
+{@guide}	The {nameof ProbeHacker} will download the data to your {item-name}AQOS Tablet{/item-name}!
 $set    jobs:common-dive.seen.probe-intro = true
 
 :: generic.micro.intro
@@ -53,6 +53,6 @@ $set    jobs:common-dive.seen.probe-intro = true
 @once
 @cutscene
 
-{@kevin}	Your new {nameof Microscope} allows you to scan and tag microscopic species!
+{@guide}	Your new {nameof Microscope} allows you to scan and tag microscopic species!
             You can click to activate your {nameof Microscope} at the top of your task bar or by pressing the [4] on your keyboard.
 $set    jobs:common-dive.seen.micro-intro = true

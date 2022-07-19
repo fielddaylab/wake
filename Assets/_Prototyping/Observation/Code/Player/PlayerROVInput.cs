@@ -17,6 +17,9 @@ namespace ProtoAqua.Observation
 
             public bool UsePress;
             public bool UseHold;
+
+            public bool UseAltPress;
+            public bool UseAltHold;
         }
 
         #region Inspector
@@ -36,7 +39,7 @@ namespace ProtoAqua.Observation
                 return;
             }
 
-            m_MouseFilter.Process(Device, inPlayerTransform, inLockOn, out outInputData.Mouse);
+            m_MouseFilter.Process(Device, inPlayerTransform, inLockOn, null, out outInputData.Mouse);
             m_KeyboardFilter.Process(Device, out outInputData.Keyboard);
 
             bool bAllowInput = (inStatus & PlayerBodyStatus.Stunned) == 0;
@@ -44,6 +47,9 @@ namespace ProtoAqua.Observation
 
             outInputData.UseHold = bAllowMouse && Device.MouseDown(0);
             outInputData.UsePress = bAllowMouse && Device.MousePressed(0);
+
+            outInputData.UseAltPress = Device.KeyPressed(KeyCode.Space);
+            outInputData.UseAltHold = Device.KeyDown(KeyCode.Space);
 
             outInputData.Move = outInputData.UseHold || outInputData.Keyboard.KeyDown;
             outInputData.MoveVector = outInputData.Keyboard.KeyDown ? outInputData.Keyboard.NormalizedOffset : outInputData.Mouse.NormalizedOffset;

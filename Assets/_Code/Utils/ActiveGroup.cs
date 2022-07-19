@@ -53,6 +53,15 @@ namespace Aqua {
             return active ? Activate() : Deactivate();
         }
 
+        public bool SetActive(bool active, bool force) {
+            if (force) {
+                ForceActive(active);
+                return true;
+            } else {
+                return active ? Activate() : Deactivate();
+            }
+        }
+
         public void ForceActive(bool active) {
             Active = !active;
             if (active) {

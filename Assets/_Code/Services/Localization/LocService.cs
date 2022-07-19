@@ -48,8 +48,8 @@ namespace Aqua
             m_LanguagePackage.name = "LanguageStrings";
             foreach(var file in m_EnglishStrings)
             {
-                var parser = BlockParser.ParseAsync(ref m_LanguagePackage, file.name, file.Source(), Parsing.Block, LocPackage.Generator.Instance);
-                yield return Async.Schedule(parser);
+                var parser = BlockParser.ParseAsync(ref m_LanguagePackage, file, Parsing.Block, LocPackage.Generator.Instance);
+                yield return Async.Schedule(parser); 
             }
 
             DebugService.Log(LogMask.Loading | LogMask.Localization, "[LocService] Loaded {0} keys (english)", m_LanguagePackage.Count);
@@ -82,13 +82,19 @@ namespace Aqua
                 return inDefault.ToString();
 
             string content;
+            bool hasEvents;
             if (!m_LanguagePackage.TryGetContent(inKey, out content))
             {
                 Debug.LogErrorFormat("[LocService] Unable to locate entry for '{0}' ({1})", inKey.Source(), inKey.Hash().HashValue);
                 content = inDefault.ToString();
+                hasEvents = content.IndexOf('{') >= 0;
+            }
+            else
+            {
+                hasEvents = m_LanguagePackage.HasEvents(inKey);
             }
             
-            if (!inbIgnoreEvents && content.IndexOf('{') >= 0)
+            if (!inbIgnoreEvents && hasEvents)
             {
                 using(var tagAlloc = m_TagStringPool.TempAlloc())
                 {

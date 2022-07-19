@@ -9,6 +9,7 @@ namespace ProtoAqua.Observation {
         #region Inspector
 
         [Header("Tagging")]
+        [SerializeField] private GameObject m_MeterGroup = null;
         [SerializeField, HideInInspector] private TaggingMeter[] m_AllMeters;
 
         #endregion // Inspector
@@ -38,6 +39,8 @@ namespace ProtoAqua.Observation {
             {
                 m_AllMeters[i].gameObject.SetActive(false);
             }
+
+            m_MeterGroup.SetActive(used > 0);
         }
 
         #if UNITY_EDITOR

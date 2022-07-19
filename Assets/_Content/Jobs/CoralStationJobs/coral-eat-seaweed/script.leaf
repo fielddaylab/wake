@@ -12,10 +12,10 @@ $set jobs:coral-clear-sarg.siteRScans = 0
 
 :: helpBackAtShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", !HasFact(Urchin.Eats.Sargassum.Stressed)
+@when 		scene:name == "Helm", !HasFact(Urchin.Eats.Sargassum.Stressed)
 @cutscene
 {@player} 	Where should I be going again?
-{@kevin}	Let's head over to the {nameof Experimentation} and try to find something that can deal with the Sargassum. 
+{@guide}	Let's head over to the {nameof Experimentation} and try to find something that can deal with the Sargassum. 
 
 :: startExperiment
 @trigger    SceneStart
@@ -23,17 +23,17 @@ $set jobs:coral-clear-sarg.siteRScans = 0
 @once
 @cutscene
 {@player}   How should we set up the experiment this time?
-{@kevin}  	We want to find out if there's anything that can help us clear the Sargassum.
-{@kevin} 	Maybe try observing a tank with Sargassum and another organism until you find something interesting?
+{@guide}  	We want to find out if there's anything that can help us clear the Sargassum.
+{@guide} 	Maybe try observing a tank with Sargassum and another organism until you find something interesting?
 
 ::helpAtExperiment
 @trigger    RequestPartnerHelp
 @when 		scene:name == "ExperimentV2", !HasFact(Urchin.Eats.Sargassum.Stressed)
 @cutscene
 {@player} 	How should I do this again?
-{@kevin}	We want to figure out if there's anything that eats the Sargassum.
-{@kevin}	Try putting different organisms in a tank with Sargassum and see if there's anything that eats it!
-{@kevin}	Maybe start with organisms that weren't at Site R?
+{@guide}	We want to figure out if there's anything that eats the Sargassum.
+{@guide}	Try putting different organisms in a tank with Sargassum and see if there's anything that eats it!
+{@guide}	Maybe start with organisms that weren't at Site R?
 
 
 :: experimentEnd
@@ -41,14 +41,14 @@ $set jobs:coral-clear-sarg.siteRScans = 0
 @when 		HasFact(Urchin.Eats.Sargassum.Stressed)
 @once
 @cutscene
-{@kevin}	Looks like we found our solution! Let's report this back to Professor Cempaka.
+{@guide}	Looks like we found our solution! Let's report this back to Professor Cempaka.
 
 :: guideTowardUnstressed
 @trigger    NewBehaviorObserved
 @when 		!HasFact(Urchin.Eats.Sargassum.Stressed), factId == "Urchin.Eats.Sargassum"
 @once
 @cutscene
-{@kevin}	Look at that, the Urchins are eating the Sargassum!
+{@guide}	Look at that, the Urchins are eating the Sargassum!
 			Let's do that one more time, only this time in the {h}Sargassum Covered Reef{/h}.
 
 ::helpAtExperimentUnstressed
@@ -56,7 +56,7 @@ $set jobs:coral-clear-sarg.siteRScans = 0
 @when 		scene:name == "ExperimentV2", !HasFact("Urchin.Eats.Sargassum.Stressed"), HasFact("Urchin.Eats.Sargassum")
 @cutscene
 {@player} 	What do we still need to do here?
-{@kevin}	We are so close!
+{@guide}	We are so close!
 			This time put the Urchins in with the Sargassum in water from the {h}Sargassum Covered Reef{/h}.
 
 :: helpReportBack
@@ -64,9 +64,9 @@ $set jobs:coral-clear-sarg.siteRScans = 0
 @when 		HasFact(Urchin.Eats.Sargassum.Stressed)
 @cutscene
 {@player} 	What should we be doing now?
-{@kevin}	Now that we've finished the experiment, let's report back to the {map-name}Office{/map-name}.
+{@guide}	Now that we've finished the experiment, let's report back to the {map-name}Office{/map-name}.
 $if global:nav.shipRoom == "office"
-	{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
+	{@guide}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
 $endif
 
 // CATCH-ALL GUIDE TEXT
@@ -76,14 +76,14 @@ $endif
 @when 		JobTaskActive(urchinSarg)
 @boostScore -5
 @cutscene
-{@kevin}    Use the Observation Tank to find an organism that eats {nameof Sargassum}.
+{@guide}    Use the Observation Tank to find an organism that eats {nameof Sargassum}.
 
 :: catchUrchinSargArgue
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(urchinSargArgue)
 @boostScore -5
 @cutscene
-{@kevin}    Head back to the Office to talk to Professor Cempaka.
+{@guide}    Head back to the Office to talk to Professor Cempaka.
 
 // ARGUMENTATION
 

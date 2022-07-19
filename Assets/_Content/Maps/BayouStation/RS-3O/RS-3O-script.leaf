@@ -6,21 +6,20 @@
 @once
 @boostScore 5
 @cutscene
-{@}     Warning: High-pressure area detected.
-        Unable to proceed without danger to self and ship.
-{@player}   "High-pressure area"? We are heading pretty deep...
-{@kevin}    Maybe we need a stronger hull?
+{@guide}    {!}Warning: High-pressure area detected.{/!}
+            You will be destroyed at those pressures. | Not me however. | I have several redundant backups of myself on the monstrum.
+            If we could {h}upgrade our hull{/h}, it would allow us to dive deeper,| thus keeping you alive.
 
 :: CantDiveSubsequent1
 @trigger    InteractObject
 @when       objectId == "To3NDive", locked
-@repeat 1
+@repeat
 @chatter
-{@kevin}    Let's see if we can get a stronger hull somewhere.
+{@guide}    {!}Warning: High-pressure area detected{/!}
 
-:: CantDiveSubsequent2
-@trigger    InteractObject
-@when       objectId == "To3NDive", locked
-@repeat 1
-@chatter
-{@kevin}    Maybe a better hull will protect us?
+// :: CantDiveSubsequent2
+// @trigger    InteractObject
+// @when       objectId == "To3NDive", locked
+// @repeat 1
+// @chatter
+// {@guide}    Maybe a better hull will protect us?

@@ -26,8 +26,8 @@ $call GiveUpgrade(Microscope)
 @when 		jobs:arctic-whale-csi.gotScans == 0
 @cutscene
 {@player} 	What should I be doing again?
-{@kevin}	We need to scan and count the surface organisms at Site W.
-{@kevin}	Looks like in total we'll need data about the salmon, sharks, and cod.
+{@guide}	We need to scan and count the surface organisms at Site W.
+{@guide}	Looks like in total we'll need data about the salmon, sharks, and cod.
 
 :: finishedScans
 @trigger    JobTasksUpdated
@@ -35,17 +35,17 @@ $call GiveUpgrade(Microscope)
 @once
 @cutscene
 $set jobs:arctic-whale-csi.gotScans = 1
-{@kevin} Great! That should be all we need for the surface organisms.
-{@kevin} Now all that's next is to scan the ice to see if there's any microscopic organisms inside.
-{@kevin} It's just like how you'd scan an organism, except you should see the microscope view popup instead.
+{@guide} Great! That should be all we need for the surface organisms.
+{@guide} Now all that's next is to scan the ice to see if there's any microscopic organisms inside.
+{@guide} It's just like how you'd scan an organism, except you should see the microscope view popup instead.
 
 :: helpScanIceAlgae
 @trigger    RequestPartnerHelp
 @when 		jobs:arctic-whale-csi.gotScans == 1, !HasScanned(RS-4W.iceAlgae)
 @cutscene
 {@player} 	What should I be doing again?
-{@kevin}	The next step to scan the ice to see if there's any microscopic organisms inside.
-{@kevin}	Try looking around that iceberg to see if there's anything you can scan.
+{@guide}	The next step to scan the ice to see if there's any microscopic organisms inside.
+{@guide}	Try looking around that iceberg to see if there's anything you can scan.
 
 // :: finishedScanAlgae
 // @trigger    JobTasksUpdated
@@ -53,12 +53,12 @@ $set jobs:arctic-whale-csi.gotScans = 1
 // @once
 // @cutscene
 // $set jobs:arctic-whale-csi.gotScans = 2
-// {@kevin} That should be it for our population study!
-// {@kevin} Let's head on back to Professor Whalen. 
+// {@guide} That should be it for our population study!
+// {@guide} Let's head on back to Professor Whalen. 
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
 @when 		jobs:arctic-whale-csi.gotScans == 1, HasScanned(RS-4W.iceAlgae)
 @cutscene
 {@player} 	Where should I be going again?
-{@kevin}	We finished the population study, so let's report back to Prof Whalen.
+{@guide}	We finished the population study, so let's report back to Prof Whalen.

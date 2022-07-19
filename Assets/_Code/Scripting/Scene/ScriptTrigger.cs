@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Aqua.Scripting
 {
+    [AddComponentMenu("Aqualab/Scripting/Trigger Region")]
     public class ScriptTrigger : ScriptComponent
     {
         #region Inspector

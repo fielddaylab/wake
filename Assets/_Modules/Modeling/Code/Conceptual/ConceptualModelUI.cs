@@ -167,6 +167,10 @@ namespace Aqua.Modeling {
                                 m_State.Display.TextPopup("modeling.missing.waterChemHistory", AQColors.Red);
                                 break;
                             }
+                        case MissingFactTypes.StressRange: {
+                                m_State.Display.TextPopup("modeling.missing.stressRange", AQColors.Red);
+                                break;
+                            }
                     }
                 }
             }

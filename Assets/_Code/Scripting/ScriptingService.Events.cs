@@ -16,6 +16,18 @@ namespace Aqua
 {
     public partial class ScriptingService : ServiceBehaviour
     {
+        static public class ColorTags
+        {
+            public const string PropertyColorString = "#bb8fce";
+            public const string CritterColorString = "#fff27e";
+            public const string AlertColorString = "#db3553";
+            public const string EnvColorString = "#f57c18";
+            public const string ItemColorString = "#00ffc8";
+            public const string MapColorString = "#ffccf9";
+            public const string CashColorString = "#e5cf12";
+            public const string ExpColorString = "#a1ff29";
+        }
+
         #region Parser
 
         private void InitParsers()
@@ -27,17 +39,17 @@ namespace Aqua
             // Replace Tags
             m_TagEventParser.AddReplace("n", "\n").WithAliases("newline");
             m_TagEventParser.AddReplace("highlight", "<color=yellow>").WithAliases("h").CloseWith("</color>");
-            m_TagEventParser.AddReplace("property-name", "<#bb8fce>").CloseWith("</color>");
-            m_TagEventParser.AddReplace("critter-name", "<#e59866>").CloseWith("</color>");
-            m_TagEventParser.AddReplace("!", "<#db3553>").CloseWith("</color>");
-            m_TagEventParser.AddReplace("env-name", "<#85c1e9>").CloseWith("</color>");
-            m_TagEventParser.AddReplace("item", "<#00ffc8>").CloseWith("</color>");
-            m_TagEventParser.AddReplace("item-name", "<#f0ff00>").CloseWith("</color>");
-            m_TagEventParser.AddReplace("map-name", "<#FFCCF9>").CloseWith("</color>");
-            m_TagEventParser.AddReplace("m", "<#FFCCF9>").CloseWith("</color>");
+            m_TagEventParser.AddReplace("property-name", "<" + ColorTags.PropertyColorString + ">").CloseWith("</color>");
+            m_TagEventParser.AddReplace("critter-name", "<" + ColorTags.CritterColorString + ">").CloseWith("</color>");
+            m_TagEventParser.AddReplace("!", "<" + ColorTags.AlertColorString + ">").CloseWith("</color>");
+            m_TagEventParser.AddReplace("env-name", "<" + ColorTags.EnvColorString + ">").CloseWith("</color>");
+            m_TagEventParser.AddReplace("item", "<" + ColorTags.ItemColorString + ">").CloseWith("</color>");
+            m_TagEventParser.AddReplace("item-name", "<" + ColorTags.ItemColorString + ">").CloseWith("</color>");
+            m_TagEventParser.AddReplace("map-name", "<" + ColorTags.MapColorString + ">").CloseWith("</color>");
+            m_TagEventParser.AddReplace("m", "<" + ColorTags.MapColorString + ">").CloseWith("</color>");
             m_TagEventParser.AddReplace("player-name", () => Save.Name);
-            m_TagEventParser.AddReplace("cash", "<#DDDC64>").CloseWith("</color><sprite name=\"cash\">");
-            m_TagEventParser.AddReplace("exp", "<#79A4EA>").CloseWith("</color><sprite name=\"exp\">");
+            m_TagEventParser.AddReplace("cash", "<" + ColorTags.CashColorString + ">").CloseWith("</color><sprite name=\"cash\">");
+            m_TagEventParser.AddReplace("exp", "<" + ColorTags.ExpColorString + ">").CloseWith("</color><sprite name=\"exp\">");
             m_TagEventParser.AddReplace("pg", ReplacePlayerGender);
             m_TagEventParser.AddReplace("icon", ReplaceIcon);
             m_TagEventParser.AddReplace("nameof", ReplaceNameOf);
@@ -75,6 +87,7 @@ namespace Aqua
 
             // Dialog-Specific Events
             m_TagEventParser.AddEvent("auto", ScriptEvents.Dialog.Auto);
+            m_TagEventParser.AddEvent("hang", ScriptEvents.Dialog.DoNotClose);
             m_TagEventParser.AddEvent("clear", ScriptEvents.Dialog.Clear);
             m_TagEventParser.AddEvent("continue", ScriptEvents.Dialog.InputContinue);
             m_TagEventParser.AddEvent("speaker", ScriptEvents.Dialog.Speaker).WithStringData();
@@ -143,19 +156,19 @@ namespace Aqua
             
             if (itemId == ItemIds.Cash)
             {
-                return string.Format("<#DDDC64>{0</color><sprite name=\"cash\">", itemCount);
+                return string.Format("<" + ColorTags.CashColorString + ">" + "{0}</color><sprite name=\"cash\">", itemCount);
             }
             else if (itemId == ItemIds.Exp)
             {
-                return string.Format("<#79A4EA>{0}</color><sprite name=\"exp\">", itemCount);
+                return string.Format("<" + ColorTags.ExpColorString + ">" + "{0}</color><sprite name=\"exp\">", itemCount);
             }
             else if (itemDesc.Category() == InvItemCategory.Upgrade)
             {
-                return string.Format("<#f0ff00>{0}</color>", Loc.Find(itemDesc.NameTextId()));
+                return string.Format("<" + ColorTags.ItemColorString + ">" + "{0}</color>", Loc.Find(itemDesc.NameTextId()));
             }
             else
             {
-                return string.Format("<#f0ff00>{0} {1}</color>", itemCount, Loc.Find(itemCount == 1 ? itemDesc.NameTextId() : itemDesc.PluralNameTextId()));
+                return string.Format("<" + ColorTags.ItemColorString + ">" + "{0} {1}</color>", itemCount, Loc.Find(itemCount == 1 ? itemDesc.NameTextId() : itemDesc.PluralNameTextId()));
             }
         }
 
@@ -175,9 +188,9 @@ namespace Aqua
                 switch(bestiary.Category())
                 {
                     case BestiaryDescCategory.Critter:
-                        return Loc.FormatFromString("<#e59866>{0}</color>", bestiary.CommonName());
+                        return Loc.FormatFromString("<" + ColorTags.CritterColorString + ">" + "{0}</color>", bestiary.CommonName());
                     case BestiaryDescCategory.Environment:
-                        return Loc.FormatFromString("<#85c1e9>{0}</color>", bestiary.CommonName());
+                        return Loc.FormatFromString("<" + ColorTags.EnvColorString + ">" + "{0}</color>", bestiary.CommonName());
                     default:
                         return Loc.Find(bestiary.CommonName());
                 }
@@ -187,25 +200,23 @@ namespace Aqua
             if (!item.IsReferenceNull())
             {
                 if (item.Id() == ItemIds.Cash)
-                    return Loc.FormatFromString("<#DDDC64>{0}</color><sprite name=\"cash\">", item.NameTextId());
+                    return Loc.FormatFromString("<" + ColorTags.CashColorString + ">" + "{0}</color><sprite name=\"cash\">", item.NameTextId());
                 else if (item.Id() == ItemIds.Exp)
-                    return Loc.FormatFromString("<#79A4EA>{0}</color><sprite name=\"exp\">", item.NameTextId());
-                else if (item.Category() == InvItemCategory.Upgrade)
-                    return Loc.FormatFromString("<#f0ff00>{0}</color>", item.NameTextId());
+                    return Loc.FormatFromString("<" + ColorTags.ExpColorString + ">" + "{0}</color><sprite name=\"exp\">", item.NameTextId());
                 else
-                    return Loc.FormatFromString("<#f0ff00>{0}</color>", item.NameTextId());
+                    return Loc.FormatFromString("<" + ColorTags.ItemColorString + ">" + "{0}</color>", item.NameTextId());
             }
 
             WaterPropertyDesc property = obj as WaterPropertyDesc;
             if (!property.IsReferenceNull())
             {
-                return Loc.FormatFromString("<#bb8fce>{0}</color", property.LabelId());
+                return Loc.FormatFromString("<" + ColorTags.PropertyColorString + ">" + "{0}</color", property.LabelId());
             }
 
             MapDesc map = obj as MapDesc;
             if (!map.IsReferenceNull())
             {
-                return Loc.FormatFromString("<#FFCCF9>{0}</color>", map.LabelId());
+                return Loc.FormatFromString("<" + ColorTags.MapColorString + ">" + "{0}</color>", map.LabelId());
             }
 
             ScriptCharacterDef charDef = obj as ScriptCharacterDef;
@@ -228,9 +239,9 @@ namespace Aqua
                 switch(bestiary.Category())
                 {
                     case BestiaryDescCategory.Critter:
-                        return Loc.FormatFromString("<#e59866>{0}</color>", bestiary.PluralCommonName());
+                        return Loc.FormatFromString("<" + ColorTags.CritterColorString + ">" + "{0}</color>", bestiary.PluralCommonName());
                     case BestiaryDescCategory.Environment:
-                        return Loc.FormatFromString("<#85c1e9>{0}</color>", bestiary.PluralCommonName());
+                        return Loc.FormatFromString("<" + ColorTags.EnvColorString + ">" + "{0}</color>", bestiary.PluralCommonName());
                     default:
                         return Loc.Find(bestiary.PluralCommonName());
                 }
@@ -240,13 +251,11 @@ namespace Aqua
             if (!item.IsReferenceNull())
             {
                 if (item.Id() == ItemIds.Cash)
-                    return Loc.FormatFromString("<#DDDC64>{0}</color><sprite name=\"cash\">", item.PluralNameTextId());
+                    return Loc.FormatFromString("<" + ColorTags.CashColorString + ">" + "{0}</color><sprite name=\"cash\">", item.PluralNameTextId());
                 else if (item.Id() == ItemIds.Exp)
-                    return Loc.FormatFromString("<#79A4EA>{0}</color><sprite name=\"exp\">", item.PluralNameTextId());
-                else if (item.Category() == InvItemCategory.Upgrade)
-                    return Loc.FormatFromString("<#f0ff00>{0}</color>", item.PluralNameTextId());
+                    return Loc.FormatFromString("<" + ColorTags.ExpColorString + ">" + "{0}</color><sprite name=\"exp\">", item.PluralNameTextId());
                 else
-                    return Loc.FormatFromString("<#f0ff00>{0}</color>", item.PluralNameTextId());
+                    return Loc.FormatFromString("<" + ColorTags.ItemColorString + ">" + "{0}</color>", item.PluralNameTextId());
             }
 
             return ReplaceNameOf(inTag, inContext);

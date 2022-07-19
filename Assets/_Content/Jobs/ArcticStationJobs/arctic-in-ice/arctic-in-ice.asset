@@ -1,0 +1,177 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
+  m_Name: arctic-in-ice
+  m_EditorClassIdentifier: 
+  m_Category: 0
+  m_Flags: 0
+  m_NameId:
+    m_Source: jobs.arctic-in-ice.name
+    m_HashValue: 1725739006
+  m_PosterId:
+    m_HashValue: 2307648171
+  m_DescId:
+    m_Source: jobs.arctic-in-ice.desc
+    m_HashValue: 2869606136
+  m_DescShortId:
+    m_Source: 
+    m_HashValue: 0
+  m_DescCompletedId:
+    m_Source: 
+    m_HashValue: 0
+  m_ExperimentDifficulty: 1
+  m_ModelingDifficulty: 0
+  m_ArgumentationDifficulty: 2
+  m_PrerequisiteJobs:
+  - {fileID: 11400000, guid: 0fb52fe38dfc9f54690b29b85765e2d5, type: 2}
+  m_PrereqConditions: 
+  m_PrereqUpgrades:
+  - m_HashValue: 165582993
+  - m_HashValue: 3188184158
+  - m_HashValue: 3188184158
+  m_PrereqExp: 0
+  m_StationId:
+    m_HashValue: 1297447963
+  m_DiveSiteIds: []
+  m_Tasks:
+  - Id:
+      m_Source: scanAlgae
+      m_HashValue: 955720608
+    LabelId:
+      m_Source: jobs.arctic-in-ice.task.scanAlgae
+      m_HashValue: 1480056617
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: IceAlgae
+        m_HashValue: 2471897816
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: countAlgae
+      m_HashValue: 4073623916
+    LabelId:
+      m_Source: jobs.arctic-in-ice.task.countAlgae
+      m_HashValue: 341190355
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Z_OpenOcean.Population.IceAlgae
+        m_HashValue: 3384588088
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: scanAlgae
+      m_HashValue: 955720608
+  - Id:
+      m_Source: observeEat
+      m_HashValue: 1950785483
+    LabelId:
+      m_Source: jobs.arctic-in-ice.task.observeEat
+      m_HashValue: 22104152
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: ArcticCod.Eats.IceAlgae
+        m_HashValue: 3673181089
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: countAlgae
+      m_HashValue: 4073623916
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    LabelId:
+      m_Source: jobs.arctic-in-ice.task.reportBack
+      m_HashValue: 2304089719
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: observeEat
+      m_HashValue: 1950785483
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: scanAlgae
+      m_HashValue: 955720608
+    IdString: scanAlgae
+    Index: 0
+    LabelId:
+      m_Source: jobs.arctic-in-ice.task.scanAlgae
+      m_HashValue: 1480056617
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: IceAlgae
+        m_HashValue: 2471897816
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: countAlgae
+      m_HashValue: 4073623916
+    IdString: countAlgae
+    Index: 1
+    LabelId:
+      m_Source: jobs.arctic-in-ice.task.countAlgae
+      m_HashValue: 341190355
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Z_OpenOcean.Population.IceAlgae
+        m_HashValue: 3384588088
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: observeEat
+      m_HashValue: 1950785483
+    IdString: observeEat
+    Index: 2
+    LabelId:
+      m_Source: jobs.arctic-in-ice.task.observeEat
+      m_HashValue: 22104152
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: ArcticCod.Eats.IceAlgae
+        m_HashValue: 3673181089
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0100
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    IdString: reportBack
+    Index: 3
+    LabelId:
+      m_Source: jobs.arctic-in-ice.task.reportBack
+      m_HashValue: 2304089719
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0200
+  m_CashReward: 50
+  m_ExpReward: 5
+  m_Scripting: {fileID: -1942890987711236906, guid: 152536906efe5c84080fc1f6e8b2030c,
+    type: 3}
+  m_ExtraAssets: []

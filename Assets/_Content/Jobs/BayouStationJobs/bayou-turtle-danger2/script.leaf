@@ -20,33 +20,33 @@
 @when 		JobTaskActive(historicalData)
 @boostScore -5
 @cutscene
-{@kevin}    The first task for this job can be found in your trusty {item}AQOS{/item}.
+{@guide}    The first task for this job can be found in your trusty {item}AQOS{/item}.
 
 :: helpProbe
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(historicalData), scene:name == "RS-3O"
 @boostScore -5
 @cutscene
-{@kevin}    Remember, we can collect historic population data for a site from a {item}probe{/item} at the site.
+{@guide}    Remember, we can collect historic population data for a site from a {item}probe{/item} at the site.
 
 :: backToShip
 @trigger    RequestPartnerHelp
 @when 		JobTaskCompleted(measureStress), !IsPlayerOnShip()
 @cutscene
-{@kevin}    Let's head back to the {m}ship{/m} to conduct our experiments.
+{@guide}    Let's head back to the {m}ship{/m} to conduct our experiments.
 
 :: catchStressRanges
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(measureStress), IsPlayerOnShip(), scene:name != "ExperimentV2"
 @cutscene
-{@kevin}    {item}Stress ranges{/item} can be studies with in the {m}Experimentation Lab{/m}
+{@guide}    {item}Stress ranges{/item} can be studies with in the {m}Experimentation Lab{/m}
 
 :: catchSyncModel
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(syncModel)
 @boostScore -5
 @cutscene
-{@kevin}    We need to do some {m}experimenting{/m} to obtain rules about {h}Site O{/h} organisms. 
+{@guide}    We need to do some {m}experimenting{/m} to obtain rules about {h}Site O{/h} organisms. 
             Then, head to the {m}Modeling Lab{/m} and make a {item}Descriptive Model{/item}, which should match the population history data you collected.
             You can view missing rules by viewing your {item}Visual Model{/item} 
 
@@ -55,7 +55,7 @@
 @when       scene:name == "Modeling", modeling:phase == "visual", JobTaskTop(syncModel) 
 @cutscene
 @boostScore 100
-{@player}   Got any ideas what to do next, Kevin?
+{@player}   Got any ideas what to do next, V1ctor?
 $if HasEntity(AngelFish),HasEntity(Cyanobacteria),HasEntity(ElkhornCoral),HasEntity(SeaPearl),HasEntity(LoggerheadTurtle),HasEntity(RedGrouper)
     //Player has all required critters
     $if HasFact(AngelFish.Reproduce.Stressed),HasFact(Cyanobacteria.Reproduce),HasFact(ElkhornCoral.Reproduce),HasFact(SeaPearl.Reproduce.Stressed),HasFact(LoggerheadTurtle.Reproduce),HasFact(RedGrouper.Reproduce)
@@ -63,38 +63,38 @@ $if HasEntity(AngelFish),HasEntity(Cyanobacteria),HasEntity(ElkhornCoral),HasEnt
 
         $if HasFact(AngelFish.Eats.SeaPearl.Stressed),HasFact(LoggerheadTurtle.Eats.Cyanobacteria),HasFact(LoggerheadTurtle.Eats.AngelFish),HasFact(RedGrouper.Eats.Cyanobacteria),HasFact(RedGrouper.Eats.AngelFish)
             //Has all eat facts
-            {@kevin}    That should be all the rules we need, make sure you have all the rates and let's go!
+            {@guide}    That should be all the rules we need, make sure you have all the rates and let's go!
         $else
-            {@kevin}    Seems like we still are missing some consumption rules. Maybe take another look at the Observation Tank?
+            {@guide}    Seems like we still are missing some consumption rules. Maybe take another look at the Observation Tank?
         $endif
     $else
         $if HasFact(O_OilRig.turtleDanger.Model.Visual)
-            {@kevin}    Head to the next tab to continue building your model.
+            {@guide}    Head to the next tab to continue building your model.
         $else
             //Missing at least 1 reproduction fact
-            {@kevin}    It seems like we're missing some of the reproduction rates, how about you take a trip over to the Measurement Tank?
+            {@guide}    It seems like we're missing some of the reproduction rates, how about you take a trip over to the Measurement Tank?
         $endif
     $endif
 $else
     //Player is missing at least 1 critter
-    {@kevin}    Looks like we're still missing some critters.
+    {@guide}    Looks like we're still missing some critters.
     $if !HasEntity(AngelFish)
-        {@kevin}    Have you tried scanning the Angelfish yet?
+        {@guide}    Have you tried scanning the Angelfish yet?
     $else
         $if !HasEntity(Cyanobacteria)
-            {@kevin}    Have you tried scanning some Cyanobacteria yet?
+            {@guide}    Have you tried scanning some Cyanobacteria yet?
         $else
             $if !HasEntity(ElkhornCoral)
-                {@kevin}    Have you tried scanning some Elkhorn Coral yet?
+                {@guide}    Have you tried scanning some Elkhorn Coral yet?
             $else
                 $if !HasEntity(SeaPearl)
-                    {@kevin}    Have you tried scanning any Sea Pearls yet?
+                    {@guide}    Have you tried scanning any Sea Pearls yet?
                 $else
                     $if !HasEntity(LoggerheadTurtle)
-                        {@kevin}    Have you tried scanning some Loggerhead Turtles yet?
+                        {@guide}    Have you tried scanning some Loggerhead Turtles yet?
                     $else
                         $if !HasEntity(RedGrouper)
-                            {@kevin}    Have you tried scanning some Red Grouper yet?
+                            {@guide}    Have you tried scanning some Red Grouper yet?
                         $endif
                     $endif
                 $endif
@@ -108,7 +108,7 @@ $endif
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@kevin}    Report back to {nameof profHarper}.
+{@guide}    Report back to {nameof profHarper}.
 
 // ARGUMENTATION
 

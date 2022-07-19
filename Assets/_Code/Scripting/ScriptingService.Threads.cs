@@ -17,6 +17,8 @@ namespace Aqua
 
         IVariantResolver ILeafVariableAccess.Resolver { get { return Services.Data.VariableResolver; }}
 
+        LeafRuntimeConfiguration ILeafPlugin.Configuration { get { return null; } }
+
         void ILeafPlugin<ScriptNode>.OnNodeEnter(ScriptNode inNode, LeafThreadState<ScriptNode> inThreadState)
         {
             var thread = ScriptThread(inThreadState);
@@ -29,7 +31,7 @@ namespace Aqua
             }
             else if ((inNode.Flags() & ScriptNodeFlags.CornerChatter) != 0)
             {
-                thread.Dialog = Services.UI.GetDialog("cornerKevin");
+                thread.Dialog = Services.UI.GetDialog("cornerV1ctor");
             }
 
             if (Services.UI.IsTransitioning())

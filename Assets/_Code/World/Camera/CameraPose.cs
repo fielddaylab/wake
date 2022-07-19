@@ -12,6 +12,16 @@ namespace Aqua.Cameras
 {
     public class CameraPose : MonoBehaviour
     {
+        [Serializable]
+        public struct Data {
+            public Vector3 Position;
+            public Quaternion Rotation;
+            public Transform Target;
+            public float Height;
+            public float Zoom;
+            public CameraPoseProperties Properties;
+        }
+
         #region Inspector
 
         public Transform Target = null;
@@ -21,6 +31,30 @@ namespace Aqua.Cameras
         [AutoEnum] public CameraPoseProperties Properties = CameraPoseProperties.Default;
 
         #endregion // Inspector
+
+        public void ReadData(ref Data data) {
+            data.Position = transform.position;
+            data.Rotation = transform.rotation;
+            data.Target = Target;
+            data.Height = Height;
+            data.Zoom = Zoom;
+            data.Properties = Properties;
+        }
+
+        public void WriteData(in Data data) {
+            #if UNITY_EDITOR
+            Undo.RecordObject(this, "Writing camera pose data");
+            Undo.RecordObject(transform, "Writing camera pose data");
+            EditorUtility.SetDirty(this);
+            EditorUtility.SetDirty(transform);
+            #endif // UNITY_EDITOR
+
+            transform.SetPositionAndRotation(data.Position, data.Rotation);
+            Target = data.Target;
+            Height = data.Height;
+            Zoom = data.Zoom;
+            Properties = data.Properties;
+        }
 
         #region Editor
 
@@ -46,6 +80,7 @@ namespace Aqua.Cameras
                 return;
 
             CameraFOVPlane plane = main.GetComponent<CameraFOVPlane>();
+            CameraRig rig = main.GetComponentInParent<CameraRig>();
             
             Vector3 center = transform.position;
             Quaternion rot = transform.rotation;
@@ -55,6 +90,7 @@ namespace Aqua.Cameras
             Vector2 size;
             size.y = Height / Zoom;
             size.x = Height * main.aspect / Zoom;
+            
             GizmoViz.Box(center, size, rot, ColorBank.Teal, ColorBank.White, RectEdges.All, inAlpha);
         }
 

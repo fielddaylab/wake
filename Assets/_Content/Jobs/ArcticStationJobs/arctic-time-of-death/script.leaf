@@ -10,14 +10,14 @@
                 All kinds of creatures use the whale detritus for food.
                 We made a descriptive model of a previous whalefall. Take a look.
 $call GiveFact(W_WhaleFall.Model.Stages)
-{@kevin}    Check the models under {h}site W{/h} in your {h}AQOS{/h} tablet to view your whalefall model.
+{@guide}    Check the models under {h}site W{/h} in your {h}AQOS{/h} tablet to view your whalefall model.
             If we collect population data for all the species in {h}site W{/h} we should be able to match something up with our model.
             Then we'll be able to roughly determine how long ago Linda met her end.
 
 :: helpMe
 @trigger RequestPartnerHelp
 @cutscene
-{@kevin}    Check the models under {h}site W{/h} in your {h}AQOS{/h} tablet to view your whalefall model.
+{@guide}    Check the models under {h}site W{/h} in your {h}AQOS{/h} tablet to view your whalefall model.
             If we collect population data for all the species in {h}site W{/h} we should be able to match something up with our model.
             Then we'll be able to roughly determine how long ago Linda met her end.
 
@@ -28,14 +28,14 @@ $call GiveFact(W_WhaleFall.Model.Stages)
 @when		JobTaskTop(getPops)
 @boostScore -5
 @cutscene
-{@kevin}    Scan the population Probe at Site W and count the current organism populations at the site.
+{@guide}    Scan the population Probe at Site W and count the current organism populations at the site.
 
 :: catchReportBack
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(reportBack)
 @boostScore -5
 @cutscene
-{@kevin}	Talk to Professor Whalen in the Office.
+{@guide}	Talk to Professor Whalen in the Office.
 
 // ARGUMENTATION
 

@@ -19,10 +19,10 @@ $call UnlockSite(RS-1B)
 
 :: helpGoOutside
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", JobTaskTop(gotoSiteB)
+@when 		scene:name == "Helm", JobTaskTop(gotoSiteB)
 @cutscene
 {@player}   Any idea where I should go next?
-{@kevin}	I think we need to head over to Site B.
+{@guide}	I think we need to head over to Site B.
             Let's exit the ship.
             
 :: helpGoToSiteB
@@ -30,7 +30,7 @@ $call UnlockSite(RS-1B)
 @when 		scene:name != "RS-1B", JobTaskTop(gotoSiteB)
 @cutscene
 {@player} 	Where should I be going again?
-{@kevin}	{h}Site B{/h} should be southwest of the ship.
+{@guide}	{h}Site B{/h} should be southwest of the ship.
             Let's head over there and dive down.
 
 :: helpAtSiteB.A
@@ -38,15 +38,15 @@ $call UnlockSite(RS-1B)
 @when 		scene:name == "RS-1B", JobTaskTop(getTagged)
 @cutscene
 {@player} 	I made it to Site B, what should I do now?
-{@kevin}	Let's explore and count all these organisms.
+{@guide}	Let's explore and count all these organisms.
 $if !TaggingHasStarted(Urchin)
-    {@kevin}    Are there any {pluralnameof Urchin} here?
+    {@guide}    Are there any {pluralnameof Urchin} here?
 $elseif !TaggingHasFinished(Urchin)
-    {@kevin}    We haven't found all the {pluralnameof Urchin} yet.
+    {@guide}    We haven't found all the {pluralnameof Urchin} yet.
 $elseif !TaggingHasStarted(GiantKelp)
-    {@kevin}    I can see a lot of {pluralnameof GiantKelp}...
+    {@guide}    I can see a lot of {pluralnameof GiantKelp}...
 $else
-    {@kevin}    Let's try to find the rest of the {pluralnameof GiantKelp}.
+    {@guide}    Let's try to find the rest of the {pluralnameof GiantKelp}.
 $endif
 
 :: countedCurrentPopulations
@@ -54,7 +54,7 @@ $endif
 @when		taskId == "getTagged"
 @once
 @cutscene
-{@kevin}	All right, that's the current population... thats a lot of urchins...
+{@guide}	All right, that's the current population... thats a lot of urchins...
 
 :: helpAtSiteB.B
 @trigger    RequestPartnerHelp
@@ -62,15 +62,15 @@ $endif
 @cutscene
 
 {@player}   What should I do next?
-{@kevin}    Maybe we should look for the {h}Historic Population Probe{/h}.
+{@guide}    Maybe we should look for the {h}Historic Population Probe{/h}.
 
 :: gotHistoricalPopulations
 @trigger	JobTaskCompleted
-@who		kevin
+@who		guide
 @when		taskId == "getProbeData" 
 @once
 @cutscene
-{@kevin}	Great, we got the historical data. Looks like the urchins have been taking over for a while now.
+{@guide}	Great, we got the historical data. Looks like the urchins have been taking over for a while now.
 
 // TO MODELING
 
@@ -79,18 +79,18 @@ $endif
 @when 		scene:name == "KelpStation", JobTaskTop(visualSiteB)
 @cutscene
 {@player} 	Where should I be going again?
-{@kevin}	We need to head back to the ship.
+{@guide}	We need to head back to the ship.
 
 :: helpToModeling
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", JobTaskTop(visualSiteB)
+@when 		scene:name == "Helm", JobTaskTop(visualSiteB)
 @cutscene
 {@player} 	Where should I be going again?
-{@kevin}	We need to go to the {map-name}Modeling Whiteboard{/map-name} in the {nameof Modeling}.
+{@guide}	We need to go to the {map-name}Modeling Whiteboard{/map-name} in the {nameof Modeling}.
 
 :: atShip
 @trigger    SceneStart
-@when       scene:name == "Ship", JobTaskTop(visualSiteB)
+@when       scene:name == "Helm", JobTaskTop(visualSiteB)
 @once
 @cutscene
 $branch common.ringPhone
@@ -100,14 +100,14 @@ $branch common.ringPhone
 
 :: helpGoToModeling
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", JobTaskTop(predictSiteB)
+@when 		scene:name == "Helm", JobTaskTop(predictSiteB)
 @cutscene
 $if global:nav.shipRoom != "Modeling"
 	{@player} 	I'm back on the ship, what should I do next?
-	{@kevin}	Let's first head to the {nameof Modeling}.
+	{@guide}	Let's first head to the {nameof Modeling}.
 $else
 	{@player} 	Made it to the {nameof Modeling}, what do we do from here?
-	{@kevin}	I think {nameof @drKelp} is going to teach us how to make a model.
+	{@guide}	I think {nameof @drKelp} is going to teach us how to make a model.
                 Head over to the {map-name}Modeling Whiteboard{/map-name}.
 $endif
 
@@ -126,7 +126,7 @@ $endif
 @when       JobTaskTop(predictSiteB), modeling:ecosystemSelected != "UrchinBarren", !jobs:kelp-urchin-barren.upgradedFacts
 @cutscene
 {@player}   What am I doing here again?
-{@kevin}    Remember, we need to open the {nameof UrchinBarren} {h}Ecosystem{/h}.
+{@guide}    Remember, we need to open the {nameof UrchinBarren} {h}Ecosystem{/h}.
             
 :: ModelingSetupPhase2
 @trigger    VisualModelExported
@@ -134,7 +134,7 @@ $endif
 @once
 @cutscene
 
-{@kevin}   That doesn't look right!
+{@guide}   That doesn't look right!
             It looks like the healthy kelp forests, but parts are missing. 
             Let's go talk to {nameof @drKelp}. 
 
@@ -146,13 +146,13 @@ $endif
 @cutscene
 $if scene:name == "Argumentation"
     {@player}   What should I be doing again?
-    {@kevin}    Report your findings to {nameof @drKelp}.
+    {@guide}    Report your findings to {nameof @drKelp}.
 $elseif global:nav.shipRoom == "office"
     {@player}   What should we do now?
-    {@kevin}    Let's report our findings to {nameof @drKelp} using the {h}Computer{/h}.
+    {@guide}    Let's report our findings to {nameof @drKelp} using the {h}Computer{/h}.
 $else
     {@player} 	What should we do now?
-	{@kevin}	Well, we've completed the modeling, so let's report back to {nameof @drKelp}.
+	{@guide}	Well, we've completed the modeling, so let's report back to {nameof @drKelp}.
                 We should first head back to the {map-name}Office{/map-name}.
 $endif
 
@@ -163,35 +163,35 @@ $endif
 @when 		JobTaskActive(goToSiteB)
 @boostScore -5
 @cutscene
-{@kevin}    Head to Site B to discover any new species.
+{@guide}    Head to Site B to discover any new species.
 
 :: catchGetProbeData
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(getProbeData)
 @boostScore -5
 @cutscene
-{@kevin}    Find the populations probe and scan it.
+{@guide}    Find the populations probe and scan it.
 
 :: catchGetTagged
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(getTagged)
 @boostScore -5
 @cutscene
-{@kevin}    Count all the populations at Site B.
+{@guide}    Count all the populations at Site B.
 
 :: catchVisualSiteB
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(visualSiteB)
 @boostScore -5
 @cutscene
-{@kevin}    Create a Visual Model of Site B.
+{@guide}    Create a Visual Model of Site B.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@kevin}    Talk to {nameof drKelp} in the Office.
+{@guide}    Talk to {nameof drKelp} in the Office.
 
 // ARGUMENTATION
 ::argue.intro

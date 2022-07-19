@@ -42,7 +42,7 @@ namespace Aqua
         }
 
         private void RefreshBlockedByScript() {
-            if (Script.IsLoading) {
+            if (Script.IsLoading || !Services.Valid) {
                 return;
             }
 
