@@ -325,6 +325,10 @@ namespace Aqua
                 Save.Jobs.MarkComplete(JobIds.Kelp_welcome);
             });
 
+            defaultsMenu.AddButton("Unlock Shop", () => {
+                Services.Data.SetVariable("world:shop.unlocked", true);
+            });
+
             yield return defaultsMenu;
         }
 
@@ -534,6 +538,8 @@ namespace Aqua
             {
                 Save.Map.UnlockRoom(roomId);
             }
+
+            Services.Data.SetVariable("world:shop.unlocked", true);
         }
 
         static private void UnlockAllStations()

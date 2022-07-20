@@ -59,3 +59,7 @@ $if JobTaskCompleted(getVisualModel), JobTaskCompleted(getTagger)
     $set    jobs:common-dive.seen.probe-intro = false
     $set    jobs:common-dive.seen.micro-intro = false
 $endif
+
+:: ReallyTheEnd
+@function   JobCompleted
+$set    world:shop.unlocked = true

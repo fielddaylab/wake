@@ -33,7 +33,7 @@
                 {random It'll|That'll} be {cash}{$local:cashCost}{/cash}!
 
 :: cancel
-{@$MerchantId}   Suit yourself! Anything else you want?
+{@$MerchantId}   Suit yourself!
 
 :: notEnoughCash
 {@$MerchantId}   Not enough cash, child.
@@ -46,14 +46,33 @@
 #OpenHandler(a)
 {@$MerchantId}  What're ya buyin'?
 
+#OpenHandler(b)
+{@$MerchantId}  Anything catch your eye?
+
 #CloseHandler(a)
 {@$MerchantId}  Thank ya!
 
+#CloseHandler(purchased, shop:purchaseCount)
+@boostScore 10
+{@$MerchantId}  Come back anytime!
+
+#CloseHandler(notEnoughCash, shop:notEnoughCount)
+{@$MerchantId}  Come back with some more {pluralnameof Cash} next time!
+
+#CloseHandler(notEnoughExp, shop:needsExpCount)
+{@$MerchantId}  Come back when you've got more {pluralnameof Exp}!
+
 #OpenExplorationHandler(a)
+{@$MerchantId}  Interested in any exploration tools?
+
+#OpenExplorationHandler(b)
 {@$MerchantId}  Any upgrades you want for your sub?
 
 #OpenScienceHandler(a)
 {@$MerchantId}  Any science-type things you want?
+
+#OpenScienceHandler(b)
+{@$MerchantId}  Need anything for your scientific pursuits?
 
 // Exploration
 
@@ -66,10 +85,18 @@
 $set    jobs:common-dive.seen.tagger-intro = true
 $EvaluateItemPurchase()
 
-#ItemHandler(Flashlight)
-{@$MerchantId}  Oh, {nameof Flashlight}!
+#OverrideItemHandler(Flashlight, flashlight.first)
+@boostScore 100
+@once
+{@$MerchantId}  Oh hey, the {nameof Flashlight}!
                 The ocean can be pretty dangerous if you can't see what's coming.
-                We should| definitely| get this on your sub as soon as we can.
+                We should |definitely| get this on your sub as soon as we can.
+                ...
+$EvaluateItemPurchase()
+
+#ItemHandler(Flashlight)
+{@$MerchantId}  Yep, that's the {nameof Flashlight}!
+                I'd like to get that on your sub as soon as possible.
 $EvaluateItemPurchase()
 
 #ItemHandler(ProbeHacker)
