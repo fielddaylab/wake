@@ -30,7 +30,6 @@ namespace Aqua
         static public readonly TableKeyPair MapId = TableKeyPair.Parse("scene:mapId");
         static public readonly TableKeyPair LastEntrance = TableKeyPair.Parse("scene:lastEntrance");
         static public readonly TableKeyPair ActNumber = TableKeyPair.Parse("global:actNumber");
-        static public readonly TableKeyPair ShipRoom = TableKeyPair.Parse("global:nav.shipRoom");
     }
 
     static public class GameConsts
