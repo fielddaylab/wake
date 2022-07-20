@@ -18,6 +18,8 @@ namespace Aqua
         private const float SkipMultiplier = 1f / 1024;
         private const float DefaultMultiplier = 0.5f;
 
+        public static Action<StringHash32, StringHash32> UpdatePortrait;
+
         #region Types
 
         private enum LineEndBehavior
@@ -297,6 +299,7 @@ namespace Aqua
             
             Sprite portraitSprite = m_CurrentState.TargetDef.Portrait(inPortraitId);
             m_CurrentState.PortraitId = inPortraitId;
+            UpdatePortrait?.Invoke(m_CurrentState.TargetId, m_CurrentState.PortraitId);
             if (portraitSprite)
             {
                 if (m_SpeakerPortraitGroup)
