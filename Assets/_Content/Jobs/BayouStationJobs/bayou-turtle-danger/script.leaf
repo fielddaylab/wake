@@ -14,7 +14,7 @@ $if !HasEntity(Cyanobacteria)
                     Be sure to scan it and count the population like you did for the other species.
 $endif
 $if !RoomUnlocked("modelingRoom")
-    {@profHarper}	I've unlocked a new room on your Ship, {map-name}the Modeling Lab{/map-name}.
+    {@profHarper}	I've unlocked a new room on your Helm, {map-name}the Modeling Lab{/map-name}.
     {@profHarper}	Head there when you need to model the food web.
     $call UnlockRoom("modelingRoom")
     $call UnlockRoom("Modeling")
@@ -28,35 +28,35 @@ $endif
 @when 		JobTaskActive(scanCyano)
 @boostScore -5
 @cutscene
-{@kevin}    Head to {h}Site O{/h} and scan the {nameof Cyanobacteria}. Make sure you have your {item}Microscope{/item} pulled out!
+{@guide}    Head to {h}Site O{/h} and scan the {nameof Cyanobacteria}. Make sure you have your {item}Microscope{/item} pulled out!
 
 :: catchCountCyano
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(countCyano)
 @boostScore -5
 @cutscene
-{@kevin}    Head to {h}Site O{/h} and count the {nameof Cyanobacteria} population. Make sure you have your {item}Microscope{/item} pulled out!
+{@guide}    Head to {h}Site O{/h} and count the {nameof Cyanobacteria} population. Make sure you have your {item}Microscope{/item} pulled out!
 
 :: catchExperimentsForSiteO
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(experimentsForSiteO)
 @boostScore -5
 @cutscene
-{@kevin}    Use the {item}Observation Tank{/item} to find what Loggerhead Turtles eat at Site O.
+{@guide}    Use the {item}Observation Tank{/item} to find what Loggerhead Turtles eat at Site O.
 
 :: catchVisualModelO
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(visualModelO)
 @boostScore -5
 @cutscene
-{@kevin}    Make a {item}Visual Model{/item} of what you found out from the Observation Tank.
+{@guide}    Make a {item}Visual Model{/item} of what you found out from the Observation Tank.
 
 :: catchReportback
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@kevin}    Report back to {nameof profHarper}.
+{@guide}    Report back to {nameof profHarper}.
 
 // ARGUMENTATION
 

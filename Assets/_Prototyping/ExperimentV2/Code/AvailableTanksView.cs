@@ -22,6 +22,7 @@ namespace ProtoAqua.ExperimentV2 {
 
         [SerializeField, Required] private CameraPose m_Pose = null;
         [SerializeField, HideInInspector] private SelectableTank[] m_Tanks = null;
+        [SerializeField, Required] private SelectableTank m_StartingTank = null;
         [SerializeField, Required] private CanvasGroup m_ExitSceneButtonGroup = null;
         [SerializeField, Required] private CanvasGroup m_ExitTankButtonGroup = null;
         [SerializeField, Required] private Button m_ExitTankButton = null;
@@ -30,7 +31,8 @@ namespace ProtoAqua.ExperimentV2 {
         #endregion // Inspector
 
         [NonSerialized] private SelectableTank m_SelectedTank;
-        [NonSerialized] private Routine m_TankTransitionAnim;
+        [NonSerialized] private Routine m_TankExitTransitionAnim;
+        [NonSerialized] private Routine m_TankEnterTransitionAnim;
         [NonSerialized] private Routine m_ExitTankButtonAnimation;
 
         private void ActivateTankClickHandlers()
@@ -101,16 +103,39 @@ namespace ProtoAqua.ExperimentV2 {
         {
             PointerListener.TryGetComponentUserData<SelectableTank>(inTankPointer, out SelectableTank tank);
             
+            OnTankNavigated(tank);
+        }
+
+        private void OnTankNavigated(SelectableTank tank) {
+            // Exit prev tank (if applicable)
+            if (m_SelectedTank != null) {
+                if (m_SelectedTank.CanDeactivate != null && !m_SelectedTank.CanDeactivate())
+                    return;
+
+                m_SelectedTank.CurrentState &= ~TankState.Selected;
+
+                m_TankExitTransitionAnim.Replace(this, DeselectTankTransition(m_SelectedTank, m_Pose)).Tick();
+                // de-activate nav arrows
+                m_SelectedTank.NavArrowParent.SetActive(false);
+
+                Routine.Start(this, m_ExitSceneButtonGroup.Show(0.2f, true));
+                m_ExitTankButtonAnimation.Replace(this, m_ExitTankButtonGroup.Hide(0.2f, false));
+
+                Services.Script.TriggerResponse(ExperimentTriggers.ExperimentTankExited);
+            }
+
+            // Enter new tank
+
             m_SelectedTank = tank;
-            DeactivateTankClickHandlers();
-            m_WaterSystem.SetActiveTank(tank);
 
             SelectableTank.Reset(m_SelectedTank, true);
 
+            DeactivateTankClickHandlers();
+            m_WaterSystem.SetActiveTank(tank);
+
             Services.Events.Dispatch(ExperimentEvents.ExperimentView, tank.Type);
 
-            using(var table = TempVarTable.Alloc())
-            {
+            using (var table = TempVarTable.Alloc()) {
                 table.Set("tankType", tank.Type.ToString());
                 table.Set("tankId", tank.Id);
                 Services.Script.TriggerResponse(ExperimentTriggers.ExperimentTankViewed, table);
@@ -118,9 +143,13 @@ namespace ProtoAqua.ExperimentV2 {
 
             m_SelectedTank.CurrentState |= TankState.Selected;
             m_SelectedTank.ActivateMethod?.Invoke();
+
+            // activate nav arrows
+            m_SelectedTank.NavArrowParent.SetActive(true);
+
             Routine.Start(this, m_ExitSceneButtonGroup.Hide(0.2f, false));
             m_ExitTankButtonAnimation.Replace(this, m_ExitTankButtonGroup.Show(0.2f, true));
-            m_TankTransitionAnim.Replace(this, SelectTankTransition(tank)).Tick();
+            m_TankEnterTransitionAnim.Replace(this, SelectTankTransition(tank)).Tick();
         }
 
         private void OnBackClicked()
@@ -131,7 +160,11 @@ namespace ProtoAqua.ExperimentV2 {
             
             m_SelectedTank.CurrentState &= ~TankState.Selected;
 
-            m_TankTransitionAnim.Replace(this, DeselectTankTransition(m_SelectedTank, m_Pose)).Tick();
+            m_TankExitTransitionAnim.Replace(this, DeselectTankTransition(m_SelectedTank, m_Pose)).Tick();
+
+            // de-activate nav arrows
+            m_SelectedTank.NavArrowParent.SetActive(false);
+
             m_SelectedTank = null;
 
             ActivateTankClickHandlers();
@@ -169,12 +202,19 @@ namespace ProtoAqua.ExperimentV2 {
                 InitializeTank(tank);
                 m_WaterSystem.InitializeTank(tank);
                 tank.Clickable.onClick.AddListener(OnTankClicked);
+                foreach (var arrow in tank.NavArrows) {
+                    arrow.Button.onClick.AddListener(delegate { OnTankNavigated(arrow.DestTank); });
+                }
             }
             Services.Camera.SnapToPose(m_Pose);
             m_ExitTankButton.onClick.AddListener(OnBackClicked);
 
             Services.Events.Register<TankType>(ExperimentEvents.ExperimentBegin, OnExperimentStart, this)
                 .Register<TankType>(ExperimentEvents.ExperimentEnded, OnExperimentFinish, this);
+
+            // Navigate to the initial tank
+
+            OnTankNavigated(m_StartingTank);
         }
 
         void ISceneUnloadHandler.OnSceneUnload(SceneBinding inScene, object inContext)

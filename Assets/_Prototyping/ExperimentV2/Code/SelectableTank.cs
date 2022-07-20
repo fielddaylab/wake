@@ -37,6 +37,9 @@ namespace ProtoAqua.ExperimentV2
         [Required(ComponentLookupDirection.Children)] public PointerListener Clickable = null;
         [Required(ComponentLookupDirection.Children)] public CursorInteractionHint InteractionHint = null;
 
+        [Required(ComponentLookupDirection.Children)] public NavArrow[] NavArrows = null;
+        [Required(ComponentLookupDirection.Children)] public GameObject NavArrowParent = null;
+
         [Header("Canvas")]
         [Required] public Canvas Interface = null;
         [Required] public InputRaycasterLayer InterfaceRaycaster = null;
@@ -45,8 +48,10 @@ namespace ProtoAqua.ExperimentV2
         [Header("Water")]
         [Required] public Transform WaterRenderer;
         [Required] public ParticleSystem WaterAmbientParticles;
+        [Required] public MeshRenderer WaterRippleRenderer;
         [Required] public BoxCollider2D WaterTrigger;
         [Required] public BoxCollider WaterCollider3D;
+        [Required] public Transform WaterTransform3D;
         [Required] public ColorGroup WaterColor;
         [Required] public ParticleSystem WaterDrainParticles;
         public float StartingWaterHeight = 1;

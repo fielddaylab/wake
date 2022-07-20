@@ -14,10 +14,10 @@ $set	jobs:coral-stressed.struggling = false
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", !jobs:coral-stressed.seen.bottom
+@when 		scene:name == "Helm", !jobs:coral-stressed.seen.bottom
 @cutscene
 {@player}   Where should I go from here?
-{@kevin}	Let's exit the ship and head to the sub.
+{@guide}	Let's exit the ship and head to the sub.
 
 
 :: navigation
@@ -25,7 +25,7 @@ $set	jobs:coral-stressed.struggling = false
 @when       scene:name == "Station2"
 @once
 @cutscene
-{@kevin}	You're gonna want to take your sub over to Dive Site R.
+{@guide}	You're gonna want to take your sub over to Dive Site R.
             It should be just north of the ship. When you're there, dive.
 					
 :: helpGoToSiteR
@@ -33,7 +33,7 @@ $set	jobs:coral-stressed.struggling = false
 @when 		scene:name == "Station2", !jobs:coral-stressed.got.scans
 @cutscene
 {@player}   Where should we go next?
-{@kevin}	Site R should be to the north of the ship, let's head over and dive down!
+{@guide}	Site R should be to the north of the ship, let's head over and dive down!
 
 :: diveSite
 @trigger    SceneStart
@@ -41,7 +41,7 @@ $set	jobs:coral-stressed.struggling = false
 @once
 @cutscene
 $set    	jobs:coral-stressed.seen.bottom = true
-{@kevin}   Looks like we made it! Time to see what's down there.
+{@guide}   Looks like we made it! Time to see what's down there.
 
 
 :: helpAtSiteR
@@ -51,9 +51,9 @@ $set    	jobs:coral-stressed.seen.bottom = true
 {@player}   What should I be doing here?
 $if HasEntity(StaghornCoral)
 	$set    jobs:coral-stressed.got.scans = true
-	{@kevin}   I think we've gotten everything we need from here, head back up to the surface when you're ready to leave.
+	{@guide}   I think we've gotten everything we need from here, head back up to the surface when you're ready to leave.
 $else
-	{@kevin}   Make sure to scan the coral.
+	{@guide}   Make sure to scan the coral.
 $endif
 
 :: navigation.goBackUp
@@ -62,7 +62,7 @@ $endif
 @once
 @cutscene
 $set jobs:coral-stressed.gotScans = true
-{@kevin}    I think that's all the info we need from here for now! Feel free to head back up when you're ready.
+{@guide}    I think that's all the info we need from here for now! Feel free to head back up when you're ready.
 
 
 :: helpBackToShip
@@ -70,24 +70,24 @@ $set jobs:coral-stressed.gotScans = true
 @when 		scene:name == "Station2", jobs:coral-stressed.got.scans
 @cutscene
 {@player} 	Where should we go from here?
-{@kevin}	Let's head south and return to the ship.
+{@guide}	Let's head south and return to the ship.
 
 
 :: atShip
 @trigger    SceneStart
-@when       scene:name == "Ship", JobTaskCompleted(siteR), JobTaskActive(stressCoral)
+@when       scene:name == "Helm", JobTaskCompleted(siteR), JobTaskActive(stressCoral)
 @once
 @cutscene
 {@player}   We're back. Now what?
-{@kevin}   	Let's head to the {nameof Experimentation} and see what's stressing the coral.
+{@guide}   	Let's head to the {nameof Experimentation} and see what's stressing the coral.
 {@player}   On it!
 	
 :: helpBackAtShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Ship", JobTaskActive(stressCoral)
+@when 		scene:name == "Helm", JobTaskActive(stressCoral)
 @cutscene
 {@player} 	What should we be doing now?
-{@kevin}	Let's head over to the {nameof Experimentation} and try to learn more about the coral's condition. 
+{@guide}	Let's head over to the {nameof Experimentation} and try to learn more about the coral's condition. 
 
 
 :: startExperiment
@@ -96,7 +96,7 @@ $set jobs:coral-stressed.gotScans = true
 @once
 @cutscene
 {@player}   What kind of experiment should we be doing this time?
-{@kevin}  	Let's put the coral in the stress tank and see if that can tell us what's happening to it.
+{@guide}  	Let's put the coral in the stress tank and see if that can tell us what's happening to it.
 
 :: openStressTank
 @trigger	ExperimentTankViewed
@@ -110,8 +110,8 @@ $set jobs:coral-stressed.gotScans = true
 @trigger    RequestPartnerHelp
 @when 		scene:name == "ExperimentV2", jobs:coral-stressed.got.scans == true
 @cutscene
-{@kevin}	Select the stressor tank instead of an observation one.
-{@kevin}	Next, add the coral in, and see if you can find what's causing its condition. 
+{@guide}	Select the stressor tank instead of an observation one.
+{@guide}	Next, add the coral in, and see if you can find what's causing its condition. 
 
 
 :: experimentEnd
@@ -119,14 +119,14 @@ $set jobs:coral-stressed.gotScans = true
 @when 		HasFact(StaghornCoral.Light.Stressed)
 @once
 @cutscene
-{@kevin}	Fantastic! The {h}Stress Tank{/h} gave us some new clues.
-{@kevin}	For each environment variable, the bars show values from low to high,
-{@kevin}	and the grayed parts show the range where the organism is stressed.
+{@guide}	Fantastic! The {h}Stress Tank{/h} gave us some new clues.
+{@guide}	For each environment variable, the bars show values from low to high,
+{@guide}	and the grayed parts show the range where the organism is stressed.
 {@player} 	Got it. So it tells us the ranges a species is stressed?
-{@kevin}	Exactly. So this experiment tells us the staghorn coral is stressed
-{@kevin}	if the temperature is too hot or too cold, or if the light is too low.
-{@kevin}	I wonder if either of those are true at Site R?
-{@kevin}	Let's report this information back to Professor Cempaka!
+{@guide}	Exactly. So this experiment tells us the staghorn coral is stressed
+{@guide}	if the temperature is too hot or too cold, or if the light is too low.
+{@guide}	I wonder if either of those are true at Site R?
+{@guide}	Let's report this information back to Professor Cempaka!
 
 :: helpReportBack
 @trigger    RequestPartnerHelp
@@ -135,13 +135,13 @@ $set jobs:coral-stressed.gotScans = true
 @cutscene
 $if	jobs:coral-stressed.struggling
 	{@player} 	Any tips about which facts to focus on?
-	{@kevin}	Make sure to open AQOS and compare the coral stress ranges with the conditions at Site R.
+	{@guide}	Make sure to open AQOS and compare the coral stress ranges with the conditions at Site R.
 $else
 	{@player} 	What should we be doing now?
 	$if global:nav.shipRoom == "office"
-		{@kevin}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
+		{@guide}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
 	$else
-		{@kevin}	That should be everything we need for now. Let's report back to Professor Harper.
+		{@guide}	That should be everything we need for now. Let's report back to Professor Harper.
 	$endif
 $endif
 
@@ -152,21 +152,21 @@ $endif
 @when 		JobTaskActive(siteR)
 @boostScore -5
 @cutscene
-{@kevin}    Find the coral at Site R.
+{@guide}    Find the coral at Site R.
 
 :: catchStressCoral
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(stressCoral)
 @boostScore -5
 @cutscene
-{@kevin}    Head to the Experimentation room and put the {nameof StaghornCoral} in the Stress Tank.
+{@guide}    Head to the Experimentation room and put the {nameof StaghornCoral} in the Stress Tank.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@kevin}    Talk to Professor Cempaka in the Office.
+{@guide}    Talk to Professor Cempaka in the Office.
 
 // ARGUMENTATION
 

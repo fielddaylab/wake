@@ -14,7 +14,7 @@ namespace Aqua
 {
     public class PartnerButton : BasePanel
     {
-        static public readonly TableKeyPair RequestCounter = TableKeyPair.Parse("kevin:help.requests");
+        static public readonly TableKeyPair RequestCounter = TableKeyPair.Parse("guide:help.requests");
 
         #region Inspector
 
@@ -29,7 +29,7 @@ namespace Aqua
             Services.Script.OnTargetedThreadStarted += OnTargetedThreadStart;
             Services.Script.OnTargetedThreadKilled += OnTargetedThreadEnd;
 
-            OnTargetedThreadStart(Services.Script.GetTargetThread(GameConsts.Target_Kevin));
+            OnTargetedThreadStart(Services.Script.GetTargetThread(GameConsts.Target_V1ctor));
         }
 
         private void OnDestroy()
@@ -45,7 +45,7 @@ namespace Aqua
 
         private void OnTargetedThreadStart(ScriptThreadHandle inHandle)
         {
-            if (inHandle.TargetId() != GameConsts.Target_Kevin)
+            if (inHandle.TargetId() != GameConsts.Target_V1ctor)
                 return;
 
             m_RootGroup.alpha = 0.5f;
@@ -54,7 +54,7 @@ namespace Aqua
 
         private void OnTargetedThreadEnd(StringHash32 inTarget)
         {
-            if (inTarget != GameConsts.Target_Kevin)
+            if (inTarget != GameConsts.Target_V1ctor)
                 return;
 
             m_RootGroup.alpha = 1;
@@ -64,7 +64,7 @@ namespace Aqua
         private void OnButtonClicked()
         {
             Services.Data.AddVariable(RequestCounter, 1);
-            Services.Script.TriggerResponse(GameTriggers.RequestPartnerHelp, GameConsts.Target_Kevin);
+            Services.Script.TriggerResponse(GameTriggers.RequestPartnerHelp, GameConsts.Target_V1ctor);
         }
 
         #endregion // Handlers

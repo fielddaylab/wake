@@ -5,7 +5,7 @@
 @when 		scene:name != "Shop"
 @cutscene
 {@player} 	Where should we be going again?
-{@kevin}    Before we head out, we might wanna upgrade our ship with some of our earnings.
+{@guide}    Before we head out, we might wanna upgrade our ship with some of our earnings.
             I hear there's a mechanic right off the dock that can upgrade our ship. Let's check them out!
 
 :: helpAtShopAfterPurchase
@@ -14,7 +14,7 @@
 @boostScore 1
 @cutscene
 {@player} 	Anything else we need here?
-{@kevin}    Nope, we've got everything we need!
+{@guide}    Nope, we've got everything we need!
             Why don't we head back to the ship?
 
 :: helpAtShop
@@ -22,7 +22,7 @@
 @when 		scene:name == "Shop"
 @cutscene
 {@player} 	What are we doing here?
-{@kevin}    We're looking to upgrade our ship with some of our earnings.
+{@guide}    We're looking to upgrade our ship with some of our earnings.
             Why don't you check out some of the instruments {nameof @merchant} has for sale.
 
 :: gotBothModels
@@ -31,12 +31,12 @@
 @once
 @cutscene
 {@player}   Okay, got both of them!
-{@kevin}    Nice! Let's head back to the Ship then.
+{@guide}    Nice! Let's head back to the Ship then.
 
 // END
 :: end
 @trigger    SceneStart
-@when       scene:name == "Ship"
+@when       scene:name == "Helm"
 @cutscene
 $if JobTaskCompleted(getVisualModel), JobTaskCompleted(getTagger)
     {@drKelp}   Hey guys! Just got back from my colleagues and they're excited to meet you guys.

@@ -4,7 +4,7 @@
 @trigger    JobStarted
 @cutscene
 
-{@kevin}	This job calls for a complete model of all living things in this ecosystem.  Maybe we should come back to it later?
+{@guide}	This job calls for a complete model of all living things in this ecosystem.  Maybe we should come back to it later?
 			If you want to keep going, we'll need to make sure all species are scanned and counted,
 			make sure we've observed every interaction between every pair of species, get data on what causes each species too be stressed,
 			and then measure the effect on water chemistry and the rates of predation and reproduction under stressed and unstressed conditions for each species. 
@@ -17,7 +17,7 @@
 @when		scene:name == "RS-2S", JobTaskCompleted(scanCritters)
 @once
 @cutscene
-{@kevin}	Alright, looks like we know about every species living here.
+{@guide}	Alright, looks like we know about every species living here.
 
 
 :: scanProbesComplete
@@ -25,7 +25,7 @@
 @when		scene:name == "RS-2S", JobTaskCompleted(scanHistory)
 @once
 @cutscene
-{@kevin}	Great, we've got the historic populations and water chemistry data here.
+{@guide}	Great, we've got the historic populations and water chemistry data here.
 
 
 :: countPopulationsComplete
@@ -33,7 +33,7 @@
 @when		scene:name == "RS-2S", JobTaskCompleted(countPopulations)
 @once
 @cutscene
-{@kevin}	Perfect, these population counts really form the base of any accurate model.
+{@guide}	Perfect, these population counts really form the base of any accurate model.
 
 
 // EXPERIMENTATION
@@ -43,28 +43,28 @@
 @when		scene:name == "ExperimentV2", JobTaskCompleted(observeEatRules)
 @once
 @cutscene
-{@kevin}	OK, we've got some of the basics of the ecosystem, but we're going to need a lot more for an intervention model.
+{@guide}	OK, we've got some of the basics of the ecosystem, but we're going to need a lot more for an intervention model.
 
 :: obtainStressRulesComplete
 @trigger    JobTasksUpdated
 @when		scene:name == "ExperimentV2", JobTaskCompleted(obtainStressRules)
 @once
 @cutscene
-{@kevin}	We now know what causes every species to be stressed but not necessarily how they behave under stress.
+{@guide}	We now know what causes every species to be stressed but not necessarily how they behave under stress.
 
 :: measureStressEatRatesComplete
 @trigger    JobTasksUpdated
 @when		scene:name == "ExperimentV2", JobTaskCompleted(measureStressEatRates)
 @once
 @cutscene
-{@kevin}	Great!  Now we know not only what eats what, but how much!
+{@guide}	Great!  Now we know not only what eats what, but how much!
 
 :: measureStressReproduceRatesComplete
 @trigger    JobTasksUpdated
 @when		scene:name == "ExperimentV2", JobTaskCompleted(measureStressReproduceRates)
 @once
 @cutscene
-{@kevin}	Wow! Reproduction rates for every species at Site S can now be found in your AQOS tablet.
+{@guide}	Wow! Reproduction rates for every species at Site S can now be found in your AQOS tablet.
 
 
 :: obtainChemistryComplete
@@ -72,7 +72,7 @@
 @when		scene:name == "ExperimentV2", JobTaskCompleted(obtainChemistry)
 @once
 @cutscene
-{@kevin}	That was the last piece of the puzzle!
+{@guide}	That was the last piece of the puzzle!
 
 // MODELING
 :: predictModelComplete
@@ -80,14 +80,14 @@
 @when		scene:name == "Modeling", JobTaskCompleted(predictModel)
 @once
 @cutscene
-{@kevin}	OK now, this is it.  We're ready to make an intervention model of what would happen if we added more fishers to hunt the Lionfish.  Good luck!
+{@guide}	OK now, this is it.  We're ready to make an intervention model of what would happen if we added more fishers to hunt the Lionfish.  Good luck!
 
 :: interveneModelComplete
 @trigger    JobTasksUpdated
 @when		scene:name == "Modeling", JobTaskCompleted(interveneModel)
 @once
 @cutscene
-{@kevin}	Alright!  Looks like allowing the hunting of lionfish would seriously benefit the coral and the ecosystem overall.  Time to hand over your findings.
+{@guide}	Alright!  Looks like allowing the hunting of lionfish would seriously benefit the coral and the ecosystem overall.  Time to hand over your findings.
 
 // ARGUMENTATION
 
@@ -141,79 +141,79 @@ $call CompleteJob()
 @trigger RequestPartnerHelp
 @when   scene:name != "RS-2S", !JobTaskCompleted(countPopulation), !JobTaskCompleted(scanCritters), !JobTaskCompleted(scanHistory)
 @cutscene
-{@kevin}	We need to collect more data at {h}Site S{/h}.
+{@guide}	We need to collect more data at {h}Site S{/h}.
 
 :: requestHelpScans
 @trigger    RequestPartnerHelp
 @when		JobTaskTop(scanCritters)
 @cutscene
-{@kevin}	Why don't you check your {item}AQOS{/item} for our first task?
+{@guide}	Why don't you check your {item}AQOS{/item} for our first task?
 
 :: requestHelpProbes
 @trigger    RequestPartnerHelp
 @when		JobTaskTop(scanHistory)
 @cutscene
-{@kevin}	Be sure to check your {item}AQOS{/item} for the next steps as you collect data.
+{@guide}	Be sure to check your {item}AQOS{/item} for the next steps as you collect data.
 
 :: requestHelpCounts
 @trigger    RequestPartnerHelp
 @when		JobTaskTop(countPopulation)
 @cutscene
-{@kevin}	Be sure to check your {item}AQOS{/item} for the next steps as you collect data.
+{@guide}	Be sure to check your {item}AQOS{/item} for the next steps as you collect data.
 
 :: backToShip
 @trigger    RequestPartnerHelp
 @when		JobTaskCompleted(scanCritters), JobTaskCompleted(scanHistory), JobTaskCompleted(countPopulation), !IsPlayerOnShip()
 @cutscene
-{@kevin}    Let's head back to the {m}Ship{/m} to continue this job.
+{@guide}    Let's head back to the {m}Ship{/m} to continue this job.
 
 :: requestHelpEatRules
 @trigger    RequestPartnerHelp
 @when		JobTaskTop(observeEatRules), IsPlayerOnShip()
 @cutscene
-{@kevin}	Use the {item}Observation Tank{/item} to find what eats what. Check AQOS to see which species you haven't covered yet.
+{@guide}	Use the {item}Observation Tank{/item} to find what eats what. Check AQOS to see which species you haven't covered yet.
             By examining your {m}Visual Model{/m} you can also check for {h}missing eat behaviors{/h}.
 
 :: blueTangTurfAlgaeStress
 @trigger    RequestPartnerHelp
 @when		JobTaskTop(observeEatRules), !HasFact(BlueTang.Eats.TurfAlgae.Stressed)
 @cutscene
-{@kevin}    We might need to observe the {nameof BlueTang} more closely.
+{@guide}    We might need to observe the {nameof BlueTang} more closely.
             I would recommend {item}observing{/item} it's behavior when it interacts with other creatures while it's stressed by the {nameof Ick}
 
 :: requestHelpStressRules
 @trigger    RequestPartnerHelp
 @when		JobTaskTop(obtainStressRules)
 @cutscene
-{@kevin}	Get the stress ranges for each  Site S species using the {item}Stress Tank{/item}. Check AQOS to see which species you haven't covered yet.
+{@guide}	Get the stress ranges for each  Site S species using the {item}Stress Tank{/item}. Check AQOS to see which species you haven't covered yet.
 
 :: requestHelpStressEatRates
 @trigger    RequestPartnerHelp
 @when		JobTaskTop(measureEatRates)
 @cutscene
-{@kevin}	Get the rate at which each creature at {h}Site S{/h} eats its prey using the {item}Measurement Tank{/item}.
+{@guide}	Get the rate at which each creature at {h}Site S{/h} eats its prey using the {item}Measurement Tank{/item}.
             By examining your {m}Visual Model{/m} you can check the blue eat lines for any rules {h}missing rates{/h}.
 
 :: requestHelpStressReproduceRates
 @trigger    RequestPartnerHelp
 @when		JobTaskTop(measureStressReproduceRates)
 @cutscene
-{@kevin}	Use the measurement tank to get each Site S species' rate of reproduction.  Check AQOS to see which species you haven't covered yet.
+{@guide}	Use the measurement tank to get each Site S species' rate of reproduction.  Check AQOS to see which species you haven't covered yet.
 
 :: requestHelpObtainChemistry
 @trigger    RequestPartnerHelp
 @when		JobTaskTop(obtainChemistry)
 @cutscene
-{@kevin}	Get the amount each species at Site S affects the water around it using the Measurement Tank.
+{@guide}	Get the amount each species at Site S affects the water around it using the Measurement Tank.
 
 :: requestHelpPredictModel
 @trigger    RequestPartnerHelp
 @when		JobTaskTop(predictModel)
 @cutscene
-{@kevin}	Start making a model of Site S using the Modeling tool, and take it as far as you can.
+{@guide}	Start making a model of Site S using the Modeling tool, and take it as far as you can.
 
 :: requestHelpArgueIncentive
 @trigger    RequestPartnerHelp
 @when		JobTaskTop(argueIncentive)
 @cutscene
-{@kevin}	It's time to go to the comms room and show off the model you created.
+{@guide}	It's time to go to the comms room and show off the model you created.

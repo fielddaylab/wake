@@ -4,7 +4,7 @@
 @trigger    JobStarted
 @cutscene
 
-{@kevin}	You'll need to use the {nameof MeasurementTank} to figure out how much Urchins eat.
+{@guide}	You'll need to use the {nameof MeasurementTank} to figure out how much Urchins eat.
 			It's in the Experiment Room.
 
 :: measurementTankSelect
@@ -12,14 +12,14 @@
 @when		tankType == "Measurement"
 @once 
 @cutscene
-{@kevin}	We know the Urchins behave normally in the Kelp Forest.
+{@guide}	We know the Urchins behave normally in the Kelp Forest.
 			
 :: measurementChooseKelp
 @trigger	ExperimentScreenViewed
 @when		screenId == "measurement.organisms"
 @once 
 @cutscene
-{@kevin}	Pick {nameof Urchin} and something we know the {nameof Urchin} eats.
+{@guide}	Pick {nameof Urchin} and something we know the {nameof Urchin} eats.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -28,21 +28,21 @@
 @when 		JobTaskActive(urchinEatBull)
 @boostScore -5
 @cutscene
-{@kevin}    Using the Measurement Tank, measure how quickly Urchins eat Bull Kelp.
+{@guide}    Using the Measurement Tank, measure how quickly Urchins eat Bull Kelp.
 
 :: catchUrchinEatKelp
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(urchinEatKelp)
 @boostScore -5
 @cutscene
-{@kevin}    Using the Measurement Tank, measure how quickly Urchins eat Giant Kelp.
+{@guide}    Using the Measurement Tank, measure how quickly Urchins eat Giant Kelp.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@kevin}    Talk to {nameof drKelp} in the Office.
+{@guide}    Talk to {nameof drKelp} in the Office.
 
 // ARGUMENTATION
 :: argue.intro
@@ -121,4 +121,4 @@ $call CompleteJob()
 @trigger	JobCompleted
 @cutscene
 {@drKelp}	Thanks for all your help! 
-{@kevin}	$10. Excellent. One better than $9. Please choose another job for further remuneration.
+{@guide}	$10. Excellent. One better than $9. Please choose another job for further remuneration.

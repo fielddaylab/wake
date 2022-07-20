@@ -4,6 +4,8 @@ namespace Aqua.Shop
 {
     static public class ShopConsts
     {
+        static public readonly StringHash32 Trigger_AttemptBuy = "ShopAttemptBuy";
+        
         static public readonly StringHash32 Event_InsufficientFunds = "shop:insufficient-funds";
         static public readonly StringHash32 Event_TalkToShopkeep = "shop:talk-to-shopkeep";
     }

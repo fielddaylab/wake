@@ -17,27 +17,12 @@ namespace Aqua.Character {
             GoToPreviousScene
         }
 
-        [LabeledEnum(false)]
-        public enum LockMode {
-            [Order(0)]
-            DisableObject,
-
-            [Order(1)]
-            DisableInteract,
-            
-            [Order(3)]
-            AllowInteract,
-            
-            [Order(2)]
-            DisableContextPopup
-        }
-
         #region Inspector
 
         [Header("Basic")]
         [SerializeField, Required] private Collider2D m_Collider = null;
         [SerializeField, ItemId(InvItemCategory.Upgrade)] private StringHash32[] m_RequiredUpgrades = null;
-        [SerializeField, AutoEnum] private LockMode m_LockMode = LockMode.DisableInteract;
+        [SerializeField, AutoEnum] private ScriptInteractLockMode m_LockMode = ScriptInteractLockMode.DisableInteract;
 
         [Header("Behavior")]
         [SerializeField] private InteractionMode m_Mode = InteractionMode.GoToMap;
@@ -48,20 +33,22 @@ namespace Aqua.Character {
         [SerializeField] private bool m_AutoExecute = false;
 
         [Header("Display")]
-        [SerializeField] private Sprite m_IconOverride = null;
         [SerializeField] private TextId m_LabelOverride = null;
-        [SerializeField] private Transform m_PinLocationOverride = null;
+        [SerializeField] private TextId m_ActionLabelOverride = null;
         [SerializeField] private TextId m_LockMessageOverride = null;
+
+        [Header("Pin")]
+        [SerializeField] private Transform m_PinLocationOverride = null;
         [SerializeField] private bool m_PinToPlayer = false;
         [SerializeField] private TransformOffset m_LocationOffset = default;
 
         #endregion // Inspector
 
-        [NonSerialized] private Routine m_Routine;
+        private Routine m_Routine;
         [NonSerialized] private PlayerBody m_PlayerInside;
         [NonSerialized] private bool m_Locked;
         [NonSerialized] private bool m_LockOverride;
-        [NonSerialized] private bool m_CancelQueued;
+        private ScriptInteractConfig m_InspectConfig;
 
         public Predicate<SceneInteractable> CheckInteractable;
         public ExecuteDelegate OnExecute;
@@ -74,7 +61,7 @@ namespace Aqua.Character {
                 return m_TargetEntrance;
             return MapDB.LookupCurrentMap();
         }
-        public bool CanInteract() { return !Locked() || m_LockMode == LockMode.AllowInteract; }
+        public bool CanInteract() { return !Locked() || m_LockMode == ScriptInteractLockMode.AllowInteract; }
         public bool Locked() { return m_LockOverride || m_Locked; }
 
         public void OverrideTargetMap(StringHash32 newTarget, StringHash32 newEntrance = default) {
@@ -86,15 +73,15 @@ namespace Aqua.Character {
             m_AutoExecute = newAuto;
         }
 
-        public Sprite Icon(Sprite defaultIcon) {
-            return m_IconOverride != null ? m_IconOverride : defaultIcon;
-        }
-
         public TextId Label(TextId defaultLabel) {
             return !m_LabelOverride.IsEmpty ? m_LabelOverride : defaultLabel;
         }
 
-        public TextId LockedLabel(TextId defaultLabel) {
+        public TextId ActionLabel(TextId defaultLabel) {
+            return !m_ActionLabelOverride.IsEmpty ? m_ActionLabelOverride : defaultLabel;
+        }
+
+        public TextId LockedActionLabel(TextId defaultLabel) {
             return !m_LockMessageOverride.IsEmpty ? m_LockMessageOverride : defaultLabel;
         }
 
@@ -109,6 +96,10 @@ namespace Aqua.Character {
                     spawn.OverrideEntrance(m_TargetMap);
                 }
             }
+
+            m_InspectConfig.Action = (ScriptInteractAction) m_Mode;
+            m_InspectConfig.OnLocked = (p, t) => OnLocked?.Invoke(this, m_PlayerInside, t);
+            m_InspectConfig.OnPerform = (p, t) => OnExecute?.Invoke(this, m_PlayerInside, t);
         }
 
         private void OnEnable() {
@@ -139,7 +130,7 @@ namespace Aqua.Character {
                 return;
             }
 
-            if (!Locked() || m_LockMode != LockMode.DisableContextPopup) {
+            if (!Locked() || m_LockMode != ScriptInteractLockMode.DisableContextPopup) {
                 ContextButtonDisplay.Display(this);
             }
         }
@@ -156,63 +147,23 @@ namespace Aqua.Character {
                 return;
             }
 
-            if (Locked() && m_LockMode != LockMode.AllowInteract) {
+            if (Locked() && m_LockMode != ScriptInteractLockMode.AllowInteract) {
                 return;
             }
 
-            m_CancelQueued = false;
-            m_Routine = Routine.Start(this, InteractRoutine());
-            m_Routine.Tick();
-        }
-
-        private IEnumerator InteractRoutine() {
-            ScriptThreadHandle thread = ScriptObject.Interact(Parent, Locked(), m_TargetMap);
-
-            if (Locked()) {
-                ContextButtonDisplay.Locked(this);
-                IEnumerator locked = OnLocked?.Invoke(this, m_PlayerInside, thread);
-                if (locked != null)
-                    yield return null;
-                
-                if (thread.IsRunning())
-                    yield return thread.Wait();
-                yield break;
+            ScriptInteractParams interact;
+            m_InspectConfig.LoadFlags = m_MapLoadFlags;
+            if (m_StopMusic) {
+                m_InspectConfig.LoadFlags |= SceneLoadFlags.StopMusic;
             }
+            m_InspectConfig.TargetId = TargetMapId();
+            m_InspectConfig.TargetEntranceId = TargetMapEntrance();
+            interact.Config = m_InspectConfig;
+            interact.Available = !Locked();
+            interact.Source = this;
+            interact.Invoker = m_PlayerInside;
 
-            IEnumerator execute = OnExecute?.Invoke(this, m_PlayerInside, thread);
-            if (execute != null)
-                yield return execute;
-            if (thread.IsRunning())
-                yield return thread.Wait();
-
-            if (m_CancelQueued) {
-                m_CancelQueued = false;
-                yield break;
-            }
-
-            switch(m_Mode) {
-                case InteractionMode.Inspect: {
-                    thread = ScriptObject.Inspect(Parent);
-                    yield return thread.Wait();
-                    break;
-                }
-
-                case InteractionMode.GoToPreviousScene: {
-                    if (m_StopMusic) {
-                        Services.Audio.StopMusic();
-                    }
-                    StateUtil.LoadPreviousSceneWithWipe(TargetMapEntrance(), null, m_MapLoadFlags);
-                    yield break;
-                }
-
-                case InteractionMode.GoToMap: {
-                    if (m_StopMusic) {
-                        Services.Audio.StopMusic();
-                    }
-                    StateUtil.LoadMapWithWipe(m_TargetMap, TargetMapEntrance(), null, m_MapLoadFlags);
-                    yield break;
-                }
-            }
+            m_Routine = Script.Interact(interact);
         }
 
         private IEnumerator WaitToActivate() {
@@ -230,11 +181,6 @@ namespace Aqua.Character {
                     yield return null;
                 }
             }
-        }
-    
-        [LeafMember("CancelInteract")]
-        public void Cancel() {
-            m_CancelQueued = true;
         }
 
         [LeafMember("Lock")]
@@ -256,11 +202,11 @@ namespace Aqua.Character {
         private void UpdateLocked() {
             m_Locked = !CheckAvailable();
             if (Locked()) {
-                if (m_LockMode == LockMode.DisableObject) {
+                if (m_LockMode == ScriptInteractLockMode.DisableObject) {
                     gameObject.SetActive(false);
                 }
             } else {
-                if (m_LockMode == LockMode.DisableObject) {
+                if (m_LockMode == ScriptInteractLockMode.DisableObject) {
                     gameObject.SetActive(true);
                 }
             }

@@ -4,29 +4,29 @@
 
 :: noJob.intro
 @trigger    RequestPartnerHelp
-@when       !player:currentJob, !kevin:knowsJobs, !AnyJobsCompleted()
+@when       !player:currentJob, !guide:knowsJobs, !AnyJobsCompleted()
 @boostScore 10000
 @once
 @cutscene
 {@player}   So... what are we supposed to be doing? 
-{@kevin}    In case you forgot, we need to make some money. 
-$if kevin:seenShipHelm
+{@guide #happy}    In case you forgot, we need to make some money. 
+$if guide:seenShipHelm
             You should check the {map-name}Job Board{/map-name}.
 $else
             Is there anywhere we can see available jobs?
-    $if scene:name == "Ship", global:nav.shipRoom == "helm"
+    $if scene:name == "Helm", global:nav.shipRoom == "helm"
             {@player}   Oh, yeah, the {map-name}Job Board{/map-name} is right in front of us!
     $else
             {@player}   Oh yeah, we have a {map-name}Job Board{/map-name} in the helm!
-    $endif // scene:name == "Ship", global:nav.shipRoom == "helm"
-$endif // kevin:seenShipHelm
-$set    kevin:knowsJobs = true
+    $endif // scene:name == "Helm", global:nav.shipRoom == "helm"
+$endif // guide:seenShipHelm
+$set    guide:knowsJobs = true
 
 :: noJob.available
 @trigger    RequestPartnerHelp
 @when   !player:currentJob, !AnyJobsAvailable($player:currentStation)
 @cutscene
-{@kevin}    Hmmmm.|.|.| we might need to hunt around for some new jobs.
+{@guide}    Hmmmm.|.|.| we might need to hunt around for some new jobs.
             We could head back to the {map-name}Helm{/map-name} to explore new stations on our {h}Map{/h}, but we might need to upgrade our sub at the {map-name}Shop{/map-name} first.
             Or we could do some more exploring at the dive sites. |The choice is yours!
 
@@ -37,15 +37,15 @@ $set    kevin:knowsJobs = true
 @repeat     1
 @cutscene
 {@player}   So.... What should we do now?
-{@kevin}    We need to get back to the {map-name}helm{/map-name} and take a job!
+{@guide}    We need to get back to the {map-name}helm{/map-name} and take a job!
 
 :: noJob.atHelm
 @trigger    RequestPartnerHelp
-@when       !player:currentJob, AnyJobsAvailable($player:currentStation), scene:name == "Ship", global:nav.shipRoom == "helm"
+@when       !player:currentJob, AnyJobsAvailable($player:currentStation), scene:name == "Helm", global:nav.shipRoom == "helm"
 @repeat     1
 @cutscene
-{@player}   Hey Kevin... any thoughts on what we should do next? 
-{@kevin}    We should check out the {map-name}Job Board{/map-name}.
+{@player}   Hey V1ctor... any thoughts on what we should do next? 
+{@guide}    We should check out the {map-name}Job Board{/map-name}.
 
 :: noJob.atJobBoard.someAvailable
 @trigger    RequestPartnerHelp
@@ -53,7 +53,7 @@ $set    kevin:knowsJobs = true
 @repeat     1
 @cutscene
 {@player}   {random Um|Uh}... what was I supposed to do?  
-{@kevin}    Select the job on the left, then accept it on the right!
+{@guide}    Select the job on the left, then accept it on the right!
 
 :: noJob.atJobBoard.someInProgress
 @trigger    RequestPartnerHelp
@@ -61,7 +61,7 @@ $set    kevin:knowsJobs = true
 @repeat     1
 @cutscene
 {@player}   I'm stuck. Anything I'm missing?
-{@kevin}    It looks like there are some jobs you already started.
+{@guide}    It looks like there are some jobs you already started.
             Let's pick one of those back up!
 
 :: noJob.default.1
@@ -69,23 +69,23 @@ $set    kevin:knowsJobs = true
 @when       !player:currentJob
 @repeat     1
 @cutscene
-{@player}   Kevin, any help?
-{@kevin}    I'd recommend we see if there are any jobs available.
+{@player}   V1ctor, any help?
+{@guide}    I'd recommend we see if there are any jobs available.
 
 :: noJob.default.2
 @trigger    RequestPartnerHelp
 @when       !player:currentJob
 @repeat     1
 @cutscene
-{@player}   Kevin, any words of wisdom? I'm a bit stuck.
-{@kevin}    I wonder if there are any jobs available for us to take...
+{@player}   V1ctor, any words of wisdom? I'm a bit stuck.
+{@guide}    I wonder if there are any jobs available for us to take...
 
 :: undefined.1
 @trigger        RequestPartnerHelp
 @cutscene
 @boostScore -500
-{@player}       {random Uh|Hey}, Kevin? Any idea what I should be doing?
-{@kevin #confused}
+{@player}       {random Uh|Hey}, V1ctor? Any idea what I should be doing?
+{@guide #confused}
         Oh, well, uh... I don't have anything specific.
         {#} But I'd look back at what the job-giver had to tell us.
         And maybe check your {item-name}AQOS Tablet{/item-name} too?

@@ -151,7 +151,7 @@ namespace ProtoAqua.Observation
             }
         }
 
-        public void UpdateActive() {
+        public void UpdateActive(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
         }
 
         public bool HasTarget()

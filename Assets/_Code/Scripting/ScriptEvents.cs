@@ -33,6 +33,7 @@ namespace Aqua.Scripting
         {
             static public readonly StringHash32 Auto = "auto-continue";
             static public readonly StringHash32 Clear = "clear";
+            static public readonly StringHash32 DoNotClose = "do-not-close";
             static public readonly StringHash32 InputContinue = "input-continue";
             static public readonly StringHash32 SetTypeSFX = "set-type-sfx";
             static public readonly StringHash32 SetVoiceType = "set-voice-type";

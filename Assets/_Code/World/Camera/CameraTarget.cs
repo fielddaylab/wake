@@ -64,6 +64,14 @@ namespace Aqua.Cameras
             }
         }
 
+        [ContextMenu("Look from Offset")]
+        private void Editor_LookFromOffset()
+        {
+            UnityEditor.Undo.RecordObject(this, "Setting look from offset");
+            Look = -Offset.normalized;
+            UnityEditor.EditorUtility.SetDirty(this);
+        }
+
         #endif // UNITY_EDITOR
     }
 }

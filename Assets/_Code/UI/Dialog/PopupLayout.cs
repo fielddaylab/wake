@@ -30,14 +30,17 @@ namespace Aqua {
         [Header("Contents")]
         [SerializeField] private LayoutGroup m_Layout = null;
         [SerializeField] private LocText m_HeaderText = null;
+        [SerializeField] private LocText m_SubheaderText = null;
         [SerializeField] private StreamedImageSetDisplay m_ImageDisplay = null;
+        [SerializeField] private Graphic m_ImageBG = null;
         [SerializeField] private LocText m_ContentsText = null;
         [SerializeField] private FactPools m_FactPools = null;
         [SerializeField] private RectTransformPool m_KnownFactBadgePool = null;
         [SerializeField] private VerticalLayoutGroup m_VerticalFactLayout = null;
         [SerializeField] private GridLayoutGroup m_GridFactLayout = null;
         [SerializeField] private int m_CustomModuleSiblingIndex = 0;
-        [SerializeField] private GameObject m_DividerGroup = null;
+        [SerializeField] private RectTransform m_ExtraBackground = null;
+        [SerializeField] private LayoutElement m_DividerGroup = null;
         [SerializeField] private ButtonConfig[] m_Buttons = null;
         [SerializeField] private Button m_CloseButton = null;
 
@@ -46,6 +49,7 @@ namespace Aqua {
         [NonSerialized] private BaseInputLayer m_Input;
 
         [NonSerialized] private Color m_DefaultHeaderColor;
+        [NonSerialized] private Color m_DefaultSubheaderColor;
         [NonSerialized] private Color m_DefaultTextColor;
 
         [NonSerialized] private StringHash32 m_SelectedOption;
@@ -70,8 +74,15 @@ namespace Aqua {
 
             m_CloseButton.onClick.AddListener(OnCloseClicked);
 
-            m_DefaultHeaderColor = m_HeaderText.Graphic.color;
-            m_DefaultTextColor = m_ContentsText.Graphic.color;
+            if (m_HeaderText != null) {
+                m_DefaultHeaderColor = m_HeaderText.Graphic.color;
+            }
+            if (m_SubheaderText != null) {
+                m_DefaultSubheaderColor = m_SubheaderText.Graphic.color;
+            }
+            if (m_ContentsText != null) {
+                m_DefaultTextColor = m_ContentsText.Graphic.color;
+            }
 
             m_Input = BaseInputLayer.Find(this);
         }
@@ -114,7 +125,7 @@ namespace Aqua {
             SetCustomModule(inContent.CustomModule);
         }
 
-        public void ConfigureText(PopupContent inContent, PopupFlags inPopupFlags) {
+        public void ConfigureText(PopupContent inContent, PopupFlags inFlags) {
             if (m_HeaderText) {
                 if (!string.IsNullOrEmpty(inContent.Header)) {
                     m_HeaderText.SetTextFromString(inContent.Header);
@@ -123,6 +134,17 @@ namespace Aqua {
                 } else {
                     m_HeaderText.gameObject.SetActive(false);
                     m_HeaderText.SetTextFromString(string.Empty);
+                }
+            }
+
+            if (m_SubheaderText) {
+                if (!string.IsNullOrEmpty(inContent.Subheader)) {
+                    m_SubheaderText.SetTextFromString(inContent.Subheader);
+                    m_SubheaderText.Graphic.color = inContent.SubheaderColorOverride.GetValueOrDefault(m_DefaultSubheaderColor);
+                    m_SubheaderText.gameObject.SetActive(true);
+                } else {
+                    m_SubheaderText.gameObject.SetActive(false);
+                    m_SubheaderText.SetTextFromString(string.Empty);
                 }
             }
 
@@ -142,12 +164,40 @@ namespace Aqua {
                     m_ImageDisplay.gameObject.SetActive(false);
                 } else {
                     m_ImageDisplay.gameObject.SetActive(true);
-                    if ((inPopupFlags & PopupFlags.TallImage) != 0) {
+                    if ((inFlags & PopupFlags.TallImage) != 0) {
                         m_ImageDisplay.Layout.preferredHeight = 260;
                     } else {
                         m_ImageDisplay.Layout.preferredHeight = 160;
                     }
                     m_ImageDisplay.Display(inContent.Image);
+                    if (m_ImageBG) {
+                        m_ImageBG.enabled = (inFlags & PopupFlags.ImageBG) != 0;
+                    }
+                }
+            }
+
+            if (m_ExtraBackground) {
+                if ((inFlags & PopupFlags.ImageTextBG) != 0) {
+                    float top = 20;
+                    if (m_HeaderText && m_HeaderText.gameObject.activeSelf) {
+                        top += m_HeaderText.Graphic.preferredHeight;
+                    }
+                    if (m_ImageDisplay && m_ImageDisplay.gameObject.activeSelf) {
+                        top += m_ImageDisplay.Layout.preferredHeight * 0.6f;
+                    }
+                    float bottom = 20;
+                    if (inContent.Options.Length > 0) {
+                        bottom += 72;
+                    }
+                    Vector2 offsetMin = m_ExtraBackground.offsetMin,
+                        offsetMax = m_ExtraBackground.offsetMax;
+                    offsetMin.y = bottom;
+                    offsetMax.y = -top;
+                    m_ExtraBackground.offsetMin = offsetMin;
+                    m_ExtraBackground.offsetMax = offsetMax;
+                    m_ExtraBackground.gameObject.SetActive(true);
+                } else {
+                    m_ExtraBackground.gameObject.SetActive(false);
                 }
             }
         }
@@ -175,7 +225,8 @@ namespace Aqua {
             }
 
             if (m_DividerGroup) {
-                m_DividerGroup.SetActive(m_OptionCount > 0);
+                m_DividerGroup.gameObject.SetActive(m_OptionCount > 0);
+                m_DividerGroup.preferredHeight = (ioPopupFlags & PopupFlags.ImageTextBG) != 0 ? 16 : 4;
             }
             if (m_CloseButton) {
                 m_CloseButton.gameObject.SetActive((ioPopupFlags & PopupFlags.ShowCloseButton) != 0);
@@ -363,8 +414,10 @@ namespace Aqua {
 
     public struct PopupContent {
         public string Header;
+        public string Subheader;
         public string Text;
         public Color? HeaderColorOverride;
+        public Color? SubheaderColorOverride;
         public Color? TextColorOverride;
         public StreamedImageSet Image;
         public RectTransform CustomModule;
@@ -396,6 +449,8 @@ namespace Aqua {
     [Flags]
     public enum PopupFlags {
         ShowCloseButton = 0x01,
-        TallImage = 0x02
+        TallImage = 0x02,
+        ImageTextBG = 0x04,
+        ImageBG = 0x08
     }
 }

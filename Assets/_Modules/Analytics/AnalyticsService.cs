@@ -195,7 +195,7 @@ namespace Aqua
                 .Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, HandleBestiaryUpdated, this)
                 .Register<StringHash32>(GameEvents.JobCompleted, LogCompleteJob, this)
                 .Register<StringHash32>(GameEvents.JobTaskCompleted, LogCompleteTask, this)
-                .Register<string>(GameEvents.RoomChanged, LogRoomChanged, this)
+                .Register<string>(GameEvents.ViewChanged, LogRoomChanged, this)
                 .Register<string>(GameEvents.ScriptFired, LogScriptFired, this)
                 .Register<TankType>(ExperimentEvents.ExperimentBegin, LogBeginExperiment, this)
                 .Register<string>(GameEvents.BeginDive, LogBeginDive, this)
@@ -263,7 +263,7 @@ namespace Aqua
 
         private void GuideHandler(ScriptThreadHandle inThread)
         {
-            if (inThread.TargetId() != GameConsts.Target_Kevin)
+            if (inThread.TargetId() != GameConsts.Target_V1ctor)
             {
                 return;
             }

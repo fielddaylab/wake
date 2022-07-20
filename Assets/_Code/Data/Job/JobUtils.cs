@@ -213,6 +213,57 @@ namespace Aqua {
 
             return status;
         }
+
+        /// <summary>
+        /// Returns whether unlocking a given upgrade would open up new jobs at the given station
+        /// </summary>
+        public static bool UpgradeUnlocksJobAtStation(StringHash32 upgradeId, StringHash32 stationId) {
+            JobDB db = Services.Assets.Jobs;
+
+            var jobList = db.JobsForStation(stationId);
+
+            PlayerJob status;
+            SaveData saveData = Save.Current;
+
+            foreach (var job in jobList) {
+                status = GetJobStatus(job, saveData, true);
+
+                int exp = (int)saveData.Inventory.ItemCount(ItemIds.Exp);
+
+                // if not required experience, not visible
+                int requiredExp = job.RequiredExp();
+                if (exp < requiredExp) {
+                    continue;
+                }
+
+                // if haven't completed the required jobs, not visible
+                bool completedRequired = true;
+                foreach (var req in job.RequiredJobs()) {
+                    if (!saveData.Jobs.IsComplete(req.Id())) {
+                        completedRequired = false;
+                        break;
+                    }
+                }
+                if (!completedRequired) {
+                    continue;
+                }
+
+                // if special conditions aren't met, not visible
+                StringSlice conditions = job.RequiredConditions();
+                if (!conditions.IsEmpty && !Services.Data.CheckConditions(conditions)) {
+                    continue;
+                }
+
+                // if haven't gotten required upgrades, locked
+                if (job.RequiredUpgrades().Contains(upgradeId) && status.Status != JobStatusFlags.Visible) {
+                    // a job which would be unlocked and is visible was found
+                    return true;
+                }
+            }
+
+            // no job in this station would be unlocked by the upgrade
+            return false;
+        }
     }
 
     public struct JobProgressSummary {

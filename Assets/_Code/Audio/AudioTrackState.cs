@@ -61,7 +61,6 @@ namespace AquaAudio
 
             state.LocalProperties = AudioPropertyBlock.Default;
             state.LastKnownTime = 0;
-            state.Delay = 0;
             state.State = StateId.Idle;
             state.Flags = 0;
             state.StopCounter = 0;

@@ -6,9 +6,9 @@
 @trigger    JobStarted
 @cutscene
 $if HasEntity(Methane),HasEntity(Methanogen)
-    {@kevin} I think we already have everything we need. You might want to look over AQOS again before we make any claims to {nameof profHarper}.
+    {@guide} I think we already have everything we need. You might want to look over AQOS again before we make any claims to {nameof profHarper}.
 $else
-    {@kevin} Let's just go down to {h}Site N{/h} and start scanning stuff, I guess.
+    {@guide} Let's just go down to {h}Site N{/h} and start scanning stuff, I guess.
 $endif
 
 :: atSiteN
@@ -16,64 +16,46 @@ $endif
 @when    scene:name == "RS-3N", JobTaskActive(methaneScan)
 @once
 @cutscene
-{@kevin} There must be something here that would indicate how this disaster happened. When you think you've found it, go talk to {nameof profHarper}.
+{@guide} There must be something here that would indicate how this disaster happened. When you think you've found it, go talk to {nameof profHarper}.
 
 :: methaneScanned
-@trigger JobTaskUpdated
+@trigger JobTaskCompleted
 @when    JobTaskActive(reportBack)
 @once
 @cutscene
-{@kevin}    Looks like there was some different types of methane down here.
-{@kevin}    Let's not stay here longer than we need to, that stuff is explosive!
+{@guide}    Looks like there was some different types of methane down here.
+{@guide}    Let's not stay here longer than we need to, that stuff is explosive!
 
-<<<<<<< HEAD
-=======
-:: methaneTagCompleted
-@trigger JobTaskUpdated
-@when    JobTaskActive(methaneTag)
-@once
-@cutscene
-{@kevin}    [TEMP] methaneTag
-
->>>>>>> e35bf0c9f9ff792112a1524940d5d2a375b93de3
 // CATCH-ALL GUIDE TEXT
 :: catchGoToSiteN
 @trigger    RequestPartnerHelp
 @when 		scene:name != "RS-3N", JobTaskActive(methaneScan)
 @boostScore -5
 @cutscene
-{@kevin}    Dive at {h}Site N{/h} and scan anything you think might have caused the wreckage.
-<<<<<<< HEAD
-
-:: catchAtSiteN
-=======
+{@guide}    Dive at {h}Site N{/h} and scan anything you think might have caused the wreckage.
             We can get there by diving deep down into {h}Site O{/h}
             Hope you aren't scared of the dark!
 
 :: catchAtSiteNScan
->>>>>>> e35bf0c9f9ff792112a1524940d5d2a375b93de3
 @trigger    RequestPartnerHelp
 @when 		scene:name == "RS-3N", JobTaskActive(methaneScan)
 @boostScore -5
 @cutscene
-{@kevin}    Scan anything you think might have ruined the communications equipment.
+{@guide}    Scan anything you think might have ruined the communications equipment.
 
-<<<<<<< HEAD
-=======
 :: catchAtSiteNTag
 @trigger    RequestPartnerHelp
 @when 		scene:name == "RS-3N", JobTaskActive(methaneTag)
 @boostScore -5
 @cutscene
-{@kevin}    Tag the types of methane you found to get their population information.
+{@guide}    Tag the types of methane you found to get their population information.
 
->>>>>>> e35bf0c9f9ff792112a1524940d5d2a375b93de3
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		
 @boostScore -10
 @cutscene
-{@kevin}    You're ready to talk it through with {nameof profHarper}, though you might want to review your AQOS first.
+{@guide}    You're ready to talk it through with {nameof profHarper}, though you might want to review your AQOS first.
 
 
 // ARGUMENTATION
@@ -81,19 +63,9 @@ $endif
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(bayouBoomArgue)
 @cutscene
-<<<<<<< HEAD
-<<<<<<< HEAD
-$call ArgueLoad(bayouBoomArgue)
-=======
 $goto .argue.firstQuestion
 
 ::  argue.firstQuestion
->>>>>>> cfbaa6fc8 (Bayou-boom-cause implemented)
-=======
-$goto .argue.firstQuestion
-
-::  argue.firstQuestion
->>>>>>> e35bf0c9f9ff792112a1524940d5d2a375b93de3
 {@profHarper} What caused the communication tower to collapse?
 $if !ArgueIsComplete(bayouBoomArgueFishCriminals)
     $choice .argue.methaneHere; There's methane here.
@@ -107,27 +79,6 @@ $else
 $endif
 
 :: argue.methaneHere
-<<<<<<< HEAD
-<<<<<<< HEAD
-{@profHarper} Really? What methane did you find?
-=======
-$call ArgueLoad(bayouBoomArgueMethane)
-{@profHarper} Really? What methane did you find at {h}Site N{/h}?
->>>>>>> cfbaa6fc8 (Bayou-boom-cause implemented)
-$goto .argue.chooseFacts
-
-:: argue.chooseFacts
-$call ArgueDisplayClaim()
-$if ArgueAllFactsCorrect()
-    $goto .argue.done
-$else
-    $choice #argueFactSet; Present facts from AQOS
-        $answer Methane, .argue.methane
-        $answer Methanogen, .argue.methanogen
-        $answer *, .argue.unrelated
-    $choice .argue.giveUp; Let me get back to you.
-$endif
-=======
 $call ArgueLoad(bayouBoomArgueMethane)
 {@profHarper} Really? What methane did you find at {h}Site N{/h}?
 $goto .argue.chooseFacts
@@ -143,17 +94,12 @@ $choice #argueFact; Present facts from AQOS
     $answer *, .argue.unrelated
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
->>>>>>> e35bf0c9f9ff792112a1524940d5d2a375b93de3
 
 :: argue.fishersFault
 $call ArgueLoad(bayouBoomArgueFishCriminals)
 $if ArgueSetClaim(Claim, jobs.bayou-boom-cause.argue.claimLabel2) 
-<<<<<<< HEAD
-    $call ArgueFactSlot(Methanogen.Temperature.Stressed) 
-=======
     $call ArgueFactSlot(SeaOtter.Eats.Urchin) 
 $endif
->>>>>>> e35bf0c9f9ff792112a1524940d5d2a375b93de3
 $call ArgueDisplayClaim()
 {@profHarper} What evidence do you have of foul play?
 $choice #argueFactSet; Present facts from AQOS
@@ -165,41 +111,10 @@ $choose branch
 :: argue.unrelatedFishers
 {@profHarper} I don't think this actually indicates human involvement.
 $call ArgueRejectIncorrect()
-<<<<<<< HEAD
-<<<<<<< HEAD
-{@profHarper} What caused the communication tower to collapse?
-    $choice .argue.methaneHere; There's methane here.
-    $choice .argue.fishersFault; Fishers blew it up.
-    $choose branch
-
-:: argue.methane
-$if ArgueIsFactSubmitted(Methanogen)
-    $goto .argue.done
-$else
-    {@profHarper}   So there was {nameof Methane} down there, anything else?
-    $goto argue.chooseFacts
-$endif
-
-:: argue.methanogen
-$if ArgueIsFactSubmitted(Methane)
-    $goto .argue.done
-$else
-    {@profHarper}   So there was {nameof Methanogen} down there, anything else?
-    $goto argue.chooseFacts
-$endif
-=======
-$call ArgueComplete()
-$goto .argue.firstQuestion
->>>>>>> cfbaa6fc8 (Bayou-boom-cause implemented)
-
-:: argue.unrelated
-$call ArgueDisplayClaim()
-=======
 $call ArgueComplete()
 $goto .argue.firstQuestion
 
 :: argue.unrelated
->>>>>>> e35bf0c9f9ff792112a1524940d5d2a375b93de3
 {@profHarper}   That doesn't look like a type of Methane to me...
 $call ArgueRejectIncorrect()
 $goto .argue.chooseFacts
@@ -211,16 +126,7 @@ $call ArgueUnload()
 
 // END
 :: argue.done
-<<<<<<< HEAD
-<<<<<<< HEAD
-$call ArgueComplete(bayouBoomArgue)
-=======
 $call ArgueLoad(bayouBoomArgue)
 $call ArgueComplete()
->>>>>>> cfbaa6fc8 (Bayou-boom-cause implemented)
-=======
-$call ArgueLoad(bayouBoomArgue)
-$call ArgueComplete()
->>>>>>> e35bf0c9f9ff792112a1524940d5d2a375b93de3
 {@profHarper}   Oh, I hear Methane is very explosive. It must have heated enough to ignite and explode. Good work!
 $call CompleteJob()
