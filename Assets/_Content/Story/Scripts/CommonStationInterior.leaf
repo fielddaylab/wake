@@ -42,11 +42,11 @@ $call InteriorOpenJobBoard()
 // Shop
 :: shop.base
 @trigger    InspectObject
-@when       objectId == "Shop" //, JobStartedOrComplete(kelp-shop-welcome)
+@when       objectId == "Shop", world:shop.unlocked
 @cutscene
-{@merchant} How's it going out there kiddo? Need any upgrades from dear ol' dad?
+{@merchant} How's it going out there kiddo? Need any upgrades from your dear ol' uncle?
 $choice .shop.board; Sure do!
-$choice .shop.cancel; Ugh, leave me alone dad.
+$choice .shop.cancel; Ugh, leave me alone.
 
 :: shop.board
 $call InteriorOpenShopBoard()

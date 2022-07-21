@@ -600,7 +600,10 @@ namespace Aqua
             ScriptThread thread;
             if (m_ThreadTargetMap.TryGetValue(target, out thread))
             {
-                if (thread.Priority() >= inNode.Priority())
+                bool higherPriority = (inNode.Flags() & ScriptNodeFlags.Interrupt) != 0
+                    ? thread.Priority() > inNode.Priority()
+                    : thread.Priority() >= inNode.Priority();
+                if (higherPriority)
                 {
                     DebugService.Log(LogMask.Scripting,  "[ScriptingService] Could not trigger node '{0}' on target '{1}' - higher priority thread already running for given target",
                         inNode.Id(), target);

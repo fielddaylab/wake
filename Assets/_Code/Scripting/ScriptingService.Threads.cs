@@ -198,7 +198,7 @@ namespace Aqua
 
             if (!inThread.IsSkipping() && lineEvents.RichText.Length > 0)
             {
-                yield return inThread.Dialog?.CompleteLine();
+                yield return inThread.Dialog?.CompleteLine(inThread);
             }
 
             yield return Routine.Command.BreakAndResume;

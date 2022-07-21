@@ -239,6 +239,12 @@ namespace Aqua {
                         break;
                     }
 
+                case ScriptInteractAction.Talk: {
+                        thread = ScriptObject.Talk(inParams.Source.Object.Parent, inParams.Config.TargetId);
+                        yield return thread.Wait();
+                        break;
+                    }
+
                 case ScriptInteractAction.GoToPreviousScene: {
                         StateUtil.LoadPreviousSceneWithWipe(inParams.Config.TargetEntranceId, null, inParams.Config.LoadFlags);
                         break;

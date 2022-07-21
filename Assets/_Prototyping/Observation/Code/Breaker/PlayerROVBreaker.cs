@@ -105,12 +105,23 @@ namespace ProtoAqua.Observation {
             return false;
         }
 
+        public PlayerROVAnimationFlags AnimFlags() {
+            switch(m_Phase) {
+                case Phase.Bursting: {
+                    return PlayerROVAnimationFlags.DoNotTurn;
+                }
+
+                default: {
+                    return 0;
+                }
+            }
+        }
+
         public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
             return false;
         }
 
         public void UpdateActive(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
-            Log.Msg("[PlayerROVBreaker] Current phase: {0}; Alt Press/Hold: {1}/{2}", m_Phase, inInput.UseAltPress, inInput.UseAltHold);
             switch(m_Phase) {
                 case Phase.Ready: {
                     if (inInput.UseAltHold || m_UI.IsHeld()) {

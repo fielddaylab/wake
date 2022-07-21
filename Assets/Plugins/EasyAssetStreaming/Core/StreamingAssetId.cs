@@ -30,12 +30,26 @@ namespace EasyAssetStreaming {
             m_Type = type;
         }
 
+        private StreamingAssetId(string path, int hash, Streaming.AssetType type) {
+            m_Path = path;
+            m_Hash = hash;
+            m_Type = type;
+        }
+
         public bool IsEmpty {
             get { return m_Hash == 0; }
         }
 
-        internal Streaming.AssetType Type {
-            get { return m_Type; }
+        internal Streaming.AssetTypeId Type {
+            get { return m_Type.Id; }
+        }
+
+        internal Streaming.AssetSubTypeId SubType {
+            get { return m_Type.Sub; }
+        }
+
+        internal StreamingAssetId ReplaceType(Streaming.AssetType type) {
+            return new StreamingAssetId(m_Path, m_Hash, type);
         }
 
         public bool Equals(StreamingAssetId other) {

@@ -159,6 +159,10 @@ namespace ProtoAqua.Observation
             return m_TargetScannable != null;
         }
 
+        public PlayerROVAnimationFlags AnimFlags() {
+            return 0;
+        }
+
         public void GetTargetPosition(bool inbOnGamePlane, out Vector3? outWorld, out Vector3? outCursor) {
             outWorld = outCursor = null;
 
