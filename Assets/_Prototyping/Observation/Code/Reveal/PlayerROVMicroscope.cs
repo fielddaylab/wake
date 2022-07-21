@@ -93,6 +93,10 @@ namespace ProtoAqua.Observation {
             return false;
         }
 
+        public PlayerROVAnimationFlags AnimFlags() {
+            return 0;
+        }
+
         public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
             return false;
         }

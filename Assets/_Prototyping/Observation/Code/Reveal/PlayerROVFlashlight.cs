@@ -54,6 +54,10 @@ namespace ProtoAqua.Observation {
         public void UpdateActive(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
         }
 
+        public PlayerROVAnimationFlags AnimFlags() {
+            return 0;
+        }
+
         #endregion // ITool
 
         private void HandleEnter(Collider2D inCollider) {
