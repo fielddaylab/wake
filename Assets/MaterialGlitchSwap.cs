@@ -11,6 +11,8 @@ public class MaterialGlitchSwap : MonoBehaviour
     public float glitchMax = 0.8f;
     private Material startingMaterial;
     public bool glitching = false;
+    public GameObject glitchingObject;
+    public GameObject finalObject;
     private bool matSwapped = false;
 
 
@@ -38,6 +40,17 @@ public class MaterialGlitchSwap : MonoBehaviour
     {
         glitching = true;
     }
+
+    public void StopGlitching()
+    {
+        glitching = false;
+        if (glitchingObject && finalObject)
+        {
+            glitchingObject.SetActive(false);
+            finalObject.SetActive(true);
+        }
+    }
+
 
     IEnumerator MaterialGlitch()
     {
