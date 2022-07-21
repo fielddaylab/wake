@@ -94,8 +94,8 @@ $if ArgueIsComplete(competitionArgue1)
 $else
     $call ArgueLoad(competitionArgue1)
     $if ArgueSetClaim(Claim, jobs.arctic-salmon-competition.argue.claimLabelNoImpact)
-        $call ArgueFactSlot(Z_OpenOcean.PopulationHistory.Diatoms)
-        $call ArgueFactSlot(Z_OpenOcean.PopulationHistory.IceAlgae)
+        $call ArgueFactSlot(Z_FrostedSea.PopulationHistory.Diatoms)
+        $call ArgueFactSlot(Z_FrostedSea.PopulationHistory.IceAlgae)
     $endif
     $call ArgueDisplayClaim()
     {@profWhalen}   Intriguing. Are Salmon's food sources not affected by the Cod growth?
@@ -124,7 +124,7 @@ $goto .argue.modelQuery
 {@profWhalen}   Did your information on the Cod improve our prior model?
 $call ArgueLoad(competitionArgue2)
 $if ArgueSetClaim(Claim2, jobs.arctic-salmon-competition.argue.claimLabelImproved)
-    $call ArgueFactSlot(Z_OpenOcean.SalmonCompetition.Model.Sync)
+    $call ArgueFactSlot(Z_FrostedSea.SalmonCompetition.Model.Sync)
 $endif
 $call ArgueDisplayClaim()
 $branch .argue.chooseFactsModel
