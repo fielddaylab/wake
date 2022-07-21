@@ -35,7 +35,8 @@ namespace Aqua.Scripting {
         Inspect,
         GoToMap,
         GoToPreviousScene,
-        GoToView
+        GoToView,
+        Talk
     }
 
     [LabeledEnum(false)]

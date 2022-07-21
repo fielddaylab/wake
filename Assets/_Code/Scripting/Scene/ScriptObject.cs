@@ -166,6 +166,16 @@ namespace Aqua
             }
         }
 
+        static public ScriptThreadHandle Talk(ScriptObject inObject, StringHash32 inCharacterId)
+        {
+            Assert.NotNull(inObject);
+            using(var table = TempVarTable.Alloc())
+            {
+                table.Set("objectId", inObject.m_Id.Hash());
+                return Services.Script.TriggerResponse(GameTriggers.Talk, inCharacterId, inObject, table);
+            }
+        }
+
         static public ScriptThreadHandle Interact(ScriptObject inObject, bool inbLocked = false, StringHash32 inTarget = default)
         {
             Assert.NotNull(inObject);

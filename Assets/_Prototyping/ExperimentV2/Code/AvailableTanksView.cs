@@ -121,7 +121,7 @@ namespace ProtoAqua.ExperimentV2 {
                 Routine.Start(this, m_ExitSceneButtonGroup.Show(0.2f, true));
                 m_ExitTankButtonAnimation.Replace(this, m_ExitTankButtonGroup.Hide(0.2f, false));
 
-                Services.Script.TriggerResponse(ExperimentTriggers.ExperimentTankExited);
+                // Services.Script.TriggerResponse(ExperimentTriggers.ExperimentTankExited);
             }
 
             // Enter new tank

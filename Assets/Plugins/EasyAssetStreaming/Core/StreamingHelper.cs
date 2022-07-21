@@ -175,7 +175,7 @@ namespace EasyAssetStreaming {
         /// <summary>
         /// Calculates the size of a window into a given texture region.
         /// </summary>
-        static internal Vector2 GetTextureRegionSize(Texture2D texture, Rect uvRect) {
+        static internal Vector2 GetTextureRegionSize(Texture texture, Rect uvRect) {
             Vector2 size;
             size.x = texture.width * Math.Abs(uvRect.width);
             size.y = texture.height * Math.Abs(uvRect.height);
@@ -226,7 +226,7 @@ namespace EasyAssetStreaming {
             return sizeMode >= AutoSizeMode.FitToParent && sizeMode <= AutoSizeMode.FillParentWithClipping;
         }
 
-        static internal UpdatedResizeProperty AutoSize(AutoSizeMode sizeMode, Texture2D texture, Rect sourceUV, Vector2 localPosition, Vector2 pivot, ref Vector2 size, ref Rect clippedUV, ref Vector2 appliedPivot, Vector2? parentSize) {
+        static internal UpdatedResizeProperty AutoSize(AutoSizeMode sizeMode, Texture texture, Rect sourceUV, Vector2 localPosition, Vector2 pivot, ref Vector2 size, ref Rect clippedUV, ref Vector2 appliedPivot, Vector2? parentSize) {
             if (sizeMode == AutoSizeMode.Disabled || !texture) {
                 if (clippedUV != sourceUV) {
                     clippedUV = sourceUV;

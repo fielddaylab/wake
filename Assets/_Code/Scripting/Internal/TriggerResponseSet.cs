@@ -115,10 +115,19 @@ namespace Aqua.Scripting {
                 if (node.TargetId() != StringHash32.Null)
                 {
                     ScriptThread currentThread;
-                    if (inTargetStates.TryGetValue(node.TargetId(), out currentThread) && currentThread.Priority() > triggerData.TriggerPriority)
+                    if (inTargetStates.TryGetValue(node.TargetId(), out currentThread))
                     {
-                        DebugService.Log(LogMask.Scripting, "...higher-priority node ({0}) is executing for target '{1}'", currentThread.InitialNodeName(), node.TargetId());
-                        continue;
+                        bool higherPriority;
+                        if ((node.Flags() & ScriptNodeFlags.Interrupt) != 0)
+                            higherPriority = currentThread.Priority() > triggerData.TriggerPriority;
+                        else
+                            higherPriority = currentThread.Priority() >= triggerData.TriggerPriority;
+                            
+                        if (higherPriority)
+                        {
+                            DebugService.Log(LogMask.Scripting, "...higher-priority node ({0}) is executing for target '{1}'", currentThread.InitialNodeName(), node.TargetId());
+                            continue;
+                        }
                     }
                 }
 

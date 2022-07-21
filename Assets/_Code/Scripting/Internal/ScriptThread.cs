@@ -88,11 +88,17 @@ namespace Aqua.Scripting
             {
                 if (m_CurrentDialog != value)
                 {
+                    var currentHandle = GetHandle();
                     if (m_CurrentDialog != null)
                     {
+                        m_CurrentDialog.ClearThread(currentHandle);
                         m_CurrentDialog.CompleteSequence();
                     }
                     m_CurrentDialog = value;
+                    if (m_CurrentDialog != null)
+                    {
+                        m_CurrentDialog.AssignThread(currentHandle);
+                    }
                 }
             }
         }

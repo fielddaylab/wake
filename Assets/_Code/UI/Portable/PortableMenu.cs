@@ -124,7 +124,7 @@ namespace Aqua.Portable {
         #region BasePanel
 
         protected override void OnShow(bool inbInstant) {
-            Services.Data.SetVariable("portable:open", true);
+            Script.WriteVariable("portable:open", true);
 
             AdjustInputForRequest();
 

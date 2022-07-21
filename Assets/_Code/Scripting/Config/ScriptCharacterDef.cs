@@ -96,8 +96,8 @@ namespace Aqua
             var def = (ScriptCharacterDef) inObject;
             string found = Loc.Find(def.ShortNameId());
             if (string.IsNullOrEmpty(found))
-                return base.Name(inObject);
-            return found;
+                return "@" + inObject.name;
+            return string.Format("@{0}: {1}", inObject.name, found);
         }
     }
 }
