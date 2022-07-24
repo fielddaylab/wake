@@ -1,0 +1,47 @@
+:: basePath job.arctic-endangered-seals
+
+// INTRO
+
+:: start
+@trigger    JobStarted
+@cutscene
+
+// write an intro to your job
+{@guide}    This is the intro to the arctic-endangered-seals job!
+
+// ARGUMENTATION
+
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete() // TODO: NAME ME
+@cutscene
+$call ArgueLoad() // TODO: SAME NAME HERE
+// TODO: add your claim label to jobs.aqloc
+$if ArgueSetClaim(Claim, jobs.station-job-name.argue.claimLabel) 
+    $call ArgueFactSlot() // TODO: put fact slot info here 
+$endif
+
+:: argue.showClaim
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.complete 
+    $answer *, .argue.unrelated
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelated
+$call ArgueRejectIncorrect()
+{@guide} Ok, that's interesting, but it's not answering my question.
+$goto .argue.showClaim
+
+:: argue.giveUp
+{@guide} OK. Get back to me when you're ready.
+$call ArgueCancelClaim()
+
+// END
+:: argue.complete
+$call ArgueComplete()
+{@guide} This looks great!
+         This is the conclusion to the arctic-endangered-seals job!
+
+$call CompleteJob()
