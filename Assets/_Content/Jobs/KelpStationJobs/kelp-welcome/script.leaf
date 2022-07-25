@@ -10,6 +10,7 @@
 @cutscene
 $branch common.ringPhone
 
+$set world:intro.completed = true
 {@drKelp}  Before you head up to the surface, use your {item-name}Scanner{/item-name} to ID all the species down here.
 $call GiveUpgrade(ROVScanner, Silent)
 $call Player->SetTool(Scanner)
@@ -134,7 +135,7 @@ $branch common.ringPhone
 $call hotbar.guide->Show()
 $call hotbar.guide->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.guide)
-    Talk to {nameof @guide} by clicking the {h}button with the jellyfish{/h} up here.
+    Talk to {nameof @guide} by clicking the {h}top right button{/h} up here.
     They can help if you get stuck!
 $call hotbar.guide->ResetSorting()
 $call FocusHighlight->Clear()
@@ -154,7 +155,7 @@ $branch common.ringPhone
 @when 		scene:name == "KelpStation", JobTaskActive(returnToShip)
 @cutscene
 {@player} 	What now?
-{@guide}	We need to head back to the ship. 
+{@guide}	We need to head into the helm. 
 
 // BACK AT SHIP
 
@@ -284,12 +285,12 @@ $endif
 
 // CATCH-ALL GUIDE TEXT
 
-:: catchGoToSiteC
-@trigger    RequestPartnerHelp
-@when 		JobTaskActive(gotoSiteC)
-@boostScore -5
-@cutscene
-{@guide}    Head to {h}site C{/h}.
+// :: catchGoToSiteC
+// @trigger    RequestPartnerHelp
+// @when 		JobTaskActive(gotoSiteC)
+// @boostScore -5
+// @cutscene
+// {@guide}    Head to {h}site C{/h}.
 
 :: catchScanGiantKelp
 @trigger    RequestPartnerHelp
@@ -406,3 +407,10 @@ $call CompleteJob()
 {@drKelp}  Don't suppose you'd like another job?
             I've got work available at other research sites.
             You can find them on the {map-name}Job Board{/map-name}!
+
+$call hotbar.guide->Show()
+$call hotbar.portable->Show()
+$call UnlockSite("RS-1C")
+$call UnlockRoom("nav")
+$call UnlockRoom("exterior")
+$call UnlockRoom("Experimentation")

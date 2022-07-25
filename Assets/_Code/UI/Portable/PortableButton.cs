@@ -23,8 +23,7 @@ namespace Aqua.Portable
 
         public Toggle Toggle { get { return m_Toggle; } }
 
-        protected override void Awake()
-        {
+        protected override void Awake() {
             base.Awake();
 
             m_Menu = Services.UI.FindPanel<PortableMenu>();
@@ -32,7 +31,7 @@ namespace Aqua.Portable
             m_Menu.OnHideEvent.AddListener(OnMenuClose);
 
             m_Toggle.onValueChanged.AddListener(OnToggleValue);
-
+            
             Services.Events.Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, OnBestiaryUpdated, this)
                 .Register<PortableRequest>(GameEvents.PortableOpened, OnPortableOpened, this)
                 .Register(GameEvents.PortableClosed, OnPortableClosed, this);
@@ -121,5 +120,11 @@ namespace Aqua.Portable
         }
 
         #endregion // Animation
+
+        private void Start() {
+            if(Services.Data.GetVariable("world:intro.completed") == false) {
+                this.Hide(); 
+            }
+        }
     }
 }
