@@ -3,6 +3,7 @@ using Aqua;
 using Aqua.Character;
 using System;
 using BeauRoutine;
+using BeauUtil;
 
 namespace ProtoAqua.Observation
 {
@@ -35,6 +36,7 @@ namespace ProtoAqua.Observation
 
         public struct InputState {
             public PlayerBodyStatus Status;
+            public PlayerROVAnimationFlags AnimFlags;
             public bool Moving;
             public bool UsingTool;
 
@@ -52,19 +54,23 @@ namespace ProtoAqua.Observation
             m_LastInputState = state;
 
             if (state.Moving) {
-                if (state.NormalizedMove.x < 0) {
-                    m_Facing = FacingId.Left;
-                } else if (state.NormalizedMove.x > 0) {
-                    m_Facing = FacingId.Right;
+                if (!Bits.ContainsAny(state.AnimFlags, PlayerROVAnimationFlags.DoNotTurn)) {
+                    if (state.NormalizedMove.x < 0) {
+                        m_Facing = FacingId.Left;
+                    } else if (state.NormalizedMove.x > 0) {
+                        m_Facing = FacingId.Right;
+                    }
                 }
 
                 m_Pitch = state.NormalizedMove.y;
                 m_LookTarget = null;
             } else if (state.UsingTool) {
-                if (state.NormalizedLook.x < 0) {
-                    m_Facing = FacingId.Left;
-                } else if (state.NormalizedLook.x > 0) {
-                    m_Facing = FacingId.Right;
+                if (!Bits.ContainsAny(state.AnimFlags, PlayerROVAnimationFlags.DoNotTurn)) {
+                    if (state.NormalizedLook.x < 0) {
+                        m_Facing = FacingId.Left;
+                    } else if (state.NormalizedLook.x > 0) {
+                        m_Facing = FacingId.Right;
+                    }
                 }
 
                 m_Pitch = state.NormalizedLook.y;
@@ -148,5 +154,9 @@ namespace ProtoAqua.Observation
 
             return Quaternion.LookRotation(targetLookVec, Vector3.up) * fix;
         }
+    }
+
+    public enum PlayerROVAnimationFlags {
+        DoNotTurn = 0x01
     }
 }

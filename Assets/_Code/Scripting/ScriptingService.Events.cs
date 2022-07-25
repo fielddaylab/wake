@@ -87,11 +87,11 @@ namespace Aqua
 
             // Dialog-Specific Events
             m_TagEventParser.AddEvent("auto", ScriptEvents.Dialog.Auto);
-            m_TagEventParser.AddEvent("hang", ScriptEvents.Dialog.DoNotClose);
             m_TagEventParser.AddEvent("clear", ScriptEvents.Dialog.Clear);
             m_TagEventParser.AddEvent("continue", ScriptEvents.Dialog.InputContinue);
             m_TagEventParser.AddEvent("speaker", ScriptEvents.Dialog.Speaker).WithStringData();
             m_TagEventParser.AddEvent("speed", ScriptEvents.Dialog.Speed).WithFloatData(1);
+            m_TagEventParser.AddEvent("sticky", ScriptEvents.Dialog.DoNotClose);
             m_TagEventParser.AddEvent("type", ScriptEvents.Dialog.SetTypeSFX).WithStringHashData();
             m_TagEventParser.AddEvent("voice", ScriptEvents.Dialog.SetVoiceType).WithStringHashData("default");
         }
@@ -339,6 +339,7 @@ namespace Aqua
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Clear);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.InputContinue);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.SetTypeSFX);
+            m_DialogOnlyEvents.Add(ScriptEvents.Dialog.DoNotClose);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.SetVoiceType);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Speaker);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Speed);

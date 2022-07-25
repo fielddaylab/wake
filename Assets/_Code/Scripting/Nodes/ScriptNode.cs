@@ -82,6 +82,9 @@ namespace Aqua.Scripting
         {
             if (m_Target.IsEmpty)
                 m_Target = inTarget;
+            if (Bits.ContainsAny(m_Flags, ScriptNodeFlags.Cutscene) && m_TriggerData != null) {
+                m_TriggerData.TriggerPriority = TriggerPriority.Cutscene;
+            }
         }
 
         #region Parser
@@ -90,6 +93,12 @@ namespace Aqua.Scripting
         private void SetCutscene()
         {
             m_Flags |= ScriptNodeFlags.Cutscene;
+        }
+
+        [BlockMeta("interrupt"), Preserve]
+        private void SetInterrupt()
+        {
+            m_Flags |= ScriptNodeFlags.Interrupt;
         }
 
         [BlockMeta("ignoreDuringCutscene"), Preserve]
@@ -221,6 +230,7 @@ namespace Aqua.Scripting
         CornerChatter = 0x10,
         SuppressDuringCutscene = 0x20,
         Function = 0x40,
-        Autosave = 0x80
+        Autosave = 0x80,
+        Interrupt = 0x100
     }
 }

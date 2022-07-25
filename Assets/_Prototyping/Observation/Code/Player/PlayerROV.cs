@@ -77,6 +77,7 @@ namespace ProtoAqua.Observation
             bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody);
             void UpdateActive(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody);
             bool HasTarget();
+            PlayerROVAnimationFlags AnimFlags();
             void GetTargetPosition(bool inbOnGamePlane, out Vector3? outWorldPosition, out Vector3? outCursorPosition);
         }
 
@@ -92,6 +93,7 @@ namespace ProtoAqua.Observation
                 outWorldPosition = outCursorPosition = null;
             }
             public bool HasTarget() { return false; }
+            public PlayerROVAnimationFlags AnimFlags() { return 0; }
             public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) { return false; }
             public void UpdateActive(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) { }
         }
@@ -264,6 +266,7 @@ namespace ProtoAqua.Observation
         private void UpdateAnims() {
             PlayerROVAnimator.InputState animState;
             animState.Position = m_Transform.position;
+            animState.AnimFlags = m_CurrentTool.AnimFlags();
             animState.Moving = m_Moving;
             animState.UsingTool = m_CurrentTool.HasTarget();
             animState.NormalizedLook = m_LastInputData.Mouse.NormalizedOffset;

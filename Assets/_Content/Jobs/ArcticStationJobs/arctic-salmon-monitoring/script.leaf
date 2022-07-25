@@ -41,7 +41,7 @@ $branch .argue.mainQuestion
 {@profWhalen}	Did you finish counting? What did you find?
 $call ArgueLoad(argueCounts)
 $if ArgueSetClaim(argueCountsClaim, jobs.arctic-salmon-monitoring.argue.claimLabel)
-		$call ArgueFactSlot(Z_OpenOcean.Population.ChinookSalmon)
+		$call ArgueFactSlot(Z_FrostedSea.Population.ChinookSalmon)
 $endif
 $call ArgueDisplayClaim()
 $branch .argue.presentFacts

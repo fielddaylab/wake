@@ -30,6 +30,9 @@ namespace Aqua
         [NonSerialized] public Vector2 AccumulatedForce;
         [NonSerialized] public float AdditionalDrag;
 
+        [NonSerialized] public float AdditionalDragMultiplier = 1;
+        [NonSerialized] public float AccumulatedForceMultiplier = 1;
+
         #endregion // Inspector
 
         private void OnEnable()

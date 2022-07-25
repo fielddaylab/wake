@@ -10,6 +10,7 @@ namespace Aqua
 
         static public readonly StringHash32 InteractObject = "InteractObject";
         static public readonly StringHash32 InspectObject = "InspectObject";
+        static public readonly StringHash32 Talk = "Talk";
         static public readonly StringHash32 SceneStart = "SceneStart";
 
         static public readonly StringHash32 BestiaryEntryAdded = "BestiaryEntryAdded";

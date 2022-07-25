@@ -14,7 +14,8 @@ namespace Aqua.Character {
         public enum InteractionMode {
             Inspect,
             GoToMap,
-            GoToPreviousScene
+            GoToPreviousScene,
+            Talk = ScriptInteractAction.Talk
         }
 
         #region Inspector
@@ -28,6 +29,7 @@ namespace Aqua.Character {
         [SerializeField] private InteractionMode m_Mode = InteractionMode.GoToMap;
         [SerializeField, MapId] private StringHash32 m_TargetMap = null;
         [SerializeField] private SerializedHash32 m_TargetEntrance = null;
+        [SerializeField, ScriptCharacterId] private StringHash32 m_TargetCharacter = null;
         [SerializeField] private SceneLoadFlags m_MapLoadFlags = SceneLoadFlags.Cutscene;
         [SerializeField, ShowIfField("ShowStopMusic")] private bool m_StopMusic = true;
         [SerializeField] private bool m_AutoExecute = false;
@@ -156,8 +158,13 @@ namespace Aqua.Character {
             if (m_StopMusic) {
                 m_InspectConfig.LoadFlags |= SceneLoadFlags.StopMusic;
             }
-            m_InspectConfig.TargetId = TargetMapId();
-            m_InspectConfig.TargetEntranceId = TargetMapEntrance();
+            if (m_Mode == InteractionMode.Talk) {
+                m_InspectConfig.TargetId = m_TargetCharacter;
+                m_InspectConfig.TargetEntranceId = default;
+            } else {
+                m_InspectConfig.TargetId = TargetMapId();
+                m_InspectConfig.TargetEntranceId = TargetMapEntrance();
+            }
             interact.Config = m_InspectConfig;
             interact.Available = !Locked();
             interact.Source = this;

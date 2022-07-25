@@ -188,7 +188,7 @@ namespace Aqua
                 using(var table = TempVarTable.Alloc())
                 {
                     table.Set("upgradeId", inItemId);
-                    Services.Script.TryCallFunctions(GameTriggers.UpgradeAdded, null, null, table);
+                    Services.Script.TriggerResponse(GameTriggers.UpgradeAdded, table);
                 }
             }
 
