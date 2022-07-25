@@ -4,6 +4,8 @@
 
 using System;
 using System.Collections.Generic;
+using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
 namespace EasyAssetStreaming {
@@ -366,6 +368,29 @@ namespace EasyAssetStreaming {
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Converts an unmanaged buffer to a unity NativeArray.
+        /// </summary>
+        static internal unsafe NativeArray<T> ToNativeArray<T>(T* ptr, int length, AtomicSafetyHandle safetyHandle) where T : unmanaged {
+            var arr = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<T>(ptr, length, Allocator.None);
+            NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref arr, safetyHandle);
+            return arr;
+        }
+
+        /// <summary>
+        /// Hashes the given unmanaged struct.
+        /// </summary>
+        static internal unsafe ulong Hash<T>(T value) where T : unmanaged {
+            // fnv-1a
+            ulong hash = 14695981039346656037;
+            byte* ptr = (byte*) &value;
+            int length = sizeof(T);
+            while(length-- > 0) {
+                hash = (hash ^ *ptr++) * 1099511628211;
+            }
+            return hash;
         }
 
         #endregion // Misc

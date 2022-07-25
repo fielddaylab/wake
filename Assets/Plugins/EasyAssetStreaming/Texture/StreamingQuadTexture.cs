@@ -46,6 +46,7 @@ namespace EasyAssetStreaming {
 
         [SerializeField, StreamingImagePath, FormerlySerializedAs("m_Url")] private string m_Path = null;
         [SerializeField] private Material m_Material;
+        [SerializeField] private uint m_Tessellation = 0;
         [SerializeField] private Color32 m_Color = Color.white;
         [SerializeField] private bool m_Visible = true;
         
@@ -66,6 +67,7 @@ namespace EasyAssetStreaming {
         [NonSerialized] private int m_MainTexturePropertyId = 0;
         [NonSerialized] private int m_MainColorPropertyId = 0;
         [NonSerialized] private Rect m_ClippedUVs;
+        [NonSerialized] private ulong m_MeshInstanceHash;
  
         private readonly Streaming.AssetCallback OnAssetUpdated;
 
@@ -449,7 +451,7 @@ namespace EasyAssetStreaming {
                 vertColor = Color.white;
             }
 
-            m_MeshInstance = MeshGeneration.CreateQuad(m_Size, m_Pivot, vertColor, m_ClippedUVs, m_MeshInstance);
+            m_MeshInstance = MeshGeneration.CreateQuad(m_Size, m_Pivot, vertColor, m_ClippedUVs, m_Tessellation, m_MeshInstance, ref m_MeshInstanceHash);
             m_MeshInstance.hideFlags = HideFlags.DontSave;
             m_MeshFilter.sharedMesh = m_MeshInstance;
         }
@@ -485,6 +487,7 @@ namespace EasyAssetStreaming {
             }
             StreamingHelper.DestroyResource(ref m_MeshInstance);
             m_MeshFilter.sharedMesh = null;
+            m_MeshInstanceHash = 0;
         }
 
         #endregion // Resources
