@@ -27,6 +27,7 @@ namespace ProtoAqua.ExperimentV2 {
         [SerializeField, Required] private CanvasGroup m_ExitTankButtonGroup = null;
         [SerializeField, Required] private Button m_ExitTankButton = null;
         [SerializeField, Required] private TankWaterSystem m_WaterSystem = null;
+        [SerializeField, Required] private Transform m_GuideTransform = null;
 
         #endregion // Inspector
 
@@ -194,8 +195,7 @@ namespace ProtoAqua.ExperimentV2 {
 
         #region Interfaces
 
-        void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
-        {
+        void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext) {
             s_Instance = this;
             foreach(var tank in m_Tanks)
             {
@@ -204,6 +204,7 @@ namespace ProtoAqua.ExperimentV2 {
                 tank.Clickable.onClick.AddListener(OnTankClicked);
                 foreach (var arrow in tank.NavArrows) {
                     arrow.Button.onClick.AddListener(delegate { OnTankNavigated(arrow.DestTank); });
+                    arrow.Button.onClick.AddListener(delegate { Routine.Start( UpdateGuidePosition.MoveGuide( m_GuideTransform, arrow.DestTank.GuideTarget.transform ) ); });
                 }
             }
             Services.Camera.SnapToPose(m_Pose);
