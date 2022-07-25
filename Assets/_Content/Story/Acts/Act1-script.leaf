@@ -4,6 +4,7 @@
 @trigger    SceneStart
 @when       scene:name == "RS-1C"
 @triggerPriority   High
+@once
 $if !JobCompleted(kelp-welcome)
     $set world:intro.completed = false
     $goto .intro
