@@ -4,9 +4,9 @@
 @trigger    SceneStart
 @when       scene:name == "RS-1C"
 @triggerPriority   High
-$if !JobStartedOrComplete(kelp-welcome)
-    $call hotbar.guide->Hide()
-    $call hotbar.portable->Hide()
+@once
+$if !JobCompleted(kelp-welcome)
+    $set world:intro.completed = false
     $goto .intro
 $endif
 
@@ -43,7 +43,6 @@ $goto .tutorialMove
 {style center}
     Use the {h}Mouse{/h} \ or \ the {h}[W][A][S][D]{/h} keys to move your Sub
 {hide-dialog}{fade-in 0.5, wait}
-
 
 // On unlocking world map
 :: afterUnlockWorldMap

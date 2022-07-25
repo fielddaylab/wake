@@ -20,10 +20,10 @@ namespace Aqua
 
         [SerializeField] private Button m_Button = null;
 
+
         #endregion // Inspector
 
-        protected override void Awake()
-        {
+        protected override void Awake() {
             m_Button.onClick.AddListener(OnButtonClicked);
 
             Services.Script.OnTargetedThreadStarted += OnTargetedThreadStart;
@@ -68,5 +68,11 @@ namespace Aqua
         }
 
         #endregion // Handlers
+
+        private void Start() {
+            if(Services.Data.GetVariable("world:intro.completed") == false) {
+                this.Hide(); 
+            }
+        }
     }
 }
