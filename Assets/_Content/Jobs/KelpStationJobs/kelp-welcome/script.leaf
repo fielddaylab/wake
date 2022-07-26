@@ -27,19 +27,23 @@ $call hotbar.guide->Unlock()
 $call hotbar.guide->Show()
 $call hotbar.guide->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.guide)
-    Talk to {nameof @guide} by clicking the {h}button with the jellyfish{/h} up here.
+    Talk to {nameof @guide} by clicking the {h}button with the eyes{/h} here.
     They can help if you get stuck!
-$call hotbar.guide->ResetSorting()
 $call FocusHighlight->Clear()
 
 $call hotbar.portable->Unlock()
 $call hotbar.portable->Show()
 $call hotbar.portable->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.portable)
-    One more tip! You can check your {item-name}AQOS Tablet{/item-name} to see all the info about your active job!
-$call hotbar.portable->ResetSorting()
+    One more tip!
+    You can check your {item-name}AQOS Tablet{/item-name} to see all the info about your active job!
+    This tool also holds all the data you collect about critters.
 $call FocusHighlight->Clear()
+
 {hide-dialog}{fade-in 0.5, wait}
+$call hotbar.portable->ResetSorting()
+$call hotbar.guide->ResetSorting()
+
 $call GiveEntity(WarmKelpForest)
 $call UnlockSite("RS-1C")
 $call UnlockRoom("nav")
@@ -148,8 +152,8 @@ $call FocusHighlight->Clear()
 $branch common.ringPhone
 
 {@player}   Is that it? 
-{@drKelp}  Oh dear. I'm afraid you missed something. 
-            Why don't you head back to {h}site C{/h} and try again?
+{@drKelp}   Oh dear. I'm afraid you missed something. 
+            Why don't you dive back to {h}site C{/h} and keep scanning.
 
 :: helpReturnToShip
 @trigger    RequestPartnerHelp

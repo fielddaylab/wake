@@ -62,7 +62,7 @@ namespace Aqua {
             switch(inObject.Mode()) {
                 case SceneInteractable.InteractionMode.GoToMap: {
                     Assert.True(!inObject.TargetMapId().IsEmpty, "Interaction {0} has no assigned map", inObject);
-                    label = Loc.Format(inObject.Label(m_MapLabel), Assets.Map(inObject.TargetMapId()).ShortLabelId());
+                    label = Loc.Format(inObject.Label(m_MapLabel), Assets.Map(inObject.TargetMapId()).LabelId());
                     actionLabel = locked ? inObject.LockedActionLabel(m_MapActionLockedLabel) : inObject.ActionLabel(m_MapActionLabel);
                     break;
                 }

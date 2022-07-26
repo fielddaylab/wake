@@ -15,6 +15,8 @@ GameObject:
   - component: {fileID: 183757642039306734}
   - component: {fileID: 183757642039306737}
   - component: {fileID: -7043964366462720272}
+  - component: {fileID: 2677484287609406807}
+  - component: {fileID: 5163452557771742230}
   m_Layer: 5
   m_Name: Hotbar
   m_TagString: Untagged
@@ -152,9 +154,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Id:
-    m_Source: Hotbar
-    m_HashValue: 2988308433
+    m_Source: hotbar
+    m_HashValue: 1812626865
   m_IsPersistent: 1
+--- !u!114 &2677484287609406807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 183757642039306739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca0f487b5f010b642a4dc51b3d877921, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Group: {fileID: 5163452557771742230}
+  m_Canvas: {fileID: 183757642039306733}
+--- !u!225 &5163452557771742230
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 183757642039306739}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1684807157659995362
 GameObject:
   m_ObjectHideFlags: 0
