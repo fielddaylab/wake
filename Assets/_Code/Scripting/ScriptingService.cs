@@ -547,6 +547,8 @@ namespace Aqua
                 return default(ScriptThreadHandle);
             }
 
+            ScriptThread thread = m_ThreadPool.Alloc();
+
             if (inNode.IsCutscene())
             {
                 m_CutsceneThread?.Kill();
@@ -560,7 +562,6 @@ namespace Aqua
                 tempVars.Object.Base = inVars.Base;
             }
 
-            ScriptThread thread = m_ThreadPool.Alloc();
             ScriptThreadHandle handle = thread.Prep(inContext, tempVars);
             thread.SyncPriority(inNode);
             Routine routine = Routine.Start(this, ProcessNodeInstructions(thread, inNode)).SetPhase(RoutinePhase.Manual);

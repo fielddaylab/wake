@@ -37,10 +37,12 @@ namespace Aqua {
             get { return StateUtil.IsLoading || Services.Pause.IsPaused(); }
         }
 
+        [LeafMember("ScriptBlocking")]
         static public bool ShouldBlock() {
             return !Services.Valid || Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.UI.IsLetterboxed() || StateUtil.IsLoading;
         }
 
+        [LeafMember("ScriptBlockingIgnoreLetterbox")]
         static public bool ShouldBlockIgnoreLetterbox() {
             return Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || StateUtil.IsLoading;
         }
@@ -289,7 +291,7 @@ namespace Aqua {
         }
 
         // Added by Xander 06/03/22
-        [LeafMember]
+        [LeafMember, Preserve]
         static public bool IsPlayerOnShip() {
             StringHash32 currentMapId = MapDB.LookupCurrentMap();
             return ((currentMapId == MapIds.Helm) || (currentMapId == MapIds.Modeling) || (currentMapId == MapIds.Experimentation) ||

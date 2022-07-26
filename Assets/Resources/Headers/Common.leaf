@@ -9,3 +9,12 @@
     $elseif $fallback \
         $branch $$fallback \
     $endif
+
+#macro CutsceneDelayed(wait, node) \
+    {release-dialog} \
+    $call Wait($wait) \
+    $while ScriptBlocking() \
+        $call Wait(1) \
+    $endwhile \
+    $fork $node \
+    $join
