@@ -40,6 +40,16 @@ $call InteriorOpenJobBoard()
 {@drKelp} Okay, well just let me know if you need me.
 
 // Shop
+:: shop.notUnlocked
+@trigger    InspectObject
+@when       objectId == "Shop", !world:shop.unlocked
+@boostScore -1000
+@cutscene
+{@merchant} Nice to see you again, {nameof @player}.
+            I'm still working on getting things here setup. How about you help out your mom and head back later?
+            Oh, and make sure to stay safe out there!
+{@player}   Thanks {nameof @merchant}, but I know I've got this!
+
 :: shop.base
 @trigger    InspectObject
 @when       objectId == "Shop", world:shop.unlocked
