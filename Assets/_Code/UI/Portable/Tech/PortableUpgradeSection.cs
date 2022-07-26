@@ -9,7 +9,7 @@ using System;
 using BeauUtil.Debugger;
 using EasyAssetStreaming;
 
-namespace Aqua
+namespace Aqua.Portable
 {
     public class PortableUpgradeSection : MonoBehaviour
     {
@@ -17,21 +17,21 @@ namespace Aqua
 
         [SerializeField] private GameObject m_NoUpgradesGroup = null;
         [SerializeField] private GameObject m_HasUpgradesGroup = null;
-        [NonSerialized] private PortableUpgradeIcon[] m_UpgradeIcons = null;
+        [NonSerialized] private PortableUpgradeButton[] m_UpgradeIcons = null;
 
         #endregion // Inspector
 
         private void Awake()
         {
-            m_UpgradeIcons = m_HasUpgradesGroup.GetComponentsInChildren<PortableUpgradeIcon>(true);
+            m_UpgradeIcons = m_HasUpgradesGroup.GetComponentsInChildren<PortableUpgradeButton>(true);
             foreach(var icon in m_UpgradeIcons) {
-                PortableUpgradeIcon cached = icon;
+                PortableUpgradeButton cached = icon;
                 icon.Button.onClick.AddListener(() => OnClickUpgrade(cached));
             }
         }
 
-        static private void OnClickUpgrade(PortableUpgradeIcon icon) {
-            Script.PopupItemDetails(icon.Item);
+        static private void OnClickUpgrade(PortableUpgradeButton icon) {
+            Script.PopupItemDetails(icon.CachedItem);
         }
 
         public void Clear()
@@ -64,13 +64,13 @@ namespace Aqua
             }
         }
 
-        static private void Populate(PortableUpgradeIcon ioIcon, InvItem inInv)
+        static private void Populate(PortableUpgradeButton ioIcon, InvItem inInv)
         {
             ioIcon.Cursor.TooltipId = inInv.DescriptionTextId();
-            ioIcon.Text.SetText(inInv.NameTextId());
+            ioIcon.Title.SetText(inInv.NameTextId());
             ioIcon.Icon.sprite = inInv.Icon();
             ioIcon.gameObject.SetActive(true);
-            ioIcon.Item = inInv;
+            ioIcon.CachedItem = inInv;
         }
     }
 }
