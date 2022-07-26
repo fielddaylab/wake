@@ -19,12 +19,18 @@ namespace Aqua
         #region Inspector
 
         [SerializeField] private Button m_Button = null;
-
+        [SerializeField] private Transform m_Eyes = null;
+        [SerializeField] private float m_OffscreenX = 80;
+        [SerializeField] private TweenSettings m_ShowHideAnim = new TweenSettings(0.2f, Curve.Smooth);
 
         #endregion // Inspector
 
+        [NonSerialized] private float m_OnscreenX;
+
         protected override void Awake() {
             m_Button.onClick.AddListener(OnButtonClicked);
+
+            m_OnscreenX = Root.anchoredPosition.x;
 
             Services.Script.OnTargetedThreadStarted += OnTargetedThreadStart;
             Services.Script.OnTargetedThreadKilled += OnTargetedThreadEnd;
@@ -69,10 +75,31 @@ namespace Aqua
 
         #endregion // Handlers
 
-        private void Start() {
-            if(Services.Data.GetVariable("world:intro.completed") == false) {
-                this.Hide(); 
-            }
+        #region Animations
+
+        protected override void InstantTransitionToHide() {
+            Root.gameObject.SetActive(false);
+            Root.SetAnchorPos(m_OffscreenX, Axis.X);
         }
+
+        protected override void InstantTransitionToShow() {
+            Root.gameObject.SetActive(true);
+            Root.SetAnchorPos(m_OnscreenX, Axis.X);
+            m_Eyes.SetScale(1);
+        }
+
+        protected override IEnumerator TransitionToHide() {
+            yield return Root.AnchorPosTo(m_OffscreenX, m_ShowHideAnim, Axis.X);
+            Root.gameObject.SetActive(false);
+        }
+
+        protected override IEnumerator TransitionToShow() {
+            Root.gameObject.SetActive(true);
+            m_Eyes.SetScale(new Vector3(0.8f, 0, 1));
+            yield return Root.AnchorPosTo(m_OnscreenX, m_ShowHideAnim, Axis.X);
+            yield return m_Eyes.ScaleTo(1, 0.2f).Ease(Curve.BackOut);
+        }
+
+        #endregion // Animations
     }
 }

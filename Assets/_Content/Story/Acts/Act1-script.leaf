@@ -3,14 +3,22 @@
 :: checkIntro
 @trigger    SceneStart
 @when       scene:name == "RS-1C"
-@triggerPriority   High
+@boostScore 100000
 @cutscene
 @once
+
+{fade-out black, 0}
+{bgm-volume 0, 0}
+$call hotbar.guide->Lock()
+$call hotbar.portable->Lock()
+{wait 0.5}
 
 $set world:intro.completed = false
 {@player}   Isn't this nice {nameof @guide}?
 {@guide}    {nameof @player}, you are unauthorized to be using this submarine without explicit approval from {nameof @drKelp}.
 {@player}   Relax, there is no way she's going to find out.
+{fade-in 2}
+{bgm-volume 1, 2}
 {@guide }    ...
 {@player}   Isn't that right, {nameof @guide}?
 {@guide}    I'm sorry {nameof @player}, I have alerted all personal at the {m}Kelp Station{/m} to the missing sub...

@@ -14,9 +14,12 @@ namespace Aqua.Portable
 
         [SerializeField, Required] private RectTransform m_AnimationRoot = null;
         [SerializeField, Required] private Toggle m_Toggle = null;
+        [SerializeField] private float m_OffscreenX = 80;
+        [SerializeField] private TweenSettings m_ShowHideAnim = new TweenSettings(0.2f, Curve.Smooth);
 
         #endregion // Inspector
 
+        [NonSerialized] private float m_OnscreenX;
         [NonSerialized] private PortableMenu m_Menu;
         [NonSerialized] private Routine m_NewAnim;
         [NonSerialized] private RectTransformState m_OriginalAnimState;
@@ -27,11 +30,11 @@ namespace Aqua.Portable
             base.Awake();
 
             m_Menu = Services.UI.FindPanel<PortableMenu>();
-
             m_Menu.OnHideEvent.AddListener(OnMenuClose);
-
             m_Toggle.onValueChanged.AddListener(OnToggleValue);
-            
+
+            m_OnscreenX = Root.anchoredPosition.x;
+
             Services.Events.Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, OnBestiaryUpdated, this)
                 .Register<PortableRequest>(GameEvents.PortableOpened, OnPortableOpened, this)
                 .Register(GameEvents.PortableClosed, OnPortableClosed, this);
@@ -119,12 +122,26 @@ namespace Aqua.Portable
             yield return m_AnimationRoot.AnchorPosTo(m_OriginalAnimState.AnchoredPos.y, 0.5f, Axis.Y).Ease(Curve.BounceOut);
         }
 
-        #endregion // Animation
-
-        private void Start() {
-            if(Services.Data.GetVariable("world:intro.completed") == false) {
-                this.Hide(); 
-            }
+        protected override void InstantTransitionToHide() {
+            Root.gameObject.SetActive(false);
+            Root.SetAnchorPos(m_OffscreenX, Axis.X);
         }
+
+        protected override void InstantTransitionToShow() {
+            Root.gameObject.SetActive(true);
+            Root.SetAnchorPos(m_OnscreenX, Axis.X);
+        }
+
+        protected override IEnumerator TransitionToHide() {
+            yield return Root.AnchorPosTo(m_OffscreenX, m_ShowHideAnim, Axis.X);
+            Root.gameObject.SetActive(false);
+        }
+
+        protected override IEnumerator TransitionToShow() {
+            Root.gameObject.SetActive(true);
+            yield return Root.AnchorPosTo(m_OnscreenX, m_ShowHideAnim, Axis.X);
+        }
+
+        #endregion // Animation
     }
 }
