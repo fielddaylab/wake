@@ -10,7 +10,6 @@
 @cutscene
 $branch common.ringPhone
 
-$set world:intro.completed = true
 {@drKelp}  Before you head up to the surface, use your {item-name}Scanner{/item-name} to ID all the species down here.
 $call GiveUpgrade(ROVScanner, Silent)
 $call Player->SetTool(Scanner)
@@ -24,24 +23,27 @@ $call Player->SetTool(Scanner)
 {@}
 {style center}
 
+$call hotbar.guide->Unlock()
 $call hotbar.guide->Show()
 $call hotbar.guide->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.guide)
     Talk to {nameof @guide} by clicking the {h}button with the eyes{/h} here.
     They can help if you get stuck!
-$call hotbar.guide->ResetSorting()
 $call FocusHighlight->Clear()
 
+$call hotbar.portable->Unlock()
 $call hotbar.portable->Show()
 $call hotbar.portable->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.portable)
     One more tip!
     You can check your {item-name}AQOS Tablet{/item-name} to see all the info about your active job!
     This tool also holds all the data you collect about critters.
-$call hotbar.portable->ResetSorting()
 $call FocusHighlight->Clear()
 
 {hide-dialog}{fade-in 0.5, wait}
+$call hotbar.portable->ResetSorting()
+$call hotbar.guide->ResetSorting()
+
 $call GiveEntity(WarmKelpForest)
 $call UnlockSite("RS-1C")
 $call UnlockRoom("nav")

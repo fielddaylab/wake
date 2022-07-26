@@ -14,6 +14,33 @@ namespace EasyAssetStreaming {
     /// Helper and utility methods for streaming.
     /// </summary>
     static internal class StreamingHelper {
+        static internal void Init() {
+            if (s_Initialized) {
+                return;
+            }
+
+            s_Initialized = true;
+            #if ENABLE_UNITY_COLLECTIONS_CHECKS
+            s_NativeSafetyHandle = AtomicSafetyHandle.Create();
+            #endif // if ENABLE_UNITY_COLLECTIONS_CHECKS
+        }
+
+        static internal void Release() {
+            if (!s_Initialized) {
+                return;
+            }
+
+            s_Initialized = false;
+            #if ENABLE_UNITY_COLLECTIONS_CHECKS
+            AtomicSafetyHandle.Release(s_NativeSafetyHandle);
+            #endif // if ENABLE_UNITY_COLLECTIONS_CHECKS
+        }
+
+        static private bool s_Initialized = false;
+        #if ENABLE_UNITY_COLLECTIONS_CHECKS
+        static private AtomicSafetyHandle s_NativeSafetyHandle;
+        #endif // ENABLE_UNITY_COLLECTIONS_CHECKS
+
         #region Resources
 
         static internal void DestroyResource<T>(ref T resource) where T : UnityEngine.Object {
@@ -373,9 +400,11 @@ namespace EasyAssetStreaming {
         /// <summary>
         /// Converts an unmanaged buffer to a unity NativeArray.
         /// </summary>
-        static internal unsafe NativeArray<T> ToNativeArray<T>(T* ptr, int length, AtomicSafetyHandle safetyHandle) where T : unmanaged {
+        static internal unsafe NativeArray<T> ToNativeArray<T>(T* ptr, int length) where T : unmanaged {
             var arr = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<T>(ptr, length, Allocator.None);
-            NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref arr, safetyHandle);
+            #if ENABLE_UNITY_COLLECTIONS_CHECKS || UNITY_EDITOR
+            NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref arr, s_NativeSafetyHandle);
+            #endif // ENABLE_UNITY_COLLECTIONS_CHECKS || UNITY_EDITOR
             return arr;
         }
 
