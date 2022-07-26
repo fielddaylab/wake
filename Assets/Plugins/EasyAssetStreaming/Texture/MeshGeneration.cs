@@ -121,15 +121,11 @@ namespace EasyAssetStreaming {
                 WriteTessellatedIndices(i, quadsPerRow, verticesPerRow, &indicesWritePtr);
             }
 
-            AtomicSafetyHandle tempHandle = AtomicSafetyHandle.Create();
-
             ioMesh.Clear(true);
-            ioMesh.SetVertices<Vector3>(StreamingHelper.ToNativeArray(vertices, totalVertices, tempHandle), 0, totalVertices);
-            ioMesh.SetColors<Color32>(StreamingHelper.ToNativeArray(colors, totalVertices, tempHandle));
-            ioMesh.SetUVs<Vector2>(0, StreamingHelper.ToNativeArray(uvs, totalVertices, tempHandle));
-            ioMesh.SetIndices<ushort>(StreamingHelper.ToNativeArray(indices, totalIndices, tempHandle), MeshTopology.Triangles, 0, false);
-
-            AtomicSafetyHandle.Release(tempHandle);
+            ioMesh.SetVertices<Vector3>(StreamingHelper.ToNativeArray(vertices, totalVertices), 0, totalVertices);
+            ioMesh.SetColors<Color32>(StreamingHelper.ToNativeArray(colors, totalVertices));
+            ioMesh.SetUVs<Vector2>(0, StreamingHelper.ToNativeArray(uvs, totalVertices));
+            ioMesh.SetIndices<ushort>(StreamingHelper.ToNativeArray(indices, totalIndices), MeshTopology.Triangles, 0, false);
         }
 
         static private unsafe void WriteTessellatedIndices(int inQuadIndex, int inQuadsPerRow, int inVertsPerRow, ushort** outVerts) {

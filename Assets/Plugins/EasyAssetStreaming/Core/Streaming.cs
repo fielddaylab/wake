@@ -40,6 +40,7 @@ namespace EasyAssetStreaming {
             UnityEditor.Experimental.SceneManagement.PrefabStage.prefabStageClosing += OnPrefabStageClosing;
             UnityEditor.EditorApplication.quitting += () => s_EditorQuitting = true;
             AppDomain.CurrentDomain.DomainUnload += OnDomainUnload;
+            StreamingHelper.Init();
         }
 
         static private void PlayModeStateChange(UnityEditor.PlayModeStateChange stateChange) {
@@ -49,6 +50,7 @@ namespace EasyAssetStreaming {
 
             UnloadAll();
             DeregisterTick();
+            StreamingHelper.Release();
         }
 
         static private void OnPrefabStageClosing(UnityEditor.Experimental.SceneManagement.PrefabStage _) {
@@ -691,6 +693,7 @@ namespace EasyAssetStreaming {
             #endif // UNITY_EDITOR
 
             StreamingHelper.DestroyResource(ref s_UpdateHookGO);
+            StreamingHelper.Release();
         }
 
         private sealed class UpdateHook : MonoBehaviour {

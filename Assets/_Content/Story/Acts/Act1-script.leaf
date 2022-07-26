@@ -3,10 +3,11 @@
 :: checkIntro
 @trigger    SceneStart
 @when       scene:name == "RS-1C"
-@triggerPriority   High
+@triggerPriority   Cutscene
 @once
 $if !JobCompleted(kelp-welcome)
-    $set world:intro.completed = false
+    $call hotbar.guide->Lock()
+    $call hotbar.portable->Lock()
     $goto .intro
 $endif
 

@@ -10,7 +10,6 @@
 @cutscene
 $branch common.ringPhone
 
-$set world:intro.completed = true
 {@drKelp}  Before you head up to the surface, use your {item-name}Scanner{/item-name} to ID all the species down here.
 $call GiveUpgrade(ROVScanner, Silent)
 $call Player->SetTool(Scanner)
@@ -24,6 +23,7 @@ $call Player->SetTool(Scanner)
 {@}
 {style center}
 
+$call hotbar.guide->Unlock()
 $call hotbar.guide->Show()
 $call hotbar.guide->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.guide)
@@ -32,6 +32,7 @@ $call FocusHighlight->Focus(hotbar.guide)
 $call hotbar.guide->ResetSorting()
 $call FocusHighlight->Clear()
 
+$call hotbar.portable->Unlock()
 $call hotbar.portable->Show()
 $call hotbar.portable->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.portable)

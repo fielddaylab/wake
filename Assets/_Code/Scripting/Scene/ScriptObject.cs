@@ -16,6 +16,7 @@ namespace Aqua
         #region Inspector
 
         [SerializeField] private SerializedHash32 m_Id = "";
+        [SerializeField] private bool m_IsPersistent = false;
 
         #endregion // Inspector
 
@@ -148,6 +149,27 @@ namespace Aqua
             using(PooledStringBuilder psb = PooledStringBuilder.Create())
             {
                 psb.Builder.Append(currentMap.name).Append('.').Append(inObject.m_Id.Source());
+                if (!string.IsNullOrEmpty(inKey))
+                {
+                    psb.Builder.Append('.').Append(inKey);
+                }
+                return new StringBuilderSlice(psb.Builder).Hash32();
+            }
+        }
+
+        /// <summary>
+        /// Returns the id to use for persisting a value for a ScriptObject.
+        /// </summary>
+        static public StringHash32 PersistenceId(ScriptObject inObject, string inKey = null)
+        {
+            if (!inObject.m_IsPersistent)
+            {
+                return MapPersistenceId(inObject, inKey);
+            }
+            
+            using(PooledStringBuilder psb = PooledStringBuilder.Create())
+            {
+                psb.Builder.Append(inObject.m_Id.Source());
                 if (!string.IsNullOrEmpty(inKey))
                 {
                     psb.Builder.Append('.').Append(inKey);
