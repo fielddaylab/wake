@@ -135,7 +135,7 @@ $branch common.ringPhone
 @cutscene
 
 $branch common.ringPhone
-{@drKelp}  Head back to the ship for your next task!
+{@drKelp}  Head into the ship for your next task!
 
 $call hotbar.guide->Show()
 $call hotbar.guide->ForceOnTop()
@@ -195,15 +195,15 @@ $call AutoSaveNow()
 {@player} 	Now what?
 {@guide}	Let's head to the {nameof Experimentation}.
 
-:: firstExperiment
-@trigger    SceneStart
-@when       scene:name == "ExperimentV2", JobTaskActive(runExperiment)
-@once
-@cutscene
-$branch common.ringPhone
+// :: firstExperiment
+// @trigger    SceneStart
+// @when       scene:name == "ExperimentV2", JobTaskActive(runExperiment)
+// @once
+// @cutscene
+// $branch common.ringPhone
 
-{@drKelp}  What a lovely old tank! This ship really is ancient, isn't it.
-            Go ahead, take a closer look!
+// {@drKelp}  What a lovely old tank! This ship really is ancient, isn't it.
+//             Go ahead, take a closer look!
             
 :: firstCaptureCircle
 @trigger    BehaviorCaptureChance
