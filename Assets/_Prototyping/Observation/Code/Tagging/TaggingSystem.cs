@@ -27,6 +27,7 @@ namespace ProtoAqua.Observation {
         [Space]
         [SerializeField] private Fraction16 m_DefaultTagProportion = new Fraction16(0.8f);
         [SerializeField] private CritterProportion[] m_CritterProportionOverrides = null;
+        [SerializeField, MapId(MapCategory.DiveSite)] private StringHash32 m_EnvironmentOverride = default;
 
         [SerializeField, HideInInspector] private TaggingManifest[] m_SceneManifest;
         [SerializeField, HideInInspector] private BestiaryDesc m_EnvironmentType;
@@ -398,9 +399,13 @@ namespace ProtoAqua.Observation {
 
         bool IBaked.Bake(ScriptableBake.BakeFlags flags) {
             StringHash32 mapId = MapDB.LookupCurrentMap();
+            if (!m_EnvironmentOverride.IsEmpty) {
+                mapId = m_EnvironmentOverride;
+            }
             Assert.False(mapId.IsEmpty, "Tagging enabled in scene {0} which has no corresponding map", SceneHelper.ActiveScene().Name);
 
             m_MapId = mapId;
+
             m_EnvironmentType = Assets.Bestiary(Assets.Map(mapId).EnvironmentId());
 
             RingBuffer<TaggingManifest> entries = new RingBuffer<TaggingManifest>();

@@ -575,20 +575,20 @@ MonoBehaviour:
       AmbientAnimationSpeedMultiplier: 1
     StateEvaluator:
       Temperature:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
+        AliveMin: 27
+        AliveMax: 64
+        StressedMin: 13
+        StressedMax: 86
       Light:
-        AliveMin: -Infinity
-        AliveMax: Infinity
+        AliveMin: 0
+        AliveMax: 100
         StressedMin: -Infinity
         StressedMax: Infinity
       PH:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
+        AliveMin: 7.25
+        AliveMax: 8.3
+        StressedMin: 6.6
+        StressedMax: 8.5
     AliveEatTargets:
     - TargetId:
         m_HashValue: 3040832533
@@ -1087,20 +1087,20 @@ MonoBehaviour:
       AmbientAnimationSpeedMultiplier: 1
     StateEvaluator:
       Temperature:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
+        AliveMin: 22
+        AliveMax: 36
+        StressedMin: 6
+        StressedMax: 45
       Light:
-        AliveMin: -Infinity
-        AliveMax: Infinity
+        AliveMin: 0
+        AliveMax: 100
         StressedMin: -Infinity
         StressedMax: Infinity
       PH:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
+        AliveMin: 7.2
+        AliveMax: 8.4
+        StressedMin: 6.9
+        StressedMax: 8.5
     AliveEatTargets:
     - TargetId:
         m_HashValue: 2642860014
@@ -1533,6 +1533,70 @@ MonoBehaviour:
       y: -0.099999905
       width: 1.1634119
       height: 2.0441341
+  - Id:
+      m_HashValue: 2881543797
+    Type: {fileID: 11400000, guid: e1bb4d7c66925914b809969c4454ea76, type: 2}
+    PrefabName: H_Gas
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 3
+      SpawnAnimation: 2
+      AvoidTankSidesRadius: 0.2
+      AvoidTankTopBottomRadius: 0
+    Movement:
+      MoveType: 0
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 0
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+    AliveEatTargets: []
+    StressedEatTargets: []
+    ParasiteTargets: []
+    SpawnCount: 1
+    SpawnMax: 3
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
+    IsPlant: 0
+    IsLivingOrganism: 0
+    IsDistributed: 1
+    TargetLimit: 8
+    FreeOnEaten: 0
+    EatOffsetRange:
+      serializedVersion: 2
+      x: -3.65
+      y: -1.95
+      width: 7.3
+      height: 3.9
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: -3.65
+      y: -1.95
+      width: 7.3
+      height: 3.9
   - Id:
       m_HashValue: 339695989
     Type: {fileID: 11400000, guid: ea9eb6c2233744f44b0f69ef8b3f0aaa, type: 2}
@@ -2027,30 +2091,30 @@ MonoBehaviour:
       AmbientAnimationSpeedMultiplier: 1
     StateEvaluator:
       Temperature:
-        AliveMin: 15
-        AliveMax: 45
+        AliveMin: 30
+        AliveMax: 75
         StressedMin: 0
-        StressedMax: 50
+        StressedMax: 95
       Light:
         AliveMin: 0
         AliveMax: 100
         StressedMin: -Infinity
         StressedMax: Infinity
       PH:
-        AliveMin: 7.2
-        AliveMax: 9
-        StressedMin: 0
-        StressedMax: 10
+        AliveMin: 3
+        AliveMax: 8.2
+        StressedMin: 2
+        StressedMax: 9
     AliveEatTargets:
     - TargetId:
-        m_HashValue: 722380343
+        m_HashValue: 2881543797
       FactId:
-        m_HashValue: 2726244040
+        m_HashValue: 1987105362
     StressedEatTargets:
     - TargetId:
-        m_HashValue: 722380343
+        m_HashValue: 2881543797
       FactId:
-        m_HashValue: 3955480703
+        m_HashValue: 4148858529
     ParasiteTargets: []
     SpawnCount: 1
     SpawnMax: 3
@@ -2617,78 +2681,6 @@ MonoBehaviour:
       y: -0.25
       width: 0.5
       height: 0.5
-  - Id:
-      m_HashValue: 1456926888
-    Type: {fileID: 11400000, guid: 64107b6705b01c84fabd187303fbd2b1, type: 2}
-    PrefabName: RedGorgonian
-    SpawnAmountOverride: -1
-    Spawning:
-      SpawnLocation: 1
-      SpawnAnimation: 1
-      AvoidTankSidesRadius: 0.2
-      AvoidTankTopBottomRadius: 0
-    Movement:
-      MoveType: 0
-      MovementIdleDistance: 1
-      MovementSpeed: 1
-      MovementCurve: 1
-      MovementInterval: 1.5
-      MovementIntervalRandom: 1
-    Eating:
-      EatType: 3
-      MovementMultiplier: 1
-    Stress:
-      MovementSpeedMultiplier: 0.8
-      MovementIntervalMultiplier: 0.9
-      AmbientAnimationSpeedMultiplier: 1
-    StateEvaluator:
-      Temperature:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      Light:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      PH:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-    AliveEatTargets:
-    - TargetId:
-        m_HashValue: 4251495377
-      FactId:
-        m_HashValue: 3914354569
-    StressedEatTargets:
-    - TargetId:
-        m_HashValue: 4251495377
-      FactId:
-        m_HashValue: 3270658668
-    ParasiteTargets: []
-    SpawnCount: 10
-    SpawnMax: 30
-    AliveReproduceRate: 3.5
-    StressedReproduceRate: 1.5
-    IsPlant: 0
-    IsLivingOrganism: 1
-    IsDistributed: 0
-    TargetLimit: 1
-    FreeOnEaten: 1
-    EatOffsetRange:
-      serializedVersion: 2
-      x: -0.55499643
-      y: 0.03962308
-      width: 1.1431664
-      height: 0.81925905
-    LocalBoundsRect:
-      serializedVersion: 2
-      x: -0.6185057
-      y: -0.005891323
-      width: 1.270185
-      height: 0.91028786
   - Id:
       m_HashValue: 1605956068
     Type: {fileID: 11400000, guid: 9053ff33b55f144a08d9bcf323fe8070, type: 2}
@@ -3314,78 +3306,6 @@ MonoBehaviour:
       width: 0.36
       height: 0.36
   - Id:
-      m_HashValue: 3381793967
-    Type: {fileID: 11400000, guid: f12f82ae797e9cf42b1cb314495d0838, type: 2}
-    PrefabName: Siphonophore
-    SpawnAmountOverride: -1
-    Spawning:
-      SpawnLocation: 0
-      SpawnAnimation: 0
-      AvoidTankSidesRadius: 0.2
-      AvoidTankTopBottomRadius: 0
-    Movement:
-      MoveType: 1
-      MovementIdleDistance: 1
-      MovementSpeed: 1
-      MovementCurve: 1
-      MovementInterval: 1.5
-      MovementIntervalRandom: 1
-    Eating:
-      EatType: 1
-      MovementMultiplier: 1
-    Stress:
-      MovementSpeedMultiplier: 0.8
-      MovementIntervalMultiplier: 0.9
-      AmbientAnimationSpeedMultiplier: 1
-    StateEvaluator:
-      Temperature:
-        AliveMin: 0
-        AliveMax: 0
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      Light:
-        AliveMin: 0
-        AliveMax: 0
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      PH:
-        AliveMin: 0
-        AliveMax: 0
-        StressedMin: -Infinity
-        StressedMax: Infinity
-    AliveEatTargets:
-    - TargetId:
-        m_HashValue: 4251495377
-      FactId:
-        m_HashValue: 1627738578
-    StressedEatTargets:
-    - TargetId:
-        m_HashValue: 4251495377
-      FactId:
-        m_HashValue: 1574933793
-    ParasiteTargets: []
-    SpawnCount: 10
-    SpawnMax: 30
-    AliveReproduceRate: 1
-    StressedReproduceRate: 0.5
-    IsPlant: 0
-    IsLivingOrganism: 1
-    IsDistributed: 0
-    TargetLimit: 1
-    FreeOnEaten: 1
-    EatOffsetRange:
-      serializedVersion: 2
-      x: -0.1265531
-      y: -0.34319735
-      width: 0.41987646
-      height: 0.58639073
-    LocalBoundsRect:
-      serializedVersion: 2
-      x: -0.14987957
-      y: -0.37577462
-      width: 0.46652937
-      height: 0.6515453
-  - Id:
       m_HashValue: 2920275176
     Type: {fileID: 11400000, guid: 67eee79beff93cb43b970be3df22731a, type: 2}
     PrefabName: Smelt
@@ -3611,20 +3531,20 @@ MonoBehaviour:
       AmbientAnimationSpeedMultiplier: 1
     StateEvaluator:
       Temperature:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
+        AliveMin: 10
+        AliveMax: 40
+        StressedMin: 0
+        StressedMax: 80
       Light:
-        AliveMin: -Infinity
-        AliveMax: Infinity
+        AliveMin: 0
+        AliveMax: 15
         StressedMin: -Infinity
         StressedMax: Infinity
       PH:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
+        AliveMin: 3.5
+        AliveMax: 8.3
+        StressedMin: 2
+        StressedMax: 8.5
     AliveEatTargets:
     - TargetId:
         m_HashValue: 3040832533
@@ -3899,20 +3819,20 @@ MonoBehaviour:
       AmbientAnimationSpeedMultiplier: 1
     StateEvaluator:
       Temperature:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
+        AliveMin: 25
+        AliveMax: 35
+        StressedMin: 20
+        StressedMax: 40
       Light:
-        AliveMin: -Infinity
-        AliveMax: Infinity
+        AliveMin: 0
+        AliveMax: 100
         StressedMin: -Infinity
         StressedMax: Infinity
       PH:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
+        AliveMin: 7.5
+        AliveMax: 8.2
+        StressedMin: 7.1
+        StressedMax: 8.4
     AliveEatTargets:
     - TargetId:
         m_HashValue: 4251495377
@@ -4006,8 +3926,8 @@ MonoBehaviour:
     ParasiteTargets: []
     SpawnCount: 10
     SpawnMax: 30
-    AliveReproduceRate: 1
-    StressedReproduceRate: 0.5
+    AliveReproduceRate: 0.1
+    StressedReproduceRate: 0.1
     IsPlant: 0
     IsLivingOrganism: 1
     IsDistributed: 0
