@@ -32,8 +32,16 @@ namespace Aqua.Ship
         }
 
         private void Interact() {
-            Services.Data.AddVariable(PartnerButton.RequestCounter, 1);
+            Services.Data.AddVariable(PartnerButton.Var_RequestCounter, 1);
             Services.Script.TriggerResponse(GameTriggers.RequestPartnerHelp, GameConsts.Target_V1ctor);
+        }
+
+        private void OnEnable() {
+            Script.OnSceneLoad(() => Services.Events.Queue(PartnerButton.Event_WorldAvatarPresent));
+        }
+
+        private void OnDisable() {
+            Services.Events?.Queue(PartnerButton.Event_WorldAvatarHidden);
         }
     }
 }

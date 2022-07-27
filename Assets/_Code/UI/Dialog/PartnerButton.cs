@@ -12,9 +12,12 @@ using Aqua.Scripting;
 
 namespace Aqua
 {
+    [RequireComponent(typeof(UnlockableUI))]
     public class PartnerButton : BasePanel
     {
-        static public readonly TableKeyPair RequestCounter = TableKeyPair.Parse("guide:help.requests");
+        static public readonly TableKeyPair Var_RequestCounter = TableKeyPair.Parse("guide:help.requests");
+        static public readonly StringHash32 Event_WorldAvatarPresent = "guide:avatar-present";
+        static public readonly StringHash32 Event_WorldAvatarHidden = "guide:avatar-hidden";
 
         #region Inspector
 
@@ -22,10 +25,12 @@ namespace Aqua
         [SerializeField] private Transform m_Eyes = null;
         [SerializeField] private float m_OffscreenX = 80;
         [SerializeField] private TweenSettings m_ShowHideAnim = new TweenSettings(0.2f, Curve.Smooth);
+        [SerializeField] private UnlockableUI m_UnlockableUI = null;
 
         #endregion // Inspector
 
         [NonSerialized] private float m_OnscreenX;
+        [NonSerialized] private int m_OnscreenAvatarCount;
 
         protected override void Awake() {
             m_Button.onClick.AddListener(OnButtonClicked);
@@ -36,6 +41,11 @@ namespace Aqua
             Services.Script.OnTargetedThreadKilled += OnTargetedThreadEnd;
 
             OnTargetedThreadStart(Services.Script.GetTargetThread(GameConsts.Target_V1ctor));
+
+            this.CacheComponent(ref m_UnlockableUI).IsUnlocked = (o) => m_OnscreenAvatarCount <= 0;
+
+            Services.Events.Register(Event_WorldAvatarPresent, OnWorldPartnerEnabled, this)
+                .Register(Event_WorldAvatarHidden, OnWorldPartnerDisabled, this);
         }
 
         private void OnDestroy()
@@ -45,6 +55,8 @@ namespace Aqua
                 Services.Script.OnTargetedThreadStarted -= OnTargetedThreadStart;
                 Services.Script.OnTargetedThreadKilled -= OnTargetedThreadEnd;
             }
+
+            Services.Events?.DeregisterAll(this);
         }
 
         #region Handlers
@@ -69,8 +81,24 @@ namespace Aqua
 
         private void OnButtonClicked()
         {
-            Services.Data.AddVariable(RequestCounter, 1);
+            Services.Data.AddVariable(Var_RequestCounter, 1);
             Services.Script.TriggerResponse(GameTriggers.RequestPartnerHelp, GameConsts.Target_V1ctor);
+        }
+
+        private void OnWorldPartnerEnabled() {
+            m_OnscreenAvatarCount++;
+            if (m_OnscreenAvatarCount == 1) {
+                m_UnlockableUI.Reload();
+            }
+        }
+
+        private void OnWorldPartnerDisabled() {
+            if (m_OnscreenAvatarCount > 0) {
+                m_OnscreenAvatarCount--;
+                if (m_OnscreenAvatarCount == 0) {
+                    m_UnlockableUI.Reload();
+                }
+            }
         }
 
         #endregion // Handlers

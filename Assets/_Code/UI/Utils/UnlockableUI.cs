@@ -13,6 +13,7 @@ using Leaf.Runtime;
 
 namespace Aqua
 {
+    [RequireComponent(typeof(ScriptMenu))]
     public class UnlockableUI : ScriptComponent
     {
         #region Inspector
@@ -22,9 +23,15 @@ namespace Aqua
 
         #endregion // Inspector
 
+        public Predicate<ScriptObject> IsUnlocked;
+
         private TableKeyPair m_VarPair;
         private bool m_CachedLocked = false;
         private bool m_Initialized = false;
+
+        public void Reload() {
+            RefreshState();
+        }
 
         #region Handlers
 
@@ -56,7 +63,7 @@ namespace Aqua
         }
 
         private void RefreshState() {
-            bool locked = Script.ReadVariable(m_VarPair).AsBool();
+            bool locked = Script.ReadVariable(m_VarPair).AsBool() || (IsUnlocked != null && !IsUnlocked(Parent));
             
             if (m_Initialized && m_CachedLocked == locked) {
                 return;
