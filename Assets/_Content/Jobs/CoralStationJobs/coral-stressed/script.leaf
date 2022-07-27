@@ -26,7 +26,7 @@ $set	jobs:coral-stressed.struggling = false
 @once
 @cutscene
 {@guide}	You're gonna want to take your sub over to Dive Site R.
-            It should be just north of the ship. When you're there, dive.
+            It should be to the east. When you're there, dive.
 					
 :: helpGoToSiteR
 @trigger    RequestPartnerHelp
@@ -70,7 +70,7 @@ $set jobs:coral-stressed.gotScans = true
 @when 		scene:name == "Station2", jobs:coral-stressed.got.scans
 @cutscene
 {@player} 	Where should we go from here?
-{@guide}	Let's head south and return to the ship.
+{@guide}	Let's return to the ship.
 
 
 :: atShip
