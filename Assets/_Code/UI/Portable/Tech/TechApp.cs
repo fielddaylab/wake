@@ -60,8 +60,8 @@ namespace Aqua.Portable {
             m_ExplorationCategory.Group.ForceActive(false);
             m_ScienceCategory.Group.ForceActive(false);
 
-            m_ExplorationCategory.Toggle.onValueChanged.AddListener((_) => UpdateCategory(m_ExplorationCategory, CategoryId.Exploration, TechConsts.Trigger_OpenExploration));
-            m_ScienceCategory.Toggle.onValueChanged.AddListener((_) => UpdateCategory(m_ScienceCategory, CategoryId.Science, TechConsts.Trigger_OpenScience));
+            m_ExplorationCategory.Toggle.onValueChanged.AddListener((_) => UpdateCategory(m_ExplorationCategory, CategoryId.Exploration));
+            m_ScienceCategory.Toggle.onValueChanged.AddListener((_) => UpdateCategory(m_ScienceCategory, CategoryId.Science));
 
             Services.Events.Register(GameEvents.InventoryUpdated, RefreshButtons, this);
 
@@ -77,7 +77,7 @@ namespace Aqua.Portable {
 
         }
 
-        protected void OnEnable() {
+        protected override void OnEnable() {
             base.OnEnable(); 
             ClearAll();
         }
@@ -165,7 +165,7 @@ namespace Aqua.Portable {
 
         #region Categories
 
-        private void UpdateCategory(TechCategoryButton category, CategoryId id, StringHash32 triggerId = default) {
+        private void UpdateCategory(TechCategoryButton category, CategoryId id) {
             if (!IsShowing()) return;
     
             if (!category.Toggle.isOn) {
@@ -178,9 +178,6 @@ namespace Aqua.Portable {
             if (category.Group.Activate()) {
                 PopulateColumn(m_LeftColumnHeader, category.LeftHeader, m_LeftColumnButtons, category.LeftItems);
                 PopulateColumn(m_RightColumnHeader, category.RightHeader, m_RightColumnButtons, category.RightItems);
-
-                if (!triggerId.IsEmpty)
-                    Services.Script.TriggerResponse(triggerId);
             }
 
             m_LeftColumnLayout.ForceRebuild();

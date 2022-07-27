@@ -6,7 +6,7 @@
 
 $branch common.ringPhone
 
-{@profHarper}   Have you explored the {h}Bayou Station{/h} yet? There appears to be a new reef growing in the middle of {h}Site O{/h}. 
+{@profBayou}   Have you explored the {h}Bayou Station{/h} yet? There appears to be a new reef growing in the middle of {h}Site O{/h}. 
                 Would you be able to go pop over and help us report back on what exactly is growing over there?
 {@player}   You can count on me!
 
@@ -17,12 +17,12 @@ $branch common.ringPhone
 @cutscene
 $if !HasUpgrade(ROVTagger)
 	$branch common.ringPhone
-	{@profHarper} When you took this job I had the tech install a population counter tool on your sub.
+	{@profBayou} When you took this job I had the tech install a population counter tool on your sub.
 	$call GiveUpgrade(ROVTagger)
-	{@profHarper} You should see the {nameof ROVTagger} at the top of your view.  
-	{@profHarper} If you switch it on and move close to a scanned species, the {nameof ROVTagger} will {h}count{/h} it.
-	{@profHarper} Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
-	{@profHarper} Go ahead and give it a try!
+	{@profBayou} You should see the {nameof ROVTagger} at the top of your view.  
+	{@profBayou} If you switch it on and move close to a scanned species, the {nameof ROVTagger} will {h}count{/h} it.
+	{@profBayou} Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
+	{@profBayou} Go ahead and give it a try!
 	$set    jobs:common-dive.seen.tagger-intro = true
 $endif
 
@@ -31,7 +31,7 @@ $endif
 @when       JobTaskActive(makeModel), scene:name == "Ship"
 @once
 @cutscene
-{@guide}    Let's head to our ship's modeling room to compile our data into a report for {nameof @profHarper}.
+{@guide}    Let's head to our ship's modeling room to compile our data into a report for {nameof @profBayou}.
 $call UnlockRoom("modelingRoom")
 $call UnlockRoom("Modeling")
 
@@ -74,7 +74,7 @@ $endif
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Report back to {nameof profHarper}.
+{@guide}    Report back to {nameof profBayou}.
 
 // ARGUMENTATION
 ::argue.intro
@@ -86,7 +86,7 @@ $if ArgueSetClaim(Claim, jobs.bayou-displaced-reef.argue.claimLabel)
     $call ArgueFactSlot(O_OilRig.displacedReef.Model.Viz)
 $endif
 
-{@profHarper} Have you constructed a {h}visual model{/h} for the critters at {nameof O_OilRig}?
+{@profBayou} Have you constructed a {h}visual model{/h} for the critters at {nameof O_OilRig}?
 $branch .argue.showClaim
 
 :: argue.showClaim
@@ -99,17 +99,17 @@ $choose branch
 
 :: argue.incorrectPopulation
 $call ArgueRejectIncorrect()
-{@profHarper} Ok, that's interesting, but it's not answering my question.
+{@profBayou} Ok, that's interesting, but it's not answering my question.
 $goto .argue.showClaim
 $call ArgueCancelClaim()
 
 :: argue.giveUp
-{@profHarper} OK. Get back to me when you're ready.
+{@profBayou} OK. Get back to me when you're ready.
 
 ::end
 
 :: argue.correctPopulation
 $call ArgueComplete()
-{@profHarper} That looks great. 
-{@profHarper} It looks like you are getting good at estimating populations with your sub.
+{@profBayou} That looks great. 
+{@profBayou} It looks like you are getting good at estimating populations with your sub.
 $call CompleteJob()

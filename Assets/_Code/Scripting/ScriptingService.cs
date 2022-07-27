@@ -232,7 +232,8 @@ namespace Aqua
             {
                 using(PooledList<ScriptNode> nodes = PooledList<ScriptNode>.Create())
                 {
-                    int responseCount = functionSet.GetNodes(inTarget, nodes);
+                    LeafEvalContext context = LeafEvalContext.FromResolver(this, resolver, inContext);
+                    int responseCount = functionSet.GetNodes(context, inTarget, nodes);
                     if (responseCount > 0)
                     {
                         for(int i = responseCount - 1; i >= 0; --i)

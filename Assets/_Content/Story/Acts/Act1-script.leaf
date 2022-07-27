@@ -54,8 +54,8 @@ $goto .tutorialMove
 @cutscene
 @boostScore 100
 
-{@guide}    Hey, Kel gave us coordinates to some new stations!
-            We could stay here and keep doing jobs for them...{wait 0.5} or we could check out the {map-name}Map{/map-name} and explore a new station!
+{@guide}    Hey, {nameof @drKelp} gave us coordinates to some new stations!
+            We could stay here and keep doing jobs for her...{wait 0.5} or we could check out the {map-name}Map{/map-name} and explore a new station!
 
 // Coral Station
 
@@ -68,7 +68,7 @@ $goto .tutorialMove
 
 $branch common.ringPhone
 
-{@profCempaka}  Oh, hello! Have you come from the Kelp Station?
+{@profCoral}  Oh, hello! Have you come from the Kelp Station?
 				Well, welcome to the Coral Station!
 				Hope you like turtles. They are all over the coral reef.
 				I have some jobs listed on the Job Board, let me know if you're interested.
@@ -81,10 +81,10 @@ $branch common.ringPhone
 @cutscene
 $branch common.ringPhone
 {@player}   Well this is new.
-{@profHarper}   Oh, hello! Welcome to the Bayou Station!
+{@profBayou}   Oh, hello! Welcome to the Bayou Station!
                 This is an exciting time to be a Bayou researcher!
 {@player}   Oh yeah?
-{@profHarper}   I'll be sure to send some jobs your way that will show you how totally mystifying the Bayou can be.
+{@profBayou}   I'll be sure to send some jobs your way that will show you how totally mystifying the Bayou can be.
                 I'm looking forward to working with you!
 
 :: atArcticStation
@@ -95,7 +95,7 @@ $branch common.ringPhone
 @cutscene
 $branch common.ringPhone
 {@player}   {slow}Brrrrrrr{/slow}{auto}{wait 0.5}
-{@profWhalen}   Oh,| hello!| You're not a whale...
+{@profArctic}   Oh,| hello!| You're not a whale...
 				Well...| welcome to the Arctic Station!
                 This is so exciting!| I never get visitors...
                 Let me tell you a thing or two about Bowhead whales!
@@ -103,7 +103,7 @@ $branch common.ringPhone
                 [ Many| hours| later| .|.|.| ]
 $call GiveEntity(BowheadWhale)
 {@guide}        Listen, I'm sure we'd love to hear more about Bowhead whales, but we were actually wondering if you had any work for us.
-{@profWhalen}	Oh! | Well... | let me see if I can find some jobs to put on the Job Board.
+{@profArctic}	Oh! | Well... | let me see if I can find some jobs to put on the Job Board.
                 Fell free to give me a ring if you ever want to talk more about whales!
 
 // Intro
@@ -146,17 +146,17 @@ $call InteriorOpenJobBoard()
 @cutscene
 @boostScore 100
 @once
-{@merchant} {nameof @player}!
+{@merchantKelp} {nameof @player}!
             Phew, you had me worried for a bit. How's the sub?
 {@player}   The Sub's fine, I'm a good pilot.
-{@merchant} You better go talk to your Mom. She's pretty upset right now.
+{@merchantKelp} You better go talk to your Mom. She's pretty upset right now.
 {@player}   Can't you talk to her? 
-{@merchant} Sorry kiddo. You got yourself into this mess.
+{@merchantKelp} Sorry kiddo. You got yourself into this mess.
 {@player}   Ughh...
 
 :: momMad2
 @trigger    InspectObject
 @when       objectId == "Shop", !JobStartedOrComplete(kelp-welcome)
 @cutscene
-{@merchant} Sorry kiddo. You got yourself into this mess.
+{@merchantKelp} Sorry kiddo. You got yourself into this mess.
             You better go talk to Mom.

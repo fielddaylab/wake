@@ -96,17 +96,17 @@
 @when   !ArgueIsComplete(huntingLionsArgue)
 @cutscene
 $call ArgueLoad(huntingLionsArgue)
-{@profCempaka}	We know I'm not the fishers' biggest fan, but if I'm going to advocate for hunting, I need a model that demonstrates it will improve the populations or the diversity of the reef in the future.
+{@profCoral}	We know I'm not the fishers' biggest fan, but if I'm going to advocate for hunting, I need a model that demonstrates it will improve the populations or the diversity of the reef in the future.
 				Have that model yet?
 	$choice .argue.haveModel; Yes! I know how it works!
 	$choice .argue.noModel; No, not yet.
 $choose branch	
 
 :: argue.noModel
-{@profCempaka}	Well, let me know when you do.
+{@profCoral}	Well, let me know when you do.
 
 :: argue.haveModel
-{@profCempaka}	Okay. I need a model that shows the coral will come back, an observation of what species Lionfish impact, and a connection to the Coral.
+{@profCoral}	Okay. I need a model that shows the coral will come back, an observation of what species Lionfish impact, and a connection to the Coral.
 $if ArgueSetClaim(hunting-lionsClaim, jobs.coral-hunting-lions.argue.claimEvidence)
 		$call ArgueFactSlot(LionfishInvasion.Model.HuntingLionsIntervene)
 		$call ArgueFactSlot(Lionfish.Eats.BlueTang)
@@ -120,15 +120,15 @@ $choice #argueFactSet; Present facts from AQOS
 $choice .argue.giveUp; Let me get back to you
 
 :: argue.giveUp
-{@profCempaka}	OK. Get back to me when you're ready.
+{@profCoral}	OK. Get back to me when you're ready.
 
 :: argue.incorrectFacts
-{@profCempaka}	Hmm, this isn't quite what I'm looking for.
+{@profCoral}	Hmm, this isn't quite what I'm looking for.
 $call ArgueRejectIncorrect()
 $call ArgueClearFacts()
 
 :: argue.correctFacts
-{@profCempaka}	So, the less Lionfish, the more small fish, less algae, more light, happier coral!
+{@profCoral}	So, the less Lionfish, the more small fish, less algae, more light, happier coral!
 				Whoa. That is complex, but you did it!
 				I knew those Lionfish were awful from day 1.
 $call ArgueComplete()

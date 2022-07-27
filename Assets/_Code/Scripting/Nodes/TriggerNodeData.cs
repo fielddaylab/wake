@@ -12,7 +12,6 @@ namespace Aqua.Scripting
     {
         public TriggerPriority TriggerPriority;
 
-        public LeafExpressionGroup Conditions;
         public int Score;
 
         public PersistenceLevel OnceLevel = PersistenceLevel.Untracked;

@@ -8,6 +8,7 @@ using BeauUtil.Variants;
 using UnityEngine;
 using Leaf;
 using BeauUtil.Debugger;
+using Leaf.Runtime;
 
 namespace Aqua.Scripting
 {
@@ -22,6 +23,7 @@ namespace Aqua.Scripting
         private StringHash32 m_ScriptPackageRoot = null;
         private TriggerNodeData m_TriggerData = null;
         private StringHash32 m_TriggerOrFunctionId = null;
+        private LeafExpressionGroup m_TriggerOrFunctionConditions;
         private StringHash32 m_Target = null;
 
         #endregion // Serialized
@@ -46,6 +48,7 @@ namespace Aqua.Scripting
 
         public TriggerNodeData TriggerData { get { return m_TriggerData; } }
         public StringHash32 TriggerOrFunctionId() { return m_TriggerOrFunctionId; }
+        public LeafExpressionGroup TriggerOrFunctionConditions() { return m_TriggerOrFunctionConditions; }
 
         public PersistenceLevel TrackingLevel()
         {
@@ -170,10 +173,10 @@ namespace Aqua.Scripting
         [BlockMeta("when"), Preserve]
         private void SetTriggerConditions(StringSlice inConditionsList)
         {
+            m_TriggerOrFunctionConditions = LeafUtils.CompileExpressionGroup(this, inConditionsList);
             if (m_TriggerData != null)
             {
-                m_TriggerData.Conditions = LeafUtils.CompileExpressionGroup(this, inConditionsList);
-                m_TriggerData.Score += m_TriggerData.Conditions.Count;
+                m_TriggerData.Score += m_TriggerOrFunctionConditions.Count;
             }
         }
 

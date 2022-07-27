@@ -6,7 +6,7 @@
 
 $branch common.ringPhone
 
-{@profCempaka}	We need to know why the turtles are doing so well here.
+{@profCoral}	We need to know why the turtles are doing so well here.
 				I need you to scan all the species at the reef edge, 
 				then run some experiments to see what the turtles eat.
 $set jobs:turtle-stability-visual-model.saved = false
@@ -162,14 +162,14 @@ $endif
 @once
 @cutscene
 {@guide}   Nice work! I think we know all the facts about what Turtles eat.
-{@profCempaka}	Oh, are you ready to make the model?
+{@profCoral}	Oh, are you ready to make the model?
 $if !RoomUnlocked("modelingRoom")
-    {@profCempaka}	I've unlocked a new room on your Helm, {map-name}the Modeling Lab{/map-name}.
+    {@profCoral}	I've unlocked a new room on your Helm, {map-name}the Modeling Lab{/map-name}.
     $call UnlockRoom("modelingRoom")
     $call UnlockRoom("Modeling")
     $call GiveUpgrade(VisualModel)
 $endif
-{@profCempaka}	Use the {map-name}Modeling Lab{/map-name} to visualize {h}site V{/h}'s food web.
+{@profCoral}	Use the {map-name}Modeling Lab{/map-name} to visualize {h}site V{/h}'s food web.
 
 // TURTLE MODEL
 
@@ -208,7 +208,7 @@ $set jobs:turtle-stability-visual-model.saved = true
 @boostScore 1
 @cutscene
 {@player} 	What should we be doing now?
-{@guide}	That should be everything we need for now. Let's report back to Professor Cempaka.
+{@guide}	That should be everything we need for now. Let's report back to {nameof @profCoral}.
 $if global:nav.shipRoom == "office"
 	{@guide}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
 $endif
@@ -241,7 +241,7 @@ $endif
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Take your Visual Model to {nameof profCempaka}.
+{@guide}    Take your Visual Model to {nameof profCoral}.
 
 // ARGUMENTATION
 
@@ -251,7 +251,7 @@ $endif
 @when   !ArgueIsComplete(turtleStabilityArgue)
 @cutscene
 $call ArgueLoad(turtleStabilityArgue)
-{@profCempaka} So, why are the turtles so well-fed here?
+{@profCoral} So, why are the turtles so well-fed here?
 $choice .argue.coralMultipleFood; There are multiple food sources for the turtles.
 $choose branch
 
@@ -264,7 +264,7 @@ $call ArgueDisplayClaim()
 $if ArgueIsFactSubmitted(ReefEdge.Model.TurtleVisual)
 	$goto .argue.done
 $else
-	{@profCempaka}	That would make sense that a buffet is a big draw.
+	{@profCoral}	That would make sense that a buffet is a big draw.
 					What species are being consumed by turtles?
 					Do you have a model of those connections?
 	$goto .argue.chooseFacts
@@ -283,16 +283,16 @@ $endif
 
 :: argue.turtleModel
 $call ArgueComplete()
-{@profCempaka}	Thank you! Eventually we may need more information to complete this food web.
+{@profCoral}	Thank you! Eventually we may need more information to complete this food web.
 $call CompleteJob()
 
 :: argue.unrelated
 $call ArgueRejectIncorrect()
-{@profCempaka}  Ok, that's interesting, but it's not answering my question.
+{@profCoral}  Ok, that's interesting, but it's not answering my question.
                 Do you have a model of the food web which shows what species turtles are consuming?
 $goto .argue.chooseFacts
 
 :: argue.giveUp
-{@profCempaka} OK. Get back to me when you're ready.
+{@profCoral} OK. Get back to me when you're ready.
 
 

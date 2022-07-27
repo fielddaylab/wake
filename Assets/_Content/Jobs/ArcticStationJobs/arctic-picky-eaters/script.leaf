@@ -5,7 +5,7 @@
 @trigger    JobStarted
 @cutscene
 
-{@profWhalen}   We're trying to feed the Cod equal amounts of what they eat, but they seem to want only Diatoms.
+{@profArctic}   We're trying to feed the Cod equal amounts of what they eat, but they seem to want only Diatoms.
                 A trip to the Measurement Tank should be all you need.
 
 :: measureAlgaeOnly
@@ -27,7 +27,7 @@
 @when       JobTaskCompleted(obtainRateAlgae), JobTaskCompleted(obtainRateDiatoms)
 @once
 @cutscene
-{@guide}    That's everything we need to figure out which species Cod eats more of! Let's head back to Prof. Whalen.
+{@guide}    That's everything we need to figure out which species Cod eats more of! Let's head back to {nameof @profArctic}.
 
 
 // CATCH-ALL GUIDE TEXT
@@ -51,7 +51,7 @@
 @when		JobTaskTop(reportBack)
 @boostScore -5
 @cutscene
-{@guide}	 Compare the rates you just got and talk to Prof. Whalen about what you figured out.
+{@guide}	 Compare the rates you just got and talk to {nameof @profArctic} about what you figured out.
 
 
 // ARGUMENTATION
@@ -60,11 +60,11 @@
 @when       !ArgueIsComplete(pickyArgue) 
 @cutscene
 $call ArgueLoad(pickyArgue)
-{@profWhalen}   Feeding rates can tell us a lot about how much energy a species needs.
+{@profArctic}   Feeding rates can tell us a lot about how much energy a species needs.
 $branch .argue.firstQuery
 
 :: argue.firstQuery
-{@profWhalen}   If a species eats more of one species, it usually means it's low in nutrition. Which species is more nutritious?
+{@profArctic}   If a species eats more of one species, it usually means it's low in nutrition. Which species is more nutritious?
 $branch .argue.chooseClaim
 
 :: argue.chooseClaim
@@ -85,7 +85,7 @@ $call ArgueDisplayClaim()
 $branch .argue.diatomQuery
 
 :: argue.diatomQuery
-{@profWhalen}   How do the rates compare?
+{@profArctic}   How do the rates compare?
 $branch .argue.chooseFactsDiatoms
 
 :: argue.chooseFactsDiatoms
@@ -97,14 +97,14 @@ $choose branch
 
 :: argue.revise
 $if IsFactFullyUpgraded(ArcticCod.Eats.IceAlgae), IsFactFullyUpgraded(ArcticCod.Eats.Diatoms)
-    {@profWhalen}   Oh, I think these facts show the opposite of what you claimed, actually.
+    {@profArctic}   Oh, I think these facts show the opposite of what you claimed, actually.
                     High nutrition means lower rates, low nutrition means higher rates.
                     Want to revise your claim?
     $call ArgueHideClaim()
     $call ArgueClearFacts()
     $branch .argue.firstQuery
 $else
-    {@profWhalen}   You seem to be missing the rates for at least one of these facts.
+    {@profArctic}   You seem to be missing the rates for at least one of these facts.
                     Come back once you have the rates.
     $call ArgueHideClaim()
     $call ArgueClearFacts()
@@ -112,7 +112,7 @@ $endif
 
 
 :: argue.unrelatedDiatoms
-{@profWhalen}   I'm not following how this relates to Cod eating rates.
+{@profArctic}   I'm not following how this relates to Cod eating rates.
 $call ArgueRejectIncorrect()
 $branch .argue.diatomQuery
 
@@ -126,7 +126,7 @@ $call ArgueDisplayClaim()
 $branch .argue.algaeQuery
 
 :: argue.algaeQuery
-{@profWhalen}   How do the rates compare?
+{@profArctic}   How do the rates compare?
 $branch .argue.chooseFactsAlgae
 
 :: argue.chooseFactsAlgae
@@ -137,22 +137,22 @@ $choice .argue.notSure; Let me get back to you.
 $choose branch
 
 :: argue.unrelatedAlgae
-{@profWhalen}   I'm not following how this relates to Cod eating rates.
+{@profArctic}   I'm not following how this relates to Cod eating rates.
 $call ArgueRejectIncorrect()
 $branch .argue.algaeQuery
 
 // COMMON branch
 :: argue.notSure
-{@profWhalen}   That's okay, there's no rush here. Let me know when you're ready.
+{@profArctic}   That's okay, there's no rush here. Let me know when you're ready.
 
 :: argue.complete
 $if IsFactFullyUpgraded(ArcticCod.Eats.IceAlgae), IsFactFullyUpgraded(ArcticCod.Eats.Diatoms)
     $call ArgueComplete()
-    {@profWhalen}   Wow! The nutritional potency of the Ice Algae must really be something.
+    {@profArctic}   Wow! The nutritional potency of the Ice Algae must really be something.
                     I wonder if this has anything to do with what happened to that missing whale.
     $call CompleteJob()
 $else
-    {@profWhalen}   You seem to be missing the rates for at least one of these facts.
+    {@profArctic}   You seem to be missing the rates for at least one of these facts.
                     Come back once you have the rates.
     $call ArgueHideClaim()
     $call ArgueClearFacts()

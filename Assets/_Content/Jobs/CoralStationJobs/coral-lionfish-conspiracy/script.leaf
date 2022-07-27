@@ -4,7 +4,7 @@
 @trigger    JobStarted
 @cutscene
 
-{@guide}	Professor Cempaka sounds like they've got a real issue with the Lionfish. Let's help them out with this puzzle.
+{@guide}	{nameof @profCoral} sounds like they've got a real issue with the Lionfish. Let's help them out with this puzzle.
 $if HasEntity(Lionfish), HasEntity(BlueheadWrasse), HasEntity(BlueTang), HasEntity(StaghornCoral)
 	$if HasFact(Lionfish.Eats.BlueTang), HasFact(Lionfish.Eats.BlueheadWrasse)
 		{@guide}	Looks like you already have everything needed, so we can go right to the {h}Office{/h}.
@@ -71,13 +71,13 @@ $endif
 @when	JobTaskTop(arguePredator)
 @cutscene
 {@guide}	It doesn't seem like the Lionfish interact directly with the coral at all.
-			We know enough to discuss this with {nameof profCempaka}, now. I'm sure they'll be relieved to get some answers.
+			We know enough to discuss this with {nameof profCoral}, now. I'm sure they'll be relieved to get some answers.
 
 :: helpReportBack
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(arguePredator)
 @cutscene
-{@guide}	Report back to Professor Cempaka.
+{@guide}	Report back to {nameof @profCoral}.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -100,7 +100,7 @@ $endif
 @when 		JobTaskActive(arguePredator)
 @boostScore -5
 @cutscene
-{@guide}    Report back to {nameof profCempaka}.
+{@guide}    Report back to {nameof profCoral}.
 
 // ARGUMENTATION
 
@@ -109,7 +109,7 @@ $endif
 @when   !ArgueIsComplete(lionfishConspiracyArgue)
 @cutscene
 $call ArgueLoad(lionfishConspiracyArgue)
-{@profCempaka} I know these things are vicious predators. What do they eat?!
+{@profCoral} I know these things are vicious predators. What do they eat?!
 $if ArgueSetClaim(lionfish-conspiracyClaim, jobs.coral-lionfish-conspiracy.argue.claimEvidence)
 		$call ArgueFactSlot(Lionfish.Eats.BlueheadWrasse)
 		$call ArgueFactSlot(Lionfish.Eats.BlueTang)
@@ -121,16 +121,16 @@ $choice #argueFactSet; Present facts from AQOS
 $choice .argue.giveUp; Let me get back to you
 
 :: argue.giveUp
-{@profCempaka}	OK. Get back to me when you're ready.
+{@profCoral}	OK. Get back to me when you're ready.
 
 :: argue.incorrectFood
-{@profCempaka}	No, no, this doesn't tell me everything Lionfish eat.
+{@profCoral}	No, no, this doesn't tell me everything Lionfish eat.
 $call ArgueRejectIncorrect()
 $call ArgueClearFacts()
 $goto .argue.intro
 
 :: argue.correctFood
-{@profCempaka}	I knew it. That doesn't explain what's happening with the coral though.
+{@profCoral}	I knew it. That doesn't explain what's happening with the coral though.
 				But maybe it's connected.
 $call ArgueComplete()
 $call CompleteJob()

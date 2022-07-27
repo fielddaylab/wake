@@ -7,7 +7,7 @@
 $branch common.ringPhone
 
 $set jobs:bayou-shrimp-tastrophe.measuredOxygen = 0
-{@profHarper}	Those oxygen levels were perplexing.  I'm curious to see if they could be directly caused by the shrimp.
+{@profBayou}	Those oxygen levels were perplexing.  I'm curious to see if they could be directly caused by the shrimp.
 {@player} 	I can take a look.
 $call GiveUpgrade(MeasurementTank)
 
@@ -24,11 +24,11 @@ $call GiveUpgrade(MeasurementTank)
 @once
 @cutscene
 $set jobs:bayou-shrimp-tastrophe.measuredOxygen = 1
-{@guide} Okay, I think that oxygen measurement is what we were looking for!  Let's forward that to Professor Harper.
+{@guide} Okay, I think that oxygen measurement is what we were looking for!  Let's forward that to {nameof @profBayou}.
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
 @when 		jobs:bayou-shrimp-tastrophe.measuredOxygen == 1
 @cutscene
 {@player} 	Where am I headed again?
-{@guide}	We've collected the oxygen data we needed, and I think Professor Harper wants to see the results.
+{@guide}	We've collected the oxygen data we needed, and I think {nameof @profBayou} wants to see the results.

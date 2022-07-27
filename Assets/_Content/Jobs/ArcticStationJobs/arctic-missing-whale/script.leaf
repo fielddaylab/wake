@@ -7,12 +7,12 @@
 $branch common.ringPhone
 
 $set jobs:arctic-missing-whale.foundWhale = 0
-{@profWhalen}	Some of our researchers down south have been tracking a certain pod of whales for some time now.
+{@profArctic}	Some of our researchers down south have been tracking a certain pod of whales for some time now.
                 Recently however, one of our trackers went out, and we haven't been able to find them since.
                 The tracker was attached to one of the matriarchs of the pod we call "Linda".
                 Would you be able to go check her last known location and see if you can find her?  
 {@player}   Can do!
-{@profWhalen}  A mother whale is called a Cow, so sending you off to find her makes you a cowboy!
+{@profArctic}  A mother whale is called a Cow, so sending you off to find her makes you a cowboy!
 {@player}   When then, I reckon we ought to saddle-up and mosey on over.
 {@guide}    Oh, brother...
 
@@ -66,14 +66,14 @@ $endif
 @cutscene
 $set jobs:arctic-missing-whale.foundWhale = 1
 {@guide} Looks like we were able to find her...
-         Let's head back and let Professor Whalen know.
+         Let's head back and let {nameof @profArctic} know.
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
 @when 		JobTaskTop(reportBack)
 @cutscene
 {@player} 	Where should I be going again?
-{@guide}	We located the whale, so let's report back to Professor Whalen.
+{@guide}	We located the whale, so let's report back to {nameof @profArctic}.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -103,7 +103,7 @@ $set jobs:arctic-missing-whale.foundWhale = 1
 @when		JobTaskTop(reportBack)
 @boostScore -5
 @cutscene
-{@guide}	Talk to Professor Whalen in the Office.
+{@guide}	Talk to {nameof @profArctic} in the Office.
 
 // ARGUMENTATION
 ::argue.intro
@@ -115,7 +115,7 @@ $if ArgueSetClaim(Claim, jobs.arctic-missing-whale.argue.claimLabel)
     $call ArgueFactSlot(W_WhaleFall.Population.Detritus) 
     $call ArgueFactSlot(W_WhaleFall.Population.WhaleTracker) 
 $endif
-{@profWhalen}   Have you found Linda?
+{@profArctic}   Have you found Linda?
 $choice .argue.showClaim; Yes
 $choice .argue.cantFind; No
 $choose branch
@@ -133,7 +133,7 @@ $choose branch
 $if ArgueIsFactSubmitted(W_WhaleFall.Population.WhaleTracker)
     $goto .argue.complete
 $else
-{@profWhalen}   That's a LOT of detritus. It might be a whale, but did you happen to find our tracker?
+{@profArctic}   That's a LOT of detritus. It might be a whale, but did you happen to find our tracker?
                 That would confirm that it's her...
 $endif
 $goto .argue.showClaim
@@ -142,27 +142,27 @@ $goto .argue.showClaim
 $if ArgueIsFactSubmitted(W_WhaleFall.Population.Detritus)
     $goto .argue.complete
 $else
-{@profWhalen}   Oh no. Maybe it just fell off? 
+{@profArctic}   Oh no. Maybe it just fell off? 
                 You didn't happen to see anything that resembled a dead whale, did you?
 $endif
 $goto .argue.showClaim
 
 :: argue.unrelated
 $call ArgueRejectIncorrect()
-{@profWhalen} Ok, that's interesting, but it's not answering my question.
+{@profArctic} Ok, that's interesting, but it's not answering my question.
 $goto .argue.showClaim
 
 :: argue.giveUp
-{@profWhalen} OK. Get back to me when you're ready.
+{@profArctic} OK. Get back to me when you're ready.
 
 :: argue.cantFind
-{@profWhalen}   She's got to be out there somewhere. I hope something hasn't happened to her...
+{@profArctic}   She's got to be out there somewhere. I hope something hasn't happened to her...
                 Don't come back until you've found some evidence of her. 
 
 // END
 :: argue.complete
 $call ArgueComplete()
-{@profWhalen}   Oh. With both pieces of evidence... Well, that's unfortunate.
+{@profArctic}   Oh. With both pieces of evidence... Well, that's unfortunate.
                 I'm sure she will be missed by her pod. I wonder who will take over as leader...
                 Anyhow, thanks for letting us know.
 

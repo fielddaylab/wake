@@ -36,7 +36,7 @@
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(MethanoArg)
 @cutscene
-{@profHarper}   Have you discoverd how these microorganisms survive in such a hostile enviornment?
+{@profBayou}   Have you discoverd how these microorganisms survive in such a hostile enviornment?
 $if ArgueIsComplete(MethanoTemp), !ArgueIsComplete(MethanoMeta)
     $choice .argue.metabolize;  They metabolize methane
     $choose branch
@@ -51,7 +51,7 @@ $endif
 
 :: argue.immune
 $call ArgueLoad(MethanoTemp)
-{@profHarper}   Have you been able to measure their temperature tolerance ranges?
+{@profBayou}   Have you been able to measure their temperature tolerance ranges?
 $if ArgueSetClaim(Claim, jobs.bayou-methanogen.argue.claimLabel1) 
     $call ArgueFactSlot(Methanogen.Temperature.Stressed) 
 $endif
@@ -64,7 +64,7 @@ $choose branch
 
 :: argue.metabolize
 $call ArgueLoad(MethanoMeta)
-{@profHarper}   I saw that they eat methane, but can they consume enough to survive and reproduce?
+{@profBayou}   I saw that they eat methane, but can they consume enough to survive and reproduce?
 $if ArgueSetClaim(Claim, jobs.bayou-methanogen.argue.claimLabel2) 
     $call ArgueFactSlot(Methanogen.Eats.Methane) 
 $endif
@@ -98,30 +98,30 @@ $goto .argue.complete
 
 :: argue.unrelatedImmune
 $if ArgueIsFactSubmitted(Methanogen.Light.Stressed) 
-    {@profHarper}   Oops, this appears to be their Light tolerange.
+    {@profBayou}   Oops, this appears to be their Light tolerange.
                 We're looking for their {h}Temperature{/h} tolerance.
 $elseif
-    {@profHarper}   Oops, this appears to be their PH tolerange.
+    {@profBayou}   Oops, this appears to be their PH tolerange.
                 We're looking for their {h}Temperature{/h} tolerance.
 $else
-    {@profHarper} Hmmm, that's interesting, but it's not answering my question.
+    {@profBayou} Hmmm, that's interesting, but it's not answering my question.
 $endif
 $call ArgueRejectIncorrect()
 $goto .argue.immune
 
 :: argue.unrelatedMetabolize
-    {@profHarper} Hmmm, that's interesting, but it's not answering my question.
+    {@profBayou} Hmmm, that's interesting, but it's not answering my question.
 $call ArgueRejectIncorrect()
 $goto .argue.metabolize
 
 :: argue.giveUp
-{@profHarper} OK. Get back to me when you're ready.
+{@profBayou} OK. Get back to me when you're ready.
 $call ArgueCancelClaim()
 $call ArgueUnload()
 
 // END
 :: argue.complete
 $call ArgueComplete(MethanoArg)
-{@profHarper} This looks great!
+{@profBayou} This looks great!
 
 $call CompleteJob()

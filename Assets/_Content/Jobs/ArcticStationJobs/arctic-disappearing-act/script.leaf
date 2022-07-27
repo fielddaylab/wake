@@ -10,8 +10,8 @@ $else
 {@guide}    If we're going to investigate properly, we'll need to know all the species at {h}site W{/h}.
 $endif
 $if !HasUpgrade(VisualModel)
-	{@profWhalen}	I've unlocked a new room on your Helm, {map-name}the Modeling Lab{/map-name}.
-	{@profWhalen}	Head there when you are ready to make a Visual Model of how {h}site W{/h} species interact with each other.
+	{@profArctic}	I've unlocked a new room on your Helm, {map-name}the Modeling Lab{/map-name}.
+	{@profArctic}	Head there when you are ready to make a Visual Model of how {h}site W{/h} species interact with each other.
 	$call UnlockRoom("modelingRoom")
 	$call UnlockRoom("Modeling")
 	$call GiveUpgrade(VisualModel)
@@ -44,7 +44,7 @@ $endif
 @trigger    RequestPartnerHelp
 @when JobTaskTop(reportBack)
 @cutscene
-{@guide}    Let's report back to {nameof profWhalen} with our model.
+{@guide}    Let's report back to {nameof profArctic} with our model.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -67,7 +67,7 @@ $endif
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Report back to Professor Whalen.
+{@guide}    Report back to {nameof @profArctic}.
 
 // ARGUMENTATION
 ::argue.intro
@@ -78,7 +78,7 @@ $call ArgueLoad(whaleModel)
 $if ArgueSetClaim(Claim, jobs.arctic-disappearing-act.argue.claimLabel) 
 		$call ArgueFactSlot(W_WhaleFall.Model.WhaleFallVisual)
 $endif
-{@profWhalen} Where you able to create that visual model of site W?
+{@profArctic} Where you able to create that visual model of site W?
 $goto .argue.showClaim
             
 :: argue.showClaim
@@ -91,16 +91,16 @@ $choose branch
 
 :: argue.unrelated
 $call ArgueRejectIncorrect()
-{@profWhalen} Ok, that's interesting, but it's not answering my question.
+{@profArctic} Ok, that's interesting, but it's not answering my question.
 $goto .argue.showClaim
 
 :: argue.giveUp
-{@profWhalen} OK. Get back to me when you're ready.
+{@profArctic} OK. Get back to me when you're ready.
 
 // END
 :: argue.complete
 $call ArgueComplete()
-{@profWhalen}   It looks like quite a few organisms came to feast on her. 
+{@profArctic}   It looks like quite a few organisms came to feast on her. 
                 I wonder how long she has been down there...
                 Anyways, thanks for your help!
 

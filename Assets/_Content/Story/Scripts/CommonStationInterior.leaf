@@ -45,16 +45,16 @@ $call InteriorOpenJobBoard()
 @when       objectId == "Shop", !world:shop.unlocked
 @boostScore -1000
 @cutscene
-{@merchant} Nice to see you again, {nameof @player}.
+{@merchantKelp} Nice to see you again, {nameof @player}.
             I'm still working on getting things here setup. How about you help out your mom and head back later?
             Oh, and make sure to stay safe out there!
-{@player}   Thanks {nameof @merchant}, but I know I've got this!
+{@player}   Thanks {nameof @merchantKelp}, but I know I've got this!
 
 :: shop.base
 @trigger    InspectObject
 @when       objectId == "Shop", world:shop.unlocked
 @cutscene
-{@merchant} How's it going out there kiddo? Need any upgrades from your dear ol' uncle?
+{@merchantKelp} How's it going out there kiddo? Need any upgrades from your dear ol' uncle?
 $choice .shop.board; Sure do!
 $choice .shop.cancel; Ugh, leave me alone.
 
@@ -63,4 +63,4 @@ $call InteriorOpenShopBoard()
 
 :: shop.cancel
 @cutscene
-{@merchant} Okalie dokalie!
+{@merchantKelp} Okalie dokalie!
