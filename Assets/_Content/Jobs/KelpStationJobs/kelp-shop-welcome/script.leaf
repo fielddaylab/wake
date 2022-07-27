@@ -2,7 +2,7 @@
 
 :: helpGoShop
 @trigger    RequestPartnerHelp
-@when 		scene:name != "Shop"
+@when 		scene:name != "Shop", JobTaskTop(gotoShop)
 @cutscene
 {@player} 	Where should we be going again?
 {@guide}    Before we head out, we might wanna upgrade our ship with some of our earnings.
@@ -32,6 +32,14 @@
 @cutscene
 {@player}   Okay, got both of them!
 {@guide}    Nice! Let's head back to the Ship then.
+
+:: helpReturnShip
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(returnShip)
+@once
+@cutscene
+{@player}   So... where do we head now?
+{@guide}    We need to return to the Helm on the ship.
 
 // END
 :: end
