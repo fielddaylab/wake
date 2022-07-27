@@ -240,7 +240,6 @@ $endif
 :: helpFirstExperiment
 @trigger    RequestPartnerHelp
 @when 		scene:name == "ExperimentV2", !JobTaskCompleted(runExperiment)
-@boostScore -500
 @cutscene
 {@player}   Ok, now what? 
 $if ExperimentIsRunning()
