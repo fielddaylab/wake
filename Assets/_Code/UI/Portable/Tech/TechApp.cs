@@ -74,13 +74,16 @@ namespace Aqua.Portable {
                 var cachedBtn = button;
                 cachedBtn.Button.onClick.AddListener(() => OnButtonClicked(cachedBtn));
             }
+
         }
 
-        protected void OnEnable() { base.OnEnable(); }
+        protected void OnEnable() {
+            base.OnEnable(); 
+            ClearAll();
+        }
 
         protected void OnDestroy() {
             Services.Events?.DeregisterAll(this);
-            // base.OnDestroy();
         }
 
         #endregion //Unity Events
@@ -89,17 +92,26 @@ namespace Aqua.Portable {
 
         protected override void OnShowComplete(bool inbInstant) {
             base.OnShow(inbInstant);
-            RefreshButtons();
-            // LoadData();
         }
 
         protected override void OnHide(bool inbInstant) {
             base.OnHide(inbInstant);
+            ClearAll();
         }
 
         #endregion // Panel
 
         #region Page Display
+
+        private void ClearAll(){
+            m_ExplorationCategory.Toggle.isOn = m_ScienceCategory.Toggle.isOn = false;
+            m_CurrentCategory = CategoryId.NONE;
+            UpdateCategory(m_ExplorationCategory, CategoryId.Exploration);
+            UpdateCategory(m_ScienceCategory, CategoryId.Exploration);
+
+            m_SelectedItem = null;
+            RefreshButtons();
+        }
 
         #endregion // Page Display
 
@@ -109,6 +121,7 @@ namespace Aqua.Portable {
             button.Outline.Color = m_SelectedOutlineColor;
             m_SelectedItem = button.CachedItem;
             // Routine.Start(this, ButtonClickRoutine(button));
+            RefreshButtons();
         }
 
         // private IEnumerator ButtonClickRoutine(PortableUpgradeButton button) {
@@ -180,9 +193,16 @@ namespace Aqua.Portable {
             PortableUpgradeButton button;
             InvItem item;
             for(int i = 0; i < itemIds.Length; i++) {
-                item = Assets.Item(itemIds[i]);
-                button = buttons[i];
-                PopulateButton(button, item);
+                // if(Save.Inventory.HasItem(itemIds[i])) {
+                if(Save.Inventory.HasUpgrade(itemIds[i])){
+                    item = Assets.Item(itemIds[i]);
+                    button = buttons[i];
+                    PopulateButton(button, item);
+                } else {
+                    button = buttons[i];
+                    button.CachedItem = null;
+                    button.gameObject.SetActive(false);
+                }
             }
 
             for(int i = itemIds.Length; i < buttons.Length; i++) {
@@ -205,7 +225,8 @@ namespace Aqua.Portable {
 
         private void UpdateButtonState(PortableUpgradeButton button) {
             bool selected = m_SelectedItem == button.CachedItem;
-            button.Outline.Color = m_BaseOutlineColor;
+
+            if(!selected) button.Outline.Color = m_BaseOutlineColor;
         }
 
         private void RefreshButtons() {
