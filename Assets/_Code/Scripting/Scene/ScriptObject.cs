@@ -17,6 +17,7 @@ namespace Aqua
 
         [SerializeField] private SerializedHash32 m_Id = "";
         [SerializeField] private bool m_IsPersistent = false;
+        [SerializeField] private bool m_StartDisabled = false;
 
         #endregion // Inspector
 
@@ -67,6 +68,12 @@ namespace Aqua
         private void Awake()
         {
             RegisterScriptObject();
+        }
+
+        private void Start()
+        {
+            if (m_StartDisabled)
+                gameObject.SetActive(false);
         }
 
         private void OnDestroy()

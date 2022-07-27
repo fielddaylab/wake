@@ -20,9 +20,6 @@ namespace EasyAssetStreaming {
             }
 
             s_Initialized = true;
-            #if ENABLE_UNITY_COLLECTIONS_CHECKS
-            s_NativeSafetyHandle = AtomicSafetyHandle.Create();
-            #endif // if ENABLE_UNITY_COLLECTIONS_CHECKS
         }
 
         static internal void Release() {
@@ -31,15 +28,9 @@ namespace EasyAssetStreaming {
             }
 
             s_Initialized = false;
-            #if ENABLE_UNITY_COLLECTIONS_CHECKS
-            AtomicSafetyHandle.Release(s_NativeSafetyHandle);
-            #endif // if ENABLE_UNITY_COLLECTIONS_CHECKS
         }
 
         static private bool s_Initialized = false;
-        #if ENABLE_UNITY_COLLECTIONS_CHECKS
-        static private AtomicSafetyHandle s_NativeSafetyHandle;
-        #endif // ENABLE_UNITY_COLLECTIONS_CHECKS
 
         #region Resources
 
@@ -383,6 +374,29 @@ namespace EasyAssetStreaming {
 
         #region Misc
 
+        internal struct NativeArrayContext : IDisposable {
+            #if ENABLE_UNITY_COLLECTIONS_CHECKS
+            public AtomicSafetyHandle? SafetyHandle;
+            #endif // ENABLE_UNITY_COLLECTIONS_CHECKS
+
+            public unsafe NativeArray<T> GetNativeArray<T>(T* ptr, int length) where T : unmanaged {
+                var arr = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<T>(ptr, length, Allocator.None);
+                #if ENABLE_UNITY_COLLECTIONS_CHECKS
+                NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref arr, SafetyHandle.Value);
+                #endif // ENABLE_UNITY_COLLECTIONS_CHECKS
+                return arr;
+            }
+            
+            public void Dispose() {
+                #if ENABLE_UNITY_COLLECTIONS_CHECKS
+                if (SafetyHandle.HasValue) {
+                    AtomicSafetyHandle.Release(SafetyHandle.Value);
+                    SafetyHandle = null;
+                }
+                #endif // ENABLE_UNITY_COLLECTIONS_CHECKS
+            }
+        }
+
         static internal bool FastRemove<T>(this List<T> list, T item) {
             int end = list.Count - 1;
             int index = list.IndexOf(item);
@@ -397,15 +411,12 @@ namespace EasyAssetStreaming {
             return false;
         }
 
-        /// <summary>
-        /// Converts an unmanaged buffer to a unity NativeArray.
-        /// </summary>
-        static internal unsafe NativeArray<T> ToNativeArray<T>(T* ptr, int length) where T : unmanaged {
-            var arr = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<T>(ptr, length, Allocator.None);
-            #if ENABLE_UNITY_COLLECTIONS_CHECKS || UNITY_EDITOR
-            NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref arr, s_NativeSafetyHandle);
-            #endif // ENABLE_UNITY_COLLECTIONS_CHECKS || UNITY_EDITOR
-            return arr;
+        static internal NativeArrayContext NewArrayContext() {
+            return new NativeArrayContext() {
+                #if ENABLE_UNITY_COLLECTIONS_CHECKS
+                SafetyHandle = AtomicSafetyHandle.Create()
+                #endif // ENABLE_UNITY_COLLECTIONS_CHECKS
+            };
         }
 
         /// <summary>
