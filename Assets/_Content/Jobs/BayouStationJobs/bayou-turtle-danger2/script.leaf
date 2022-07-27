@@ -5,14 +5,14 @@
 @trigger    JobStarted
 @cutscene
 
-{@profHarper}   We want to figure out how the turtles are responding to the reef that has grown all around the oil rig.
+{@profBayou}   We want to figure out how the turtles are responding to the reef that has grown all around the oil rig.
                 Specifically, we want you to collect the historic population data and develop a model using what you know about the food web.
 {@player}       I'm happy to help, but why build a model if we can easily get the historic population data? Can we just look at the trend?
-{@profHarper}   We need a model so we can understand why the populations are changing the way they are.
+{@profBayou}   We need a model so we can understand why the populations are changing the way they are.
                 If you can build a model that outputs populations that match the historic data,
                 then we can start to assume that our model is describing how the ecosystem works. 
 {@player}       Got it. So the model is tested against the world?
-{@profHarper}   Exactly!  
+{@profBayou}   Exactly!  
 
 // CATCH-ALL GUIDE TEXT
 :: catchHistoricalData
@@ -108,7 +108,7 @@ $endif
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Report back to {nameof profHarper}.
+{@guide}    Report back to {nameof profBayou}.
 
 // ARGUMENTATION
 
@@ -117,7 +117,7 @@ $endif
 @when   !ArgueIsComplete(turtleDanger)
 @cutscene
 $call ArgueLoad(turtleDanger)
-{@profHarper} How are turtle populations responding?
+{@profBayou} How are turtle populations responding?
 $choice .argue.turtlesSafe2; It seems the turtle populations are stable
 $choice .argue.giveUp; Let me get back to you
 $choose branch
@@ -126,7 +126,7 @@ $choose branch
 $if ArgueSetClaim(Claim, jobs.bayou-turtle-danger2.argue.claimLabel) 
 	$call ArgueFactSlot(O_OilRig.turtleDanger.Model.Describe)
 $endif
-{@profHarper} Were you able to obtain a numerical model that describes the populations?
+{@profBayou} Were you able to obtain a numerical model that describes the populations?
 $goto .argue.showClaim
 
 :: argue.showClaim
@@ -139,17 +139,17 @@ $choose branch
 
 :: argue.unrelated
 $call ArgueRejectIncorrect()
-{@profHarper} Ok, that's interesting, but it's not answering my question.
+{@profBayou} Ok, that's interesting, but it's not answering my question.
 $goto .argue.showClaim
 
 :: argue.giveUp
-{@profHarper} OK. Get back to me when you're ready.
+{@profBayou} OK. Get back to me when you're ready.
 $call ArgueCancelClaim()
 
 // END
 
 :: argue.complete
 $call ArgueComplete()
-{@profHarper}   The turtles do seem to be maintaining their populations. 
+{@profBayou}   The turtles do seem to be maintaining their populations. 
                 We will need a higher accuracy rating in the future, if we want to predict from this though.
 $call CompleteJob()

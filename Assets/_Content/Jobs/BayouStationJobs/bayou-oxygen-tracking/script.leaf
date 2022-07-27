@@ -9,8 +9,8 @@ $branch common.ringPhone
 $set jobs:bayou-oxygen-tracking.doneScanning = false
 $set jobs:bayou-oxygen-tracking.doneMeasuring = false
 $set jobs:bayou-oxygen-tracking.doneModeling = false
-{@profHarper} Hey, the shrimp situation in the deadzone is still looking pretty dire.
-{@profHarper} Do you think that any of your more recently discovered tools could help with that?
+{@profBayou} Hey, the shrimp situation in the deadzone is still looking pretty dire.
+{@profBayou} Do you think that any of your more recently discovered tools could help with that?
 {@player} Yeah, I think I might have an idea.  Let's head back to site P, V1ctor.
 
 :: helpGoToSite
@@ -76,7 +76,7 @@ $endif
 @cutscene
 
 {@player} OK, what now?
-{@guide} We just need to report back to professor Harper!
+{@guide} We just need to report back to {nameof @profBayou}!
 
 :: end
 @trigger JobCompleted

@@ -108,7 +108,7 @@ $endif
 @once
 @cutscene
 {@guide}	We have a model, but for some reason it doesn't match what we've observed. The {nameof BlueTang} aren't eating as much as we'd expect.
-			Let's talk through it with {nameof profCempaka}.
+			Let's talk through it with {nameof profCoral}.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -152,7 +152,7 @@ $endif
 @when 		JobTaskActive(sargArgue)
 @boostScore -5
 @cutscene
-{@guide}    Talk to {@nameof profCempaka} in the {map-name}Office{map-name}.
+{@guide}    Talk to {@nameof profCoral} in the {map-name}Office{map-name}.
 
 
 // ARGUMENTATION
@@ -161,7 +161,7 @@ $endif
 @trigger    RequestPartnerHelp
 @when       JobTaskTop(reportBack) // BRANCH D
 @cutscene
-{@guide} 	Return to the Office and describe your results to {nameof profCempaka}.
+{@guide} 	Return to the Office and describe your results to {nameof profCoral}.
 
 :: argue.intro
 @trigger    TryArgumentation
@@ -170,7 +170,7 @@ $endif
 $branch .argue.chooseClaim
 
 :: argue.chooseClaim
-{@profCempaka}	Why is there so much algae at Site S?
+{@profCoral}	Why is there so much algae at Site S?
 	$choice .argue.claimSparseFish; There aren't enough fish there to eat it.
 	$choice .argue.claimLionfishQuicken; The lionfish are making it reproduce faster!
 	$choice .argue.giveUp; Let me get back to you.
@@ -180,7 +180,7 @@ $choose branch
 // BRANCH: SPARSE FISH
 
 :: argue.claimSparseFish
-{@profCempaka}	What is supposed to eat the turf algae?
+{@profCoral}	What is supposed to eat the turf algae?
 $call ArgueLoad(coralMuchAlgaeArgue)
 $if ArgueSetClaim(coralMuchAlgaeArgueClaim, jobs.coral-much-algae.argue.claimLabel)
 		$call ArgueFactSlot(LionfishInvasion.Model.MuchAlgaeDescriptive)
@@ -197,27 +197,27 @@ $choice .argue.giveUp; Let me get back to you
 
 :: argue.correctFacts
 $call ArgueComplete()
-{@profCempaka}	It looks like the {nameof BlueTang} are not eating enough of the algae. We should look into why.
+{@profCoral}	It looks like the {nameof BlueTang} are not eating enough of the algae. We should look into why.
 $call CompleteJob()
 
 :: argue.incorrectFacts
 $if ArgueIsFactSubmitted(LionfishInvasion.Model.MuchAlgaeVisual)
-	{@profCempaka}	Oops! This is a {h}Visual Model{/h}. This isn't the model we're looking for.
+	{@profCoral}	Oops! This is a {h}Visual Model{/h}. This isn't the model we're looking for.
 $endif
 $if ArgueIsFactSubmitted(LionfishInvasion.Model.MuchAlgaeDescriptive)
 	// A only
-	{@profCempaka}	I'm not sure how that second fact relates, but your model seems good.
+	{@profCoral}	I'm not sure how that second fact relates, but your model seems good.
 	$goto .argue.correctFacts
 $else
 	$if ArgueIsFactSubmitted(BlueTang.Eats.TurfAlgae.Stressed)
 		// B only 
-		{@profCempaka}	So the tang are supposed to be there to eat the {nameof TurfAlgae}. Have you created a {h}Descriptive Model{/h} this?
+		{@profCoral}	So the tang are supposed to be there to eat the {nameof TurfAlgae}. Have you created a {h}Descriptive Model{/h} this?
 		$call ArgueClearFacts()
 		$call ArgueSubmitFact(BlueTang.Eats.TurfAlgae.Stressed)
 		$goto .argue.chooseFactsSparseFish
 	$else
 		// neither
-		{@profCempaka}	I don't think that is important for answering this question.
+		{@profCoral}	I don't think that is important for answering this question.
 		$call ArgueRejectIncorrect()
 		$call ArgueClearFacts()
 		$call ArgueHideClaim()
@@ -225,12 +225,12 @@ $else
 $endif
 
 :: argue.giveUp
-{@profCempaka}	OK. Get back to me when you're ready.
+{@profCoral}	OK. Get back to me when you're ready.
 
 // BRANCH: LIONFISH QUICKEN
 
 :: argue.claimLionfishQuicken
-{@profCempaka}	Ugh, creepy buggers! Do you have an experiment that shows this?
+{@profCoral}	Ugh, creepy buggers! Do you have an experiment that shows this?
 $call ArgueLoad(coralMuchAlgaeIncorrectArgue)
 $if ArgueSetClaim(coralMuchAlgaeIncorrectArgueClaim, jobs.coral-much-algae.argue.claimLabelIncorrect)
 			$call ArgueFactSlot(LionfishInvasion.Model.MuchAlgaeDescriptive)
@@ -242,7 +242,7 @@ $choice #argueFactSet; Present facts from AQOS
 $choice .argue.giveUp; Let me get back to you
 
 :: argue.incorrectFactsIncorrect
-{@profCempaka}	Hmmmm... Maybe that's not the case.
+{@profCoral}	Hmmmm... Maybe that's not the case.
 $call ArgueRejectIncorrect()
 $call ArgueClearFacts()
 $call ArgueHideClaim()

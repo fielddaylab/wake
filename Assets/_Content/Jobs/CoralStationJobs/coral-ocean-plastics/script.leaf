@@ -6,16 +6,16 @@
 
 $branch common.ringPhone
 
-{@profCempaka}	You scanned plastic!? In the reef? This won't do.
-{@profCempaka}  What will happen if the makes its way to the Reef Edge?
+{@profCoral}	You scanned plastic!? In the reef? This won't do.
+{@profCoral}  What will happen if the makes its way to the Reef Edge?
 $if JobTaskTop(scanReefEdge)
-    {@profCempaka}  Head to the Reef Edge at Site V to construct a food web for the Loggerhead Turtle.
+    {@profCoral}  Head to the Reef Edge at Site V to construct a food web for the Loggerhead Turtle.
     {@player}       We're on our way!
 $elseif JobTaskTop(whatTurtlesEat)
-    {@profCempaka}  Experiment in the Observation tank with the organisms you've scanned in the Reef Edge at Site V.
+    {@profCoral}  Experiment in the Observation tank with the organisms you've scanned in the Reef Edge at Site V.
     {@player}       On it!
 $else
-    {@profCempaka}  Take what you know about the Reef Edge at Site V interactions and construct a food web for the Loggerhead Turtle.
+    {@profCoral}  Take what you know about the Reef Edge at Site V interactions and construct a food web for the Loggerhead Turtle.
     {@player}       Copy that!
 $endif
 
@@ -84,7 +84,7 @@ $set    	jobs:coral-turtle-population.seen.bottom = true
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Talk to {nameof profCempaka} in the Office.
+{@guide}    Talk to {nameof profCoral} in the Office.
 
 // ARGUMENTATION
 
@@ -93,7 +93,7 @@ $set    	jobs:coral-turtle-population.seen.bottom = true
 @when   !ArgueIsComplete(oceanPlasticArgue)
 @cutscene
 $call ArgueLoad(oceanPlasticArgue)
-{@profCempaka} What will be impacted if the plastic enters the Reef Edge?
+{@profCoral} What will be impacted if the plastic enters the Reef Edge?
 $choice .argue.turtles; Only the turtles will be impacted.
 $choice .argue.all; All species may be impacted.
 //$choice .argue.queen; The conch will be impacted.
@@ -106,32 +106,32 @@ $choose branch
 $if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimLabel1)
     $call ArgueFactSlot(LoggerheadTurtle.Eats.PlasticBag)
 $endif
-{@profCempaka}	Not the turtles! Do you have evidence for this claim?	
+{@profCoral}	Not the turtles! Do you have evidence for this claim?	
 $goto .argue.chooseFacts
 
 ::argue.all
 $if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimLabel4)
     $call ArgueFactSlot(ReefEdge.Model.PlasticsVisual)
 $endif
-{@profCempaka}	Well that doesn't sound good. What evidence do you have for that claim?	
+{@profCoral}	Well that doesn't sound good. What evidence do you have for that claim?	
 $goto .argue.chooseFacts
 
 ::argue.queen
 $if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimLabel3)
     $call ArgueFactSlot(LoggerheadTurtle.Eats.PlasticBag)
 $endif
-{@profCempaka}	Well that doesn't sound good. What evidence do you have for that claim?	
+{@profCoral}	Well that doesn't sound good. What evidence do you have for that claim?	
 $goto .argue.chooseFactsDummy
 
 ::argue.nan
-{@profCempaka}	That can't be right, we know there's a change in the environment. 
+{@profCoral}	That can't be right, we know there's a change in the environment. 
                 Why don't you double check your observations.	
 
 ::argue.staghorn
 $if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimLabel2)
 		$call ArgueFactSlot(QueenConch.Light.Stressed)
 $endif
-{@profCempaka}	Well that doesn't sound good. What evidence do you have for that claim?	
+{@profCoral}	Well that doesn't sound good. What evidence do you have for that claim?	
 $goto .argue.chooseFactsDummy
 
 ::argue.chooseFacts
@@ -152,28 +152,28 @@ $choose branch
 
 ::argue.done
 $call ArgueComplete()
-{@profCempaka}  So if the turtles eat the plastic, then the other species will get thrown out of balance?
+{@profCoral}  So if the turtles eat the plastic, then the other species will get thrown out of balance?
                 We need to get ahead of this plastic thing.
                 For the turtles!
 {@guide}   ...
-{@profCempaka}  ...and the other critters too!
+{@profCoral}  ...and the other critters too!
 
 $call CompleteJob()
 
 ::argue.done2
 $call ArgueComplete()
-{@profCempaka}  Why would someone add litter to the ocean? We need to get ahead of this plastic thing.
+{@profCoral}  Why would someone add litter to the ocean? We need to get ahead of this plastic thing.
                 For the turtles!
 $call CompleteJob()
 
 ::argue.unrelated
 $call ArgueRejectIncorrect()
-{@profCempaka}  I'm not seeing a clear relationship between that species and the plastic.
+{@profCoral}  I'm not seeing a clear relationship between that species and the plastic.
                 Can you head back and double check your observations?
 $call ArgueCancelClaim()
 
 :: argue.giveUp
-{@profCempaka} OK. Get back to me when you're ready.
+{@profCoral} OK. Get back to me when you're ready.
 $call ArgueCancelClaim()
 
 ::end

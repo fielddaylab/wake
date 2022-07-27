@@ -6,7 +6,7 @@
 @trigger    JobStarted
 @cutscene
 
-{@profWhalen}   We've had whales die in this area before.  It's called a "whalefall".
+{@profArctic}   We've had whales die in this area before.  It's called a "whalefall".
                 All kinds of creatures use the whale detritus for food.
                 We made a descriptive model of a previous whalefall. Take a look.
 $call GiveFact(W_WhaleFall.Model.Stages)
@@ -35,7 +35,7 @@ $call GiveFact(W_WhaleFall.Model.Stages)
 @when		JobTaskTop(reportBack)
 @boostScore -5
 @cutscene
-{@guide}	Talk to Professor Whalen in the Office.
+{@guide}	Talk to {nameof @profArctic} in the Office.
 
 // ARGUMENTATION
 
@@ -44,7 +44,7 @@ $call GiveFact(W_WhaleFall.Model.Stages)
 @when   !ArgueIsComplete(deathTime)
 @cutscene
 $call ArgueLoad(deathTime)
-{@profWhalen} How long has she been down there?
+{@profArctic} How long has she been down there?
     $choice .argue.stage1; Stage 1
     $choice .argue.stage2; Stage 2
     $choice .argue.stage3; Stage 3
@@ -56,7 +56,7 @@ $if ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel1)
 		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm)
         $call ArgueFactSlot(W_WhaleFall.Model.Stages)
 $endif
-{@profWhalen}   What did you observe? Include both the stage model and anything you found.
+{@profArctic}   What did you observe? Include both the stage model and anything you found.
 $goto .argue.showZombieWormsWrong
 
 :: argue.stage2
@@ -64,7 +64,7 @@ $if ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel2)
 		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm)
         $call ArgueFactSlot(W_WhaleFall.Model.Stages)
 $endif
-{@profWhalen}   What did you observe to specify stage 2? Include both the stage model and anything you found.
+{@profArctic}   What did you observe to specify stage 2? Include both the stage model and anything you found.
 $goto .argue.showZombieWorms
 
 :: argue.stage3
@@ -72,7 +72,7 @@ $if ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel3)
 		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm)
         $call ArgueFactSlot(W_WhaleFall.Model.Stages)
 $endif
-{@profWhalen}   What did you observe that shows you that? Include both the stage model and anything you found.
+{@profArctic}   What did you observe that shows you that? Include both the stage model and anything you found.
 $goto .argue.showZombieWormsWrong
 
 :: argue.showZombieWormsWrong
@@ -89,11 +89,11 @@ $if ArgueIsFactSubmitted(W_WhaleFall.Population.Detritus)
 $else
     $if ArgueIsFactSubmitted(W_WhaleFall.Population.ZombieWorm)
         $call ArgueRejectIncorrect()
-        {@profWhalen}   This seems possible, but could you connect this evidence with the stage model?
+        {@profArctic}   This seems possible, but could you connect this evidence with the stage model?
         $branch .argue.showZombieWormsWrong
     $else
         $call ArgueRejectIncorrect()
-        {@profWhalen}   Have you seen any zombie worms there?
+        {@profArctic}   Have you seen any zombie worms there?
                         It looks like the worms might be a good marker of the whale fall stage.
         $goto .argue.showZombieWormsWrong
     $endif
@@ -102,13 +102,13 @@ $endif
 
 :: argue.unrelatedDetritus
 $call ArgueRejectIncorrect()
-{@profWhalen}   Yes, the whale creates a lot of detritus, but we might be able to determine the stage from the other species.
+{@profArctic}   Yes, the whale creates a lot of detritus, but we might be able to determine the stage from the other species.
                 How do the species' populations compare with the model I gave you? 
 $goto .argue.showZombieWormsWrong
 
 :: argue.zombieWormsEarly
 $call ArgueRejectIncorrect()
-{@profWhalen}   Interesting, it seems like the zombie worms could have occurred earlier.
+{@profArctic}   Interesting, it seems like the zombie worms could have occurred earlier.
                 Can you check the species populations against the model I gave you and adjust your claim? 
 $call ArgueCancelClaim()
 $call ArgueUnload()
@@ -122,21 +122,21 @@ $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.giveUp
-{@profWhalen} OK. Get back to me when you're ready.
+{@profArctic} OK. Get back to me when you're ready.
 $call ArgueCancelClaim()
 $call ArgueUnload()
 
 :: argue.unrelated2
 $if ArgueIsFactSubmitted(W_WhaleFall.Population.ZombieWorm)
     $call ArgueRejectIncorrect()
-    {@profWhalen}   This seems plausible, but could you connect this evidence with the stage model?
+    {@profArctic}   This seems plausible, but could you connect this evidence with the stage model?
     $branch .argue.showZombieWorms
 $else
     $if ArgueIsFactSubmitted(W_WhaleFall.Population.Detritus)
         $branch .argue.unrelatedDetritus2
     $else
         $call ArgueRejectIncorrect()
-        {@profWhalen}   Have you seen any zombie worms there?
+        {@profArctic}   Have you seen any zombie worms there?
                         It looks like the worms might be a good marker of the whale fall stage.
         $goto .argue.showZombieWorms
     $endif
@@ -145,7 +145,7 @@ $endif
 
 :: argue.unrelatedDetritus2
 $call ArgueRejectIncorrect()
-{@profWhalen}   Yes, the whale creates a lot of detritus, but we might be able to determine the stage from the other species.
+{@profArctic}   Yes, the whale creates a lot of detritus, but we might be able to determine the stage from the other species.
                 how do the species' populations compare with the model I gave you?
 $goto .argue.showZombieWorms
 
@@ -154,7 +154,7 @@ $goto .argue.showZombieWorms
 
 :: argue.complete
 $call ArgueComplete()
-{@profWhalen}   Ahhh, yes! These can only live on the whale detritus once the bones are exposed.
+{@profArctic}   Ahhh, yes! These can only live on the whale detritus once the bones are exposed.
                 Excellent work {nameof @player}!
 
 $call CompleteJob()

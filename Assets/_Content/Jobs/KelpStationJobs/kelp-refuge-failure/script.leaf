@@ -32,7 +32,7 @@ $branch common.ringPhone
 @once
 @cutscene
 $set    	jobs:coral-stressed.seen.bottom = true
-{@guide}	Dr. Kelpurnia was right, there are very few Bull Kelp compared to Giant Kelp.
+{@guide}	{nameof @drKelp} was right, there are very few Bull Kelp compared to Giant Kelp.
 			Let's see what the population history has been like since the refuge was created. We'll need to scan the population probe.
 {@guide}   	Do you see it anywhere?
 
@@ -130,7 +130,7 @@ $goto .experimentsCompleted
 @trigger	SimulationSyncSuccess
 @once
 @cutscene
-{@guide}	We've solved it! Let's tell Dr. Kelpurnia the good news.
+{@guide}	We've solved it! Let's tell {nameof @drKelp} the good news.
 
 :: helpReportBack
 @trigger    RequestPartnerHelp
@@ -195,7 +195,7 @@ $goto .experimentsCompleted
 @when 		JobTaskActive(getPaid)
 @boostScore -5
 @cutscene
-{@guide}	Let's head back to the Office and tell Dr. Kelpurnia what we found.
+{@guide}	Let's head back to the Office and tell {nameof @drKelp} what we found.
 
 // ARGUMENTATION
 

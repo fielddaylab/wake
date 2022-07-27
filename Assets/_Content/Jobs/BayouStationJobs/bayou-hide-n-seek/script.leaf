@@ -5,10 +5,10 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@profHarper}   We are working on generating a model to predict the future health of turtles at {h}Site O{/h}.
+{@profBayou}   We are working on generating a model to predict the future health of turtles at {h}Site O{/h}.
                 However, the models based on our current information are not accurate enough.
 {@player}       What is wrong with our model?
-{@profHarper}   It could be that we missed some organism when we {item}scanned{/item} the life at the {m}Oil Rig{/m}.
+{@profBayou}   It could be that we missed some organism when we {item}scanned{/item} the life at the {m}Oil Rig{/m}.
                 For this job, we need you to gather more organism data from the {h}Site O{/h} to build a higher accuracy model.
 
 // CATCH-ALL GUIDE TEXT
@@ -45,7 +45,7 @@
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Report back to {nameof profHarper}.
+{@guide}    Report back to {nameof profBayou}.
 
 :: catchVisualize
 @trigger    RequestPartnerHelp
@@ -124,14 +124,14 @@ $endif
 @cutscene
 $if !ArgueIsComplete(predictJelly)
     $call ArgueLoad(predictJelly)
-    {@profHarper} What will happen to turtle populations in the future?
+    {@profBayou} What will happen to turtle populations in the future?
     $choice .argue.stableTurtle; Turtle populations remain stable
     $choice .argue.increaseTurtle; Turtle populations will increase
     $choice .argue.decreaseTurtle; Turtle populations will decrease
     $choose branch
 $else
     $call ArgueLoad(jellyTurtle)
-    {@profHarper}   We've already established that the turtle populations will remain stable.
+    {@profBayou}   We've already established that the turtle populations will remain stable.
     $if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1) 
         $call ArgueFactSlot(LoggerheadTurtle.Eats.MoonJelly)
     $endif
@@ -143,21 +143,21 @@ $endif
 $if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1)
     $call ArgueFactSlot(O_OilRig.turtleDangerJellies.Model.Predict)
 $endif
-{@profHarper} Have you increased the accuracy of your model from last time?
+{@profBayou} Have you increased the accuracy of your model from last time?
 $branch argue.showClaim
 
 :: argue.increaseTurtle
 $if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel2)
     $call ArgueFactSlot(O_OilRig.turtleDangerJellies.Model.Predict)
 $endif
-{@profHarper} Can I see your model?
+{@profBayou} Can I see your model?
 $branch argue.chooseFactsDummy
 
 :: argue.decreaseTurtle
 $if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel3)
     $call ArgueFactSlot(O_OilRig.turtleDangerJellies.Model.Predict)
 $endif
-{@profHarper} Can I see your model?
+{@profBayou} Can I see your model?
 $branch argue.chooseFactsDummy
 
 :: argue.showClaim
@@ -171,7 +171,7 @@ $choose branch
 :: argue.whatMissing
 $call ArgueComplete()
 $call ArgueLoad(jellyTurtle)
-{@profHarper}   I see. Nicely done!
+{@profBayou}   I see. Nicely done!
 $if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1) 
     $call ArgueFactSlot(LoggerheadTurtle.Eats.MoonJelly)
 $endif
@@ -191,7 +191,7 @@ $choose branch
 $if ArgueIsFactSubmitted(LoggerheadTurtle.Eats.MoonJelly)
 	$branch .argue.complete
 $else
-	{@profHarper}	I see. How is this fact related to the Turtles?
+	{@profBayou}	I see. How is this fact related to the Turtles?
     $call ArgueClearFacts()
 	$branch .argue.chooseFacts
 $endif
@@ -200,7 +200,7 @@ $endif
 $if ArgueIsFactSubmitted(ReefEdge.Population.LoggerheadTurtle)
 	$branch .argue.complete
 $else
-	{@profHarper}	I see. What is the population of the Jellyfish here?
+	{@profBayou}	I see. What is the population of the Jellyfish here?
 	$branch .argue.chooseFacts
 $endif
 
@@ -214,23 +214,23 @@ $choose branch
 
 :: argue.unrelated
 $call ArgueClearFacts()
-{@profHarper} Ok, that's interesting, but it's not answering my question.
+{@profBayou} Ok, that's interesting, but it's not answering my question.
 $branch .argue.showClaim
 
 :: argue.unrelated2
 $call ArgueClearFacts()
-{@profHarper} Ok, that's interesting, but it's not answering my question.
+{@profBayou} Ok, that's interesting, but it's not answering my question.
 $branch .argue.chooseFactsDummy
 
 :: argue.unrelated3
 $call ArgueClearFacts()
-{@profHarper} Ok, that's interesting, but it's not answering my question.
+{@profBayou} Ok, that's interesting, but it's not answering my question.
 $branch .argue.chooseFacts
 
 :: argue.clarifyClaim
 $call ArgueComplete()
 $call ArgueLoad(jellyTurtle) 
-{@profHarper}   In your model, the turtle population stays within a normal range. They are not in jeopardy.
+{@profBayou}   In your model, the turtle population stays within a normal range. They are not in jeopardy.
                 I do see that you increased your accuracy. What did you add to the model?
 $if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1) 
     $call ArgueFactSlot(LoggerheadTurtle.Eats.MoonJelly)
@@ -238,7 +238,7 @@ $endif
 $branch .argue.chooseFacts
 
 :: argue.giveUp
-{@profHarper} OK. Get back to me when you're ready.
+{@profBayou} OK. Get back to me when you're ready.
 $call ArgueClearFacts()
 $call ArgueCancelClaim()
 $call ArgueUnload()
@@ -246,7 +246,7 @@ $call ArgueUnload()
 // END
 :: argue.complete
 $call ArgueComplete()
-{@profHarper}   Nicely done! Nothing like a little Hide n' Seek to spice you our science.
+{@profBayou}   Nicely done! Nothing like a little Hide n' Seek to spice you our science.
                 Keep at it! We're almost done here!
 
 $call CompleteJob()

@@ -4,7 +4,7 @@
 @trigger    JobStarted
 @cutscene
 $branch common.ringPhone
-{@profCempaka}  According to the data collected by our reasearch probe, the {nameof BlueTang} seem to be more {!}stressed{/!} than in the model you submitted. We need collect more data to improve our model's accuracy.
+{@profCoral}  According to the data collected by our reasearch probe, the {nameof BlueTang} seem to be more {!}stressed{/!} than in the model you submitted. We need collect more data to improve our model's accuracy.
 {@guide}        Well, the first thing we can do is see what stress ranges the {nameof BlueTang} can tolerate.
                 For that, we'll need to conduct some {map-name}Experiments{/map-name} with the {h}Stress Tank{/h}.
 
@@ -15,10 +15,10 @@ $branch common.ringPhone
 @cutscene
 $branch common.ringPhone
 
-{@profCempaka}	Forgive the intrusion, but your {nameof @guide} tells me that according to the stress ranges you've measured,
+{@profCoral}	Forgive the intrusion, but your {nameof @guide} tells me that according to the stress ranges you've measured,
 				the environmental conditions at {h}Site S{/h} should be well within the Blue Tang's comfortable range. 
 {@guide}        So something else is stressing the tang?
-{@profCempaka}	There is something else which could be stressing the Blue Tang: {h}Microorganisms{/h}! 
+{@profCoral}	There is something else which could be stressing the Blue Tang: {h}Microorganisms{/h}! 
 				I'm going to need you to go back to {h}Site S{/h} and scan for microorganisms.
 
 :: scanIck
@@ -42,7 +42,7 @@ $branch common.ringPhone
 @cutscene
 {@guide}	Now that we know {nameof Ick} stresses {nameof BlueTang}, we can measure the reproduction and eating rates of the stressed Tang to improve our model.
 $branch common.ringPhone
-{@profCempaka} Sorry to intrude, after you measured the stress ranges of the Tang we measured their eating and reproduction rates when stressed. I'll send the data over now.
+{@profCoral} Sorry to intrude, after you measured the stress ranges of the Tang we measured their eating and reproduction rates when stressed. I'll send the data over now.
 $call UpgradeFact(Ick.Stresses.BlueTang)
 $call UpgradeFact(BlueTang.Eats.TurfAlgae.Stressed)
 $call UpgradeFact(BlueTang.Reproduce.Stressed)
@@ -151,7 +151,7 @@ $call GiveFact(Ick.Reproduce)
 @when 		JobTaskActive(report)
 @boostScore -5
 @cutscene
-{@guide}    Present your new model to {@profCempaka} in the Comms room.
+{@guide}    Present your new model to {@profCoral} in the Comms room.
 
 // ARGUMENTATION
 
@@ -160,14 +160,14 @@ $call GiveFact(Ick.Reproduce)
 @when		!ArgueIsComplete(checkUpArgue)
 @cutscene
 $call ArgueLoad(checkUpArgue)
-{@profCempaka}	What's going on with the {nameof BlueTang}?
+{@profCoral}	What's going on with the {nameof BlueTang}?
 $if JobTaskTop(report)
 	$choice .argue.transition; The Ick are making them stressed!
 $endif
 $choice .argue.giveUp; I'm still not sure...
 
 :: argue.transition
-{@profCempaka}	The Ick? Did adding Ick fix the model?
+{@profCoral}	The Ick? Did adding Ick fix the model?
 $if ArgueSetClaim(checkUpClaim, jobs.coral-check-up.argue.claimLabel)
 		$call ArgueFactSlot(LionfishInvasion.Model.IckStressDescribe)
 $endif
@@ -181,17 +181,17 @@ $choice #argueFactSet; Present facts from AQOS
 $choice .argue.giveUp; Let me get back to you
 
 :: argue.correctModel
-{@profCempaka}	Well done! Now we understand more about the effects of Ick on Blue Tang.
+{@profCoral}	Well done! Now we understand more about the effects of Ick on Blue Tang.
 $branch .end
 
 :: argue.incorrectModel
-{@profCempaka}	Hmm. I don't see how this pertains to the issue at hand.
+{@profCoral}	Hmm. I don't see how this pertains to the issue at hand.
 $call ArgueRejectIncorrect()
-{@profCempaka}	Why do you say the Ick are stressing the Tang?
+{@profCoral}	Why do you say the Ick are stressing the Tang?
 $branch .argue.presentFacts
 
 :: argue.giveUp
-{@profCempaka}	OK. Get back to me when you're ready.
+{@profCoral}	OK. Get back to me when you're ready.
 
 // END
 

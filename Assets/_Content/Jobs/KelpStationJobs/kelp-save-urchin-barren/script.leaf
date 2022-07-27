@@ -82,11 +82,11 @@ $branch common.ringPhone
 @cutscene
 $if global:nav.shipRoom != "office"
 	{@player} 	What should we do now?
-	{@guide}	We've got a model now that shows us what might help Site B, so let's report back to Dr. Kelpurnia.
+	{@guide}	We've got a model now that shows us what might help Site B, so let's report back to {nameof @drKelp}.
 	{@guide}	We should first head back to the {map-name}Office{/map-name}.
 $else
 	{@player} 	So... now what?
-	{@guide}	We can report our findings to Dr. Kelpurnia using the {h}Computer{/h}.
+	{@guide}	We can report our findings to {nameof @drKelp} using the {h}Computer{/h}.
 $endif
 
 // CATCH-ALL GUIDE TEXT

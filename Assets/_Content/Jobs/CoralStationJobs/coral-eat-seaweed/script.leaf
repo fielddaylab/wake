@@ -6,9 +6,9 @@
 $branch common.ringPhone
 
 $set jobs:coral-clear-sarg.siteRScans = 0
-{@profCempaka}	This time I need you to analyze the relations between Sargassum and everything else you've found so far.
-{@profCempaka}	Hopefully we can find something that can deal with that Sargassum!
-{@profCempaka}	It's a bit of a grind, but you will need to run experiments until you've figured out a solution. 
+{@profCoral}	This time I need you to analyze the relations between Sargassum and everything else you've found so far.
+{@profCoral}	Hopefully we can find something that can deal with that Sargassum!
+{@profCoral}	It's a bit of a grind, but you will need to run experiments until you've figured out a solution. 
 
 :: helpBackAtShip
 @trigger    RequestPartnerHelp
@@ -41,7 +41,7 @@ $set jobs:coral-clear-sarg.siteRScans = 0
 @when 		HasFact(Urchin.Eats.Sargassum.Stressed)
 @once
 @cutscene
-{@guide}	Looks like we found our solution! Let's report this back to Professor Cempaka.
+{@guide}	Looks like we found our solution! Let's report this back to {nameof @profCoral}.
 
 :: guideTowardUnstressed
 @trigger    NewBehaviorObserved
@@ -83,7 +83,7 @@ $endif
 @when 		JobTaskActive(urchinSargArgue)
 @boostScore -5
 @cutscene
-{@guide}    Head back to the Office to talk to Professor Cempaka.
+{@guide}    Head back to the Office to talk to {nameof @profCoral}.
 
 // ARGUMENTATION
 
@@ -95,7 +95,7 @@ $call ArgueLoad(coralClearSargArgue)
 $branch .argue.intro
 
 :: argue.intro
-{@profCempaka} Is there an organism that can clear the Sargassum?
+{@profCoral} Is there an organism that can clear the Sargassum?
 	$choice .argue.doesntEatSargasssum; Blue Tang
 	$choice .argue.doesntEatSargasssum; Bluehead Wrasse
 	$choice .argue.eatsSargassum; Urchin
@@ -103,15 +103,15 @@ $branch .argue.intro
 $choose branch
 
 :: argue.doesntEatSargasssum
-{@profCempaka} Hmm. That doesn't eat Sargassum, does it?
+{@profCoral} Hmm. That doesn't eat Sargassum, does it?
 $goto .argue.intro
 
 :: argue.nothingEatsSargassum
-{@profCempaka}	Hmm. That seems unlikely.
+{@profCoral}	Hmm. That seems unlikely.
 				Perhaps running more experiments will reveal something?
 
 :: argue.eatsSargassum
-{@profCempaka} Urchins?! No way! Did you see this happen?!
+{@profCoral} Urchins?! No way! Did you see this happen?!
 $goto .argue.evidence
 
 :: argue.evidence
@@ -125,19 +125,19 @@ $choice #argueFact; Present facts from AQOS
 $choice .argue.giveUp; Let me get back to you
 
 ::argue.giveUp
-{@profCempaka}    OK. Get back to me when you're ready.
+{@profCoral}    OK. Get back to me when you're ready.
 
 :: argue.urchin
 $call ArgueComplete()
-{@profCempaka} Perfect! I wonder if they can actually live here... I've heard they destroy the Kelp Forests...
+{@profCoral} Perfect! I wonder if they can actually live here... I've heard they destroy the Kelp Forests...
 $call CompleteJob()
 
 :: argue.unrelated
 $if ArgueIsFactSubmitted(Urchin.Eats.Sargassum)
 	$branch .argue.urchin
 $else
-	{@profCempaka} How does that help the Sargassum situation?
-	{@profCempaka} Are you sure you saw Urchins eat Sargassum?
+	{@profCoral} How does that help the Sargassum situation?
+	{@profCoral} Are you sure you saw Urchins eat Sargassum?
 	$call ArgueRejectIncorrect()
 	$goto .argue.evidence
 $endif

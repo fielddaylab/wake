@@ -23,7 +23,7 @@
 @cutscene
 {@player} 	What are we doing here?
 {@guide}    We're looking to upgrade our ship with some of our earnings.
-            Why don't you check out some of the instruments {nameof @merchant} has for sale.
+            Why don't you check out some of the instruments {nameof @merchantKelp} has for sale.
 
 :: gotBothModels
 @trigger    JobTaskCompleted
@@ -59,7 +59,7 @@ $if JobTaskCompleted(getVisualModel), JobTaskCompleted(getTagger)
     $call ShowPopup(map.unlock.shipRoom.header, map.unlock.worldMap.desc)
     $call ShowPopup(map.unlock.stations.header, map.unlock.stations.desc)
 
-    {@player}   Thanks, Kel!
+    {@player}   Thanks, {nameof @drKelp}!
     {@drKelp}   No problem!
                 If you'd like to stay here, head back to the {map-name}Job Board{/map-name} where I have some new jobs for you!
     $call CompleteJob()

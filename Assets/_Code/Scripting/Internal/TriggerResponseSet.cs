@@ -132,10 +132,10 @@ namespace Aqua.Scripting {
                 }
 
                 // cannot play due to conditions
-                if (triggerData.Conditions.Count > 0)
+                if (node.TriggerOrFunctionConditions().Count > 0)
                 {
                     LeafExpression failure;
-                    Variant result = triggerData.Conditions.Evaluate(inContext, out failure);
+                    Variant result = node.TriggerOrFunctionConditions().Evaluate(inContext, out failure);
                     if (!result.AsBool())
                     {
                         if (DebugService.IsLogging(LogMask.Scripting))

@@ -58,7 +58,7 @@
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(argue), scene:name == "Helm"
 @cutscene
-{@guide}	{nameof profCempaka} is waiting to hear your findings about the effectiveness of the coral reef.
+{@guide}	{nameof profCoral} is waiting to hear your findings about the effectiveness of the coral reef.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -88,7 +88,7 @@
 @when 		JobTaskActive(argue)
 @boostScore -5
 @cutscene
-{@guide}    Talk to {nameof profCempaka} in the Office.
+{@guide}    Talk to {nameof profCoral} in the Office.
 
 // ARGUMENTATION
 
@@ -100,7 +100,7 @@ $branch .argue.chooseClaim
 
 :: argue.chooseClaim
 $call ArgueCancelClaim()
-{@profCempaka}	Have the artificial reefs increased coral populations?
+{@profCoral}	Have the artificial reefs increased coral populations?
 	$choice .argue.claimNoHelp; No, the artificial reefs have not helped.
 	$choice .argue.claimHelp; Yes, the artificial reefs helped!
 	$choice .argue.giveUp; Let me check my notes and get back to you
@@ -109,7 +109,7 @@ $choose branch
 // BRANCH: NO HELP
 
 :: argue.claimNoHelp
-{@profCempaka}	How do you know?
+{@profCoral}	How do you know?
 $call ArgueLoad(coralFakeFixArgue)
 $if ArgueSetClaim(coralFakeFixArgueClaim, jobs.coral-fake-fix.argue.claimLabel)
 		$call ArgueFactSlot(LionfishInvasion.Population.ArtificialReef)
@@ -126,13 +126,13 @@ $choice .argue.giveUp; Let me get back to you
 
 :: argue.correctFactsAB
 $call ArgueComplete()
-{@profCempaka}	I see. The artificial reefs really have no effect.
+{@profCoral}	I see. The artificial reefs really have no effect.
 $call CompleteJob()
 
 :: argue.incorrectFacts
 $if ArgueIsFactSubmitted(LionfishInvasion.PopulationHistory.StaghornCoral)
 	// B only
-	{@profCempaka}	The coral seem to be continuing to stay the same.
+	{@profCoral}	The coral seem to be continuing to stay the same.
 					Was the installation successful? Are the artificial reefs still there?
 	$call ArgueClearFacts()
 	$call ArgueSubmitFact(LionfishInvasion.PopulationHistory.StaghornCoral)
@@ -140,13 +140,13 @@ $if ArgueIsFactSubmitted(LionfishInvasion.PopulationHistory.StaghornCoral)
 $else
 	$if ArgueIsFactSubmitted(LionfishInvasion.Population.ArtificialReef)
 		// A only 
-		{@profCempaka}	I see the installation was successful. How are the coral affected?
+		{@profCoral}	I see the installation was successful. How are the coral affected?
 		$call ArgueClearFacts()
 		$call ArgueSubmitFact(LionfishInvasion.Population.ArtificialReef)
 		$goto .argue.chooseFactsNoHelp
 	$else
 		// neither
-		{@profCempaka}	I don't think that is important for answering this question.
+		{@profCoral}	I don't think that is important for answering this question.
 		$call ArgueRejectIncorrect()
 		$call ArgueClearFacts()
         $goto .argue.chooseFactsNoHelp
@@ -155,12 +155,12 @@ $else
 $endif
 
 :: argue.giveUp
-{@profCempaka}	OK. Get back to me when you're ready.
+{@profCoral}	OK. Get back to me when you're ready.
 
 // BRANCH: HELP
 
 :: argue.claimHelp
-{@profCempaka}	Can you show me the historic coral populations?
+{@profCoral}	Can you show me the historic coral populations?
 $call ArgueLoad(coralFakeFixIncorrectArgue)
 $if ArgueSetClaim(coralFakeFixIncorrectArgueClaim, jobs.coral-fake-fix.argue.claimLabelIncorrect)
 	$call ArgueFactSlot(LionfishInvasion.PopulationHistory.StaghornCoral)
@@ -172,7 +172,7 @@ $choice #argueFactSet; Present facts from AQOS
 $choice .argue.giveUp; Let me get back to you
 
 :: argue.correctFactsIncorrect
-{@profCempaka}	This shows the coral populations staying the same. I think you should reconsider your claim.
+{@profCoral}	This shows the coral populations staying the same. I think you should reconsider your claim.
 $call ArgueRejectIncorrect()
 $call ArgueClearFacts()
 $call ArgueHideClaim()
@@ -180,14 +180,14 @@ $goto .argue.chooseClaim
 
 :: argue.incorrectFactsIncorrect
 $if ArgueIsFactSubmitted(LionfishInvasion.PopulationHistory.ArtificialReef) 
-    {@profCempaka}  Actually, I'm looking for the population history of the {h}{nameof StaghornCoral}{/h}
+    {@profCoral}  Actually, I'm looking for the population history of the {h}{nameof StaghornCoral}{/h}
     $call ArgueRejectIncorrect()
     $call ArgueClearFacts()
     $goto .argue.claimHelp
 $else
     $call ArgueRejectIncorrect()
     $call ArgueClearFacts()
-    {@profCempaka}	Hmmm... That's not the fact I was looking for, Are you reconsidering your claim?
+    {@profCoral}	Hmmm... That's not the fact I was looking for, Are you reconsidering your claim?
         $choice #argue.argue.chooseClaim; Let me amend my claim
         $choice .argue.giveUp; Let me get back to you
         $choose branch

@@ -1,16 +1,13 @@
 #basePath   upgrades
 
-:: unlockRoomsForUpgrades
+:: unlockPrediction
 @function   UpgradeAdded
+@when       upgradeId == "PredictionModel"
+$call GiveUpgrade("SyncModel", Silent)
+$call GiveUpgrade("WaterModeling", Silent)
 
-$if local:upgradeId == "PredictionModel"
-    $call GiveUpgrade("SyncModel", Silent)
-    $call GiveUpgrade("WaterModeling", Silent)
-    $return
-$endif
-
-$if local:upgradeId == "MeasurementTank"
-    $call GiveUpgrade("WaterStabilizer", Silent)
-    $call GiveUpgrade("AutoFeeder", Silent)
-    $return
-$endif
+:: unlockMeasurement
+@function   UpgradeAdded
+@when       upgradeId == "MeasurementTank"
+$call GiveUpgrade("WaterStabilizer", Silent)
+$call GiveUpgrade("AutoFeeder", Silent)

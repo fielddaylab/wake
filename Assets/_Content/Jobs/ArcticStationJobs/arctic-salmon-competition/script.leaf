@@ -5,7 +5,7 @@
 @trigger    JobStarted
 @cutscene
 
-{@profWhalen}   Here, take this. It's some information we've already gathered about Salmon.
+{@profArctic}   Here, take this. It's some information we've already gathered about Salmon.
 $call GiveEntity(ChinookSalmon, Silent)
 $call GiveFact(ChinookSalmon.Eats.IceAlgae)
 $call GiveFact(ChinookSalmon.Eats.Clione)
@@ -58,7 +58,7 @@ $if ArgueIsComplete(competitionArgue1)
     $branch .argue.noImpact
 $else
     $call ArgueLoad(competitionArgue1)
-    {@profWhalen}   Is there an ecosystem imbalance when Cod and Salmon are both present?
+    {@profArctic}   Is there an ecosystem imbalance when Cod and Salmon are both present?
     $branch .argue.chooseClaim
 $endif
 
@@ -74,7 +74,7 @@ $if ArgueSetClaim(Claim, jobs.arctic-salmon-competition.argue.claimLabelImbalanc
     $call ArgueFactSlot(ArcticCod.Eats.IceAlgae)
 $endif
 $call ArgueDisplayClaim()
-{@profWhalen}   Why do you think that?
+{@profArctic}   Why do you think that?
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.unrelatedCod
     $answer *, .argue.unrelatedCod
@@ -82,14 +82,14 @@ $choice .argue.notSure; Let me get back to you.
 $choose branch
 
 :: argue.unrelatedCod
-{@profWhalen}   I don't think so. It doesn't seem like this is pointing to any sort of imbalance.
+{@profArctic}   I don't think so. It doesn't seem like this is pointing to any sort of imbalance.
 $call ArgueClearFacts()
 
 // Neither branch
 
 :: argue.noImpact
 $if ArgueIsComplete(competitionArgue1)
-    {@profWhalen}   You already showed me the historic populations of Cod's prey.
+    {@profArctic}   You already showed me the historic populations of Cod's prey.
     $branch .argue.modelQuery
 $else
     $call ArgueLoad(competitionArgue1)
@@ -98,12 +98,12 @@ $else
         $call ArgueFactSlot(Z_OpenOcean.PopulationHistory.IceAlgae)
     $endif
     $call ArgueDisplayClaim()
-    {@profWhalen}   Intriguing. Are Salmon's food sources not affected by the Cod growth?
+    {@profArctic}   Intriguing. Are Salmon's food sources not affected by the Cod growth?
     $branch .argue.noImpactQuery
 $endif
 
 :: argue.noImpactQuery
-{@profWhalen}   What are historic populations of Cod's prey like?
+{@profArctic}   What are historic populations of Cod's prey like?
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.correctPopulations
     $answer *, .argue.unrelatedPopulations
@@ -111,7 +111,7 @@ $choice .argue.notSure; Let me get back to you.
 $choose branch
 
 :: argue.unrelatedPopulations
-{@profWhalen}   These don't seem like the population histories of Cod's food sources.
+{@profArctic}   These don't seem like the population histories of Cod's food sources.
 $call ArgueRejectIncorrect()
 $branch .argue.noImpactQuery
 
@@ -121,7 +121,7 @@ $call ArgueCancelClaim()
 $goto .argue.modelQuery
 
 :: argue.modelQuery
-{@profWhalen}   Did your information on the Cod improve our prior model?
+{@profArctic}   Did your information on the Cod improve our prior model?
 $call ArgueLoad(competitionArgue2)
 $if ArgueSetClaim(Claim2, jobs.arctic-salmon-competition.argue.claimLabelImproved)
     $call ArgueFactSlot(Z_OpenOcean.SalmonCompetition.Model.Sync)
@@ -138,16 +138,16 @@ $choose branch
 
 :: argue.correctModel
 $call ArgueComplete()
-{@profWhalen}   Improved! We need to keep working at it, but your efforts have helped unstick us. Thanks!
+{@profArctic}   Improved! We need to keep working at it, but your efforts have helped unstick us. Thanks!
 $call CompleteJob()
 
 :: argue.unrelatedModel
-{@profWhalen}   We're looking for an updated Numerical model about Salmon and Cod.
+{@profArctic}   We're looking for an updated Numerical model about Salmon and Cod.
 $call ArgueRejectIncorrect()
-{@profWhalen}   Did your information on the Cod improve our prior model?
+{@profArctic}   Did your information on the Cod improve our prior model?
 $branch .argue.chooseFactsModel
 
 // Shared
 
 :: argue.notSure
-{@profWhalen}   Okay. Get back to me when you're ready.
+{@profArctic}   Okay. Get back to me when you're ready.

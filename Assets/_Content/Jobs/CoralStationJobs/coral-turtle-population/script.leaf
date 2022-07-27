@@ -6,9 +6,9 @@
 
 $branch common.ringPhone
 
-{@profCempaka}	We need to get an accurate count of the Loggerhead Turtle population at {h}site V{/h}.
-{@profCempaka}  Drop in at {h}site V{/h} and use your Scanner to locate a Turtle.
-{@profCempaka}  Then switch to Counting mode and navigate the site to get a representative sample.
+{@profCoral}	We need to get an accurate count of the Loggerhead Turtle population at {h}site V{/h}.
+{@profCoral}  Drop in at {h}site V{/h} and use your Scanner to locate a Turtle.
+{@profCoral}  Then switch to Counting mode and navigate the site to get a representative sample.
 {@player} 	We're on our way!
 
 :: helpLeaveShip
@@ -34,11 +34,11 @@ $set    	jobs:coral-turtle-population.seen.bottom = true
 {@guide}   Let's look around for that Loggerhead Turtle.
 // $branch common.ringPhone
 // $if !HasUpgrade(ROVTagger)
-// 	{@profCempaka} Once you've scanned a turtle, I'll need you to start counting how many are here.
+// 	{@profCoral} Once you've scanned a turtle, I'll need you to start counting how many are here.
 // 	$call GiveUpgrade(ROVTagger)
-// 	{@profCempaka} You should see the {nameof ROVTagger} at the top of your view.  
-// 	{@profCempaka} If you switch it on and move close to a scanned species, the {nameof ROVTagger} will {h}count{/h} it.
-// 	{@profCempaka} Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
+// 	{@profCoral} You should see the {nameof ROVTagger} at the top of your view.  
+// 	{@profCoral} If you switch it on and move close to a scanned species, the {nameof ROVTagger} will {h}count{/h} it.
+// 	{@profCoral} Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
 // 	{@guide} That's really convenient.
 // 	$set    jobs:common-dive.seen.tagger-intro = true
 // $endif
@@ -130,7 +130,7 @@ $set jobs:coral-turtle-population.got.pop = true
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Talk to {nameof profCempaka} in the Office.
+{@guide}    Talk to {nameof profCoral} in the Office.
 
 // ARGUMENTATION
 // 
@@ -142,7 +142,7 @@ $call ArgueLoad(turtlePopulationArgue)
 $if ArgueSetClaim(Claim, jobs.coral-turtle-population.argue.turtlePopulationClaim)
 		$call ArgueFactSlot(ReefEdge.Population.LoggerheadTurtle)
 $endif
-{@profCempaka} What is the current {nameof LoggerheadTurtle} population at {nameof ReefEdge}?
+{@profCoral} What is the current {nameof LoggerheadTurtle} population at {nameof ReefEdge}?
 $branch .argue.showClaim
 
 ::argue.showClaim
@@ -155,17 +155,17 @@ $choose branch
 
 ::argue.correctPopulation
 $call ArgueComplete()
-{@profCempaka} That looks great. 
-{@profCempaka} It looks like you are getting good at studying populations with your sub.
+{@profCoral} That looks great. 
+{@profCoral} It looks like you are getting good at studying populations with your sub.
 $call CompleteJob()
 
 ::argue.incorrectPopulation
 $call ArgueRejectIncorrect()
-{@profCempaka} Ok, that's interesting, but it's not answering my question.
+{@profCoral} Ok, that's interesting, but it's not answering my question.
 $goto .argue.showClaim
 
 :: argue.giveUp
-{@profCempaka} OK. Get back to me when you're ready.
+{@profCoral} OK. Get back to me when you're ready.
 
 
 ::end

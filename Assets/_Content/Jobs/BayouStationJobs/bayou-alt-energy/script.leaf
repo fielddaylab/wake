@@ -26,7 +26,7 @@ $endif
 @when    JobTaskActive(reportBack)
 @once
 @cutscene
-{@guide} Hmm. It seems as though this ecosystem might be powered by more than one source of energy. Talk to {nameof profHarper} and maybe you can figure it out.
+{@guide} Hmm. It seems as though this ecosystem might be powered by more than one source of energy. Talk to {nameof profBayou} and maybe you can figure it out.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -61,7 +61,7 @@ $endif
 @when 		
 @boostScore -10
 @cutscene
-{@guide}    Go explain to {nameof profHarper} what the sources of energy are for this ecosystem.
+{@guide}    Go explain to {nameof profBayou} what the sources of energy are for this ecosystem.
 
 
 // ARGUMENTATION
@@ -72,7 +72,7 @@ $endif
 $goto .argue.firstQuestion
 
 ::  argue.firstQuestion
-{@profHarper} Where is energy in {h}Site N{/h} even coming from?
+{@profBayou} Where is energy in {h}Site N{/h} even coming from?
 $if !ArgueIsComplete(bayouAltEnergy_Branch3)
     $choice .argue.1_Methane; It's the methane from the vents
     $choice .argue.2_Detritus; It's the falling detritus
@@ -89,7 +89,7 @@ $endif
 //Branch 1
 :: argue.1_Methane
 $call ArgueLoad(bayouAltEnergy_Branch1)
-{@profHarper} Can you show me your Visual Model? I'd like to see what consumes Methane.
+{@profBayou} Can you show me your Visual Model? I'd like to see what consumes Methane.
 $goto .argue.1_Methane_ChooseFacts
 
 :: argue.1_Methane_ChooseFacts
@@ -104,19 +104,19 @@ $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.1_Methane_Unrelated
-{@profHarper}   That doesn't look like the right model.
+{@profBayou}   That doesn't look like the right model.
 $call ArgueRejectIncorrect()
 $goto .argue.1_Methane_ChooseFacts
 
 :: argue.1_Methane_BranchEnd
-{@profHarper} Oh, interesting! Based on this model, it looks like it's not just Methane.
+{@profBayou} Oh, interesting! Based on this model, it looks like it's not just Methane.
 $call ArgueComplete()
 $goto .argue.done
 
 //Branch 2
 :: argue.2_Detritus
 $call ArgueLoad(bayouAltEnergy_Branch2)
-{@profHarper} Can you show me your Visual Model? I'd like to see what eats Detritus.
+{@profBayou} Can you show me your Visual Model? I'd like to see what eats Detritus.
 $goto .argue.2_Detritus_ChooseFacts
 
 :: argue.2_Detritus_ChooseFacts
@@ -131,18 +131,18 @@ $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.2_Detritus_Unrelated
-{@profHarper}   That doesn't look like the right model.
+{@profBayou}   That doesn't look like the right model.
 $call ArgueRejectIncorrect()
 $goto .argue.2_Detritus_ChooseFacts
 
 :: argue.2_Detritus_BranchEnd
-{@profHarper} Oh, interesting! Based on this model, it looks like it's not just Detritus.
+{@profBayou} Oh, interesting! Based on this model, it looks like it's not just Detritus.
 $call ArgueComplete()
 $goto .argue.done
 
 //Branch 3
 :: argue.3_Heat
-{@profHarper} What makes you think that?
+{@profBayou} What makes you think that?
 $call ArgueLoad(bayouAltEnergy_Branch3)
 $goto .argue.3_Heat_ChooseFacts
 
@@ -158,19 +158,19 @@ $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.3_Heat_Unrelated
-{@profHarper}   That doesn't tell me how much heat is at {h}Site N{/h}.
+{@profBayou}   That doesn't tell me how much heat is at {h}Site N{/h}.
 $call ArgueRejectIncorrect()
 $goto .argue.3_Heat_ChooseFacts
 
 :: argue.3_Heat_BranchEnd
-{@profHarper} It does seem hotter than normal here, but heat doesn't directly support life in a food web.
+{@profBayou} It does seem hotter than normal here, but heat doesn't directly support life in a food web.
               Though it may help the organisms stay alive and unstressed.
 $call ArgueComplete()
 $goto .argue.firstQuestion
 
 //GiveUp
 :: argue.giveUp
-{@profHarper} OK. Get back to me when you're ready.
+{@profBayou} OK. Get back to me when you're ready.
 $call ArgueCancelClaim()
 $call ArgueUnload()
 
@@ -178,5 +178,5 @@ $call ArgueUnload()
 :: argue.done
 $call ArgueLoad(bayouAltEnergy)
 $call ArgueComplete()
-{@profHarper}   So both Methane and Detritus are primary sources of energy. Great work!
+{@profBayou}   So both Methane and Detritus are primary sources of energy. Great work!
 $call CompleteJob()
