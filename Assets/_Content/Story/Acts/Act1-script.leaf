@@ -109,8 +109,9 @@ $call GiveEntity(BowheadWhale)
 // Intro
 
 :: momMadEnd
-@trigger    InspectObject
-@when       objectId == "Job", !JobStartedOrComplete(kelp-welcome)
+@trigger    Talk
+@who        drKelp
+@when       !JobStartedOrComplete(kelp-welcome)
 @boostScore 100
 @once
 @cutscene
@@ -134,29 +135,32 @@ $call InteriorOpenJobBoard()
 $set    guide:knowsJobs = true
 
 :: LoopKelpWelcome
-@trigger    InspectObject
-@when       objectId == "Job", !JobStartedOrComplete(kelp-welcome)
+@trigger    Talk
+@who        drKelp
+@when       !JobStartedOrComplete(kelp-welcome)
 @cutscene
 {@drKelp}   You think you're ready to handle more responsibility? Complete this task for me and we'll see about giving you more to do around here. 
 $call InteriorOpenJobBoard()
 
 :: momMad
-@trigger    InspectObject
-@when       objectId == "Shop", !JobStartedOrComplete(kelp-welcome)
+@trigger    Talk
+@who        kelpMechanic
+@when       !JobStartedOrComplete(kelp-welcome)
 @cutscene
 @boostScore 100
 @once
-{@merchantKelp} {nameof @player}!
+{@kelpMechanic} {nameof @player}!
             Phew, you had me worried for a bit. How's the sub?
 {@player}   The Sub's fine, I'm a good pilot.
-{@merchantKelp} You better go talk to your Mom. She's pretty upset right now.
+{@kelpMechanic} You better go talk to your Mom. She's pretty upset right now.
 {@player}   Can't you talk to her? 
-{@merchantKelp} Sorry kiddo. You got yourself into this mess.
+{@kelpMechanic} Sorry kiddo. You got yourself into this mess.
 {@player}   Ughh...
 
 :: momMad2
-@trigger    InspectObject
-@when       objectId == "Shop", !JobStartedOrComplete(kelp-welcome)
+@trigger    Talk
+@who        kelpMechanic
+@when       !JobStartedOrComplete(kelp-welcome)
 @cutscene
-{@merchantKelp} Sorry kiddo. You got yourself into this mess.
+{@kelpMechanic} Sorry kiddo. You got yourself into this mess.
             You better go talk to Mom.

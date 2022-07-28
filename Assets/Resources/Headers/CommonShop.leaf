@@ -9,6 +9,9 @@
 // #const NotEnoughCashNodeId
 // #const PurchaseNodeId
 
+// MACROS
+
+// Defines a default item handler header
 #macro ItemHandler(itemId, ...conditions) \
 :: item.$itemId \
 @trigger    ShopAttemptBuy \
@@ -16,6 +19,7 @@
 @who        $MerchantId \
 @cutscene
 
+// Defines an item handler header
 #macro OverrideItemHandler(itemId, nodeId, ...conditions) \
 :: item.$nodeId \
 @trigger    ShopAttemptBuy \
@@ -23,11 +27,13 @@
 @who        $MerchantId \
 @cutscene
 
+// Executes default item purchase logic
 #macro EvaluateItemPurchase() \
     $branch .eval.checkUnlocks \
     $branch .eval.checkLevel \
     $branch .eval.purchasePrompt
 
+// Defines a "shop opened" response
 #macro OpenHandler(nodeId, ...conditions) \
 :: open.$nodeId \
 @trigger    ShopOpenMenu \
@@ -37,6 +43,7 @@
 @triggerPriority    Medium \
 {sticky}
 
+// Defines a "shop closed" response
 #macro CloseHandler(nodeId, ...conditions) \
 :: close.$nodeId \
 @trigger    ShopClose \
@@ -44,6 +51,7 @@
 @when       $conditions \
 @cutscene
 
+// Defines an "exploration opened" response
 #macro OpenExplorationHandler(nodeId, ...conditions) \
 :: openExplore.$nodeId \
 @trigger    ShopOpenExploration \
@@ -53,6 +61,7 @@
 @triggerPriority    Medium \
 {sticky}
 
+// Defines a "science opened" response
 #macro OpenScienceHandler(nodeId, ...conditions) \
 :: openScience.$nodeId \
 @trigger    ShopOpenScience \
@@ -61,6 +70,30 @@
 @interrupt \
 @triggerPriority    Medium \
 {sticky}
+
+// Defines a "the shop is locked" response
+#macro ShopLockedHandler(nodeId, ...conditions) \
+:: shopLocked.$nodeId \
+@trigger    Talk \
+@who        $MerchantId \
+@when       !world:shop.unlocked, $conditions \
+@cutscene
+
+// Defines a "the shop is open" response
+#macro ShopHandler(nodeId, ...conditions) \
+:: shopOpen.$nodeId \
+@trigger    Talk \
+@who        $MerchantId \
+@when       world:shop.unlocked, $conditions \
+@cutscene
+
+// ACTIONS
+
+// Opens the shop
+:: action.openShop
+$call InteriorOpenShopBoard()
+
+// INTERNALS
 
 // Checks if the upgrade set with local:itemId
 // will potentially unlock another job

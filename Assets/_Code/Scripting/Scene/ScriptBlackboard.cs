@@ -10,7 +10,7 @@ using UnityEngine.Scripting;
 
 namespace Aqua.Scripting
 {
-    [AddComponentMenu("Aqualab/Scripting/Blackboard")]
+    [AddComponentMenu("Aqualab/Scripting/Script Blackboard")]
     public class ScriptBlackboard : ScriptComponent
     {
         [SerializeField] private SerializedHash32 m_BlackboardName = null;

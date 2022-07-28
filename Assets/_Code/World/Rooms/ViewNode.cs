@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Aqua.Cameras;
+using Aqua.Scripting;
 using BeauUtil;
 using ScriptableBake;
 using UnityEngine;
@@ -10,6 +11,7 @@ namespace Aqua.View {
         public SerializedHash32 Id;
         public CameraPose Camera;
         public ActiveGroup Group;
+        public ScriptInteractionGroup InteractionGroup;
         public Canvas UI;
         public SerializedHash32[] GroupIds;
 

@@ -448,6 +448,7 @@ namespace ProtoAqua.ExperimentV2 {
 
         void IScriptComponent.OnRegister(ScriptObject inObject) { }
         void IScriptComponent.OnDeregister(ScriptObject inObject) { }
+        void IScriptComponent.PostRegister() { }
 
         #endregion // IScriptComponent
     }
