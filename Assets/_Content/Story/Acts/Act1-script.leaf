@@ -146,17 +146,17 @@ $call InteriorOpenJobBoard()
 @cutscene
 @boostScore 100
 @once
-{@merchantKelp} {nameof @player}!
+{@kelpMechanic} {nameof @player}!
             Phew, you had me worried for a bit. How's the sub?
 {@player}   The Sub's fine, I'm a good pilot.
-{@merchantKelp} You better go talk to your Mom. She's pretty upset right now.
+{@kelpMechanic} You better go talk to your Mom. She's pretty upset right now.
 {@player}   Can't you talk to her? 
-{@merchantKelp} Sorry kiddo. You got yourself into this mess.
+{@kelpMechanic} Sorry kiddo. You got yourself into this mess.
 {@player}   Ughh...
 
 :: momMad2
 @trigger    InspectObject
 @when       objectId == "Shop", !JobStartedOrComplete(kelp-welcome)
 @cutscene
-{@merchantKelp} Sorry kiddo. You got yourself into this mess.
+{@kelpMechanic} Sorry kiddo. You got yourself into this mess.
             You better go talk to Mom.

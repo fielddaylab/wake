@@ -47,6 +47,11 @@ namespace Aqua.Portable {
         [SerializeField] private LocText m_RightColumnHeader = null;
         [SerializeField] private PortableUpgradeButton[] m_RightColumnButtons = null;
 
+        [Header("Item Description")]
+        [SerializeField] private GameObject m_ItemDescriptionLayout = null;
+        [SerializeField] private LocText m_ItemDescription = null;
+        [SerializeField] private Image m_LargeItemIcon = null;
+
         #endregion //Inspector
 
         [NonSerialized] private InvItem m_SelectedItem;
@@ -111,6 +116,8 @@ namespace Aqua.Portable {
 
             m_SelectedItem = null;
             RefreshButtons();
+
+            m_ItemDescriptionLayout.SetActive(false);
         }
 
         #endregion // Page Display
@@ -182,6 +189,7 @@ namespace Aqua.Portable {
 
             m_LeftColumnLayout.ForceRebuild();
             m_RightColumnLayout.ForceRebuild();
+            m_ItemDescriptionLayout.SetActive(false);
         }
 
         private void PopulateColumn(LocText header, TextId headerId, PortableUpgradeButton[] buttons, StringHash32[] itemIds) {
@@ -223,7 +231,14 @@ namespace Aqua.Portable {
         private void UpdateButtonState(PortableUpgradeButton button) {
             bool selected = m_SelectedItem == button.CachedItem;
 
-            if(!selected) button.Outline.Color = m_BaseOutlineColor;
+            if(!selected) { button.Outline.Color = m_BaseOutlineColor; }
+            else { UpdateInfoSection(button); }
+        }
+
+        private void UpdateInfoSection(PortableUpgradeButton selected) {
+            m_ItemDescriptionLayout.SetActive(true);
+            m_ItemDescription.SetText(selected.CachedItem.DescriptionTextId());
+            m_LargeItemIcon.sprite = selected.Icon.sprite;
         }
 
         private void RefreshButtons() {
