@@ -80,14 +80,14 @@ $endif
 
 // AT STATION
 
-:: navigation
-@trigger    SceneStart
-@when       scene:name == "KelpStation"
-@once
-@cutscene
-$branch common.ringPhone
+// :: navigation
+// @trigger    SceneStart
+// @when       scene:name == "KelpStation"
+// @once
+// @cutscene
+// $branch common.ringPhone
 
-{@drKelp}	Head over to {h}site C{/h} and get to work!
+// {@drKelp}	Head over to {h}site C{/h} and get to work!
 			
 
 // player does not have anything from site C yet, tell them to go there
@@ -142,7 +142,7 @@ $branch common.ringPhone
 
 $call ship.map->ForceOnTop()
 $call schematic.button->ForceOnTop()
-$call FocusHighlight->Focus(schematic.button, 175, 175)
+$call FocusHighlight->Focus(schematic.button, 250, 250)
     This is your ship's {h}schematic{/h}. It can be used to navigate inside your ship.
 $call FocusHighlight->Clear()
 
@@ -176,7 +176,7 @@ $branch common.ringPhone
 {@guide}	We need to head into the {h}helm{/h}. 
 $call ship.map->ForceOnTop()
 $call schematic.button->ForceOnTop()
-$call FocusHighlight->Focus(schematic.button, 175, 175)
+$call FocusHighlight->Focus(schematic.button, 250, 250)
     Use the {h}schematic{/h} to navigate inside your ship.
 $call FocusHighlight->Clear()
 $call schematic.button->ResetSorting()
@@ -201,8 +201,16 @@ $branch common.ringPhone
 
 $call UnlockRoom("Experimentation")
 $call GiveUpgrade(ObservationTank)
-$call FocusHighlight->Focus("exterior.experimentation", 200, 200)
 {wait 1}
+$call ship.map->ForceOnTop()
+$call schematic.button->ForceClick()
+{hide-dialog}{wait 1}{style default}
+// $call HelmButton->ForceOnTop()
+$call FocusHighlight->Focus(ExperimentationButton, 200, 200)
+    Click here to enter your ship's {h}Experimentation Lab{/h}.
+$call FocusHighlight->Clear()
+{hide-dialog}{fade-in 0.5, wait}
+$call ship.map->ResetSorting()
 
 {@drKelp}  Head over there to start your next task! 
 $call FocusHighlight->Clear()
