@@ -121,7 +121,7 @@ $branch common.ringPhone
 
 :: helpAtSiteCCompleted
 @trigger    RequestPartnerHelp
-@when 		scene:name == "RS-1C", jobs:kelp-welcome.got.scans
+@when 		scene:name == "RS-1C", JobTaskTop(returnToShip)
 @cutscene
 {@player} 	Um... V1ctor? Now what? 
 {@guide}    We're done here. Head back to the surface! 
@@ -136,14 +136,27 @@ $branch common.ringPhone
 
 $branch common.ringPhone
 {@drKelp}  Head into the ship for your next task!
+{fade-out black.60, 0.5, wait}
+{@}
+{hide-dialog}
 
-$call hotbar.guide->Show()
-$call hotbar.guide->ForceOnTop()
-$call FocusHighlight->Focus(hotbar.guide)
-    Talk to {nameof @guide} by clicking the {h}top right button{/h} up here.
-    They can help if you get stuck!
-$call hotbar.guide->ResetSorting()
+$call ship.map->ForceOnTop()
+$call schematic.button->ForceOnTop()
+$call FocusHighlight->Focus(schematic.button, 175, 175)
+    This is your ship's {h}schematic{/h}. It can be used to navigate inside your ship.
 $call FocusHighlight->Clear()
+
+$call schematic.button->ForceClick()
+{hide-dialog}{wait 1}{style default}
+// $call HelmButton->ForceOnTop()
+$call FocusHighlight->Focus(HelmButton, 200, 200)
+    Click here to enter your ship's {h}helm{/h}
+$call FocusHighlight->Clear()
+{hide-dialog}{fade-in 0.5, wait}
+$call schematic.button->ResetSorting()
+$call ship.map->ResetSorting()
+// $call HelmButton->ResetSorting()
+
 
 :: navigation.return.incomplete
 @trigger    SceneStart
@@ -160,7 +173,14 @@ $branch common.ringPhone
 @when 		scene:name == "KelpStation", JobTaskActive(returnToShip)
 @cutscene
 {@player} 	What now?
-{@guide}	We need to head into the helm. 
+{@guide}	We need to head into the {h}helm{/h}. 
+$call ship.map->ForceOnTop()
+$call schematic.button->ForceOnTop()
+$call FocusHighlight->Focus(schematic.button, 175, 175)
+    Use the {h}schematic{/h} to navigate inside your ship.
+$call FocusHighlight->Clear()
+$call schematic.button->ResetSorting()
+$call ship.map->ResetSorting()
 
 // BACK AT SHIP
 
