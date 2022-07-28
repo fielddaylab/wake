@@ -8,7 +8,7 @@ using UnityEngine.Scripting;
 
 namespace Aqua.Scripting
 {
-    [AddComponentMenu("Aqualab/Scripting/UI Element")]
+    [AddComponentMenu("Aqualab/Scripting/Script UI Element")]
     public class ScriptUIElement : ScriptComponent
     {
         #region Inspector

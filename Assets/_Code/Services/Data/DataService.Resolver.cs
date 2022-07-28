@@ -713,6 +713,22 @@ namespace Aqua
                 return Save.Jobs.MarkComplete(inJobId);
             }
 
+            [LeafMember("JobIsAtCurrentStation"), UnityEngine.Scripting.Preserve]
+            static private bool JobIsAtCurrentStation(StringHash32 inJobId = default(StringHash32))
+            {
+                if (inJobId.IsEmpty)
+                {
+                    inJobId = Save.CurrentJobId;
+                    if (inJobId.IsEmpty)
+                    {
+                        return false;
+                    }
+                }
+
+                StringHash32 jobStation = Assets.Job(inJobId).StationId();
+                return jobStation.IsEmpty || jobStation == Save.Map.CurrentStationId();
+            }
+
             #endregion // Jobs
 
             #region World

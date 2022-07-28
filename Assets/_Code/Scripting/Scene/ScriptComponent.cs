@@ -19,5 +19,6 @@ namespace Aqua.Scripting
 
         public virtual void OnDeregister(ScriptObject inObject) { m_Parent = null; }
         public virtual void OnRegister(ScriptObject inObject) { m_Parent = inObject; }
+        public virtual void PostRegister() { }
     }
 }

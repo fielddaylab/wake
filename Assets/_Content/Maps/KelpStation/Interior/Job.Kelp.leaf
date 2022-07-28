@@ -1,0 +1,44 @@
+# basePath interior.job.kelp
+
+#include "Headers/Common.leaf"
+
+#const JobGiverId = drKelp
+
+#include "Headers/CommonJob.leaf"
+
+// Generic
+
+#NoJobHandler(a)
+{@$JobGiverId}  Hey, want to see the {h}Job Board{/h}?
+$choice .action.openJobBoard; Sure!
+$choice .action.cancel; No thanks.
+
+#WrongStationJobHandler(a)
+{@$JobGiverId}  Hmm, it looks like you've taken a job with someone else.
+                Unfortunately I can't help you with it here.
+                No shame in switching jobs to something here though.
+                Still want to see the {h}Job Board{/h}?
+    $choice .action.openJobBoard; Yes.
+    $choice .action.cancel; Nah.
+
+#WrongStationJobHandler(b)
+{@$JobGiverId}  I think you have a job with someone else right now.
+                You'll have to talk to them for the details.
+                Could always take a job here though...
+                Still want to see the {h}Job Board{/h}?
+    $choice .action.openJobBoard; Yes.
+    $choice .action.cancel; Nah.
+
+#JobHandler(a)
+{@$JobGiverId}  {random Hey, got|So, do you have} anything to report for your current job?
+    $choice .action.report; Yep!
+    $choice .action.openJobBoard; Let me {random see|look at} the {h}Job Board{/h}.
+    $choice .action.cancel.currentJob; Nope.
+
+:: action.cancel
+@cutscene
+{@$JobGiverId}  Okay, well please let me know when you need me.
+
+:: action.cancel.currentJob
+@cutscene
+{@$JobGiverId}  Just let me know when you're ready then.

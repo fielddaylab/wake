@@ -36,9 +36,7 @@ namespace Aqua.View
             link.Group.SetActive(isActive, force);
             link.Highlight.SetActive(isCurrent, force);
             link.Inspectable.Locked = isCurrent || !isActive;
-            if (link.Inspectable.Hint) {
-                link.Inspectable.Hint.enabled = !isCurrent;
-            }
+            link.Inspectable.RefreshState();
         }
     }
 }

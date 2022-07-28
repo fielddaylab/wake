@@ -1,0 +1,35 @@
+// requirements
+// $const JobGiverId
+
+// MACROS
+
+#macro  NoJobHandler(nodeId, ...conditions) \
+:: jobGiver.noJob.$nodeId \
+@trigger    Talk \
+@who        $JobGiverId \
+@when       !player:currentJob, $conditions \
+@cutscene
+
+#macro  WrongStationJobHandler(nodeId, ...conditions) \
+:: jobGiver.wrongStation.$nodeId \
+@trigger    Talk \
+@who        $JobGiverId \
+@when       player:currentJob, !JobIsAtCurrentStation(), $conditions \
+@cutscene
+
+#macro  JobHandler(nodeId, ...conditions) \
+:: jobGiver.hasJob.$nodeId \
+@trigger    Talk \
+@who        $JobGiverId \
+@when       JobIsAtCurrentStation(), $conditions \
+@cutscene
+
+// ACTIONS
+
+:: action.openJobBoard
+$call InteriorOpenJobBoard()
+
+:: action.report
+{trigger-response TryArgumentation}
+
+// INTERNALS

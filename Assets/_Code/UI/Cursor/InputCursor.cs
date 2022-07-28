@@ -162,6 +162,7 @@ namespace Aqua
         Select,
         Question,
         Tooltip,
-        Camera
+        Camera,
+        Talk
     }
 }

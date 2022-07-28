@@ -19,6 +19,9 @@ namespace Aqua
             public AmbientMode ambientMode;
             public float ambientIntensity;
             public Color ambientLight;
+            public LightmapData[] lightmaps;
+            public LightmapsMode lightmapsMode;
+            public LightProbes lightProbes;
 
             public void Read()
             {
@@ -31,6 +34,9 @@ namespace Aqua
                 ambientMode = RenderSettings.ambientMode;
                 ambientIntensity = RenderSettings.ambientIntensity;
                 ambientLight = RenderSettings.ambientLight;
+                lightmaps = ArrayUtils.CreateFrom(LightmapSettings.lightmaps);
+                lightmapsMode = LightmapSettings.lightmapsMode;
+                lightProbes = LightmapSettings.lightProbes;
             }
 
             public void Write()
@@ -44,6 +50,9 @@ namespace Aqua
                 RenderSettings.ambientMode = ambientMode;
                 RenderSettings.ambientIntensity = ambientIntensity;
                 RenderSettings.ambientLight = ambientLight;
+                LightmapSettings.lightmaps = lightmaps;
+                LightmapSettings.lightmapsMode = lightmapsMode;
+                LightmapSettings.lightProbes = lightProbes;
             }
         }
 

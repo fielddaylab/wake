@@ -52,5 +52,6 @@ namespace ProtoAqua.Observation
         ScriptObject IScriptComponent.Parent { get { return null; } }    
         void IScriptComponent.OnRegister(ScriptObject inObject) { }
         void IScriptComponent.OnDeregister(ScriptObject inObject) { }
+        void IScriptComponent.PostRegister() { }
     }
 }

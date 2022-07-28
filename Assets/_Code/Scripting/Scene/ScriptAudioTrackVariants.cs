@@ -10,7 +10,7 @@ using UnityEngine.Scripting;
 using UnityEngine.UI;
 
 namespace Aqua.Scripting {
-    [AddComponentMenu("Aqualab/Scripting/Audio Track Variants")]
+    [AddComponentMenu("Aqualab/Scripting/Script Audio Track Variants")]
     public class ScriptAudioTrackVariants : ScriptComponent {
         #region Types
 

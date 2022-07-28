@@ -82,10 +82,10 @@ namespace Aqua.Editor
                         {
                             EditorSceneManager.MoveGameObjectToScene(root, scene);
                         }
-                        // if (subscene.ImportLighting)
-                        // {
-                        //     LightUtils.CopySettings(unitySubScene, scene);
-                        // }
+                        if (subscene.ImportLighting)
+                        {
+                            LightUtils.CopySettings(unitySubScene, scene);
+                        }
                         EditorSceneManager.CloseScene(unitySubScene, true);
                     }
                 }

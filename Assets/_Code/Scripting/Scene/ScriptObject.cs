@@ -94,6 +94,10 @@ namespace Aqua
 
                 for(int i = m_ScriptComponents.Length - 1; i >= 0; i--)
                     m_ScriptComponents[i].OnRegister(this);
+
+                for(int i = m_ScriptComponents.Length - 1; i >= 0; i--) {
+                    m_ScriptComponents[i].PostRegister();
+                }
             }
         }
 

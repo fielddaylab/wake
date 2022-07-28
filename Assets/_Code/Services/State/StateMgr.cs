@@ -517,10 +517,10 @@ namespace Aqua
             {
                 SceneManager.MoveGameObjectToScene(root, inActiveScene);
             }
-            // if (inSubScene.ImportLighting)
-            // {
-            //     LightUtils.CopySettings(unityScene, inActiveScene);
-            // }
+            if (inSubScene.ImportLighting)
+            {
+                LightUtils.CopySettings(unityScene, inActiveScene);
+            }
             yield return SceneManager.UnloadSceneAsync(unityScene);
         }
 

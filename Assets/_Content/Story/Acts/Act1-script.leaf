@@ -109,8 +109,9 @@ $call GiveEntity(BowheadWhale)
 // Intro
 
 :: momMadEnd
-@trigger    InspectObject
-@when       objectId == "Job", !JobStartedOrComplete(kelp-welcome)
+@trigger    Talk
+@who        drKelp
+@when       !JobStartedOrComplete(kelp-welcome)
 @boostScore 100
 @once
 @cutscene
@@ -134,15 +135,17 @@ $call InteriorOpenJobBoard()
 $set    guide:knowsJobs = true
 
 :: LoopKelpWelcome
-@trigger    InspectObject
-@when       objectId == "Job", !JobStartedOrComplete(kelp-welcome)
+@trigger    Talk
+@who        drKelp
+@when       !JobStartedOrComplete(kelp-welcome)
 @cutscene
 {@drKelp}   You think you're ready to handle more responsibility? Complete this task for me and we'll see about giving you more to do around here. 
 $call InteriorOpenJobBoard()
 
 :: momMad
-@trigger    InspectObject
-@when       objectId == "Shop", !JobStartedOrComplete(kelp-welcome)
+@trigger    Talk
+@who        kelpMechanic
+@when       !JobStartedOrComplete(kelp-welcome)
 @cutscene
 @boostScore 100
 @once
@@ -155,8 +158,9 @@ $call InteriorOpenJobBoard()
 {@player}   Ughh...
 
 :: momMad2
-@trigger    InspectObject
-@when       objectId == "Shop", !JobStartedOrComplete(kelp-welcome)
+@trigger    Talk
+@who        kelpMechanic
+@when       !JobStartedOrComplete(kelp-welcome)
 @cutscene
 {@kelpMechanic} Sorry kiddo. You got yourself into this mess.
             You better go talk to Mom.
