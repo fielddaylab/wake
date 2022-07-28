@@ -41,6 +41,8 @@ namespace ProtoAqua.ExperimentV2
         [Required(ComponentLookupDirection.Children)] public GameObject NavArrowParent = null;
         [Required(ComponentLookupDirection.Children)] public GameObject GuideTarget = null;
 
+        [HideInInspector] public bool[] NavArrowStates;
+
         [Header("Canvas")]
         [Required] public Canvas Interface = null;
         [Required] public InputRaycasterLayer InterfaceRaycaster = null;
@@ -109,6 +111,30 @@ namespace ProtoAqua.ExperimentV2
             }
             tank.CurrentScreen = null;
         }
+
+        #region Helper Methods
+
+        public static void InitNavArrows(SelectableTank inTank) {
+            inTank.NavArrowStates = new bool[inTank.NavArrows.Length];
+        }
+
+        public static void SetNavArrowsActive(SelectableTank inTank, bool isActive) {
+            if (isActive) {
+                // restore to prev states
+                for (int i = 0; i < inTank.NavArrows.Length; i++) {
+                    inTank.NavArrows[i].gameObject.SetActive(inTank.NavArrowStates[i]);
+                }
+            }
+            else {
+                // save prev states and deactivate arrows
+                for (int i = 0; i < inTank.NavArrows.Length; i++) {
+                    inTank.NavArrowStates[i] = inTank.NavArrows[i].gameObject.activeSelf;
+                    inTank.NavArrows[i].gameObject.SetActive(false);
+                }
+            }
+        }
+
+        #endregion // Helper Methods
 
         #region Sequences
 

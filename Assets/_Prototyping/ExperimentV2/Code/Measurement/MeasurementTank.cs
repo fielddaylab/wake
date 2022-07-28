@@ -10,17 +10,21 @@ using BeauUtil.Debugger;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ProtoAqua.ExperimentV2 {
-    public class MeasurementTank : MonoBehaviour {
+namespace ProtoAqua.ExperimentV2
+{
+    public class MeasurementTank : MonoBehaviour
+    {
         [Flags]
-        public enum FeatureMask {
+        public enum FeatureMask
+        {
             Stabilizer = 0x01,
             AutoFeeder = 0x02
         }
 
         public const FeatureMask DefaultFeatures = FeatureMask.Stabilizer;
 
-        private enum SetupPhase : byte {
+        private enum SetupPhase : byte
+        {
             Begin,
             Environment,
             Critters,
@@ -28,7 +32,8 @@ namespace ProtoAqua.ExperimentV2 {
             Run
         }
 
-        public enum IsolatedVariable {
+        public enum IsolatedVariable
+        {
             Unknown,
             Eating,
             Reproduction,
@@ -85,15 +90,15 @@ namespace ProtoAqua.ExperimentV2 {
             m_ParentTank.HasEnvironment = (s) => m_SelectedEnvironment?.Id() == s;
             m_ParentTank.OnEmitEmoji = (e) => OnEmojiEmit(e);
             m_ParentTank.ActorBehavior.ActionAvailable = (e) => {
-                switch(e) {
-                    case ActorActionId.Hungry: 
+                switch (e) {
+                    case ActorActionId.Hungry:
                     case ActorActionId.Parasiting: {
                             return (m_ExperimentData.Settings & RunningExperimentData.Flags.Feeder) == 0;
                         }
 
                     default: {
-                        return true;
-                    }
+                            return true;
+                        }
                 }
             };
             m_ParentTank.ActorBehavior.ReproAvailable = () => {
@@ -122,6 +127,8 @@ namespace ProtoAqua.ExperimentV2 {
                 s.CustomButton.interactable = false;
                 m_CollectingMeasurements = false;
             };
+
+            SelectableTank.InitNavArrows(m_ParentTank);
         }
 
         #region Tank
@@ -215,6 +222,7 @@ namespace ProtoAqua.ExperimentV2 {
                         break;
                     }
                 case SetupPhase.Run: {
+                        SelectableTank.SetNavArrowsActive(m_ParentTank, false);
                         ExperimentScreen.Transition(m_InProgressScreen, m_World, null, () => {
                             Routine.Start(this, StartExperiment()).Tick();
                         });
@@ -244,7 +252,7 @@ namespace ProtoAqua.ExperimentV2 {
         private IEnumerator StartExperiment() {
             m_ParentTank.CurrentState |= TankState.Running;
             m_ExperimentData = GenerateData();
-            m_IsolatedVar = (IsolatedVariable) m_ExperimentData.CustomData;
+            m_IsolatedVar = (IsolatedVariable)m_ExperimentData.CustomData;
 
             if ((m_ExperimentData.Settings & RunningExperimentData.Flags.Feeder) != 0) {
                 m_AutoFeederParticles.Play();
@@ -266,13 +274,13 @@ namespace ProtoAqua.ExperimentV2 {
             yield return thread.Wait();
 
             float duration = m_IsolatedVar > 0 ? 1.5f : 1;
-            while(!AddProgressFirstPhase(Routine.DeltaTime / duration)) {
+            while (!AddProgressFirstPhase(Routine.DeltaTime / duration)) {
                 yield return null;
             }
 
             if (m_CollectingMeasurements) {
                 float mult = m_World.EnvDeaths > 0 ? 8 : 1;
-                while(!AddProgressCollection(mult * Routine.DeltaTime / m_BackgroundMeasureTimeRequirement, false)) {
+                while (!AddProgressCollection(mult * Routine.DeltaTime / m_BackgroundMeasureTimeRequirement, false)) {
                     yield return null;
                 }
             }
@@ -289,7 +297,7 @@ namespace ProtoAqua.ExperimentV2 {
             if (m_FeaturePanel.IsSelected(FeatureMask.AutoFeeder))
                 experimentData.Settings |= RunningExperimentData.Flags.Feeder;
             experimentData.CritterIds = ArrayUtils.MapFrom<BestiaryDesc, StringHash32>(m_OrganismScreen.Panel.Selected, (a) => a.Id());
-            experimentData.CustomData = (int) IsolateVariable(experimentData);
+            experimentData.CustomData = (int)IsolateVariable(experimentData);
             return experimentData;
         }
 
@@ -309,13 +317,14 @@ namespace ProtoAqua.ExperimentV2 {
             ApplyProgressMeterProgress(m_Progress);
             if (m_Progress >= 1) {
                 IsolatedVariable iso = m_IsolatedVar;
-                ApplyProgressMeterStyle(IsolatedVariableLabels[(int) iso], iso == 0 ? m_InProgressFailureColors : m_InProgressSuccessColors);
+                ApplyProgressMeterStyle(IsolatedVariableLabels[(int)iso], iso == 0 ? m_InProgressFailureColors : m_InProgressSuccessColors);
                 if (iso == 0) {
                     FlashMeter(ColorBank.Black);
                     m_InProgressScreen.CustomButton.interactable = true;
                     m_CollectingMeasurements = false;
                     Services.Audio.PostEvent("Experiment.FinishPrompt");
-                } else {
+                }
+                else {
                     FlashMeter(ColorBank.White);
                     m_Progress = 0;
                     m_CollectingMeasurements = true;
@@ -353,27 +362,27 @@ namespace ProtoAqua.ExperimentV2 {
                 return;
             }
 
-            switch(m_IsolatedVar) {
+            switch (m_IsolatedVar) {
                 case IsolatedVariable.Eating: {
-                    if (id == SelectableTank.Emoji_Eat || id == SelectableTank.Emoji_Parasite) {
-                        AddProgressCollection(0.01f + 1f / m_EatEventMeasureRequirement, true);
+                        if (id == SelectableTank.Emoji_Eat || id == SelectableTank.Emoji_Parasite) {
+                            AddProgressCollection(0.01f + 1f / m_EatEventMeasureRequirement, true);
+                        }
+                        break;
                     }
-                    break;
-                }
 
                 case IsolatedVariable.Chemistry: {
-                    if (id == SelectableTank.Emoji_Breath) {
-                        AddProgressCollection(0.01f + 1f / m_ChemistryEventMeasureRequirement, true);
+                        if (id == SelectableTank.Emoji_Breath) {
+                            AddProgressCollection(0.01f + 1f / m_ChemistryEventMeasureRequirement, true);
+                        }
+                        break;
                     }
-                    break;
-                }
 
                 case IsolatedVariable.Reproduction: {
-                    if (id == SelectableTank.Emoji_Reproduce) {
-                        AddProgressCollection(0.01f + 1f / m_ReproduceEventMeasureRequirement, true);
+                        if (id == SelectableTank.Emoji_Reproduce) {
+                            AddProgressCollection(0.01f + 1f / m_ReproduceEventMeasureRequirement, true);
+                        }
+                        break;
                     }
-                    break;
-                }
             }
         }
 
@@ -420,8 +429,8 @@ namespace ProtoAqua.ExperimentV2 {
         }
 
         private IEnumerator FinishExperiment(ExperimentResult inResult) {
-            using(Script.DisableInput())
-            using(Script.Letterbox()) {
+            using (Script.DisableInput())
+            using (Script.Letterbox()) {
                 Services.Script.KillLowPriorityThreads();
                 using (var fader = Services.UI.WorldFaders.AllocFader()) {
                     yield return fader.Object.Show(Color.black, 1);
@@ -432,7 +441,7 @@ namespace ProtoAqua.ExperimentV2 {
                 }
             }
 
-            using(Script.Letterbox()) {
+            using (Script.Letterbox()) {
                 yield return ExperimentUtil.DisplaySummaryPopup(inResult);
 
                 using (var table = TempVarTable.Alloc()) {
@@ -455,6 +464,7 @@ namespace ProtoAqua.ExperimentV2 {
             m_ParentTank.CurrentState &= ~TankState.Running;
             m_SetupPhase = 0;
             m_ExperimentData = null;
+            SelectableTank.SetNavArrowsActive(m_ParentTank, true);
         }
 
         #endregion // Run
@@ -481,8 +491,9 @@ namespace ProtoAqua.ExperimentV2 {
             ExperimentResult result = new ExperimentResult();
             if (inWorld.EnvDeaths > 0) {
                 result.Feedback |= ExperimentFeedbackFlags.DeadOrganisms;
-            } else {
-                IsolatedVariable iso = (IsolatedVariable) inData.CustomData;
+            }
+            else {
+                IsolatedVariable iso = (IsolatedVariable)inData.CustomData;
                 if (iso != IsolatedVariable.Reproduction) {
                     result.Feedback |= ExperimentFeedbackFlags.ReproduceCategory;
                 }
@@ -495,22 +506,22 @@ namespace ProtoAqua.ExperimentV2 {
 
                 List<ExperimentFactResult> newFacts = new List<ExperimentFactResult>();
 
-                switch(iso) {
+                switch (iso) {
                     case IsolatedVariable.Unknown: {
-                        break;
-                    }
+                            break;
+                        }
                     case IsolatedVariable.Eating: {
-                        EvaluateEatParasiteResult(inData, ref result.Feedback, newFacts);
-                        break;
-                    }
+                            EvaluateEatParasiteResult(inData, ref result.Feedback, newFacts);
+                            break;
+                        }
                     case IsolatedVariable.Reproduction: {
-                        EvaluateReproductionResult(inData, ref result.Feedback, newFacts);
-                        break;
-                    }
+                            EvaluateReproductionResult(inData, ref result.Feedback, newFacts);
+                            break;
+                        }
                     case IsolatedVariable.Chemistry: {
-                        EvaluateWaterChemResult(inData, ref result.Feedback, newFacts);
-                        break;
-                    }
+                            EvaluateWaterChemResult(inData, ref result.Feedback, newFacts);
+                            break;
+                        }
                 }
 
                 result.Facts = newFacts.ToArray();
@@ -606,7 +617,8 @@ namespace ProtoAqua.ExperimentV2 {
                 if (bestiaryData.HasFact(leftEatsRight.Id)) {
                     bAddedFact = true;
                     ioFacts.Add(ExperimentUtil.NewFactFlags(leftEatsRight.Id, BFDiscoveredFlags.Rate));
-                } else {
+                }
+                else {
                     leftEatsRight = null;
                 }
             }
@@ -614,7 +626,8 @@ namespace ProtoAqua.ExperimentV2 {
                 if (bestiaryData.HasFact(rightEatsLeft.Id)) {
                     bAddedFact = true;
                     ioFacts.Add(ExperimentUtil.NewFactFlags(rightEatsLeft.Id, BFDiscoveredFlags.Rate));
-                } else {
+                }
+                else {
                     rightEatsLeft = null;
                 }
             }
@@ -622,7 +635,8 @@ namespace ProtoAqua.ExperimentV2 {
                 if (bestiaryData.HasFact(leftParasitesRight.Id)) {
                     bAddedFact = true;
                     ioFacts.Add(ExperimentUtil.NewFactFlags(leftParasitesRight.Id, BFDiscoveredFlags.Rate));
-                } else {
+                }
+                else {
                     leftParasitesRight = null;
                 }
             }
@@ -630,7 +644,8 @@ namespace ProtoAqua.ExperimentV2 {
                 if (bestiaryData.HasFact(rightParasitesLeft.Id)) {
                     bAddedFact = true;
                     ioFacts.Add(ExperimentUtil.NewFactFlags(rightParasitesLeft.Id, BFDiscoveredFlags.Rate));
-                } else {
+                }
+                else {
                     rightParasitesLeft = null;
                 }
             }
@@ -638,7 +653,8 @@ namespace ProtoAqua.ExperimentV2 {
             if (!bAddedFact) {
                 if (!bHadEat && !bHadParasite) {
                     ioFeedback |= ExperimentFeedbackFlags.NoInteraction;
-                } else {
+                }
+                else {
                     if (bHadEat) {
                         ioFeedback |= ExperimentFeedbackFlags.EatNeedsObserve;
                     }
