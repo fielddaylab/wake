@@ -84,6 +84,7 @@ namespace Aqua
         [SerializeField] private float m_NonAutoWaitTimer = 2;
         [SerializeField] private float m_StickyWaitTimer = 2;
         [SerializeField] private float m_StickyVerticalOffset = 0;
+        [SerializeField] private bool m_UseShortName = false;
 
         [Header("Speaker")]
         
@@ -292,10 +293,11 @@ namespace Aqua
             }
             else
             {
-                if (actorDef.NameId().IsEmpty)
+                TextId nameId = m_UseShortName ? actorDef.ShortNameId() : actorDef.NameId();
+                if (nameId.IsEmpty)
                     SetSpeakerName(StringSlice.Empty);
                 else
-                    SetSpeakerName(Loc.Find(actorDef.NameId()));
+                    SetSpeakerName(Loc.Find(nameId));
             }
 
             ColorPalette4? nameOverride = actorDef.NamePaletteOverride();
