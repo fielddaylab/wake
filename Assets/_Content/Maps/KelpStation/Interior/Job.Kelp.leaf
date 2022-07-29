@@ -29,10 +29,17 @@ $choice .action.cancel; No thanks.
     $choice .action.cancel; Nah. I'll check back later. 
 
 #JobHandler(a)
-{@$JobGiverId}  {random Olivia! |Welcome back, Sweetie!} Do you need something? 
+{@$JobGiverId}  {random Olivia!|Welcome back, Sweetie!|Do you need something?} 
+
+$if !JobInProgress(kelp-shop-welcome)
     $choice .action.report; I'm ready to report back on my job!
     $choice .action.openJobBoard; I'd like to {random see|look at} the {h}Job Board{/h}.
     $choice .action.cancel.currentJob; Never mind. Thanks, Mom.
+$else
+    {@drKelp}   Once you head back to the {h}surface{/h}, I'll finish upgrading your ship's map.
+    // $choice .action.openJobBoard; I'd like to {random see|look at} the {h}Job Board{/h}.
+    // $choice .action.cancel.currentJob; Never mind. Thanks, Mom.
+$endif
 
 :: action.cancel
 @cutscene

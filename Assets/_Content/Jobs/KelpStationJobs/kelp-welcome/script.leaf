@@ -51,23 +51,6 @@ $call UnlockSite("RS-1C")
 $call UnlockRoom("nav")
 $call UnlockRoom("exterior")
 
-// :: start
-// @trigger    SceneStart
-// @when       scene:name == "Helm"
-// @once
-// @cutscene
-
-// $branch common.ringPhone
-
-// $set    player:seen.drJules = true
-// {@drKelp}	Lovely! Thanks for the help.
-//             Drive your sub over to {h}site C{/h} to get started. 
-// {@player}	Ok, great! The sub, which is located...um... 
-// {@kevin}	Right outside the door. 
-// {@player}	Oh, yeah. I knew that. 
-//             (Thanks, Kevin.)
-
-
 :: helpGoOutsideToSubShip
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Helm", !jobs:kelp-welcome.got.scans
@@ -81,18 +64,6 @@ $else
 $endif
 
 // AT STATION
-
-// :: navigation
-// @trigger    SceneStart
-// @when       scene:name == "KelpStation"
-// @once
-// @cutscene
-// $branch common.ringPhone
-
-// {@drKelp}	Head over to {h}site C{/h} and get to work!
-			
-
-// player does not have anything from site C yet, tell them to go there
 
 :: helpGoToSiteC 
 @trigger    RequestPartnerHelp
@@ -113,8 +84,9 @@ $endif
 :: navigation.goBackUp
 @trigger    JobTasksUpdated
 @when       JobTaskActive(returnToShip)
-@once
+@boostScore 100
 @cutscene
+@once
 $set    jobs:kelp-welcome.got.scans = true
 $branch common.ringPhone
 
@@ -136,8 +108,9 @@ $branch common.ringPhone
 :: navigation.return
 @trigger    SceneStart
 @when       scene:name == "KelpStation", jobs:kelp-welcome.got.scans
-@once
+@boostScore 100
 @cutscene
+@once
 
 $branch common.ringPhone
 {@drKelp}  Head into the ship for your next task!
@@ -177,6 +150,7 @@ $branch common.ringPhone
 :: helpReturnToShip
 @trigger    RequestPartnerHelp
 @when 		scene:name == "KelpStation", JobTaskActive(returnToShip)
+@boostScore 100
 @cutscene
 {@player} 	What now?
 {@guide}	We need to head into the {h}helm{/h}. 
@@ -193,20 +167,20 @@ $call ship.map->ResetSorting()
 :: atShip
 @trigger    SceneStart
 @when       scene:name == "Helm", JobTaskActive(runExperiment)
-@once
+@boostScore 100
 @cutscene
+@once
 $branch common.ringPhone
 
 {@player} Wow. This ship... it's beautiful.  
 {@guide}  Yes! The mainframe is positively buzzing with data!
-{@player} You have scanned the life forms at Site C.
-{@player}  Now you must find out how they interact. 
+{@drKelp} You have scanned the life forms at Site C. Now you must find out how they interact. 
 {@drKelp}  Head to your ship's built-in {nameof Experimentation}!
 {hide-dialog}
 
 $call UnlockRoom("Experimentation")
 $call GiveUpgrade(ObservationTank)
-{wait 1}
+{wait 0.75}
 $call ship.map->ForceOnTop()
 $call schematic.button->ForceClick()
 {hide-dialog}{wait 1}{style default}
@@ -229,16 +203,6 @@ $call AutoSaveNow()
 {@guide}    Certainly, O. Open your schematic in the upper left.
 {@guide}  Then head to {nameof Experimentation}!
 
-// :: firstExperiment
-// @trigger    SceneStart
-// @when       scene:name == "ExperimentV2", JobTaskActive(runExperiment)
-// @once
-// @cutscene
-// $branch common.ringPhone
-
-// {@drKelp}  What a lovely old tank! This ship really is ancient, isn't it.
-//             Go ahead, take a closer look!
-            
 :: firstCaptureCircle
 @trigger    BehaviorCaptureChance
 @chatter
@@ -295,10 +259,8 @@ $branch common.ringPhone
 {@player}  Okay, we've got our behaviors! 
 {@guide}   Excellent work, O!
 {@guide}   Now you must return to the {m}research station{/m} and report your findings.
-            // Head to your {map-name}Office{/map-name} and use your {h}Computer{/h} to send me your findings.
-            // There we'll discuss your findings using argumentation with the facts you've collected.
 
-$call   UnlockRoom("office")
+// $call   UnlockRoom("office")
 
 // REPORT BACK
 
@@ -306,10 +268,10 @@ $call   UnlockRoom("office")
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @cutscene
-{@player} 	What now, {@nameof @guide}?
+{@player} 	What now, {nameof @guide}?
 {@guide}	Let's report back to your mother at the {m}research station{/m}.
 $if !IsPlayerOnShip()
-	{@guide}	Head back to your sub and return to the {map-name}research station{/map-name}.
+	{@guide}	Head back to your sub and return to the {m}place where we got this job{/m}.
 $endif
 
 :: helpReportBackInArgumentation
@@ -318,15 +280,6 @@ $endif
 @cutscene
 {@player} 	What now, {nameof @guide}? 
 {@guide}	Tell your mother what you found out!
-
-// CATCH-ALL GUIDE TEXT
-
-// :: catchGoToSiteC
-// @trigger    RequestPartnerHelp
-// @when 		JobTaskActive(gotoSiteC)
-// @boostScore -5
-// @cutscene
-// {@guide}    Head to {h}site C{/h}.
 
 :: catchScanGiantKelp
 @trigger    RequestPartnerHelp
@@ -461,7 +414,7 @@ $call CompleteJob()
 {@player}   Hey Mom, I was wondering... are there any jobs available at, I don't know.
 {@player}   Other ecosystems? 
 {@drKelp}   Oh... you mean outide the Kelp Forest? Of course.
-{drKelp}    The other stations are all stretched nearly as thin as we are. 
+            The other stations are all stretched nearly as thin as we are |.|.|. 
 {@drKelp}   But never mind about them. Let's get you set up with your next job. 
             Go ahead and check your {map-name}Job Board{/map-name}!
 
