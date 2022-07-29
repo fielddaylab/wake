@@ -2,6 +2,23 @@
 
 // INTRO
 
+:: start
+@trigger    JobStarted
+@cutscene
+{fade-out black.60, 0.5, wait}
+{@}
+{style center}
+
+$call hotbar.portable->Unlock()
+$call hotbar.portable->Show()
+$call hotbar.portable->ForceOnTop()
+$call FocusHighlight->Focus(hotbar.portable)
+    Check your {item-name}AQOS Tablet{/item-name} to see all the info about your active job!
+    This tool also holds all the data you collect.
+$call FocusHighlight->Clear()
+
+{hide-dialog}{fade-in 0.5, wait}
+
 :: diveSite
 @trigger    SceneStart
 @when       scene:name == "RS-1C"
@@ -32,14 +49,6 @@ $call hotbar.guide->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.guide)
     Talk to {nameof @guide} by clicking the {h}button with the eyes{/h} here.
     He can help if you get stuck!
-$call FocusHighlight->Clear()
-
-$call hotbar.portable->Unlock()
-$call hotbar.portable->Show()
-$call hotbar.portable->ForceOnTop()
-$call FocusHighlight->Focus(hotbar.portable)
-    Check your {item-name}AQOS Tablet{/item-name} to see all the info about your active job!
-    This tool also holds all the data you collect.
 $call FocusHighlight->Clear()
 
 {hide-dialog}{fade-in 0.5, wait}
