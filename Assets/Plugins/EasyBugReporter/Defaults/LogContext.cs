@@ -14,7 +14,7 @@ namespace EasyBugReporter {
         #if UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
             LogTypeMask.Development;
         #else
-            LogMask.Production;
+            LogTypeMask.Production;
         #endif
 
         static private readonly DumpStyle FailureStyle = new DumpStyle(FontStyle.Bold, Color.white, Color.magenta);
