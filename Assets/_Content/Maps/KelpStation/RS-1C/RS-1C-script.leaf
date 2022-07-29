@@ -11,3 +11,8 @@ $elseif !world:Act1.Sunrise
 $else
     $call ScenePostProcess->SetPostProcessProfile(BullKelpPostProcessing)
 $endif
+
+:: CheckSurface
+@function   SceneStart
+@when   !jobs:kelp-welcome.got.scans
+$call   Surface->Deactivate()

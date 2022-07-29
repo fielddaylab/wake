@@ -13,6 +13,8 @@
 $call hotbar.guide->Lock()
 $call hotbar.portable->Lock()
 $call StationEntrance->Deactivate()
+$call Player->TeleportTo(IntroSpawn)
+$call CameraSnapToTarget()
 {wait 0.5}
 
 $set world:intro.completed = false
