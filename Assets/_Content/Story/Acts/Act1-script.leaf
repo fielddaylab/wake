@@ -63,40 +63,41 @@ $CutsceneDelayed(30, .intro-part2)
 // Coral Station
 
 :: atCoralStation
-@trigger    ViewEnter
-@when       viewId == "helm", player:currentStation == "CoralStation"
-@once
+@trigger    Talk
+@who        profCoral
 @boostScore 100
+@once
 @cutscene
 
-$branch common.ringPhone
-
-{@profCoral}  Oh, hello! Have you come from the Kelp Station?
+{@profCoral}    Oh, hello! Have you come from the Kelp Station?
 				Well, welcome to the Coral Station!
 				Hope you like turtles. They are all over the coral reef.
 				I have some jobs listed on the Job Board, let me know if you're interested.
+$call InteriorOpenJobBoard()
 
 :: atBayouStation
-@trigger    ViewEnter
-@when       viewId == "helm", player:currentStation == "BayouStation"
+@trigger    Talk
+@who        profBayou
 @boostScore 100
 @once
 @cutscene
-$branch common.ringPhone
+
 {@player}   Well this is new.
-{@profBayou}   Oh, hello! Welcome to the Bayou Station!
+{@profBayou}    Oh, hello! Welcome to the Bayou Station!
                 This is an exciting time to be a Bayou researcher!
 {@player}   Oh yeah?
-{@profBayou}   I'll be sure to send some jobs your way that will show you how totally mystifying the Bayou can be.
+{@profBayou}    I'll be sure to send some jobs your way that will show you how totally mystifying the Bayou can be.
                 I'm looking forward to working with you!
+$call InteriorOpenJobBoard()
+
 
 :: atArcticStation
-@trigger    ViewEnter
-@when       viewId == "helm", player:currentStation == "ArcticStation"
+@trigger    Talk
+@who        profArctic
 @boostScore 100
 @once
 @cutscene
-$branch common.ringPhone
+
 {@player}   {slow}Brrrrrrr{/slow}{auto}{wait 0.5}
 {@profArctic}   Oh,| hello!| You're not a whale...
 				Well...| welcome to the Arctic Station!
@@ -108,6 +109,7 @@ $call GiveEntity(BowheadWhale)
 {@guide}        Listen, I'm sure we'd love to hear more about Bowhead whales, but we were actually wondering if you had any work for us.
 {@profArctic}	Oh! | Well... | let me see if I can find some jobs to put on the Job Board.
                 Fell free to give me a ring if you ever want to talk more about whales!
+$call InteriorOpenJobBoard()
 
 // Intro
 
