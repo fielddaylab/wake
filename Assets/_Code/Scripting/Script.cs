@@ -297,5 +297,12 @@ namespace Aqua {
             return ((currentMapId == MapIds.Helm) || (currentMapId == MapIds.Modeling) || (currentMapId == MapIds.Experimentation) ||
             (currentMapId == MapIds.JobBoard) || (currentMapId == MapIds.WorldMap));
         }
+
+        [LeafMember, Preserve]
+        static public bool IsPlayerOnStation() {
+            StringHash32 currentMapId = MapDB.LookupCurrentMap();
+            return ((currentMapId == MapIds.RS_Kelp) || (currentMapId == MapIds.RS_Coral) ||
+             (currentMapId == MapIds.RS_Bayou) || (currentMapId == MapIds.RS_Arctic));
+        }
     }
 }

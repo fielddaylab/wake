@@ -33,7 +33,7 @@ $set    guide:knowsJobs = true
 
 :: noJob.notAtHelm
 @trigger    RequestPartnerHelp
-@when       !player:currentJob, scene:name != "JobBoard", global:nav.shipRoom != "helm"
+@when       !player:currentJob, !IsPlayerOnStation()
 @repeat     1
 @cutscene
 {@player}   So.... What should we do now?
