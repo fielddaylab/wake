@@ -64,10 +64,7 @@ $set jobs:coral-clear-sarg.siteRScans = 0
 @when 		HasFact(Urchin.Eats.Sargassum.Stressed)
 @cutscene
 {@player} 	What should we be doing now?
-{@guide}	Now that we've finished the experiment, let's report back to the {map-name}Office{/map-name}.
-$if global:nav.shipRoom == "office"
-	{@guide}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
-$endif
+{@guide}	Now that we've finished the experiment, let's report back to the {m}research station{/m}.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -83,7 +80,7 @@ $endif
 @when 		JobTaskActive(urchinSargArgue)
 @boostScore -5
 @cutscene
-{@guide}    Head back to the Office to talk to {nameof @profCoral}.
+{@guide}    Head back to the research station to talk to {nameof @profCoral}.
 
 // ARGUMENTATION
 

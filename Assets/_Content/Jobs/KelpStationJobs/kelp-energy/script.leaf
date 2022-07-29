@@ -15,7 +15,7 @@ $if !RoomUnlocked("modelingRoom")
     $call GiveUpgrade(VisualModel)
 $endif
 {@drKelp}	Use the {map-name}Modeling Lab{/map-name} to visualize Site C's food web.
-            When you are done, check back with me at your {map-name}Office{/map-name}!
+            When you are done, check back with me at the {m}research station{/m}!
 $set jobs:kelp-energy-visual-model.saved = false
 
 :: helpGoModeling
@@ -63,7 +63,7 @@ $set jobs:kelp-energy-visual-model.saved = false
 @once
 @cutscene
 {@guide}    Looks like you've successfully created a visual model of the warm kelp forest!
-            Let's bring it back to the {map-name}Office{/map-name}, where we can discuss it with {nameof drKelp}.
+            Let's bring it back to the {map-name}research station{/map-name}, where we can discuss it with {nameof drKelp}.
 $set jobs:kelp-energy-visual-model.saved = true
 
 // report back
@@ -76,10 +76,8 @@ $set jobs:kelp-energy-visual-model.saved = true
 {@player} 	What should we do now?
 {@guide}	We've modeled the relationships between {pluralnameof Urchin}, {pluralnameof GiantKelp}, and {pluralnameof SeaOtter}.
 			So let's report back to {nameof @drKelp}.
-$if global:nav.shipRoom != "office"
-	{@guide}	We should first head back to the {map-name}Office{/map-name}.
-$else
-	{@guide}	Same as before, you can report your findings using the {h}Computer{/h}.
+$if !IsPlayerOnStation()
+	{@guide}	We should first head back to the {map-name}research station{/map-name}.
 $endif
 
 // SUGGEST ARGUMENTATION
@@ -91,13 +89,13 @@ $endif
 $if scene:name == "Argumentation"
     {@player}   What should I be doing again?
     {@guide}    Report your findings to {nameof @drKelp}.
-$elseif global:nav.shipRoom == "office"
+$elseif !IsPlayerOnStation()
     {@player}   What should we do now?
-    {@guide}    Let's report our findings to {nameof @drKelp} using the {h}Computer{/h}.
+    {@guide}    Let's report our findings to {nameof @drKelp}.
 $else
     {@player} 	What should we do now?
 	{@guide}	Well, we've completed the modeling, so let's report back to {nameof @drKelp}.
-                We should first head back to the {map-name}Office{/map-name}.
+                We should first head back to the {map-name}research station{/map-name}.
 $endif
 
 // CATCH-ALL GUIDE TEXT
@@ -114,7 +112,7 @@ $endif
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Talk to {nameof drKelp} in the Office.
+{@guide}    Talk to {nameof drKelp} at the research station.
 
 // ARGUMENTATION
 

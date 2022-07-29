@@ -143,9 +143,6 @@ $endif
 @cutscene
 {@player} 	What should we be doing now?
 {@guide}	We know now how many Fishers Site V can safely sustain, so let's report back to {nameof @profCoral}.
-$if global:nav.shipRoom == "office"
-	{@guide}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
-$endif
 
 // CATCH-ALL GUIDE TEXT
 
@@ -175,7 +172,7 @@ $endif
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Take your prediction to {nameof @profCoral} in the Office.
+{@guide}    Take your prediction to {nameof @profCoral} in the research station.
 
 //ARGUMENT
 

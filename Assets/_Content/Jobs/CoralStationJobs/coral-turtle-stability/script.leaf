@@ -197,7 +197,7 @@ $endif
 @once		
 @cutscene
 {@guide}	Huh, turns out turtles eat a lot of things.
-{@guide}	Let's bring our model back to the {map-name}Office{/map-name}.
+{@guide}	Let's bring our model back to the {map-name}research station{/map-name}.
 $set jobs:turtle-stability-visual-model.saved = true
 
 // report back
@@ -209,9 +209,6 @@ $set jobs:turtle-stability-visual-model.saved = true
 @cutscene
 {@player} 	What should we be doing now?
 {@guide}	That should be everything we need for now. Let's report back to {nameof @profCoral}.
-$if global:nav.shipRoom == "office"
-	{@guide}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
-$endif
 
 // CATCH-ALL GUIDE TEXT
 

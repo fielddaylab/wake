@@ -152,7 +152,7 @@ $endif
 @when 		JobTaskActive(sargArgue)
 @boostScore -5
 @cutscene
-{@guide}    Talk to {@nameof profCoral} in the {map-name}Office{map-name}.
+{@guide}    Talk to {@nameof profCoral} in the {m}research station{/m}.
 
 
 // ARGUMENTATION
@@ -161,7 +161,7 @@ $endif
 @trigger    RequestPartnerHelp
 @when       JobTaskTop(reportBack) // BRANCH D
 @cutscene
-{@guide} 	Return to the Office and describe your results to {nameof profCoral}.
+{@guide} 	Return to the research station and describe your results to {nameof profCoral}.
 
 :: argue.intro
 @trigger    TryArgumentation

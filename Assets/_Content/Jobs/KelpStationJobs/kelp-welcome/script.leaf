@@ -287,12 +287,8 @@ $endif
 @once
 
 $branch common.ringPhone
-{@drKelp}  Excellent work, {player-name}! 
+{@drKelp}   Excellent work, {player-name}! 
             Report back to the {m}research station{/m} at once, so we can discuss your findings.
-            // Head to your {map-name}Office{/map-name} and use your {h}Computer{/h} to send me your findings.
-            // There we'll discuss your findings using argumentation with the facts you've collected.
-
-$call   UnlockRoom("office")
 
 // REPORT BACK
 
@@ -302,10 +298,8 @@ $call   UnlockRoom("office")
 @cutscene
 {@player} 	What now?
 {@guide}	Let's report back to {nameof @drKelp}.
-$if global:nav.shipRoom != "office"
+$if !IsPlayerOnStation()
 	{@guide}	We should head back to your Sub to return to the {map-name}research station{/map-name} where we got this job.
-$else
-	{@guide}	Report your findings with the {h}Computer{/h} in front of you.
 $endif
 
 :: helpReportBackInArgumentation
@@ -364,7 +358,7 @@ $endif
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Talk to {nameof drKelp} in the Office.
+{@guide}    Talk to {nameof drKelp} at the {m}research station{/m}.
 
 //ARGUMENTATION
 

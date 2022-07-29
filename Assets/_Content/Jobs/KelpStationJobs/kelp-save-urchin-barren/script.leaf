@@ -53,7 +53,7 @@ $branch common.ringPhone
             You can use the plus and minus buttons next to the organisms to increase or decrease their populations.
             And use the {h}Add Organism{/h} button to select a new organism to add.
             We can only simulate one intervention at a time, though, so no adding multiple new organisms or adjusting multiple populations.
-            ...Oh, sorry, I have to go for now. Good luck! Come talk to me in the {map-name}Office{/map-name} when you're done!
+            ...Oh, sorry, I have to go for now. Good luck! Come talk to me at the {map-name}station{/map-name} when you're done!
 {hide-dialog}
 {wait 1}
 {@guide}    Looks like we're on our own. Let's see what we can do.
@@ -72,7 +72,7 @@ $branch common.ringPhone
 @once
 @cutscene
 {@guide}    Ok. It looks like we have a plan!
-            I have no idea what adding {pluralnameof SeaOtter} practically means, but let's report back to {nameof @drKelp} at the {map-name}Office{/map-name}.
+            I have no idea what adding {pluralnameof SeaOtter} practically means, but let's report back to {nameof @drKelp} at the {map-name}research station{/map-name}.
 
 // to argumentation
 
@@ -80,13 +80,13 @@ $branch common.ringPhone
 @trigger    RequestPartnerHelp
 @when 		JobTaskCompleted(makeAPlan)
 @cutscene
-$if global:nav.shipRoom != "office"
+$if !IsPlayerOnStation()
 	{@player} 	What should we do now?
 	{@guide}	We've got a model now that shows us what might help Site B, so let's report back to {nameof @drKelp}.
-	{@guide}	We should first head back to the {map-name}Office{/map-name}.
+	{@guide}	We should first head back to the {map-name}research station{/map-name}.
 $else
 	{@player} 	So... now what?
-	{@guide}	We can report our findings to {nameof @drKelp} using the {h}Computer{/h}.
+	{@guide}	Report our findings to {nameof @drKelp}.
 $endif
 
 // CATCH-ALL GUIDE TEXT
@@ -103,7 +103,7 @@ $endif
 @when 		JobTaskActive(return)
 @boostScore -5
 @cutscene
-{@guide}    Talk to {nameof drKelp} in the Office.
+{@guide}    Talk to {nameof drKelp} at the {m}research station{/m}.
 
 // ARGUMENTATION
 

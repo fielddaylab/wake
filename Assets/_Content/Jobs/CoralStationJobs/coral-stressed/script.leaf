@@ -138,11 +138,7 @@ $if	jobs:coral-stressed.struggling
 	{@guide}	Make sure to open AQOS and compare the coral stress ranges with the conditions at Site R.
 $else
 	{@player} 	What should we be doing now?
-	$if global:nav.shipRoom == "office"
-		{@guide}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
-	$else
-		{@guide}	That should be everything we need for now. Let's report back to {nameof @profBayou}.
-	$endif
+	{@guide}	That should be everything we need for now. Let's report back to {nameof @profBayou}.
 $endif
 
 // CATCH-ALL GUIDE TEXT
@@ -166,7 +162,7 @@ $endif
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Talk to {nameof @profCoral} in the Office.
+{@guide}    Return to the station to talk to {nameof @profCoral}.
 
 // ARGUMENTATION
 
