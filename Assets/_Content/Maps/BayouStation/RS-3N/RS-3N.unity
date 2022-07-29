@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -751,6 +751,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4118583866171764165, guid: 879ecb243a571fa4a99eff0c46a5e956,
         type: 3}
+      propertyPath: m_Offset.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4118583866171764165, guid: 879ecb243a571fa4a99eff0c46a5e956,
+        type: 3}
       propertyPath: m_Offset.y
       value: -23
       objectReference: {fileID: 0}
@@ -771,8 +776,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4118583866171764166, guid: 879ecb243a571fa4a99eff0c46a5e956,
         type: 3}
+      propertyPath: m_Offset.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4118583866171764166, guid: 879ecb243a571fa4a99eff0c46a5e956,
+        type: 3}
       propertyPath: m_Offset.y
       value: 23
+      objectReference: {fileID: 0}
+    - target: {fileID: 4118583866171764167, guid: 879ecb243a571fa4a99eff0c46a5e956,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4118583866171764167, guid: 879ecb243a571fa4a99eff0c46a5e956,
         type: 3}
@@ -857,22 +872,22 @@ PrefabInstance:
     - target: {fileID: 5409637383755610233, guid: 3f1d80ab39c476f46b3c71da32017253,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.9999949
       objectReference: {fileID: 0}
     - target: {fileID: 5409637383755610233, guid: 3f1d80ab39c476f46b3c71da32017253,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 5409637383755610233, guid: 3f1d80ab39c476f46b3c71da32017253,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0.0032096142
       objectReference: {fileID: 0}
     - target: {fileID: 5409637383755610233, guid: 3f1d80ab39c476f46b3c71da32017253,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 5409637383755610233, guid: 3f1d80ab39c476f46b3c71da32017253,
         type: 3}
@@ -882,7 +897,7 @@ PrefabInstance:
     - target: {fileID: 5409637383755610233, guid: 3f1d80ab39c476f46b3c71da32017253,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: -0.36800003
       objectReference: {fileID: 0}
     - target: {fileID: 5409637383755610233, guid: 3f1d80ab39c476f46b3c71da32017253,
         type: 3}
@@ -892,7 +907,7 @@ PrefabInstance:
     - target: {fileID: 5409637383755610238, guid: 3f1d80ab39c476f46b3c71da32017253,
         type: 3}
       propertyPath: m_Size.x
-      value: 86.77323
+      value: 91.882195
       objectReference: {fileID: 0}
     - target: {fileID: 5409637383755610238, guid: 3f1d80ab39c476f46b3c71da32017253,
         type: 3}
@@ -902,7 +917,7 @@ PrefabInstance:
     - target: {fileID: 5409637383755610238, guid: 3f1d80ab39c476f46b3c71da32017253,
         type: 3}
       propertyPath: m_Offset.x
-      value: 44.437992
+      value: 46.992474
       objectReference: {fileID: 0}
     - target: {fileID: 5409637383755610238, guid: 3f1d80ab39c476f46b3c71da32017253,
         type: 3}
@@ -1113,7 +1128,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 1.2750244, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -1124,7 +1139,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 95, y: 50}
+  m_Size: {x: 97.55005, y: 50}
   m_EdgeRadius: 0
 --- !u!4 &1316677036 stripped
 Transform:
@@ -2723,7 +2738,7 @@ PrefabInstance:
     - target: {fileID: 305302807730767112, guid: 2f3382de17af5654fbd7559791adbc24,
         type: 3}
       propertyPath: m_Size.x
-      value: 81.88693
+      value: 86.79788
       objectReference: {fileID: 0}
     - target: {fileID: 305302807730767112, guid: 2f3382de17af5654fbd7559791adbc24,
         type: 3}
@@ -2733,7 +2748,7 @@ PrefabInstance:
     - target: {fileID: 305302807730767112, guid: 2f3382de17af5654fbd7559791adbc24,
         type: 3}
       propertyPath: m_Offset.x
-      value: 44.20063
+      value: 46.656105
       objectReference: {fileID: 0}
     - target: {fileID: 305302807730767112, guid: 2f3382de17af5654fbd7559791adbc24,
         type: 3}
