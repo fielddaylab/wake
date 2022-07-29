@@ -383,7 +383,19 @@ $call ArgueLoad(welcomeArgue)
 			$call ArgueFactSlot(Urchin.Eats.GiantKelp)
 	$endif
 
-	$branch .argue.hello
+    $if JobTaskTop(reportBack)
+        $branch .argue.hello
+    $else
+        $branch .argue.later
+    $endif
+
+
+::argue.later
+{@drKelp}  Wow, that was quick! You must be even better at this than I thought!
+{@player}  Actually, I've still got a few things I've got to do.
+// TODO: add a branch if player has not received V1ct0r help button yet
+{@drKelp}  Oh. Well, don't be afraid to ask {nameof @guide} if you run into trouble. You've got this!
+	
 	
 ::argue.hello
 {@drKelp}  This is so exciting, Olivia! Your first job! 
