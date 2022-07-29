@@ -45,12 +45,13 @@ $call UnlockSite(RS-1A)
 @trigger    RequestPartnerHelp
 @when 		scene:name == "RS-1A", JobTaskTop(siteA)
 @cutscene
+
 {@guide}    Welcome to the Bull Kelp Forest, O!
 {@player} 	Thanks, {nameof @guide}. But I've been here before. Mostly with my sister. 
 {@player}   I wonder if Ovid the Otter still lives here.
 {@guide}    According to my database, otters live an average of 9 years in the wild...
 {@guide}    So there is a 10.8% chance that Ovid is still alive.
-{@player}   Gee. Thanks for that, {@nameof @guide}.
+{@player}   Gee. Thanks for that, {nameof @guide}.
 {@guide}    You are most welcome!
 
 // to experimentation
@@ -107,9 +108,11 @@ $endif
 @boostScore 2
 @cutscene
 {@player} 	Okay, {nameof @guide}. What's next? 
-{@guide}	You've found a new relationship between {pluralnameof Urchin} and {pluralnameof BullKelp}. Time to report back to the station!
+{@guide}	You've found a new relationship between {pluralnameof Urchin} and {pluralnameof BullKelp}.
 $if !IsPlayerOnStation()
-	{@guide}	We should first head back to the {map-name}Office{/map-name}.
+	{@guide}	Time to report back to the {map-name}station{/map-name}.
+$else
+	{@guide}	Let's report back to your {nameof @drKelp}.
 $endif
 
 // CATCH-ALL GUIDE TEXT
@@ -119,7 +122,7 @@ $endif
 @when 		JobTaskActive(siteA)
 @boostScore -5
 @cutscene
-{@guide}    Head to Site A and identify any new species!
+{@guide}    Head to {h}Site A{/h} and identify any new species!
 
 :: catchFoodWeb
 @trigger    RequestPartnerHelp
