@@ -10,13 +10,16 @@
 @cutscene
 $branch common.ringPhone
 
-{@drKelp}  Before you head up to the surface, use your {item-name}Scanner{/item-name} to ID all the species down here.
+{@guide}Greetings, Olivia Ramirez! 
+{@guide}   I am {nameof @guide}, your onboard A.I.!
+{@guide}   Did your job-giver not inform you that I would be uploaded to your sub?
+{@player}  Nah. Mom's been pretty distracted lately.  
+{@player}  Okay then, {nameof @guide}. What do we do first? 
+{@guide}  Use your {item-name}Scanner{/item-name} to ID all the species at Site C. 
 $call GiveUpgrade(ROVScanner, Silent)
 $call Player->SetTool(Scanner)
-{@drKelp}  The {item-name}Scanner{/item-name} searches for life forms automatically. 
-            Click the red targets to ID a new plant or animal species! 
-{@player}   I know Mom...
-{@drKelp}   If you need help, you can always ask {nameof @guide} for a reminder or a hint.
+{@guide}  The {item-name}Scanner{/item-name} searches for life forms automatically. 
+            Click the red targets to ID a new plant or animal species. 
 {wait 0.5}
 
 {fade-out black.60, 0.5, wait}
@@ -28,16 +31,15 @@ $call hotbar.guide->Show()
 $call hotbar.guide->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.guide)
     Talk to {nameof @guide} by clicking the {h}button with the eyes{/h} here.
-    They can help if you get stuck!
+    He can help if you get stuck!
 $call FocusHighlight->Clear()
 
 $call hotbar.portable->Unlock()
 $call hotbar.portable->Show()
 $call hotbar.portable->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.portable)
-    One more tip!
-    You can check your {item-name}AQOS Tablet{/item-name} to see all the info about your active job!
-    This tool also holds all the data you collect about critters.
+    Check your {item-name}AQOS Tablet{/item-name} to see all the info about your active job!
+    This tool also holds all the data you collect.
 $call FocusHighlight->Clear()
 
 {hide-dialog}{fade-in 0.5, wait}
@@ -116,15 +118,18 @@ $endif
 $set    jobs:kelp-welcome.got.scans = true
 $branch common.ringPhone
 
-{@drKelp}  Excellent work! Looks like you found everything you need for now.
-            Head up to the surface, to continue this job at the ship.
+{@guide}   You've scanned all of the species at site C! Excellent work, Olivia!
+{@player}  Hey {nameof @guide}... would you mind calling me O?
+{@guide}   Updating database...
+{@guide}   Excellent work, O!
+{@guide}   Time to head to the surface and board your new research vessel.
 
 :: helpAtSiteCCompleted
 @trigger    RequestPartnerHelp
 @when 		scene:name == "RS-1C", JobTaskTop(returnToShip)
 @cutscene
-{@player} 	Um... V1ctor? Now what? 
-{@guide}    We're done here. Head back to the surface! 
+{@player}   Can you remind me what to do now, {nameof @guide}?  
+{@guide}    Certainly, O. Head to the surface and board your ship! 
 
 // BACK AT STATION
 
@@ -164,9 +169,10 @@ $call ship.map->ResetSorting()
 @cutscene
 $branch common.ringPhone
 
-{@player}   Is that it? 
-{@drKelp}   Oh dear. I'm afraid you missed something. 
-            Why don't you dive back to {h}site C{/h} and keep scanning.
+{@player}   Is that everything, {nameof @guide}? 
+{@guide}   Hmmm. It appears you missed something. 
+{@guide}    Head back to {h}site C{/h} and try again!
+
 
 :: helpReturnToShip
 @trigger    RequestPartnerHelp
@@ -191,12 +197,11 @@ $call ship.map->ResetSorting()
 @cutscene
 $branch common.ringPhone
 
-{@drKelp}  Great! You scanned some life forms! 
-            Now I need you to find out how they interact.
-{@player}   Interact? What's that mean?
-{@guide}    It's a nice way of saying we need to find out which ones eat each other.
-{@player}   Yikes. Ok. How do we do that? 
-{@drKelp}  Your ship has a built-in {nameof Experimentation}!
+{@player} Wow. This ship... it's beautiful.  
+{@guide}  Yes! The mainframe is positively buzzing with data!
+{@player} You have scanned the life forms at Site C.
+{@player}  Now you must find out how they interact. 
+{@drKelp}  Head to your ship's built-in {nameof Experimentation}!
 {hide-dialog}
 
 $call UnlockRoom("Experimentation")
@@ -220,8 +225,9 @@ $call AutoSaveNow()
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(runExperiment), scene:name != "ExperimentV2"
 @cutscene
-{@player} 	Now what?
-{@guide}	Let's head to the {nameof Experimentation}.
+{@player}   Can you help me find my way, {nameof @guide}?
+{@guide}    Certainly, O. Open your schematic in the upper left.
+{@guide}  Then head to {nameof Experimentation}!
 
 // :: firstExperiment
 // @trigger    SceneStart
@@ -239,9 +245,9 @@ $call AutoSaveNow()
 @once
 
 $if local:factId == "Urchin.Eats.GiantKelp"
-    {@guide}    Whoa!| That urchin's eating something!
+    {@guide}    That urchin's eating something!
 $else
-    {@guide}    Whoa!| That sea otter's eating something!
+    {@guide}    That sea otter's eating something!
 $endif
 
 :: firstCaptureSuccess
@@ -251,8 +257,8 @@ $endif
 @boostScore 1000
 
 $if local:factId == "Urchin.Eats.GiantKelp"
-    {@guide}    Nice one! Looks like {pluralnameof Urchin} eat {pluralnameof GiantKelp}. 
-    {$guide}    Nice one! Looks like {pluralnameof SeaOtter} eat {pluralnameof Urchin}. 
+    {@guide}    You captured a new behavior! Looks like {pluralnameof Urchin} eat {pluralnameof GiantKelp}. 
+    {$guide}    You captured a new behavior! Looks like {pluralnameof SeaOtter} eat {pluralnameof Urchin}. 
 $endif
 {@guide}    That should be recorded in our {item-name}Bestiary{/item-name} now.
 
@@ -271,9 +277,8 @@ $endif
 @cutscene
 {@player}   Ok, now what? 
 $if ExperimentIsRunning()
-    {@guide}	Humans. So impatient. 
-                Watch the tank and click to record new behaviors.  
-                We need to find out how these species interact.
+    {@guide}	Watch the tank and click to record new behaviors.  
+                You need to find out how these species interact.
 $else
     {@guide}    You need to set up the tank. 
                 You'll need some {nameof SeaOtter}, some {nameof Urchin}, and some {nameof GiantKelp}.
@@ -287,8 +292,13 @@ $endif
 @once
 
 $branch common.ringPhone
-{@drKelp}   Excellent work, {player-name}! 
-            Report back to the {m}research station{/m} at once, so we can discuss your findings.
+{@player}  Okay, we've got our behaviors! 
+{@guide}   Excellent work, O!
+{@guide}   Now you must return to the {m}research station{/m} and report your findings.
+            // Head to your {map-name}Office{/map-name} and use your {h}Computer{/h} to send me your findings.
+            // There we'll discuss your findings using argumentation with the facts you've collected.
+
+$call   UnlockRoom("office")
 
 // REPORT BACK
 
@@ -296,18 +306,18 @@ $branch common.ringPhone
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @cutscene
-{@player} 	What now?
-{@guide}	Let's report back to {nameof @drKelp}.
-$if !IsPlayerOnStation()
-	{@guide}	We should head back to your Sub to return to the {map-name}research station{/map-name} where we got this job.
+{@player} 	What now, {@nameof @guide}?
+{@guide}	Let's report back to your mother at the {m}research station{/m}.
+$if !IsPlayerOnShip()
+	{@guide}	Head back to your sub and return to the {map-name}research station{/map-name}.
 $endif
 
 :: helpReportBackInArgumentation
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack), scene:name == "Argumentation"
 @cutscene
-{@player} 	What now?
-{@guide}	Let's tell {nameof @drKelp} what we found out.
+{@player} 	What now, {nameof @guide}? 
+{@guide}	Tell your mother what you found out!
 
 // CATCH-ALL GUIDE TEXT
 
@@ -323,42 +333,42 @@ $endif
 @when 		JobTaskActive(scanGiantKelp)
 @boostScore -5
 @cutscene
-{@guide}    Make sure to scan all the organisms here. Have you looked at the Kelp yet?
+{@guide}    Make sure to scan all the organisms here. Have you looked at the kelp yet?
 
 :: catchScanUrchin
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(scanUrchin)
 @boostScore -5
 @cutscene
-{@guide}    Make sure to scan all the organisms here. Have you looked at the Urchins yet?
+{@guide}    Make sure to scan all the organisms here. Have you looked at the urchins yet?
 
 :: catchScanOtter
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(scanOtter)
 @boostScore -5
 @cutscene
-{@guide}    Make sure to scan all the organisms here. Have you looked at the Otters yet?
+{@guide}    Make sure to scan all the organisms here. Have you looked at the otters yet?
 
 :: catchReturnToShip
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(returnToShip)
 @boostScore -5
 @cutscene
-{@guide}    Time to head back to the ship!
+{@guide}    Head to the surface and board your ship!
 
 :: catchRunExperiment
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(runExperiment)
 @boostScore -5
 @cutscene
-{@guide}    Head to the Observation Tank to find what eats what.
+{@guide}    Head to the Observation Tank and run your experiment! 
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Talk to {nameof drKelp} at the {m}research station{/m}.
+{@guide}    Report back to your mother and let her know what you learned!
 
 //ARGUMENTATION
 
@@ -376,7 +386,14 @@ $call ArgueLoad(welcomeArgue)
 	$branch .argue.hello
 	
 ::argue.hello
-{@drKelp}    Thanks for your help out there, {player-name}! What did you find out?
+{@drKelp}  This is so exciting, Olivia! Your first job! 
+           How are you feeling? Tired? Hungry?
+           I've got a recipe for cinnamon kelp rolls that I've been dying to try...
+{@player}  Maybe later, Mom.
+{@drKelp}  Ok. If you're sure. 
+           This job will form the foundation of all the work you do here at the Kelp Forest. 
+           Let's see what you discovered. 
+         
 $goto .argue.chooseFacts
 
 ::argue.chooseFacts
@@ -396,7 +413,7 @@ $endif
 $if ArgueIsFactSubmitted(Urchin.Eats.GiantKelp)
 	$goto .argue.done
 $else
-	{@drKelp}    Got it. The {pluralnameof SeaOtter} eat {pluralnameof Urchin}. Did you learn anything about what the {pluralnameof Urchin} eat?
+	{@drKelp}    Excellent. The {pluralnameof SeaOtter} eat {pluralnameof Urchin}. Did you learn anything about what the {pluralnameof Urchin} eat?
 	$goto .argue.chooseFacts
 $endif
 
@@ -404,7 +421,7 @@ $endif
 $if ArgueIsFactSubmitted(SeaOtter.Eats.Urchin)
 	$goto .argue.done
 $else
-	{@drKelp}    So {pluralnameof Urchin} live on {pluralnameof GiantKelp}. Interesting! Did you learn anything about the {pluralnameof SeaOtter}?
+	{@drKelp}    Perfect! The {pluralnameof Urchin} live on {pluralnameof GiantKelp}. Did you learn anything about the {pluralnameof SeaOtter}?
 	$goto .argue.chooseFacts
 $endif
 
@@ -414,11 +431,11 @@ $call ArgueRejectIncorrect()
 $goto .argue.chooseFacts
 
 ::argue.giveUp
-{@drKelp}    OK get back to me when you're ready.
+{@drKelp}    Okay, Sweetie. Get back to me when you're ready.
 
 ::argue.done
 $call ArgueComplete()
-{@drKelp}    Really nice work! You just explained the basis of the kelp forest food web.
+{@drKelp}    Nice work, Olivia! You just explained the basis of the kelp forest food web.
 $call CompleteJob()
 
 // DONE
@@ -426,13 +443,15 @@ $call CompleteJob()
 :: end
 @trigger    JobCompleted
 @cutscene
-{@drKelp}	Wonderful! Thank you for your help, {player-name}! 
-{@player}   Easy peasy. I was glad to help. 
-{@guide}    Ahem.
-{@player}   Oh. Uh, V1ctor helped too. A little. 
-{@drKelp}  Don't suppose you'd like another job?
-            I've got work available at other research sites.
-            You can find them on the {map-name}Job Board{/map-name}!
+{@drKelp}	I'm so thrilled, Olivia. 
+{@drKelp}   With your help, we'll have that Kelp Refuge up and running before you know it. 
+{@drKelp}   I can't think of a better way to honor your sister. 
+{@player}   Hey Mom, I was wondering... are there any jobs available at, I don't know.
+{@player}   Other ecosystems? 
+{@drKelp}   Oh... you mean outide the Kelp Forest? Of course.
+{drKelp}    The other stations are all stretched nearly as thin as we are. 
+{@drKelp}   But never mind about them. Let's get you set up with your next job. 
+            Go ahead and check your {map-name}Job Board{/map-name}!
 
 $call hotbar.guide->Show()
 $call hotbar.portable->Show()
