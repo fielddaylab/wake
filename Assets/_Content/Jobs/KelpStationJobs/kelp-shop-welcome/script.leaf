@@ -32,6 +32,22 @@
 {@player}   Okay, got both of them!
 {@guide}    Nice! Let's head back to the Ship then.
 
+// CATCH-ALL GUIDE TEXT
+
+:: helpGetTagger
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(getTagger)
+@cutscene
+{@player}   So... where do we head now?
+{@guide}    Talk to your uncle, he'll have some items for us.
+
+:: helpGetVisualModel
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(getVisualModel)
+@cutscene
+{@player}   So... where do we head now?
+{@guide}    Talk to your uncle, he'll have some items for us.
+
 :: helpReturnShip
 @trigger    RequestPartnerHelp
 @when       JobTaskTop(returnShip)
