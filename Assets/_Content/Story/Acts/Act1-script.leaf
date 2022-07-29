@@ -8,10 +8,11 @@
 @cutscene
 @once
 
-{fade-out black.80, 0}
+{fade-out black, 0}
 {bgm-volume 0, 0}
 $call hotbar.guide->Lock()
 $call hotbar.portable->Lock()
+$call StationEntrance->Deactivate()
 {wait 0.5}
 
 $set world:intro.completed = false
@@ -33,7 +34,7 @@ $start .tutorialMove
 {fade-out black.60, 0.5, wait}
 {@}
 {style center}
-    Use the {h}Mouse{/h} \ or \ the {h}[W][A][S][D]{/h} keys to move your Sub
+    Use the {h}Mouse{/h} or the {h}[W][A][S][D]{/h} keys to move your Sub
 {hide-dialog}{fade-in 0.5, wait}
 {/cutscene}
 $CutsceneDelayed(30, .intro-part2)
@@ -46,7 +47,8 @@ $CutsceneDelayed(30, .intro-part2)
 {@drKelp}Sweetie, what were you thinking?! Taking the sub out at night, after what happened last time?
 {@drKelp}Come back to the {m}Kelp Station{/m} immediately.
 {@drKelp}And be careful!
-{@player}Copy that, Mom. On my way.  
+{@player}Copy that, Mom. On my way.
+$call StationEntrance->Activate()
 
 
 // On unlocking world map

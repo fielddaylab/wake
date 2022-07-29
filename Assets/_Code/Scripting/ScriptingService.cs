@@ -305,13 +305,15 @@ namespace Aqua
         /// <summary>
         /// Kills all threads with a priority less than the given priority
         /// </summary>
-        public void KillLowPriorityThreads(TriggerPriority inThreshold = TriggerPriority.Cutscene)
+        public void KillLowPriorityThreads(TriggerPriority inThreshold = TriggerPriority.Cutscene, bool inbKillFunctions = false)
         {
             DebugService.Log(LogMask.Scripting,  "[ScriptingService] Killing all with priority less than {0}", inThreshold);
 
             for(int i = m_ThreadList.Count - 1; i >= 0; --i)
             {
                 var thread = m_ThreadList[i];
+                if (!inbKillFunctions && thread.IsFunction())
+                    continue;
                 if (thread.Priority() < inThreshold)
                     thread.Kill();
             }

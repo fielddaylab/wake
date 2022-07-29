@@ -124,7 +124,7 @@ namespace Aqua {
             base.OnHide(inbInstant);
 
             if (WasShowing()) {
-                Services.Events.Dispatch(GameEvents.ContextHide);
+                Services.Events?.Dispatch(GameEvents.ContextHide);
             }
         }
 
