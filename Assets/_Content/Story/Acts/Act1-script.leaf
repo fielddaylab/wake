@@ -17,13 +17,14 @@ $call hotbar.portable->Lock()
 $set world:intro.completed = false
 {@player} Wow, this place looks so different at night!
 {@player} Tío, you still there? 
+{fade-in 3}
 {@kelpMechanic} Sí, mijita. I can hear you on the comms.
 {@kelpMechanic} Keep exploring. A few more minutes, and the computer should be able to calculate your score! 
 {@player} Thanks, Tío. 
 {@player} Just... don't let Mom find out.
 {@kelpMechanic} No promises, Ollie. 
 {hide-dialog}
-$goto .tutorialMove
+$start .tutorialMove
 
 // Intro tutorial
 
