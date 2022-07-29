@@ -26,17 +26,18 @@
 #ShopHandler(first)
 @boostScore 100
 @once
-{@$MerchantId}  Hey kiddo! Workshop's all ready - do you need me to build you anything?
-$choice .action.openShop; Sure do!
-$choice .action.cancel; Not right now!
+{@$MerchantId}  Well, if it isn't my favorite junior scientist!
+                My shop's open for business. Want to look at some upgrades?
+$choice .action.openShop; Sure, I'll take a look! 
+$choice .action.cancel; No thanks, Tío. Just checking in. 
 
 #ShopHandler(a)
-{@$MerchantId} How's it going out there kiddo? Need any upgrades from your dear ol' uncle?
-$choice .action.openShop; Sure do!
-$choice .action.cancel; Not right now!
+{@$MerchantId} Welcome back, mijita. Need any upgrades for your ship? 
+$choice .action.openShop; Sure, I'll take a look. Thanks, Tío!
+$choice .action.cancel; Nah. I'm good for now. 
 
 :: action.cancel
-{@$MerchantId}  Alright,| well you know where to find me!
+{@$MerchantId}  Okay, Ollie. Good luck out there!| Well, you know where to find me!
 
 // Generic
 
