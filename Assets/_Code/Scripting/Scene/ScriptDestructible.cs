@@ -11,6 +11,7 @@ using System;
 
 namespace Aqua.Scripting
 {
+    [AddComponentMenu("Aqualab/Scripting/Script Destructible")]
     [DisallowMultipleComponent]
     public class ScriptDestructible : ScriptComponent, IBaked
     {

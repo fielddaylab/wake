@@ -1,4 +1,4 @@
-:: basePath job.turtle-danger
+# basePath job.turtle-danger
 
 // INTRO
 
@@ -6,16 +6,16 @@
 @trigger    JobStarted
 @cutscene
 
-{@profHarper}	People are concerned about the {pluralnameof LoggerheadTurtle} that live by the {h}Oil Rig Reef{/h}.
+{@profBayou}	People are concerned about the {pluralnameof LoggerheadTurtle} that live by the {h}Oil Rig Reef{/h}.
 				For this job, I need you to develop a food web with the species you found there.
                 We want to learn if there are any new predators of the Turtles.
 $if !HasEntity(Cyanobacteria)
-	{@profHarper}	There is a new organism at the Oil Rig Reef you can research now that you have the {h}Microscope{/h}.
+	{@profBayou}	There is a new organism at the Oil Rig Reef you can research now that you have the {h}Microscope{/h}.
                     Be sure to scan it and count the population like you did for the other species.
 $endif
 $if !RoomUnlocked("modelingRoom")
-    {@profHarper}	I've unlocked a new room on your Helm, {map-name}the Modeling Lab{/map-name}.
-    {@profHarper}	Head there when you need to model the food web.
+    {@profBayou}	I've unlocked a new room on your Helm, {map-name}the Modeling Lab{/map-name}.
+    {@profBayou}	Head there when you need to model the food web.
     $call UnlockRoom("modelingRoom")
     $call UnlockRoom("Modeling")
     $call GiveUpgrade(VisualModel)
@@ -56,7 +56,7 @@ $endif
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Report back to {nameof profHarper}.
+{@guide}    Report back to {nameof profBayou}.
 
 // ARGUMENTATION
 
@@ -65,19 +65,19 @@ $endif
 @when   !ArgueIsComplete(siteOModel)
 @cutscene
 $call ArgueLoad(siteOModel)
-{@profHarper} What can you tell me about the safety of the turtles?
+{@profBayou} What can you tell me about the safety of the turtles?
 $choice .argue.turtleSafe; The turtles should be safe from predators
 $choice .argue.turtleNotSafe; The turtles might not be safe from predators
 $choose branch
 
 :: argue.turtleSafe
 $call ArgueSetClaim(Claim, jobs.bayou-turtle-danger.argue.claimLabel1) 
-{@profHarper} Do you have a model that shows the turtles are safe in {h}Site O{/h}?
+{@profBayou} Do you have a model that shows the turtles are safe in {h}Site O{/h}?
 $goto argue.showSafeClaim
 
 :: argue.turtleNotSafe
 $call ArgueSetClaim(Claim, jobs.bayou-turtle-danger.argue.claimLabel2) 
-{@profHarper} Do you have a model that shows the turtles are not safe in {h}Site O{/h}?
+{@profBayou} Do you have a model that shows the turtles are not safe in {h}Site O{/h}?
 $goto argue.showUnsafeClaim
 
 :: argue.showUnsafeClaim
@@ -90,7 +90,7 @@ $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.goodEvidenceWrongClaim
-{@profHarper} That model doesn't indicate any danger to the turtles. 
+{@profBayou} That model doesn't indicate any danger to the turtles. 
     Let's start over.
 $call ArgueRejectIncorrect()
 $call ArgueClearFacts()
@@ -107,19 +107,19 @@ $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.unrelated
-{@profHarper} Ok, that's interesting, but it's not answering my question.
+{@profBayou} Ok, that's interesting, but it's not answering my question.
 $call ArgueRejectIncorrect()
 $call ArgueClearFacts()
 $call ArgueCancelClaim()
 $goto .argue.intro
 
 :: argue.giveUp
-{@profHarper} OK. Get back to me when you're ready.
+{@profBayou} OK. Get back to me when you're ready.
 $call ArgueCancelClaim()
 
 :: argue.complete
 $call ArgueComplete()
-{@profHarper} Nice work! It looks like the Turtles are safe from any predators here.
-{@profHarper} We will need to see a descriptive model that looks at historic populations to know for certain.
+{@profBayou} Nice work! It looks like the Turtles are safe from any predators here.
+{@profBayou} We will need to see a descriptive model that looks at historic populations to know for certain.
 $call CompleteJob()
 :: end

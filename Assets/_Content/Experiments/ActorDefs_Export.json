@@ -2,55 +2,86 @@
    "__serializerVersion": 2,
    "definitions": [
       {
+         "key": "AngelFish",
+         "value": {
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 1,
+            "moveDistance": 2,
+            "moveSpeed": 2,
+            "eatSpeedMultiplier": 1
+         }
+      },
+      {
          "key": "ArcticCod",
          "value": {
-            "sidesRadius": 0.300000011920929,
-            "topBottomRadius": 0.150000005960464,
-            "moveDistance": 0.5
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 1,
+            "moveSpeed": 2
+         }
+      },
+      {
+         "key": "ArcticCopepod",
+         "value": {
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 1,
+            "moveDistance": 2,
+            "moveSpeed": 2,
+            "eatSpeedMultiplier": 1
          }
       },
       {
          "key": "AstarteBorealis",
          "value": {
-            "sidesRadius": 0,
+            "spawnLocation": "Bottom",
+            "sidesRadius": 0.400000005960464,
             "topBottomRadius": 0,
             "moveType": "Stationary",
-            "eatType": "None",
-            "ambientAnimationMultiplier": 0
+            "eatType": "Filter",
+            "eatSpeedMultiplier": 1
          }
       },
       {
          "key": "BlueheadWrasse",
          "value": {
-            "sidesRadius": 1
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0.400000005960464,
+            "moveDistance": 2,
+            "moveSpeed": 2
          }
       },
       {
          "key": "BlueTang",
          "value": {
-            "sidesRadius": 0.800000011920929,
-            "topBottomRadius": 0.600000023841858,
-            "eatType": "None"
-         }
-      },
-      {
-         "key": "BowheadWhale",
-         "value": {
-            "sidesRadius": 0,
+            "sidesRadius": 0.400000005960464,
             "topBottomRadius": 0,
-            "moveType": "Stationary",
-            "eatType": "None",
-            "ambientAnimationMultiplier": 0
+            "moveDistance": 2,
+            "moveSpeed": 2,
+            "eatSpeedMultiplier": 1
          }
       },
       {
          "key": "BristleWorm",
          "value": {
             "spawnLocation": "Bottom",
-            "sidesRadius": 0.25,
-            "topBottomRadius": 0.0299999993294477,
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveDistance": 2,
+            "moveSpeed": 2,
+            "eatSpeedMultiplier": 1,
+            "stressSpeedMultiplier": 0.899999976158142,
+            "stressMoveIntervalMultiplier": 1.10000002384186
+         }
+      },
+      {
+         "key": "brooksiMussel",
+         "value": {
+            "spawnLocation": "Bottom",
+            "spawnAnimation": "Sprout",
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
             "moveType": "Stationary",
-            "eatType": "None"
+            "eatType": "Filter",
+            "eatSpeedMultiplier": 1
          }
       },
       {
@@ -58,7 +89,7 @@
          "value": {
             "spawnLocation": "Bottom",
             "spawnAnimation": "Sprout",
-            "sidesRadius": 3,
+            "sidesRadius": 0.400000005960464,
             "topBottomRadius": 0,
             "moveType": "Stationary",
             "eatType": "None"
@@ -67,30 +98,43 @@
       {
          "key": "ChinookSalmon",
          "value": {
-            "sidesRadius": 0.75,
-            "topBottomRadius": 0.300000011920929,
-            "moveSpeed": 1.20000004768372,
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveDistance": 2,
+            "moveSpeed": 2.40000009536743,
             "moveInterval": 0.5,
             "moveIntervalRandom": 0.300000011920929
          }
       },
       {
+         "key": "Clione",
+         "value": {
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveDistance": 2,
+            "moveSpeed": 2,
+            "eatType": "None"
+         }
+      },
+      {
          "key": "Copepod",
          "value": {
-            "sidesRadius": 0.200000002980232,
-            "topBottomRadius": 0.200000002980232,
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0.400000005960464,
+            "moveDistance": 2,
+            "moveSpeed": 2,
             "moveInterval": 1,
             "moveIntervalRandom": 0.5,
-            "eatType": "None"
+            "eatSpeedMultiplier": 1
          }
       },
       {
          "key": "Cyanobacteria",
          "value": {
-            "sidesRadius": 0.150000005960464,
-            "topBottomRadius": 0.100000001490116,
-            "moveDistance": 0.200000002980232,
-            "moveSpeed": 0.200000002980232,
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveDistance": 0.400000005960464,
+            "moveSpeed": 0.400000005960464,
             "eatType": "None",
             "ambientAnimationMultiplier": 0
          }
@@ -98,18 +142,32 @@
       {
          "key": "DecomposingBacteria",
          "value": {
-            "sidesRadius": 0.150000005960464,
-            "topBottomRadius": 0.100000001490116,
-            "moveDistance": 0.200000002980232,
-            "moveSpeed": 0.200000002980232,
-            "eatType": "None",
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveDistance": 0.400000005960464,
+            "moveSpeed": 0.400000005960464,
+            "eatSpeedMultiplier": 1,
             "ambientAnimationMultiplier": 0
+         }
+      },
+      {
+         "key": "DeepSeaSkate",
+         "value": {
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 1,
+            "moveDistance": 2,
+            "moveSpeed": 2,
+            "eatSpeedMultiplier": 1
          }
       },
       {
          "key": "Detritus",
          "value": {
-            "topBottomRadius": 0.600000023841858,
+            "spawnAmountOverride": 15,
+            "spawnLocation": "Center",
+            "spawnAnimation": "Expand",
+            "sidesRadius": 0,
+            "topBottomRadius": 0,
             "moveType": "Stationary",
             "eatType": "None"
          }
@@ -117,12 +175,24 @@
       {
          "key": "Diatoms",
          "value": {
-            "sidesRadius": 0.150000005960464,
-            "topBottomRadius": 0.100000001490116,
-            "moveDistance": 0.200000002980232,
-            "moveSpeed": 0.200000002980232,
+            "spawnLocation": "Center",
+            "spawnAnimation": "Expand",
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveType": "Stationary",
             "eatType": "None",
             "ambientAnimationMultiplier": 0
+         }
+      },
+      {
+         "key": "ElkhornCoral",
+         "value": {
+            "spawnLocation": "Bottom",
+            "spawnAnimation": "Sprout",
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveType": "Stationary",
+            "eatType": "None"
          }
       },
       {
@@ -131,7 +201,41 @@
             "spawnAmountOverride": 3,
             "spawnLocation": "Bottom",
             "spawnAnimation": "Sprout",
-            "sidesRadius": 1,
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveType": "Stationary",
+            "eatType": "None"
+         }
+      },
+      {
+         "key": "GlacialAmphipod",
+         "value": {
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveDistance": 2,
+            "moveSpeed": 2,
+            "eatSpeedMultiplier": 1
+         }
+      },
+      {
+         "key": "GlassSponge",
+         "value": {
+            "spawnAmountOverride": 3,
+            "spawnLocation": "Bottom",
+            "spawnAnimation": "Sprout",
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveType": "Stationary",
+            "eatType": "Filter",
+            "eatSpeedMultiplier": 1
+         }
+      },
+      {
+         "key": "H_Gas",
+         "value": {
+            "spawnLocation": "Center",
+            "spawnAnimation": "Expand",
+            "sidesRadius": 0.400000005960464,
             "topBottomRadius": 0,
             "moveType": "Stationary",
             "eatType": "None"
@@ -140,15 +244,29 @@
       {
          "key": "Hagfish",
          "value": {
-            "sidesRadius": 0.75,
-            "moveDistance": 1.20000004768372,
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveDistance": 2.40000009536743,
+            "moveSpeed": 2,
             "moveIntervalRandom": 0.400000005960464
          }
       },
       {
          "key": "IceAlgae",
          "value": {
-            "sidesRadius": 0,
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveDistance": 2,
+            "moveSpeed": 2,
+            "eatType": "None"
+         }
+      },
+      {
+         "key": "Ick",
+         "value": {
+            "spawnLocation": "Center",
+            "spawnAnimation": "Expand",
+            "sidesRadius": 0.400000005960464,
             "topBottomRadius": 0,
             "moveType": "Stationary",
             "eatType": "None",
@@ -156,77 +274,155 @@
          }
       },
       {
-         "key": "Ick",
+         "key": "Lionfish",
          "value": {
-            "sidesRadius": 0.300000011920929,
-            "topBottomRadius": 0.300000011920929,
-            "moveDistance": 0.200000002980232,
-            "moveSpeed": 0.200000002980232,
-            "eatType": "None",
-            "ambientAnimationMultiplier": 0
+            "spawnLocation": "Bottom",
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveSpeed": 2,
+            "moveInterval": 2,
+            "moveIntervalRandom": 3,
+            "eatSpeedMultiplier": 3
          }
       },
       {
          "key": "LoggerheadTurtle",
          "value": {
-            "sidesRadius": 2.5,
-            "topBottomRadius": 1,
-            "moveSpeed": 0.200000002980232,
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveDistance": 2,
+            "moveSpeed": 0.400000005960464,
             "moveInterval": 3
+         }
+      },
+      {
+         "key": "Methane",
+         "value": {
+            "spawnLocation": "Center",
+            "spawnAnimation": "Expand",
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveType": "Stationary",
+            "eatType": "None"
+         }
+      },
+      {
+         "key": "Methanogen",
+         "value": {
+            "spawnLocation": "Center",
+            "spawnAnimation": "Expand",
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveType": "Stationary",
+            "eatType": "Filter",
+            "eatSpeedMultiplier": 1
+         }
+      },
+      {
+         "key": "MoonJelly",
+         "value": {
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveDistance": 2,
+            "moveSpeed": 2,
+            "eatSpeedMultiplier": 1
          }
       },
       {
          "key": "Mussel",
          "value": {
+            "spawnAmountOverride": 5,
+            "spawnLocation": "Bottom",
+            "spawnAnimation": "Sprout",
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
             "moveType": "Stationary",
-            "eatType": "None",
-            "ambientAnimationMultiplier": 0
+            "eatType": "Filter",
+            "eatSpeedMultiplier": 1
          }
       },
       {
          "key": "NorthAtlanticOctopus",
          "value": {
             "spawnLocation": "Bottom",
-            "sidesRadius": 0.349999994039536,
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveDistance": 2,
+            "moveSpeed": 2,
+            "eatSpeedMultiplier": 1
+         }
+      },
+      {
+         "key": "NorthernSeaNettle",
+         "value": {
+            "sidesRadius": 2,
+            "topBottomRadius": 2,
+            "moveCurve": "QuadOut",
+            "moveInterval": 2,
+            "eatType": "Filter",
+            "eatSpeedMultiplier": 1
+         }
+      },
+      {
+         "key": "PlasticBag",
+         "value": {
+            "sidesRadius": 0.400000005960464,
             "topBottomRadius": 0,
             "moveType": "Stationary",
-            "eatType": "None",
-            "ambientAnimationMultiplier": 0
+            "eatType": "None"
+         }
+      },
+      {
+         "key": "PterasterObscurus",
+         "value": {
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveDistance": 2,
+            "moveSpeed": 2,
+            "eatSpeedMultiplier": 1
          }
       },
       {
          "key": "QueenConch",
          "value": {
             "spawnLocation": "Bottom",
-            "sidesRadius": 0.25,
-            "topBottomRadius": 0.25
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveDistance": 2,
+            "moveSpeed": 2
          }
       },
       {
          "key": "RedGrouper",
          "value": {
-            "sidesRadius": 1,
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveDistance": 2,
+            "moveSpeed": 2,
             "moveInterval": 1
          }
       },
       {
          "key": "RibbonSeal",
          "value": {
-            "sidesRadius": 0,
-            "topBottomRadius": 0,
-            "moveType": "Stationary",
-            "eatType": "None",
-            "ambientAnimationMultiplier": 0
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 1,
+            "moveDistance": 2,
+            "moveSpeed": 2,
+            "eatSpeedMultiplier": 1
          }
       },
       {
          "key": "SalmonShark",
          "value": {
-            "sidesRadius": 0,
-            "topBottomRadius": 0,
-            "moveType": "Stationary",
-            "eatType": "None",
-            "ambientAnimationMultiplier": 0
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 2,
+            "moveDistance": 2,
+            "moveSpeed": 2,
+            "moveCurve": "QuadOut",
+            "moveInterval": 2,
+            "eatType": "LargeBite",
+            "eatSpeedMultiplier": 1
          }
       },
       {
@@ -234,8 +430,8 @@
          "value": {
             "spawnAmountOverride": 4,
             "spawnLocation": "Top",
-            "sidesRadius": 1.29999995231628,
-            "topBottomRadius": 0.300000011920929,
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": -1,
             "moveType": "Stationary",
             "eatType": "None"
          }
@@ -243,53 +439,66 @@
       {
          "key": "SeaAnemone",
          "value": {
-            "sidesRadius": 0,
+            "spawnLocation": "Bottom",
+            "spawnAnimation": "Sprout",
+            "sidesRadius": 0.400000005960464,
             "topBottomRadius": 0,
             "moveType": "Stationary",
-            "eatType": "None",
-            "ambientAnimationMultiplier": 0
+            "eatType": "None"
          }
       },
       {
          "key": "SeaOtter",
          "value": {
             "spawnAmountOverride": 2,
-            "sidesRadius": 1.5,
-            "topBottomRadius": 1.5,
-            "moveDistance": 2,
-            "moveSpeed": 2,
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveDistance": 4,
+            "moveSpeed": 4,
             "moveInterval": 3,
             "eatType": "LargeBite"
          }
       },
       {
+         "key": "SeaPearl",
+         "value": {
+            "spawnLocation": "Bottom",
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveType": "Stationary",
+            "eatType": "None"
+         }
+      },
+      {
          "key": "SeaStar",
          "value": {
-            "sidesRadius": 1,
-            "topBottomRadius": 1,
-            "moveType": "Stationary",
-            "eatType": "None",
-            "ambientAnimationMultiplier": 0
+            "spawnLocation": "Bottom",
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0.400000005960464,
+            "moveDistance": 2,
+            "moveSpeed": 2,
+            "eatSpeedMultiplier": 1
          }
       },
       {
          "key": "Smelt",
          "value": {
-            "sidesRadius": 0,
-            "topBottomRadius": 0,
-            "moveType": "Stationary",
-            "eatType": "None",
-            "ambientAnimationMultiplier": 0
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 1,
+            "moveDistance": 2,
+            "moveSpeed": 2,
+            "eatType": "None"
          }
       },
       {
          "key": "SnowCrab",
          "value": {
             "spawnLocation": "Bottom",
-            "sidesRadius": 0.699999988079071,
+            "sidesRadius": 0.400000005960464,
             "topBottomRadius": 0,
-            "moveType": "Stationary",
-            "eatType": "None"
+            "moveDistance": 2,
+            "moveSpeed": 2,
+            "eatSpeedMultiplier": 1
          }
       },
       {
@@ -298,41 +507,54 @@
             "spawnAmountOverride": 3,
             "spawnLocation": "Bottom",
             "spawnAnimation": "Sprout",
-            "sidesRadius": 1,
-            "topBottomRadius": -0.100000001490116,
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
             "moveType": "Stationary",
             "eatType": "None"
          }
       },
       {
+         "key": "Tubeworm",
+         "value": {
+            "spawnLocation": "Bottom",
+            "spawnAnimation": "Sprout",
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveType": "Stationary",
+            "eatType": "Filter",
+            "eatSpeedMultiplier": 1
+         }
+      },
+      {
          "key": "TurfAlgae",
          "value": {
-            "spawnLocation": "Top",
-            "topBottomRadius": 0.200000002980232,
-            "moveType": "Stationary",
-            "eatType": "None",
-            "ambientAnimationMultiplier": 0
+            "spawnAmountOverride": 20,
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveDistance": 2,
+            "moveSpeed": 2,
+            "eatType": "None"
          }
       },
       {
          "key": "TurtleGrass",
          "value": {
-            "spawnAmountOverride": 3,
+            "spawnAmountOverride": 4,
             "spawnLocation": "Bottom",
             "spawnAnimation": "Sprout",
-            "sidesRadius": 2.5,
-            "topBottomRadius": 0.200000002980232,
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
             "moveType": "Stationary",
-            "eatType": "None",
-            "ambientAnimationMultiplier": 0
+            "eatType": "None"
          }
       },
       {
          "key": "Urchin",
          "value": {
             "sidesRadius": 0.400000005960464,
-            "topBottomRadius": 0.400000005960464,
-            "moveDistance": 2,
+            "topBottomRadius": 0,
+            "moveDistance": 4,
+            "moveSpeed": 2,
             "moveInterval": 2,
             "moveIntervalRandom": 3,
             "eatSpeedMultiplier": 1.20000004768372,
@@ -340,18 +562,31 @@
          }
       },
       {
+         "key": "VentStar",
+         "value": {
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveDistance": 2,
+            "moveSpeed": 2,
+            "eatSpeedMultiplier": 1
+         }
+      },
+      {
          "key": "WhiteShrimp",
          "value": {
-            "sidesRadius": 1
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveDistance": 2,
+            "moveSpeed": 2
          }
       },
       {
          "key": "ZombieWorm",
          "value": {
             "spawnLocation": "Bottom",
-            "sidesRadius": 0.100000001490116,
-            "topBottomRadius": 0.324999988079071,
-            "moveDistance": 0.5,
+            "sidesRadius": 0.400000005960464,
+            "topBottomRadius": 0,
+            "moveSpeed": 2,
             "moveInterval": 2,
             "moveIntervalRandom": 3,
             "eatSpeedMultiplier": 3

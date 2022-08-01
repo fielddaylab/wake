@@ -18,7 +18,7 @@ MonoBehaviour:
     m_Source: jobs.kelp-shop-welcome.name
     m_HashValue: 3700085342
   m_PosterId:
-    m_HashValue: 180146002
+    m_HashValue: 46959747
   m_DescId:
     m_Source: jobs.kelp-shop-welcome.desc
     m_HashValue: 548985176
@@ -41,20 +41,6 @@ MonoBehaviour:
   m_DiveSiteIds: []
   m_Tasks:
   - Id:
-      m_Source: gotoShop
-      m_HashValue: 4111384426
-    LabelId:
-      m_Source: jobs.kelp-shop-welcome.task.gotoShop
-      m_HashValue: 3142915145
-    Steps:
-    - Type: 3
-      Target:
-        m_Source: RS-1C-StationInterior
-        m_HashValue: 109921524
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds: []
-  - Id:
       m_Source: getTagger
       m_HashValue: 3991606745
     LabelId:
@@ -67,9 +53,7 @@ MonoBehaviour:
         m_HashValue: 3082617054
       ConditionString: 
       Amount: 1
-    PrerequisiteTaskIds:
-    - m_Source: gotoShop
-      m_HashValue: 4111384426
+    PrerequisiteTaskIds: []
   - Id:
       m_Source: getVisualModel
       m_HashValue: 3700339672
@@ -83,31 +67,31 @@ MonoBehaviour:
         m_HashValue: 1203385870
       ConditionString: 
       Amount: 1
-    PrerequisiteTaskIds:
-    - m_Source: gotoShop
-      m_HashValue: 4111384426
-  m_OptimizedTaskList:
+    PrerequisiteTaskIds: []
   - Id:
-      m_Source: gotoShop
-      m_HashValue: 4111384426
-    IdString: gotoShop
-    Index: 0
+      m_Source: returnShip
+      m_HashValue: 1440896037
     LabelId:
-      m_Source: jobs.kelp-shop-welcome.task.gotoShop
-      m_HashValue: 3142915145
+      m_Source: jobs.kelp-shop-welcome.task.returnShip
+      m_HashValue: 1658964290
     Steps:
     - Type: 3
       Target:
-        m_Source: RS-1C-StationInterior
-        m_HashValue: 109921524
+        m_Source: Helm
+        m_HashValue: 2644362649
       ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 
+      Amount: 1
+    PrerequisiteTaskIds:
+    - m_Source: getTagger
+      m_HashValue: 3991606745
+    - m_Source: getVisualModel
+      m_HashValue: 3700339672
+  m_OptimizedTaskList:
   - Id:
       m_Source: getTagger
       m_HashValue: 3991606745
     IdString: getTagger
-    Index: 1
+    Index: 0
     LabelId:
       m_Source: jobs.kelp-shop-welcome.task.getTagger
       m_HashValue: 2506764212
@@ -118,12 +102,12 @@ MonoBehaviour:
         m_HashValue: 3082617054
       ConditionString: 
       Amount: 1
-    PrerequisiteTaskIndices: 0000
+    PrerequisiteTaskIndices: 
   - Id:
       m_Source: getVisualModel
       m_HashValue: 3700339672
     IdString: getVisualModel
-    Index: 2
+    Index: 1
     LabelId:
       m_Source: jobs.kelp-shop-welcome.task.geVisualModel
       m_HashValue: 2102424099
@@ -134,7 +118,23 @@ MonoBehaviour:
         m_HashValue: 1203385870
       ConditionString: 
       Amount: 1
-    PrerequisiteTaskIndices: 0000
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: returnShip
+      m_HashValue: 1440896037
+    IdString: returnShip
+    Index: 2
+    LabelId:
+      m_Source: jobs.kelp-shop-welcome.task.returnShip
+      m_HashValue: 1658964290
+    Steps:
+    - Type: 3
+      Target:
+        m_Source: Helm
+        m_HashValue: 2644362649
+      ConditionString: 
+      Amount: 1
+    PrerequisiteTaskIndices: 00000100
   m_CashReward: 0
   m_ExpReward: 0
   m_Scripting: {fileID: -1942890987711236906, guid: 743ba01df62bb3d49a53ed8356bcc75a,

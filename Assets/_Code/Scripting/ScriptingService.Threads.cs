@@ -34,8 +34,10 @@ namespace Aqua
                 thread.Dialog = Services.UI.GetDialog("cornerV1ctor");
             }
 
-            if (Services.UI.IsTransitioning())
+            if (Services.UI.IsTransitioning() && (inNode.Flags() & ScriptNodeFlags.Function) == 0)
+            {
                 thread.DelayBy(0.5f);
+            }
         }
 
         void ILeafPlugin<ScriptNode>.OnNodeExit(ScriptNode inNode, LeafThreadState<ScriptNode> inThreadState)
@@ -198,7 +200,7 @@ namespace Aqua
 
             if (!inThread.IsSkipping() && lineEvents.RichText.Length > 0)
             {
-                yield return inThread.Dialog?.CompleteLine();
+                yield return inThread.Dialog?.CompleteLine(inThread);
             }
 
             yield return Routine.Command.BreakAndResume;

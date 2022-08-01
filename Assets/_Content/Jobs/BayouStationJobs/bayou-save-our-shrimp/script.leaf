@@ -6,8 +6,8 @@
 $branch common.ringPhone
 
 $set jobs:bayou-save-our-shrimp.gotScans = 0
-{@profHarper}	There seems to be something strange going on with the shrimp at Site P.
-{@profHarper}	I want you to head over there and investigate the environment and shrimp population.
+{@profBayou}	There seems to be something strange going on with the shrimp at Site P.
+{@profBayou}	I want you to head over there and investigate the environment and shrimp population.
 {@player} 	On it!
 
 :: helpGetScans
@@ -30,4 +30,4 @@ $set jobs:bayou-save-our-shrimp.gotScans = 1
 @when 		jobs:bayou-save-our-shrimp.gotScans == 1
 @cutscene
 {@player} 	Where should I be going again?
-{@guide}	We got all the data from Site P, so let's report back to {@profHarper}.
+{@guide}	We got all the data from Site P, so let's report back to {@profBayou}.

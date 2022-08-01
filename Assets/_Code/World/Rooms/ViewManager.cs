@@ -157,6 +157,9 @@ namespace Aqua.View {
                 node.UI.enabled = false;
             }
             node.Group.SetActive(false, force);
+            if (node.InteractionGroup) {
+                node.InteractionGroup.Lock();
+            }
         }
 
         static private void ActivateNode(ViewNode node, bool force, bool invoke) {
@@ -164,6 +167,9 @@ namespace Aqua.View {
                 node.UI.enabled = true;
             }
             node.Group.SetActive(true, force);
+            if (node.InteractionGroup) {
+                node.InteractionGroup.Unlock();
+            }
             if (invoke) {
                 node.OnEnter?.Invoke();
             }

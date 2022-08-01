@@ -40,6 +40,7 @@ namespace EasyAssetStreaming {
             UnityEditor.Experimental.SceneManagement.PrefabStage.prefabStageClosing += OnPrefabStageClosing;
             UnityEditor.EditorApplication.quitting += () => s_EditorQuitting = true;
             AppDomain.CurrentDomain.DomainUnload += OnDomainUnload;
+            StreamingHelper.Init();
         }
 
         static private void PlayModeStateChange(UnityEditor.PlayModeStateChange stateChange) {
@@ -49,6 +50,7 @@ namespace EasyAssetStreaming {
 
             UnloadAll();
             DeregisterTick();
+            StreamingHelper.Release();
         }
 
         static private void OnPrefabStageClosing(UnityEditor.Experimental.SceneManagement.PrefabStage _) {
@@ -97,12 +99,14 @@ namespace EasyAssetStreaming {
                 }
             }
 
-            switch(meta.Type) {
-                case AssetType.Texture: {
-                    if (bDeleted) {
-                        Textures.HandleTextureDeleted(id, meta);
-                    } else if (bModified || manifestUpdated) {
-                        Textures.HandleTextureModified(id, meta);
+            switch(meta.Type.Id) {
+                case AssetTypeId.Texture: {
+                    if (meta.Type.Sub == AssetSubTypeId.Default) {
+                        if (bDeleted) {
+                            Textures.HandleTextureDeleted(id, meta);
+                        } else if (bModified || manifestUpdated) {
+                            Textures.HandleTextureModified(id, meta);
+                        }
                     }
                     break;
                 }
@@ -117,12 +121,58 @@ namespace EasyAssetStreaming {
 
         public delegate void AssetCallback(StreamingAssetId id, AssetStatus status, object asset);
 
-        internal enum AssetType : ushort {
+        internal struct AssetType : IEquatable<AssetType> {
+            public readonly AssetTypeId Id;
+            public readonly AssetSubTypeId Sub;
+
+            public AssetType(AssetTypeId id, AssetSubTypeId sub = 0) {
+                Id = id;
+                Sub = sub;
+            }
+
+            public bool Equals(AssetType other) {
+                return Id == other.Id && Sub == other.Sub;
+            }
+
+            public override bool Equals(object obj) {
+                if (obj is AssetType) {
+                    return Equals((AssetType) obj);
+                }
+
+                return false;
+            }
+
+            public override string ToString() {
+                return string.Format("{0} ({1})", Id.ToString(), Sub.ToString());
+            }
+
+            public override int GetHashCode() {
+                return (int) Id << 8 | (int) Sub;
+            }
+
+            static public implicit operator AssetType(AssetTypeId main) {
+                return new AssetType(main);
+            }
+
+            static public bool operator ==(AssetType x, AssetType y) {
+                return x.Equals(y);
+            }
+
+            static public bool operator !=(AssetType x, AssetType y) {
+                return !x.Equals(y);
+            }
+        }
+
+        internal enum AssetTypeId : byte {
             Unknown = 0,
 
             Texture,
-            Audio,
-            Video
+            Audio
+        }
+
+        internal enum AssetSubTypeId : byte {
+            Default = 0,
+            VideoTexture = 1,
         }
 
         public enum AssetStatus : byte {
@@ -216,7 +266,7 @@ namespace EasyAssetStreaming {
             StreamingAssetId id;
             int instanceId = instance.GetInstanceID();
             if (!s_ReverseLookup.TryGetValue(instanceId, out id)) {
-                UnityEngine.Debug.LogWarningFormat("[Streaming] No asset metadata found for {0}'", instance);
+                UnityEngine.Debug.LogWarningFormat("[Streaming] No asset id found for {0}'", instance);
             }
 
             return id;
@@ -296,10 +346,14 @@ namespace EasyAssetStreaming {
             }
 
             switch(id.Type) {
-                case AssetType.Texture: {
-                    return Textures.TextureMap[id];
+                case AssetTypeId.Texture: {
+                    if (id.SubType == AssetSubTypeId.VideoTexture) {
+                        return Videos.PlayerMap[id].texture;
+                    } else {
+                        return Textures.TextureMap[id];
+                    }
                 }
-                case AssetType.Audio: {
+                case AssetTypeId.Audio: {
                     return AudioClips.ClipMap[id];
                 }
                 default: {
@@ -444,6 +498,7 @@ namespace EasyAssetStreaming {
         static public void UnloadAll() {
             Textures.DestroyAllTextures();
             AudioClips.DestroyAllClips();
+            Videos.DestroyAllVideos();
 
             foreach(var meta in s_Metas.Values) {
                 meta.Status = AssetStatus.Unloaded;
@@ -476,7 +531,7 @@ namespace EasyAssetStreaming {
             }
         }
 
-        static private StreamingAssetId IdentifyOverBudgetToDelete(AssetType type, long now, long over) {
+        static private StreamingAssetId IdentifyOverBudgetToDelete(AssetTypeId type, long now, long over) {
             AssetMeta meta;
             StreamingAssetId best = default;
             long bestScore = 0;
@@ -484,7 +539,7 @@ namespace EasyAssetStreaming {
             long score;
             foreach(var metaKv in s_Metas) {
                 meta = metaKv.Value;
-                if (meta.RefCount > 0 || (meta.Status & AssetStatus.PendingUnload) == 0 || meta.Type != type) {
+                if (meta.RefCount > 0 || (meta.Status & AssetStatus.PendingUnload) == 0 || meta.Type.Id != type) {
                     continue;
                 }
 
@@ -532,13 +587,17 @@ namespace EasyAssetStreaming {
             if ((meta.Status & (AssetStatus.PendingLoad | AssetStatus.Loaded | AssetStatus.Error)) != 0) {
                 UnityEngine.Object resource = null;
                 
-                switch(meta.Type) {
-                    case AssetType.Texture: {
-                        resource = Textures.DestroyTexture(id, meta);
+                switch(meta.Type.Id) {
+                    case AssetTypeId.Texture: {
+                        if (meta.Type.Sub == AssetSubTypeId.VideoTexture) {
+                            resource = Videos.DestroyVideo(id, meta);
+                        } else {
+                            resource = Textures.DestroyTexture(id, meta);
+                        }
                         break;
                     }
 
-                    case AssetType.Audio: {
+                    case AssetTypeId.Audio: {
                         resource = AudioClips.DestroyClip(id, meta);
                         break;
                     }
@@ -634,6 +693,7 @@ namespace EasyAssetStreaming {
             #endif // UNITY_EDITOR
 
             StreamingHelper.DestroyResource(ref s_UpdateHookGO);
+            StreamingHelper.Release();
         }
 
         private sealed class UpdateHook : MonoBehaviour {
@@ -674,12 +734,16 @@ namespace EasyAssetStreaming {
 
                 UnityEngine.Debug.LogFormat("[Streaming] Beginning download of '{0}'", meta.Path);
 
-                switch(meta.Type) {
-                    case AssetType.Texture: {
-                        Textures.StartLoading(id, meta);
+                switch(meta.Type.Id) {
+                    case AssetTypeId.Texture: {
+                        if (meta.Type.Sub == AssetSubTypeId.VideoTexture) {
+                            Videos.StartLoading(id, meta);
+                        } else {
+                            Textures.StartLoading(id, meta);
+                        }
                         break;
                     }
-                    case AssetType.Audio: {
+                    case AssetTypeId.Audio: {
                         AudioClips.StartLoading(id, meta);
                         break;
                     }

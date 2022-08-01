@@ -1,4 +1,4 @@
-:: basePath job.arctic-in-Ice
+# basePath job.arctic-in-Ice
 
 // INTRO
 :: start
@@ -174,7 +174,7 @@ $else
         $call ArgueFactSlot(ArcticCod.Eats.IceAlgae)
     $endif
     $call ArgueDisplayClaim()
-    {@profWhalen}   Did you figure out what the cod are doing near that ice shelf?
+    {@profArctic}   Did you figure out what the cod are doing near that ice shelf?
     $branch .argue.chooseFactsEat
 $endif
 
@@ -188,15 +188,15 @@ $choice .argue.notSure; Let me get back to you.
 $choose branch
 
 :: argue.unrelatedEat
-{@profWhalen}   I'm not seeing how that relates.
+{@profArctic}   I'm not seeing how that relates.
 $call ArgueRejectIncorrect()
 $branch .argue.chooseFactsEat
 
 :: argue.notSure
-{@profWhalen}   Okay. Get back to me when you're ready.
+{@profArctic}   Okay. Get back to me when you're ready.
 
 :: argue.correctEat
-{@profWhalen}   Interesting.
+{@profArctic}   Interesting.
 $call ArgueComplete()
 $call ArgueCancelClaim()
 $branch .argue.startPop
@@ -204,7 +204,7 @@ $branch .argue.startPop
 // Population Branch
 
 :: argue.alreadyDiscussed
-{@profWhalen}   Last time we spoke, you told me the cod were hanging out at the ice shelf because they eat the Ice Algae there.
+{@profArctic}   Last time we spoke, you told me the cod were hanging out at the ice shelf because they eat the Ice Algae there.
 $branch .argue.startPop
 
 :: argue.startPop
@@ -216,7 +216,7 @@ $call ArgueDisplayClaim()
 $branch .argue.popQuery
 
 :: argue.popQuery
-{@profWhalen}   Is there a lot of ice algae in the shelf? How much did you count?
+{@profArctic}   Is there a lot of ice algae in the shelf? How much did you count?
 $branch .argue.chooseFactsPop
 
 :: argue.chooseFactsPop
@@ -227,11 +227,11 @@ $choice .argue.notSure; Let me get back to you.
 $choose branch
 
 :: argue.unrelatedPop
-{@profWhalen}   I'm not seeing how that relates.
+{@profArctic}   I'm not seeing how that relates.
 $call ArgueRejectIncorrect()
 $branch .argue.popQuery
 
 :: argue.correctPop
 $call ArgueComplete()
-{@profWhalen}   Oh! That's certainly enough to draw them in. I wonder if the Salmon interact with them too...
+{@profArctic}   Oh! That's certainly enough to draw them in. I wonder if the Salmon interact with them too...
 $call CompleteJob()

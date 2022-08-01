@@ -232,7 +232,8 @@ namespace Aqua
             {
                 using(PooledList<ScriptNode> nodes = PooledList<ScriptNode>.Create())
                 {
-                    int responseCount = functionSet.GetNodes(inTarget, nodes);
+                    LeafEvalContext context = LeafEvalContext.FromResolver(this, resolver, inContext);
+                    int responseCount = functionSet.GetNodes(context, inTarget, nodes);
                     if (responseCount > 0)
                     {
                         for(int i = responseCount - 1; i >= 0; --i)
@@ -304,13 +305,15 @@ namespace Aqua
         /// <summary>
         /// Kills all threads with a priority less than the given priority
         /// </summary>
-        public void KillLowPriorityThreads(TriggerPriority inThreshold = TriggerPriority.Cutscene)
+        public void KillLowPriorityThreads(TriggerPriority inThreshold = TriggerPriority.Cutscene, bool inbKillFunctions = false)
         {
             DebugService.Log(LogMask.Scripting,  "[ScriptingService] Killing all with priority less than {0}", inThreshold);
 
             for(int i = m_ThreadList.Count - 1; i >= 0; --i)
             {
                 var thread = m_ThreadList[i];
+                if (!inbKillFunctions && thread.IsFunction())
+                    continue;
                 if (thread.Priority() < inThreshold)
                     thread.Kill();
             }
@@ -547,6 +550,8 @@ namespace Aqua
                 return default(ScriptThreadHandle);
             }
 
+            ScriptThread thread = m_ThreadPool.Alloc();
+
             if (inNode.IsCutscene())
             {
                 m_CutsceneThread?.Kill();
@@ -560,7 +565,6 @@ namespace Aqua
                 tempVars.Object.Base = inVars.Base;
             }
 
-            ScriptThread thread = m_ThreadPool.Alloc();
             ScriptThreadHandle handle = thread.Prep(inContext, tempVars);
             thread.SyncPriority(inNode);
             Routine routine = Routine.Start(this, ProcessNodeInstructions(thread, inNode)).SetPhase(RoutinePhase.Manual);
@@ -600,7 +604,10 @@ namespace Aqua
             ScriptThread thread;
             if (m_ThreadTargetMap.TryGetValue(target, out thread))
             {
-                if (thread.Priority() >= inNode.Priority())
+                bool higherPriority = (inNode.Flags() & ScriptNodeFlags.Interrupt) != 0
+                    ? thread.Priority() > inNode.Priority()
+                    : thread.Priority() >= inNode.Priority();
+                if (higherPriority)
                 {
                     DebugService.Log(LogMask.Scripting,  "[ScriptingService] Could not trigger node '{0}' on target '{1}' - higher priority thread already running for given target",
                         inNode.Id(), target);

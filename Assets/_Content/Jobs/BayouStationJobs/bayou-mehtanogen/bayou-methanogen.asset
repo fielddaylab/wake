@@ -18,7 +18,7 @@ MonoBehaviour:
     m_Source: jobs.bayou-methanogen.name
     m_HashValue: 3081791155
   m_PosterId:
-    m_HashValue: 6948676
+    m_HashValue: 3347434154
   m_DescId:
     m_Source: jobs.bayou-methanogen.desc
     m_HashValue: 1600787649
@@ -53,8 +53,8 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: Methanogen.Eats.Methane
-        m_HashValue: 2726244040
+        m_Source: Methanogen.Eats.H_Gas
+        m_HashValue: 1987105362
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
@@ -93,14 +93,14 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: Methanogen.Produce.CarbonDioxide
-        m_HashValue: 853895530
+        m_Source: Methanogen.Consume.CarbonDioxide
+        m_HashValue: 1288877368
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: Methanogen.Consume.Oxygen
-        m_HashValue: 2653333845
+        m_Source: Methanogen.Consume.CarbonDioxide.Stressed
+        m_HashValue: 840918511
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
@@ -152,8 +152,8 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: Methanogen.Eats.Methane
-        m_HashValue: 2726244040
+        m_Source: Methanogen.Eats.H_Gas
+        m_HashValue: 1987105362
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
@@ -196,14 +196,14 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: Methanogen.Produce.CarbonDioxide
-        m_HashValue: 853895530
+        m_Source: Methanogen.Consume.CarbonDioxide
+        m_HashValue: 1288877368
       ConditionString: 
       Amount: 0
     - Type: 1
       Target:
-        m_Source: Methanogen.Consume.Oxygen
-        m_HashValue: 2653333845
+        m_Source: Methanogen.Consume.CarbonDioxide.Stressed
+        m_HashValue: 840918511
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 

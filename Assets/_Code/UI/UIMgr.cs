@@ -392,6 +392,9 @@ namespace Aqua
                 m_ScreenFaders.StopAll();
             });
 
+            uiMenu.AddToggle("Unlock Guide", () => !Script.ReadVariable("world:hotbar.guide.locked").AsBool(), (b) => Script.WriteVariable("world:hotbar.guide.locked", !b), () => Services.Data.IsProfileLoaded());
+            uiMenu.AddToggle("Unlock AQOS", () => !Script.ReadVariable("world:hotbar.portable.locked").AsBool(), (b) => Script.WriteVariable("world:hotbar.portable.locked", !b), () => Services.Data.IsProfileLoaded());
+
             yield return uiMenu;
         }
 

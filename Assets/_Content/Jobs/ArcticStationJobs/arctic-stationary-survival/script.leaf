@@ -1,4 +1,4 @@
-:: basePath job.arctic-stationary-survival
+# basePath job.arctic-stationary-survival
 
 // INTRO
 :: start
@@ -13,7 +13,7 @@
 @trigger    JobTasksUpdated
 @when   JobTaskCompleted(visualModel)
 @cutscene
-{@guide}    I think we're ready to show this to {nameof @profWhalen}.
+{@guide}    I think we're ready to show this to {nameof @profArctic}.
 
 ::helpMe
 @trigger    RequestPartnerHelp
@@ -37,14 +37,14 @@
 @when		JobTaskTop(report)
 @boostScore -5
 @cutscene
-{@guide}	Talk to Professor Whalen in the Office.
+{@guide}	Return to the station and talk to {nameof @profArctic}.
 
 // ARGUMENTATION
 ::argue.intro
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(siteXVisual) 
 @cutscene
-{@profWhalen} Did you determine how they survive?
+{@profArctic} Did you determine how they survive?
 $call ArgueLoad(siteXVisual)
 $call ArgueSetClaim(Claim, jobs.arctic-stationary-survival.argue.claimLabel) 
 	$call ArgueFactSlot(X_UnderTheIce.Model.StationaryViz)
@@ -60,19 +60,19 @@ $choose branch
 
 :: argue.unrelated
 $call ArgueRejectIncorrect()
-{@profWhalen}    Hmmmm, this doesn't really show what you think it does.
+{@profArctic}    Hmmmm, this doesn't really show what you think it does.
             Do you have a model that might demonstrate how these creatures survive?
 $goto .argue.showClaim
 
 :: argue.giveUp
-{@profWhalen}    No worries, I'm sure you'll figure it out!
+{@profArctic}    No worries, I'm sure you'll figure it out!
 $call ArgueUnload()
 $call ArgueCancelClaim()
 
 // END
 :: argue.complete
 $call ArgueComplete()
-{@profWhalen}   Detritus... Of course!
+{@profArctic}   Detritus... Of course!
                 No plants could grow down there to feed the other species,
                 but instead, they all eat the Detritus that is pulled in by that current.
                 It seems old Linda's death gives energy to a whole ecosystem!

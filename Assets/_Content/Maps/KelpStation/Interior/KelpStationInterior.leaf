@@ -1,0 +1,13 @@
+# basePath interior.kelpStation
+
+#include "Headers/Common.leaf"
+
+:: lockExit
+@function   SceneStart
+@when       !JobStartedOrComplete("kelp-welcome")
+$call   ExitStation->LockInteract()
+
+:: unlockExit
+@function   JobStarted
+@when       jobId == "kelp-welcome"
+$call   ExitStation->UnlockInteract()

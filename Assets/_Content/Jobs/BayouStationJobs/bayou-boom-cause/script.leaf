@@ -1,4 +1,4 @@
-:: basePath job.boom-cause
+# basePath job.boom-cause
 
 // INTRO
 
@@ -6,7 +6,7 @@
 @trigger    JobStarted
 @cutscene
 $if HasEntity(Methane),HasEntity(Methanogen)
-    {@guide} I think we already have everything we need. You might want to look over AQOS again before we make any claims to {nameof profHarper}.
+    {@guide} I think we already have everything we need. You might want to look over AQOS again before we make any claims to {nameof profBayou}.
 $else
     {@guide} Let's just go down to {h}Site N{/h} and start scanning stuff, I guess.
 $endif
@@ -16,7 +16,7 @@ $endif
 @when    scene:name == "RS-3N", JobTaskActive(methaneScan)
 @once
 @cutscene
-{@guide} There must be something here that would indicate how this disaster happened. When you think you've found it, go talk to {nameof profHarper}.
+{@guide} There must be something here that would indicate how this disaster happened. When you think you've found it, go talk to {nameof profBayou}.
 
 :: methaneScanned
 @trigger JobTaskCompleted
@@ -55,7 +55,7 @@ $endif
 @when 		
 @boostScore -10
 @cutscene
-{@guide}    You're ready to talk it through with {nameof profHarper}, though you might want to review your AQOS first.
+{@guide}    You're ready to talk it through with {nameof profBayou}, though you might want to review your AQOS first.
 
 
 // ARGUMENTATION
@@ -66,7 +66,7 @@ $endif
 $goto .argue.firstQuestion
 
 ::  argue.firstQuestion
-{@profHarper} What caused the communication tower to collapse?
+{@profBayou} What caused the communication tower to collapse?
 $if !ArgueIsComplete(bayouBoomArgueFishCriminals)
     $choice .argue.methaneHere; There's methane here.
     $choice .argue.fishersFault; Fishers blew it up.
@@ -80,7 +80,7 @@ $endif
 
 :: argue.methaneHere
 $call ArgueLoad(bayouBoomArgueMethane)
-{@profHarper} Really? What methane did you find at {h}Site N{/h}?
+{@profBayou} Really? What methane did you find at {h}Site N{/h}?
 $goto .argue.chooseFacts
 
 :: argue.chooseFacts
@@ -101,7 +101,7 @@ $if ArgueSetClaim(Claim, jobs.bayou-boom-cause.argue.claimLabel2)
     $call ArgueFactSlot(SeaOtter.Eats.Urchin) 
 $endif
 $call ArgueDisplayClaim()
-{@profHarper} What evidence do you have of foul play?
+{@profBayou} What evidence do you have of foul play?
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.unrelatedFishers
     $answer *, .argue.unrelatedFishers
@@ -109,18 +109,18 @@ $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.unrelatedFishers
-{@profHarper} I don't think this actually indicates human involvement.
+{@profBayou} I don't think this actually indicates human involvement.
 $call ArgueRejectIncorrect()
 $call ArgueComplete()
 $goto .argue.firstQuestion
 
 :: argue.unrelated
-{@profHarper}   That doesn't look like a type of Methane to me...
+{@profBayou}   That doesn't look like a type of Methane to me...
 $call ArgueRejectIncorrect()
 $goto .argue.chooseFacts
 
 :: argue.giveUp
-{@profHarper} OK. Get back to me when you're ready.
+{@profBayou} OK. Get back to me when you're ready.
 $call ArgueCancelClaim()
 $call ArgueUnload()
 
@@ -128,5 +128,5 @@ $call ArgueUnload()
 :: argue.done
 $call ArgueLoad(bayouBoomArgue)
 $call ArgueComplete()
-{@profHarper}   Oh, I hear Methane is very explosive. It must have heated enough to ignite and explode. Good work!
+{@profBayou}   Oh, I hear Methane is very explosive. It must have heated enough to ignite and explode. Good work!
 $call CompleteJob()

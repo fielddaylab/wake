@@ -22,6 +22,8 @@ namespace Aqua.StationInterior
         [SerializeField] private RectTransform m_CurrencyUI = null;
         [SerializeField] private float m_CurrencyOffscreenPos = 64;
         [SerializeField] private float m_CurrencyOnscreenPos = -8;
+        [SerializeField] private float m_CurrencyJobOffsetX = 0;
+        [SerializeField] private float m_CurrencyShopOffsetX = 0;
 
         [Header("Animations")]
         [SerializeField] private TweenSettings m_SharedOnAnim = new TweenSettings(0.2f);
@@ -68,7 +70,7 @@ namespace Aqua.StationInterior
             m_SharedAnim.Replace(this, AnimateSharedOff());
         }
 
-        private void SetPanel(BasePanel panel) {
+        private void SetPanel(BasePanel panel, float currencyOffsetX) {
             if (m_CurrentPanel == panel) {
                 return;
             }
@@ -83,7 +85,7 @@ namespace Aqua.StationInterior
                 m_CurrentPanel = panel;
                 m_BaseInput.PushPriority();
                 m_CurrentPanel.Show();
-                m_SharedAnim.Replace(this, AnimateSharedOn());
+                m_SharedAnim.Replace(this, AnimateSharedOn(currencyOffsetX));
             } else {
                 m_SharedAnim.Replace(this, AnimateSharedOff());
             }
@@ -93,8 +95,9 @@ namespace Aqua.StationInterior
 
         #region Animations
 
-        private IEnumerator AnimateSharedOn() {
+        private IEnumerator AnimateSharedOn(float offsetX) {
             m_CurrencyUI.gameObject.SetActive(true);
+            m_CurrencyUI.SetAnchorPos(offsetX, Axis.X);
             yield return Routine.Combine(
                 m_BackButtonGroup.Show(m_SharedOnAnim.Time),
                 m_CurrencyUI.AnchorPosTo(m_CurrencyOnscreenPos, m_SharedOnAnim, Axis.Y)
@@ -117,14 +120,14 @@ namespace Aqua.StationInterior
         static private void LeafOpenJobBoard() {
             var ctrl = Services.State.FindManager<InteriorUICtrl>();
             Assert.NotNull(ctrl);
-            ctrl.SetPanel(ctrl.m_JobBoard);
+            ctrl.SetPanel(ctrl.m_JobBoard, ctrl.m_CurrencyJobOffsetX);
         }
 
         [LeafMember("InteriorOpenShopBoard"), Preserve]
         static private void LeafOpenShopBoard() {
             var ctrl = Services.State.FindManager<InteriorUICtrl>();
             Assert.NotNull(ctrl);
-            ctrl.SetPanel(ctrl.m_ShopPanel);
+            ctrl.SetPanel(ctrl.m_ShopPanel, ctrl.m_CurrencyShopOffsetX);
         }
         #endregion // Leaf
     }

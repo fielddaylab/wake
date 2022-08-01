@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using BeauUtil;
+using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 
 namespace Aqua {
     static public unsafe class UnsafeExt {
@@ -43,6 +45,27 @@ namespace Aqua {
             }
 
             return new string(charBuffer, 0, charBufferSize);
+        }
+
+        /// <summary>
+        /// Converts an unmanaged buffer to a unity NativeArray.
+        /// </summary>
+        static public NativeArray<T> ToNativeArray<T>(T* ptr, int length, Unity.Collections.Allocator allocator) where T : unmanaged {
+            return NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<T>(ptr, sizeof(T) * length, Allocator.None);
+        }
+
+        /// <summary>
+        /// Hashes the given unmanaged struct.
+        /// </summary>
+        static public ulong Hash<T>(T value) where T : unmanaged {
+            // fnv-1a
+            ulong hash = 14695981039346656037;
+            byte* ptr = (byte*) &value;
+            int length = sizeof(T);
+            while(length-- > 0) {
+                hash = (hash ^ *ptr++) * 1099511628211;
+            }
+            return hash;
         }
     }
 }

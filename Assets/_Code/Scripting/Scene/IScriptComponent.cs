@@ -10,6 +10,7 @@ namespace Aqua.Scripting
     {
         ScriptObject Parent { get; }
         void OnRegister(ScriptObject inObject);
+        void PostRegister();
         void OnDeregister(ScriptObject inObject);
     }
 }

@@ -1071,7 +1071,7 @@ namespace Aqua.Cameras
         /// </summary>
         public void AddShake(float inDistance, float inPeriod, float inDuration)
         {
-            AddShake(new Vector2(inDistance, inDistance), new Vector2(inPeriod, inPeriod), inDuration);
+            AddShake(new Vector2(RNG.Instance.NextFloat(0.9f, 1.1f) * inDistance, inDistance), new Vector2(inPeriod, RNG.Instance.NextFloat(0.9f, 1.1f) * inPeriod), inDuration);
         }
 
         /// <summary>

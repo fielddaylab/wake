@@ -1,8 +1,8 @@
-:: basePath job.kelp-shop-welcome
+# basePath job.kelp-shop-welcome
 
 :: helpGoShop
 @trigger    RequestPartnerHelp
-@when 		scene:name != "Shop"
+@when 		scene:name != "Shop", JobTaskTop(gotoShop)
 @cutscene
 {@player} 	Where should we be going again?
 {@guide}    Before we head out, we might wanna upgrade our ship with some of our earnings.
@@ -23,20 +23,43 @@
 @cutscene
 {@player} 	What are we doing here?
 {@guide}    We're looking to upgrade our ship with some of our earnings.
-            Why don't you check out some of the instruments {nameof @merchant} has for sale.
+            Why don't you check out some of the instruments {nameof @kelpMechanic} has for sale.
 
 :: gotBothModels
 @trigger    JobTaskCompleted
 @when       JobTaskCompleted(getVisualModel), JobTaskCompleted(getTagger)
-@once
 @cutscene
 {@player}   Okay, got both of them!
 {@guide}    Nice! Let's head back to the Ship then.
+
+// CATCH-ALL GUIDE TEXT
+
+:: helpGetTagger
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(getTagger)
+@cutscene
+{@player}   So... where do we head now?
+{@guide}    Talk to your uncle, he'll have some items for us.
+
+:: helpGetVisualModel
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(getVisualModel)
+@cutscene
+{@player}   So... where do we head now?
+{@guide}    Talk to your uncle, he'll have some items for us.
+
+:: helpReturnShip
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(returnShip)
+@cutscene
+{@player}   So... where do we head now?
+{@guide}    We need to return to the Helm on the ship.
 
 // END
 :: end
 @trigger    SceneStart
 @when       scene:name == "Helm"
+@triggerPriority    High
 @cutscene
 $if JobTaskCompleted(getVisualModel), JobTaskCompleted(getTagger)
     {@drKelp}   Hey guys! Just got back from my colleagues and they're excited to meet you guys.
@@ -51,7 +74,7 @@ $if JobTaskCompleted(getVisualModel), JobTaskCompleted(getTagger)
     $call ShowPopup(map.unlock.shipRoom.header, map.unlock.worldMap.desc)
     $call ShowPopup(map.unlock.stations.header, map.unlock.stations.desc)
 
-    {@player}   Thanks, Kel!
+    {@player}   Thanks, {nameof @drKelp}!
     {@drKelp}   No problem!
                 If you'd like to stay here, head back to the {map-name}Job Board{/map-name} where I have some new jobs for you!
     $call CompleteJob()
@@ -59,3 +82,7 @@ $if JobTaskCompleted(getVisualModel), JobTaskCompleted(getTagger)
     $set    jobs:common-dive.seen.probe-intro = false
     $set    jobs:common-dive.seen.micro-intro = false
 $endif
+
+:: ReallyTheEnd
+@function   JobStarted
+$set    world:shop.unlocked = true

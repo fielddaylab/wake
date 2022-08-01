@@ -1,11 +1,11 @@
-:: basePath job.arctic-underneath
+# basePath job.arctic-underneath
 
 // INTRO
 :: getTheEngine
 @trigger    RequestPartnerHelp
 @when 		!HasUpgrade("Engine")
 @cutscene
-{@guide}	Have you upgraded your {h}engine{/h} yet? Let's ask {nameof @merchant} if he has something that can help us.
+{@guide}	Have you upgraded your {h}engine{/h} yet? Let's ask {nameof @arcticMechanic} if he has something that can help us.
 
 :: toSiteX
 @trigger    RequestPartnerHelp
@@ -26,7 +26,7 @@
 @when 		JobTaskTop(reportBack)
 @cutscene
 {@guide}	It looks like you've got a good sample of the life to be found under the ice.
-            Lets report back to {nameof profWhalen} with everything you've found.
+            Lets report back to {nameof profArctic} with everything you've found.
 
 :: LookAround
 @trigger    RequestPartnerHelp
@@ -40,7 +40,7 @@
 @when 	    JobTaskTop(reportBack)
 @cutscene
 {@guide}	It looks like you've got a good sample of the life to be found under the ice.
-            Lets report back to {nameof profWhalen} with everything you've found.
+            Lets report back to {nameof profArctic} with everything you've found.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -56,14 +56,12 @@
 @when		JobTaskTop(reportBack)
 @boostScore -5
 @cutscene
-{@guide}	Talk to Professor Whalen in the Office.
+{@guide}	Return to the station and talk to {nameof @profArctic}.
 
-// ARGUMENTATION
-::argue.intro
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(siteXAnalysis) 
 @cutscene
-{@profWhalen}   What populations did you count beneath the ice?
+{@profArctic}   What populations did you count beneath the ice?
 $call ArgueLoad(siteXAnalysis) 
 $call ArgueSetClaim(Claim, jobs.arctic-underneath.argue.claimLabel) 
     $call ArgueFactSlot(X_UnderTheIce.Population.AstarteBorealis)  
@@ -80,20 +78,20 @@ $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.unrelated
-{@profWhalen} Ok, that's interesting, but it's not answering my question.
+{@profArctic} Ok, that's interesting, but it's not answering my question.
 $if ArgueIsFactSubmitted(X_UnderTheIce.Population.Detritus)
-    {@profWhalen} You don't need to tell me the count of detritus, that stuff isn't alive.
+    {@profArctic} You don't need to tell me the count of detritus, that stuff isn't alive.
 $endif
 $call ArgueRejectIncorrect()
 $goto .argue.showClaim
 
 :: argue.giveUp
-{@profWhalen}   Make sure you get a complete picture of all the populations down there.
+{@profArctic}   Make sure you get a complete picture of all the populations down there.
 
 // END
 :: argue.complete
 $call ArgueComplete()
-{@profWhalen}   Whoa! That's amazing! I wonder what they are doing down there! 
+{@profArctic}   Whoa! That's amazing! I wonder what they are doing down there! 
                 How are they living? What do they eat? Is there light? We need to get more information, stat!
 
 $call CompleteJob()

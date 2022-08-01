@@ -4,6 +4,8 @@
 
 using System;
 using System.Collections.Generic;
+using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
 namespace EasyAssetStreaming {
@@ -12,6 +14,24 @@ namespace EasyAssetStreaming {
     /// Helper and utility methods for streaming.
     /// </summary>
     static internal class StreamingHelper {
+        static internal void Init() {
+            if (s_Initialized) {
+                return;
+            }
+
+            s_Initialized = true;
+        }
+
+        static internal void Release() {
+            if (!s_Initialized) {
+                return;
+            }
+
+            s_Initialized = false;
+        }
+
+        static private bool s_Initialized = false;
+
         #region Resources
 
         static internal void DestroyResource<T>(ref T resource) where T : UnityEngine.Object {
@@ -175,7 +195,7 @@ namespace EasyAssetStreaming {
         /// <summary>
         /// Calculates the size of a window into a given texture region.
         /// </summary>
-        static internal Vector2 GetTextureRegionSize(Texture2D texture, Rect uvRect) {
+        static internal Vector2 GetTextureRegionSize(Texture texture, Rect uvRect) {
             Vector2 size;
             size.x = texture.width * Math.Abs(uvRect.width);
             size.y = texture.height * Math.Abs(uvRect.height);
@@ -226,7 +246,7 @@ namespace EasyAssetStreaming {
             return sizeMode >= AutoSizeMode.FitToParent && sizeMode <= AutoSizeMode.FillParentWithClipping;
         }
 
-        static internal UpdatedResizeProperty AutoSize(AutoSizeMode sizeMode, Texture2D texture, Rect sourceUV, Vector2 localPosition, Vector2 pivot, ref Vector2 size, ref Rect clippedUV, ref Vector2 appliedPivot, Vector2? parentSize) {
+        static internal UpdatedResizeProperty AutoSize(AutoSizeMode sizeMode, Texture texture, Rect sourceUV, Vector2 localPosition, Vector2 pivot, ref Vector2 size, ref Rect clippedUV, ref Vector2 appliedPivot, Vector2? parentSize) {
             if (sizeMode == AutoSizeMode.Disabled || !texture) {
                 if (clippedUV != sourceUV) {
                     clippedUV = sourceUV;
@@ -354,6 +374,29 @@ namespace EasyAssetStreaming {
 
         #region Misc
 
+        internal struct NativeArrayContext : IDisposable {
+            #if ENABLE_UNITY_COLLECTIONS_CHECKS
+            public AtomicSafetyHandle? SafetyHandle;
+            #endif // ENABLE_UNITY_COLLECTIONS_CHECKS
+
+            public unsafe NativeArray<T> GetNativeArray<T>(T* ptr, int length) where T : unmanaged {
+                var arr = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<T>(ptr, length, Allocator.None);
+                #if ENABLE_UNITY_COLLECTIONS_CHECKS
+                NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref arr, SafetyHandle.Value);
+                #endif // ENABLE_UNITY_COLLECTIONS_CHECKS
+                return arr;
+            }
+            
+            public void Dispose() {
+                #if ENABLE_UNITY_COLLECTIONS_CHECKS
+                if (SafetyHandle.HasValue) {
+                    AtomicSafetyHandle.Release(SafetyHandle.Value);
+                    SafetyHandle = null;
+                }
+                #endif // ENABLE_UNITY_COLLECTIONS_CHECKS
+            }
+        }
+
         static internal bool FastRemove<T>(this List<T> list, T item) {
             int end = list.Count - 1;
             int index = list.IndexOf(item);
@@ -366,6 +409,28 @@ namespace EasyAssetStreaming {
             }
 
             return false;
+        }
+
+        static internal NativeArrayContext NewArrayContext() {
+            return new NativeArrayContext() {
+                #if ENABLE_UNITY_COLLECTIONS_CHECKS
+                SafetyHandle = AtomicSafetyHandle.Create()
+                #endif // ENABLE_UNITY_COLLECTIONS_CHECKS
+            };
+        }
+
+        /// <summary>
+        /// Hashes the given unmanaged struct.
+        /// </summary>
+        static internal unsafe ulong Hash<T>(T value) where T : unmanaged {
+            // fnv-1a
+            ulong hash = 14695981039346656037;
+            byte* ptr = (byte*) &value;
+            int length = sizeof(T);
+            while(length-- > 0) {
+                hash = (hash ^ *ptr++) * 1099511628211;
+            }
+            return hash;
         }
 
         #endregion // Misc

@@ -1,0 +1,50 @@
+# basePath interior.job.kelp
+
+#include "Headers/Common.leaf"
+
+#const JobGiverId = drKelp
+
+#include "Headers/CommonJob.leaf"
+
+// Generic
+
+#NoJobHandler(a)
+{@$JobGiverId}  Hey, want to see the {h}Job Board{/h}?
+$choice .action.openJobBoard; Sure!
+$choice .action.cancel; No thanks.
+
+#WrongStationJobHandler(a)
+{@$JobGiverId}  Looks like you've got a job at another station. 
+                If you have questions, you should probably head back there. 
+                Though if you want to stay and help me with the Kelp Refuge, I wouldn't say no...
+    $choice .action.openJobBoard; Sure. Let me see the {h}Job Board{/h}.
+    $choice .action.cancel; Never mind, Mom. I'll check back later. 
+
+#WrongStationJobHandler(b)
+{@$JobGiverId}  Looks like you took a job at another station. 
+                You'll have to talk to them for the details.
+                Could always take a job here, though...
+                Still want to see the {h}Job Board{/h}?
+    $choice .action.openJobBoard; Sure. Thanks, Mom!
+    $choice .action.cancel; Nah. I'll check back later. 
+
+#JobHandler(a)
+{@$JobGiverId}  {random Olivia!|Welcome back, Sweetie!|Do you need something?} 
+
+$if !JobInProgress(kelp-shop-welcome)
+    $choice .action.report; I'm ready to report back on my job!
+    $choice .action.openJobBoard; I'd like to {random see|look at} the {h}Job Board{/h}.
+    $choice .action.cancel.currentJob; Never mind. Thanks, Mom.
+$else
+    {@drKelp}   Once you head back to the {h}surface{/h}, I'll finish upgrading your ship's map.
+    // $choice .action.openJobBoard; I'd like to {random see|look at} the {h}Job Board{/h}.
+    // $choice .action.cancel.currentJob; Never mind. Thanks, Mom.
+$endif
+
+:: action.cancel
+@cutscene
+{@$JobGiverId}  Okay, Sweetie. I'm here if you need me. 
+
+:: action.cancel.currentJob
+@cutscene
+{@$JobGiverId}  That's fine, Olivia. Let me know when you're ready for another job. 

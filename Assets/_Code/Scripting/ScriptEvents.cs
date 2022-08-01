@@ -15,8 +15,9 @@ namespace Aqua.Scripting
             static public readonly StringHash32 FadeIn = "fade-in";
             static public readonly StringHash32 FadeOut = "fade-out";
             static public readonly StringHash32 HideDialog = "hide-dialog";
-            static public readonly StringHash32 LetterboxOff = "letterbox-off";
-            static public readonly StringHash32 LetterboxOn = "letterbox-on";
+            static public readonly StringHash32 ReleaseDialog = "release-dialog";
+            static public readonly StringHash32 CutsceneOff = "cutscene-off";
+            static public readonly StringHash32 CutsceneOn = "cutscene-on";
             static public readonly StringHash32 PitchBGM = "bgm-pitch";
             static public readonly StringHash32 PlayBGM = "bgm-play";
             static public readonly StringHash32 PlaySound = "sound-play";

@@ -38,9 +38,6 @@ namespace ProtoAqua.Observation
         [NonSerialized] private Color m_DefaultTextColor;
         [NonSerialized] private Vector4 m_DefaultTextMargins;
 
-        [NonSerialized] private RectTransform m_RectTransform;
-        [NonSerialized] private float m_AnchorOffsetX;
-
         protected override void Awake()
         {
             base.Awake();
@@ -49,8 +46,6 @@ namespace ProtoAqua.Observation
             m_DefaultHeaderColor = m_HeaderText.Graphic.color;
             m_DefaultTextColor = m_DescriptionText.Graphic.color;
             m_DefaultTextMargins = m_DescriptionText.Graphic.margin;
-            m_RectTransform = (RectTransform) transform;
-            m_AnchorOffsetX = m_RectTransform.anchoredPosition.x;
         }
 
         #region Scanning

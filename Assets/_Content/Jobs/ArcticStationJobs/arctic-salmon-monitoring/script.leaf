@@ -1,4 +1,4 @@
-:: basePath job.arctic-salmon-monitoring
+# basePath job.arctic-salmon-monitoring
 
 // INTRO
 :: start
@@ -38,7 +38,7 @@
 $branch .argue.mainQuestion
 
 :: argue.mainQuestion
-{@profWhalen}	Did you finish counting? What did you find?
+{@profArctic}	Did you finish counting? What did you find?
 $call ArgueLoad(argueCounts)
 $if ArgueSetClaim(argueCountsClaim, jobs.arctic-salmon-monitoring.argue.claimLabel)
 		$call ArgueFactSlot(Z_OpenOcean.Population.ChinookSalmon)
@@ -54,7 +54,7 @@ $choice .argue.giveUp; Let me get back to you
 
 :: argue.correctFacts
 $call ArgueComplete()
-{@profWhalen}	We were just fine then. I suppose if you're going to be working up here, we can get you started with some of our preliminary work.
+{@profArctic}	We were just fine then. I suppose if you're going to be working up here, we can get you started with some of our preliminary work.
 $call GiveFact(ChinookSalmon.Eats.Diatoms)
 $call UpgradeFact(ChinookSalmon.Eats.Diatoms)
 $call GiveFact(ChinookSalmon.Reproduce)
@@ -65,10 +65,10 @@ $call UpgradeFact(Fishers.Eats.ChinookSalmon)
 $call CompleteJob()
 
 :: argue.incorrectFacts
-{@profWhalen}	This doesn't look like a salmon population count...
+{@profArctic}	This doesn't look like a salmon population count...
 $call ArgueClearFacts()
 $call ArgueUnload()
 $branch .argue.mainQuestion
 
 :: argue.giveUp
-{@profCempaka}	OK. Get back to me when you're ready.
+{@profCoral}	OK. Get back to me when you're ready.

@@ -40,7 +40,7 @@ namespace ProtoAqua.Observation {
             return dist.sqrMagnitude < updateArgs.RadiusSq;
         }
 
-        static private void UpdateActiveBatch(ListSlice<CritterAI> objs, int batchId, in UpdateArgs updateArgs) {
+        static private void UpdateActiveBatch(ListSlice<CritterAI> objs, int batchId, UpdateArgs updateArgs) {
             
         }
 

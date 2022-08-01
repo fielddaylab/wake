@@ -35,6 +35,7 @@ namespace Aqua
         [NonSerialized] private StringHash32 m_EntranceId;
         [NonSerialized] private bool m_SceneLock;
         [NonSerialized] private PlayerBody m_Body;
+        [NonSerialized] private bool m_InitFrame;
 
         private VariantTable m_TempSceneTable;
 
@@ -249,6 +250,7 @@ namespace Aqua
 
             DebugService.Log(LogMask.Loading, "[StateMgr] Initial load of '{0}' finished", active.Path);
 
+            m_InitFrame = true;
             ProcessCallbackQueue();
             active.BroadcastLoaded();
             Services.Input.ResumeAll();
@@ -256,12 +258,13 @@ namespace Aqua
 
             Services.Events.Dispatch(GameEvents.SceneLoaded);
             Services.Script.TriggerResponse(GameTriggers.SceneStart);
+            m_InitFrame = false;
         }
 
         private IEnumerator SceneSwap(SceneBinding inNextScene, StringHash32 inEntrance, object inContext, SceneLoadFlags inFlags)
         {
             Services.Input.PauseAll();
-            Services.Script.KillLowPriorityThreads();
+            Services.Script.KillLowPriorityThreads(TriggerPriority.Cutscene, true);
             Services.Physics.Enabled = false;
             BootParams.ClearStartFlag();
 
@@ -349,17 +352,19 @@ namespace Aqua
             }
 
             DebugService.Log(LogMask.Loading, "[StateMgr] Finished loading scene '{0}'", inNextScene.Path);
+
+            m_InitFrame = true;
             ProcessCallbackQueue();
             inNextScene.BroadcastLoaded(inContext);
             if (!m_SceneLock)
             {
                 Services.Input.ResumeAll();
                 Services.Physics.Enabled = true;
-                m_SceneLock = false;
 
                 Services.Events.Dispatch(GameEvents.SceneLoaded);
                 Services.Script.TriggerResponse(GameTriggers.SceneStart);
             }
+            m_InitFrame = false;
         }
 
         private IEnumerator WaitForServiceLoading()
@@ -517,10 +522,10 @@ namespace Aqua
             {
                 SceneManager.MoveGameObjectToScene(root, inActiveScene);
             }
-            // if (inSubScene.ImportLighting)
-            // {
-            //     LightUtils.CopySettings(unityScene, inActiveScene);
-            // }
+            if (inSubScene.ImportLighting)
+            {
+                LightUtils.CopySettings(unityScene, inActiveScene);
+            }
             yield return SceneManager.UnloadSceneAsync(unityScene);
         }
 

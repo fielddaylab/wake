@@ -37,10 +37,12 @@ namespace Aqua {
             get { return StateUtil.IsLoading || Services.Pause.IsPaused(); }
         }
 
+        [LeafMember("ScriptBlocking")]
         static public bool ShouldBlock() {
             return !Services.Valid || Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.UI.IsLetterboxed() || StateUtil.IsLoading;
         }
 
+        [LeafMember("ScriptBlockingIgnoreLetterbox")]
         static public bool ShouldBlockIgnoreLetterbox() {
             return Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || StateUtil.IsLoading;
         }
@@ -239,6 +241,12 @@ namespace Aqua {
                         break;
                     }
 
+                case ScriptInteractAction.Talk: {
+                        thread = ScriptObject.Talk(inParams.Source.Object.Parent, inParams.Config.TargetId);
+                        yield return thread.Wait();
+                        break;
+                    }
+
                 case ScriptInteractAction.GoToPreviousScene: {
                         StateUtil.LoadPreviousSceneWithWipe(inParams.Config.TargetEntranceId, null, inParams.Config.LoadFlags);
                         break;
@@ -283,11 +291,18 @@ namespace Aqua {
         }
 
         // Added by Xander 06/03/22
-        [LeafMember]
+        [LeafMember, Preserve]
         static public bool IsPlayerOnShip() {
             StringHash32 currentMapId = MapDB.LookupCurrentMap();
             return ((currentMapId == MapIds.Helm) || (currentMapId == MapIds.Modeling) || (currentMapId == MapIds.Experimentation) ||
             (currentMapId == MapIds.JobBoard) || (currentMapId == MapIds.WorldMap));
+        }
+
+        [LeafMember, Preserve]
+        static public bool IsPlayerOnStation() {
+            StringHash32 currentMapId = MapDB.LookupCurrentMap();
+            return ((currentMapId == MapIds.RS_Kelp) || (currentMapId == MapIds.RS_Coral) ||
+             (currentMapId == MapIds.RS_Bayou) || (currentMapId == MapIds.RS_Arctic));
         }
     }
 }

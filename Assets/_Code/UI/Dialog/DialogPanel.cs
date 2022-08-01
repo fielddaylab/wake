@@ -10,13 +10,16 @@ using Aqua.Scripting;
 using BeauUtil;
 using Leaf;
 using BeauUtil.Debugger;
+using Leaf.Runtime;
 
 namespace Aqua
 {
     public class DialogPanel : BasePanel
     {
         private const float SkipMultiplier = 1f / 1024;
-        private const float DefaultMultiplier = 0.5f;
+        private const float DefaultMultiplier = 0.55f;
+
+        public static Action<StringHash32, StringHash32> UpdatePortrait;
 
         #region Types
 
@@ -40,7 +43,7 @@ namespace Aqua
             public bool Silent;
             public bool AutoContinue;
             public bool SkipPressed;
-            public bool DoNotClose;
+            public bool Sticky;
 
             public bool IsCutsceneSkip;
 
@@ -51,7 +54,7 @@ namespace Aqua
                 VisibleText = null;
                 TypeSFX = null;
                 IsCutsceneSkip = false;
-                DoNotClose = false;
+                Sticky = false;
                 TargetId = StringHash32.Null;
                 PortraitId = StringHash32.Null;
                 TargetDef = null;
@@ -65,7 +68,6 @@ namespace Aqua
                 SkipPressed = false;
                 AutoContinue = false;
                 IsCutsceneSkip = false;
-                DoNotClose = false;
             }
         }
 
@@ -80,6 +82,9 @@ namespace Aqua
         [SerializeField] private SerializedHash32 m_DefaultTypeSFX = "text_type";
         [SerializeField] private LineEndBehavior m_EndBehavior = LineEndBehavior.WaitForInput;
         [SerializeField] private float m_NonAutoWaitTimer = 2;
+        [SerializeField] private float m_StickyWaitTimer = 2;
+        [SerializeField] private float m_StickyVerticalOffset = 0;
+        [SerializeField] private bool m_UseShortName = false;
 
         [Header("Speaker")]
         
@@ -112,17 +117,22 @@ namespace Aqua
 
         #endregion // Inspector
 
+        [NonSerialized] private RectTransform m_SelfTransform;
         [NonSerialized] private ColorPalette4 m_DefaultNamePalette;
         [NonSerialized] private ColorPalette4 m_DefaultTextPalette;
 
         [NonSerialized] private TypingState m_CurrentState;
         [NonSerialized] private Routine m_BoxAnim;
         [NonSerialized] private Routine m_FadeAnim;
+        [NonSerialized] private Routine m_StickyMoveAnim;
+        [NonSerialized] private bool m_VisibleStickyState;
         [NonSerialized] private TagStringEventHandler m_EventHandler;
 
         [NonSerialized] private BaseInputLayer m_Input;
         [NonSerialized] private Routine m_RebuildRoutine;
         [NonSerialized] private float m_OriginalX;
+        [NonSerialized] private float m_SelfOriginalY;
+        [NonSerialized] private ScriptThreadHandle m_CurrentThread;
 
         [NonSerialized] private TagString m_TempTagString = new TagString();
 
@@ -133,6 +143,8 @@ namespace Aqua
         protected override void Awake()
         {
             base.Awake();
+
+            this.CacheComponent(ref m_SelfTransform);
             
             if (m_SpeakerLabel)
                 m_DefaultNamePalette.Content = m_SpeakerLabel.color;
@@ -143,6 +155,7 @@ namespace Aqua
             m_DefaultTextPalette.Content = m_TextDisplay.color;
 
             m_OriginalX = Root.anchoredPosition.x;
+            m_SelfOriginalY = m_SelfTransform.anchoredPosition.y;
 
             if (m_TextBackground)
                 m_DefaultTextPalette.Background = m_TextBackground.color;
@@ -163,12 +176,15 @@ namespace Aqua
                 return;
             
             m_CurrentState.ResetFull();
+            m_CurrentThread = default;
 
             ResetSpeaker();
 
             m_TextDisplay.SetText(string.Empty);
 
             Root.SetAnchorPos(m_OriginalX, Axis.X);
+            UpdateStickyState();
+            m_StickyMoveAnim.Stop();
             
             if (m_ButtonContainer)
                 m_ButtonContainer.gameObject.SetActive(false);
@@ -193,7 +209,10 @@ namespace Aqua
                 m_EventHandler.Register(ScriptEvents.Dialog.Auto, () => m_CurrentState.AutoContinue = true);
                 m_EventHandler.Register(ScriptEvents.Dialog.Clear, () => m_TextDisplay.SetText(string.Empty));
                 m_EventHandler.Register(ScriptEvents.Dialog.InputContinue, () => WaitForInput());
-                m_EventHandler.Register(ScriptEvents.Dialog.DoNotClose, () => m_CurrentState.DoNotClose = true);
+                m_EventHandler.Register(ScriptEvents.Dialog.DoNotClose, () => {
+                    m_CurrentState.Sticky = true;
+                    UpdateStickyState();
+                });
                 m_EventHandler.Register(ScriptEvents.Dialog.SetTypeSFX, (e, o) => m_CurrentState.TypeSFX = e.Argument0.AsStringHash());
                 m_EventHandler.Register(ScriptEvents.Dialog.SetVoiceType, SetVoiceType);
                 m_EventHandler.Register(ScriptEvents.Dialog.Speaker, (e, o) => SetSpeakerName(e.StringArgument));
@@ -274,10 +293,11 @@ namespace Aqua
             }
             else
             {
-                if (actorDef.NameId().IsEmpty)
+                TextId nameId = m_UseShortName ? actorDef.ShortNameId() : actorDef.NameId();
+                if (nameId.IsEmpty)
                     SetSpeakerName(StringSlice.Empty);
                 else
-                    SetSpeakerName(Loc.Find(actorDef.NameId()));
+                    SetSpeakerName(Loc.Find(nameId));
             }
 
             ColorPalette4? nameOverride = actorDef.NamePaletteOverride();
@@ -297,6 +317,7 @@ namespace Aqua
             
             Sprite portraitSprite = m_CurrentState.TargetDef.Portrait(inPortraitId);
             m_CurrentState.PortraitId = inPortraitId;
+            UpdatePortrait?.Invoke(m_CurrentState.TargetId, m_CurrentState.PortraitId);
             if (portraitSprite)
             {
                 if (m_SpeakerPortraitGroup)
@@ -339,6 +360,26 @@ namespace Aqua
         #region Scripting
 
         /// <summary>
+        /// Sets the current thread.
+        /// </summary>
+        public void AssignThread(ScriptThreadHandle inHandle)
+        {
+            if (Ref.Replace(ref m_CurrentThread, inHandle))
+            {
+                m_CurrentState.ResetFull();
+                UpdateStickyState();
+            }
+        }
+
+        /// <summary>
+        /// Clears the current thread.
+        /// </summary>
+        public void ClearThread(ScriptThreadHandle inHandle)
+        {
+            Ref.CompareExchange(ref m_CurrentThread, inHandle, default);
+        }
+
+        /// <summary>
         /// Preps for a line of dialog.
         /// </summary>
         public TagStringEventHandler PrepLine(TagString inLine, TagStringEventHandler inParentHandler, bool inbForceHandle)
@@ -378,12 +419,16 @@ namespace Aqua
         /// <summary>
         /// Finishes the current line.
         /// </summary>
-        public IEnumerator CompleteLine()
+        public IEnumerator CompleteLine(LeafThreadState inThread)
         {
             if (IsShowing() && !string.IsNullOrEmpty(m_CurrentState.VisibleText))
             {
-                if (m_CurrentState.DoNotClose)
-                    return Routine.WaitForever();
+                if (m_CurrentState.Sticky)
+                {
+                    if (LeafRuntime.PredictEnd(inThread))
+                        return Routine.Yield(Routine.Command.Pause);
+                    return Routine.WaitSeconds(m_StickyWaitTimer);
+                }
 
                 switch(m_EndBehavior)
                 {
@@ -522,7 +567,7 @@ namespace Aqua
 
         private void UpdateSkipHeld()
         {
-            if (m_EndBehavior != LineEndBehavior.WaitForInput)
+            if (m_EndBehavior != LineEndBehavior.WaitForInput || m_CurrentState.Sticky)
                 return;
             
             if (m_Input.Device.MousePressed(0))
@@ -659,6 +704,33 @@ namespace Aqua
             }
         }
 
+        private IEnumerator ScrollToVerticalOffset(float inOffset)
+        {
+            yield return m_SelfTransform.AnchorPosTo(m_SelfOriginalY + inOffset, 0.2f, Axis.Y).Ease(Curve.Smooth);
+        }
+
+        private void SetVerticalOffset(float inOffset)
+        {
+            m_StickyMoveAnim.Stop();
+            m_SelfTransform.SetAnchorPos(m_SelfOriginalY + inOffset, Axis.Y);
+        }
+
+        private void UpdateStickyState()
+        {
+            if (m_VisibleStickyState == m_CurrentState.Sticky)
+                return;
+
+            m_VisibleStickyState = m_CurrentState.Sticky;
+            if (m_RootTransform.gameObject.activeSelf && (IsShowing() || IsTransitioning()))
+            {
+                m_StickyMoveAnim.Replace(this, ScrollToVerticalOffset(m_VisibleStickyState ? m_StickyVerticalOffset : 0));
+            }
+            else
+            {
+                SetVerticalOffset(m_VisibleStickyState ? m_StickyVerticalOffset : 0);
+            }
+        }
+
         #endregion // Coroutines
 
         #region BasePanel
@@ -667,6 +739,7 @@ namespace Aqua
         {
             if (!m_RootTransform.gameObject.activeSelf)
             {
+                UpdateStickyState();
                 m_RootGroup.alpha = 0;
                 m_RootTransform.SetScale(0.5f);
                 m_RootTransform.gameObject.SetActive(true);
@@ -680,6 +753,8 @@ namespace Aqua
 
         protected override IEnumerator TransitionToHide()
         {
+            yield return null;
+            
             yield return Routine.Combine(
                 m_RootGroup.FadeTo(0, 0.15f),
                 m_RootTransform.ScaleTo(0.5f, 0.15f).Ease(Curve.CubeIn)

@@ -242,6 +242,7 @@ GameObject:
   - component: {fileID: 4001825904412916712}
   - component: {fileID: 7043630854697046813}
   - component: {fileID: 3128119315664225032}
+  - component: {fileID: 4720685074817823246}
   m_Layer: 5
   m_Name: ShopItem
   m_TagString: Untagged
@@ -342,6 +343,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Button: {fileID: 4001825904412916712}
   Outline: {fileID: 8799701025786700429}
+  Listener: {fileID: 4720685074817823246}
   Title: {fileID: 3966371818428215366}
   Icon: {fileID: 1672332577563446468}
   Cursor: {fileID: 3128119315664225032}
@@ -430,6 +432,33 @@ MonoBehaviour:
     m_HashValue: 0
   TooltipOverride: 
   Cursor: 1
+--- !u!114 &4720685074817823246
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1927218211831719971}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63a18b24c3d6f2b4eae4fa906f0ff980, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_OnPointerEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnPointerExit:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnPointerDown:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnPointerUp:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &2095294874161404256
 GameObject:
   m_ObjectHideFlags: 0

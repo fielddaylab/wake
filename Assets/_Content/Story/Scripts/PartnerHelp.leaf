@@ -9,7 +9,7 @@
 @once
 @cutscene
 {@player}   So... what are we supposed to be doing? 
-{@guide}    In case you forgot, we need to make some money. 
+{@guide #happy}    In case you forgot, we need to make some money. 
 $if guide:seenShipHelm
             You should check the {map-name}Job Board{/map-name}.
 $else
@@ -33,11 +33,11 @@ $set    guide:knowsJobs = true
 
 :: noJob.notAtHelm
 @trigger    RequestPartnerHelp
-@when       !player:currentJob, scene:name != "JobBoard", global:nav.shipRoom != "helm"
+@when       !player:currentJob, !IsPlayerOnStation()
 @repeat     1
 @cutscene
 {@player}   So.... What should we do now?
-{@guide}    We need to get back to the {map-name}helm{/map-name} and take a job!
+{@guide}    We need to head to a research station and take a job!
 
 :: noJob.atHelm
 @trigger    RequestPartnerHelp

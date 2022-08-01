@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 188141314107118365}
   - component: {fileID: 111989121548328064}
   - component: {fileID: 6962069660404683264}
+  - component: {fileID: 4285675052956684245}
+  - component: {fileID: 4188908532318377998}
   m_Layer: 5
   m_Name: KevinButton
   m_TagString: Untagged
@@ -36,7 +38,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -50, y: -50}
+  m_AnchoredPosition: {x: -46, y: -130}
   m_SizeDelta: {x: 72, y: 52}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &188141314107118365
@@ -57,6 +59,12 @@ MonoBehaviour:
   m_InputBehavior: 2
   m_HideOnStart: 0
   m_Button: {fileID: 110751972680460203}
+  m_Eyes: {fileID: 756200590604759611}
+  m_OffscreenX: 96
+  m_ShowHideAnim:
+    Time: 0.25
+    Curve: 1
+  m_UnlockableUI: {fileID: 4188908532318377998}
 --- !u!114 &111989121548328064
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71,7 +79,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Id:
     m_Source: hotbar.guide
-    m_HashValue: 3102914138
+    m_HashValue: 3123302771
+  m_IsPersistent: 1
 --- !u!114 &6962069660404683264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,6 +95,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Group: {fileID: 3596847950982378278}
   m_Canvas: {fileID: 0}
+--- !u!114 &4285675052956684245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 403321102130430852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a63828d2b9925d4e974cdfbab6f1a5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Menu: {fileID: 188141314107118365}
+--- !u!114 &4188908532318377998
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 403321102130430852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5202f2ddf6794a742999bcaa5ec5faa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Panel: {fileID: 188141314107118365}
+  m_Group:
+    GameObjects: []
+    Behaviours: []
 --- !u!1 &3824900694844881669
 GameObject:
   m_ObjectHideFlags: 0
@@ -274,7 +312,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.03529412, g: 0.15686275, b: 0.11764707, a: 1}
+  m_Color: {r: 0.039215688, g: 0.019607844, b: 0.019607844, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:

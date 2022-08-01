@@ -75,6 +75,9 @@ namespace Aqua.Scripting
             m_TriggerId = inNode.TriggerOrFunctionId();
             m_TriggerWho = inNode.TargetId();
             m_TriggerPriority = inNode.Priority();
+            if (inNode.IsFunction()) {
+                m_Flags |= ScriptFlags.Function;
+            }
         }
 
         #endregion // Lifecycle
@@ -88,11 +91,17 @@ namespace Aqua.Scripting
             {
                 if (m_CurrentDialog != value)
                 {
+                    var currentHandle = GetHandle();
                     if (m_CurrentDialog != null)
                     {
+                        m_CurrentDialog.ClearThread(currentHandle);
                         m_CurrentDialog.CompleteSequence();
                     }
                     m_CurrentDialog = value;
+                    if (m_CurrentDialog != null)
+                    {
+                        m_CurrentDialog.AssignThread(currentHandle);
+                    }
                 }
             }
         }
@@ -148,6 +157,7 @@ namespace Aqua.Scripting
         public new ScriptObject Actor { get { return m_Actor; } }
 
         public bool IsCutscene() { return (m_Flags & ScriptFlags.Cutscene) != 0 || m_CutsceneCount > 0; }
+        public bool IsFunction() { return (m_Flags & ScriptFlags.Function) != 0; }
         public string InitialNodeName() { return m_TriggerNodeName; }
         public StringHash32 TriggerId() { return m_TriggerId; }
         public StringHash32 Target() { return m_TriggerWho; }
@@ -404,6 +414,7 @@ namespace Aqua.Scripting
         Skip = 0x10,
         Cutscene = 0x20,
         InChoice = 0x40,
+        Function = 0x80
     }
 
     [UnityEngine.Scripting.Preserve]

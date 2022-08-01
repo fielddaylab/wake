@@ -106,12 +106,6 @@ namespace ProtoAqua.ExperimentV2 {
             ExperimentResult result = new ExperimentResult();
             result.Facts = experimentFacts.ToArray();
 
-            if (result.Facts.Length > 0) {
-                using (var table = TempVarTable.Alloc()) {
-                    Services.Script.TriggerResponse(ExperimentTriggers.NewStressResults, table);
-                }
-            }
-
             return result;
         }
 
@@ -135,6 +129,10 @@ namespace ProtoAqua.ExperimentV2 {
 
             using(Script.Letterbox()) {
                 yield return ExperimentUtil.DisplaySummaryPopup(inResult);
+
+                if (inResult.Facts.Length > 0) {
+                    yield return Services.Script.TriggerResponse(ExperimentTriggers.NewStressResults).Wait();
+                }
 
                 using (var table = TempVarTable.Alloc()) {
                     table.Set("tankType", m_ParentTank.Type.ToString());

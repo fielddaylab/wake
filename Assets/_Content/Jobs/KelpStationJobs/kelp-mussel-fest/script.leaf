@@ -43,7 +43,7 @@
 @when 		JobTaskTop(report)
 @once
 @cutscene
-{@guide}	All right -- let's untangle what's disturbing the mussels by talking it through with Dr. Kelpurnia.
+{@guide}	All right -- let's untangle what's disturbing the mussels by talking it through with {nameof @drKelp}.
 
 
 // REPORT
@@ -53,7 +53,7 @@
 @when 		JobTaskTop(report)
 @cutscene
 {@player}   Any idea of what to do next?
-{@guide}	It's time to explain our findings in the comms room.
+{@guide}	It's time to explain our findings at the {m}research station{/m}.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -83,7 +83,7 @@
 @when 		JobTaskActive(report)
 @boostScore -5
 @cutscene
-{@guide}    Talk to {nameof drKelp} in the Office.
+{@guide}    Talk to {nameof drKelp} at the research station.
 
 // ARGUMENTATION
 ::argue.hello

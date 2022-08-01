@@ -12,16 +12,16 @@ $call ArgueLoad(coralUrchinFriendArgue)
 $branch .argue.intro
 
 ::argue.intro
-{@profCempaka} So do you think it's safe to add Urchins to Site R?
+{@profCoral} So do you think it's safe to add Urchins to Site R?
 	$choice .argue.safe; Urchins are fine to be added.
 	$choice .argue.unsafe; It's not a good idea.
 
 :: argue.safe
-{@profCempaka} Why won't the Urchin population take over, like they did in the Kelp Forest?
+{@profCoral} Why won't the Urchin population take over, like they did in the Kelp Forest?
 $goto .argue.evidence
 
 :: argue.unsafe
-{@profCempaka} Can you prove it to me with a model?
+{@profCoral} Can you prove it to me with a model?
 $goto .argue.evidenceWrong
 
 :: argue.evidenceWrong
@@ -36,16 +36,16 @@ $choice .argue.giveUpWrong; Let me get back to you
 $choose branch
 
 :: argue.modelWrong
-{@profCempaka} This model is valid, but it doesn't line up with your claim.
+{@profCoral} This model is valid, but it doesn't line up with your claim.
 $call ArgueCancelClaim()
 
 :: argue.unrelatedWrong
-{@profCempaka} This model doesn't have much to do with your claim
+{@profCoral} This model doesn't have much to do with your claim
 $call ArgueRejectIncorrect()
 $goto .argue.evidenceWrong
 
 :: argue.giveUpWrong
-{@profCempaka} OK. Get back to me when you're ready.
+{@profCoral} OK. Get back to me when you're ready.
 $call ArgueCancelClaim()
 
 :: argue.evidence
@@ -68,21 +68,21 @@ $if ArgueIsFactSubmitted(Urchin.Reproduce.Stressed)
 // 11?
 	$if ArgueIsFactSubmitted(SargassumCoveredReef.Model.SiteRPrediction)
 	// 111
-		{@profCempaka} Ah! It's all coming together now, good work!
+		{@profCoral} Ah! It's all coming together now, good work!
 		$goto .argue.correct
 	$else
 	//110
-		{@profCempaka} So the stressed urchins would reproduce slower... Have you made any predictions if this will really work?
+		{@profCoral} So the stressed urchins would reproduce slower... Have you made any predictions if this will really work?
 		
 	$endif
 $else
 //10?
 	$if ArgueIsFactSubmitted(SargassumCoveredReef.Model.SiteRPrediction)
 	//101
-		{@profCempaka} So the urchins will be stressed, but how does this lead to them not taking over?
+		{@profCoral} So the urchins will be stressed, but how does this lead to them not taking over?
 	$else
 	//100
-		{@profCempaka} Hmmm, so you're saying the urchins will be stressed. Could you explain how this information helps us?
+		{@profCoral} Hmmm, so you're saying the urchins will be stressed. Could you explain how this information helps us?
 	$endif
 $endif
 $goto .argue.evidence
@@ -92,20 +92,20 @@ $if ArgueIsFactSubmitted(Urchin.Temperature.Stressed)
 //11?
 	$if ArgueIsFactSubmitted(SargassumCoveredReef.Model.SiteRPrediction)
 	//111
-		{@profCempaka} Ah! It's all coming together now, good work!
+		{@profCoral} Ah! It's all coming together now, good work!
 		$goto .argue.correct
 	$else
 	//110
-		{@profCempaka} So the stressed urchins would reproduce slower... Have you made any predictions if this will really work?
+		{@profCoral} So the stressed urchins would reproduce slower... Have you made any predictions if this will really work?
 	$endif
 $else
 //01?
 	$if ArgueIsFactSubmitted(SargassumCoveredReef.Model.SiteRPrediction)
 	//011
-		{@profCempaka} But do you know that the urchins will be stressed? 
+		{@profCoral} But do you know that the urchins will be stressed? 
 	$else
 	//010
-		{@profCempaka} So... When the urchins are stressed, they reproduce slower. Could you explain how that helps us here?
+		{@profCoral} So... When the urchins are stressed, they reproduce slower. Could you explain how that helps us here?
 	$endif
 $endif
 $goto .argue.evidence
@@ -115,35 +115,35 @@ $if ArgueIsFactSubmitted(Urchin.Temperature.Stressed)
 //1?1
 	$if ArgueIsFactSubmitted(Urchin.Reproduce.Stressed)
 	//111
-		{@profCempaka} Ah! It's all coming together now, good work!
+		{@profCoral} Ah! It's all coming together now, good work!
 		$goto .argue.correct
 	$else
 	//101
-		{@profCempaka} So the urchins will be stressed, but how does this lead to them not taking over?
+		{@profCoral} So the urchins will be stressed, but how does this lead to them not taking over?
 	$endif
 $else
 //0?1
 	$if ArgueIsFactSubmitted(Urchin.Reproduce.Stressed)
 	//011
-		{@profCempaka} But do you know that the urchins will be stressed?
+		{@profCoral} But do you know that the urchins will be stressed?
 	$else
 	//001
-		{@profCempaka} I see. You were able to model urchins not taking over. Why is that?
+		{@profCoral} I see. You were able to model urchins not taking over. Why is that?
 	$endif
 $endif
 $goto .argue.evidence
 
 :: argue.correct
 $call ArgueComplete()
-{@profCempaka} So, urchins can stay because they will be stressed which makes them reproduce slower. That way they won't take over. Clever!
+{@profCoral} So, urchins can stay because they will be stressed which makes them reproduce slower. That way they won't take over. Clever!
 $call CompleteJob()
 
 :: argue.unrelated
-{@profCempaka} I don't see how that's relevant.
+{@profCoral} I don't see how that's relevant.
 $call ArgueRejectIncorrect()
 $goto .argue.evidence
 
 :: argue.giveUp
-{@profCempaka} OK. Get back to me when you're ready.
+{@profCoral} OK. Get back to me when you're ready.
 
 :: end

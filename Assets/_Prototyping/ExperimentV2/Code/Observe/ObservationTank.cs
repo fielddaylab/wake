@@ -80,6 +80,8 @@ namespace ProtoAqua.ExperimentV2 {
             m_RunningScreen.CustomButton.onClick.AddListener(OnFinishClick);
 
             m_UnobservedStateLabel.gameObject.SetActive(false);
+
+            SelectableTank.InitNavArrows(m_ParentTank);
         }
 
         #region Tank
@@ -268,6 +270,7 @@ namespace ProtoAqua.ExperimentV2 {
                         break;
                     }
                 case SetupPhase.Run: {
+                        SelectableTank.SetNavArrowsActive(m_ParentTank, false);
                         m_ParentTank.CurrentState |= TankState.Running;
                         ExperimentScreen.Transition(null, m_World, SelectableTank.SpawnSequence(m_ParentTank, m_OrganismScreen.Panel), () => {
                             Routine.Start(this, StartExperiment()).Tick();
@@ -440,6 +443,8 @@ namespace ProtoAqua.ExperimentV2 {
             m_UnobservedStateLabel.gameObject.SetActive(false);
             m_PotentialNewFacts.Clear();
             m_MissedFactCount = 0;
+
+            SelectableTank.SetNavArrowsActive(m_ParentTank, true);
         }
 
         #endregion // Sequence
@@ -448,6 +453,7 @@ namespace ProtoAqua.ExperimentV2 {
 
         void IScriptComponent.OnRegister(ScriptObject inObject) { }
         void IScriptComponent.OnDeregister(ScriptObject inObject) { }
+        void IScriptComponent.PostRegister() { }
 
         #endregion // IScriptComponent
     }

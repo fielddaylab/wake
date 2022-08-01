@@ -7,9 +7,9 @@
 $branch common.ringPhone
 
 $set jobs:coral-fishy-bizz.gotScans = false
-{@profCempaka}	Site V is a very popular fishing spot for Grouper. We are looking to maximize how much people can fish without causing the Grouper fish population to decline. 
-{@profCempaka}	I need you to determine how much Red Grouper can be harvested sustainably.
-{@profCempaka}	Start by heading to Site V and learning about the Grouper and the Fishers.
+{@profCoral}	Site V is a very popular fishing spot for Grouper. We are looking to maximize how much people can fish without causing the Grouper fish population to decline. 
+{@profCoral}	I need you to determine how much Red Grouper can be harvested sustainably.
+{@profCoral}	Start by heading to Site V and learning about the Grouper and the Fishers.
 {@player}		We're on it!
 
 :: helpGoOutside
@@ -32,7 +32,7 @@ $set jobs:coral-fishy-bizz.gotScans = false
 @when 		scene:name == "Station2", jobs:coral-fishy-bizz.gotScans == false
 @cutscene
 {@player} 	Where should I be going again?
-{@guide}	Site V should be to the east of the ship.
+{@guide}	Site V should be at the southern buoy.
 {@guide}	Let's head over there and dive down. 
 
 
@@ -75,7 +75,7 @@ $endif
 @boostScore 2
 @cutscene
 {@player} 	Where should I be going again?
-{@guide}	We've got all the scans we need from Site V, so let's head back west to the ship.
+{@guide}	We've got all the scans we need from Site V, so let's head back to the ship.
 
 
 :: backAtShip
@@ -135,17 +135,14 @@ $endif
 @once
 @cutscene
 {@guide} 	Well done! Seems we've found out how many fishers still keep the Grouper population safe. 
-{@guide}	Let's report this back to Professor Cempaka.
+{@guide}	Let's report this back to {nameof @profCoral}.
 
 :: helpReportBack
 @trigger    RequestPartnerHelp
 @when 		HasFact(Urchin.Eats.Sargassum)
 @cutscene
 {@player} 	What should we be doing now?
-{@guide}	We know now how many Fishers Site V can safely sustain, so let's report back to Professor Cempaka.
-$if global:nav.shipRoom == "office"
-	{@guide}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
-$endif
+{@guide}	We know now how many Fishers Site V can safely sustain, so let's report back to {nameof @profCoral}.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -175,7 +172,7 @@ $endif
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Take your prediction to Professor Cempaka in the Office.
+{@guide}    Take your prediction to {nameof @profCoral} in the research station.
 
 //ARGUMENT
 
@@ -188,25 +185,25 @@ $branch .argue.chooseEvidence
 
 :: argue.chooseEvidence
 $if HasFact(ReefEdge.Model.GrouperFishingRate)
-	{@profCempaka} So, how can we make the Grouper population sustainable for fishing?
+	{@profCoral} So, how can we make the Grouper population sustainable for fishing?
 		$choice .argue.claimSome; We must reducing fishing significanly.
 		$choice .argue.claimTooMany; We must reduce fishing only by a small mount.
 		$choice .argue.claimNone; We can't fish here at all.
 	$choose branch	
 $else
-	{@profCempaka}	Back so soon? I don't think you've had enough time to look into this thoroughly.
+	{@profCoral}	Back so soon? I don't think you've had enough time to look into this thoroughly.
 					Come back when you've made a model.
 $endif
 
 
 :: argue.claimNone
-{@profCempaka} Hold on, we've been fishing here for centuries! Please check your data.
+{@profCoral} Hold on, we've been fishing here for centuries! Please check your data.
 
 :: argue.claimTooMany
-{@profCempaka} That doesn't seem like it'd have an impact... Go check your evidence again and come back to me.
+{@profCoral} That doesn't seem like it'd have an impact... Go check your evidence again and come back to me.
 
 :: argue.claimSome
-{@profCempaka} Not too many... seems reasonable. What evidence do you have to show to support that?
+{@profCoral} Not too many... seems reasonable. What evidence do you have to show to support that?
 $goto .argue.defendClaim
 
 :: argue.defendClaim
@@ -222,20 +219,20 @@ $choice .argue.giveUp; Let me get back to you
 
 :: argue.correctFacts
 $call ArgueComplete()
-{@profCempaka} Excellent! This is exactly what they need to see!
+{@profCoral} Excellent! This is exactly what they need to see!
 $call CompleteJob()
 
 :: argue.incorrectFacts
 $if ArgueIsFactSubmitted(Model.TurtleVisual)
-	{@profCempaka} I see how that might be related, but I need a model to show how many fishers we can support.
+	{@profCoral} I see how that might be related, but I need a model to show how many fishers we can support.
 $else
-	{@profCempaka} Hmmm... Got anything else?
+	{@profCoral} Hmmm... Got anything else?
 $endif
 
 $call ArgueRejectIncorrect()
 $goto .argue.defendClaim
 
 :: argue.giveUp
-{@profCempaka} OK. Get back to me when you're ready.
+{@profCoral} OK. Get back to me when you're ready.
 
 :: end

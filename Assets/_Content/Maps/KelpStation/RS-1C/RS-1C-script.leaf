@@ -1,1 +1,18 @@
 # basePath RS-1C
+
+:: CheckNightMode
+@function SceneStart
+$if !JobStartedOrComplete(kelp-welcome)
+    $call ScenePostProcess->SetPostProcessProfile(BullKelpPostProcessing_Night00)
+$elseif !world:Act1.Sunrise
+    $call ScenePostProcess->SetPostProcessProfile(BullKelpPostProcessing_Night00)
+    $call ScenePostProcess->SetPostProcessProfile(BullKelpPostProcessing, 45)
+    $set world:Act1.Sunrise = true
+$else
+    $call ScenePostProcess->SetPostProcessProfile(BullKelpPostProcessing)
+$endif
+
+:: CheckSurface
+@function   SceneStart
+@when   !jobs:kelp-welcome.got.scans
+$call   Surface->Deactivate()

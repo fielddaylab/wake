@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace EasyAssetStreaming {
     public interface IStreamingTextureComponent : IStreamingComponent {
-        Texture2D Texture { get; }
+        Texture Texture { get; }
         Rect UVRect { get; set; }
         
         Color Color { get; set; }

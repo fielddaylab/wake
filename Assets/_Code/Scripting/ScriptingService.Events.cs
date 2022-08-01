@@ -70,10 +70,11 @@ namespace Aqua
             m_TagEventParser.AddEvent("bgm-stop", ScriptEvents.Global.StopBGM).WithFloatData(0.5f);
             m_TagEventParser.AddEvent("bgm", ScriptEvents.Global.PlayBGM).WithStringData();
             m_TagEventParser.AddEvent("hide-dialog", ScriptEvents.Global.HideDialog);
+            m_TagEventParser.AddEvent("release-dialog", ScriptEvents.Global.ReleaseDialog);
             m_TagEventParser.AddEvent("sfx", ScriptEvents.Global.PlaySound).WithStringData();
             m_TagEventParser.AddEvent("show-dialog", ScriptEvents.Global.ShowDialog);
             m_TagEventParser.AddEvent("wait-abs", ScriptEvents.Global.WaitAbsolute).WithFloatData(0.25f);
-            m_TagEventParser.AddEvent("letterbox", ScriptEvents.Global.LetterboxOn).CloseWith(ScriptEvents.Global.LetterboxOff);
+            m_TagEventParser.AddEvent("cutscene", ScriptEvents.Global.CutsceneOn).CloseWith(ScriptEvents.Global.CutsceneOff);
             m_TagEventParser.AddEvent("enable-object", ScriptEvents.Global.EnableObject).WithStringData();
             m_TagEventParser.AddEvent("disable-object", ScriptEvents.Global.DisableObject).WithStringData();
             m_TagEventParser.AddEvent("broadcast-event", ScriptEvents.Global.BroadcastEvent).WithStringData();
@@ -87,11 +88,11 @@ namespace Aqua
 
             // Dialog-Specific Events
             m_TagEventParser.AddEvent("auto", ScriptEvents.Dialog.Auto);
-            m_TagEventParser.AddEvent("hang", ScriptEvents.Dialog.DoNotClose);
             m_TagEventParser.AddEvent("clear", ScriptEvents.Dialog.Clear);
             m_TagEventParser.AddEvent("continue", ScriptEvents.Dialog.InputContinue);
             m_TagEventParser.AddEvent("speaker", ScriptEvents.Dialog.Speaker).WithStringData();
             m_TagEventParser.AddEvent("speed", ScriptEvents.Dialog.Speed).WithFloatData(1);
+            m_TagEventParser.AddEvent("sticky", ScriptEvents.Dialog.DoNotClose);
             m_TagEventParser.AddEvent("type", ScriptEvents.Dialog.SetTypeSFX).WithStringHashData();
             m_TagEventParser.AddEvent("voice", ScriptEvents.Dialog.SetVoiceType).WithStringHashData("default");
         }
@@ -294,9 +295,10 @@ namespace Aqua
 
             m_TagEventHandler
                 .Register(ScriptEvents.Global.HideDialog, EventHideDialog)
+                .Register(ScriptEvents.Global.ReleaseDialog, EventReleaseDialog)
                 .Register(ScriptEvents.Global.ShowDialog, EventShowDialog)
-                .Register(ScriptEvents.Global.LetterboxOff, () => Services.UI.HideLetterbox() )
-                .Register(ScriptEvents.Global.LetterboxOn, () => Services.UI.ShowLetterbox() )
+                .Register(ScriptEvents.Global.CutsceneOff, (e, o) => Thread(o).PopCutscene() )
+                .Register(ScriptEvents.Global.CutsceneOn, (e, o) => Thread(o).PushCutscene() )
                 .Register(ScriptEvents.Global.PitchBGM, EventPitchBGM)
                 .Register(ScriptEvents.Global.VolumeBGM, EventVolumeBGM)
                 .Register(ScriptEvents.Global.PlayBGM, EventPlayBGM)
@@ -315,8 +317,8 @@ namespace Aqua
                 .Register(ScriptEvents.Global.DisableObject, EventDisableObject);
 
             m_SkippedEvents = new HashSet<StringHash32>();
-            m_SkippedEvents.Add(ScriptEvents.Global.LetterboxOn);
-            m_SkippedEvents.Add(ScriptEvents.Global.LetterboxOff);
+            m_SkippedEvents.Add(ScriptEvents.Global.CutsceneOn);
+            m_SkippedEvents.Add(ScriptEvents.Global.CutsceneOff);
             m_SkippedEvents.Add(ScriptEvents.Global.PlaySound);
             m_SkippedEvents.Add(LeafUtils.Events.Wait);
             m_SkippedEvents.Add(ScriptEvents.Global.WaitAbsolute);
@@ -339,6 +341,7 @@ namespace Aqua
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Clear);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.InputContinue);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.SetTypeSFX);
+            m_DialogOnlyEvents.Add(ScriptEvents.Dialog.DoNotClose);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.SetVoiceType);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Speaker);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Speed);
@@ -365,6 +368,11 @@ namespace Aqua
         private void EventHideDialog(TagEventData inEvent, object inContext)
         {
             Thread(inContext).Dialog?.Hide();
+        }
+
+        private void EventReleaseDialog(TagEventData inEvent, object inContext)
+        {
+            Thread(inContext).Dialog = null;
         }
 
         private void EventShowDialog(TagEventData inEvent, object inContext)

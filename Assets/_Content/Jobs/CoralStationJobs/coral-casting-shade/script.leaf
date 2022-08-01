@@ -6,9 +6,9 @@
 
 $branch common.ringPhone
 
-{@profCempaka}	Welcome back {player-name}! It's time for us to figure out if we should remove that pesky Sargassum.
+{@profCoral}	Welcome back {player-name}! It's time for us to figure out if we should remove that pesky Sargassum.
 {@player} 		So, what do you need me to do?
-{@profCempaka}	I need you find out if sargassum is really what's causing the coral to be stressed. Can it block light?
+{@profCoral}	I need you find out if sargassum is really what's causing the coral to be stressed. Can it block light?
 {@player} 		Got it, I'll get started on it now.
 $if HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
 	{@guide}		{player-name}, let's start by heading to the {nameof Experimentation}!
@@ -34,7 +34,7 @@ $endif
 @cutscene
 @once
 {@player} OK, I've already got the Sargassum, but how do we get the population history?
-{@profCempaka} 	Look around for a Population Probe.  You'll need this to download the data.
+{@profCoral} 	Look around for a Population Probe.  You'll need this to download the data.
 $call GiveUpgrade(ProbeHacker)
 {@player} 		Thanks!
 
@@ -44,7 +44,7 @@ $call GiveUpgrade(ProbeHacker)
 @once
 @cutscene
 {@player} OK, I can see the Sargassum, but how do we get the population history?
-{@profCempaka} 	Look around for a Population Probe.  You'll need this to download the data.
+{@profCoral} 	Look around for a Population Probe.  You'll need this to download the data.
 $call GiveUpgrade(ProbeHacker)
 {@player} 		Thanks!
 
@@ -103,13 +103,13 @@ $if HasUpgrade(MeasurementTank)
 	{@player}   Any tips of what we should to this time?
 	{@guide}  	We want to know if Sargassum really does lower light, so I think a measurement tank is our best bet!
 $else
-	{@profCempaka} Hmmmm... You need to measure effects of Sargassum. Your tanks can't do that. 
-	//{@profCempaka} I don't have any spares. Maybe check with my colleagues at other stations.
+	{@profCoral} Hmmmm... You need to measure effects of Sargassum. Your tanks can't do that. 
+	//{@profCoral} I don't have any spares. Maybe check with my colleagues at other stations.
 	// TODO: When the bayou is ready, restore to the above ^^
-	{@profCempaka} I happen to have a spare measurement tank.  Here you go!
+	{@profCoral} I happen to have a spare measurement tank.  Here you go!
 	$call GiveUpgrade(MeasurementTank)
 	$call GiveUpgrade(WaterStabilizer)
-	{@profCempaka} Why don't you focus on the Measurement Tank and I'll show you how it works.
+	{@profCoral} Why don't you focus on the Measurement Tank and I'll show you how it works.
 $endif
 
 ::measurementTankSelectWater
@@ -117,23 +117,23 @@ $endif
 @when		tankType == "Measurement", JobTaskCompleted(popProbe), JobTaskCompleted(chemHistory)
 @once 
 @cutscene
-{@profCempaka} Let's start by figuring out the Sargassum reproduction rate.
-{@profCempaka} We need to match the conditions of the site we're interested in.
-{@profCempaka} Let's select the water of the Sargassum Covered Reef.
+{@profCoral} Let's start by figuring out the Sargassum reproduction rate.
+{@profCoral} We need to match the conditions of the site we're interested in.
+{@profCoral} Let's select the water of the Sargassum Covered Reef.
 
 ::measurementTankSelectSpecies
 @trigger	ExperimentScreenViewed
 @when		screenId == "measurement.organisms", JobTaskCompleted(popProbe), JobTaskCompleted(chemHistory)
 @once 
 @cutscene
-{@profCempaka} Now add only the Sargassum. We don't want the species interacting with each other.
+{@profCoral} Now add only the Sargassum. We don't want the species interacting with each other.
 
 ::measurementTankSelectFeatures
 @trigger	ExperimentScreenViewed
 @when		screenId == "measurement.features", JobTaskCompleted(popProbe), JobTaskCompleted(chemHistory)
 @once 
 @cutscene
-{@profCempaka} Since we want to measure the reproduction rate, turn on the tank stabilizer and auto feeder.
+{@profCoral} Since we want to measure the reproduction rate, turn on the tank stabilizer and auto feeder.
 
 :: experimentEnd
 @trigger    JobTasksUpdated
@@ -275,14 +275,14 @@ $endif
 @trigger	SimulationPredictSuccess
 @once
 @cutscene
-{@guide} 	Nicely done! Looks like Sargassum is to blame for the low light at Site R. Let's report this back to Professor Cempaka.
+{@guide} 	Nicely done! Looks like Sargassum is to blame for the low light at Site R. Let's report this back to {nameof @profCoral}.
 
 :: helpAfterModel
 @trigger    RequestPartnerHelp
 @when 		HasFact(SargassumCoveredReef.Model.LightPrediction)
 @cutscene
 {@player} 	What should we be doing next?
-{@guide}	Let's report back to the {map-name}Office{/map-name} with our findings!
+{@guide}	Let's report back to the {m}research station{/m} with our findings!
 
 // CATCH-ALL GUIDE TEXT
 
@@ -349,7 +349,7 @@ $endif
 @when 		JobTaskActive(sargArgue)
 @boostScore -5
 @cutscene
-{@guide}    Talk to Professor Cempaka in the Office.
+{@guide}    Return to the station to talk to {nameof @profCoral}.
 
 // ARGUMENTATION
 
@@ -358,25 +358,25 @@ $endif
 @when   !ArgueIsComplete(castingShadeArgue)
 @cutscene
 $call ArgueLoad(castingShadeArgue)
-{@profCempaka} Have you got evidence that Sargassum is hurting the Staghorn Coral?
+{@profCoral} Have you got evidence that Sargassum is hurting the Staghorn Coral?
 	$choice .argue.yesEvidence; Yes, I've got the evidence.
 	$choice .argue.noEvidence; No, I don't have it, yet.
 	$choice .argue.disagree; I disagree that Sargassum is the problem.
 $choose branch
 
 :: argue.introRevisit
-{@profCempaka} So, do you have the model showing Sargassum is hurting the Staghorn Coral?
+{@profCoral} So, do you have the model showing Sargassum is hurting the Staghorn Coral?
 	$choice .argue.yesEvidence; Yes, I've got the evidence.
 	$choice .argue.noEvidence; No, I don't have it, yet.
 	$choice .argue.disagree; I disagree that Sargassum is the problem.
 $choose branch
 
 :: argue.noEvidence
-{@profCempaka} Let me know when you have something for me to review.
+{@profCoral} Let me know when you have something for me to review.
 
 :: argue.disagree
-{@profCempaka} Have you been down to Site R?  It's pretty obvious.
-{@profCempaka} I just need you to confirm it numerically.
+{@profCoral} Have you been down to Site R?  It's pretty obvious.
+{@profCoral} I just need you to confirm it numerically.
 $goto .argue.introRevisit
 
 :: argue.yesEvidence
@@ -391,18 +391,18 @@ $choice .argue.giveUp; Let me get back to you
 
 :: argue.correctModelSupplied
 $call ArgueComplete()
-{@profCempaka} Thank you! 
-{@profCempaka} We need to reduce the Sargassum population, but yanking it out would be STINKY.
-{@profCempaka} Maybe there's another solution...
+{@profCoral} Thank you! 
+{@profCoral} We need to reduce the Sargassum population, but yanking it out would be STINKY.
+{@profCoral} Maybe there's another solution...
 $call CompleteJob()
 
 :: argue.wrongModelSupplied
-{@profCempaka} If I'm going to convince people to pull the Sargassum, I need a model.
-{@profCempaka} It should show that Sargassum is hurting the Staghorn Coral.
+{@profCoral} If I'm going to convince people to pull the Sargassum, I need a model.
+{@profCoral} It should show that Sargassum is hurting the Staghorn Coral.
 $call ArgueRejectIncorrect()
 $goto .argue.yesEvidence
 
 :: argue.giveUp
-{@profCempaka} OK. Get back to me when you're ready.
+{@profCoral} OK. Get back to me when you're ready.
 
 :: end

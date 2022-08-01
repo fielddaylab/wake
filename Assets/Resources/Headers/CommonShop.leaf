@@ -1,0 +1,191 @@
+// requirements
+// $const MerchantId
+// #const UnlockHintNodeId
+// #const UnlockHintHereNodeId
+// #const LowExpNodeId
+// #const FreeItemPromptId
+// #const CostItemPromptId
+// #const CancelNodeId
+// #const NotEnoughCashNodeId
+// #const PurchaseNodeId
+
+// MACROS
+
+// Defines a default item handler header
+#macro ItemHandler(itemId, ...conditions) \
+:: item.$itemId \
+@trigger    ShopAttemptBuy \
+@when       itemId == "$itemId", $conditions \
+@who        $MerchantId \
+@cutscene
+
+// Defines an item handler header
+#macro OverrideItemHandler(itemId, nodeId, ...conditions) \
+:: item.$nodeId \
+@trigger    ShopAttemptBuy \
+@when       itemId == "$itemId", $conditions \
+@who        $MerchantId \
+@cutscene
+
+// Executes default item purchase logic
+#macro EvaluateItemPurchase() \
+    $branch .eval.checkUnlocks \
+    $branch .eval.checkLevel \
+    $branch .eval.purchasePrompt
+
+// Defines a "shop opened" response
+#macro OpenHandler(nodeId, ...conditions) \
+:: open.$nodeId \
+@trigger    ShopOpenMenu \
+@who        $MerchantId \
+@when       $conditions \
+@interrupt \
+@triggerPriority    Medium \
+{sticky}
+
+// Defines a "shop closed" response
+#macro CloseHandler(nodeId, ...conditions) \
+:: close.$nodeId \
+@trigger    ShopClose \
+@who        $MerchantId \
+@when       $conditions \
+@cutscene
+
+// Defines an "exploration opened" response
+#macro OpenExplorationHandler(nodeId, ...conditions) \
+:: openExplore.$nodeId \
+@trigger    ShopOpenExploration \
+@who        $MerchantId \
+@when       $conditions \
+@interrupt \
+@triggerPriority    Medium \
+{sticky}
+
+// Defines a "science opened" response
+#macro OpenScienceHandler(nodeId, ...conditions) \
+:: openScience.$nodeId \
+@trigger    ShopOpenScience \
+@who        $MerchantId \
+@when       $conditions \
+@interrupt \
+@triggerPriority    Medium \
+{sticky}
+
+// Defines a "the shop is locked" response
+#macro ShopLockedHandler(nodeId, ...conditions) \
+:: shopLocked.$nodeId \
+@trigger    Talk \
+@who        $MerchantId \
+@when       !world:shop.unlocked, $conditions \
+@cutscene
+
+// Defines a "the shop is open" response
+#macro ShopHandler(nodeId, ...conditions) \
+:: shopOpen.$nodeId \
+@trigger    Talk \
+@who        $MerchantId \
+@when       world:shop.unlocked, $conditions \
+@cutscene
+
+// ACTIONS
+
+// Opens the shop
+:: action.openShop
+$call InteriorOpenShopBoard()
+
+// INTERNALS
+
+// Checks if the upgrade set with local:itemId
+// will potentially unlock another job
+:: eval.checkUnlocks
+$set local:currentStation = player:currentStation
+
+$if UpgradeUnlocksJobAtStation($local:itemId, $local:currentStation)
+    $set local:hintStation = local:currentStation
+    $goto $UnlockHintHereNodeId
+$elseif local:currentStation != "KelpStation", UpgradeUnlocksJobAtStation($local:itemId, "KelpStation")
+    $set local:hintStation = "KelpStation"
+    $goto $UnlockHintNodeId
+$elseif local:currentStation != "CoralStation", UpgradeUnlocksJobAtStation($local:itemId, "CoralStation")
+    $set local:hintStation = "CoralStation"
+    $goto $UnlockHintNodeId
+$elseif local:currentStation != "BayouStation", UpgradeUnlocksJobAtStation($local:itemId, "BayouStation")
+    $set local:hintStation = "BayouStation"
+    $goto $UnlockHintNodeId
+$elseif local:currentStation != "ArcticStation", UpgradeUnlocksJobAtStation($local:itemId, "ArcticStation")
+    $set local:hintStation = "ArcticStation"
+    $goto $UnlockHintNodeId
+$endif
+
+// Checks if the player has enough experience points
+// to afford this the current local:itemId item
+:: eval.checkLevel
+$if player:exp >= local:expCost
+    $return
+$endif
+
+$set    local:needExp = local:expCost
+$set    local:needExp - player:exp
+
+$set    shop:lastFailure = local:itemId
+$set    shop:lastFailureReason = "exp"
+$set    player:hasAttemptedPurchaseUnderleveled = local:itemId
+
+$set    shop:needsExpCount + 1
+
+$branch $LowExpNodeId
+$stop
+
+:: eval.purchasePrompt
+$if local:cashCost > 0
+    $branch $CostItemPromptId
+
+    $choice .eval.purchase.confirm, CanAffordItem($local:itemId); {h}Yes! (Purchase){/h}
+    $choice .eval.purchase.cantAfford, !CanAffordItem($local:itemId); {random ...Yes?|Uh...}
+$else
+    $branch $FreeItemPromptId
+
+    $choice .eval.purchase.confirm; {h}Yes! (Install){/h}
+$endif
+
+$choice .eval.purchase.cancel; {random Just looking!|No.}
+
+:: eval.purchase.confirm
+
+$set    shop:lastFailure = null
+$set    shop:lastFailureReason = null
+
+$if player:hasAttemptedPurchaseNoCash == local:itemId
+    $set player:hasAttemptedPurchaseNoCash = null
+$endif
+
+$if player:hasAttemptedPurchaseUnderleveled == local:itemId
+    $set player:hasAttemptedPurchaseUnderleveled = null
+$endif
+
+$set    shop:purchaseCount + 1
+
+$branch $PurchaseNodeId
+
+$call ShopPlayPurchaseAnimation()
+
+$call AudioOneShot(ShopPurchase)
+$call PurchaseItem($local:itemId)
+
+:: eval.purchase.cantAfford
+$set    shop:lastFailure = local:itemId
+$set    shop:lastFailureReason = "cash"
+$set    player:hasAttemptedPurchaseNoCash = local:itemId
+
+$set    shop:notEnoughCount + 1
+
+$branch $NotEnoughCashNodeId
+
+:: eval.purchase.cancel
+$branch $CancelNodeId
+
+:: handler.shopOpen
+@function   ShopOpenMenu
+$set    shop:notEnoughCount = 0
+$set    shop:purchaseCount = 0
+$set    shop:needsExpCount = 0

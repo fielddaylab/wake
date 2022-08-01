@@ -31,6 +31,9 @@ MonoBehaviour:
     m_HashValue: 0
   m_Facts:
   - {fileID: 11400000, guid: 0c34b5f5141c4be459facc0c31abcf41, type: 2}
+  - {fileID: 11400000, guid: 2c6ddffa70632a7428db4a5fdc488347, type: 2}
+  - {fileID: 11400000, guid: 2202494e9a1a28144b7609453e6b8836, type: 2}
+  - {fileID: 11400000, guid: 13dbaa3982d8021479ea8cce2702187c, type: 2}
   - {fileID: 11400000, guid: cbf0afe6eefca4e408235f434826d229, type: 2}
   - {fileID: 11400000, guid: 411aca3f4ae4e3243b8acff927dad275, type: 2}
   - {fileID: 11400000, guid: 9cdab00083314684e92c3359500a2cdc, type: 2}
@@ -52,14 +55,17 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 411aca3f4ae4e3243b8acff927dad275, type: 2}
   - {fileID: 11400000, guid: 1d3f07ea67d203b49813032c5c20775c, type: 2}
   - {fileID: 11400000, guid: 125caae32b572794b95419c4628113e9, type: 2}
+  - {fileID: 11400000, guid: 13dbaa3982d8021479ea8cce2702187c, type: 2}
   - {fileID: 11400000, guid: d1abeae387d6f2647bb977340321265c, type: 2}
+  - {fileID: 11400000, guid: 2202494e9a1a28144b7609453e6b8836, type: 2}
   - {fileID: 11400000, guid: bc5a52240b5ce08498f1bb97892137bb, type: 2}
   - {fileID: 11400000, guid: 9cdab00083314684e92c3359500a2cdc, type: 2}
+  - {fileID: 11400000, guid: 2c6ddffa70632a7428db4a5fdc488347, type: 2}
   - {fileID: 11400000, guid: a3ef5ce9f9ace2547a07213d76e6cdbc, type: 2}
   - {fileID: 11400000, guid: 0c34b5f5141c4be459facc0c31abcf41, type: 2}
-  m_PlayerFactCount: 8
+  m_PlayerFactCount: 11
   m_AlwaysFactCount: 0
-  m_InternalFactOffset: 8
+  m_InternalFactOffset: 11
   m_InternalFactCount: 1
   m_StationSortingOrder: 2
   m_EnvState:
@@ -72,17 +78,17 @@ MonoBehaviour:
   m_HistoricalRecordDuration: 2
   m_StateTransitions:
     Temperature:
-      AliveMin: -Infinity
-      AliveMax: Infinity
-      StressedMin: -Infinity
-      StressedMax: Infinity
+      AliveMin: 10
+      AliveMax: 40
+      StressedMin: 0
+      StressedMax: 80
     Light:
-      AliveMin: -Infinity
-      AliveMax: Infinity
+      AliveMin: 0
+      AliveMax: 15
       StressedMin: -Infinity
       StressedMax: Infinity
     PH:
-      AliveMin: -Infinity
-      AliveMax: Infinity
-      StressedMin: -Infinity
-      StressedMax: Infinity
+      AliveMin: 3.5
+      AliveMax: 8.3
+      StressedMin: 2
+      StressedMax: 8.5

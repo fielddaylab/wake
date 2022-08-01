@@ -114,7 +114,7 @@ namespace Aqua {
             }
             Services.Input.PauseAll();
             Services.Audio.FadeOut(FadeDuration);
-            Services.Script.KillLowPriorityThreads();
+            Services.Script.KillLowPriorityThreads(TriggerPriority.Cutscene, true);
             Services.Events.Dispatch(GameEvents.SceneWillUnload);
             s_IsLoading = true;
             return true;
