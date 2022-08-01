@@ -45,6 +45,7 @@ $call UnlockSite(RS-1A)
 @trigger    RequestPartnerHelp
 @when 		scene:name == "RS-1A", JobTaskTop(siteA)
 @cutscene
+@once
 
 {@guide}    Welcome to the Bull Kelp Forest, O!
 {@player} 	Thanks, {nameof @guide}. But I've been here before. Mostly with my sister. 
