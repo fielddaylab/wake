@@ -93,6 +93,7 @@ GameObject:
   - component: {fileID: 1258626636756427444}
   - component: {fileID: 8306550521872375302}
   - component: {fileID: 2306239266753568082}
+  - component: {fileID: 9157440759234834695}
   m_Layer: 0
   m_Name: V1C_interact
   m_TagString: Untagged
@@ -143,6 +144,7 @@ MonoBehaviour:
     m_Source: hotbar.guide
     m_HashValue: 3102914138
   m_IsPersistent: 0
+  m_StartDisabled: 0
 --- !u!114 &1258626636756427444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157,6 +159,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Proxy: {fileID: 0}
   m_Selectable: {fileID: 0}
+  m_GroupId:
+    m_Source: 
+    m_HashValue: 0
   Config:
     Action: 0
     TargetId:
@@ -195,6 +200,20 @@ MonoBehaviour:
     m_HashValue: 2749820570
   TooltipOverride: 
   Cursor: 1
+--- !u!114 &9157440759234834695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 769409824137156203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b90681fec0a58143a69f4a18219ef82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_KeyCode: 113
+  m_ButtonDisplay: {fileID: 0}
 --- !u!1 &1872643035457608417
 GameObject:
   m_ObjectHideFlags: 0

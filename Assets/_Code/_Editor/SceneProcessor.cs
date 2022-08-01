@@ -28,15 +28,12 @@ namespace Aqua.Editor
             RemoveBootstrap(scene);
             RemoveDebug(scene);
             BakeScene(scene);
-            if (UnityEditorInternal.InternalEditorUtility.inBatchMode)
-            {
-                StripEditorInfo(scene);
-            }
+            StripEditorInfo(scene);
         }
 
         static private void RemoveBootstrap(Scene scene)
         {
-            if (scene.buildIndex > 0)
+            if (scene.buildIndex != 0)
             {
                 BootParams[] bootstraps = GameObject.FindObjectsOfType<BootParams>();
                 if (bootstraps.Length > 0)

@@ -104,6 +104,12 @@ namespace Aqua.Scripting
             m_Flags |= ScriptNodeFlags.Interrupt;
         }
 
+        [BlockMeta("noDelay"), Preserve]
+        private void SetNoDelay()
+        {
+            m_Flags |= ScriptNodeFlags.NoDelay;
+        }
+
         [BlockMeta("ignoreDuringCutscene"), Preserve]
         private void IgnoreDuringCutscene()
         {
@@ -234,6 +240,7 @@ namespace Aqua.Scripting
         SuppressDuringCutscene = 0x20,
         Function = 0x40,
         Autosave = 0x80,
-        Interrupt = 0x100
+        Interrupt = 0x100,
+        NoDelay = 0x200
     }
 }

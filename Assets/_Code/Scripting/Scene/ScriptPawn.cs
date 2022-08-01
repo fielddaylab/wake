@@ -46,5 +46,12 @@ namespace Aqua.Scripting
         }
 
         #endregion // IScriptComponent
+
+        [LeafMember("TeleportTo"), Preserve]
+        private void LeafTeleportTo(StringHash32 inObjectId)
+        {
+            Services.Script.TryGetScriptObjectById(inObjectId, out ScriptObject obj);
+            transform.position = obj.transform.position;
+        }
     }
 }

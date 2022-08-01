@@ -222,7 +222,7 @@ namespace Aqua
             m_SceneHistory.PushBack(active);
 
             // if we started from another scene than the boot or title scene
-            if (active.BuildIndex >= GameConsts.GameSceneIndexStart)
+            if (active.BuildIndex < 0 || active.BuildIndex >= GameConsts.GameSceneIndexStart)
             {
                 #if DEVELOPMENT
                 Services.Data.UseDebugProfile();
@@ -288,7 +288,7 @@ namespace Aqua
                 Services.Events.Dispatch(GameEvents.SceneWillUnload);
 
             // if we started from another scene than the boot or title scene
-            if (inNextScene.BuildIndex >= GameConsts.GameSceneIndexStart)
+            if (inNextScene.BuildIndex < 0 || inNextScene.BuildIndex >= GameConsts.GameSceneIndexStart)
             {
                 #if DEVELOPMENT
                 if (!Services.Data.IsProfileLoaded())
@@ -556,7 +556,7 @@ namespace Aqua
 
         private void RecordCurrentMapAsSeen(SceneBinding inBinding)
         {
-            if (inBinding.BuildIndex < GameConsts.GameSceneIndexStart)
+            if (inBinding.BuildIndex >= 0 && inBinding.BuildIndex < GameConsts.GameSceneIndexStart)
                 return;
 
             StringHash32 map = MapDB.LookupMap(inBinding);

@@ -4,6 +4,7 @@ using BeauUtil;
 using BeauUtil.Debugger;
 using Leaf.Runtime;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Aqua.Character
 {
@@ -41,7 +42,7 @@ namespace Aqua.Character
             m_Transform.position = inPosition;
         }
 
-        [LeafMember("TeleportTo")]
+        [LeafMember("TeleportTo"), Preserve]
         private void LeafTeleportTo(StringHash32 inObjectId)
         {
             Services.Script.TryGetScriptObjectById(inObjectId, out ScriptObject obj);
