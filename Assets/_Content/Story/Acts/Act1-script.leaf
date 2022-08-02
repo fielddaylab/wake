@@ -40,7 +40,7 @@ $start .tutorialMove
     Use the {h}Mouse{/h} or the {h}[W][A][S][D]{/h} keys to move your Sub
 {hide-dialog}{fade-in 0.5, wait}
 {/cutscene}
-$CutsceneDelayed(30, .intro-part2)
+$CutsceneDelayed(8, .intro-part2)
 
 :: intro-part2
 @cutscene
@@ -120,10 +120,12 @@ $call InteriorOpenJobBoard()
 
 :: EnterStation
 @trigger SceneStart
-@when   scene:name=="RS-Kelp" 
+@when   scene:name=="RS-1C-StationInterior" 
 @once
 @cutscene 
 @boostScore 100
+
+$call Uncle->TeleportTo(tio-intro-pos)
 {@player}Uh oh. Mom doesn't look too happy. 
 {@player}Better go talk to her. 
 
@@ -162,27 +164,25 @@ $set global:Act1.TalkedToMomMad = true
 {@drKelp}   You think you're ready to handle more responsibility? Complete this task for me and we'll see about giving you more to do around here. 
 $call InteriorOpenJobBoard()
 
-:: momMad
-@trigger    Talk
-@who        kelpMechanic
-@when       !JobStartedOrComplete(kelp-welcome)
-@cutscene
-@boostScore 100
-@once
-{@player}Tío's shop!
-{@player}I used to hang out here and do homework while he worked. 
-{@player}Can't wait til I have my own ship to upgrade!!
+// :: momMad
+// @trigger    Talk
+// @who        kelpMechanic
+// @when       !JobStartedOrComplete(kelp-welcome)
+// @cutscene
+// @boostScore 100
+// @once
+// {@player}Tío's shop!
+// {@player}I used to hang out here and do homework while he worked. 
+// {@player}Can't wait til I have my own ship to upgrade!!
 
 
-:: momMad2
-@trigger    Talk
-@who        kelpMechanic
-@when       !JobStartedOrComplete(kelp-welcome)
-@cutscene
-{@player}  Shop's closed for the night. 
-$if !global:Act1.TalkedToMomMad 
-{@player}  Tío's over there with Mom... I better go check in.  
-{@player}  Hopefully she's not TOO angry. 
-$endif
-
-
+// :: momMad2
+// @trigger    Talk
+// @who        kelpMechanic
+// @when       !JobStartedOrComplete(kelp-welcome)
+// @cutscene
+// {@player}  Shop's closed for the night. 
+// $if !global:Act1.TalkedToMomMad 
+// {@player}  Tío's over there with Mom... I better go check in.  
+// {@player}  Hopefully she's not TOO angry. 
+// $endif
