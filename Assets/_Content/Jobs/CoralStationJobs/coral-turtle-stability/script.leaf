@@ -163,11 +163,10 @@ $endif
 @cutscene
 {@guide}   Nice work! I think we know all the facts about what Turtles eat.
 {@profCoral}	Oh, are you ready to make the model?
-$if !RoomUnlocked("modelingRoom")
+$if !RoomUnlocked("ModelingFoyer")
     {@profCoral}	I've unlocked a new room on your Helm, {map-name}the Modeling Lab{/map-name}.
-    $call UnlockRoom("modelingRoom")
+    $call UnlockRoom("ModelingFoyer")
     $call UnlockRoom("Modeling")
-    $call GiveUpgrade(VisualModel)
 $endif
 {@profCoral}	Use the {map-name}Modeling Lab{/map-name} to visualize {h}site V{/h}'s food web.
 

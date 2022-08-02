@@ -9,10 +9,10 @@ $if HasEntity(ArcticCod), HasEntity(BristleWorm), HasEntity(ChinookSalmon), HasE
 $else
 {@guide}    If we're going to investigate properly, we'll need to know all the species at {h}site W{/h}.
 $endif
-$if !HasUpgrade(VisualModel)
+$if !IsRoomUnlocked("ModelingFoyer")
 	{@profArctic}	I've unlocked a new room on your Helm, {map-name}the Modeling Lab{/map-name}.
 	{@profArctic}	Head there when you are ready to make a Visual Model of how {h}site W{/h} species interact with each other.
-	$call UnlockRoom("modelingRoom")
+	$call UnlockRoom("ModelingFoyer")
 	$call UnlockRoom("Modeling")
 	$call GiveUpgrade(VisualModel)
 $endif
