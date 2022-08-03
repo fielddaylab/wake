@@ -4,8 +4,6 @@
 @trigger    JobStarted
 @cutscene
 
-$branch common.ringPhone
-
 {@profBayou}   Have you explored the {h}Bayou Station{/h} yet? There appears to be a new reef growing in the middle of {h}Site O{/h}. 
                 Would you be able to go pop over and help us report back on what exactly is growing over there?
 {@player}   You can count on me!
@@ -32,7 +30,7 @@ $endif
 @once
 @cutscene
 {@guide}    Let's head to our ship's modeling room to compile our data into a report for {nameof @profBayou}.
-$call UnlockRoom("modelingRoom")
+$call UnlockRoom("ModelingFoyer")
 $call UnlockRoom("Modeling")
 
 // CATCH-ALL GUIDE TEXT

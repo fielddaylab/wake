@@ -52,6 +52,7 @@ namespace Aqua.Scripting
         {
             Services.Script.TryGetScriptObjectById(inObjectId, out ScriptObject obj);
             transform.position = obj.transform.position;
+            transform.rotation = obj.transform.rotation;
         }
     }
 }
