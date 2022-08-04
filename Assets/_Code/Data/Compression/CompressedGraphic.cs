@@ -158,7 +158,7 @@ namespace Aqua.Compression {
 
         static private readonly CompressionRange FontSizeRange = new CompressionRange(0, 512);
         static private readonly CompressionRange SpacingRange = new CompressionRange(0, 100);
-        static private readonly CompressionRange MarginRange = new CompressionRange(0, 200);
+        static private readonly CompressionRange MarginRange = new CompressionRange(0, 100);
     }
 
     public struct CompressedLocText {

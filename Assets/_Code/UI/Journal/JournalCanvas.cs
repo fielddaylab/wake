@@ -1,8 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Aqua.Compression;
 using Aqua.Journal;
 using BeauPools;
+using BeauRoutine;
 using BeauUtil;
 using EasyAssetStreaming;
 using TMPro;
@@ -45,7 +47,9 @@ namespace Aqua {
         [Header("Pages")]
 
         [SerializeField] private GameObject m_LeftPagePrefab = null;
+        [SerializeField] private CanvasGroup m_LeftPageGroup = null;
         [SerializeField] private GameObject m_RightPagePrefab = null;
+        [SerializeField] private CanvasGroup m_RightPageGroup = null;
 
         [Header("Nav")]
 
@@ -71,6 +75,10 @@ namespace Aqua {
         [NonSerialized] private readonly List<JournalDesc> m_CurrentList = new List<JournalDesc>(32);
         [NonSerialized] private JournalCategoryMask m_CurrentTab = 0;
         [NonSerialized] private bool m_TabsOpen = false;
+        [NonSerialized] private int m_TotalSections = 0;
+        [NonSerialized] private int m_CurrentSection = -1;
+        [NonSerialized] private JournalCategoryMask m_AvailableTabs = 0;
+        private Routine m_LoadRoutine;
 
         private JournalCanvas() {
             m_Decompressor.NewRoot = (string name, CompressedPrefabFlags flags, CompressedComponentTypes componentTypes, GameObject parent) => {
@@ -100,26 +108,34 @@ namespace Aqua {
             base.Awake();
 
             m_CurrentLayouts = m_EnglishLayouts;
-
-            Script.OnSceneLoad(() => {
-                LoadPages("TestPage00", "TestPage01");
-            });
         }
 
         #region Loading
 
         private void LoadList() {
             m_AllList.Clear();
+            m_AvailableTabs = 0;
             foreach(var entryId in Save.Inventory.AllJournalEntryIds()) {
-                m_AllList.Add(Assets.Journal(entryId));
+                var asset = Assets.Journal(entryId);
+                m_AllList.Add(asset);
+                m_AvailableTabs |= asset.Category();
             }
         }
 
         private void FilterList(JournalCategoryMask mask) {
+            m_CurrentList.Clear();
             if (mask == 0) {
-                m_CurrentList.Clear();
                 m_CurrentList.AddRange(m_AllList);
+            } else {
+                foreach(var item in m_AllList) {
+                    if ((item.Category() & mask) != 0) {
+                        m_CurrentList.Add(item);
+                    }
+                }
             }
+
+            m_TotalSections = (int) Math.Ceiling(m_CurrentList.Count / 2f);
+            LoadSection(0, true);
         }
 
         private void ResetPools() {
@@ -130,26 +146,52 @@ namespace Aqua {
             m_StreamingUGUIPool.Reset();
         }
 
-        private void LoadPages(StringHash32 left, StringHash32 right) {
-            ResetPools();
-            LoadPage(left, m_LeftPagePrefab);
-            LoadPage(right, m_RightPagePrefab);
-        }
-
-        private void LoadPage(StringHash32 entryId, GameObject page) {
-            if (entryId.IsEmpty) {
-                page.SetActive(false);
+        private void LoadSection(int sectionIdx, bool force) {
+            if (!force && sectionIdx == m_CurrentSection) {
                 return;
             }
 
-            StringHash32 prefab = Assets.Journal(entryId).PrefabId();
+            m_CurrentSection = sectionIdx;
+            int leftIdx = m_CurrentSection * 2;
+            int rightIdx = leftIdx + 1;
+            JournalDesc left = leftIdx < m_CurrentList.Count ? m_CurrentList[leftIdx] : null;
+            JournalDesc right = rightIdx < m_CurrentList.Count ? m_CurrentList[rightIdx] : null;
+            LoadPages(left, right);
+        }
+
+        private void LoadPages(JournalDesc left, JournalDesc right) {
+            ResetPools();
+            LoadPage(left, m_LeftPagePrefab, m_LeftPageGroup);
+            LoadPage(right, m_RightPagePrefab, m_RightPageGroup);
+            m_LoadRoutine.Replace(this, LoadShowRoutine());
+        }
+
+        private void LoadPage(JournalDesc entry, GameObject page, CanvasGroup group) {
+            if (entry == null) {
+                page.SetActive(false);
+                group.alpha = 0;
+                return;
+            }
+
+            StringHash32 prefab = entry.PrefabId();
 
             page.SetActive(false);
             m_CurrentDecompressionTarget = page;
             m_CurrentLayouts.Decompress(prefab, m_Decompressor);
             m_CurrentDecompressionTarget = null;
-
+            group.alpha = 0;
             page.SetActive(true);
+        }
+
+        private IEnumerator LoadShowRoutine() {
+            while(IsTransitioning() || Streaming.IsLoading()) {
+                yield return null;
+            }
+
+            yield return Routine.Combine(
+                m_LeftPageGroup.FadeTo(1, 0.4f),
+                m_RightPageGroup.FadeTo(1, 0.4f).DelayBy(0.15f)
+            );
         }
 
         #endregion // Loading
@@ -167,6 +209,12 @@ namespace Aqua {
             FilterList(0);
         }
 
+        protected override void OnHide(bool inbInstant) {
+            base.OnHide(inbInstant);
+
+            m_LoadRoutine.Stop();
+        }
+
         protected override void OnHideComplete(bool inbInstant) {
             base.OnHideComplete(inbInstant);
 
@@ -174,6 +222,7 @@ namespace Aqua {
             m_InputLayer.Override = false;
             m_Canvas.enabled = false;
             ResetPools();
+            m_CurrentSection = -1;
         }
 
         #endregion // Events
