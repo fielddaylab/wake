@@ -119,9 +119,16 @@ namespace Aqua.View {
                 ViewNode old = m_Current;
                 m_Current = node;
 
+                if (old.AudioLayers) {
+                    old.AudioLayers.SetLayerActive(old.AudioLayerId, false);
+                }
                 old.OnExit?.Invoke();
                 m_Current = node;
                 node.OnLoad?.Invoke();
+
+                if (node.AudioLayers) {
+                    node.AudioLayers.SetLayerActive(node.AudioLayerId, true);
+                }
 
                 yield return cameraTransition;
 
@@ -153,6 +160,9 @@ namespace Aqua.View {
             if (invoke) {
                 node.OnExit?.Invoke();
             }
+            if (node.AudioLayers) {
+                node.AudioLayers.SetLayerActive(node.AudioLayerId, false);
+            }
             if (node.UI) {
                 node.UI.enabled = false;
             }
@@ -165,6 +175,9 @@ namespace Aqua.View {
         static private void ActivateNode(ViewNode node, bool force, bool invoke) {
             if (node.UI) {
                 node.UI.enabled = true;
+            }
+            if (node.AudioLayers) {
+                node.AudioLayers.SetLayerActive(node.AudioLayerId, true);
             }
             node.Group.SetActive(true, force);
             if (node.InteractionGroup) {
