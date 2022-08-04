@@ -157,5 +157,25 @@ namespace Aqua.Scripting {
             layer.Enabled = false;
             UpdatePlayingTrack();
         }
+
+        private Layer GetLayer(StringHash32 id) {
+            foreach(var layer in m_Layers) {
+                if (layer.Id == id) {
+                    return layer;
+                }
+            }
+            return null;
+        }
+
+        [LeafMember("SetAudioLayer")]
+        public void SetLayerActive(StringHash32 id, bool active) {
+            Layer layer = GetLayer(id);
+            if (layer != null) {
+                if (layer.Enabled != active) {
+                    layer.Enabled = active;
+                    UpdatePlayingTrack();
+                }
+            }
+        }
     }
 }

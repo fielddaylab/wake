@@ -13,10 +13,10 @@ $if !HasEntity(Cyanobacteria)
 	{@profBayou}	There is a new organism at the Oil Rig Reef you can research now that you have the {h}Microscope{/h}.
                     Be sure to scan it and count the population like you did for the other species.
 $endif
-$if !RoomUnlocked("modelingRoom")
+$if !RoomUnlocked("ModelingFoyer")
     {@profBayou}	I've unlocked a new room on your Helm, {map-name}the Modeling Lab{/map-name}.
     {@profBayou}	Head there when you need to model the food web.
-    $call UnlockRoom("modelingRoom")
+    $call UnlockRoom("ModelingFoyer")
     $call UnlockRoom("Modeling")
     $call GiveUpgrade(VisualModel)
 $endif
