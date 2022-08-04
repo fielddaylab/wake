@@ -48,13 +48,6 @@ namespace Aqua {
         }
 
         /// <summary>
-        /// Converts an unmanaged buffer to a unity NativeArray.
-        /// </summary>
-        static public NativeArray<T> ToNativeArray<T>(T* ptr, int length, Unity.Collections.Allocator allocator) where T : unmanaged {
-            return NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<T>(ptr, sizeof(T) * length, Allocator.None);
-        }
-
-        /// <summary>
         /// Hashes the given unmanaged struct.
         /// </summary>
         static public ulong Hash<T>(T value) where T : unmanaged {
@@ -67,5 +60,32 @@ namespace Aqua {
             }
             return hash;
         }
+
+        #region Read/Write
+
+        static public T Read<T>(byte** mem, int* size) where T : unmanaged {
+            if (*size < sizeof(T)) {
+                throw new IndexOutOfRangeException();
+            }
+
+            T val = default(T);
+            if (((ulong)(*mem) % Unsafe.AlignOf<T>()) == 0) {
+                val = Unsafe.Reinterpret<byte, T>(*mem);
+            } else {
+                Unsafe.Copy(*mem, sizeof(T), &val, sizeof(T));
+            }
+
+            *size -= sizeof(T);
+            *mem += sizeof(T);
+            return val;
+        }
+
+        static public void Write<T>(byte** mem, int* size, T val) where T : unmanaged {
+            Unsafe.Copy(&val, sizeof(T), *mem, sizeof(T));
+            *mem += sizeof(T);
+            *size += sizeof(T);
+        }
+
+        #endregion // Read/Write
     }
-}
+} 

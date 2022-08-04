@@ -19,6 +19,7 @@ using BeauUtil.Debugger;
 using BeauData;
 using Aqua.Profile;
 using ScriptableBake;
+using Aqua.Journal;
 
 namespace Aqua.Editor
 {
@@ -122,6 +123,7 @@ namespace Aqua.Editor
         [MenuItem("Optimize/Rebuild Databases", false, 50)]
         static public void RefreshAllDBs()
         {
+            DBObject.RefreshCollection<JournalDesc, JournalDB>();
             DBObject.RefreshCollection<MapDesc, MapDB>();
             DBObject.RefreshCollection<BestiaryDesc, BestiaryDB>();
             DBObject.RefreshCollection<JobDesc, JobDB>();

@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Aqua.Journal;
 using BeauUtil;
 using BeauUtil.Debugger;
 using TMPro;
@@ -18,6 +19,7 @@ namespace Aqua {
         static private ActDB ActDB;
         static private MapDB MapDB;
         static private WaterPropertyDB WaterPropertyDB;
+        static private JournalDB JournalDB;
 
         static private Dictionary<StringHash32, ScriptableObject> s_GlobalLookup;
         static private TMP_FontAsset s_RegularFont;
@@ -35,6 +37,7 @@ namespace Aqua {
             ActDB = inService.Acts;
             MapDB = inService.Map;
             WaterPropertyDB = inService.WaterProp;
+            JournalDB = inService.Journal;
 
             s_GlobalLookup = new Dictionary<StringHash32, ScriptableObject>(512);
 
@@ -45,6 +48,7 @@ namespace Aqua {
             Import(ActDB);
             Import(MapDB);
             Import(WaterPropertyDB);
+            Import(JournalDB);
 
             foreach (var fact in BestiaryDB.AllFacts())
                 s_GlobalLookup.Add(fact.Id, fact);
@@ -110,6 +114,11 @@ namespace Aqua {
         [MethodImpl(256)]
         static public InvItem Item(StringHash32 inId) {
             return InventoryDB.Get(inId);
+        }
+
+        [MethodImpl(256)]
+        static public JournalDesc Journal(StringHash32 inId) {
+            return JournalDB.Get(inId);
         }
 
         [MethodImpl(256)]

@@ -36,8 +36,12 @@ namespace Aqua
 
         #region Inspector
 
-        [SerializeField] private string m_ServerAddress = null;
         [SerializeField, Required] private TextAsset m_IdRenames = null;
+
+        [Header("Server")]
+        [SerializeField] private string m_ServerAddress = null;
+        [SerializeField] private uint m_SaveRetryCount = 8;
+        [SerializeField] private float m_SaveRetryDelay = 5;
 
         // [Header("Conversation History")]
         // [SerializeField, Range(32, 256)] private int m_DialogHistorySize = 128;
@@ -541,18 +545,33 @@ namespace Aqua
 
             if (!IsDebugProfile())
             {
-                using(var future = Future.Create())
-                using(var saveRequest = OGD.GameState.PushState(m_ProfileName, saveData, future.Complete, (r) => future.Fail(r)))
+                int attempts = (int) (m_SaveRetryCount + 1);
+                while(attempts > 0)
                 {
-                    yield return future;
+                    using(var future = Future.Create())
+                    using(var saveRequest = OGD.GameState.PushState(m_ProfileName, saveData, future.Complete, (r) => future.Fail(r)))
+                    {
+                        yield return future;
 
-                    if (future.IsComplete())
-                    {
-                        DebugService.Log(LogMask.DataService, "[DataService] Saved to server!");
-                    }
-                    else
-                    {
-                        Log.Warn("[DataService] Failed to save to server: {0}", future.GetFailure().Object);
+                        if (future.IsComplete())
+                        {
+                            DebugService.Log(LogMask.DataService, "[DataService] Saved to server!");
+                            break;
+                        }
+                        else
+                        {
+                            attempts--;
+                            Log.Warn("[DataService] Failed to save to server: {0}", future.GetFailure().Object);
+                            if (attempts > 0)
+                            {
+                                Log.Warn("[DataService] Retrying server save...", attempts);
+                                yield return m_SaveRetryDelay;
+                            }
+                            else
+                            {
+                                Log.Error("[DataService] Server save failed after {0} attempts", m_SaveRetryCount + 1);
+                            }
+                        }
                     }
                 }
             }
