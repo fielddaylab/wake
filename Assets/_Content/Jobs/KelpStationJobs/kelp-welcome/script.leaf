@@ -28,11 +28,12 @@ $call FocusHighlight->Clear()
 $branch common.ringPhone
 
 {@guide}Greetings, Olivia Ramirez! 
-{@guide}   I am {nameof @guide}, your onboard A.I.!
+{@player}Yikes! Who's there?
+{@guide}   I am {nameof @guide}, your onboard A.I.
 {@guide}   Did your job-giver not inform you that I would be uploaded to your sub?
 {@player}  Nah. Mom's been pretty distracted lately.  
-{@player}  Okay then, {nameof @guide}. What do we do first? 
-{@guide}  Use your {item-name}Scanner{/item-name} to ID all the species at Site C. 
+{@player}  Okay, {nameof @guide}. What do we do first? 
+{@guide}  Use your {item-name}Scanner{/item-name} to ID all the species here at the Warm Kelp Forest. 
 $call GiveUpgrade(ROVScanner, Silent)
 $call Player->SetTool(Scanner)
 {@guide}  The {item-name}Scanner{/item-name} searches for life forms automatically. 
@@ -100,11 +101,13 @@ $endif
 $set    jobs:kelp-welcome.got.scans = true
 $branch common.ringPhone
 
-{@guide}   You've scanned all of the species at site C! Excellent work, Olivia!
+{@guide}   You have scanned all of the local species. Your work is acceptable!
+{@player} Thanks, {nameof @guide}. 
+{@guide} You are most welcome, Olivia!
 {@player}  Hey {nameof @guide}... would you mind calling me O?
 {@guide}   Updating database...
-{@guide}   Excellent work, O!
-{@guide}   Time to head to the surface and board your new research vessel.
+{@guide}   You are most welcome, O!
+{@guide}   Now head to the surface and board your new research vessel!
 $call Surface->Activate()
 
 :: helpAtSiteCCompleted
@@ -124,7 +127,10 @@ $call Surface->Activate()
 @once
 
 $branch common.ringPhone
-{@drKelp}  Head into the ship for your next task!
+{@player}My own ship!! I can't believe Mom trusted me with this.
+{@guide}Yes. And it includes several built-in safety features!
+{@player}Oh. Yeah, that tracks. 
+{@guide}Board your ship for your next task!
 {fade-out black.60, 0.5, wait}
 {@}
 {hide-dialog}
@@ -132,14 +138,14 @@ $branch common.ringPhone
 $call ship.map->ForceOnTop()
 $call schematic.button->ForceOnTop()
 $call FocusHighlight->Focus(schematic.button, 250, 250)
-    This is your ship's {h}schematic{/h}. It can be used to navigate inside your ship.
+    This is your ship's {h}schematic{/h}. 
 $call FocusHighlight->Clear()
 
 $call schematic.button->ForceClick()
 {hide-dialog}{wait 1}{style default}
 // $call HelmButton->ForceOnTop()
 $call FocusHighlight->Focus(HelmButton, 200, 200)
-    Click here to enter your ship's {h}helm{/h}
+    Click here to enter your {h}helm{/h}
 $call FocusHighlight->Clear()
 {hide-dialog}{fade-in 0.5, wait}
 $call schematic.button->ResetSorting()
@@ -183,10 +189,12 @@ $call ship.map->ResetSorting()
 @once
 $branch common.ringPhone
 
-{@player} Wow. This ship... it's beautiful.  
-{@guide}  Yes! The mainframe is positively buzzing with data!
-{@drKelp} You have scanned the life forms at Site C. Now you must find out how they interact. 
-{@drKelp}  Head to your ship's built-in {nameof Experimentation}!
+{@player} Wow. This ship... it's beautiful.
+{@player} I can't wait to tell Sam. 
+{@guide} "Sam" does not compute. 
+{@player} Oh, Sam is my best friend. They're out on a mission right now. 
+{@player}  Anyway... what now, {nameof @guide}?
+{@guide} Updating schametic... 
 {hide-dialog}
 
 $call UnlockRoom("Experimentation")
@@ -197,12 +205,12 @@ $call schematic.button->ForceClick()
 {hide-dialog}{wait 1}{style default}
 // $call HelmButton->ForceOnTop()
 $call FocusHighlight->Focus(ExperimentationButton, 200, 200)
-    Click here to enter your ship's {h}Experimentation Lab{/h}.
+    Click here to enter your {h}Experimentation Lab{/h}.
 $call FocusHighlight->Clear()
 {hide-dialog}{fade-in 0.5, wait}
 $call ship.map->ResetSorting()
 
-{@drKelp}  Head over there to start your next task! 
+{@guide} Head to your {nameof Experimentation} to start your next task!
 $call FocusHighlight->Clear()
 $call AutoSaveNow()
 
@@ -267,9 +275,7 @@ $endif
 @once
 
 $branch common.ringPhone
-{@player}  Okay, we've got our behaviors! 
-{@guide}   Excellent work, O!
-{@guide}   Now you must return to the {m}research station{/m} and report your findings.
+{@guide}   Now head up to the helm and navigate your sub back to the {m}Research Station{/m}.
 
 // $call   UnlockRoom("office")
 
@@ -280,9 +286,10 @@ $branch common.ringPhone
 @when 		JobTaskActive(reportBack)
 @cutscene
 {@player} 	What now, {nameof @guide}?
-{@guide}	Let's report back to your mother at the {m}research station{/m}.
+{@guide}	You need to report back to {nameof @drKelp}.
 $if !IsPlayerOnStation()
-	{@guide}	Head back to your sub and return to the {m}place where we got this job{/m}.
+	{@guide}	Use your sub to navigate to the Site C Research Station. 
+                Your mother will be waiting for you there!
 $endif
 
 :: helpReportBackInArgumentation
@@ -355,20 +362,20 @@ $call ArgueLoad(welcomeArgue)
 
 
 ::argue.later
-{@drKelp}  Wow, that was quick! You must be even better at this than I thought!
-{@player}  Actually, I've still got a few things I've got to do.
+{@drKelp}  Wow, that was quick! Are you sure you're ready?
+{@player}  Actually, I've still got a few things to do.
 // TODO: add a branch if player has not received V1ct0r help button yet
-{@drKelp}  Oh. Well, don't be afraid to ask {nameof @guide} if you run into trouble. You've got this!
+{@drKelp}  Well, don't be afraid to ask {nameof @guide} if you need some help.
+{drKelp}  I'll be here when you're ready. 
 	
 	
 ::argue.hello
-{@drKelp}  This is so exciting, Olivia! Your first job! 
+{@drKelp}  This is so exciting! Your first job! 
            How are you feeling? Tired? Hungry?
            I've got a recipe for cinnamon kelp rolls that I've been dying to try...
 {@player}  Maybe later, Mom.
-{@drKelp}  Ok. If you're sure. 
-           This job will form the foundation of all the work you do here at the Kelp Forest. 
-           Let's see what you discovered. 
+{@drKelp}  Ok, Mija. If you're sure. 
+           Let's see what behaviors you discovered about the species at Site C! 
          
 $goto .argue.chooseFacts
 
@@ -389,7 +396,7 @@ $endif
 $if ArgueIsFactSubmitted(Urchin.Eats.GiantKelp)
 	$goto .argue.done
 $else
-	{@drKelp}    Excellent. The {pluralnameof SeaOtter} eat {pluralnameof Urchin}. Did you learn anything about what the {pluralnameof Urchin} eat?
+	{@drKelp}    Looks good! The {pluralnameof SeaOtter} eat {pluralnameof Urchin}. Did you learn anything about what the {pluralnameof Urchin} eat?
 	$goto .argue.chooseFacts
 $endif
 
@@ -397,7 +404,7 @@ $endif
 $if ArgueIsFactSubmitted(SeaOtter.Eats.Urchin)
 	$goto .argue.done
 $else
-	{@drKelp}    Perfect! The {pluralnameof Urchin} live on {pluralnameof GiantKelp}. Did you learn anything about the {pluralnameof SeaOtter}?
+	{@drKelp}    Perfect! The {pluralnameof Urchin} eat {pluralnameof GiantKelp}. Did you learn anything about the {pluralnameof SeaOtter}?
 	$goto .argue.chooseFacts
 $endif
 
@@ -411,7 +418,7 @@ $goto .argue.chooseFacts
 
 ::argue.done
 $call ArgueComplete()
-{@drKelp}    Nice work, Olivia! You just explained the basis of the kelp forest food web.
+{@drKelp}    Excellent work, Olivia. You just explained the basis of the Kelp Forest Food Web!
 $call CompleteJob()
 
 // DONE
@@ -419,15 +426,17 @@ $call CompleteJob()
 :: end
 @trigger    JobCompleted
 @cutscene
-{@drKelp}	I'm so thrilled, Olivia. 
-{@drKelp}   With your help, we'll have that Kelp Refuge up and running before you know it. 
-{@drKelp}   I can't think of a better way to honor your sister. 
-{@player}   Hey Mom, I was wondering... are there any jobs available at, I don't know.
-{@player}   Other ecosystems? 
-{@drKelp}   Oh... you mean outide the Kelp Forest? Of course.
-            The other stations are all stretched nearly as thin as we are |.|.|. 
-{@drKelp}   But never mind about them. Let's get you set up with your next job. 
-            Go ahead and check your {map-name}Job Board{/map-name}!
+
+{@drKelp}	I'm so thrilled, Mija. 
+{@drKelp}   With your help, we might actually be able to get the Kelp Refuge up and running!
+{@player}   Thanks, Mom.
+{@player}   What about the other science stations? Do they need help, too?
+{@drKelp}   Hmm. You mean in other ecosystems?
+{@drKelp}    I'm sure they would love your help, Mija.
+{@drKelp}    But for now, I want you closer to home. Just in case. 
+{@player}    In case of what? 
+{@drKelp}    Never mind, Sweetie. Let's get you set up with your next job! 
+            Go ahead and check your {map-name}Job Board{/map-name}.
 
 $call hotbar.guide->Show()
 $call hotbar.portable->Show()

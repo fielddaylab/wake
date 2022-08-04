@@ -23,7 +23,7 @@ $set world:intro.completed = false
 {@player} Tío, you still there? 
 {fade-in 3}
 {@kelpMechanic} Sí, mijita. I can hear you on the comms.
-{@kelpMechanic} Keep exploring. A few more minutes, and the computer should be able to calculate your score! 
+{@kelpMechanic} Keep exploring. The computer will calculate your score. 
 {@player} Thanks, Tío. 
 {@player} Just... don't let Mom find out.
 {@kelpMechanic} No promises, Ollie. 
@@ -44,10 +44,10 @@ $CutsceneDelayed(30, .intro-part2)
 
 :: intro-part2
 @cutscene
-{@drKelp}Olivia?? Is that you out there?!
+{@drKelp}Olivia?? Is that you out there?
 {@player}Uh oh.
 {@player}Mom, I can explain--
-{@drKelp}Sweetie, what were you thinking?! Taking the sub out at night, after what happened last time?
+{@drKelp}Sweetie, what were you thinking?! Taking the sub out at night, after last time?
 {@drKelp}Come back to the {m}Kelp Station{/m} immediately.
 {@drKelp}And be careful!
 {@player}Copy that, Mom. On my way.
@@ -135,13 +135,14 @@ $call InteriorOpenJobBoard()
 @once
 @cutscene
 {@drKelp}Olivia! Honey, thank goodness you're okay!
-{@drKelp}Enrique, I can't believe you let her go out there alone. 
-{@drKelp}She's still on probation! She could've crashed, she could've gotten lost--
+{@player}I'm fine, Mom. It was no big deal. 
+{@drKelp}Enrique, I can't believe you let her go out there. 
+{@drKelp}She's on probation! She could've crashed, she could've gotten lost--
 {@kelpMechanic}Actually, she's not on probation anymore. 
 {@kelpMechanic}Good news, mijita. You passed.  
 {@player}YES!!!
 {@drKelp}Wow. Olivia.... this is fantastic! You're a junior scientist now!
-{@drKelp}And just in time. I could really use your help around here. 
+{@drKelp}And just in time. I could really use your help. 
 {@player}You mean... you want me to work here? At the Kelp Forest? 
 {@drKelp}Of course! You know this place better than anyone. 
 {@drKelp}Sun's almost up. Let's get you started with your first job!
@@ -171,7 +172,7 @@ $call InteriorOpenJobBoard()
 @once
 {@player}Tío's shop!
 {@player}I used to hang out here and do homework while he worked. 
-{@player}Can't wait til I have my own ship to upgrade!!
+{@player}Can't wait til I have my own ship to upgrade!
 
 
 :: momMad2
