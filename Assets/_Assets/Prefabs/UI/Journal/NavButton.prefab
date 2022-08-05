@@ -231,6 +231,8 @@ GameObject:
   - component: {fileID: 495361135769761112}
   - component: {fileID: 3037731363327097538}
   - component: {fileID: 6563035509144593554}
+  - component: {fileID: 5533137951820692138}
+  - component: {fileID: 1480783341237340441}
   m_Layer: 5
   m_Name: NavButton
   m_TagString: Untagged
@@ -390,8 +392,40 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Rect: {fileID: 4413080259008622491}
+  Group: {fileID: 1480783341237340441}
   Button: {fileID: 495361135769761112}
+  Icon: {fileID: 5577151577787739227}
   Direction: 1
+--- !u!114 &5533137951820692138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8133405141564790290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbc67c900561e7045ac48ef02da1b6cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Selectable: {fileID: 495361135769761112}
+  m_EnterEvent: ui_hover
+  m_ExitEvent: 
+  m_DownEvent: 
+  m_UpEvent: 
+  m_ClickEvent: Journal.PageTurn
+--- !u!225 &1480783341237340441
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8133405141564790290}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &8314382641965960727
 GameObject:
   m_ObjectHideFlags: 0

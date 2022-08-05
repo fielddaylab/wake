@@ -132,7 +132,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8183856, b: 1, a: 1}
   m_RaycastTarget: 0
-  m_Maskable: 1
+  m_Maskable: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -194,6 +194,7 @@ GameObject:
   - component: {fileID: 5132481867097557934}
   - component: {fileID: 5607408473333554327}
   - component: {fileID: 7116916896273068164}
+  - component: {fileID: 9154823323022860336}
   m_Layer: 0
   m_Name: Tab
   m_TagString: Untagged
@@ -357,6 +358,26 @@ MonoBehaviour:
   Rect: {fileID: 1377411882425962961}
   Toggle: {fileID: 5777072655114645044}
   Category: 0
+  SelectedOffset: 8
+  AllowAnimation: 0
+--- !u!114 &9154823323022860336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2648091159410735138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbc67c900561e7045ac48ef02da1b6cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Selectable: {fileID: 5777072655114645044}
+  m_EnterEvent: ui_hover
+  m_ExitEvent: 
+  m_DownEvent: 
+  m_UpEvent: 
+  m_ClickEvent: 
 --- !u!1 &3988657472201228981
 GameObject:
   m_ObjectHideFlags: 0
@@ -419,7 +440,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
-  m_Maskable: 1
+  m_Maskable: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []

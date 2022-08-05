@@ -54,12 +54,11 @@ namespace Aqua {
         [Header("Nav")]
 
         [SerializeField] private RectTransform m_PageNavRect = null;
-        [SerializeField] private Button m_BackButton = null;
-        [SerializeField] private Button m_NextButton = null;
+        [SerializeField] private JournalPageButton m_BackButton = null;
+        [SerializeField] private JournalPageButton m_NextButton = null;
 
         [Header("Tabs")]
 
-        [SerializeField] private JournalTab m_SortingTab = null;
         [SerializeField] private JournalTab[] m_Tabs = null;
 
         [Header("Data")]
@@ -74,11 +73,11 @@ namespace Aqua {
         [NonSerialized] private readonly List<JournalDesc> m_AllList = new List<JournalDesc>(32);
         [NonSerialized] private readonly List<JournalDesc> m_CurrentList = new List<JournalDesc>(32);
         [NonSerialized] private JournalCategoryMask m_CurrentTab = 0;
-        [NonSerialized] private bool m_TabsOpen = false;
         [NonSerialized] private int m_TotalSections = 0;
         [NonSerialized] private int m_CurrentSection = -1;
         [NonSerialized] private JournalCategoryMask m_AvailableTabs = 0;
         private Routine m_LoadRoutine;
+        [NonSerialized] private float m_OriginalNavWidth;
 
         private JournalCanvas() {
             m_Decompressor.NewRoot = (string name, CompressedPrefabFlags flags, CompressedComponentTypes componentTypes, GameObject parent) => {
@@ -108,6 +107,15 @@ namespace Aqua {
             base.Awake();
 
             m_CurrentLayouts = m_EnglishLayouts;
+            m_OriginalNavWidth = m_PageNavRect.sizeDelta.x;
+
+            m_BackButton.Button.onClick.AddListener(OnBackClicked);
+            m_NextButton.Button.onClick.AddListener(OnNextClicked);
+
+            foreach(var tab in m_Tabs) {
+                JournalTab cachedTab = tab;
+                tab.Toggle.onValueChanged.AddListener((b) => OnTabToggle(cachedTab, b));
+            }
         }
 
         #region Loading
@@ -119,6 +127,10 @@ namespace Aqua {
                 var asset = Assets.Journal(entryId);
                 m_AllList.Add(asset);
                 m_AvailableTabs |= asset.Category();
+            }
+
+            foreach(var tab in m_Tabs) {
+                tab.gameObject.SetActive((tab.Category & m_AvailableTabs) == tab.Category);
             }
         }
 
@@ -134,6 +146,7 @@ namespace Aqua {
                 }
             }
 
+            m_CurrentTab = mask;
             m_TotalSections = (int) Math.Ceiling(m_CurrentList.Count / 2f);
             LoadSection(0, true);
         }
@@ -157,6 +170,9 @@ namespace Aqua {
             JournalDesc left = leftIdx < m_CurrentList.Count ? m_CurrentList[leftIdx] : null;
             JournalDesc right = rightIdx < m_CurrentList.Count ? m_CurrentList[rightIdx] : null;
             LoadPages(left, right);
+
+            m_BackButton.SetVisible(sectionIdx > 0, IsTransitioning());
+            m_NextButton.SetVisible(sectionIdx < m_TotalSections - 1, IsTransitioning());
         }
 
         private void LoadPages(JournalDesc left, JournalDesc right) {
@@ -205,8 +221,23 @@ namespace Aqua {
             m_InputLayer.PushPriority();
             m_InputLayer.Override = null;
 
+            m_CurrentTab = 0;
+            m_Tabs[0].Toggle.SetIsOnWithoutNotify(true);
+            
+            foreach(var tab in m_Tabs) {
+                tab.AllowAnimation = false;
+            }
+
             LoadList();
             FilterList(0);
+        }
+
+        protected override void OnShowComplete(bool inbInstant) {
+            base.OnShowComplete(inbInstant);
+
+            foreach(var tab in m_Tabs) {
+                tab.AllowAnimation = true;
+            }
         }
 
         protected override void OnHide(bool inbInstant) {
@@ -230,12 +261,75 @@ namespace Aqua {
         #region Animations
 
         protected override void InstantTransitionToHide() {
-            base.InstantTransitionToHide();
+            CloseNavInstant();
+            m_BGFader.alpha = 0;
+            m_JournalTransform.SetAnchorPos(m_JournalOffscreenY, Axis.Y);
+        }
+
+        protected override void InstantTransitionToShow() {
+            ShowNavInstant();
+            m_BGFader.alpha = 1;
+            m_JournalTransform.SetAnchorPos(0, Axis.Y);
+        }
+
+        protected override IEnumerator TransitionToHide() {
+            Services.Audio.PostEvent("Journal.Close");
+            yield return Routine.Combine(
+                CloseNav(),
+                m_JournalTransform.AnchorPosTo(m_JournalOffscreenY, 0.3f, Axis.Y).Ease(Curve.CubeIn).DelayBy(0.1f),
+                m_BGFader.FadeTo(0, 0.3f).DelayBy(0.3f)
+            );
+            Root.gameObject.SetActive(false);
+        }
+
+        protected override IEnumerator TransitionToShow() {
+            Services.Audio.PostEvent("Journal.Open");
+            Root.gameObject.SetActive(true);
+            yield return Routine.Combine(
+                m_BGFader.FadeTo(1, 0.3f).DelayBy(0.1f),
+                m_JournalTransform.AnchorPosTo(0, 0.3f, Axis.Y).Ease(Curve.BackOut),
+                OpenNav(0.2f)
+            );
+        }
+
+        private IEnumerator OpenNav(float delay) {
+            yield return delay;
+            m_PageNavRect.gameObject.SetActive(true);
+            yield return m_PageNavRect.SizeDeltaTo(m_OriginalNavWidth, 0.3f, Axis.X).Ease(Curve.Smooth);
+        }
+
+        private IEnumerator CloseNav() {
+            yield return m_PageNavRect.SizeDeltaTo(m_OriginalNavWidth - 200, 0.3f, Axis.X).Ease(Curve.Smooth);
+            m_PageNavRect.gameObject.SetActive(false);
+        }
+
+        private void CloseNavInstant() {
+            m_PageNavRect.gameObject.SetActive(false);
+            m_PageNavRect.SetSizeDelta(m_OriginalNavWidth - 200, Axis.X);
+        }
+
+        private void ShowNavInstant() {
+            m_PageNavRect.SetSizeDelta(m_OriginalNavWidth, Axis.X);
+            m_PageNavRect.gameObject.SetActive(true);
         }
 
         #endregion // Animations
 
         #region Handlers
+
+        private void OnNextClicked() {
+            LoadSection(m_CurrentSection + 1, false);
+        }
+
+        private void OnBackClicked() {
+            LoadSection(m_CurrentSection - 1, false);
+        }
+
+        private void OnTabToggle(JournalTab tab, bool state) {
+            if (state && m_CurrentTab != tab.Category) {
+                FilterList(tab.Category);
+            }
+        }
 
         #endregion // Handlers
     }
