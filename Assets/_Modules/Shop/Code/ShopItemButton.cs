@@ -17,6 +17,7 @@ namespace Aqua.Shop {
         public CursorInteractionHint Cursor;
 
         [Header("Cost")]
+        public GameObject LevelRequirementIcon;
         public LocText LevelRequirementObject;
         public LocText CashCost;
         public GameObject CashIcon;
