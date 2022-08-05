@@ -16,7 +16,11 @@
 
 // Intros
 
-#ShopLockedHandler(a)
+#ShopLockedHandler(intro, !JobStartedOrComplete(kelp-welcome))
+@boostScore 100
+$goto act1.momMadEnd
+
+#ShopLockedHandler(b, JobStartedOrComplete(kelp-welcome))
 @boostScore -100
 {@$MerchantId} Ollie! Welcome back.
                I'm still getting things set up for the day.
