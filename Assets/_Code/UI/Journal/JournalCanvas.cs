@@ -21,6 +21,12 @@ namespace Aqua {
         [Serializable] private class StreamingUGUIPool : SerializablePool<StreamingUGUITexture> { }
         [Serializable] private class LocTextPool : SerializablePool<LocText> { }
 
+        private enum RequestType {
+            None,
+            NewEntry,
+            NewEntryNewPage,
+        }
+
         #endregion // Type
 
         #region Inspector
@@ -46,10 +52,8 @@ namespace Aqua {
 
         [Header("Pages")]
 
-        [SerializeField] private GameObject m_LeftPagePrefab = null;
-        [SerializeField] private CanvasGroup m_LeftPageGroup = null;
-        [SerializeField] private GameObject m_RightPagePrefab = null;
-        [SerializeField] private CanvasGroup m_RightPageGroup = null;
+        [SerializeField] private JournalPageGroup m_LeftPage = null;
+        [SerializeField] private JournalPageGroup m_RightPage = null;
 
         [Header("Nav")]
 
@@ -78,6 +82,8 @@ namespace Aqua {
         [NonSerialized] private JournalCategoryMask m_AvailableTabs = 0;
         private Routine m_LoadRoutine;
         [NonSerialized] private float m_OriginalNavWidth;
+        [NonSerialized] private RequestType m_RequestType;
+        private Routine m_NewEntryRoutine;
 
         private JournalCanvas() {
             m_Decompressor.NewRoot = (string name, CompressedPrefabFlags flags, CompressedComponentTypes componentTypes, GameObject parent) => {
@@ -148,7 +154,17 @@ namespace Aqua {
 
             m_CurrentTab = mask;
             m_TotalSections = (int) Math.Ceiling(m_CurrentList.Count / 2f);
-            LoadSection(0, true);
+            if (m_RequestType == RequestType.NewEntry && m_TotalSections > 1 && (m_CurrentList.Count % 2) == 1) {
+                m_RequestType = RequestType.NewEntryNewPage;
+            }
+
+            if (m_TotalSections == 0) {
+                LoadSection(0, true);
+            } else if (m_RequestType == RequestType.NewEntryNewPage) {
+                LoadSection(m_TotalSections - 2, true);
+            } else {
+                LoadSection(m_TotalSections - 1, true);
+            }
         }
 
         private void ResetPools() {
@@ -169,45 +185,96 @@ namespace Aqua {
             int rightIdx = leftIdx + 1;
             JournalDesc left = leftIdx < m_CurrentList.Count ? m_CurrentList[leftIdx] : null;
             JournalDesc right = rightIdx < m_CurrentList.Count ? m_CurrentList[rightIdx] : null;
-            LoadPages(left, right);
+            int newIdx = -1;
+            if (m_RequestType != RequestType.None && sectionIdx == m_TotalSections - 1) {
+                newIdx = 1 - (m_CurrentList.Count % 2);
+            }
+            LoadPages(left, right, newIdx);
 
             m_BackButton.SetVisible(sectionIdx > 0, IsTransitioning());
-            m_NextButton.SetVisible(sectionIdx < m_TotalSections - 1, IsTransitioning());
+            m_NextButton.SetVisible(sectionIdx < m_TotalSections - 1 && m_RequestType != RequestType.NewEntryNewPage, IsTransitioning());
         }
 
-        private void LoadPages(JournalDesc left, JournalDesc right) {
+        private void LoadPages(JournalDesc left, JournalDesc right, int newIdx) {
             ResetPools();
-            LoadPage(left, m_LeftPagePrefab, m_LeftPageGroup);
-            LoadPage(right, m_RightPagePrefab, m_RightPageGroup);
-            m_LoadRoutine.Replace(this, LoadShowRoutine());
+            LoadPage(left, m_LeftPage);
+            LoadPage(right, m_RightPage);
+            m_LoadRoutine.Replace(this, LoadShowRoutine(newIdx));
         }
 
-        private void LoadPage(JournalDesc entry, GameObject page, CanvasGroup group) {
+        private void LoadPage(JournalDesc entry, JournalPageGroup page) {
+            page.DisableMasking();
+
             if (entry == null) {
-                page.SetActive(false);
-                group.alpha = 0;
+                page.Prefab.SetActive(false);
+                page.Group.alpha = 0;
                 return;
             }
 
             StringHash32 prefab = entry.PrefabId();
 
-            page.SetActive(false);
-            m_CurrentDecompressionTarget = page;
+            page.Prefab.SetActive(false);
+            m_CurrentDecompressionTarget = page.Prefab;
             m_CurrentLayouts.Decompress(prefab, m_Decompressor);
             m_CurrentDecompressionTarget = null;
-            group.alpha = 0;
-            page.SetActive(true);
+            page.Group.alpha = 0;
+            page.Prefab.SetActive(true);
         }
 
-        private IEnumerator LoadShowRoutine() {
+        private IEnumerator LoadShowRoutine(int newIdx) {
             while(IsTransitioning() || Streaming.IsLoading()) {
                 yield return null;
             }
 
-            yield return Routine.Combine(
-                m_LeftPageGroup.FadeTo(1, 0.4f),
-                m_RightPageGroup.FadeTo(1, 0.4f).DelayBy(0.15f)
-            );
+            if (newIdx == -1) {
+                yield return Routine.Combine(
+                    m_LeftPage.Group.FadeTo(1, 0.4f),
+                    m_RightPage.Group.FadeTo(1, 0.4f).DelayBy(0.15f)
+                );
+            } else if (newIdx == 0) {
+                yield return PageReveal(m_LeftPage);
+            } else if (newIdx == 1) {
+                yield return m_LeftPage.Group.FadeTo(1, 0.4f);
+                yield return PageReveal(m_RightPage);
+            }
+        }
+
+        private IEnumerator PageReveal(JournalPageGroup pageGroup) {
+            yield return 0.3f;
+            pageGroup.Group.alpha = 1;
+            pageGroup.Mask.enabled = true;
+            pageGroup.MaskImage.enabled = true;
+            pageGroup.MaskImage.fillAmount = 0;
+            Services.Audio.PostEvent("Journal.NewEntry");
+            yield return pageGroup.MaskImage.FillTo(1, 1f);
+            pageGroup.DisableMasking();
+        }
+
+        private IEnumerator NewEntryRoutine() {
+            // show
+            Services.Input.PauseAll();
+            m_RequestType = RequestType.NewEntry;
+            yield return Show();
+            CanvasGroup.interactable = false;
+
+            if (m_RequestType == RequestType.NewEntryNewPage) {
+                yield return m_LoadRoutine;
+                yield return 0.3f;
+                LoadSection(m_CurrentSection + 1, false);
+                Services.Audio.PostEvent("Journal.PageTurn");
+                yield return 0.5f;
+            }
+
+            yield return m_LoadRoutine;
+            yield return 0.5f;
+            m_RequestType = RequestType.None;
+            
+            // wait for player to close
+            Services.Input.ResumeAll();
+            CanvasGroup.interactable = true;
+            while(IsShowing() || IsTransitioning()) {
+                yield return null;
+            }
         }
 
         #endregion // Loading
@@ -244,6 +311,7 @@ namespace Aqua {
             base.OnHide(inbInstant);
 
             m_LoadRoutine.Stop();
+            m_RequestType = RequestType.None;
         }
 
         protected override void OnHideComplete(bool inbInstant) {
@@ -253,7 +321,10 @@ namespace Aqua {
             m_InputLayer.Override = false;
             m_Canvas.enabled = false;
             ResetPools();
+            m_LeftPage.DisableMasking();
+            m_RightPage.DisableMasking();
             m_CurrentSection = -1;
+            m_NewEntryRoutine.Stop();
         }
 
         #endregion // Events
@@ -332,5 +403,10 @@ namespace Aqua {
         }
 
         #endregion // Handlers
+
+        public IEnumerator ShowNewEntry() {
+            m_NewEntryRoutine.Replace(this, NewEntryRoutine()).Tick();
+            return m_NewEntryRoutine.Wait();
+        }
     }
 }

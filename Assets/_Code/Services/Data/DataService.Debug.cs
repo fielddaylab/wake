@@ -254,6 +254,20 @@ namespace Aqua
 
             yield return invMenu;
 
+            // journal menu
+
+            DMInfo journalMenu = new DMInfo("Journal");
+
+            journalMenu.AddButton("Unlock All Entries", () => UnlockAllJournals());
+            journalMenu.AddDivider();
+
+            foreach(var journal in Services.Assets.Journal.Objects)
+            {
+                RegisterJournalToggle(journalMenu, journal.Id());
+            }
+
+            yield return journalMenu;
+
             // save data menu
 
             DMInfo saveMenu = new DMInfo("Player Profile");
@@ -474,6 +488,27 @@ namespace Aqua
             foreach(var entry in Services.Assets.Inventory.Upgrades)
             {
                 Save.Inventory.AddUpgrade(entry.Id());
+            }
+        }
+
+        static private void RegisterJournalToggle(DMInfo inMenu, StringHash32 inEntry)
+        {
+            inMenu.AddToggle(inEntry.ToDebugString(),
+                () => { return Save.Inventory.HasJournalEntry(inEntry); },
+                (b) =>
+                {
+                    if (b)
+                        Save.Inventory.AddJournalEntry(inEntry);
+                    else
+                        Save.Inventory.AddJournalEntry(inEntry);
+                });
+        }
+
+        static private void UnlockAllJournals()
+        {
+            foreach(var entry in Services.Assets.Journal.Objects)
+            {
+                Save.Inventory.AddJournalEntry(entry.Id());
             }
         }
 
