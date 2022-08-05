@@ -221,6 +221,7 @@ namespace Aqua.Shop {
             button.CashIcon.SetActive(cashCost > 0);
             button.CashCost.gameObject.SetActive(cashCost > 0);
             button.CashCost.SetTextFromString(cashCost.ToStringLookup());
+            button.LevelRequirementIcon.SetActive(expCost > 0);
             button.LevelRequirementObject.gameObject.SetActive(expCost > 0);
             button.LevelRequirementObject.SetTextFromString(expCost.ToStringLookup());
 
