@@ -6,7 +6,7 @@
 @trigger    JobStarted
 @cutscene
  
-{@drKelp}   You already identified all the species at site C.    
+{@drKelp}   You already identified all the species here at site C.    
 {@drKelp}   Now you'll need to find {h}site A{/h} and do the same thing there. 
 {@drKelp}   Oh, and let me know if any bull kelp snags on your hull! 
 {@drKelp}   I was thinking we could whip up some bull kelp cookies between my next two meetings... 
@@ -102,8 +102,9 @@ $else
 $endif
 
 :: helpDoExperiment.TankView
-{@guide}    You've added some {pluralnameof BullKelp}. 
-            Now record how the other species interact with it! 
+$if ExperimentHasCritter(BullKelp)
+    {@guide}    You've added some {pluralnameof BullKelp}. 
+                Now record how the other species interact with it! 
 $else
     Start by adding some {pluralnameof BullKelp} to the tank. 
 $endif
@@ -192,7 +193,7 @@ $goto .argue.chooseFacts
 ::argue.done
 $call ArgueComplete()
 {@drKelp} Perfect, Olivia! This matches with our findings. 
-          Just like at Site C, {pluralnameof SeaOtter} eat the {pluralnameof Urchin}.
+          Just like here at Site C, {pluralnameof SeaOtter} eat the {pluralnameof Urchin}.
 And {pluralnameof Urchin} eat the {critter-name}Kelp{/critter-name}!
 $call CompleteJob()
 
