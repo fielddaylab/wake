@@ -137,6 +137,15 @@ namespace BeauUWT
         }
 
         /// <summary>
+        /// Playback position in samples.
+        /// </summary>
+        public int HighResTime
+        {
+            get { return GetHiResTime(); }
+            set { SetHiResTime(value); }
+        }
+
+        /// <summary>
         /// The volume of the audio source (0.0 to 1.0);
         /// </summary>
         public float Volume
