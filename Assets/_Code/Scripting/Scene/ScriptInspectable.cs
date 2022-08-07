@@ -141,7 +141,7 @@ namespace Aqua.Scripting {
                 } else {
                     var collider2d = GetComponent<Collider2D>();
                     if (collider2d) {
-                        m_Proxy = collider.EnsureComponent<PointerListener>();
+                        m_Proxy = collider2d.EnsureComponent<PointerListener>();
                     }
                 }
             }

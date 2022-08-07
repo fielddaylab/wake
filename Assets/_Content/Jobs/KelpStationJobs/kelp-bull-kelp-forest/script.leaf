@@ -5,15 +5,13 @@
 :: start
 @trigger    JobStarted
 @cutscene
-
-$branch common.ringPhone
  
-{@drKelp}   You already identified all the species at site C.    
-{@drKelp}   I need you to head over to {h}site A{/h} and see if anything is different there. 
+{@drKelp}   You already identified all the species here at site C.    
+{@drKelp}   Now you'll need to find {h}site A{/h} and do the same thing there. 
 {@drKelp}   Oh, and let me know if any bull kelp snags on your hull! 
 {@drKelp}   I was thinking we could whip up some bull kelp cookies between my next two meetings... 
 {@player}   Mom! Aren't you busy enough?
-{@drKelp}   Okay, okay. It was just a thought.    
+{@drKelp}   Okay, okay. It was just an idea.    
 
 $call UnlockSite(RS-1A)
 
@@ -28,18 +26,36 @@ $call UnlockSite(RS-1A)
 @trigger    RequestPartnerHelp
 @when       scene:name == "RS-1C", JobTaskTop(siteA)
 @cutscene
-{@player}   Is this right, {nameof @guide}?
-{@guide}    According to my readings, we've veered off course. 
-            You need to surface and head to {h}Site A{/h}.
+{@player}   What should I do next, {nameof @guide}?
+{@guide}    According to my data, you've taken a job at a different site.  
+            You need to surface and navigate your ship to {h}Site A{/h}.
 
 :: helpGoToSiteA
 @trigger    RequestPartnerHelp
 @when 		scene:name == "KelpStation", JobTaskTop(siteA)
 @cutscene
 {@player} 	Where should we be going, again?
-{@guide}	{h}Site A{/h} should be at the northernmost buoy.      
+{@guide}	Head north and look for {h}Site A{/h}.      
 
 // at the site
+
+:: diveSite
+@trigger    SceneStart
+@when       scene:name == "RS-1A"
+@triggerPriority   High
+@once
+@cutscene
+$branch common.ringPhone
+
+{@player}    Wow, the Bull Kelp Forest!
+{@player}    My sister used to bring me here when I was a kid.
+{@player}    I wonder if Ovid the Otter still lives here. He was my favorite. 
+{@guide}    According to my database, otters live an average of 9 years in the wild...
+{@guide}    So there is a 10.8% chance that Ovid is still alive!
+{@player}   Gee. Thanks, {nameof @guide}.
+{@guide}    Don't mention it, O! 
+{wait 0.5}
+{hide-dialog}
 
 :: helpAtSiteA
 @trigger    RequestPartnerHelp
@@ -47,13 +63,9 @@ $call UnlockSite(RS-1A)
 @cutscene
 @once
 
-{@guide}    Welcome to the Bull Kelp Forest, O!
-{@player} 	Thanks, {nameof @guide}. But I've been here before. Mostly with my sister. 
-{@player}   I wonder if Ovid the Otter still lives here.
-{@guide}    According to my database, otters live an average of 9 years in the wild...
-{@guide}    So there is a 10.8% chance that Ovid is still alive.
-{@player}   Gee. Thanks for that, {nameof @guide}.
-{@guide}    You are most welcome!
+{@player}    What now, {nameof @guide}?
+{@guide}     You need to scan any news species here, and then head back to your ship!
+{@player}    Okay. Copy that. 
 
 // to experimentation
 
@@ -61,11 +73,11 @@ $call UnlockSite(RS-1A)
 @trigger    RequestPartnerHelp
 @when 		JobTaskTop(foodweb), scene:name != "ExperimentV2"
 @cutscene
-{@player} 	Where should I go next?
-{@guide}	Now that we've discovered {nameof BullKelp}, let's head back to the {nameof Experimentation}.
+{@player} 	What now, {nameof @guide}?
+{@guide}	You have completed your task! Now head to your ship's {nameof Experimentation}.
 
 $if scene:name == "RS-1A"
-	{@guide}	You have completed your task, O! Let's head back to the surface. 
+	{@guide}	First you'll need to return to the surface and board your ship.  
 $endif
 
 ::helpDoExperiment
@@ -85,20 +97,20 @@ $endif
 $if ExperimentHasCritter(BullKelp)
     {@guide}    Is anything interacting with the {pluralnameof BullKelp}?
 $else
-    {@guide}    Is it possible to get any new information from this experiment?
-                I don't see any {pluralname BullKelp} in this tank...
+    {@guide}    We need to find out what interacts with the {pluralnameof BUllKelp}.
+                Try adding some {pluralname BullKelp} to the tank.
 $endif
 
 :: helpDoExperiment.TankView
-{@guide}    You've added a new species. Now you must find out how the other species interact with it!
 $if ExperimentHasCritter(BullKelp)
-    You've added some {pluralnameof BullKelp}. What might it interact with?
+    {@guide}    You've added some {pluralnameof BullKelp}. 
+                Now record how the other species interact with it! 
 $else
     Start by adding some {pluralnameof BullKelp} to the tank. 
 $endif
 
 :: helpDoExperiment.None
-{@guide}    You've identified a new species! You need to find out how the other species interact with it. 
+{@guide}    You need to find out how the other species interact with the {pluralnameof BullKelp}. 
             Set up an {h}Observation Tank{/h} experiment, like last time.
 
 // report back
@@ -156,9 +168,8 @@ $branch .argue.introQuestion
 
 ::argue.introQuestion
 {@drKelp} 
-Olivia! Perfect timing. I just got back from a meeting with our funders.
-They were thrilled to hear that you'd be taking on jobs around here!
-So what behaviors did you learn about {nameof BullKelp} in Site A?
+Okay, let's dive in!
+What behaviors did you learn about {nameof BullKelp} in Site A?
 $branch .argue.chooseFacts
 
 ::argue.chooseFacts
@@ -182,7 +193,7 @@ $goto .argue.chooseFacts
 ::argue.done
 $call ArgueComplete()
 {@drKelp} Perfect, Olivia! This matches with our findings. 
-          Just like at Site C, {pluralnameof SeaOtter} eat the {pluralnameof Urchin}.
+          Just like here at Site C, {pluralnameof SeaOtter} eat the {pluralnameof Urchin}.
 And {pluralnameof Urchin} eat the {critter-name}Kelp{/critter-name}!
 $call CompleteJob()
 
@@ -194,19 +205,19 @@ $call CompleteJob()
 
 {@drKelp}   Now you've proven that {pluralnameof BullKelp} power the whole forest at Site A...
             And {pluralnameof BullKelp} and {pluralnameof GiantKelp} have the same role in their environments.
-            That foundation will be the basis for the rest of your jobs here.
-{@player}   Yeah, Mom, about that...
-            Would you mind if I head out to another ecosystem? Just for another job or two?
-{@drKelp}   Oh, of course, Dear!
-            It's so sweet that you want to explore. Your sister went through that phase, too. 
-            Check out another ecosystem. Two, even! The more the merrier.
-{@player}   Mom.... 
-{@drKelp}   I'll upload the ecosystem map to your ship.
-            And don't be nervous, Sweetie. You've got {nameof @guide} to keep you safe! 
+            No wonder my colleagues all want your help. You're a natural!
+{@player}   Your colleagues??
+{@player}   Does that mean I can take a job at another ecosystem?
+{@drKelp}   Well... if that's what you want, Mija.
+{@drKelp}   But remember, don't take too many risks. You're still so new at this.   
+{@player}   Don't worry, Mom. I'll be careful!
+{@drKelp}   Okay, then. 
+{@drKelp}   Wherever you're going, you'll need to get some upgrades. 
+{@drKelp}   Look for your next job on the Job Board, and then stop by your uncle's shop!
 {hide-dialog}
 {wait 1.5}
 
-{@drKelp}  Oh, it looks like you've gotten a lot of {pluralnameof Exp}!
+{@drKelp}  It looks like you've gotten a lot of {pluralnameof Exp}!
            Why don't you stop by your uncle's shop? 
            You might be able to afford an upgrade! 
 $call UnlockRoom("Shop")

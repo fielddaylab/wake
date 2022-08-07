@@ -4,8 +4,6 @@
 @trigger    JobStarted
 @cutscene
 
-$branch common.ringPhone
-
 $set jobs:arctic-missing-whale.foundWhale = 0
 {@profArctic}	Some of our researchers down south have been tracking a certain pod of whales for some time now.
                 Recently however, one of our trackers went out, and we haven't been able to find them since.
@@ -15,6 +13,7 @@ $set jobs:arctic-missing-whale.foundWhale = 0
 {@profArctic}  A mother whale is called a Cow, so sending you off to find her makes you a cowboy!
 {@player}   When then, I reckon we ought to saddle-up and mosey on over.
 {@guide}    Oh, brother...
+$call UnlockSite(RS-4W)
 
 :: helpFindWhale
 @trigger    RequestPartnerHelp

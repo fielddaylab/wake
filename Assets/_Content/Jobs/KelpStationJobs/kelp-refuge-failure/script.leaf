@@ -4,27 +4,26 @@
 @trigger    JobStarted
 @cutscene
 
-$branch common.ringPhone
-
-{@drKelp}	Well, despite our best thinking, the Giant Kelp are taking over the refuge.
-			That's science I guess: we make our best predictions,
-			but sometimes things don't turn out as planned.
-			So we learn more, update our thinking and carry on.
-{@player}	Sounds slow.
-{@drKelp}	Sometimes it is!
-			So first we need to learn more by using your new predictive modeling tool.
-			You will start by getting all numerical data the tool needs, 
-			like the historical population and the kelp reproduction rates.
-			Once we have all those numbers, the tool will run a simulations
-			and help us describe what's happening down there.
-			Let's start by going to the kelp refuge site to count those populations.
+{@drKelp}	Well, despite our efforts, the Giant Kelp are taking over the refuge.
+{@player}   Wait... en serio??
+{@player}   I thought it was going to work! 
+{@drKelp}   That's science, Olivia. 
+{@drKelp}   We make the best predictions we can with the information available to us.
+{@drKelp}   If things don't turn out as planned, we learn more, adjust our thinking, and carry on.
+{@player}   ....Okay, Mom. Where do we start?
+{@drKelp}    I need you to use your new predictive modeling tool. 
+			Start by gathering data from Kelp Refuge site.
+			Once you have those numbers, run a simulation and figure out what's happening down there. 
+{@player}   Okay. I can handle that. 
+{@player}   But Mom... no entiendo. The Refuge is your dream. Why aren't you sadder about this?
+{@drKelp}   It takes a lot to break my heart, Mija.
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Helm", !jobs:kelp-refuge-failure.seen.bottom
 @cutscene
 {@player}   Where should I go from here?
-{@guide}	Let's dive into the kelp refuge site and see what's happening.
+{@guide}    You'll need to dive to the Kelp Refuge site. 
 
 :: diveSite
 @trigger    SceneStart
@@ -32,16 +31,22 @@ $branch common.ringPhone
 @once
 @cutscene
 $set    	jobs:coral-stressed.seen.bottom = true
-{@guide}	{nameof @drKelp} was right, there are very few Bull Kelp compared to Giant Kelp.
-			Let's see what the population history has been like since the refuge was created. We'll need to scan the population probe.
-{@guide}   	Do you see it anywhere?
+{@player}   Wow. Mom was right.
+{@player}   The Giant Kelp have completely taken over.
+{@guide}    My sensors indicate you are stressed, O. 
+{@guide}    Perhaps we should run an experiment to determine your ideal environmental conditions. 
+{@player}   ....Did you just make a joke, {nameof @guide}?
+{@player}   Because I gotta say, it was pretty good.
+{@guide}    Thank you, O.
+{@guide}    We need to gather the historical population data.
+{@guide}    See if you can track down the population probe.
 
 :: helpHistorical
 @trigger    RequestPartnerHelp
 @when 		JobTaskTop(histPop)
 @cutscene
 {@player}   Where should I go from here?
-{@guide}	We'll need the historical population - check the population probe.
+{@guide}	We need the historical population. You'll need to find and scan the population probe.
 
 
 :: probeCollectionComplete
@@ -51,7 +56,9 @@ $set    	jobs:coral-stressed.seen.bottom = true
 @once
 @chatter
 
-{@guide}	Measuring the reproduction rates of kelp is our next priority. Let's surface and get to the Experiment Room.
+{@guide}	Presentable work, O! You've gathered the data we need. 
+{@guide}    Your next priority is to measure the reproductive rates of kelp. 
+{@guide}    Head to the surface and go to your Experiment Room. 
 $set    	jobs:kelp-refuge-failure.collected.probe = true
 
 
@@ -62,39 +69,39 @@ $set    	jobs:kelp-refuge-failure.collected.probe = true
 @when 		scene:name != "ExperimentV2", jobs:kelp-refuge-failure.collected.probe == true, !JobTaskTop(newModel), !JobTaskTop(getPaid)
 @cutscene
 {@player}   Where should I go from here?
-{@guide}	Let's head to the {h}Measurement Tank{/h} to measure Kelp reproduction rates.
+{@guide}	Head to the {h}Measurement Tank{/h} to measure Kelp reproduction rates.
 
 :: startExperiment
 @trigger	ExperimentTankViewed
 @when		tankType == "Measurement"
 @once
 @cutscene
-{@guide}	We need the reproduction rates of kelp when stressed and unstressed.
-			Reproduction rate means put in only one species and make sure it's fed and stabilized.
-			You will need to put the kelp in multiple ecosystems to obtain both stressed and unstressed rules. 
+{@guide}	You need the reproduction rates of kelp when stressed and unstressed.
+			Add only one species, and make sure it's fed and stabilized.
+			You'll need to study the kelp in multiple ecosystems to obtain both stressed and unstressed rules. 
 
 :: helpAtExperiment
 @trigger    RequestPartnerHelp
 @when 		scene:name == "ExperimentV2", !JobTaskTop(newModel), !JobTaskTop(getPaid)
 @cutscene
 {@player} 	How should I do this again?
-{@guide}	We need the reproduction rates of kelp when stressed and unstressed.
-			You will need to put the kelp in multiple ecosystems to obtain both types of rules.
-			What sites do we know they are stressed in, and which do we know they're not stressed in?
+{@guide}	You need the reproduction rates of kelp when stressed and unstressed.
+			You will need to put the kelp in multiple ecosystems.
+			Which sites are they are stressed in, and which sites allow them to thrive? 
 
 :: experimentGrowthEnd
 @trigger    JobTasksUpdated
 @when 		JobTaskCompleted(growthRates), JobTaskCompleted(growthRatesBull)
 @once
 @cutscene
-{@guide}	Nice work!
+{@guide}	Agreeable work, O!
 $if JobTaskCompleted(lightRatesGiant), JobTaskCompleted(lightRatesBull)
-	{@guide}	And you already measured how {nameof GiantKelp} and {nameof BullKelp} consume light.
-				Way to be proactive!
+	{@guide}	And you have already measured how {nameof GiantKelp} and {nameof BullKelp} consume light.
+				Looks like your past work has come in handy!
 	$goto .experimentsCompleted
 $else
-	{@guide}	We will also need to measure how {nameof GiantKelp} and {nameof BullKelp} affect the light levels.
-				Add them to the Measurement Tank again separately, only this time turn off the Stabilizer Controls and turn the Auto Feeder on.
+	{@guide}	You will also need to measure how {nameof GiantKelp} and {nameof BullKelp} affect light levels.
+				Add them to the Measurement Tank again separately... only this time turn off the Stabilizer Controls and turn on the Auto Feeder.
 $endif
 
 :: experimentConsumeEnd
@@ -102,12 +109,14 @@ $endif
 @when 		JobTaskTop(newModel)
 @once
 @cutscene
-{@guide}	Fantastic! The {h}Measurement Tank{/h} gave us some new clues.
+{@guide}	Hmm. The {h}Measurement Tank{/h} has provided us with some new clues.
 $goto .experimentsCompleted
 
 :: experimentsCompleted
-{@guide}	Now we need to build a model that incorporates all of this data so we can be certain of what's causing {nameof BullKelp} to reproduce more slowly.
-			We should head to the Modeling room for that.
+{@player}   Okay. What now, {nameof @guide}?
+{@guide}	You need to build a model that incorporates all of this data.
+			This will help you determine why the {nameof BullKelp} are reproducing more slowly.
+			Head to the Modeling Room.
 
 // MODELING	
 
@@ -130,14 +139,17 @@ $goto .experimentsCompleted
 @trigger	SimulationSyncSuccess
 @once
 @cutscene
-{@guide}	We've solved it! Let's tell {nameof @drKelp} the good news.
+{@guide}	You solved it, O!
+{@player}   Yeah. I guess so. 
+{@guide}    Now you can help your mother understand why the Kelp Refuge failed.
+{@guide}    Time to head back to the station.
 
 :: helpReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskTop(getPaid)
 @cutscene
 {@player} 	What do we need to do now?
-{@guide}	The research station is where we must return to share your findings.
+{@guide}	Return to the research station and share your findings. 
 
 // CATCH-ALL GUIDE TEXT
 
@@ -146,56 +158,56 @@ $goto .experimentsCompleted
 @when 		JobTaskActive(visitSite)
 @boostScore -5
 @cutscene
-{@guide}   	Head to Site D. We need to take a look around.
+{@guide}   	Head to Site D. You'll need to take a look around.
 
 :: catchHistPop
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(histPop)
 @boostScore -5
 @cutscene
-{@guide}	There should be a population probe we can collect data from at Site D.
+{@guide}	You'll need to collect data from the population probe at site D.
 
 :: catchGrowthRates
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(growthRates)
 @boostScore -5
 @cutscene
-{@guide}    Place some {nameof GiantKelp} into the Measurement Tank using water from different ecosystems, then focus on the reproductive rates.
+{@guide}    Place some {nameof GiantKelp} into the Measurement Tank using water from different ecosystems. Then focus on the reproductive rates.
 
 :: catchGrowthRatesBull
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(growthRatesBull)
 @boostScore -5
 @cutscene
-{@guide}	Place some {nameof BullKelp} into the Measurement Tank using water from different ecosystems, then focus on the reproduction rates.
+{@guide}	Place some {nameof BullKelp} into the Measurement Tank using water from different ecosystems. Then focus on the reproduction rates.
 
 :: catchLightRatesGiant
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(lightRatesGiant)
 @boostScore -5
 @cutscene
-{@guide}	Place some {nameof GiantKelp} into the Measurement Tank using water from different ecosystems, then focus on how much light they consume.
+{@guide}	Place some {nameof GiantKelp} into the Measurement Tank using water from different ecosystems. Then focus on how much light they consume.
 
 :: catchLightRatesBull
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(lightRatesBull)
 @boostScore -5
 @cutscene
-{@guide}	Place some {nameof BullKelp} into the Measurement Tank using water from different ecosystems, then focus on how much light they consume.
+{@guide}	Place some {nameof BullKelp} into the Measurement Tank using water from different ecosystems. Then focus on how much light they consume.
 
 :: catchNewModel
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(newModel)
 @boostScore -5
 @cutscene
-{@guide}	Create a Sync Model of {nameof GiantKelp} and {nameof BullKelp} at the site.
+{@guide}	Create a Sync Model of {nameof GiantKelp} and {nameof BullKelp} at the Refuge site.
 
 :: catchGetPaid
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(getPaid)
 @boostScore -5
 @cutscene
-{@guide}	Let's head back to the {m}research station{/m} and tell {nameof @drKelp} what we found.
+{@guide}	Time to head back to the {m}research station{/m} and tell {nameof @drKelp} what you discovered.
 
 // ARGUMENTATION
 
@@ -204,26 +216,32 @@ $goto .experimentsCompleted
 @when   !ArgueIsComplete(refugeFailureArgue)
 @cutscene
 $call ArgueLoad(refugeFailureArgue)
-{@drKelp} So why didn't the Refuge work for the {nameof BullKelp}?
-	$choice .argue.wrongTemp; It's the wrong temperature.
+{@drKelp} Olivia! I'm eager to hear what you discovered. 
+{@drKelp} Why did the Refuge fail for the {nameof BullKelp}?
+	$choice .argue.wrongTemp; The water is the wrong temperature.
 	$choice .argue.slowGrowth; The Bull Kelp are reproducing at a slower rate than expected.
 	$choice .argue.pickyUrchins; The urchins are only eating the Bull Kelp.
-	$choice .argue.notReady; Let me get back to you
+	$choice .argue.notReady; I'm not sure. Let me get back to you.
 $choose branch
 
 :: argue.notReady
-{@drKelp} OK. Get back to me when you're ready.
+{@drKelp} Okay, Mija. I'll be here whenever you're ready.
 
 ::argue.wrongTemp
-{@drKelp}	We already know that Bull Kelp should thrive at 14°C. It must be something else.
+{@drKelp}	Hmmm. That can't be.
+{@drKelp}    We already know that Bull Kelp thrive at 14°C. 
+{@drKelp}   It must be something else.
 $goto .argue.chooseClaim
 
 ::argue.pickyUrchins
-{@drKelp}	Hmmm. We know that Urchins eat both Kelp. Do you have another theory?
+{@drKelp}  That doesn't quite make sense, Mija.
+{@drKelp}  You've already determined that Urchins eat both types of Kelp. 
+{@drKelp}   Do you have another theory?
 $goto .argue.chooseClaim
 
 ::argue.slowGrowth
-{@drKelp}	Show me your model. Does it explain why the {nameof BullKelp} are reproducing more slowly?
+{@drKelp}	Hmmm. Yes, that could be the problem.
+			Show me your model. Does it explain why the {nameof BullKelp} are reproducing more slowly?
 $if ArgueSetClaim(refugeFailureArgueClaim, jobs.kelp-refuge-failure.argue.claimLabel)
 			$call ArgueFactSlot(MixedKelp.Model.RefugeFail)
 $endif
@@ -242,17 +260,23 @@ $endif
 
 :: argue.correctFacts
 $call ArgueComplete()
-{@drKelp}	Wow. So both were doing fine, but the {nameof GiantKelp} started blocking the light, making the {nameof GiantKelp} stressed.
-{@drKelp}	That does explain it.
-{@drKelp}	I guess it's back to the drawing board for this Refuge idea.
+{@drKelp}	Wow. So both types of kelp were doing fine, but then the {nameof GiantKelp} started blocking the light, stressing the {nameof BullKelp}.
+{@drKelp}	Excellent work, Olivia!
+{@player}  What do you mean, excellent? The Refuge failed!
+{@drKelp}  Yes. But now we understand why, and we can try something different next time.
+{@drKelp}  That's science. Slow. Methodical. 
+{@player}  I bet Mer would've figured it out by now.
+{@drKelp}  Hm? What was that, Mija?
+{@player}  Nothing, Mom. Just... back to square one, I guess. 
+
 $call CompleteJob()
 
 :: argue.incorrectFacts
-{@drKelp} That doesn't explain it. Did you make a model of the site?
+{@drKelp} That doesn't explain it, Olivia. Did you make a model of the site?
 $call ArgueRejectIncorrect()
 $goto .argue.defendClaim
 
 :: argue.giveUp
-{@drKelp} OK. Get back to me when you're ready.
+{@drKelp} Okay, Sweetie. Get back to me when you're ready.
 
 ::end

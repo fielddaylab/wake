@@ -4,14 +4,23 @@
 @trigger    JobStarted
 @cutscene
 
-{@guide}	The first thing to do is check out these mussels and their environment at {h}site C{/h}.
+{@drKelp} Thank you for taking this job, Olivia!
+{@drKelp} It's been so hard to keep up with everything.
+{@player} Yeah... the station's been pretty empty lately. 
+{@player} Didn't Deesha used to work here? And Julio?
+{@drKelp} Our people keep getting called away to other stations.
+{@drKelp} Not that I blame them, of course. There's just not enough scientists.
+{@drKelp} Well... never mind all that, Mija. 
+{@drKelp} The mussels at the Warm Kelp Forest look strange.
+{@drKelp} I need to find out if something is stressing them. 
+{@drKelp} Head outside to {h}site C{/h}, and {nameof @guide} will guide you from there. 
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
 @when 		scene:name != "RS-1C", !JobTaskTop(stressParam), !JobTaskTop(report)
 @cutscene
-{@player}   Where should I go from here?
-{@guide}	Get to {h}site C{/h} so we can check out those mussels.
+{@player}   Where should I go from here, {nameof @guide}?
+{@guide}	According to my data, you need to take your sub to {h}site C{/h}!
 
 // SCANNING
 
@@ -19,15 +28,17 @@
 @trigger    RequestPartnerHelp
 @when 		scene:name == "RS-1C", !JobTaskTop(stressParam), !JobTaskTop(report)
 @cutscene
-{@player}   Hmm. What now?
-{@guide}	We need to scan a mussel, and also the water chemistry probe here.
+{@player}   Can you remind me what to do next, {nameof @guide}?
+{@guide}	Certainly, O.
+            You need to scan a mussel and gather data from the water chemistry probe!
 
 :: navigation.goBackUp
 @trigger    JobTasksUpdated
 @when       JobTaskTop(stressParam)
 @once
 @cutscene
-{@guide}    We have enough information to do some experiments, now.
+{@guide}  Admissable work, O! You've gathered enough information to do some experiments!
+{@player} Thanks, {nameof @guide}. Let's head back to the ship! 
 
 // EXPERIMENTATION
 
@@ -35,16 +46,18 @@
 @trigger    RequestPartnerHelp
 @when 		JobTaskTop(stressParam)
 @cutscene
-{@player}   Any idea of what to do next?
-{@guide}	Putting a mussel in the stress tank might provide some answers.
+{@player}   Okay, {nameof @guide}. What now? 
+{@guide}	Add mussels to the stress tank. Then adjust the levels and see what happens. 
 
 :: experimentEnd
 @trigger    JobTasksUpdated
 @when 		JobTaskTop(report)
 @once
 @cutscene
-{@guide}	All right -- let's untangle what's disturbing the mussels by talking it through with {nameof @drKelp}.
-
+{@player}	Um. So... we've got our stress ranges.
+{@player}   But how does that relate to what's happening to the mussels at site C?
+{@guide} My data is inconclusive, O.
+{@player} Okay. Guess I better go talk to Mom.  
 
 // REPORT
 
@@ -52,8 +65,8 @@
 @trigger    RequestPartnerHelp
 @when 		JobTaskTop(report)
 @cutscene
-{@player}   Any idea of what to do next?
-{@guide}	It's time to explain our findings at the {m}research station{/m}.
+{@player}   What now, {nameof @guide}?
+{@guide}	It's time to share your findings at the {m}research station{/m}.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -90,12 +103,14 @@
 @trigger    TryArgumentation
 @when   	!ArgueIsComplete(musselFestArgueMusselTemp)
 @cutscene
-{@drKelp}	Hi {nameof @player}. Have questions about what you've found? Let's talk this over.
+{@drKelp}	Excellent! Did you find out what's been stressing the mussels at site C?
+{@player} Um... honestly, Mom, I'm not sure.
+{@drKelp} Okay, Mija. Let's look at your data. 
 $if ArgueIsComplete(musselFestReasonChemistry)
 	{@drKelp}	We've talked about the temperature, pH, and light at the site.
 	$branch .argue.chooseClaim
 $elseif ArgueIsComplete(musselFestReasonStress)
-	{@drKelp}	So. We've already established the stress ranges for the mussels.
+	{@drKelp}	We've already established the stress ranges for the mussels.
     $call ArgueLoad(musselFestReasonChemistry)
 	$branch .argue.reasonChemistry
 $else
@@ -121,13 +136,14 @@ $choice .argue.giveUpArgument; Let me get back to you
 $call ArgueComplete()
 $call ArgueCancelClaim()
 // $call ArgueUnload()
-{@drKelp}	Okay, so the mussels are stressed when the temperature is below -13.3 C or above 25 C, or when PH levels are below 7.5 or above 8.9. 
-            And light levels do not make a difference on their stress levels.
+{@drKelp}	So, mussels get stressed out when the temperature is below 2 C or above 13 C.   
+            They don't like it when the pH goes below 8.0 or above 8.4. 
+            And the amount of light doesn't seem to make a difference.
 $call ArgueLoad(musselFestReasonChemistry)
 $branch .argue.reasonChemistry
 
 :: argue.incorrectFactsReasonStress
-{@drKelp}	Hmmm... that's not really leading us to an answer.
+{@drKelp}	Hmmm... that doesn't seem right.
 $call ArgueRejectIncorrect()
 $branch .argue.reasonStress
 
@@ -139,8 +155,8 @@ $if ArgueSetClaim(musselFestReasonChemistryClaim, jobs.kelp-mussel-fest.argue.cl
     $call ArgueFactSlot(WarmKelpForest.PH)
 $endif
 $call ArgueDisplayClaim()
-{@drKelp}	How about the site?
-{@drKelp}	What are the current temperature, pH, and light conditions there?
+{@drKelp}	Now compare the mussels' stress levels from the tank with the conditions at site C. 
+{@drKelp}	What are the temperature, pH, and light levels at the Warm Kelp Forest?
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.correctFactsReasonChemistry
     $answer incorrect, .argue.incorrectFactsReasonChemistry
@@ -148,8 +164,7 @@ $choice .argue.giveUpArgument; Let me get back to you
 
 :: argue.correctFactsReasonChemistry
 $call ArgueComplete()
-{@drKelp}	Okay, so Site C has maintained a temperature of about 21 C, has 100% light, and has a pH of 8.1.
-{@drKelp}	Ohhh... those values look promising!
+{@drKelp}	Hmmm. So, Site C has 100% light, a temperature of 21 C, and a pH of 8.1
 $call ArgueUnload()
 $call ArgueCancelClaim()
 $call ArgueLoad(musselFestArgueMusselTemp)
@@ -163,7 +178,7 @@ $branch .argue.reasonChemistry
 // Allow player to make a claim
 ::argue.chooseClaim
 $call ArgueLoad(musselFestArgueMusselTemp)
-{@drKelp}	What do you think this data means?
+{@drKelp}	According to the stress tank, which of these values is too much for our poor mussels?
 	$choice .argue.lightOrPHStress; It's the light!
 	$choice .argue.tempStress; It's the temperature!
 	$choice .argue.lightOrPHStress; It's the pH!
@@ -179,11 +194,11 @@ $call ArgueCancelClaim()
 $goto .argue.giveUp
 
 :: argue.giveUp
-{@drKelp} OK. Get back to me when you're ready.
+{@drKelp} Okay, Olivia. Get back to me when you're ready.
 
 ::argue.tempStress
-{@drKelp}	I think you are right. I see the overlap here. Good to know.
-{@drKelp}	I wonder if the mussels will continue to reproduce.
+{@drKelp}	Perfect, Olivia! Looks like the Warm Kelp Forest is too... well, warm. 
+{@drKelp}	Hmm. I wonder if the mussels will continue to reproduce.
 $call ArgueComplete()
 $call CompleteJob()
 

@@ -27,7 +27,7 @@ namespace AquaAudio
 
         public float Delay;
         public byte StopCounter;
-        public float LastKnownTime;
+        public int LastKnownTime;
         public double LastStartTime;
 
         public AudioPropertyBlock EventProperties;
@@ -153,8 +153,8 @@ namespace AquaAudio
 
             switch(state.Mode) {
                 case AudioEvent.PlaybackMode.Sample: {
-                    if (state.Sample.loop || (state.LastKnownTime < state.Sample.clip.length - 0.1f)) {
-                        state.Sample.time = state.LastKnownTime;
+                    if (state.Sample.loop || (state.LastKnownTime < state.Sample.clip.samples - state.Sample.clip.frequency)) {
+                        state.Sample.timeSamples = state.LastKnownTime;
                         state.Sample.Play();
                     }
                     break;
@@ -164,7 +164,7 @@ namespace AquaAudio
                     if (state.Stream.Loop) {
                         state.Stream.Unload();
                         state.Stream.Play();
-                        state.Stream.Time = state.LastKnownTime;
+                        state.Stream.HighResTime = state.LastKnownTime;
                     }
                     break;
                 }
@@ -236,16 +236,20 @@ namespace AquaAudio
             if (source == target) {
                 return;
             }
+            if (source.Mode != target.Mode) {
+                Log.Error("Cannot sync between sources with different modes");
+                return;
+            }
             
-            float sourceTime = source.LastKnownTime;
+            int sourceTime = source.LastKnownTime;
             target.LastKnownTime = sourceTime;
             switch(target.Mode) {
                 case AudioEvent.PlaybackMode.Sample: {
-                    target.Sample.time = sourceTime;
+                    target.Sample.timeSamples = sourceTime;
                     break;
                 }
                 case AudioEvent.PlaybackMode.Stream: {
-                    target.Stream.Time = sourceTime;
+                    target.Stream.HighResTime = sourceTime;
                     break;
                 }
             }
@@ -309,17 +313,17 @@ namespace AquaAudio
             }
 
             bool bIsPlaying = false;
-            float currentTime = 0;
+            int currentTime = 0;
 
             switch(state.Mode) {
                 case AudioEvent.PlaybackMode.Sample: {
                     bIsPlaying = state.Sample.isPlaying;
-                    currentTime = state.Sample.time;
+                    currentTime = state.Sample.timeSamples;
                     break;
                 }
                 case AudioEvent.PlaybackMode.Stream: {
                     bIsPlaying = state.Stream.IsPlaying;
-                    currentTime = state.Stream.Time;
+                    currentTime = state.Stream.HighResTime;
                     break;
                 }
             }
@@ -371,12 +375,12 @@ namespace AquaAudio
         static private void SyncTime(AudioTrackState state) {
             switch(state.Mode) {
                 case AudioEvent.PlaybackMode.Sample: {
-                    state.Sample.time = state.LastKnownTime;
+                    state.Sample.timeSamples = state.LastKnownTime;
                     break;
                 }
 
                 case AudioEvent.PlaybackMode.Stream: {
-                    state.Stream.Time = state.LastKnownTime;
+                    state.Stream.HighResTime = state.LastKnownTime;
                     break;
                 }
             }

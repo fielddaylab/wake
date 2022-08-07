@@ -15,6 +15,9 @@ namespace Aqua.View {
         public Canvas UI;
         public SerializedHash32[] GroupIds;
 
+        public ScriptAudioTrackVariants AudioLayers;
+        public SerializedHash32 AudioLayerId;
+
         public Action OnLoad;
         public Action OnEnter;
         public Action OnExit;
