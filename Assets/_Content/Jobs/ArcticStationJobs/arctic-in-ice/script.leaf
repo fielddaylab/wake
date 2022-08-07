@@ -170,7 +170,7 @@ $if ArgueIsComplete(inIceArgueEat)
     $branch .argue.alreadyDiscussed
 $else
     $call ArgueLoad(inIceArgueEat)
-    $if ArgueSetClaim(Claim, jobs.arctic-ince-ice.argue.claimLabelEat)
+    $if ArgueSetClaim(Claim, jobs.arctic-in-ice.argue.claimLabelEat)
         $call ArgueFactSlot(ArcticCod.Eats.IceAlgae)
     $endif
     $call ArgueDisplayClaim()
@@ -209,7 +209,7 @@ $branch .argue.startPop
 
 :: argue.startPop
 $call ArgueLoad(inIceArguePop)
-$if ArgueSetClaim(Claim2, jobs.arctic-salmon-competition.argue.claimLabelPop)
+$if ArgueSetClaim(Claim2, jobs.arctic-in-ice.argue.claimLabelPop)
     $call ArgueFactSlot(Z_OpenOcean.Population.IceAlgae)
 $endif
 $call ArgueDisplayClaim()

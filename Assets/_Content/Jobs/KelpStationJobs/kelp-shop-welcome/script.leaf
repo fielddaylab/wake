@@ -86,3 +86,10 @@ $endif
 :: ReallyTheEnd
 @function   JobStarted
 $set    world:shop.unlocked = true
+
+:: UnlockModeling
+@trigger    JobTasksUpdated
+@when   JobTaskCompleted(getVisualModel)
+@triggerPriority High
+$call UnlockRoom("ModelingFoyer")
+$call UnlockRoom("Modeling")

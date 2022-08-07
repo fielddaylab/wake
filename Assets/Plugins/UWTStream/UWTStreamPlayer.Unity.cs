@@ -11,6 +11,12 @@ namespace BeauUWT
     // Unity AudioSource implementation
     public partial class UWTStreamPlayer : MonoBehaviour
     {
+        private enum TimeMode
+        {
+            Seconds,
+            HiRes
+        }
+
         public const bool IsNative = false;
 
         private const ulong HeaderBufferSize = 1024 * 16;
@@ -23,6 +29,8 @@ namespace BeauUWT
         [NonSerialized] private Coroutine m_LoadCoroutine;
         [NonSerialized] private AudioClip m_StreamingClip;
         [NonSerialized] private float m_QueuedTime = 0;
+        [NonSerialized] private int m_QueuedTimeHiRes = 0;
+        [NonSerialized] private TimeMode m_QueuedTimeMode = TimeMode.Seconds;
 
         #region Resources
 
@@ -145,8 +153,29 @@ namespace BeauUWT
             if (m_PlayRequested)
             {
                 m_QueuedTime = inTime;
+                m_QueuedTimeMode = TimeMode.Seconds;
             }
             EnsureSource().time = inTime;
+        }
+
+        private int GetHiResTime()
+        {
+            if (m_UnitySource)
+                return m_UnitySource.timeSamples;
+            return 0;
+        }
+
+        private void SetHiResTime(int inTime)
+        {
+            if (m_PlayRequested)
+            {
+                m_QueuedTimeHiRes = inTime;
+                m_QueuedTimeMode = TimeMode.HiRes;
+            }
+            if (m_StreamingClip)
+            {
+                EnsureSource().timeSamples = inTime;
+            }
         }
 
         private void UpdateVolume(float inVolume)
