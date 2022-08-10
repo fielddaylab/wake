@@ -165,5 +165,26 @@ namespace Aqua.Editor
             AssetDatabase.ImportAsset(outputPath);
             Log.Msg("[PrefabTools] Compressed file '{0}' to '{1}'", path, outputPath);
         }
+        
+        [MenuItem("Aqualab/Test Compress Selection")]
+        static public void AttemptCompress()
+        {
+            foreach(var file in Selection.objects) {
+                LZCompress(file);
+            }
+        }
+
+        static public void LZCompress(UnityEngine.Object asset) {
+            string path = AssetDatabase.GetAssetPath(asset);
+            string outputPath = Path.ChangeExtension(path, ".lzb");
+            byte[] read = File.ReadAllBytes(path);
+            byte[] compressed;
+            using(Profiling.Time("compressing file")) {
+                compressed = UnsafeExt.Compress(read);
+            }
+            File.WriteAllBytes(outputPath, compressed);
+            Log.Msg("[PrefabTools] Compressed file '{0}' with ratio {1}", path, (float) read.Length / compressed.Length);
+            EditorUtility.RevealInFinder(outputPath);
+        }
     }
 }

@@ -31,6 +31,7 @@ namespace Aqua.Compression {
         [SerializeField] private PackageBank m_Bank = new PackageBank();
         [SerializeField] private PrefabEntry[] m_TOC = new PrefabEntry[0];
         [SerializeField] private byte[] m_CompressedData = new byte[0];
+        [SerializeField] private bool m_AllowLZCompression = false;
 
         #endregion // Data
 
@@ -66,10 +67,25 @@ namespace Aqua.Compression {
                     foreach(var prefab in allPrefabs) {
                         EditorUtility.DisplayProgressBar("Compressing Prefabs...", string.Format("Compressing '{0}' ({1}/{2})", prefab.name, idx + 1, allPrefabs.Length), (idx + 1) / (float) allPrefabs.Length);
                         idx++;
-                        GameObject instantiated = GameObject.Instantiate(prefab, root.transform);
+                        GameObject instantiated = GameObject.Instantiate(prefab, root.transform, false);
                         instantiated.name = prefab.name;
+                        TRS trs = new TRS(prefab.transform);
+                        trs.CopyTo(instantiated.transform);
                         try {
+                            Log.Msg("[LayoutPrefabPackage] Encoding '{0}'", prefab.name);
                             byte[] compressed = instantiated.GetComponent<CompressiblePrefab>().Compress(compressor, CompressedRectTransformBounds.Default);
+                            if (m_AllowLZCompression && compressed.Length >= 0x80) {
+                                Log.Msg("[LayoutPrefabPackage] Compressing '{0}'...", prefab.name);
+                                byte[] uncompressed = (byte[]) compressed.Clone();
+                                compressed = UnsafeExt.Compress(compressed);
+                                Log.Msg("[LayoutPrefabPackage] Compression Ratio: {0}", (float) uncompressed.Length / compressed.Length);
+                                byte[] decompressed;
+                                if (!UnsafeExt.Decompress(compressed, out decompressed)) {
+                                    Log.Error("[LayoutPrefabPackage] Compressed data unable to be decompressed!");
+                                } else if (!ArrayUtils.ContentEquals(uncompressed, decompressed)) {
+                                    Log.Error("[LayoutPrefabPackage] Compressed data, when uncompressed, is not identical");
+                                }
+                            }
                             PrefabEntry entry = new PrefabEntry() {
                                 Id = prefab.name,
                                 Offset = (uint) allData.Count,
@@ -109,10 +125,12 @@ namespace Aqua.Compression {
         private class Inspector : UnityEditor.Editor
         {
             [NonSerialized] private GUIStyle m_Style;
+            [NonSerialized] private SerializedProperty m_AllowLZCompression;
 
             protected void OnEnable()
             {
                 GetType().GetProperty("alwaysAllowExpansion", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(this, true);
+                m_AllowLZCompression = serializedObject.FindProperty("m_AllowLZCompression");
             }
 
             public override void OnInspectorGUI()
@@ -122,11 +140,14 @@ namespace Aqua.Compression {
                     m_Style = new GUIStyle("ScriptText");
                 }
 
+                serializedObject.UpdateIfRequiredOrScript();
+
                 LayoutPrefabPackage prefabPackage = (LayoutPrefabPackage) target;
 
                 if (GUILayout.Button("Build")) {
                     prefabPackage.Bake();
                 }
+                EditorGUILayout.PropertyField(m_AllowLZCompression);
 
                 EditorGUILayout.Space();
 
@@ -167,6 +188,8 @@ namespace Aqua.Compression {
                     }
                     EditorGUILayout.EndVertical();
                 }
+
+                serializedObject.ApplyModifiedProperties();
             }
         }
 
