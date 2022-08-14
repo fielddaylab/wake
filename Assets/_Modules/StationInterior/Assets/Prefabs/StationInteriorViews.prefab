@@ -1247,6 +1247,7 @@ GameObject:
   - component: {fileID: 9117932011759870453}
   - component: {fileID: 1068882611433167654}
   - component: {fileID: 6917023265291351409}
+  - component: {fileID: 7275117290724400207}
   m_Layer: 0
   m_Name: ViewMgr
   m_TagString: Untagged
@@ -1355,6 +1356,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Packages:
   - {fileID: 11400000, guid: cfa886f126260074d8652603a2e61ace, type: 2}
+--- !u!114 &7275117290724400207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5490044791482369900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4899eb25fb90a1a45928fb9b6796f12a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IntroParticles: []
+  CraneAnimator: {fileID: 0}
+  CraneSFX:
+    m_Source: StationInterior.Emerge
+    m_HashValue: 873741710
 --- !u!1 &5531893163476065654
 GameObject:
   m_ObjectHideFlags: 0
@@ -1523,19 +1541,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 701db7bc5deefc84c85519e2f61fe2f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_BaseEventId: StationInterior.BGM.Default
+  m_BaseEventId: StationInterior.BGM.Kelp.Base
   m_Layers:
   - Id:
       m_Source: Jobs
       m_HashValue: 1256630173
-    EventId: StationInterior.BGM.Jobs2
+    EventId: StationInterior.BGM.Kelp.Jobs
     Priority: 1
     PlayerTrigger: {fileID: 0}
     Persistent: 0
   - Id:
       m_Source: Shop
       m_HashValue: 678702281
-    EventId: StationInterior.BGM.Shop
+    EventId: StationInterior.BGM.Kelp.Shop
     Priority: 1
     PlayerTrigger: {fileID: 0}
     Persistent: 0
@@ -1735,7 +1753,7 @@ PrefabInstance:
     - target: {fileID: 2229816169111045380, guid: 9948b6c241b51814db59656c4147d8f0,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 12
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2229816169111045380, guid: 9948b6c241b51814db59656c4147d8f0,
         type: 3}
@@ -2255,7 +2273,7 @@ PrefabInstance:
     - target: {fileID: 588985989030871623, guid: fc882f508aae0704b868a274110d4bc1,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 400
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 588985989030871623, guid: fc882f508aae0704b868a274110d4bc1,
         type: 3}
@@ -2265,7 +2283,7 @@ PrefabInstance:
     - target: {fileID: 588985989030871623, guid: fc882f508aae0704b868a274110d4bc1,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 216
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 588985989030871623, guid: fc882f508aae0704b868a274110d4bc1,
         type: 3}
