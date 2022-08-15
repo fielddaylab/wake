@@ -25,6 +25,7 @@ namespace Aqua
         [SerializeField] private TextId m_StationHeaderId = default;
         [SerializeField] private Sprite m_Icon = null;
         [SerializeField] private MapDesc m_Parent = null;
+        [SerializeField] private MapDesc m_QuickTravel = null;
         [SerializeField, FilterBestiaryId(BestiaryDescCategory.Environment)] private StringHash32 m_EnvironmentId = null;
         [SerializeField] private int m_StationSortingOrder = 0;
 
@@ -45,6 +46,7 @@ namespace Aqua
         public TextId StationHeaderId() { Assert.True(m_Category == MapCategory.Station, "MapDesc {0} is not a station", Id()); return m_StationHeaderId ;}
         public Sprite Icon() { return m_Icon; }
         public MapDesc Parent() { return m_Parent; }
+        public MapDesc QuickTravel() { return m_QuickTravel; }
 
         [LeafLookup("Environment")] public StringHash32 EnvironmentId() { return m_EnvironmentId; }
         public int SortingOrder() { Assert.True(m_Category == MapCategory.Station, "MapDesc {0} is not a station", Id()); return m_StationSortingOrder; }
@@ -65,6 +67,7 @@ namespace Aqua
             private SerializedProperty m_StationHeaderIdProperty;
             private SerializedProperty m_IconProperty;
             private SerializedProperty m_ParentProperty;
+            private SerializedProperty m_QuickTravelProperty;
             private SerializedProperty m_EnvironmentIdProperty;
             private SerializedProperty m_StationSortingOrderProperty;
             private SerializedProperty m_AdditionalPropertiesProperty;
@@ -80,6 +83,7 @@ namespace Aqua
                 m_StationHeaderIdProperty = serializedObject.FindProperty("m_StationHeaderId");
                 m_IconProperty = serializedObject.FindProperty("m_Icon");
                 m_ParentProperty = serializedObject.FindProperty("m_Parent");
+                m_QuickTravelProperty = serializedObject.FindProperty("m_QuickTravel");
                 m_EnvironmentIdProperty = serializedObject.FindProperty("m_EnvironmentId");
                 m_StationSortingOrderProperty = serializedObject.FindProperty("m_StationSortingOrder");
                 m_AdditionalPropertiesProperty = serializedObject.FindProperty("m_AdditionalProperties");
@@ -115,6 +119,7 @@ namespace Aqua
                             EditorGUILayout.Space();
                             EditorGUILayout.PropertyField(m_StationHeaderIdProperty);
                             EditorGUILayout.PropertyField(m_StationSortingOrderProperty);
+                            EditorGUILayout.PropertyField(m_QuickTravelProperty);
                             break;
                         }
 
