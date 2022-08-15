@@ -9,7 +9,7 @@
 // Generic
 
 #NoJobHandler(a)
-{@$JobGiverId}  Hey, want to see the {h}Job Board{/h}?
+{@$JobGiverId}  Would you like to see the {h}Job Board{/h}, Mija?
 $choice .action.openJobBoard; Sure!
 $choice .action.cancel; No thanks.
 
@@ -29,23 +29,23 @@ $choice .action.cancel; No thanks.
     $choice .action.cancel; Nah. I'll check back later. 
 
 #JobHandler(a)
-{@$JobGiverId}  {random Olivia!|Welcome back, Sweetie!|Do you need something?} 
+{@$JobGiverId}  {random Olivia! Do you need help with something?|Welcome back, Sweetie! ¿Qué pasa?|Do you need something, Mija?} 
 
 $if !JobInProgress(kelp-shop-welcome)
     $choice .action.report; I'm ready to report back on my job!
     $choice .action.openJobBoard; I'd like to {random see|look at} the {h}Job Board{/h}.
     $choice .action.cancel.currentJob; Never mind. Thanks, Mom.
 $else
-    {@drKelp}   Once you upgrade your sub, head back to the {h}surface{/h}.
-                There, I'll radio once I've finished upgrading your ship's map.
+    {@drKelp}  One more thing, Mija! I'm having {nameof @guide} update your ship's map.  
+               You should be able to find it in the Helm.  
     // $choice .action.openJobBoard; I'd like to {random see|look at} the {h}Job Board{/h}.
     // $choice .action.cancel.currentJob; Never mind. Thanks, Mom.
 $endif
 
 :: action.cancel
 @cutscene
-{@$JobGiverId}  Okay, Sweetie. I'm here if you need me. 
+{@$JobGiverId}  {random Okay, Sweetie. I'm here if you need me. | Okay. Come back whenever you're ready.} 
 
 :: action.cancel.currentJob
 @cutscene
-{@$JobGiverId}  That's fine, Olivia. Let me know when you're ready for another job. 
+{@$JobGiverId}  {random Okay. We'll have work for you here when you're ready.| Okay, Mija. Let me know when you're ready for another job.} 

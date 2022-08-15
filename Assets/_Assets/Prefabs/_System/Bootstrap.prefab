@@ -549,6 +549,7 @@ MonoBehaviour:
   m_Inventory: {fileID: 11400000, guid: e9a2dcc9ba98c40d083e7932d110a76b, type: 2}
   m_WaterProperties: {fileID: 11400000, guid: 633ee60b9cdd3a3479cd3343b577cdd6, type: 2}
   m_ScriptCharacters: {fileID: 11400000, guid: 381bba69c79d63142a038ab9ca21aa3a, type: 2}
+  m_Journal: {fileID: 11400000, guid: 2ea0153723102764d9baa514a9bc0969, type: 2}
   m_RegularFont: {fileID: 11400000, guid: b15403010083ed84b8d4539664e828a8, type: 2}
   m_SemiBoldFont: {fileID: 11400000, guid: 7940b4e17d8b8a0439ce330effed3c43, type: 2}
   m_BoldFont: {fileID: 11400000, guid: 06a2d36ed11768646965034c3153aadb, type: 2}
@@ -618,8 +619,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8400ae16527fd1d4aa301dd2c0752c49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ServerAddress: https://fieldday-web.wcer.wisc.edu/wsgi-bin/opengamedata.wsgi
   m_IdRenames: {fileID: 4900000, guid: 5961de391c43f3548a0426b42fb1e019, type: 3}
+  m_ServerAddress: https://fieldday-web.wcer.wisc.edu/wsgi-bin/opengamedata.wsgi
+  m_SaveRetryCount: 8
+  m_SaveRetryDelay: 5
   m_DefaultPlayerDisplayName: Ollie
   m_DefaultMapId:
     m_Source: RS-1C

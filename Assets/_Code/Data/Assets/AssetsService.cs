@@ -1,4 +1,5 @@
 using System.Collections;
+using Aqua.Journal;
 using BeauData;
 using BeauRoutine;
 using BeauUtil;
@@ -18,6 +19,7 @@ namespace Aqua {
         [SerializeField, Required] private InventoryDB m_Inventory = null;
         [SerializeField, Required] private WaterPropertyDB m_WaterProperties = null;
         [SerializeField, Required] private ScriptCharacterDB m_ScriptCharacters = null;
+        [SerializeField, Required] private JournalDB m_Journal = null;
 
         [Header("Fonts")]
         [SerializeField, Required] private TMP_FontAsset m_RegularFont = null;
@@ -41,6 +43,7 @@ namespace Aqua {
         public InventoryDB Inventory { get { return m_Inventory; } }
         public WaterPropertyDB WaterProp { get { return m_WaterProperties; } }
         public ScriptCharacterDB Characters { get { return m_ScriptCharacters; } }
+        public JournalDB Journal { get { return m_Journal; } }
 
         public TMP_FontAsset RegularFont { get { return m_RegularFont; } }
         public TMP_FontAsset SemiBoldFont { get { return m_SemiBoldFont; } }
@@ -48,6 +51,8 @@ namespace Aqua {
 
         public Material DefaultSpriteMaterial { get { return m_DefaultSpriteMaterial; } }
         public Material OverlaySpriteMaterial { get { return m_OverlaySpriteMaterial; } }
+
+        private Unsafe.ArenaHandle m_DecompressionBuffer;
 
         protected override void Initialize() {
             base.Initialize();
@@ -59,11 +64,13 @@ namespace Aqua {
             m_Inventory.Initialize();
             m_WaterProperties.Initialize();
             m_ScriptCharacters.Initialize();
+            m_Journal.Initialize();
 
             Streaming.TextureMemoryBudget = (long) (m_StreamedTextureMem * 1024 * 1024);
             Streaming.AudioMemoryBudget = (long) (m_StreamedAudioMem * 1024 * 1024);
+            m_DecompressionBuffer = Unsafe.CreateArena(1024 * 1024 * 2, "Decompression");
 
-            Assets.Assign(this);
+            Assets.Assign(this, m_DecompressionBuffer);
             Routine.Start(this, StreamingManagementRoutine());
         }
 
@@ -86,6 +93,8 @@ namespace Aqua {
 
         protected override void Shutdown() {
             Streaming.UnloadAll();
+
+            Unsafe.TryDestroyArena(ref m_DecompressionBuffer);
 
             base.Shutdown();
         }

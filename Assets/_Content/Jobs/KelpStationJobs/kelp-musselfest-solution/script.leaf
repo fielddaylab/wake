@@ -4,7 +4,13 @@
 @trigger    JobStarted
 @cutscene
 
-{@guide}	We'll need to measure how Mussels reproduce in stressed and unstressed conditions.
+{@drKelp} Wonderful! I've really been wanting to solve the mystery of those mussels.  
+{@drKelp}  We need to find out if the mussels at site C will continue reproducing, even though they're stressed.
+{@drKelp}  The community is pretty concerned. Mussels are a delicacy around here. 
+{@drKelp}  Speaking of which... you've been working nonstop lately. Have you been getting enough protein? 
+{@drKelp}  You can stick around, if you'd like. I made my homemade mussel-kelp loaf!
+{@player}  That sounds delicious, Mom, but I better get to work.
+{@drKelp} Okay, Sweetie. Stay safe out there. 
 $set jobs:kelp-mussel-fest-solution.inMeasurement = false
 $set jobs:kelp-mussel-fest-solution.inMeasurementEcosystem = false
 
@@ -59,8 +65,9 @@ $set jobs:kelp-mussel-fest-solution.inMeasurement = false
 @trigger    RequestPartnerHelp
 @when 		!JobTaskTop(reportChange)
 @cutscene
-{@player}   Hmm, I'm not sure how to approach this job.
-{@guide}	The {nameof MeasurementTank} in the Experiment room should be your weapon of choice, here.
+{@player}   Hmm. I'm not sure how to approach this job.
+{@guide}	Processing data...
+		    I believe you'll need the {nameof MeasurementTank} in the Experiment room. 
 
 :: helpSelectEnvironment
 @trigger    RequestPartnerHelp
@@ -68,11 +75,14 @@ $set jobs:kelp-mussel-fest-solution.inMeasurement = false
 @boostScore 1
 @cutscene
 $if jobs:kelp-mussel-fest-solution.inMeasurementEcosystem
-	{@player}   Which site should we pick?
-	{@guide}	Do you know which sites the mussels will be stressed in, and which sites they won't be stressed in?
+	{@player}   Can you help me figure out which sites to choose, {nameof @guide}?
+	{@guide}	Certainly, O.
+	{@guide}   You will need to run the experiment twice...
+	{@guide} Once with an environment that stresses the mussels.
+	{@guide} And another time with an environment that doesn't stress them. 
 $else
-	{@player}   How do we do this again?
-	{@guide}	Select an ecosystem, organism, and additional controls. Then run the experiment.
+	{@player}   How do we do this again, {nameof @guide}?
+	{@guide}	Select an ecosystem, a species, and additional controls. Then run your experiment.
 $endif
 
 :: helpContinueExperiment
@@ -80,22 +90,27 @@ $endif
 @when 		JobTaskTop(stressedRate), !jobs:kelp-mussel-fest-solution.inMeasurement
 @boostScore 2
 @cutscene
-{@player}   Are we ready to report our findings?
-{@guide}	Not quite. You still have another Mussel reproduction rate to get.
+{@player}   Okay, {nameof @guide}. Should I head back and report my findings?
+{@guide}	Not yet, O. You still need to find another Mussel reproduction rate.
 
 :: experimentEnd
 @trigger    JobTasksUpdated
 @when 		JobTaskTop(reportChange)
 @once
 @cutscene
-{@guide}	We have all the information -- if you can interpret it, you'll be able to advise {nameof @drKelp}.
+{@guide}	Your work is sufficient, O!
+{@player}   Thanks, {nameof @guide}. You too. 
+{@player}   I better grab a snack on the way to the station. Mom's mussel-kelp loaf is the stuff of nightmares.
+{@guide}    You have had another nightmare? About meatloaf?
+{@player}   Oh... no, it's just a figure of speech. 
+{@player}   I hope.  
 
 :: helpReport
 @trigger    RequestPartnerHelp
 @when 		JobTaskTop(reportChange)
 @cutscene
 {@player}   What now?
-{@guide}	Ah, now you should be able to tell {nameof drKelp} about the effect stress has on Mussel reproduction.
+{@guide}	Now you should be able to tell {nameof drKelp} about the effect of stress on Mussel reproduction!
 
 // CATCH-ALL GUIDE TEXT
 
@@ -134,7 +149,7 @@ $endif
 $choose branch
 
 :: argue.notReady
-{@drKelp} OK. Get back to me when you're ready.
+{@drKelp} Okay, Sweetie. Get back to me when you're ready.
 
 :: argue.growSame
 {@drKelp}	How do you know?
@@ -177,5 +192,9 @@ $call ArgueRejectIncorrect()
 
 :: argue.correctFacts
 $call ArgueComplete()
-{@drKelp}	Oh! They grow at the same rate. Amazing!
+{@drKelp}	Oh! They grow at the same rate. 
+{@drKelp}   What a relief. Looks like local restaurants won't have any trouble.
+{@drKelp}   Want to stick around for dinner, Mija?
+{@player}   Oh, uh, no thanks, Mom. I already ate.
+{@drKelp}   Okay, Sweetie. Just let me know if you change your mind!
 $call CompleteJob()

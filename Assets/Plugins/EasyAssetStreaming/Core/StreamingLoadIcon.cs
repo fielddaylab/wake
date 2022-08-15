@@ -7,19 +7,8 @@
  * Purpose: Displays a loading icon when an IStreamingComponent is loading.
  */
 
-#if USING_BEAUUTIL
-using BeauUtil;
-#endif // USING_BEAUUTIL
-
 using System;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
-
-#if UNITY_EDITOR
-using UnityEditor;
-#endif // UNITY_EDITOR
 
 namespace EasyAssetStreaming {
     [AddComponentMenu("Streaming Assets/Streaming Load Icon")]

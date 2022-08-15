@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace EasyAssetStreaming {
 
@@ -372,6 +373,14 @@ namespace EasyAssetStreaming {
 
         #endregion // Streamed Textures
 
+        #region Web Requests
+
+        static internal bool ShouldRetry(UnityWebRequest webRequest) {
+            return webRequest.isNetworkError;
+        }
+
+        #endregion // Web Requests
+
         #region Misc
 
         internal struct NativeArrayContext : IDisposable {
@@ -411,6 +420,13 @@ namespace EasyAssetStreaming {
             return false;
         }
 
+        static internal void FastRemoveAt<T>(this List<T> list, int index) {
+            int end = list.Count - 1;
+            if (index != end)
+                list[index] = list[end];
+            list.RemoveAt(end);
+        }
+
         static internal NativeArrayContext NewArrayContext() {
             return new NativeArrayContext() {
                 #if ENABLE_UNITY_COLLECTIONS_CHECKS
@@ -430,6 +446,30 @@ namespace EasyAssetStreaming {
             while(length-- > 0) {
                 hash = (hash ^ *ptr++) * 1099511628211;
             }
+            return hash;
+        }
+
+        /// <summary>
+        /// Hashes the given string.
+        /// </summary>
+        static internal unsafe uint HashString(string value) {
+            if (value == null || value.Length <= 0)
+                return 0;
+            
+            // fnv-1a
+            uint hash = 2166136261;
+            int length = value.Length;
+            
+            // unsafe method
+            fixed(char* ptr = value)
+            {
+                char* inc = ptr;
+                while(--length >= 0)
+                {
+                    hash = (hash ^ *inc++) * 16777619;
+                }
+            }
+            
             return hash;
         }
 

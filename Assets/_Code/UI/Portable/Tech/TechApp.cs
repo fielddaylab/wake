@@ -131,43 +131,6 @@ namespace Aqua.Portable {
             RefreshButtons();
         }
 
-        // private IEnumerator ButtonClickRoutine(PortableUpgradeButton button) {
-        //     try {
-        //         using(var table = TempVarTable.Alloc()) {
-                    
-        //             // bool canAfford = button.CachedStatus == ItemStatus.Available;
-
-        //             table.Set("itemId", button.CachedItem.Id());
-        //             // var thread = Services.Script.TriggerResponse(ShopConsts.Trigger_AttemptBuy, table);
-
-        //             // if (!canAfford) {
-        //             //     Services.Events.Dispatch(ShopConsts.Event_InsufficientFunds, button.CachedItem.Id());
-        //             // }
-
-        //             // m_Preview.ShowPreview(button.CachedItem);
-
-        //             yield return ;
-
-        //             // bool nowHasItem = Save.Inventory.HasUpgrade(button.CachedItem.Id());
-        //             switch(m_CurrentCategory) {
-        //                 case CategoryId.Exploration: {
-        //                     Services.Script.TriggerResponse(TechConsts.Trigger_OpenExploration);
-        //                     break;
-        //                 }
-        //                 case CategoryId.Science: {
-        //                     Services.Script.TriggerResponse(TechConsts.Trigger_OpenScience);
-        //                     break;
-        //                 }
-        //             }
-
-        //         }
-        //     } finally {
-        //         m_SelectedItem = null;
-        //         UpdateButtonState(button);
-        //         // m_Preview.HidePreview();
-        //     }
-        // }
-
         #endregion // Buttons
 
         #region Categories
@@ -217,42 +180,42 @@ namespace Aqua.Portable {
             }
         }
 
+        // called from collumn to fill button info 
         private void PopulateButton(PortableUpgradeButton button, InvItem item) {
             button.CachedItem = item;
             button.Title.SetText(item.NameTextId());
             button.Icon.sprite = item.Icon();
             button.Cursor.TooltipId = item.NameTextId();
 
-            button.gameObject.SetActive(false);
             UpdateButtonState(button);
-            button.gameObject.SetActive(true);
         }
 
-        private void UpdateButtonState(PortableUpgradeButton button) {
-            bool selected = m_SelectedItem == button.CachedItem;
-
-            if(!selected) { button.Outline.Color = m_BaseOutlineColor; }
-            else { UpdateInfoSection(button); }
-        }
-
+        // updates the info section of the tab to display item info
         private void UpdateInfoSection(PortableUpgradeButton selected) {
             m_ItemDescriptionLayout.SetActive(true);
             m_ItemDescription.SetText(selected.CachedItem.DescriptionTextId());
             m_LargeItemIcon.sprite = selected.Icon.sprite;
         }
 
+        // called to update button outlines based on button states
         private void RefreshButtons() {
             foreach(var button in m_LeftColumnButtons) {
-                if (button.isActiveAndEnabled) {
-                    UpdateButtonState(button);
-                }
+                if (button.isActiveAndEnabled) UpdateButtonState(button);
             }
-
             foreach(var button in m_RightColumnButtons) {
-                if (button.isActiveAndEnabled) {
-                    UpdateButtonState(button);
-                }
+                if (button.isActiveAndEnabled) UpdateButtonState(button);
             }
+        }
+
+        private void UpdateButtonState(PortableUpgradeButton button) {
+            button.gameObject.SetActive(false);
+
+            bool selected = m_SelectedItem == button.CachedItem;
+
+            if(!selected) { button.Outline.Color = m_BaseOutlineColor; }
+            else { UpdateInfoSection(button); }
+
+            button.gameObject.SetActive(true);
         }
 
         #endregion // Categories

@@ -87,7 +87,6 @@ namespace Aqua.Option
             OnChanged?.Invoke(actualValue);
 
             OptionsData options = Save.Options;
-            options.SetDirty();
 
             string valueString;
             if (GenerateString != null)

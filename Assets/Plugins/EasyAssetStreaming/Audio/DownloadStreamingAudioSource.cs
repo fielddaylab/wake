@@ -29,14 +29,14 @@ namespace EasyAssetStreaming {
 
         #endregion // Inspector
 
-        [NonSerialized] private StreamingAssetId m_AssetId;
+        [NonSerialized] private StreamingAssetHandle m_Handle;
         [NonSerialized] private AudioClip m_LoadedClip;
         private readonly Streaming.AssetCallback m_OnUpdatedEvent;
         private bool m_PlayRequested;
         private float? m_PlayRequestedTime;
 
         private DownloadStreamingAudioSource() {
-            m_OnUpdatedEvent = (StreamingAssetId id, Streaming.AssetStatus status, object asset) => {
+            m_OnUpdatedEvent = (StreamingAssetHandle id, Streaming.AssetStatus status, object asset) => {
                 if (status == Streaming.AssetStatus.Loaded) {
                     m_LoadedClip = (AudioClip) asset;
                     m_AudioSource.clip = m_LoadedClip;
@@ -77,14 +77,14 @@ namespace EasyAssetStreaming {
         /// Returns if the clip is fully loaded.
         /// </summary>
         public bool IsLoaded() {
-            return Streaming.IsLoaded(m_AssetId);
+            return Streaming.IsLoaded(m_Handle);
         }
 
         /// <summary>
         /// Returns if the clip is currently loading.
         /// </summary>
         public bool IsLoading() {
-            return (Streaming.Status(m_AssetId) & Streaming.AssetStatus.PendingLoad) != 0;;
+            return (Streaming.Status(m_Handle) & Streaming.AssetStatus.PendingLoad) != 0;;
         }
 
         /// <summary>
@@ -200,8 +200,8 @@ namespace EasyAssetStreaming {
         }
 
         private void LoadClip() {
-            if (!Streaming.Audio(m_Path, ref m_AssetId, m_OnUpdatedEvent)) {
-                if (!m_AssetId) {
+            if (!Streaming.Audio(m_Path, ref m_Handle, m_OnUpdatedEvent)) {
+                if (!m_Handle) {
                     m_AudioSource.Stop();
                     m_AudioSource.clip = null;
                     m_AudioSource.enabled = false;
@@ -213,10 +213,10 @@ namespace EasyAssetStreaming {
             LoadSettings();
 
             m_AudioSource.clip = m_LoadedClip;
-            m_AudioSource.enabled = m_AssetId;
+            m_AudioSource.enabled = m_Handle;
             m_AudioSource.Stop();
 
-            Streaming.AssetStatus status = Streaming.Status(m_AssetId);
+            Streaming.AssetStatus status = Streaming.Status(m_Handle);
 
             if ((status & Streaming.AssetStatus.Loaded) != 0) {
                 if (m_PlayRequested) {
@@ -243,7 +243,7 @@ namespace EasyAssetStreaming {
                 m_AudioSource.clip = null;
             }
 
-            if (Streaming.Unload(ref m_AssetId)) {
+            if (Streaming.Unload(ref m_Handle)) {
                 m_LoadedClip = null;
                 OnUpdated?.Invoke(this, Streaming.AssetStatus.Unloaded);
             }

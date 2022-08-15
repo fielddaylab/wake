@@ -4,8 +4,8 @@
 @trigger    JobStarted
 @cutscene
 
-{@profBayou}   Have you explored the {h}Bayou Station{/h} yet? There appears to be a new reef growing in the middle of {h}Site O{/h}. 
-                Would you be able to go pop over and help us report back on what exactly is growing over there?
+{@profBayou}   Have you explored the {h}Bayou Station{/h} yet? There appears to be a new reef growing right here in the middle of {h}Site O{/h}. 
+                Would you be able to go pop out there and help us report back on what exactly is growing out there?
 {@player}   You can count on me!
 
 :: giveROVTagger
@@ -40,7 +40,7 @@ $call UnlockRoom("Modeling")
 @when 		JobTaskActive(visitSiteO)
 @boostScore -5
 @cutscene
-{@guide}    Head to {h}site O{/h}, it's just South of us!
+{@guide}    Head to {h}site O{/h}, it's right outside!
 
 :: catchGetScans
 @trigger    RequestPartnerHelp

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Aqua.Journal;
 using BeauData;
 using BeauUtil;
 using BeauUtil.Debugger;
@@ -12,6 +13,7 @@ namespace Aqua.Profile
         private RingBuffer<PlayerInv> m_Items = new RingBuffer<PlayerInv>();
         private HashSet<StringHash32> m_ScannerIds = new HashSet<StringHash32>();
         private HashSet<StringHash32> m_UpgradeIds = new HashSet<StringHash32>();
+        private List<StringHash32> m_JournalIds = new List<StringHash32>();
 
         [NonSerialized] private bool m_ItemListDirty = true;
         [NonSerialized] private bool m_HasChanges;
@@ -284,6 +286,37 @@ namespace Aqua.Profile
 
         #endregion // Upgrades
 
+        #region Journals
+
+        public bool HasJournalEntry(StringHash32 inJournalId)
+        {
+            Assert.True(Services.Assets.Journal.HasId(inJournalId), "Could not find JournalDesc with id '{0}'", inJournalId);
+            return m_JournalIds.Contains(inJournalId);
+        }
+
+        public bool AddJournalEntry(StringHash32 inJournalId)
+        {
+            Assert.True(Services.Assets.Journal.HasId(inJournalId), "Could not find JournalDesc with id '{0}'", inJournalId);
+            if (m_JournalIds.Contains(inJournalId))
+                return false;
+
+            m_JournalIds.Add(inJournalId);
+            return true;
+        }
+
+        public bool RemoveJournalEntry(StringHash32 inJournalId)
+        {
+            Assert.True(Services.Assets.Journal.HasId(inJournalId), "Could not find JournalDesc with id '{0}'", inJournalId);
+            return m_JournalIds.Remove(inJournalId);
+        }
+
+        public ListSlice<StringHash32> AllJournalEntryIds()
+        {
+            return m_JournalIds;
+        }
+
+        #endregion // Journals
+
         #region IProfileChunk
 
         public void SetDefaults()
@@ -303,10 +336,16 @@ namespace Aqua.Profile
                     }
                 }
             }
+
+            foreach(var journal in Services.Assets.Journal.Objects) {
+                if (journal.IsDefault()) {
+                    AddJournalEntry(journal.Id());
+                }
+            }
         }
 
         // v3: removed water property
-        ushort ISerializedVersion.Version { get { return 3; } }
+        ushort ISerializedVersion.Version { get { return 4; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
@@ -320,6 +359,10 @@ namespace Aqua.Profile
                 if (waterChem != 0) {
                     m_UpgradeIds.Add(ItemIds.WaterModeling);
                 }
+            }
+
+            if (ioSerializer.ObjectVersion >= 4) {
+                ioSerializer.UInt32ProxyArray("journalIds", ref m_JournalIds);
             }
         }
 
@@ -350,6 +393,11 @@ namespace Aqua.Profile
                 } else {
                     inv.Item = Assets.Item(inv.ItemId);
                 }
+            }
+
+            for(int i = m_JournalIds.Count - 1; i >= 0; i--)
+            {
+                SavePatcher.PatchIds(m_JournalIds);
             }
 
             m_UpgradeIds.RemoveWhere((itemId) => {
@@ -385,6 +433,10 @@ namespace Aqua.Profile
             writer.Header("Scanner Ids");
             foreach(var scannerId in m_ScannerIds) {
                 writer.Text(scannerId.ToDebugString());
+            }
+            writer.Header("Journal Ids");
+            foreach(var journalId in m_JournalIds) {
+                writer.Text(journalId.ToDebugString());
             }
         }
 

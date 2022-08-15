@@ -184,6 +184,11 @@ namespace Aqua.Profile
             return false;
         }
 
+        public IReadOnlyCollection<StringHash32> VisitedLocationIds()
+        {
+            return m_VisitedLocations;
+        }
+
         #endregion // Seen
 
         public void SetDefaults()

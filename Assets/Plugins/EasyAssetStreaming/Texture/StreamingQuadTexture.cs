@@ -60,7 +60,7 @@ namespace EasyAssetStreaming {
 
         #endregion // Inspector
 
-        [NonSerialized] private StreamingAssetId m_AssetId;
+        [NonSerialized] private StreamingAssetHandle m_AssetHandle;
         [NonSerialized] private Texture m_LoadedTexture;
         [NonSerialized] private Mesh m_MeshInstance;
         [NonSerialized] private Shader m_LastKnownShader = null;
@@ -72,7 +72,7 @@ namespace EasyAssetStreaming {
         private readonly Streaming.AssetCallback OnAssetUpdated;
 
         private StreamingQuadTexture() {
-            OnAssetUpdated = (StreamingAssetId id, Streaming.AssetStatus status, object asset) => {
+            OnAssetUpdated = (StreamingAssetHandle id, Streaming.AssetStatus status, object asset) => {
                 if (status == Streaming.AssetStatus.Loaded) {
                     m_LoadedTexture = (Texture) asset;
                     if (m_MainTexturePropertyId != 0) {
@@ -114,14 +114,14 @@ namespace EasyAssetStreaming {
         /// Returns if the texture is fully loaded.
         /// </summary>
         public bool IsLoaded() {
-            return Streaming.IsLoaded(m_AssetId);
+            return Streaming.IsLoaded(m_AssetHandle);
         }
 
         /// <summary>
         /// Returns if the texture is currently loading.
         /// </summary>
         public bool IsLoading() {
-            return (Streaming.Status(m_AssetId) & Streaming.AssetStatus.PendingLoad) != 0;;
+            return (Streaming.Status(m_AssetHandle) & Streaming.AssetStatus.PendingLoad) != 0;;
         }
 
         /// <summary>
@@ -387,8 +387,8 @@ namespace EasyAssetStreaming {
         }
 
         private void LoadTexture() {
-            if (!Streaming.Texture(m_Path, ref m_AssetId, OnAssetUpdated)) {
-                if (!m_AssetId) {
+            if (!Streaming.Texture(m_Path, ref m_AssetHandle, OnAssetUpdated)) {
+                if (!m_AssetHandle) {
                     m_LoadedTexture = null;
                     m_MeshRenderer.enabled = false;
                     #if USING_BEAUUTIL
@@ -413,7 +413,7 @@ namespace EasyAssetStreaming {
                 ApplyTextureAndColor();
             }
 
-            Streaming.AssetStatus status = Streaming.Status(m_AssetId);
+            Streaming.AssetStatus status = Streaming.Status(m_AssetHandle);
             if ((status & Streaming.AssetStatus.Loaded) != 0) {
                 Resize(m_AutoSize);
             } else {
@@ -478,7 +478,7 @@ namespace EasyAssetStreaming {
             }
             #endif // USING_BEAUUTIL
 
-            if (Streaming.Unload(ref m_AssetId, OnAssetUpdated)) {
+            if (Streaming.Unload(ref m_AssetHandle, OnAssetUpdated)) {
                 m_LoadedTexture = null;
                 if (m_MainTexturePropertyId != 0) {
                     ApplyTextureAndColor();

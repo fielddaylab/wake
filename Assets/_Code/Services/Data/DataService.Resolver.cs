@@ -316,6 +316,18 @@ namespace Aqua
                 return null;
             }
 
+            [LeafMember("OrganismEntityCount"), UnityEngine.Scripting.Preserve]
+            static private int EntityOrganismCount()
+            {
+                return Save.Bestiary.GetEntityCount(BestiaryDescCategory.Critter);
+            }
+
+            [LeafMember("EcosystemEntityCount"), UnityEngine.Scripting.Preserve]
+            static private int EntityEcosystemCount()
+            {
+                return Save.Bestiary.GetEntityCount(BestiaryDescCategory.Environment);
+            }
+
             [LeafMember("HasFact"), UnityEngine.Scripting.Preserve]
             static private bool HasFact(StringHash32 inFactId)
             {
@@ -592,6 +604,27 @@ namespace Aqua
             static private bool HasScanned(StringHash32 inNodeId)
             {
                 return Save.Inventory.WasScanned(inNodeId);
+            }
+
+            [LeafMember("HasJournalEntry"), UnityEngine.Scripting.Preserve]
+            static private bool HasJournalEntry(StringHash32 inEntryId)
+            {
+                return Save.Inventory.HasJournalEntry(inEntryId);
+            }
+
+            [LeafMember("GiveJournalEntry"), UnityEngine.Scripting.Preserve]
+            static private IEnumerator GiveJournalEntry([BindThread] ScriptThread inThread, StringHash32 inEntryId, PopupMode inMode = PopupMode.Popup)
+            {
+                if (Save.Inventory.AddJournalEntry(inEntryId) && inMode != PopupMode.Silent)
+                {
+                    inThread.Dialog = null;
+
+                    if (Services.UI.IsSkippingCutscene())
+                        return null;
+
+                    return Services.UI.FindPanel<JournalCanvas>().ShowNewEntry();
+                }
+                return null;
             }
 
             #endregion // Bestiary/Inventory

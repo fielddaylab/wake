@@ -27,15 +27,14 @@ namespace EasyAssetStreaming {
         #region Types
 
         internal class ManifestData {
-            public Dictionary<StreamingAssetId, ManifestEntry> Map = new Dictionary<StreamingAssetId, ManifestEntry>();
+            public Dictionary<uint, ManifestEntry> Map = new Dictionary<uint, ManifestEntry>();
 
             public Textures.DefaultSettings TextureDefaults = Textures.DefaultSettings.Default;
         }
 
         internal struct ManifestEntry {
             public string Path;
-            public AssetType Type;
-            [NonSerialized] public StreamingAssetId Id;
+            public StreamingAssetType Type;
 
             public Textures.TextureSettings Texture;
         }
@@ -131,8 +130,8 @@ namespace EasyAssetStreaming {
                     }
 
                     ManifestEntry entry;
-                    StreamingAssetId id = new StreamingAssetId(relativePath, default(AssetTypeId));
-                    Current.Map.TryGetValue(id, out entry);
+                    uint hash = AddressKey(relativePath);
+                    Current.Map.TryGetValue(hash, out entry);
 
                     JSON entryJSON = assetsJSON[relativePath] = JSON.CreateObject();
 
@@ -140,10 +139,10 @@ namespace EasyAssetStreaming {
                     entry.Type = IdentifyAssetTypeFromExt(ext);
 
                     WriteEnum(entryJSON, "Type", entry.Type.Id);
-                    WriteEnum(entryJSON, "SubType", entry.Type.Sub, AssetSubTypeId.Default);
+                    WriteEnum(entryJSON, "SubType", entry.Type.Sub, StreamingAssetSubTypeId.Default);
 
-                    if (entry.Type.Id == AssetTypeId.Texture) {
-                        if (entry.Type.Sub == AssetSubTypeId.Default) {
+                    if (entry.Type.Id == StreamingAssetTypeId.Texture) {
+                        if (entry.Type.Sub == StreamingAssetSubTypeId.Default) {
                             Texture2D texture = null;
                             try {
                                 texture = new Texture2D(1, 1);
@@ -156,7 +155,7 @@ namespace EasyAssetStreaming {
                         }
                     }
 
-                    Current.Map[id] = entry;
+                    Current.Map[hash] = entry;
                 }
 
                 var textureDefaults = manifestJSON["TextureDefaults"] = JSON.CreateObject();
@@ -203,8 +202,8 @@ namespace EasyAssetStreaming {
                 }
 
                 UnityEngine.Debug.LogFormat("[Streaming] Loading manifest...", Current.Map.Count);
-                var request = s_Loader = UnityWebRequest.Get(ResolvePathToURL(ManifestPath));
-                EnsureTick();
+                var request = s_Loader = UnityWebRequest.Get(ResolveAddressToURL(ManifestPath));
+                EnsureInitialized();
                 var op = s_Loader.SendWebRequest();
                 op.completed += (_) => {
                     HandleLoaded(request);
@@ -249,15 +248,15 @@ namespace EasyAssetStreaming {
                     ManifestEntry entry = new ManifestEntry();
                     entry.Path = entryKV.Key;
                     JSON entryJSON = entryKV.Value;
-                    AssetTypeId assetType = ParseEnum(entryJSON["Type"], AssetTypeId.Unknown);
-                    AssetSubTypeId subType = ParseEnum(entryJSON["SubType"], AssetSubTypeId.Default);
-                    entry.Type = new AssetType(assetType, subType);
+                    StreamingAssetTypeId assetType = ParseEnum(entryJSON["Type"], StreamingAssetTypeId.Unknown);
+                    StreamingAssetSubTypeId subType = ParseEnum(entryJSON["SubType"], StreamingAssetSubTypeId.Default);
+                    entry.Type = new StreamingAssetType(assetType, subType);
                     if (entryJSON["Texture"] != null) {
                         entry.Texture = Textures.ParseTextureSettings(entryJSON["Texture"]);
                     }
 
-                    entry.Id = new StreamingAssetId(entry.Path, entry.Type);
-                    data.Map.Add(entry.Id, entry);
+                    uint hash = AddressKey(entry.Path);
+                    data.Map.Add(hash, entry);
                 }
 
                 var texSettings = json["TextureDefaults"];
@@ -270,13 +269,12 @@ namespace EasyAssetStreaming {
 
             #region Access
 
-            static public ManifestEntry Entry(StreamingAssetId id, AssetType type) {
+            static public ManifestEntry Entry(uint id, string address, StreamingAssetType type) {
                 EnsureLoaded();
 
                 ManifestEntry entry = default;
                 if (!Current.Map.TryGetValue(id, out entry)) {
-                    entry.Id = id;
-                    entry.Path = id.ToString();
+                    entry.Path = address;
                     entry.Type = type;
                     Current.Map.Add(id, entry);
                 }
@@ -301,23 +299,23 @@ namespace EasyAssetStreaming {
             return (T) Enum.Parse(typeof(T), data.AsString);
         }
 
-        static private AssetType IdentifyAssetTypeFromPath(string filePath) {
+        static private StreamingAssetType IdentifyAssetTypeFromPath(string filePath) {
             return IdentifyAssetTypeFromExt(Path.GetExtension(filePath));
         }
 
-        static private AssetType IdentifyAssetTypeFromExt(string extension) {
+        static private StreamingAssetType IdentifyAssetTypeFromExt(string extension) {
             switch(extension) {
                 case ".png":
                 case ".jpg":
                 case ".jpeg":
                 {
-                    return AssetTypeId.Texture;
+                    return StreamingAssetTypeId.Texture;
                 }
 
                 case ".webm":
                 case ".mp4":
                 {
-                    return new AssetType(AssetTypeId.Texture, AssetSubTypeId.VideoTexture);
+                    return new StreamingAssetType(StreamingAssetTypeId.Texture, StreamingAssetSubTypeId.VideoTexture);
                 }
 
                 case ".mp3":
@@ -325,12 +323,12 @@ namespace EasyAssetStreaming {
                 case ".wav":
                 case ".aac":
                 {
-                    return AssetTypeId.Audio;
+                    return StreamingAssetTypeId.Audio;
                 }
 
                 default:
                 {
-                    return AssetTypeId.Unknown;
+                    return StreamingAssetTypeId.Unknown;
                 }
             }
         }

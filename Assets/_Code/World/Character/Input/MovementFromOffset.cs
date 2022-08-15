@@ -12,15 +12,15 @@ namespace Aqua.Character
         public Curve SpeedCurve;
         public float Acceleration;
 
-        public bool Apply(Vector2 inNormalizedOffset, KinematicObject2D inKinematics, float inDeltaTime)
+        public bool Apply(Vector2 inNormalizedOffset, KinematicObject2D inKinematics, float inDeltaTime, float inMultiplier)
         {
-            float desiredSpeed = SpeedCurve.Evaluate(inNormalizedOffset.magnitude) * MaxSpeed;
+            float desiredSpeed = SpeedCurve.Evaluate(inNormalizedOffset.magnitude) * MaxSpeed * inMultiplier;
             Vector2 desiredVelocity = inNormalizedOffset * desiredSpeed;
             Vector2 deltaVelocity = desiredVelocity - inKinematics.State.Velocity;
             
             if (deltaVelocity.sqrMagnitude > 0)
             {
-                Vector2 vector = deltaVelocity * inDeltaTime * Acceleration;
+                Vector2 vector = deltaVelocity * (inDeltaTime * Acceleration * inMultiplier);
                 vector = PhysicsService.SmoothVelocity(vector);
 
                 if (vector.x == 0 && vector.y == 0)
