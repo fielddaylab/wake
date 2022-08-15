@@ -16,7 +16,7 @@ namespace Aqua.Ship
         public string BayouStationPath;
         public string FinalStationPath;
 
-        IEnumerable<string> ISceneSubsceneSelector.GetAdditionalScenesNames(SceneBinding inNew, object inContext)
+        IEnumerable<SceneImportSettings> ISceneSubsceneSelector.GetAdditionalScenesNames(SceneBinding inNew, object inContext)
         {
             StringHash32 currentStationId = Save.Map.CurrentStationId();
             if (currentStationId == MapIds.KelpStation)

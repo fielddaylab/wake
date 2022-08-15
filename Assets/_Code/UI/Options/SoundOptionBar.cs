@@ -80,7 +80,6 @@ namespace Aqua.Option
             UpdateMuteIcon(inbValue);
             options.Audio[m_Id] = currentSettings;
 
-            options.SetDirty();
             OnChanged?.Invoke(m_Id, currentSettings);
 
             Services.Events.Queue(GameEvents.OptionsUpdated, options);
@@ -94,7 +93,6 @@ namespace Aqua.Option
             currentSettings.Volume = inVolume / m_Slider.maxValue;
             options.Audio[m_Id] = currentSettings;
 
-            options.SetDirty();
             OnChanged?.Invoke(m_Id, currentSettings);
             
             Services.Events.Queue(GameEvents.OptionsUpdated, options);

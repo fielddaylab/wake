@@ -14,9 +14,9 @@ namespace Aqua.Character
         public float TurnRate;
         public float InPlaceRotationSpeedThreshold;
 
-        public bool Apply(Vector2 inNormalizedOffset, KinematicObject2D inKinematics, float inDeltaTime)
+        public bool Apply(Vector2 inNormalizedOffset, KinematicObject2D inKinematics, float inDeltaTime, float inMultiplier)
         {
-            float desiredSpeed = SpeedCurve.Evaluate(inNormalizedOffset.magnitude) * MaxSpeed;
+            float desiredSpeed = SpeedCurve.Evaluate(inNormalizedOffset.magnitude) * MaxSpeed * inMultiplier;
             Vector2 desiredVelocity = inNormalizedOffset * desiredSpeed;
             Vector2 deltaVelocity = desiredVelocity - inKinematics.State.Velocity;
             float currentSpeed = inKinematics.State.Velocity.magnitude;
@@ -36,7 +36,7 @@ namespace Aqua.Character
                     return true;
                 }
 
-                float vecSpeed = deltaSpeed * inDeltaTime * Acceleration;
+                float vecSpeed = deltaSpeed * (inDeltaTime * Acceleration * inMultiplier);
                 Vector2 vector = new Vector2(vecSpeed, 0);
                 Geom.Rotate(ref vector, newRotation * Mathf.Deg2Rad);
                 vector = PhysicsService.SmoothVelocity(vector);

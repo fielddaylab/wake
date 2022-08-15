@@ -116,6 +116,8 @@ namespace ProtoAqua.Observation
             return 0;
         }
 
+        public float MoveSpeedMultiplier() { return 1; }
+
         public void GetTargetPosition(bool inbOnGamePlane, out Vector3? outWorld, out Vector3? outCursor) {
             outWorld = outCursor = null;
         }

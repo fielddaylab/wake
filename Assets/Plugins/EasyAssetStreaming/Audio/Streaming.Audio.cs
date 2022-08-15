@@ -28,24 +28,25 @@ namespace EasyAssetStreaming {
         /// Loads an audio clip from a given url.
         /// Returns if the "assetId" parameter has changed.
         /// </summary>
-        static public bool Audio(string pathOrUrl, ref StreamingAssetId assetId, AssetCallback callback = null) {
-            if (string.IsNullOrEmpty(pathOrUrl)) {
+        static public bool Audio(string address, ref StreamingAssetHandle assetId, AssetCallback callback = null) {
+            if (string.IsNullOrEmpty(address)) {
                 return Unload(ref assetId, callback);
             }
 
-            Manifest.EnsureLoaded();
+            EnsureInitialized();
 
-            StreamingAssetId id = new StreamingAssetId(pathOrUrl, AssetTypeId.Audio);
             AudioClip loadedClip;
-            AssetMeta meta = AudioClips.GetMeta(ref id, pathOrUrl, out loadedClip);
+            StreamingAssetHandle id = AudioClips.GetHandle(address, out loadedClip);
 
             if (assetId != id) {
                 Dereference(assetId, callback);
                 assetId = id;
-                meta.RefCount++;
-                meta.LastModifiedTS = CurrentTimestamp();
-                meta.Status &= ~AssetStatus.PendingUnload;
-                AddCallback(meta, id, loadedClip, callback);
+                
+                ref AssetStateInfo state = ref id.StateInfo;
+                state.RefCount++;
+                state.LastAccessedTS = CurrentTimestamp();
+                state.Status &= ~AssetStatus.PendingUnload;
+                AddCallback(id, loadedClip, callback);
                 return true;
             }
 
@@ -55,21 +56,21 @@ namespace EasyAssetStreaming {
         /// <summary>
         /// Loads an audio clip from a given url.
         /// </summary>
-        static public StreamingAssetId Audio(string pathOrUrl, AssetCallback callback = null) {
-            if (string.IsNullOrEmpty(pathOrUrl)) {
+        static public StreamingAssetHandle Audio(string address, AssetCallback callback = null) {
+            if (string.IsNullOrEmpty(address)) {
                 return default;
             }
 
-            Manifest.EnsureLoaded();
+            EnsureInitialized();
 
-            StreamingAssetId id = new StreamingAssetId(pathOrUrl, AssetTypeId.Texture);
             AudioClip loadedClip;
-            AssetMeta meta = AudioClips.GetMeta(ref id, pathOrUrl, out loadedClip);
+            StreamingAssetHandle id = AudioClips.GetHandle(address, out loadedClip);
 
-            meta.RefCount++;
-            meta.LastModifiedTS = CurrentTimestamp();
-            meta.Status &= ~AssetStatus.PendingUnload;
-            AddCallback(meta, id, loadedClip, callback);
+            ref AssetStateInfo state = ref id.StateInfo;
+            state.RefCount++;
+            state.LastAccessedTS = CurrentTimestamp();
+            state.Status &= ~AssetStatus.PendingUnload;
+            AddCallback(id, loadedClip, callback);
 
             return id;
         }
@@ -116,50 +117,40 @@ namespace EasyAssetStreaming {
 
             #region State
 
-            static public readonly Dictionary<StreamingAssetId, AudioClip> ClipMap = new Dictionary<StreamingAssetId, AudioClip>();
+            static public readonly Dictionary<StreamingAssetHandle, AudioClip> ClipMap = new Dictionary<StreamingAssetHandle, AudioClip>();
             static public MemoryStat MemoryUsage = default;
             static public long MemoryBudget;
 
             #endregion // State
 
-            static public AssetMeta GetMeta(ref StreamingAssetId id, string pathOrUrl, out AudioClip clip) {
-                AudioClip loadedClip;
-                AssetMeta meta;
-                if (!s_Metas.TryGetValue(id, out meta)) {
-                    meta = new AssetMeta();
-
-                    UnityEngine.Debug.LogFormat("[Streaming] Loading streamed audio '{0}'...", id);
-                    
-                    meta.Type = AssetTypeId.Audio;
-                    meta.Status = AssetStatus.PendingLoad;
-                    meta.Path = pathOrUrl;
-                    loadedClip = LoadAudioAsync(id, pathOrUrl, meta);
-
-                    s_Metas[id] = meta;
-                    ClipMap[id] = loadedClip;
+            static public StreamingAssetHandle GetHandle(string address, out AudioClip clip) {
+                StreamingAssetHandle handle;
+                uint hash = AddressKey(address);
+                if (!s_Cache.ByAddressHash.TryGetValue(hash, out handle)) {
+                    handle = s_Cache.AllocSlot(address, StreamingAssetTypeId.Audio);
+                    clip = LoadAudioAsync(handle);
                 } else {
-                    loadedClip = ClipMap[id];
+                    clip = ClipMap[handle];
                 }
-
-                clip = loadedClip;
-                return meta;
+                
+                return handle;
             }
 
-            static public void StartLoading(StreamingAssetId id, AssetMeta meta) {
-                DownloadHandlerAudioClip audioDownload = (DownloadHandlerAudioClip) meta.Loader.downloadHandler;
-                var sent = meta.Loader.SendWebRequest();
+            static public void StartLoading(StreamingAssetHandle id) {
+                string url = id.MetaInfo.ResolvedAddress;
+                var request = id.LoadInfo.Loader = new UnityWebRequest(url, UnityWebRequest.kHttpVerbGET);
+                request.downloadHandler = new DownloadHandlerAudioClip(url, GetAudioTypeForURL(url));
+                var sent = request.SendWebRequest();
                 sent.completed += (_) => {
-                    HandleAudioUWRFinished(id, meta.Path, meta, meta.Loader);
+                    HandleAudioUWRFinished(id);
                 };
             }
 
-            static public UnityEngine.Object DestroyClip(StreamingAssetId id, AssetMeta meta) {
+            static public void DestroyClip(StreamingAssetHandle id) {
                 AudioClip clip = ClipMap[id];
                 ClipMap.Remove(id);
-                MemoryUsage.Current -= meta.Size;
-
+                MemoryUsage.Current -= id.StateInfo.Size;
                 StreamingHelper.DestroyResource(clip);
-                return clip;
             }
 
             static public void DestroyAllClips() {
@@ -181,55 +172,61 @@ namespace EasyAssetStreaming {
         
             #region Load
 
-            static private AudioClip LoadAudioAsync(StreamingAssetId id, string pathOrUrl, AssetMeta meta) {
-                AudioClip clip = CreatePlaceholder(pathOrUrl, false);
-                string url = ResolvePathToURL(pathOrUrl);
-                var request = meta.Loader = new UnityWebRequest(url, UnityWebRequest.kHttpVerbGET);
-                request.downloadHandler = new DownloadHandlerAudioClip(url, GetAudioTypeForURL(url));
-                s_LoadState.Queue.Enqueue(id);
-                EnsureTick();
-                RecomputeMemorySize(ref MemoryUsage, meta, clip);
-                s_LoadState.Count++;
+            static private AudioClip LoadAudioAsync(StreamingAssetHandle id) {
+                AudioClip clip = CreatePlaceholder(id.MetaInfo.Address, false);
+                s_Cache.BindAsset(id, clip);
+                QueueLoad(id);
+                RecomputeMemorySize(ref MemoryUsage, id, clip);
                 return clip;
             }
 
-            static private void HandleAudioUWRFinished(StreamingAssetId id, string pathOrUrl, AssetMeta meta, UnityWebRequest request) {
-                s_LoadState.Count--;
+            static private void HandleAudioUWRFinished(StreamingAssetHandle id) {
+                DecrementLoadCounter();
 
-                if (meta.Status == AssetStatus.Unloaded) {
+                ref AssetStateInfo stateInfo = ref id.StateInfo;
+                ref AssetLoadInfo loadInfo = ref id.LoadInfo;
+
+                if (stateInfo.Status == AssetStatus.Unloaded) {
                     return;
                 }
 
-                if ((meta.Status & AssetStatus.PendingUnload) != 0) {
+                if ((stateInfo.Status & AssetStatus.PendingUnload) != 0) {
                     UnloadSingle(id, 0, 0);
                     return;
                 }
 
+                UnityWebRequest request = loadInfo.Loader;
+
                 if (request.isNetworkError || request.isHttpError) {
-                    OnAudioDownloadFail(id, pathOrUrl, meta);
+                    if (loadInfo.RetryCount < RetryLimit && StreamingHelper.ShouldRetry(request)) {
+                        UnityEngine.Debug.LogWarningFormat("[Streaming] Retrying audio load '{0}' from '{1}': {2}", id.MetaInfo.Address, id.MetaInfo.ResolvedAddress, loadInfo.Loader.error);
+                        loadInfo.RetryCount++;
+                        QueueDelayedLoad(id, RetryDelayBase + (loadInfo.RetryCount - 1) * RetryDelayExtra);
+                        return;
+                    }
+                    OnAudioDownloadFail(id, request.error);
                 } else {
-                    OnAudioDownloadCompleted(id, ((DownloadHandlerAudioClip) request.downloadHandler).audioClip, pathOrUrl, meta);
+                    OnAudioDownloadCompleted(id, ((DownloadHandlerAudioClip) request.downloadHandler).audioClip);
                 }
 
                 request.Dispose();
-                meta.Loader = null;
+                loadInfo.Loader = null;
             }
 
-            static private void OnAudioDownloadCompleted(StreamingAssetId id, AudioClip clip, string pathOrUrl, AssetMeta meta) {
+            static private void OnAudioDownloadCompleted(StreamingAssetHandle id, AudioClip clip) {
                 ClipMap[id] = clip;
-                s_ReverseLookup[clip.GetInstanceID()] = id;
+                s_Cache.BindAsset(id, clip);
 
-                meta.Status = AssetStatus.Loaded;
-                RecomputeMemorySize(ref MemoryUsage, meta, clip);
-                UnityEngine.Debug.LogFormat("[Streaming] ...finished loading (async) '{0}'", id);
-                InvokeCallbacks(meta, id, clip);
+                id.StateInfo.Status = AssetStatus.Loaded;
+                RecomputeMemorySize(ref MemoryUsage, id, clip);
+                UnityEngine.Debug.LogFormat("[Streaming] ...finished loading audio (async) '{0}'", id.MetaInfo.Address);
+                InvokeCallbacks(id, clip);
             }
 
-            static private void OnAudioDownloadFail(StreamingAssetId id, string pathOrUrl, AssetMeta meta) {
-                UnityEngine.Debug.LogErrorFormat("[Streaming] Failed to load audio '{0}' from '{1}", id, pathOrUrl);
-                meta.Loader = null;
-                meta.Status = AssetStatus.Error;
-                InvokeCallbacks(meta, id, ClipMap[id]);
+            static private void OnAudioDownloadFail(StreamingAssetHandle id, string error) {
+                UnityEngine.Debug.LogErrorFormat("[Streaming] Failed to load audio '{0}' from '{1}': {2}", id.MetaInfo.Address, id.MetaInfo.ResolvedAddress, error);
+                id.StateInfo.Status = AssetStatus.Error;
+                InvokeCallbacks(id, ClipMap[id]);
             }
 
             #endregion // Load
@@ -249,7 +246,7 @@ namespace EasyAssetStreaming {
                         UnityEngine.Debug.LogFormat("[Streaming] Audio memory is over budget by {0:0.00} Kb", over / 1024f);
                         s_OverBudgetFlag = true;
                     }
-                    StreamingAssetId asset = IdentifyOverBudgetToDelete(AssetTypeId.Audio, now, over);
+                    StreamingAssetHandle asset = IdentifyOverBudgetToDelete(StreamingAssetTypeId.Audio, now, over);
                     if (asset) {
                         UnloadSingle(asset, now);
                         s_OverBudgetFlag = false;
@@ -265,7 +262,7 @@ namespace EasyAssetStreaming {
 
             #endregion // Manifest
 
-            static private AudioType GetAudioTypeForURL(string inURL)
+            static internal AudioType GetAudioTypeForURL(string inURL)
             {
                 string extension = System.IO.Path.GetExtension(inURL);
 

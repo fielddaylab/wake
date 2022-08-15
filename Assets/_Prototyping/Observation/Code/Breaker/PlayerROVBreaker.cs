@@ -89,6 +89,10 @@ namespace ProtoAqua.Observation {
         }
 
         public void Enable(PlayerBody inBody) {
+            if (!Services.Valid) {
+                return;
+            }
+            
             if (!m_Active) {
                 m_Active = true;
                 Services.Audio.PostEvent("ROV.Breaker.On");
@@ -113,6 +117,19 @@ namespace ProtoAqua.Observation {
 
                 default: {
                     return 0;
+                }
+            }
+        }
+
+        public float MoveSpeedMultiplier() {
+            switch(m_Phase) {
+                case Phase.Bursting:
+                case Phase.Charging: {
+                    return 0.5f;
+                }
+
+                default: {
+                    return 1.0f;
                 }
             }
         }

@@ -93,7 +93,7 @@ namespace Aqua {
 
             if (!string.IsNullOrEmpty(m_Url)) {
                 m_VideoPlayer.enabled = true;
-                m_VideoPlayer.url = Streaming.ResolvePathToURL(m_Url);
+                m_VideoPlayer.url = Streaming.ResolveAddressToURL(m_Url);
                 m_VideoPlayer.Prepare();
                 if (m_VideoPlayer.isPrepared) {
                     m_LoadingRoutine.Stop();

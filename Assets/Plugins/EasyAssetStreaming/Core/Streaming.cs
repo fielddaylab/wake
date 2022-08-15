@@ -25,201 +25,45 @@ namespace EasyAssetStreaming {
 
         #region Consts
 
+        private const int RetryLimit = 8;
+        private const float RetryDelayBase = 2.5f;
+        private const float RetryDelayExtra = 0.25f;
+
         #endregion // Consts
-
-        #region Editor Hooks
-
-        #if UNITY_EDITOR
-
-        static private bool s_EditorQuitting;
-
-        [UnityEditor.InitializeOnLoadMethod]
-        static private void EditorInitialize() {
-            UnityEditor.EditorApplication.playModeStateChanged += PlayModeStateChange;
-            UnityEditor.SceneManagement.EditorSceneManager.sceneOpened += OnSceneOpened;
-            UnityEditor.Experimental.SceneManagement.PrefabStage.prefabStageClosing += OnPrefabStageClosing;
-            UnityEditor.EditorApplication.quitting += () => s_EditorQuitting = true;
-            AppDomain.CurrentDomain.DomainUnload += OnDomainUnload;
-            StreamingHelper.Init();
-        }
-
-        static private void PlayModeStateChange(UnityEditor.PlayModeStateChange stateChange) {
-            if (stateChange != UnityEditor.PlayModeStateChange.ExitingEditMode && stateChange != UnityEditor.PlayModeStateChange.ExitingPlayMode) {
-                return;
-            }
-
-            UnloadAll();
-            DeregisterTick();
-            StreamingHelper.Release();
-        }
-
-        static private void OnPrefabStageClosing(UnityEditor.Experimental.SceneManagement.PrefabStage _) {
-            UnityEditor.EditorApplication.delayCall += UnloadUnusedSync;
-        }
-
-        static private void OnSceneOpened(UnityEngine.SceneManagement.Scene _, UnityEditor.SceneManagement.OpenSceneMode __) {
-            if (UnityEditor.EditorApplication.isPlaying) {
-                return;
-            }
-            
-            UnloadUnusedSync();
-        }
-
-        static private void OnDomainUnload(object sender, EventArgs args) {
-            if (s_EditorQuitting) {
-                return;
-            }
-
-            UnloadAll();
-        }
-
-        static private void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths) {
-            if (Application.isPlaying)
-                return;
-
-            bool manifestUpdated = Manifest.ReloadEditor();
-            
-            foreach(var meta in s_Metas) {
-                TryReloadAsset(meta.Key, meta.Value, manifestUpdated);
-            }
-        }
-
-        static private void TryReloadAsset(StreamingAssetId id, AssetMeta meta, bool manifestUpdated) {
-            if (string.IsNullOrEmpty(meta.EditorPath)) {
-                return;
-            }
-
-            bool bDeleted = !File.Exists(meta.EditorPath);
-            bool bModified = false;
-            if (!bDeleted) {
-                try {
-                    bModified = File.GetLastWriteTimeUtc(meta.EditorPath).ToFileTimeUtc() != meta.EditorEditTime;
-                } catch {
-                    bModified = false;
-                }
-            }
-
-            switch(meta.Type.Id) {
-                case AssetTypeId.Texture: {
-                    if (meta.Type.Sub == AssetSubTypeId.Default) {
-                        if (bDeleted) {
-                            Textures.HandleTextureDeleted(id, meta);
-                        } else if (bModified || manifestUpdated) {
-                            Textures.HandleTextureModified(id, meta);
-                        }
-                    }
-                    break;
-                }
-            }
-        }
-
-        #endif // UNITY_EDITOR
-
-        #endregion // Editor Hooks
 
         #region Types
 
-        public delegate void AssetCallback(StreamingAssetId id, AssetStatus status, object asset);
-
-        internal struct AssetType : IEquatable<AssetType> {
-            public readonly AssetTypeId Id;
-            public readonly AssetSubTypeId Sub;
-
-            public AssetType(AssetTypeId id, AssetSubTypeId sub = 0) {
-                Id = id;
-                Sub = sub;
-            }
-
-            public bool Equals(AssetType other) {
-                return Id == other.Id && Sub == other.Sub;
-            }
-
-            public override bool Equals(object obj) {
-                if (obj is AssetType) {
-                    return Equals((AssetType) obj);
-                }
-
-                return false;
-            }
-
-            public override string ToString() {
-                return string.Format("{0} ({1})", Id.ToString(), Sub.ToString());
-            }
-
-            public override int GetHashCode() {
-                return (int) Id << 8 | (int) Sub;
-            }
-
-            static public implicit operator AssetType(AssetTypeId main) {
-                return new AssetType(main);
-            }
-
-            static public bool operator ==(AssetType x, AssetType y) {
-                return x.Equals(y);
-            }
-
-            static public bool operator !=(AssetType x, AssetType y) {
-                return !x.Equals(y);
-            }
-        }
-
-        internal enum AssetTypeId : byte {
-            Unknown = 0,
-
-            Texture,
-            Audio
-        }
-
-        internal enum AssetSubTypeId : byte {
-            Default = 0,
-            VideoTexture = 1,
-        }
-
-        public enum AssetStatus : byte {
-            Unloaded = 0,
-            Invalid = 0x01,
-
-            PendingUnload = 0x02,
-            PendingLoad = 0x04,
-            Loaded = 0x08,
-            Error = 0x10,
-        }
-
-        internal class AssetMeta {
-            public AssetType Type;
-            public AssetStatus Status;
-            public ushort RefCount;
-            public long Size;
-            public long LastModifiedTS;
-            public string Path;
-
-            public UnityWebRequest Loader;
-            
-            #if UNITY_EDITOR
-            public string EditorPath;
-            public long EditorEditTime;
-            #endif // UNITY_EDITOR
-
-            public List<AssetCallback> OnUpdate;
-        }
-
-        public struct MemoryStat {
-            public long Current;
-            public long Max;
-        }
-
         private struct LoadState {
-            public Queue<StreamingAssetId> Queue;
+            public Queue<StreamingAssetHandle> Queue;
+            public List<TimeStampedAssetHandle> DelayedQueue;
             public uint Count;
             public int MaxPerFrame;
         }
 
+        private struct TimeStampedAssetHandle {
+            public readonly long Timestamp;
+            public readonly StreamingAssetHandle Handle;
+
+            public TimeStampedAssetHandle(StreamingAssetHandle id, long timestamp) {
+                Handle = id;
+                Timestamp = timestamp;
+            }
+        }
+
         private struct UnloadState {
-            public Queue<StreamingAssetId> Queue;
+            public Queue<StreamingAssetHandle> Queue;
             public bool Unloading;
             public long StartTS;
             public long MinAge;
             public int MaxPerFrame;
+        }
+
+        /// <summary>
+        /// Memory statistic.
+        /// </summary>
+        public struct MemoryStat {
+            public long Current;
+            public long Max;
         }
 
         #endregion // Types
@@ -227,21 +71,19 @@ namespace EasyAssetStreaming {
         #region State
 
         // Lookups
-
-        static private readonly Dictionary<StreamingAssetId, AssetMeta> s_Metas = new Dictionary<StreamingAssetId, AssetMeta>();
-        static private readonly Dictionary<int, StreamingAssetId> s_ReverseLookup = new Dictionary<int, StreamingAssetId>();
-
+        
         static private string s_LocalPathBase = Application.streamingAssetsPath;
 
         // Load/Unload
         
         static private LoadState s_LoadState = new LoadState() {
-            Queue = new Queue<StreamingAssetId>(16),
+            Queue = new Queue<StreamingAssetHandle>(16),
+            DelayedQueue = new List<TimeStampedAssetHandle>(16),
             MaxPerFrame = 4
         };
 
         static private UnloadState s_UnloadState = new UnloadState() {
-            Queue = new Queue<StreamingAssetId>(16),
+            Queue = new Queue<StreamingAssetHandle>(16),
             MaxPerFrame = 4
         };
 
@@ -253,51 +95,28 @@ namespace EasyAssetStreaming {
 
         #endregion // State
 
-        #region Management
+        #region Initialization
 
-        /// <summary>
-        /// Returns the streaming id associated with the given asset.
-        /// </summary>
-        static public StreamingAssetId Id(UnityEngine.Object instance) {
-            if (!instance) {
-                return default;
-            }
-
-            StreamingAssetId id;
-            int instanceId = instance.GetInstanceID();
-            if (!s_ReverseLookup.TryGetValue(instanceId, out id)) {
-                UnityEngine.Debug.LogWarningFormat("[Streaming] No asset id found for {0}'", instance);
-            }
-
-            return id;
-        }
-
-        /// <summary>
-        /// Returns if any loads are currently executing.
-        /// </summary>
-        static public bool IsLoading() {
+        static private void EnsureInitialized() {
+            EnsureCache();
             EnsureTick();
-            return s_LoadState.Count > 0;
         }
 
-        /// <summary>
-        /// Returns the number of loads occurring.
-        /// </summary>
-        static public uint LoadCount() {
-            return s_LoadState.Count;
-        }
+        #endregion // Initialization
+
+        #region Status
 
         /// <summary>
         /// Returns if the asset with the given streaming id is loading.
         /// </summary>
-        static public bool IsLoading(StreamingAssetId id) {
+        static public bool IsLoading(StreamingAssetHandle id) {
             return !id.IsEmpty && (Status(id) & AssetStatus.PendingLoad) != 0;
         }
 
         /// <summary>
         /// Returns if the asset with the given streaming id is loaded.
         /// </summary>
-        static public bool IsLoaded(StreamingAssetId id) {
+        static public bool IsLoaded(StreamingAssetHandle id) {
             return !id.IsEmpty && Status(id) == AssetStatus.Loaded;
         }
 
@@ -311,49 +130,49 @@ namespace EasyAssetStreaming {
         /// <summary>
         /// Returns the status of the asset with the given streaming id.
         /// </summary>
-        static public AssetStatus Status(StreamingAssetId id) {
-            AssetMeta meta;
-            if (s_Metas.TryGetValue(id, out meta)) {
-                return meta.Status;
+        static public AssetStatus Status(StreamingAssetHandle id) {
+            if (!s_Cache.IsValid(id)) {
+                return AssetStatus.Invalid;
             }
 
-            return AssetStatus.Unloaded;
+            return s_Cache.StateInfo[id.Index].Status;
         }
 
         /// <summary>
         /// Returns the status of the given streaming asset.
         /// </summary>
         static public AssetStatus Status(UnityEngine.Object instance) {
-            StreamingAssetId id = Id(instance);
+            StreamingAssetHandle id = Handle(instance);
             if (id.IsEmpty) {
                 return AssetStatus.Invalid;
             }
 
-            AssetMeta meta;
-            if (s_Metas.TryGetValue(id, out meta)) {
-                return meta.Status;
-            }
-
-            return AssetStatus.Unloaded;
+            return s_Cache.StateInfo[id.Index].Status;
         }
+
+        #endregion // Status
+
+        #region Resolve
 
         /// <summary>
         /// Resolves the asset id into its associated resource.
         /// </summary>
-        static public object Resolve(StreamingAssetId id) {
-            if (id.IsEmpty) {
+        static public object Resolve(StreamingAssetHandle id) {
+            if (id.IsEmpty || s_Cache == null || !s_Cache.IsValid(id)) {
                 return null;
             }
 
-            switch(id.Type) {
-                case AssetTypeId.Texture: {
-                    if (id.SubType == AssetSubTypeId.VideoTexture) {
+            StreamingAssetType assetType = id.AssetType;
+
+            switch(assetType.Id) {
+                case StreamingAssetTypeId.Texture: {
+                    if (assetType.Sub == StreamingAssetSubTypeId.VideoTexture) {
                         return Videos.PlayerMap[id].texture;
                     } else {
                         return Textures.TextureMap[id];
                     }
                 }
-                case AssetTypeId.Audio: {
+                case StreamingAssetTypeId.Audio: {
                     return AudioClips.ClipMap[id];
                 }
                 default: {
@@ -365,34 +184,77 @@ namespace EasyAssetStreaming {
         /// <summary>
         /// Resolves the asset id into its associated resource.
         /// </summary>
-        static public T Resolve<T>(StreamingAssetId id) where T : class {
+        static public T Resolve<T>(StreamingAssetHandle id) where T : class {
             return (T) Resolve(id);
         }
 
-        static private long CurrentTimestamp() {
-            return Stopwatch.GetTimestamp();
+        #endregion // Resolve
+
+        #region Queues
+
+        static private void QueueLoad(StreamingAssetHandle id) {
+            EnsureInitialized();
+            s_LoadState.Queue.Enqueue(id);
+            s_LoadState.Count++;
+            
+            ref AssetStatus status = ref s_Cache.StateInfo[id.Index].Status;
+            status = (status | AssetStatus.PendingLoad) & ~AssetStatus.PendingUnload;
         }
 
-        #endregion // Management
+        static private void QueueDelayedLoad(StreamingAssetHandle id, float delaySeconds) {
+            EnsureInitialized();
+            s_LoadState.DelayedQueue.Add(new TimeStampedAssetHandle(id, CurrentTimestamp() + (long) (delaySeconds * TimeSpan.TicksPerSecond)));
+            s_LoadState.Count++;
+            
+            ref AssetStatus status = ref s_Cache.StateInfo[id.Index].Status;
+            status = (status | AssetStatus.PendingLoad) & ~AssetStatus.PendingUnload;
+        }
+
+        static private void DecrementLoadCounter() {
+            s_LoadState.Count--;
+        }
+
+        static private void QueueUnload(StreamingAssetHandle id) {
+            s_UnloadState.Queue.Enqueue(id);
+            
+            ref AssetStatus status = ref s_Cache.StateInfo[id.Index].Status;
+            status = (status | AssetStatus.PendingUnload) & ~AssetStatus.PendingLoad;
+        }
+
+        #endregion // Queues
+
+        #region Loading
+
+        /// <summary>
+        /// Returns if any loads are currently executing.
+        /// </summary>
+        static public bool IsLoading() {
+            EnsureInitialized();
+            return s_LoadState.Count > 0;
+        }
+
+        /// <summary>
+        /// Returns the number of loads occurring.
+        /// </summary>
+        static public uint LoadCount() {
+            return s_LoadState.Count;
+        }
+
+        #endregion // Loading
 
         #region Unloading
 
-        #if UNITY_EDITOR
-
-        static private void UnloadUnusedSync() {
-            IdentifyUnusedSync();
-
-            while(s_UnloadState.Queue.Count > 0) {
-                UnloadSingle(s_UnloadState.Queue.Dequeue(), 0, 0);
-            }
+        /// <summary>
+        /// Returns if streaming assets are currently unloading.
+        /// </summary>
+        static public bool IsUnloading() {
+            return s_UnloadState.Unloading;
         }
-
-        #endif // UNITY_EDITOR
 
         /// <summary>
         /// Dereferences the given asset.
         /// </summary>
-        static public bool Unload(StreamingAssetId id, AssetCallback callback = null) {
+        static public bool Unload(StreamingAssetHandle id, AssetCallback callback = null) {
             if (!id.IsEmpty) {
                 Dereference(id, callback);
                 return true;
@@ -404,7 +266,7 @@ namespace EasyAssetStreaming {
         /// <summary>
         /// Dereferences the given asset.
         /// </summary>
-        static public bool Unload(ref StreamingAssetId id, AssetCallback callback = null) {
+        static public bool Unload(ref StreamingAssetHandle id, AssetCallback callback = null) {
             if (!id.IsEmpty) {
                 Dereference(id, callback);
                 id = default;
@@ -414,56 +276,31 @@ namespace EasyAssetStreaming {
             return false;
         }
 
+        // Dereferences the asset
+        [MethodImpl(256)]
         static private bool Dereference(UnityEngine.Object instance, AssetCallback callback) {
-            StreamingAssetId id = Id(instance);
-            if (id.IsEmpty) {
+            return Dereference(Handle(instance), callback);
+        }
+
+        // Dereferences the asset handle
+        static private bool Dereference(StreamingAssetHandle id, AssetCallback callback) {
+            if (id.IsEmpty || !s_Cache.IsValid(id)) {
                 return false;
             }
 
-            AssetMeta meta;
-            if (s_Metas.TryGetValue(id, out meta)) {
-                if (meta.RefCount > 0) {
-                    meta.RefCount--;
-                    meta.LastModifiedTS = CurrentTimestamp();
-                    RemoveCallback(meta, callback);
-                    if (meta.RefCount == 0) {
-                        meta.Status |= AssetStatus.PendingUnload;
-                        s_UnloadState.Queue.Enqueue(id);
-                    }
-                    return true;
+            ref AssetStateInfo stateInfo = ref s_Cache.StateInfo[id.Index];
+
+            if (stateInfo.RefCount > 0) {
+                stateInfo.RefCount--;
+                stateInfo.LastAccessedTS = CurrentTimestamp();
+                RemoveCallback(id, callback);
+                if (stateInfo.RefCount == 0) {
+                    QueueUnload(id);
                 }
+                return true;
             }
 
             return false;
-        }
-
-        static private bool Dereference(StreamingAssetId id, AssetCallback callback) {
-            if (id.IsEmpty) {
-                return false;
-            }
-
-            AssetMeta meta;
-            if (s_Metas.TryGetValue(id, out meta)) {
-                if (meta.RefCount > 0) {
-                    meta.RefCount--;
-                    meta.LastModifiedTS = CurrentTimestamp();
-                    RemoveCallback(meta, callback);
-                    if (meta.RefCount == 0) {
-                        meta.Status |= AssetStatus.PendingUnload;
-                        s_UnloadState.Queue.Enqueue(id);
-                    }
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Returns if streaming assets are currently unloading.
-        /// </summary>
-        static public bool IsUnloading() {
-            return s_UnloadState.Unloading;
         }
 
         /// <summary>
@@ -474,8 +311,8 @@ namespace EasyAssetStreaming {
                 s_UnloadState.Unloading = true;
                 s_UnloadState.MinAge = 0;
                 s_UnloadState.StartTS = CurrentTimestamp();
+                EnsureInitialized();
                 IdentifyUnusedSync();
-                EnsureTick();
             }
         }
 
@@ -485,10 +322,10 @@ namespace EasyAssetStreaming {
         static public void UnloadUnusedAsync(float minAge) {
             if (!s_UnloadState.Unloading || s_UnloadState.MinAge == 0) {
                 s_UnloadState.Unloading = true;
-                s_UnloadState.MinAge = (long) (minAge * TimeSpan.TicksPerSecond);
+                s_UnloadState.MinAge = (long) (minAge * TimeSpan.TicksPerSecond); 
                 s_UnloadState.StartTS = CurrentTimestamp();
+                EnsureInitialized();
                 IdentifyUnusedSync();
-                EnsureTick();
             }
         }
 
@@ -500,16 +337,13 @@ namespace EasyAssetStreaming {
             AudioClips.DestroyAllClips();
             Videos.DestroyAllVideos();
 
-            foreach(var meta in s_Metas.Values) {
-                meta.Status = AssetStatus.Unloaded;
-                if (meta.Loader != null) {
-                    meta.Loader.Dispose();
-                    meta.Loader = null;
+            if (s_Cache != null) {
+                foreach(var id in s_Cache.ByAddressHash.Values) {
+                    s_Cache.LoadInfo[id.Index].Loader?.Dispose();
                 }
-            }
 
-            s_ReverseLookup.Clear();
-            s_Metas.Clear();
+                s_Cache.Clear();
+            }
             s_LoadState.Queue.Clear();
 
             s_UnloadState.Queue.Clear();
@@ -518,108 +352,114 @@ namespace EasyAssetStreaming {
             UnityEngine.Debug.LogFormat("[Streaming] Unloaded all streamed assets");
         }
     
+        // Identifies and queues up unused assets
         static private void IdentifyUnusedSync() {
-            AssetMeta meta;
-            foreach(var metaKV in s_Metas) {
-                meta = metaKV.Value;
-                if (meta.RefCount == 0) {
-                    meta.Status |= AssetStatus.PendingUnload;
-                    if (!s_UnloadState.Queue.Contains(metaKV.Key)) {
-                        s_UnloadState.Queue.Enqueue(metaKV.Key);
-                    }
+            foreach(var handle in s_Cache.ByAddressHash.Values) {
+                ref AssetStateInfo stateInfo = ref s_Cache.StateInfo[handle.Index];
+                if (stateInfo.RefCount > 0) {
+                    continue;
+                }
+                
+                stateInfo.Status |= AssetStatus.PendingUnload;
+                if (!s_UnloadState.Queue.Contains(handle)) {
+                    s_UnloadState.Queue.Enqueue(handle);
                 }
             }
         }
 
-        static private StreamingAssetId IdentifyOverBudgetToDelete(AssetTypeId type, long now, long over) {
-            AssetMeta meta;
-            StreamingAssetId best = default;
+        // Identifies the best asset to unload to meet memory budgets
+        static private StreamingAssetHandle IdentifyOverBudgetToDelete(StreamingAssetTypeId type, long now, long over) {
+            StreamingAssetHandle best = default;
             long bestScore = 0;
 
             long score;
-            foreach(var metaKv in s_Metas) {
-                meta = metaKv.Value;
-                if (meta.RefCount > 0 || (meta.Status & AssetStatus.PendingUnload) == 0 || meta.Type.Id != type) {
+            foreach(var handle in s_Cache.ByAddressHash.Values) {
+                if (handle.AssetType != type) {
+                    continue;
+                }
+
+                ref AssetStateInfo stateInfo = ref handle.StateInfo;
+                if (stateInfo.RefCount > 0 || (stateInfo.Status & AssetStatus.PendingUnload) == 0) {
                     continue;
                 }
 
                 // closest to over, largest, oldest
-                score = (1 + Math.Abs(meta.Size - over)) * meta.Size * (now - meta.LastModifiedTS) / 8;
+                score = (1 + Math.Abs(stateInfo.Size - over)) * stateInfo.Size * (now - stateInfo.LastAccessedTS) / 8;
                 if (score > bestScore) {
                     bestScore = score;
-                    best = metaKv.Key;
+                    best = handle;
                 }
             }
 
             return best;
         }
 
-        static private bool UnloadSingle(StreamingAssetId id, long now, long deleteThreshold = 0) {
-            AssetMeta meta;
-            if (!s_Metas.TryGetValue(id, out meta)) {
+        static private bool UnloadSingle(StreamingAssetHandle id, long now, long deleteThreshold = 0) {
+            if (!s_Cache.IsValid(id)) {
                 return false;
             }
 
-            if (meta.RefCount > 0 || (meta.Status & AssetStatus.PendingUnload) == 0) {
+            ref AssetStateInfo stateInfo = ref s_Cache.StateInfo[id.Index];
+
+            if (stateInfo.RefCount > 0 || (stateInfo.Status & AssetStatus.PendingUnload) == 0) {
                 return false;
             }
 
-            if (deleteThreshold > 0 && (now - meta.LastModifiedTS) < deleteThreshold) {
+            if (deleteThreshold > 0 && (now - stateInfo.LastAccessedTS) < deleteThreshold) {
                 return false;
             }
 
-            s_Metas.Remove(id);
-            if (meta.Loader != null) {
-                meta.Loader.Dispose();
-                meta.Loader = null;
+            ref AssetLoadInfo loadInfo = ref s_Cache.LoadInfo[id.Index];
+
+            if (loadInfo.Loader != null) {
+                loadInfo.Loader.Dispose();
+                loadInfo.Loader = null;
             }
 
-            #if UNITY_EDITOR
-            meta.EditorPath = null;
-            meta.EditorEditTime = 0;
-            #endif // UNITY_EDITOR
+            AssetMetaInfo metaInfo = id.MetaInfo;
 
-            if (meta.OnUpdate != null) {
-                meta.OnUpdate.Clear();
-                meta.OnUpdate = null;
-            }
-
-            if ((meta.Status & (AssetStatus.PendingLoad | AssetStatus.Loaded | AssetStatus.Error)) != 0) {
-                UnityEngine.Object resource = null;
-                
-                switch(meta.Type.Id) {
-                    case AssetTypeId.Texture: {
-                        if (meta.Type.Sub == AssetSubTypeId.VideoTexture) {
-                            resource = Videos.DestroyVideo(id, meta);
+            if ((stateInfo.Status & (AssetStatus.PendingLoad | AssetStatus.Loaded | AssetStatus.Error)) != 0) {
+                switch(metaInfo.Type.Id) {
+                    case StreamingAssetTypeId.Texture: {
+                        if (metaInfo.Type.Sub == StreamingAssetSubTypeId.VideoTexture) {
+                            Videos.DestroyVideo(id);
                         } else {
-                            resource = Textures.DestroyTexture(id, meta);
+                            Textures.DestroyTexture(id);
                         }
                         break;
                     }
 
-                    case AssetTypeId.Audio: {
-                        resource = AudioClips.DestroyClip(id, meta);
+                    case StreamingAssetTypeId.Audio: {
+                        AudioClips.DestroyClip(id);
                         break;
                     }
                 }
-                s_ReverseLookup.Remove(resource.GetInstanceID());
-                resource = null;
             }
 
-            UnityEngine.Debug.LogFormat("[Streaming] Unloaded streamed asset '{0}'", id);
-            
-            meta.Size = 0;
-            meta.Status = AssetStatus.Unloaded;
-
+            UnityEngine.Debug.LogFormat("[Streaming] Unloaded streamed asset '{0}'", metaInfo.Address);
+            s_Cache.FreeSlot(id);
             return true;
         }
+
+        #if UNITY_EDITOR
+
+        static private void UnloadUnusedSync() {
+            EnsureInitialized();
+            IdentifyUnusedSync();
+
+            while(s_UnloadState.Queue.Count > 0) {
+                UnloadSingle(s_UnloadState.Queue.Dequeue(), 0, 0);
+            }
+        }
+
+        #endif // UNITY_EDITOR
         
         #endregion // Unloading
     
         #region Paths
 
-        static private bool IsURL(string pathOrUrl) {
-            return pathOrUrl.Contains("://");
+        static private bool IsURL(string address) {
+            return address.Contains("://");
         }
 
         static private string StreamingPath(string relativePath) {
@@ -648,7 +488,7 @@ namespace EasyAssetStreaming {
         /// Converts a path relative to StreamingAssets into a URL.
         /// If the input is already a URL, it is preserved.
         /// </summary>
-        static public string ResolvePathToURL(string relativePath) {
+        static public string ResolveAddressToURL(string relativePath) {
             if (IsURL(relativePath)) {
                 return relativePath;
             }
@@ -657,7 +497,7 @@ namespace EasyAssetStreaming {
 
         #endregion // Paths
 
-        #region Update Hook
+        #region Tick
 
         static private void EnsureTick() {
             if (s_TickInitialized) {
@@ -669,6 +509,7 @@ namespace EasyAssetStreaming {
             #if UNITY_EDITOR
             if (!Application.isPlaying) {
                 UnityEditor.EditorApplication.update += Tick;
+                Tick();
                 return;
             }
             #endif // UNITY_EDITOR
@@ -703,10 +544,11 @@ namespace EasyAssetStreaming {
         }
 
         static private void Tick() {
+            if (!Streaming.Manifest.Loaded) {
+                Streaming.Manifest.EnsureLoaded();
+            }
+
             if (!s_UpdateEnabled) {
-                if (!Streaming.Manifest.Loaded) {
-                    Streaming.Manifest.EnsureLoaded();
-                }
                 return;
             }
 
@@ -714,47 +556,56 @@ namespace EasyAssetStreaming {
             Textures.CheckBudget(now);
             AudioClips.CheckBudget(now);
 
+            // update the delayed queue
+            for(int i = s_LoadState.DelayedQueue.Count - 1; i >= 0; i--) {
+                if (s_LoadState.DelayedQueue[i].Timestamp <= now) {
+                    s_LoadState.Queue.Enqueue(s_LoadState.DelayedQueue[i].Handle);
+                    s_LoadState.DelayedQueue.FastRemoveAt(i);
+                }
+            }
+
+            // update the load queue
             int loadFrame = s_LoadState.MaxPerFrame;
             while(s_LoadState.Queue.Count > 0 && loadFrame > 0) {
                 loadFrame--;
-                StreamingAssetId id = s_LoadState.Queue.Dequeue();
-                AssetMeta meta;
-                
-                // if this doesn't exist, then just cancel out.
-                if (!s_Metas.TryGetValue(id, out meta)) {
+                StreamingAssetHandle id = s_LoadState.Queue.Dequeue();
+                if (!s_Cache.IsValid(id)) {
                     s_LoadState.Count--;
                     continue;
                 }
-
-                if ((meta.Status & (AssetStatus.PendingUnload | AssetStatus.Unloaded)) != 0) {
+                
+                ref AssetStateInfo stateInfo = ref s_Cache.StateInfo[id.Index];
+                if ((stateInfo.Status & (AssetStatus.PendingUnload | AssetStatus.Unloaded)) != 0) {
                     UnloadSingle(id, now, 0);
                     s_LoadState.Count--;
                     continue;
                 }
 
-                UnityEngine.Debug.LogFormat("[Streaming] Beginning download of '{0}'", meta.Path);
+                AssetMetaInfo metaInfo = s_Cache.MetaInfo[id.Index];
+                UnityEngine.Debug.LogFormat("[Streaming] Beginning download of '{0}'", metaInfo.Address);
 
-                switch(meta.Type.Id) {
-                    case AssetTypeId.Texture: {
-                        if (meta.Type.Sub == AssetSubTypeId.VideoTexture) {
-                            Videos.StartLoading(id, meta);
+                switch(metaInfo.Type.Id) {
+                    case StreamingAssetTypeId.Texture: {
+                        if (metaInfo.Type.Sub == StreamingAssetSubTypeId.VideoTexture) {
+                            Videos.StartLoading(id);
                         } else {
-                            Textures.StartLoading(id, meta);
+                            Textures.StartLoading(id);
                         }
                         break;
                     }
-                    case AssetTypeId.Audio: {
-                        AudioClips.StartLoading(id, meta);
+                    case StreamingAssetTypeId.Audio: {
+                        AudioClips.StartLoading(id);
                         break;
                     }
                 }
             }
 
+            // update the unload queue
             if (s_UnloadState.Unloading) {
                 int unloadFrame = s_UnloadState.MaxPerFrame;
                 while(s_UnloadState.Queue.Count > 0 && unloadFrame > 0) {
                     unloadFrame--;
-                    StreamingAssetId id = s_UnloadState.Queue.Dequeue();
+                    StreamingAssetHandle id = s_UnloadState.Queue.Dequeue();
                     UnloadSingle(id, s_UnloadState.StartTS, s_UnloadState.MinAge);
                 }
 
@@ -764,42 +615,30 @@ namespace EasyAssetStreaming {
             }
         }
 
-        #endregion // Update Hook
+        #endregion // Tick
 
         #region Utilities
 
-        static private void AddCallback(AssetMeta meta, StreamingAssetId id, object asset, AssetCallback callback) {
-            if (callback != null) {
-                if (meta.OnUpdate == null) {
-                    meta.OnUpdate = new List<AssetCallback>();
-                }
-                meta.OnUpdate.Add(callback);
-                if (meta.Status != AssetStatus.PendingLoad) {
-                    callback(id, meta.Status, asset);
-                }
-            }
+        [MethodImpl(256)]
+        static private uint AddressKey(string address) {
+            return StreamingHelper.HashString(address);
         }
 
-        static private void InvokeCallbacks(AssetMeta meta, StreamingAssetId id, object asset) {
-            var onUpdate = meta.OnUpdate;
-            AssetStatus status = meta.Status;
-            if (onUpdate != null) {
-                for(int i = 0, len = onUpdate.Count; i < len; i++) {
-                    onUpdate[i](id, status, asset);
-                }
-            }
+        [MethodImpl(256)]
+        static private long CurrentTimestamp() {
+            return Stopwatch.GetTimestamp();
         }
 
-        static private void RemoveCallback(AssetMeta meta, AssetCallback callback) {
-            if (callback != null && meta.OnUpdate != null) {
-                meta.OnUpdate.FastRemove(callback);
-            }
+        [MethodImpl(256)]
+        static private void RecomputeMemorySize(ref MemoryStat memUsage, StreamingAssetHandle id, UnityEngine.Object asset) {
+            RecomputeMemorySize(ref memUsage, ref id.StateInfo, asset);
         }
-    
-        static private void RecomputeMemorySize(ref MemoryStat memUsage, AssetMeta meta, UnityEngine.Object asset) {
-            memUsage.Current -= meta.Size;
-            meta.Size = StreamingHelper.CalculateMemoryUsage(asset);
-            memUsage.Current += meta.Size;
+
+        [MethodImpl(256)]
+        static private void RecomputeMemorySize(ref MemoryStat memUsage, ref AssetStateInfo state, UnityEngine.Object asset) {
+            memUsage.Current -= state.Size;
+            state.Size = StreamingHelper.CalculateMemoryUsage(asset);
+            memUsage.Current += state.Size;
             if (memUsage.Max < memUsage.Current) {
                 memUsage.Max = memUsage.Current;
             }

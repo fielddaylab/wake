@@ -316,6 +316,18 @@ namespace Aqua
                 return null;
             }
 
+            [LeafMember("OrganismEntityCount"), UnityEngine.Scripting.Preserve]
+            static private int EntityOrganismCount()
+            {
+                return Save.Bestiary.GetEntityCount(BestiaryDescCategory.Critter);
+            }
+
+            [LeafMember("EcosystemEntityCount"), UnityEngine.Scripting.Preserve]
+            static private int EntityEcosystemCount()
+            {
+                return Save.Bestiary.GetEntityCount(BestiaryDescCategory.Environment);
+            }
+
             [LeafMember("HasFact"), UnityEngine.Scripting.Preserve]
             static private bool HasFact(StringHash32 inFactId)
             {

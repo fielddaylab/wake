@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -2678,21 +2678,6 @@ PrefabInstance:
       propertyPath: m_Id.m_HashValue
       value: 2952291245
       objectReference: {fileID: 0}
-    - target: {fileID: 1323597515152377735, guid: 5141d3d614989f34a83d8da66a391408,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -21
-      objectReference: {fileID: 0}
-    - target: {fileID: 1323597515152377735, guid: 5141d3d614989f34a83d8da66a391408,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 15.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 1323597515152377735, guid: 5141d3d614989f34a83d8da66a391408,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.5
-      objectReference: {fileID: 0}
     - target: {fileID: 2292547797202832708, guid: 5141d3d614989f34a83d8da66a391408,
         type: 3}
       propertyPath: m_RootOrder
@@ -2757,11 +2742,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_RootOrder
       value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 3700642470069869660, guid: 5141d3d614989f34a83d8da66a391408,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4744718333162036326, guid: 5141d3d614989f34a83d8da66a391408,
         type: 3}
@@ -14074,6 +14054,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 716422276}
+  - component: {fileID: 716422277}
   m_Layer: 0
   m_Name: Rocks
   m_TagString: Untagged
@@ -14126,6 +14107,20 @@ Transform:
   m_Father: {fileID: 762288667}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &716422277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 716422275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 0
+  DestroyGameObject: 1
 --- !u!1001 &717610740
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16322,6 +16317,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 813136805}
+  - component: {fileID: 813136806}
   m_Layer: 0
   m_Name: Urchin
   m_TagString: Untagged
@@ -16393,6 +16389,20 @@ Transform:
   m_Father: {fileID: 762288667}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &813136806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 813136804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 0
+  DestroyGameObject: 1
 --- !u!4 &813898676 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8256579402164060393, guid: 42dc1d3632e08454eabce1fbe1d3303c,
@@ -16408,6 +16418,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 815693814}
+  - component: {fileID: 815693815}
   m_Layer: 0
   m_Name: Coral
   m_TagString: Untagged
@@ -16447,6 +16458,20 @@ Transform:
   m_Father: {fileID: 762288667}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &815693815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 815693813}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 0
+  DestroyGameObject: 1
 --- !u!1001 &820035693
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18087,6 +18112,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 920373165}
+  - component: {fileID: 920373166}
   m_Layer: 0
   m_Name: StarFish
   m_TagString: Untagged
@@ -18114,6 +18140,20 @@ Transform:
   m_Father: {fileID: 762288667}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &920373166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 920373164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 0
+  DestroyGameObject: 1
 --- !u!1001 &922648274
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18582,6 +18622,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 963453034}
+  - component: {fileID: 963453035}
   m_Layer: 0
   m_Name: Otter
   m_TagString: Untagged
@@ -18608,6 +18649,20 @@ Transform:
   m_Father: {fileID: 762288667}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &963453035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963453033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 0
+  DestroyGameObject: 1
 --- !u!1001 &965223763
 PrefabInstance:
   m_ObjectHideFlags: 0

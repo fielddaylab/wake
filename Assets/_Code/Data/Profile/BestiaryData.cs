@@ -79,6 +79,18 @@ namespace Aqua.Profile
             }
         }
 
+        public int GetEntityCount(BestiaryDescCategory inCategory)
+        {
+            int count = 0;
+            foreach(var entityId in m_ObservedEntities)
+            {
+                BestiaryDesc desc = Assets.Bestiary(entityId);
+                if (desc.HasCategory(inCategory))
+                    count++;
+            }
+            return count;
+        }
+
         public int GetEntities(BestiaryDescCategory inCategory, ICollection<BestiaryDesc> outFacts)
         {
             int count = 0;
@@ -94,7 +106,7 @@ namespace Aqua.Profile
             return count;
         }
 
-        public int GetEntities(BestiaryDescCategory inCategory, ICollection<TaggedBestiaryDesc> outFacts)
+        public int GetEntities(BestiaryDescCategory inCategory, ICollection<TaggedBestiaryDesc> outEntities)
         {
             int count = 0;
             foreach(var entityId in m_ObservedEntities)
@@ -102,7 +114,7 @@ namespace Aqua.Profile
                 BestiaryDesc desc = Assets.Bestiary(entityId);
                 if (desc.HasCategory(inCategory))
                 {
-                    outFacts.Add(new TaggedBestiaryDesc(desc));
+                    outEntities.Add(new TaggedBestiaryDesc(desc));
                     count++;
                 }
             }

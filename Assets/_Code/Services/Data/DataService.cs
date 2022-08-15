@@ -26,6 +26,7 @@ namespace Aqua
     {
         private const string LocalSettingsPrefsKey = "settings/local";
         private const string LastUserNameKey = "settings/last-known-profile";
+        private const string LastUserSaveSummaryKey = "settings/last-known-profile-summary";
         private const string DeserializeError = "deserialize-error";
 
         #if DEVELOPMENT
@@ -36,8 +37,12 @@ namespace Aqua
 
         #region Inspector
 
-        [SerializeField] private string m_ServerAddress = null;
         [SerializeField, Required] private TextAsset m_IdRenames = null;
+
+        [Header("Server")]
+        [SerializeField] private string m_ServerAddress = null;
+        [SerializeField] private uint m_SaveRetryCount = 8;
+        [SerializeField] private float m_SaveRetryDelay = 5;
 
         // [Header("Conversation History")]
         // [SerializeField, Range(32, 256)] private int m_DialogHistorySize = 128;
@@ -62,10 +67,11 @@ namespace Aqua
         [NonSerialized] private CustomVariantResolver m_VariableResolver;
         // [NonSerialized] private RingBuffer<DialogRecord> m_DialogHistory;
         [NonSerialized] private bool m_PostLoadQueued;
+        [NonSerialized] private ulong m_LastOptionsHash;
 
         [NonSerialized] private Future<bool> m_SaveResult;
         [NonSerialized] private bool m_AutoSaveEnabled;
-        [NonSerialized] private string m_LastKnownProfile;
+        [NonSerialized] private SaveSummaryData m_LastKnownProfile;
         [NonSerialized] private bool m_ForceSavingDisabled;
         
         #if DEVELOPMENT
@@ -90,7 +96,8 @@ namespace Aqua
 
         #region Loading
 
-        public string LastProfileName() { return m_LastKnownProfile; }
+        public string LastProfileName() { return m_LastKnownProfile.Id; }
+        public SaveSummaryData LastProfileSummary() { return m_LastKnownProfile; }
 
         public bool IsProfileLoaded()
         {
@@ -348,6 +355,7 @@ namespace Aqua
             }
 
             OptionsData.SyncFrom(m_CurrentSaveData.Options, m_CurrentOptions, OptionsData.Authority.Profile);
+            m_LastOptionsHash = m_CurrentOptions.Hash();
 
             HookSaveDataToVariableResolver(inProfile);
             Services.Events.Dispatch(GameEvents.ProfileLoaded);
@@ -358,10 +366,17 @@ namespace Aqua
 
         private void SetLastKnownProfile(SaveData inProfile)
         {
-            m_LastKnownProfile = inProfile.Id;
-            DebugService.Log(LogMask.DataService, "[DataService] Profile name {0} set as last known name", m_LastKnownProfile);
-            PlayerPrefs.SetString(LastUserNameKey, m_LastKnownProfile ?? string.Empty);
+            m_LastKnownProfile = SaveSummaryData.FromSave(inProfile);
+            DebugService.Log(LogMask.DataService, "[DataService] Profile name {0} set as last known name", m_LastKnownProfile.Id);
+            Serializer.WritePrefs(m_LastKnownProfile, LastUserSaveSummaryKey, OutputOptions.None, Serializer.Format.Binary);
             PlayerPrefs.Save();
+        }
+
+        private void OverwriteSummary(SaveSummaryData inSummary)
+        {
+            m_LastKnownProfile = inSummary;
+            DebugService.Log(LogMask.DataService, "[DataService] Overwriting local profile summary for {0}", m_LastKnownProfile.Id);
+            Serializer.WritePrefs(m_LastKnownProfile, LastUserSaveSummaryKey, OutputOptions.None, Serializer.Format.Binary);
         }
 
         private StringHash32 FindMapId(SaveData inSaveData)
@@ -530,10 +545,12 @@ namespace Aqua
 
             string saveData = Serializer.Write(m_CurrentSaveData, OutputOptions.None, Serializer.Format.Binary);
             m_CurrentSaveData.MarkChangesPersisted();
+            SaveSummaryData summary = SaveSummaryData.FromSave(m_CurrentSaveData);
 
             yield return null;
 
             PlayerPrefs.SetString(key, saveData);
+            OverwriteSummary(summary);
             yield return null;
             
             PlayerPrefs.Save();
@@ -541,18 +558,33 @@ namespace Aqua
 
             if (!IsDebugProfile())
             {
-                using(var future = Future.Create())
-                using(var saveRequest = OGD.GameState.PushState(m_ProfileName, saveData, future.Complete, (r) => future.Fail(r)))
+                int attempts = (int) (m_SaveRetryCount + 1);
+                while(attempts > 0)
                 {
-                    yield return future;
+                    using(var future = Future.Create())
+                    using(var saveRequest = OGD.GameState.PushState(m_ProfileName, saveData, future.Complete, (r) => future.Fail(r)))
+                    {
+                        yield return future;
 
-                    if (future.IsComplete())
-                    {
-                        DebugService.Log(LogMask.DataService, "[DataService] Saved to server!");
-                    }
-                    else
-                    {
-                        Log.Warn("[DataService] Failed to save to server: {0}", future.GetFailure().Object);
+                        if (future.IsComplete())
+                        {
+                            DebugService.Log(LogMask.DataService, "[DataService] Saved to server!");
+                            break;
+                        }
+                        else
+                        {
+                            attempts--;
+                            Log.Warn("[DataService] Failed to save to server: {0}", future.GetFailure().Object);
+                            if (attempts > 0)
+                            {
+                                Log.Warn("[DataService] Retrying server save...", attempts);
+                                yield return m_SaveRetryDelay;
+                            }
+                            else
+                            {
+                                Log.Error("[DataService] Server save failed after {0} attempts", m_SaveRetryCount + 1);
+                            }
+                        }
                     }
                 }
             }
@@ -633,11 +665,12 @@ namespace Aqua
             }
 
             Save.DeclareOptions(m_CurrentOptions);
+            m_LastOptionsHash = m_CurrentOptions.Hash();
         }
 
         public void SaveOptionsSettings()
         {
-            if (m_CurrentOptions.HasChanges())
+            if (Ref.Replace(ref m_LastOptionsHash, m_CurrentOptions.Hash()))
             {
                 DebugService.Log(LogMask.DataService, "[DataService] Wrote options to local");
                 Serializer.WritePrefs(m_CurrentOptions, LocalSettingsPrefsKey, OutputOptions.None, Serializer.Format.Binary);
@@ -664,7 +697,15 @@ namespace Aqua
 
             Services.Events.Register(GameEvents.SceneLoaded, PerformPostLoad, this);
 
-            m_LastKnownProfile = PlayerPrefs.GetString(LastUserNameKey, string.Empty);
+            if (Serializer.ReadPrefs(ref m_LastKnownProfile, LastUserSaveSummaryKey))
+            {
+                DebugService.Log(LogMask.DataService, "[DataService] Loaded last profile summary");
+            }
+            else
+            {
+                m_LastKnownProfile = default;
+                m_LastKnownProfile.Id = PlayerPrefs.GetString(LastUserNameKey, string.Empty);
+            }
             LoadOptionsSettings();
 
             SavePatcher.InitializeIdPatcher(m_IdRenames);

@@ -29,24 +29,25 @@ namespace EasyAssetStreaming {
         /// Loads a texture from a given url.
         /// Returns if the "texture" parameter has changed.
         /// </summary>
-        static public bool Texture(string pathOrUrl, ref Texture texture, AssetCallback callback = null) {
-            if (string.IsNullOrEmpty(pathOrUrl)) {
+        static public bool Texture(string address, ref Texture texture, AssetCallback callback = null) {
+            if (string.IsNullOrEmpty(address)) {
                 return Unload(ref texture, callback);
             }
 
-            Manifest.EnsureLoaded();
+            EnsureInitialized();
 
-            StreamingAssetId id = new StreamingAssetId(pathOrUrl, AssetTypeId.Texture);
             Texture loadedTexture;
-            AssetMeta meta = Textures.GetMeta(ref id, pathOrUrl, out loadedTexture);
+            StreamingAssetHandle id = Textures.GetHandle(address, out loadedTexture);
 
             if (texture != loadedTexture) {
                 Dereference(texture, callback);
                 texture = loadedTexture;
-                meta.RefCount++;
-                meta.LastModifiedTS = CurrentTimestamp();
-                meta.Status &= ~AssetStatus.PendingUnload;
-                AddCallback(meta, id, texture, callback);
+
+                ref AssetStateInfo state = ref id.StateInfo;
+                state.RefCount++;
+                state.LastAccessedTS = CurrentTimestamp();
+                state.Status &= ~AssetStatus.PendingUnload;
+                AddCallback(id, texture, callback);
                 return true;
             }
 
@@ -57,24 +58,25 @@ namespace EasyAssetStreaming {
         /// Loads a texture from a given url.
         /// Returns if the "assetId" parameter has changed.
         /// </summary>
-        static public bool Texture(string pathOrUrl, ref StreamingAssetId assetId, AssetCallback callback = null) {
-            if (string.IsNullOrEmpty(pathOrUrl)) {
+        static public bool Texture(string address, ref StreamingAssetHandle assetId, AssetCallback callback = null) {
+            if (string.IsNullOrEmpty(address)) {
                 return Unload(ref assetId, callback);
             }
 
-            Manifest.EnsureLoaded();
+            EnsureInitialized();
 
-            StreamingAssetId id = new StreamingAssetId(pathOrUrl, AssetTypeId.Texture);
             Texture loadedTexture;
-            AssetMeta meta = Textures.GetMeta(ref id, pathOrUrl, out loadedTexture);
+            StreamingAssetHandle id = Textures.GetHandle(address, out loadedTexture);
 
             if (assetId != id) {
                 Dereference(assetId, callback);
                 assetId = id;
-                meta.RefCount++;
-                meta.LastModifiedTS = CurrentTimestamp();
-                meta.Status &= ~AssetStatus.PendingUnload;
-                AddCallback(meta, id, loadedTexture, callback);
+                
+                ref AssetStateInfo state = ref id.StateInfo;
+                state.RefCount++;
+                state.LastAccessedTS = CurrentTimestamp();
+                state.Status &= ~AssetStatus.PendingUnload;
+                AddCallback(id, loadedTexture, callback);
                 return true;
             }
 
@@ -84,21 +86,21 @@ namespace EasyAssetStreaming {
         /// <summary>
         /// Loads a texture from a given url.
         /// </summary>
-        static public StreamingAssetId Texture(string pathOrUrl, AssetCallback callback = null) {
-            if (string.IsNullOrEmpty(pathOrUrl)) {
+        static public StreamingAssetHandle Texture(string address, AssetCallback callback = null) {
+            if (string.IsNullOrEmpty(address)) {
                 return default;
             }
 
-            Manifest.EnsureLoaded();
+            EnsureInitialized();
 
-            StreamingAssetId id = new StreamingAssetId(pathOrUrl, AssetTypeId.Texture);
             Texture loadedTexture;
-            AssetMeta meta = Textures.GetMeta(ref id, pathOrUrl, out loadedTexture);
+            StreamingAssetHandle id = Textures.GetHandle(address, out loadedTexture);
 
-            meta.RefCount++;
-            meta.LastModifiedTS = CurrentTimestamp();
-            meta.Status &= ~AssetStatus.PendingUnload;
-            AddCallback(meta, id, loadedTexture, callback);
+            ref AssetStateInfo state = ref id.StateInfo;
+            state.RefCount++;
+            state.LastAccessedTS = CurrentTimestamp();
+            state.Status &= ~AssetStatus.PendingUnload;
+            AddCallback(id, loadedTexture, callback);
 
             return id;
         }
@@ -213,80 +215,73 @@ namespace EasyAssetStreaming {
 
             #region State
 
-            static public readonly Dictionary<StreamingAssetId, Texture> TextureMap = new Dictionary<StreamingAssetId, Texture>();
+            static public readonly Dictionary<StreamingAssetHandle, Texture> TextureMap = new Dictionary<StreamingAssetHandle, Texture>();
             static public MemoryStat MemoryUsage = default;
             static public long MemoryBudget = 0;
 
             #endregion // State
 
-            static public AssetMeta GetMeta(ref StreamingAssetId id, string pathOrUrl, out Texture texture) {
-                Texture loadedTexture;
-                AssetMeta meta;
-                if (!s_Metas.TryGetValue(id, out meta)) {
-                    meta = new AssetMeta();
+            [MethodImpl(256)]
+            static private bool IsLoadableVideo(string address) {
+                #if UNITY_EDITOR
+                return UnityEditor.EditorApplication.isPlaying && IsVideo(address);
+                #else
+                return IsVideo(address);
+                #endif // UNITY_EDITOR
+            }
 
-                    UnityEngine.Debug.LogFormat( "[Streaming] Loading streamed texture '{0}'...", id);
+            static public StreamingAssetHandle GetHandle(string address, out Texture texture) {
+                StreamingAssetHandle handle;
+                uint hash = AddressKey(address);
+                if (!s_Cache.ByAddressHash.TryGetValue(hash, out handle)) {
+                    UnityEngine.Debug.LogFormat( "[Streaming] Loading streamed texture '{0}'...", address);
 
-                    #if UNITY_EDITOR
-                    bool isVideo = UnityEditor.EditorApplication.isPlaying && IsVideo(pathOrUrl);
-                    #else
-                    bool isVideo = IsVideo(pathOrUrl);
-                    #endif // UNITY_EDITOR
-
+                    bool isVideo = IsLoadableVideo(address);
                     if (isVideo) {
-                        meta.Type = new AssetType(AssetTypeId.Texture, AssetSubTypeId.VideoTexture);
-                        meta.Status = AssetStatus.PendingLoad;
-                        meta.Path = pathOrUrl;
-                        VideoPlayer player = Videos.LoadVideoAsync(id, pathOrUrl, meta);
-                        loadedTexture = player.texture;
-                        id = id.ReplaceType(meta.Type);
-
-                        Videos.PlayerMap[id] = player;
-                        s_Metas[id] = meta;
+                        handle = s_Cache.AllocSlot(address, new StreamingAssetType(StreamingAssetTypeId.Texture, StreamingAssetSubTypeId.VideoTexture));
+                        VideoPlayer player = Videos.LoadVideoAsync(handle);
+                        texture = player.texture;
                     } else {
-                        meta.Type = AssetTypeId.Texture;
-                        meta.Status = AssetStatus.PendingLoad;
-                        meta.Path = pathOrUrl;
+                        handle = s_Cache.AllocSlot(address, StreamingAssetTypeId.Texture);
                         #if UNITY_EDITOR
                         if (!UnityEditor.EditorApplication.isPlaying) {
-                            loadedTexture = LoadTexture_Editor(id, pathOrUrl, meta);
+                            texture = LoadTexture_Editor(handle);
                         } else
                         #endif // UNITY_EDITOR
                         {
-                            loadedTexture = LoadTextureAsync(id, pathOrUrl, meta);
+                            texture = LoadTextureAsync(handle, address);
                         }
 
-                        s_Metas[id] = meta;
-                        TextureMap[id] = loadedTexture;
-                        s_ReverseLookup[loadedTexture.GetInstanceID()] = id;
+                        TextureMap[handle] = texture;
+                        s_Cache.BindAsset(handle, texture);
                     }
                 } else {
-                    if (meta.Type.Sub == AssetSubTypeId.VideoTexture) {
-                        loadedTexture = Videos.PlayerMap[id].texture;
+                    if (handle.AssetType.Sub == StreamingAssetSubTypeId.VideoTexture) {
+                        texture = Videos.PlayerMap[handle].texture;
                     } else {
-                        loadedTexture = TextureMap[id];
+                        texture = TextureMap[handle];
                     }
                 }
 
-                texture = loadedTexture;
-                return meta;
+                return handle;
             }
 
-            static public void StartLoading(StreamingAssetId id, AssetMeta meta) {
-                Texture texture = TextureMap[id];
-                var sent = meta.Loader.SendWebRequest();
+            static public void StartLoading(StreamingAssetHandle id) {
+                string url = id.MetaInfo.ResolvedAddress;
+                var request = id.LoadInfo.Loader = new UnityWebRequest(url, UnityWebRequest.kHttpVerbGET);
+                request.downloadHandler = new DownloadHandlerBuffer();
+                var sent = request.SendWebRequest();
                 sent.completed += (_) => {
-                    HandleTextureUWRFinished(id, meta.Path, meta, meta.Loader);
+                    HandleTextureUWRFinished(id);
                 };
             }
 
-            static public UnityEngine.Object DestroyTexture(StreamingAssetId id, AssetMeta meta) {
+            static public void DestroyTexture(StreamingAssetHandle id) {
                 Texture texture = TextureMap[id];
                 TextureMap.Remove(id);
-                MemoryUsage.Current -= meta.Size;
+                MemoryUsage.Current -= id.StateInfo.Size;
 
                 StreamingHelper.DestroyResource(texture);
-                return texture;
             }
 
             static public void DestroyAllTextures() {
@@ -321,114 +316,50 @@ namespace EasyAssetStreaming {
 
             #endregion // Placeholder
 
-            #region Editor
-
-            #if UNITY_EDITOR
-
-            static private Texture2D LoadTexture_Editor(StreamingAssetId id, string pathOrUrl, AssetMeta meta) {
-                if (IsURL(pathOrUrl)) {
-                    UnityEngine.Debug.LogErrorFormat("[Streaming] Cannot load texture from URL when not in playmode '{0}'", pathOrUrl);
-                    UnityEngine.Debug.LogErrorFormat("[Streaming] Failed to load texture from '{0}'", pathOrUrl);
-                    Texture2D texture = CreatePlaceholder(pathOrUrl, true);
-                    meta.Status = AssetStatus.Error;
-                    RecomputeMemorySize(ref MemoryUsage, meta, texture);
-                    return texture;
-                }
-
-                string correctedPath = StreamingPath(pathOrUrl);
-                if (File.Exists(correctedPath)) {
-                    byte[] bytes = File.ReadAllBytes(correctedPath);
-                    Texture2D texture = new Texture2D(1, 1);
-                    texture.name = pathOrUrl;
-                    texture.hideFlags = HideFlags.DontSaveInEditor;
-                    var settings = ApplySettings(id, texture);
-                    TextureCompression compression = ResolveCompression(settings.CompressionLevel);
-                    texture.LoadImage(bytes, false);
-                    PostApplySettings(texture, settings, compression, false);
-                    RecomputeMemorySize(ref MemoryUsage, meta, texture);
-                    UnityEngine.Debug.LogFormat("[Streaming] ...finished loading (sync) '{0}'", id);
-                    meta.EditorPath = correctedPath;
-                    try {
-                        meta.EditorEditTime = File.GetLastWriteTimeUtc(correctedPath).ToFileTimeUtc();
-                    } catch {
-                        meta.EditorEditTime = 0;
-                    }
-                    meta.Status = AssetStatus.Loaded;
-                    return texture;
-                } else {
-                    UnityEngine.Debug.LogErrorFormat("[Streaming] Failed to load texture from '{0}' - file does not exist", pathOrUrl);
-                    Texture2D texture = CreatePlaceholder(pathOrUrl, true);
-                    meta.Status = AssetStatus.Error;
-                    RecomputeMemorySize(ref MemoryUsage, meta, texture);
-                    return texture;
-                }
-            }
-
-            static public void HandleTextureDeleted(StreamingAssetId id, AssetMeta meta) {
-                Texture2D texture = (Texture2D) TextureMap[id];
-                ApplyPlaceholderData(texture, true);
-                RecomputeMemorySize(ref MemoryUsage, meta, texture);
-                meta.EditorEditTime = 0;
-
-                meta.Status = AssetStatus.Error;
-                UnityEngine.Debug.LogFormat("[Streaming] Texture '{0}' was deleted", id);
-                InvokeCallbacks(meta, id, texture);
-            }
-
-            static public void HandleTextureModified(StreamingAssetId id, AssetMeta meta) {
-                Texture2D texture = (Texture2D) TextureMap[id];
-                var settings = ApplySettings(id, texture);
-                TextureCompression compression = ResolveCompression(settings.CompressionLevel);
-                texture.LoadImage(File.ReadAllBytes(meta.EditorPath), false);
-                PostApplySettings(texture, settings, compression, false);
-                RecomputeMemorySize(ref MemoryUsage, meta, texture);
-                meta.EditorEditTime = File.GetLastWriteTimeUtc(meta.EditorPath).ToFileTimeUtc();
-
-                UnityEngine.Debug.LogFormat("[Streaming] Texture '{0}' reloaded", id);
-                InvokeCallbacks(meta, id, texture);
-            }
-
-            #endif // UNITY_EDITOR
-
-            #endregion // Editor
-        
             #region Load
 
-            static private Texture2D LoadTextureAsync(StreamingAssetId id, string pathOrUrl, AssetMeta meta) {
-                Texture2D texture = CreatePlaceholder(pathOrUrl, false);
-                string url = ResolvePathToURL(pathOrUrl);
-                var request = meta.Loader = new UnityWebRequest(url, UnityWebRequest.kHttpVerbGET);
-                request.downloadHandler = new DownloadHandlerBuffer();
-                s_LoadState.Queue.Enqueue(id);
-                EnsureTick();
-                RecomputeMemorySize(ref MemoryUsage, meta, texture);
-                s_LoadState.Count++;
+            static private Texture2D LoadTextureAsync(StreamingAssetHandle id, string address) {
+                Texture2D texture = CreatePlaceholder(address, false);
+                s_Cache.BindAsset(id, texture);
+                QueueLoad(id);
+                RecomputeMemorySize(ref MemoryUsage, id, texture);
                 return texture;
             }
 
-            static private void HandleTextureUWRFinished(StreamingAssetId id, string pathOrUrl, AssetMeta meta, UnityWebRequest request) {
-                s_LoadState.Count--;
+            static private void HandleTextureUWRFinished(StreamingAssetHandle id) {
+                DecrementLoadCounter();
 
-                if (meta.Status == AssetStatus.Unloaded) {
+                ref AssetStateInfo stateInfo = ref id.StateInfo;
+                ref AssetLoadInfo loadInfo = ref id.LoadInfo;
+
+                if (stateInfo.Status == AssetStatus.Unloaded) {
                     return;
                 }
 
-                if ((meta.Status & AssetStatus.PendingUnload) != 0) {
+                if ((stateInfo.Status & AssetStatus.PendingUnload) != 0) {
                     UnloadSingle(id, 0, 0);
                     return;
                 }
 
+                UnityWebRequest request = loadInfo.Loader;
+
                 if (request.isNetworkError || request.isHttpError) {
-                    OnTextureDownloadFail(id, pathOrUrl, meta, request.error);
+                    if (loadInfo.RetryCount < RetryLimit && StreamingHelper.ShouldRetry(request)) {
+                        UnityEngine.Debug.LogWarningFormat("[Streaming] Retrying texture load '{0}' from '{1}': {2}", id.MetaInfo.Address, id.MetaInfo.ResolvedAddress, loadInfo.Loader.error);
+                        loadInfo.RetryCount++;
+                        QueueDelayedLoad(id, RetryDelayBase + (loadInfo.RetryCount - 1) * RetryDelayExtra);
+                        return;
+                    }
+                    OnTextureDownloadFail(id, request.error);
                 } else {
-                    OnTextureDownloadCompleted(id, request.downloadHandler.data, pathOrUrl, meta);
+                    OnTextureDownloadCompleted(id, request.downloadHandler.data);
                 }
 
                 request.Dispose();
-                meta.Loader = null;
+                loadInfo.Loader = null;
             }
 
-            static private void OnTextureDownloadCompleted(StreamingAssetId id, byte[] source, string pathOrUrl, AssetMeta meta) {
+            static private void OnTextureDownloadCompleted(StreamingAssetHandle id, byte[] source) {
                 Texture2D texture = (Texture2D) TextureMap[id]; 
                 try {
                     var settings = ApplySettings(id, texture);
@@ -437,25 +368,30 @@ namespace EasyAssetStreaming {
                     PostApplySettings(texture, settings, compression, true);
                 } catch(Exception e) {
                     UnityEngine.Debug.LogException(e);
-                    OnTextureDownloadFail(id, pathOrUrl, meta, e.ToString());
+                    OnTextureDownloadFail(id, e.ToString());
                     return;
                 }
 
-                meta.Status = AssetStatus.Loaded;
-                RecomputeMemorySize(ref MemoryUsage, meta, texture);
-                UnityEngine.Debug.LogFormat("[Streaming] ...finished loading (async) '{0}'", id);
-                InvokeCallbacks(meta, id, texture);
+                id.StateInfo.Status = AssetStatus.Loaded;
+                id.LoadInfo.RetryCount = 0;
+                RecomputeMemorySize(ref MemoryUsage, id, texture);
+                UnityEngine.Debug.LogFormat("[Streaming] ...finished loading (async) '{0}'", id.MetaInfo.Address);
+                InvokeCallbacks(id, texture);
             }
 
-            static private void OnTextureDownloadFail(StreamingAssetId id, string pathOrUrl, AssetMeta meta, string error) {
-                UnityEngine.Debug.LogErrorFormat("[Streaming] Failed to load texture '{0}' from '{1}': {2}", id, pathOrUrl, error);
-                meta.Loader = null;
-                meta.Status = AssetStatus.Error;
-                InvokeCallbacks(meta, id, TextureMap[id]);
+            static private void OnTextureDownloadFail(StreamingAssetHandle id, string error) {
+                UnityEngine.Debug.LogErrorFormat("[Streaming] Failed to load texture '{0}' from '{1}': {2}", id.MetaInfo.Address, id.MetaInfo.ResolvedAddress, error);
+                id.StateInfo.Status = AssetStatus.Error;
+                InvokeCallbacks(id, TextureMap[id]);
             }
 
-            static private TextureSettings ApplySettings(StreamingAssetId id, Texture2D texture) {
-                TextureSettings settings = Manifest.Entry(id, AssetTypeId.Texture).Texture;
+            #endregion // Load
+
+            #region Settings
+
+            static private TextureSettings ApplySettings(StreamingAssetHandle id, Texture2D texture) {
+                AssetMetaInfo meta = id.MetaInfo;
+                TextureSettings settings = Manifest.Entry(meta.AddressHash, meta.Address, StreamingAssetTypeId.Texture).Texture;
 
                 texture.filterMode = ResolveFilterMode(settings.Filter);
 
@@ -503,7 +439,7 @@ namespace EasyAssetStreaming {
                 }
             }
 
-            #endregion // Load
+            #endregion // Settings
 
             #region Formats
 
@@ -589,7 +525,7 @@ namespace EasyAssetStreaming {
                         UnityEngine.Debug.LogFormat("[Streaming] Texture memory is over budget by {0:0.00} Kb", over / 1024f);
                         s_OverBudgetFlag = true;
                     }
-                    StreamingAssetId asset = IdentifyOverBudgetToDelete(AssetTypeId.Texture, now, over);
+                    StreamingAssetHandle asset = IdentifyOverBudgetToDelete(StreamingAssetTypeId.Texture, now, over);
                     if (asset) {
                         UnloadSingle(asset, now);
                         s_OverBudgetFlag = false;
@@ -647,6 +583,82 @@ namespace EasyAssetStreaming {
             #endif // UNITY_EDITOR
 
             #endregion // Manifest
+
+            #region Editor
+
+            #if UNITY_EDITOR
+
+            static private Texture2D LoadTexture_Editor(StreamingAssetHandle id) {
+                string address = id.MetaInfo.Address;
+                if (IsURL(address)) {
+                    UnityEngine.Debug.LogErrorFormat("[Streaming] Cannot load texture from URL when not in playmode '{0}'", address);
+                    UnityEngine.Debug.LogErrorFormat("[Streaming] Failed to load texture from '{0}'", address);
+                    Texture2D texture = CreatePlaceholder(address, true);
+                    id.StateInfo.Status = AssetStatus.Error;
+                    RecomputeMemorySize(ref MemoryUsage, id, texture);
+                    return texture;
+                }
+
+                string correctedPath = StreamingPath(address);
+                if (File.Exists(correctedPath)) {
+                    byte[] bytes = File.ReadAllBytes(correctedPath);
+                    Texture2D texture = new Texture2D(1, 1);
+                    texture.name = address;
+                    texture.hideFlags = HideFlags.DontSaveInEditor;
+                    var settings = ApplySettings(id, texture);
+                    TextureCompression compression = ResolveCompression(settings.CompressionLevel);
+                    texture.LoadImage(bytes, false);
+                    PostApplySettings(texture, settings, compression, false);
+                    RecomputeMemorySize(ref MemoryUsage, id, texture);
+                    UnityEngine.Debug.LogFormat("[Streaming] ...finished loading (sync) '{0}'", id.MetaInfo.Address);
+                    ref AssetEditorInfo editorInfo = ref id.EditorInfo;
+                    editorInfo.Path = correctedPath;
+                    try {
+                        editorInfo.EditTime = File.GetLastWriteTimeUtc(correctedPath).ToFileTimeUtc();
+                    } catch {
+                        editorInfo.EditTime = 0;
+                    }
+                    id.StateInfo.Status = AssetStatus.Loaded;
+                    return texture;
+                } else {
+                    UnityEngine.Debug.LogErrorFormat("[Streaming] Failed to load texture from '{0}' - file does not exist", address);
+                    Texture2D texture = CreatePlaceholder(address, true);
+                    id.StateInfo.Status = AssetStatus.Error;
+                    RecomputeMemorySize(ref MemoryUsage, id, texture);
+                    return texture;
+                }
+            }
+
+            static public void HandleTextureDeleted(StreamingAssetHandle id) {
+                Texture2D texture = (Texture2D) TextureMap[id];
+                ApplyPlaceholderData(texture, true);
+                RecomputeMemorySize(ref MemoryUsage, id, texture);
+                id.EditorInfo.EditTime = 0;
+
+                id.StateInfo.Status = AssetStatus.Error;
+                UnityEngine.Debug.LogFormat("[Streaming] Texture '{0}' was deleted", id.MetaInfo.Address);
+                InvokeCallbacks(id, texture);
+            }
+
+            static public void HandleTextureModified(StreamingAssetHandle id) {
+                Texture2D texture = (Texture2D) TextureMap[id];
+                var settings = ApplySettings(id, texture);
+                TextureCompression compression = ResolveCompression(settings.CompressionLevel);
+                
+                ref AssetEditorInfo editorInfo = ref id.EditorInfo;
+
+                texture.LoadImage(File.ReadAllBytes(editorInfo.Path), false);
+                PostApplySettings(texture, settings, compression, false);
+                RecomputeMemorySize(ref MemoryUsage, id, texture);
+                editorInfo.EditTime = File.GetLastWriteTimeUtc(editorInfo.Path).ToFileTimeUtc();
+
+                UnityEngine.Debug.LogFormat("[Streaming] Texture '{0}' reloaded", id.MetaInfo.Address);
+                InvokeCallbacks(id, texture);
+            }
+
+            #endif // UNITY_EDITOR
+
+            #endregion // Editor
         }
     }
 }

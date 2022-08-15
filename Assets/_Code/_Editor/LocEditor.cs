@@ -381,7 +381,7 @@ namespace Aqua.Editor {
                     int bestMatchLength = 0;
                     for (int i = 0, totalPathCount = package.AllBasePaths.Count; i < totalPathCount; i++) {
                         basePath = package.AllBasePaths[i];
-                        if (basePath.Path.Length > bestMatchLength & inKey.StartsWith(basePath.Path, StringComparison.InvariantCulture)) {
+                        if (basePath.Path.Length > bestMatchLength && inKey.StartsWith(basePath.Path, StringComparison.InvariantCulture)) {
                             bestMatchLength = basePath.Path.Length;
                             bestMatchIdx = i;
                         }

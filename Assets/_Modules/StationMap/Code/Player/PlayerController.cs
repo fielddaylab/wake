@@ -46,7 +46,7 @@ namespace Aqua.StationMap
 
             if (input.Move && input.MovementVector.sqrMagnitude > 0)
             {
-                m_MoveParams.Apply(input.MovementVector, m_Kinematics, inDeltaTime);
+                m_MoveParams.Apply(input.MovementVector, m_Kinematics, inDeltaTime, 1);
 
                 m_Kinematics.Config.Drag = m_DragEngineOn;
             }

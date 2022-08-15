@@ -78,6 +78,7 @@ namespace ProtoAqua.Observation
             void UpdateActive(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody);
             bool HasTarget();
             PlayerROVAnimationFlags AnimFlags();
+            float MoveSpeedMultiplier();
             void GetTargetPosition(bool inbOnGamePlane, out Vector3? outWorldPosition, out Vector3? outCursorPosition);
         }
 
@@ -94,6 +95,7 @@ namespace ProtoAqua.Observation
             }
             public bool HasTarget() { return false; }
             public PlayerROVAnimationFlags AnimFlags() { return 0; }
+            public float MoveSpeedMultiplier() { return 1; }
             public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) { return false; }
             public void UpdateActive(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) { }
         }
@@ -315,11 +317,15 @@ namespace ProtoAqua.Observation
             if (m_LastInputData.Move)
             {
                 float dist = m_LastInputData.MoveVector.magnitude;
+                float moveMultiplier = m_CurrentTool.MoveSpeedMultiplier();
+                if (m_Microscope.IsEnabled()) {
+                    moveMultiplier *= m_Microscope.MoveSpeedMultiplier();
+                }
                 
                 if (dist > 0)
                 {
                     SetEngineState(true);
-                    m_MovementParams.Apply(m_LastInputData.MoveVector, m_Kinematics, inDeltaTime);
+                    m_MovementParams.Apply(m_LastInputData.MoveVector, m_Kinematics, inDeltaTime, moveMultiplier);
                 }
                 else
                 {

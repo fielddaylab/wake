@@ -448,17 +448,17 @@ namespace Aqua
         private IEnumerator LoadConditionalSubscenes(SceneBinding inBinding, object inContext)
         {
             using(PooledList<ISceneSubsceneSelector> selectors = PooledList<ISceneSubsceneSelector>.Create())
-            using(PooledList<string> subScenes = PooledList<string>.Create())
+            using(PooledList<SceneImportSettings> subScenes = PooledList<SceneImportSettings>.Create())
             {
                 inBinding.Scene.GetAllComponents<ISceneSubsceneSelector>(false, selectors);
                 if (selectors.Count > 0)
                 {
                     foreach(var selector in selectors)
                     {
-                        foreach(var scenePath in selector.GetAdditionalScenesNames(inBinding, inContext))
+                        foreach(var subScene in selector.GetAdditionalScenesNames(inBinding, inContext))
                         {
-                            if (!string.IsNullOrEmpty(scenePath))
-                                subScenes.Add(scenePath);
+                            if (!string.IsNullOrEmpty(subScene.SceneName))
+                                subScenes.Add(subScene);
                         }
                     }
                 }
@@ -468,9 +468,9 @@ namespace Aqua
                     DebugService.Log(LogMask.Loading, "[StateMgr] Loading {0} conditional subscenes...", subScenes.Count);
                     using(Profiling.Time("load conditional subscenes"))
                     {
-                        foreach(var subscenePath in subScenes)
+                        foreach(var subscene in subScenes)
                         {
-                            yield return LoadSubSceneFromName(subscenePath, inBinding);
+                            yield return LoadSubSceneFromName(subscene, inBinding);
                         }
                     }
                 }
@@ -531,17 +531,17 @@ namespace Aqua
 
         #endif // UNITY_EDITOR
 
-        static private IEnumerator LoadSubSceneFromName(string inSceneName, SceneBinding inActiveScene)
+        static private IEnumerator LoadSubSceneFromName(SceneImportSettings inImportSettings, SceneBinding inActiveScene)
         {
             #if UNITY_EDITOR
-            var editorScene = SceneHelper.FindSceneByName(inSceneName, SceneCategories.Build);
+            var editorScene = SceneHelper.FindSceneByName(inImportSettings.SceneName, SceneCategories.Build);
             string path = editorScene.Path;
             if (!editorScene.IsLoaded())
             {
                 yield return UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(path, new LoadSceneParameters(LoadSceneMode.Additive));
             }
             #else
-            string path = SceneHelper.FindSceneByName(inSceneName, SceneCategories.Build).Path;
+            string path = SceneHelper.FindSceneByName(inImportSettings.SceneName, SceneCategories.Build).Path;
             yield return SceneManager.LoadSceneAsync(path, LoadSceneMode.Additive);
             #endif // UNITY_EDITOR
 
@@ -550,6 +550,10 @@ namespace Aqua
             foreach(var root in roots)
             {
                 SceneManager.MoveGameObjectToScene(root, inActiveScene);
+            }
+            if (inImportSettings.ImportLighting)
+            {
+                LightUtils.CopySettings(unityScene, inActiveScene);
             }
             yield return SceneManager.UnloadSceneAsync(unityScene);
         }

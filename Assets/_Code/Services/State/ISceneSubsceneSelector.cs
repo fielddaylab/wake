@@ -6,6 +6,18 @@ namespace Aqua
 {
     public interface ISceneSubsceneSelector
     {
-        IEnumerable<string> GetAdditionalScenesNames(SceneBinding inNew, object inContext);
+        IEnumerable<SceneImportSettings> GetAdditionalScenesNames(SceneBinding inNew, object inContext);
+    }
+
+    public struct SceneImportSettings {
+        public string SceneName;
+        public bool ImportLighting;
+
+        static public implicit operator SceneImportSettings(string sceneName) {
+            return new SceneImportSettings() {
+                SceneName = sceneName,
+                ImportLighting = false
+            };
+        }
     }
 }

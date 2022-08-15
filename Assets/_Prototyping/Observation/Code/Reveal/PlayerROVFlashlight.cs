@@ -58,6 +58,8 @@ namespace ProtoAqua.Observation {
             return 0;
         }
 
+        public float MoveSpeedMultiplier() { return 1; }
+
         #endregion // ITool
 
         private void HandleEnter(Collider2D inCollider) {
