@@ -26,8 +26,13 @@ namespace Aqua.Ship
                 MapDesc travelDest = Assets.Map(Save.Map.CurrentStationId()).QuickTravel();
                 p.Config.TargetId = travelDest.Parent().Id();
                 p.Config.TargetEntranceId = travelDest.Id();
-                // TODO: only show if has visited interior station
             };
+        }
+
+        private void OnEnable() {
+            if (!Save.Map.HasVisitedLocation(Assets.Map(Save.Map.CurrentStationId()).QuickTravel().Id())) {
+                this.gameObject.SetActive(false);
+            }
         }
     }
 }
