@@ -4,6 +4,7 @@ using BeauRoutine;
 using BeauRoutine.Extensions;
 using BeauUtil;
 using EasyAssetStreaming;
+using ProtoAqua.ExperimentV2;
 using ScriptableBake;
 using UnityEngine;
 using UnityEngine.UI;
@@ -30,6 +31,9 @@ namespace Aqua.Ship {
             m_OnscreenPos = Root.anchoredPosition;
 
             m_OpenButton.onClick.AddListener(() => Show());
+
+            Services.Events.Register<TankType>(ExperimentEvents.ExperimentBegin, OnExperimentBegin, this)
+                .Register<TankType>(ExperimentEvents.ExperimentEnded, OnExperimentEnded, this);
         }
 
         protected override void OnShow(bool inbInstant) {
@@ -87,5 +91,17 @@ namespace Aqua.Ship {
             CanvasGroup.Hide();
             Root.SetAnchorPos(m_OnscreenPos);
         }
+
+        #region Handlers
+
+        private void OnExperimentBegin(TankType type) {
+            this.gameObject.SetActive(false);
+        }
+
+        private void OnExperimentEnded(TankType type) {
+            this.gameObject.SetActive(true);
+        }
+
+        #endregion // Handlers
     }
 }
