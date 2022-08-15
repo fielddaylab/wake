@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Aqua.Journal;
 using BeauUtil;
 using BeauUtil.Debugger;
 using TMPro;
@@ -18,6 +19,7 @@ namespace Aqua {
         static private ActDB ActDB;
         static private MapDB MapDB;
         static private WaterPropertyDB WaterPropertyDB;
+        static private JournalDB JournalDB;
 
         static private Dictionary<StringHash32, ScriptableObject> s_GlobalLookup;
         static private TMP_FontAsset s_RegularFont;
@@ -27,7 +29,9 @@ namespace Aqua {
         static private WaterPropertyDesc[] s_EditorWaterProperties;
         #endif // UNITY_EDITOR
 
-        static internal void Assign(AssetsService inService) {
+        static private Unsafe.ArenaHandle s_DecompressionArena;
+
+        static internal void Assign(AssetsService inService, Unsafe.ArenaHandle inBuffer) {
             BestiaryDB = inService.Bestiary;
             CharacterDB = inService.Characters;
             InventoryDB = inService.Inventory;
@@ -35,6 +39,7 @@ namespace Aqua {
             ActDB = inService.Acts;
             MapDB = inService.Map;
             WaterPropertyDB = inService.WaterProp;
+            JournalDB = inService.Journal;
 
             s_GlobalLookup = new Dictionary<StringHash32, ScriptableObject>(512);
 
@@ -45,6 +50,7 @@ namespace Aqua {
             Import(ActDB);
             Import(MapDB);
             Import(WaterPropertyDB);
+            Import(JournalDB);
 
             foreach (var fact in BestiaryDB.AllFacts())
                 s_GlobalLookup.Add(fact.Id, fact);
@@ -52,6 +58,8 @@ namespace Aqua {
             s_RegularFont = inService.RegularFont;
             s_SemiBoldFont = inService.SemiBoldFont;
             s_BoldFont = inService.BoldFont;
+
+            s_DecompressionArena = inBuffer;
 
             Log.Msg("[Assets] Imported {0} assets", s_GlobalLookup.Count);
         }
@@ -113,6 +121,11 @@ namespace Aqua {
         }
 
         [MethodImpl(256)]
+        static public JournalDesc Journal(StringHash32 inId) {
+            return JournalDB.Get(inId);
+        }
+
+        [MethodImpl(256)]
         static public JobDesc Job(StringHash32 inId) {
             return JobDB.Get(inId);
         }
@@ -171,5 +184,42 @@ namespace Aqua {
             return Assets.Find(inAssetId)?.name;
             #endif // ENABLE_REVERSE_HASH
         }
+
+        #region Decompression
+
+        static private int s_DecompressCounter;
+
+        static public unsafe byte* Decompress(byte[] inCompressed, int inOffset, int inSize, int* outDecompressedSize) {
+            fixed(byte* srcPtr = inCompressed) {
+                return Decompress(srcPtr + inOffset, inSize, outDecompressedSize);
+            }
+        }
+
+        static public unsafe byte* Decompress(byte* inCompressed, int inCompressedSize, int* outDecompressedSize) {
+            byte* alloc;
+            int allocSize;
+            s_DecompressCounter++;
+
+            if (UnsafeExt.PeekCompression(inCompressed, inCompressedSize, out UnsafeExt.CompressionHeader header)) {
+                allocSize = (int) header.UncompressedSize;
+                alloc = (byte*) Unsafe.Alloc(s_DecompressionArena, allocSize);
+                UnsafeExt.Decompress(inCompressed, inCompressedSize, alloc, allocSize, outDecompressedSize);
+            } else {
+                allocSize = inCompressedSize;
+                alloc = (byte*) Unsafe.Alloc(s_DecompressionArena, allocSize);
+                Unsafe.Copy(inCompressed, inCompressedSize, alloc, allocSize);
+            }
+            return alloc;
+        }
+
+        static public unsafe void FreeDecompress(byte* inDecompressed) {
+            Assert.True(s_DecompressionArena.IsValid(inDecompressed));
+            s_DecompressCounter--;
+            if (s_DecompressCounter == 0) {
+                Unsafe.ResetArena(s_DecompressionArena);
+            }
+        }
+
+        #endregion // Decompression
     }
 }

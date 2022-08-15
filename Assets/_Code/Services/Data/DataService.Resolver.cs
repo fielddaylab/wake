@@ -606,6 +606,27 @@ namespace Aqua
                 return Save.Inventory.WasScanned(inNodeId);
             }
 
+            [LeafMember("HasJournalEntry"), UnityEngine.Scripting.Preserve]
+            static private bool HasJournalEntry(StringHash32 inEntryId)
+            {
+                return Save.Inventory.HasJournalEntry(inEntryId);
+            }
+
+            [LeafMember("GiveJournalEntry"), UnityEngine.Scripting.Preserve]
+            static private IEnumerator GiveJournalEntry([BindThread] ScriptThread inThread, StringHash32 inEntryId, PopupMode inMode = PopupMode.Popup)
+            {
+                if (Save.Inventory.AddJournalEntry(inEntryId) && inMode != PopupMode.Silent)
+                {
+                    inThread.Dialog = null;
+
+                    if (Services.UI.IsSkippingCutscene())
+                        return null;
+
+                    return Services.UI.FindPanel<JournalCanvas>().ShowNewEntry();
+                }
+                return null;
+            }
+
             #endregion // Bestiary/Inventory
 
             #region Shop
