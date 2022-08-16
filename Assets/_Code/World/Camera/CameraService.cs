@@ -1220,8 +1220,9 @@ namespace Aqua.Cameras
 
             SetAsScripted();
 
-            if (!m_FOVPlane.IsReferenceNull() && inPose.Target != null)
+            if (!m_FOVPlane.IsReferenceNull() && inPose.Target != null) {
                 m_FOVPlane.SetTargetPreserveFOV(inPose.Target);
+            }
 
             CameraState currentState = GetCameraState(m_PositionRoot, m_Camera, m_FOVPlane);
             CameraState newState = new CameraState(inPose.transform.position, inPose.transform.rotation, inPose.Height, inPose.Zoom);

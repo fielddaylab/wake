@@ -71,15 +71,16 @@ namespace Aqua.Editor
                 {
                     foreach(var subscene in allSubscenes)
                     {
-                        string path = subscene.Scene.Path;
+                        SceneImportSettings importSettings = subscene;
                         GameObject.DestroyImmediate(subscene.gameObject);
-                        EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
-                        Scene unitySubScene = EditorSceneManager.GetSceneByPath(path);
+                        EditorSceneManager.OpenScene(importSettings.ScenePath, OpenSceneMode.Additive);
+                        Scene unitySubScene = EditorSceneManager.GetSceneByPath(importSettings.ScenePath);
                         foreach(var root in unitySubScene.GetRootGameObjects())
                         {
                             EditorSceneManager.MoveGameObjectToScene(root, scene);
+                            SceneImportSettings.TransformRoot(root, importSettings);
                         }
-                        if (subscene.ImportLighting)
+                        if (importSettings.ImportLighting)
                         {
                             LightUtils.CopySettings(unitySubScene, scene);
                         }

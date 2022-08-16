@@ -23,7 +23,7 @@ namespace Aqua.Scripting
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("regionId", Parent.Id());
-                Services.Script.TriggerResponse(GameTriggers.PlayerEnterRegion, table);
+                Trigger(GameTriggers.PlayerEnterRegion, table);
             }
         }
 
@@ -35,7 +35,7 @@ namespace Aqua.Scripting
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("regionId", Parent.Id());
-                Services.Script.TriggerResponse(GameTriggers.PlayerExitRegion, table);
+                Trigger(GameTriggers.PlayerExitRegion, table);
             }
         }
 

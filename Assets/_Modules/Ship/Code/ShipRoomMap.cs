@@ -36,6 +36,10 @@ namespace Aqua.Ship {
                 .Register<TankType>(ExperimentEvents.ExperimentEnded, OnExperimentEnded, this);
         }
 
+        private void OnDestroy() {
+            Services.Events?.DeregisterAll(this);
+        }
+
         protected override void OnShow(bool inbInstant) {
             base.OnShow(inbInstant);
 

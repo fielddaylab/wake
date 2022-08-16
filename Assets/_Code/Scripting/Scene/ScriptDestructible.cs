@@ -75,7 +75,7 @@ namespace Aqua.Scripting
 
             using(var table = TempVarTable.Alloc()) {
                 table.Set("objectId", Parent.Id());
-                Services.Script.TriggerResponse(Trigger_Destroyed, table);
+                Trigger(Trigger_Destroyed, table);
             }
         }
 

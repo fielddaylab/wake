@@ -20,5 +20,13 @@ namespace Aqua.Scripting
         public virtual void OnDeregister(ScriptObject inObject) { m_Parent = null; }
         public virtual void OnRegister(ScriptObject inObject) { m_Parent = inObject; }
         public virtual void PostRegister() { }
+
+        public ScriptThreadHandle Trigger(StringHash32 inTriggerId) {
+            return Services.Script.TriggerResponse(inTriggerId, null, m_Parent);
+        }
+
+        public ScriptThreadHandle Trigger(StringHash32 inTriggerId, TempVarTable inTable) {
+            return Services.Script.TriggerResponse(inTriggerId, null, m_Parent, inTable);
+        }
     }
 }
