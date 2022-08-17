@@ -1,0 +1,17 @@
+# basePath interior.bayouStation
+
+#include "Headers/Common.leaf"
+
+:: intro
+@trigger    Talk
+@who        profBayou
+@boostScore 100
+@once
+@cutscene
+
+{@profBayou}    Oh, hello! Welcome to the Bayou Station!
+                This is an exciting time to be a Bayou researcher!
+{@player}   Oh yeah?
+{@profBayou}    I'll be sure to send some jobs your way that will show you how totally mystifying the Bayou can be.
+                I'm looking forward to working with you!
+$call InteriorOpenJobBoard()

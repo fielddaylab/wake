@@ -93,6 +93,10 @@
 :: action.openShop
 $call InteriorOpenShopBoard()
 
+// Triggers chitchat
+:: action.chat
+{trigger-response Chitchat}
+
 // INTERNALS
 
 // Checks if the upgrade set with local:itemId

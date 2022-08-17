@@ -1,0 +1,22 @@
+# basePath interior.arcticStation
+
+#include "Headers/Common.leaf"
+
+:: intro
+@trigger    Talk
+@who        profArctic
+@boostScore 100
+@once
+@cutscene
+
+{@profArctic}   Oh,| hello!| You're not a whale...
+				Well...| welcome to the Arctic Station!
+                This is so exciting!| I never get visitors...
+                Let me tell you a thing or two about Bowhead whales!
+                The first thing to know about Bowhead whales is...
+                [ Many| hours| later| .|.|.| ]
+$call GiveEntity(BowheadWhale)
+{@guide}        Listen, I'm sure we'd love to hear more about Bowhead whales, but we were actually wondering if you had any work for us.
+{@profArctic}	Oh! | Well... | let me see if I can find some jobs to put on the Job Board.
+                Feel free to give me a ring if you ever want to talk more about whales!
+$call InteriorOpenJobBoard()

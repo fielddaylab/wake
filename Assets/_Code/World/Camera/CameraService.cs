@@ -128,6 +128,7 @@ namespace Aqua.Cameras
         [NonSerialized] private Camera m_Camera;
         [NonSerialized] private CameraRig m_Rig;
         [NonSerialized] private CameraFOVPlane m_FOVPlane;
+        [NonSerialized] private CameraRenderScale m_RenderScale;
         [NonSerialized] private float m_LastCameraDistance;
         [NonSerialized] private Transform m_PositionRoot;
         [NonSerialized] private Axis m_Axis = Axis.XY;
@@ -683,6 +684,8 @@ namespace Aqua.Cameras
             }
 
             Assert.NotNull(m_Camera, "No main camera located for scene");
+
+            m_RenderScale = m_Camera.EnsureComponent<CameraRenderScale>();
 
             m_Camera.transparencySortMode = TransparencySortMode.Orthographic;
             m_LastScreenAspectClip = default(Rect);

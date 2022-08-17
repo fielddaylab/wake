@@ -1,0 +1,16 @@
+# basePath interior.coralStation
+
+#include "Headers/Common.leaf"
+
+:: intro
+@trigger    Talk
+@who        profCoral
+@boostScore 100000
+@once
+@cutscene
+
+{@profCoral}    Oh, hello! Have you come from the Kelp Station?
+				Well, welcome to the Coral Station!
+				Hope you like turtles. They are all over the coral reef.
+				I have some jobs listed on the Job Board, let me know if you're interested.
+$call InteriorOpenJobBoard()
