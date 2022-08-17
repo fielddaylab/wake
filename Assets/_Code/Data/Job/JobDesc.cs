@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Aqua.Journal;
 using Aqua.Profile;
 using BeauUtil;
 using BeauUtil.Debugger;
@@ -39,6 +40,7 @@ namespace Aqua
 
         [SerializeField] private int m_CashReward = 0;
         [SerializeField] private int m_ExpReward = 5;
+        [SerializeField, JournalId] private StringHash32 m_JournalId = null;
 
         [SerializeField] internal LeafAsset m_Scripting = null;
         [SerializeField] internal ScriptableObject[] m_ExtraAssets = null;
@@ -96,6 +98,7 @@ namespace Aqua
 
         [LeafLookup("ExpReward")] public int ExpReward() { return m_ExpReward; }
         [LeafLookup("CashReward")] public int CashReward() { return m_CashReward; }
+        [LeafLookup("JournalId")] public StringHash32 JournalId() { return m_JournalId; }
 
         public LeafAsset Scripting() { return m_Scripting; }
 

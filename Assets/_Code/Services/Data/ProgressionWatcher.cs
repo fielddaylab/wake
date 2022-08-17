@@ -103,6 +103,14 @@ namespace Aqua
                 {
                     JobCompletedPopup(job);
                 }
+
+                if (!job.JournalId().IsEmpty) {
+                    Services.Script.QueueInvoke(() => {
+                        if (Save.Inventory.AddJournalEntry(job.JournalId())) {
+                            Services.UI.FindPanel<JournalCanvas>().ShowNewEntry();
+                        }
+                    }, -5);
+                }
             }
         }
 
@@ -219,7 +227,7 @@ namespace Aqua
                 ).OnComplete((_) => {
                     Services.Script.TriggerResponse(GameTriggers.PlayerLevelUp);
                 });
-            });
+            }, -1);
         }
 
         #endregion // Handlers

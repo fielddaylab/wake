@@ -40,6 +40,7 @@ namespace Aqua.Editor
 
         private SerializedProperty m_CashRewardProperty;
         private SerializedProperty m_ExpRewardProperty;
+        private SerializedProperty m_JournalIdProperty;
 
         private SerializedProperty m_ScriptingProperty;
         private SerializedProperty m_ExtraAssetsProperty;
@@ -105,6 +106,7 @@ namespace Aqua.Editor
             m_TasksProperty = serializedObject.FindProperty("m_Tasks");
             m_CashRewardProperty = serializedObject.FindProperty("m_CashReward");
             m_ExpRewardProperty = serializedObject.FindProperty("m_ExpReward");
+            m_JournalIdProperty = serializedObject.FindProperty("m_JournalId");
             m_ScriptingProperty = serializedObject.FindProperty("m_Scripting");
             m_ExtraAssetsProperty = serializedObject.FindProperty("m_ExtraAssets");
 
@@ -211,6 +213,7 @@ namespace Aqua.Editor
             if (Section("Rewards", ref m_RewardsExpanded)) {
                 EditorGUILayout.PropertyField(m_ExpRewardProperty);
                 EditorGUILayout.PropertyField(m_CashRewardProperty);
+                EditorGUILayout.PropertyField(m_JournalIdProperty);
             }
 
             if (Section("Assets", ref m_AssetsExpanded)) {

@@ -27,4 +27,14 @@ namespace Aqua.Journal {
         Depths = 0x10,
         Personal = 0x20
     }
+
+    public class JournalIdAttribute : DBObjectIdAttribute {
+        public JournalIdAttribute() : base(typeof(JournalDesc)) {
+        }
+
+        public override string Name(DBObject inObject) {
+            JournalDesc desc = (JournalDesc) inObject;
+            return string.Format("{0}/{1}", desc.Category().ToString(), desc.name);
+        }
+    }
 }
