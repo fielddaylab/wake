@@ -455,10 +455,10 @@ namespace Aqua
                 {
                     foreach(var selector in selectors)
                     {
-                        foreach(var subScene in selector.GetAdditionalScenesNames(inBinding, inContext))
+                        foreach(var importSettings in selector.GetAdditionalScenesNames(inBinding, inContext))
                         {
-                            if (!string.IsNullOrEmpty(subScene.SceneName))
-                                subScenes.Add(subScene);
+                            if (!string.IsNullOrEmpty(importSettings.ScenePath))
+                                subScenes.Add(importSettings);
                         }
                     }
                 }
@@ -470,7 +470,7 @@ namespace Aqua
                     {
                         foreach(var subscene in subScenes)
                         {
-                            yield return LoadSubSceneFromName(subscene, inBinding);
+                            yield return ImportScene(subscene, inBinding);
                         }
                     }
                 }
@@ -491,7 +491,9 @@ namespace Aqua
                     {
                         foreach(var subscene in subScenes)
                         {
-                            yield return LoadSubScene(subscene, inBinding);
+                            SceneImportSettings importSettings = subscene;
+                            Destroy(subscene.gameObject);
+                            yield return ImportScene(importSettings, inBinding);
                         }
                     }
                 }
@@ -501,47 +503,19 @@ namespace Aqua
             yield return Routine.Amortize(Bake.SceneAsync(inBinding, 0), 5);
         }
 
-        static private IEnumerator LoadSubScene(SubScene inSubScene, SceneBinding inActiveScene)
-        {
-            string path = inSubScene.Scene.Path;
-            Destroy(inSubScene.gameObject);
+        #endif // UNITY_EDITOR
 
+        static private IEnumerator ImportScene(SceneImportSettings inImportSettings, SceneBinding inActiveScene)
+        {
             #if UNITY_EDITOR
+            string path = inImportSettings.ScenePath;
             var editorScene = UnityEditor.SceneManagement.EditorSceneManager.GetSceneByPath(path);
             if (!editorScene.isLoaded)
             {
                 yield return UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(path, new LoadSceneParameters(LoadSceneMode.Additive));
             }
             #else
-            yield return SceneManager.LoadSceneAsync(path, LoadSceneMode.Additive);
-            #endif // UNITY_EDITOR
-            
-            SceneBinding unityScene = SceneHelper.FindSceneByPath(path, SceneCategories.Loaded);
-            GameObject[] roots = unityScene.Scene.GetRootGameObjects();
-            foreach(var root in roots)
-            {
-                SceneManager.MoveGameObjectToScene(root, inActiveScene);
-            }
-            if (inSubScene.ImportLighting)
-            {
-                LightUtils.CopySettings(unityScene, inActiveScene);
-            }
-            yield return SceneManager.UnloadSceneAsync(unityScene);
-        }
-
-        #endif // UNITY_EDITOR
-
-        static private IEnumerator LoadSubSceneFromName(SceneImportSettings inImportSettings, SceneBinding inActiveScene)
-        {
-            #if UNITY_EDITOR
-            var editorScene = SceneHelper.FindSceneByName(inImportSettings.SceneName, SceneCategories.Build);
-            string path = editorScene.Path;
-            if (!editorScene.IsLoaded())
-            {
-                yield return UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(path, new LoadSceneParameters(LoadSceneMode.Additive));
-            }
-            #else
-            string path = SceneHelper.FindSceneByName(inImportSettings.SceneName, SceneCategories.Build).Path;
+            string path = inImportSettings.ScenePath;
             yield return SceneManager.LoadSceneAsync(path, LoadSceneMode.Additive);
             #endif // UNITY_EDITOR
 
@@ -550,6 +524,7 @@ namespace Aqua
             foreach(var root in roots)
             {
                 SceneManager.MoveGameObjectToScene(root, inActiveScene);
+                SceneImportSettings.TransformRoot(root, inImportSettings);
             }
             if (inImportSettings.ImportLighting)
             {

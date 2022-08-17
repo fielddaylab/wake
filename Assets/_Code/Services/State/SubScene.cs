@@ -8,5 +8,6 @@ namespace Aqua
     {
         public SceneReference Scene;
         public bool ImportLighting = false;
+        public Transform Transform = null;
     }
 }

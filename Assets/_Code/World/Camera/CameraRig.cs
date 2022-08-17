@@ -112,6 +112,7 @@ namespace Aqua.Cameras
         private class Inspector : UnityEditor.Editor
         {
             private Editor m_FOVPlaneEditor;
+            private Editor m_CameraEditor;
 
             [SerializeField] private CameraPose m_Pose;
             [SerializeField] private CameraPose.Data m_DefaultPose;
@@ -131,6 +132,11 @@ namespace Aqua.Cameras
                     DestroyImmediate(m_FOVPlaneEditor);
                     m_FOVPlaneEditor = null;
                 }
+
+                if (m_CameraEditor) {
+                    DestroyImmediate(m_CameraEditor);
+                    m_CameraEditor = null;
+                }
             }
 
             public override void OnInspectorGUI()
@@ -144,6 +150,14 @@ namespace Aqua.Cameras
                     EditorGUILayout.LabelField("Plane", EditorStyles.boldLabel);
                     CreateCachedEditor(rig.FOVPlane, null, ref m_FOVPlaneEditor);
                     m_FOVPlaneEditor.OnInspectorGUI();
+                }
+
+                if (rig.Camera != null)
+                {
+                    EditorGUILayout.Space();
+                    EditorGUILayout.LabelField("Camera", EditorStyles.boldLabel);
+                    CreateCachedEditor(rig.Camera, null, ref m_CameraEditor);
+                    m_CameraEditor.OnInspectorGUI();
                 }
 
                 EditorGUILayout.Space();
@@ -179,6 +193,10 @@ namespace Aqua.Cameras
 
                     if (GUILayout.Button("Reset")) {
                         rig.WriteData(m_DefaultPose);
+                    }
+
+                    if (GUILayout.Button("Write Current To Root")) {
+                        rig.ReadData(ref m_DefaultPose);
                     }
                 }
             }

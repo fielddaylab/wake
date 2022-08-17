@@ -30,6 +30,10 @@ namespace Aqua.Ship
         }
 
         private void OnEnable() {
+            if (Script.IsLoading) {
+                return;
+            }
+
             if (!Save.Map.HasVisitedLocation(Assets.Map(Save.Map.CurrentStationId()).QuickTravel().Id())) {
                 this.gameObject.SetActive(false);
             }
