@@ -16,27 +16,29 @@
 
 // Intros
 
-#ShopLockedHandler(a)
-@boostScore -100
-{@$MerchantId} Nice to see you again, {nameof @player}.
-                I'm still working on getting things here setup. How about you help out your mom and head back later?
-                Oh, and make sure to stay safe out there!
-{@player}       Thanks {nameof @$MerchantId}, but I know I've got this!
-
 #ShopHandler(first)
 @boostScore 100
 @once
-{@$MerchantId}  Hey kiddo! Workshop's all ready - do you need me to build you anything?
-$choice .action.openShop; Sure do!
-$choice .action.cancel; Not right now!
+$if world:coral.mechanic.toldToReturn
+    {@coralMechanic}  Hey there O! Glad I didn't scare you off!
+    {@player}   Oh, no chance of that, {nameof @coralMechanic}.
+    {@coralMechanic}    So, interested in taking a look my shop?
+    
+    $choice .action.openShop; You bet!
+    $choice .action.cancel; Not right now!
+$else
+    {@coralMechanic}  Hey O! Welcome back! Glad me shoving my wares in your face didn't, uh, scare you off!
+    {@player}   Oh, no, not at all!
+    {@coralMechanic}    So, are you interested in taking another look at my shop?
+$endif
 
 #ShopHandler(a)
-{@$MerchantId} How's it going out there kiddo? Need any upgrades from your dear ol' uncle?
+{@$MerchantId} {random Hey|What's up}, O! Need anything from my shop?
 $choice .action.openShop; Sure do!
 $choice .action.cancel; Not right now!
 
 :: action.cancel
-{@$MerchantId}  Alright,| well you know where to find me!
+{@$MerchantId}  Okay! You know where to find me!
 
 // Generic
 
@@ -57,28 +59,28 @@ $choice .action.cancel; Not right now!
                 {random It'll|That'll} be {cash}{$local:cashCost}{/cash}!
 
 :: cancel
-{@$MerchantId}   Suit yourself!
+{@$MerchantId}   Eh, suit yourself!
 
 :: notEnoughCash
-{@$MerchantId}   Not enough cash, child.
+{@$MerchantId}   Ah, you don't have enough cash.
 
 :: purchased
-{@$MerchantId}   {random Good choice!|Good call.|Alright, it's yours!}
+{@$MerchantId}   {random Good choice!|Good call.|Sweet!}
 
 // Idle
 
 #OpenHandler(a)
-{@$MerchantId}  What're ya buyin'?
+{@$MerchantId}  Take a look through my stock!
 
 #OpenHandler(b)
-{@$MerchantId}  Anything catch your eye?
+{@$MerchantId}  Any of these look interesting?
 
 #CloseHandler(a)
-{@$MerchantId}  Thank ya!
+{@$MerchantId}  Thanks for stopping by!
 
 #CloseHandler(purchased, shop:purchaseCount)
 @boostScore 10
-{@$MerchantId}  Come back anytime!
+{@$MerchantId}  Thank you!
 
 #CloseHandler(notEnoughCash, shop:notEnoughCount)
 {@$MerchantId}  Come back with some more {pluralnameof Cash} next time!
@@ -87,16 +89,16 @@ $choice .action.cancel; Not right now!
 {@$MerchantId}  Come back when you've got more {pluralnameof Exp}!
 
 #OpenExplorationHandler(a)
-{@$MerchantId}  Interested in any exploration tools?
+{@$MerchantId}  Need any exploration tools?
 
 #OpenExplorationHandler(b)
-{@$MerchantId}  Any upgrades you want for your sub?
+{@$MerchantId}  Anything for your sub?
 
 #OpenScienceHandler(a)
-{@$MerchantId}  Any science-type things you want?
+{@$MerchantId}  Any science-y things you want?
 
 #OpenScienceHandler(b)
-{@$MerchantId}  Need anything for your scientific pursuits?
+{@$MerchantId}  Need anything for your science?
 
 // Exploration
 

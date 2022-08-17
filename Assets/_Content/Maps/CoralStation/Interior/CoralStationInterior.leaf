@@ -2,15 +2,93 @@
 
 #include "Headers/Common.leaf"
 
-:: intro
+:: arrival
+@trigger    SceneStart
+@boostScore 10000
+@once
+@cutscene
+
+{wait 0.5}
+{@coralMechanic}    Oh my gosh a new arrival!
+{@profCoral}        Hello there!
+{@coralMechanic}    And they've got a {slow}sweet{/slow} sub.
+{@profCoral}        Come talk to me over here.
+
+:: intro.prof
 @trigger    Talk
 @who        profCoral
 @boostScore 100000
 @once
 @cutscene
 
-{@profCoral}    Oh, hello! Have you come from the Kelp Station?
-				Well, welcome to the Coral Station!
-				Hope you like turtles. They are all over the coral reef.
-				I have some jobs listed on the Job Board, let me know if you're interested.
+{@profCoral}    Hello! I recognize your sub - you are from the Kelp Station, correct?
+{@player}       Yes! I'm O!
+{@profCoral}    Well, welcome to the {map-name}Coral Station{/map-name} O. I am {nameof @profCoral}, the chief scientist here.
+				I hope you like turtles! They are |everywhere| in this region.
+{@player}       Yeah! Very excited to see them!
+{@profCoral}    Unfortunately| you will have to give yourself the grand tour - we have been a bit preoccupied lately.
+                We maintain a handful of sites in the region. You should check them out when you have the time.
+
+$branch common.download
+
+$call UnlockSite(RS-2R)
+$call UnlockSite(RS-2S)
+
+{@profCoral}    I just uploaded their coordinates to your device. Both are relatively close.
+{@player}       Thank you!
+{@profCoral}    ...hang on. Are you looking for work by any chance?
+                We could use the help right now.
+
+$set    world:coral.metScientist = true
 $call InteriorOpenJobBoard()
+
+:: intro.mechanic
+@trigger    Talk
+@who        coralMechanic
+@boostScore 100000
+@once
+@cutscene
+
+$set    world:coral.metMechanic = true
+
+{@coralMechanic}    Hi there! I'm {nameof @coralMechanic}, mechanic extraordinaire!
+                    Can fix or build anything! Including your sub there!
+                    I did not intend to rhyme but... who| cares?
+                    So, who's the owner of that {slow}magnificent{/slow} sub?
+{@player}           That would be me! I'm Ollie, or O for short!
+{@coralMechanic}    Ooh, very bold name! For a bold person!
+{@player}           Thank you!
+{@coralMechanic}    So, if you're in a sub like that, you must be some bigshot scientist, right?
+
+$choice .intro.mechanic.bigshot; Something like that?
+$choice .intro.mechanic.notbigshot; Not exactly...
+$choose branch
+
+$if world:coral.metScientist
+    {@coralMechanic}    Anyways, let me show you what I can build for you!
+    $call InteriorOpenShopBoard()
+$else
+    {@coralMechanic}    Anyways, I shouldn't keep you. You should go talk to {h}Mr. Turtle{/h} over there.
+                        Come back and talk to me later though!
+    $set    world:coral.mechanic.toldToReturn = true
+$endif
+
+:: intro.mechanic.bigshot
+{@player}   Haha, something like that?
+$if AnyJobsCompleted() >= 8
+    I've been going from place to place to help out.  Really {slow}immersing{/slow} myself in the science.
+    {@coralMechanic}    I knew it I knew it I knew it!
+    {@player}           Aw come on, it's not |that| impressive...
+    {@coralMechanic}    Nope! No being humble on my watch, O!
+$else
+    Just getting my start honestly.
+    {@coralMechanic}    Well. Color me impressed regardless!
+                        I expect big things from you, O!
+$endif
+$set    world:coral.mechanic.toldBigShot = true
+
+:: intro.mechanic.notbigshot
+{@player}   Ha, |not exactly...
+{@coralMechanic}    I'll be shocked if you don't make it there someday, O.
+                    That sub just screams potential.
+$set    world:coral.mechanic.toldBigShot = false
