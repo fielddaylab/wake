@@ -17,7 +17,7 @@ $endif
 @when		JobTaskTop(scanAll)
 @once
 @cutscene
-{@guide}	All right, you've got the Sponge. Now we'll need to scan any new species out in the Open Ocean, right here at Site Z.
+{@guide}	All right, you've got the Sponge. Now we'll need to scan any new species out in the Frosted Sea, right here at Site Z.
 
 // PREDATOR THEORY
 
@@ -292,7 +292,7 @@ $endif
 $branch .argue.groundwork.main-question
 
 :: argue.groundwork.main-question
-{@profArctic}	What can you tell me about these theories for why we don't see Glass Sponges in the Open Ocean?
+{@profArctic}	What can you tell me about these theories for why we don't see Glass Sponges in the Frosted Sea?
 $choice .argue.groundwork.lightClaim; The Sponges are stressed by the light levels.
 $choice .argue.groundwork.predatorClaim; There is a predator eating the Sponges.
 $choice .argue.giveUp; Let me get back to you.
@@ -384,7 +384,7 @@ $call ArgueComplete()
 $branch .argue.final.main-question
 
 :: argue.final.main-question
-{@profArctic}	Have you found any predators between {h}Site X{/h} and {h}Site Z{/h} which may be the reason why Glass Sponges are not found in the Open Ocean?
+{@profArctic}	Have you found any predators between {h}Site X{/h} and {h}Site Z{/h} which may be the reason why Glass Sponges are not found in the Frosted Sea?
 $call ArgueLoad(argueIsolatedInstanceFinal)
 $if ArgueSetClaim(IsolatedInstanceFinalClaim, jobs.arctic-isolated-instance.argue.claimLabelFinal)
 	$call ArgueFactSlot(PterasterObscurus.Eats.GlassSponge)

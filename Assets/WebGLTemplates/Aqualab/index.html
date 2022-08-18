@@ -35,5 +35,32 @@
       firebase.initializeApp(firebaseConfig);
       const analytics = firebase.analytics();
     </script>
+    <script>
+        function checkGPU() {
+            var canvas = document.createElement('canvas');
+            var webGLConfig = { powerPreference: 'high-performance' };
+            var gl;
+            try {
+                gl = canvas.getContext('webgl', webGLConfig) || canvas.getContext('experimental-webgl', webGLConfig);
+            } catch(e) {
+            }
+
+            canvas.remove();
+            
+            if (!gl) {
+                return false;
+            }
+
+            if (typeof WebGLRenderingContext != 'undefined') {
+                return gl instanceof WebGLRenderingContext;
+            }
+
+            return false;
+        }
+
+        if (!checkGPU()) {
+            alert("Your browser does not have hardware acceleration enabled - this game will perform poorly as a result. Please enable it in your settings and refresh the page.");
+        }
+    </script>
   </body>
 </html>
