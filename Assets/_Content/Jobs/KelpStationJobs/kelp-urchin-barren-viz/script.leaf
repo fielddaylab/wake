@@ -5,46 +5,70 @@
 @trigger    JobStarted
 @cutscene
 
-{@drKelp}  Now that you have a probe decoder, I have something new for you.
-{@player}   How so?
-{@drKelp}  First, you are going to get a current and historical count of the kelp and urchin populations at Site B. It's... not doing well.
-            It's become what we refer to as an {h}Urchin Barren{/h}, where there are a whole lot of urchins and not so much kelp as a result.
-            Second, you're going to build a model of the food web so we can better think about how the populations relate.
-            Now head on over to Site B to get started.
-{@player}   Sounds great. Let's go!            
+{@drKelp}   Wonderful, Olivia! Now that you've got a Probe Decoder, we can make some progress at Site B. 
+{@player}   Site B? Isn't that where Sam and I--
+{@drKelp}   Crashed that old sub? Don't worry, Sweetie. {nameof @guide} will be right there with you.
+{@player}   I'm not worried. But... Mom, Site B looked pretty empty. 
+{@drKelp}   That's why I need you there, Sweetie. 
+            Something's wrong at Site B. The kelp has been disappearing. 
+            If all of the kelp vanish, nothing will be able to survive there.  
+{@player}   Oh no. That's awful!
+{@player}   But we're scientists. We can fix it, right? 
+{@drKelp}   I hope so, Mija. Start by counting the current populations. 
+            {nameof @guide} will guide you from there. 
 
 $call UnlockSite(RS-1B)
+
+:: diveSite
+@trigger    SceneStart
+@when       scene:name == "RS-1B"
+@triggerPriority   High
+@once
+@cutscene
+$branch common.ringPhone
+
+{@player}It's so strange down here. 
+{@guide} Yes. Something is clearly off balance in this ecosystem.
+{@guide} My sensors indicate that you are experiencing stress, O.
+{@player} It's just... Sam and I sneaked out here last year to explore. 
+{@player} It didn't end super well.  
+{@guide} Ah. Perhaps I can ease your mind. 
+{@guide} The probabiity of crashing at the same dive site twice is only 8.2%! 
+{@player} Thanks, {nameof @guide}. That's... sort of comforting, I guess. 
+
+{wait 0.5}
+{hide-dialog}
 
 :: helpGoOutside
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Helm", JobTaskTop(gotoSiteB)
 @cutscene
-{@player}   Any idea where I should go next?
-{@guide}	I think we need to head over to Site B.
-            Let's exit the ship.
+{@player}   What now, {nameof @guide}?
+{@guide}	You need to head to {h}Site B{/h}. 
             
 :: helpGoToSiteB
 @trigger    RequestPartnerHelp
 @when 		scene:name != "RS-1B", JobTaskTop(gotoSiteB)
 @cutscene
-{@player} 	Where should I be going again?
+{@player} 	Okay, {nameof @guide}. What now? 
 {@guide}	{h}Site B{/h} should be at the southwest buoy.
-            Let's head over there and dive down.
+            Navigate to the site and dive down in your sub!
+            
 
 :: helpAtSiteB.A
 @trigger    RequestPartnerHelp
 @when 		scene:name == "RS-1B", JobTaskTop(getTagged)
 @cutscene
-{@player} 	I made it to Site B, what should I do now?
-{@guide}	Let's explore and count all these organisms.
+{@player} 	Ok, here we are. What now?
+{@guide}    According to your task list, you'll need to count all the organisms here. 
 $if !TaggingHasStarted(Urchin)
-    {@guide}    Are there any {pluralnameof Urchin} here?
+    {@guide}    Can you find any {pluralnameof Urchin} here?
 $elseif !TaggingHasFinished(Urchin)
-    {@guide}    We haven't found all the {pluralnameof Urchin} yet.
+    {@guide}    You haven't found all the {pluralnameof Urchin} yet.
 $elseif !TaggingHasStarted(GiantKelp)
-    {@guide}    I can see a lot of {pluralnameof GiantKelp}...
+    {@guide}    Can you find any {pluralnameof GiantKelp} here?
 $else
-    {@guide}    Let's try to find the rest of the {pluralnameof GiantKelp}.
+    {@guide}    You still need to count the rest of the {pluralnameof GiantKelp}.
 $endif
 
 :: countedCurrentPopulations
@@ -52,7 +76,10 @@ $endif
 @when		taskId == "getTagged"
 @once
 @cutscene
-{@guide}	All right, that's the current population... thats a lot of urchins...
+{@player}	Okay, we've got the current population count.
+            That's a LOT of urchins. 
+            What now, {nameof @guide}?
+{@guide}    Now you must find the {h}Historic Population Probe{/h} and upload its data!
 
 :: helpAtSiteB.B
 @trigger    RequestPartnerHelp
@@ -60,7 +87,7 @@ $endif
 @cutscene
 
 {@player}   What should I do next?
-{@guide}    Maybe we should look for the {h}Historic Population Probe{/h}.
+{@guide}    Look for the {h}Historic Population Probe{/h}.
 
 :: gotHistoricalPopulations
 @trigger	JobTaskCompleted
@@ -68,7 +95,11 @@ $endif
 @when		taskId == "getProbeData" 
 @once
 @cutscene
-{@guide}	Great, we got the historical data. Looks like the urchins have been taking over for a while now.
+{@guide}	Ah, more data!! My favorite.
+{@player}   Hmm. Looks like the urchins have been taking over for a while.
+            But why?
+{@guide}    I'm not sure, O. 
+            You'll need to head back to your ship and interpret this data. 
 
 // TO MODELING
 
@@ -76,15 +107,15 @@ $endif
 @trigger    RequestPartnerHelp
 @when 		scene:name == "KelpStation", JobTaskTop(visualSiteB)
 @cutscene
-{@player} 	Where should I be going again?
-{@guide}	We need to head back to the ship.
+{@player} 	What now, {nameof @guide}?
+{@guide}	You need to return to your ship. 
 
 :: helpToModeling
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Helm", JobTaskTop(visualSiteB)
 @cutscene
-{@player} 	Where should I be going again?
-{@guide}	We need to go to the {map-name}Modeling Whiteboard{/map-name} in the {nameof Modeling}.
+{@player} 	What now, {nameof @guide}?
+{@guide}	Head to your {map-name}Modeling Whiteboard{/map-name} in the {nameof Modeling}.
 
 :: atShip
 @trigger    SceneStart
@@ -93,20 +124,22 @@ $endif
 @cutscene
 $branch common.ringPhone
 
-{@drKelp}  Okay, lets put together a food web model.
-
+{@player} Phew. We made it back! 
+          Um... not that I was worried, or anything. 
+          What now, {nameof @guide}?
+{@guide}  You must create a food web model to help explain the vanishing kelp.
+          Head to your Modeling Whiteboard in the {nameof Modeling}!
 
 :: helpGoToModeling
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Helm", JobTaskTop(predictSiteB)
 @cutscene
 $if global:nav.shipRoom != "Modeling"
-	{@player} 	I'm back on the ship, what should I do next?
-	{@guide}	Let's first head to the {nameof Modeling}.
+	{@player} 	Can you remind me where to go, {nameof @guide}?
+	{@guide}	Certainly, O. Head to the {nameof Modeling}.
 $else
-	{@player} 	Made it to the {nameof Modeling}, what do we do from here?
-	{@guide}	I think {nameof @drKelp} is going to teach us how to make a model.
-                Head over to the {map-name}Modeling Whiteboard{/map-name}.
+	{@player} 	Okay, {nameof @guide}. What do we do from here? 
+	{@guide}	You must use your {map-name}Modeling Whiteboard{/map-name} to create a Food Web Model!
 $endif
 
 // IN MODELING
@@ -116,15 +149,15 @@ $endif
 @when       JobTaskTop(predictSiteB), modeling:ecosystemSelected != "UrchinBarren", !jobs:kelp-urchin-barren.upgradedFacts
 @cutscene
 
-{@drKelp}   Ah, hang on, this isn't the right ecosystem.
+{@guide}    This isn't the right ecosystem, O.
             Head back to the {h}Ecosystem{/h} tab and select the {nameof UrchinBarren}.
             
 :: ModelingSetup-WrongHelp
 @trigger    RequestPartnerHelp
 @when       JobTaskTop(predictSiteB), modeling:ecosystemSelected != "UrchinBarren", !jobs:kelp-urchin-barren.upgradedFacts
 @cutscene
-{@player}   What am I doing here again?
-{@guide}    Remember, we need to open the {nameof UrchinBarren} {h}Ecosystem{/h}.
+{@player}   What now, {nameof @guide}?
+{@guide}    You need to open the {nameof UrchinBarren} {h}Ecosystem{/h}.
             
 :: ModelingSetupPhase2
 @trigger    VisualModelExported
@@ -132,9 +165,8 @@ $endif
 @once
 @cutscene
 
-{@guide}   That doesn't look right!
-            It looks like the healthy kelp forests, but parts are missing. 
-            Let's go talk to {nameof @drKelp}. 
+{@guide}  Adequate work, O!
+          Time to report back to your mother and tell her what you found. 
 
 // SUGGEST ARGUMENTATION
 
@@ -143,15 +175,15 @@ $endif
 @when 		JobTaskTop(reportBack)
 @cutscene
 $if scene:name == "Argumentation"
-    {@player}   What should I be doing again?
+    {@player}   What now, {nameof @guide}?
     {@guide}    Report your findings to {nameof @drKelp}.
 $elseif !IsPlayerOnStation()
-    {@player}   What should we do now?
-    {@guide}    Let's report our findings to {nameof @drKelp} at the {m}research station{/m}.
+    {@player}   What should I do now?
+    {@guide}    Report your findings to {nameof @drKelp} at the {m}research station{/m}.
 $else
-    {@player} 	What should we do now?
-	{@guide}	Well, we've completed the modeling, so let's report back to {nameof @drKelp}.
-                We should first head back to the {map-name}research station{/map-name}.
+    {@player} 	What should I do now?
+	{@guide}	You've completed the modeling, so it's time to report back to your mother.
+                You'll need to report to the {map-name}research station{/map-name}.
 $endif
 
 // CATCH-ALL GUIDE TEXT
@@ -205,9 +237,9 @@ $call ArgueLoad(urchinBarrenVizArgue)
 	$branch .argue.hello
 	
 ::argue.hello
-{@drKelp}   I see you explored Site B. 
-            Did you build a model of the food web at Site B to explain the kelp's disappearance?
-                $choice .argue.chooseFacts; Yes, here you go.
+{@drKelp}   Wonderful! So how did it go, Mija?
+            Did you build a model of the food web at Site B? 
+                $choice .argue.chooseFacts; Yep, got it right here!
                 $choice .argue.giveUp; Let me get back to you
 
 ::argue.chooseFacts
@@ -226,26 +258,30 @@ $endif
 $if HasFact(Urchin.Eats.GiantKelp)
     $goto .argue.done
 $else
-{@drKelp}   This doesn't look complete.
+{@drKelp}   Hmmm. This doesn't look complete. 
             I think some relationships might be missing. 
-            Hmm... What could be causing that decrease in kelp population?
+            What could be causing the kelp to disappear? 
             $goto .argue.giveUp
 $endif
 
 ::argue.unrelated
-{@drKelp}   Hmmm... I'm not sure this is relevant. Do you have anything else to show me?
+{@drKelp}   Hmmm... this doesn't seem relevant, Mija.  
+            Do you have anything else to show me?
 $call ArgueRejectIncorrect()
 $goto .argue.chooseFacts
 
 ::argue.giveUp
-{@drKelp}    Be sure to get back to me when you're ready.
+{@drKelp}    Okay, Sweetie. Let me know when you're ready.
 
 ::argue.done
 $call ArgueComplete()
-{@drKelp}   Hmm. Combined with the population data you gathered, we have a complete picture, 
-            but I still don't understand it.  
-            I'm going to need to give you another job so we can figure this out. 
-            In the meantime, good work.
+{@drKelp}   Hmmm. Que extraño. We have a complete picture of the ecosystem...
+            But I still don't understand exactly what's happening here. 
+{@player}   But... I did the science! We've got all the data! 
+{@drKelp}   You did an amazing job, Mija. But it looks like there's still more work to do here.
+            Let me know when you're ready to take on another job. 
+            In the meantime, buen trabajo.
+{@player}   Thanks, Mom. 
 $call CompleteJob()
 
 // END

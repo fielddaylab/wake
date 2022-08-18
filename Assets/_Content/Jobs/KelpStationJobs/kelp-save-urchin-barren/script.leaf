@@ -4,21 +4,25 @@
 @trigger    JobStarted
 @cutscene
 
-{@drKelp}  Ok. So the {nameof UrchinBarren} isn't looking great.
-            But I think we can fix it. 
-            There's one more part of the {h}Simulator{/h} I haven't shown you yet.
-            Head back up to the surface and use the {h}Modeling Whiteboard{/h}.
-
+{@drKelp}  Oh, Olivia. Thank goodness.
+            The Urchin Barren at Site B is looking quite... well, barren.
+           Our funders are talking about pulling the funding for Mer's Refuge.
+{@player}   What?? Why?
+{@drKelp}   Think about how this looks, Olivia. If we can't keep Site B healthy, how can they trust us to create a whole new ecosystem?
+{@drKelp}   Luckily, I think we can fix this.
+            Head back to your {h}Modeling Whiteboard{/h}.
+           There's one part of the Simulator that you haven't used yet. {nameof @guide} will talk you through it. 
+           Good luck, Mija. 
 ::helpGoToModeling
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Helm", JobTaskTop(makeAPlan)
 @cutscene
-{@player} 	How should we start making a plan to repair Site B?
-{@guide}	Maybe we could make another model.
+{@player} 	Where should we start, {nameof @guide}?
+{@guide}	Head to the {nameof Modeling}!
 $if global:nav.shipRoom == "modeling"
-    {@guide}    Let's head into the {h}Modeling Whiteboard{/h}.
+    {@guide}    Head to the {h}Modeling Whiteboard{/h}.
 $else
-    {@guide}    Let's head over to the {nameof Modeling}.
+    {@guide}    Head over to the {nameof Modeling}.
 $endif
 
 // in modeling
@@ -29,15 +33,20 @@ $endif
 @cutscene
 $branch common.ringPhone
 
-{@drKelp}   This time, we're going to use the modeling tool to predict what could happen if we {h}intervened{/h} with the ecosystem in some way.
-            You should have all the rules from your {item-name}AQOS Tablet{/item-name} added already, so hit that {h}Intervene{/h} tab at the top.
+{@player}  Okay, {nameof @guide}. We need a plan to repair the Urchin Barren.
+           Mom said the {h}Modeling Whiteboard{/h} could help.
+{@guide}   Ah, yes! One of my favorite predictive modeling functions!
+{@player}  Ooookay... 
+{@guide}   You need to use your modeling tool to simulate an {h}intervention{/h} and predict what would happen!
+           You've already added the rules from your {item-name}AQOS Tablet{/item-name} added already.
+           Now hit the {h}Intervene{/h} tab! 
 
 ::ModelHelp1
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Modeling", modeling:phase == "visual"
 @cutscene
-{@player} 	What should I do again?
-{@guide}	Let's head to the {h}Intervene{/h} tab.
+{@player} 	What should I do, {nameof @guide}?
+{@guide}	Go to the {h}Intervene{/h} tab at the top!
 
 :: InterventionModelSynced
 @trigger	SimulationModelStarted
@@ -45,32 +54,31 @@ $branch common.ringPhone
 @once
 @cutscene
 
-{@drKelp}   Okay, so this is the {h}Intervene{/h} screen. From here you can see what might happen if you intervene in an ecosystem.
-            I need you to see if there's anything we can adjust to make the {critter-name}Kelp{/critter-name} population rise again.
-            What would happen if we added more {critter-name}Kelp{/critter-name}, or removed {pluralnameof Urchin}, or even added another organism.
-            You can use the plus and minus buttons next to the organisms to increase or decrease their populations.
-            And use the {h}Add Organism{/h} button to select a new organism to add.
-            We can only simulate one intervention at a time, though, so no adding multiple new organisms or adjusting multiple populations.
-            ...Oh, sorry, I have to go for now. Good luck! Come talk to me at the {map-name}station{/map-name} when you're done!
-{hide-dialog}
-{wait 1}
-{@guide}    Looks like we're on our own. Let's see what we can do.
+{@guide} Use this tab to predict what might happen if you intervene at Site B!
+         Use the plus and minus buttons to increase or decrease a certain population. 
+         For example, you could add more {critter-name}Kelp{/critter-name}, or remove {pluralnameof Urchin}. 
+         You can also use the {h}Add Organism{/h} button to select a new organism to add!
+         The tool can only simulate one intervention at a time, so make sure to only change one variable. 
+{@player} Okay. No problema. I've got this. 
 
 ::ModelHelp3
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Modeling", modeling:phase == "intervene", JobTaskTop("makeAPlan")
 @cutscene
-{@player} 	I'm a bit stuck here - got any tips for me, V1ctor?
-{@guide}	We want to change something so the {critter-name}Kelp{/critter-name} population increases to the target on the right.
-            It seems like the main problem now is that it keeps getting eaten by {pluralnameof Urchin}.
-            I wonder if there's something we could add that would keep the {nameof Urchin} population under control...
+{@player} 	Ugh. I'm stuck.
+            Any ideas, {nameof @guide}?
+{@guide}	Processing...
+            You want to make an intevention that helps the {critter-name}Kelp{/critter-name} population meet the target on the right.
+            The {critter-name}Kelp{/critter-name} is being consumed by the {pluralnameof Urchin}.
+            Can you add a new organism to get the {nameof Urchin} population under control? 
 
 :: InterventionModelingGraphComplete
 @trigger	SimulationInterveneSuccess
 @once
 @cutscene
-{@guide}    Ok. It looks like we have a plan!
-            I have no idea what adding {pluralnameof SeaOtter} practically means, but let's report back to {nameof @drKelp} at the {map-name}research station{/map-name}.
+{@guide}   Look at all this predictive data!! 
+{@player}  And we have a plan! It looks like we can add {pluralnameof SeaOtter} to help increase the kelp population!
+{@player}  I knew I loved those little otters for a reason. 
 
 // to argumentation
 
@@ -79,12 +87,12 @@ $branch common.ringPhone
 @when 		JobTaskCompleted(makeAPlan)
 @cutscene
 $if !IsPlayerOnStation()
-	{@player} 	What should we do now?
-	{@guide}	We've got a model now that shows us what might help Site B, so let's report back to {nameof @drKelp}.
-	{@guide}	We should first head back to the {map-name}research station{/map-name}.
+	{@player} 	What should we do now, {nameof @guide}?
+	{@guide}	You've created an Intervention Model to show what might help Site B!
+                Now you need to report back to {nameof @drKelp} at the {map-name}research station{/map-name}.
 $else
-	{@player} 	So... now what?
-	{@guide}	Report our findings to {nameof @drKelp}.
+	{@player} 	What now, {nameof @guide}?
+	{@guide}	Report your findings to {nameof @drKelp}!
 $endif
 
 // CATCH-ALL GUIDE TEXT
@@ -94,14 +102,15 @@ $endif
 @when 		JobTaskActive(makeAPlan)
 @boostScore -5
 @cutscene
-{@guide}    Build an Intervention Model in the Modeling Lab.
+{@player}   Okay, {nameof @guide}. What should I do now? 
+{@guide}    Build an Intervention Model in the Modeling Lab!
 
 :: catchReturn
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(return)
 @boostScore -5
 @cutscene
-{@guide}    Talk to {nameof drKelp} at the {m}research station{/m}.
+{@guide}    Talk to {nameof drKelp} at the {m}research station{/m}!
 
 // ARGUMENTATION
 
@@ -111,15 +120,15 @@ $endif
 @cutscene
 
 $call ArgueLoad(saveBarrenArgue)
-{@drKelp} I figured it was hopeless... There's no way we can fix Site B, right?
-	$choice .argue.hopeless; You're right, Site B is hopeless.
-	$choice .argue.otterSolution; Site B can be fixed by adding {pluralnameof SeaOtter}!
+{@drKelp} Okay, Mija. What do you think? Can we save Site B? 
+	$choice .argue.hopeless; I'm sorry, Mom. Site B is hopeless.
+	$choice .argue.otterSolution; We can save Site B by adding {pluralnameof SeaOtter}!
 $choose branch
 
 ::argue.introRevisit
 {@drKelp} What do you think?  Can we fix Site B?
-	$choice .argue.hopeless; Site B is hopeless.
-	$choice .argue.otterSolution; Site B can be fixed by adding {pluralnameof SeaOtter}!
+	$choice .argue.hopeless; Site B is hopeless. There's nothing we can do. 
+	$choice .argue.otterSolution; We can save Site B by adding {pluralnameof SeaOtter}!
 $choose branch
 
 //it's hopeless
@@ -131,7 +140,10 @@ $endif
 $goto .argue.checkHopeless
 
 ::argue.checkHopeless
-{@drKelp}    I thought so... Maybe I could take a look at your model to see for sure?
+{@drKelp}   Hmmm. Hopeless? 
+            Since when do you give up so easy, Mija?
+{@player}   I'm not giving up, Mom. But there's no solution.
+{@drKelp}   Well, maybe I can take a look at your model to see for sure.   
 $goto .argue.chooseFactsHopeless
 
 ::argue.chooseFactsHopeless
@@ -140,30 +152,34 @@ $choice #argueFact; Present facts from AQOS
 		$answer UrchinBarren.Model.Prediction, .argue.currentModel
 		$answer UrchinBarren.Model.IntroduceOtters, .argue.hopelessButOtters
 		$answer *, .argue.unrelatedHopeless
-$choice .argue.giveUpHopeless; Let me get back to you
+$choice .argue.giveUpHopeless; Let me get back to you.
 
 ::argue.currentModel
-{@drKelp}    No, that's not relevant. Show me the model you made of changing the Urchin Barren.
+{@drKelp}    That's not relevant, Olivia. 
+              Show me your Intervention Model of the Urchin Barren.
 $call ArgueClearFacts()
 $goto .argue.chooseFactsHopeless
 
 ::argue.hopelessButOtters
-{@drKelp}    Huh, I'm seeing something different in your model...
-I think we should revisit your claim.
+{@drKelp}    Hmmm. This model isn't as hopeless as you made it sound, Mija. 
+             Can we talk this through again? 
 $call ArgueCancelClaim()
 $goto .argue.introRevisit
 
 ::argue.incomplete
-{@drKelp}    I don't think you've tried to model every type of intervention, here.  Come back when you're absolutely sure nothing can be done.
+{@drKelp}    I think there might be more you can do here, Mija.
+{@player}    More?? What's the point, Mom? Nothing is working. 
+{@drKelp}    Well, maybe that's because you didn't try every type of intervention.
+             Keep trying. Come back when you're sure that nothing else can be done. 
 $call ArgueCancelClaim()
 $goto .argue.introRevisit
 
 ::argue.giveUpHopeless
-{@drKelp}    Maybe you should revisit your claim.
+{@drKelp}    Maybe you should revisit your claim, Mija.
 $call ArgueCancelClaim()
 
 ::argue.unrelatedHopeless
-{@drKelp}    Hmm, no, that isn't relevant.
+{@drKelp}    That's not relevant, Olivia. Give it another try. 
 $call ArgueRejectIncorrect()
 $goto .argue.chooseFactsHopeless
 
@@ -177,7 +193,8 @@ $endif
 $goto .argue.checkOtters
 
 ::argue.checkOtters
-{@drKelp}    Do you have a model that shows how otters would help?
+{@drKelp}   Ooh. Sounds promising!
+            Do you have a model that shows how otters would help?
 $goto .argue.chooseFactsOtters
 
 ::argue.chooseFactsOtters
@@ -193,23 +210,24 @@ $endif
 
 ::argue.otters
 $call ArgueComplete()
-{@drKelp}    Aha! So according to your model, the increase in {critter-name}Kelp{/critter-name} is linked to adding {critter-name}Otters{/critter-name}!
+{@drKelp}   Amazing work, Olivia! 
+            According to your model, adding {critter-name}Otters{/critter-name} is linked to an increase in {critter-name}Kelp{/critter-name}.
 $goto .argue.done
 
 ::argue.unrelated
-{@drKelp}    Hmm, no, that isn't relevant.
+{@drKelp}    Hmm... I don't think that's relevant, Mija. 
 $call ArgueRejectIncorrect()
 $goto .argue.chooseFactsOtters
 
 ::argue.giveUp
-{@drKelp}    OK. Get back to me when you're ready.
+{@drKelp}    Okay. Get back to me when you're ready.
 
 ::argue.done
-{@drKelp}    Okay, so because {pluralnameof Urchin} eat {pluralnameof GiantKelp}, and {pluralnameof SeaOtter} eat {pluralnameof Urchin}...
-Adding some {pluralnameof SeaOtter} will ultimately let the {critter-name}Kelp{/critter-name} repopulate!
-Now... where to find some otters..
-You know what, I'll work on that. Absolutely fantastic work, you two.
-{@player}   Thanks. It was nice being able to use some science to help.
+{@drKelp} Thank you, Mija. I'll bring this solution to our funders right away.
+          {pluralnameof Urchin} eat {pluralnameof GiantKelp}, and {pluralnameof SeaOtter} eat {pluralnameof Urchin}...
+          So adding some {pluralnameof SeaOtter} should control the {pluralnameof Urchin} population and give the {critter-name}Kelp{/critter-name} a chance to repopulate!
+          Now we just need to decide which otters to add. Maybe Ofelia and Otis? And Orion could use a change of scenery...
+{@player}  You'll figure it out, Mom. I'm just glad I could help. 
 $call CompleteJob()
 
 

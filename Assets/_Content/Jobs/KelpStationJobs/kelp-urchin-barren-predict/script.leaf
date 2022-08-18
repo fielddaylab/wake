@@ -6,17 +6,22 @@
 @trigger    JobStarted
 @cutscene
 
-{@drKelp}  Alright, after reviewing your visual model of Site B, I have consulted with my colleagues and compiled all of the rates.
-           Now we should be able to enhance our model of the Urchin Barren. 
-           Head back to up to the surface and use the {h}Modeling Whiteboard{/h} to get started.
+{@drKelp}  I'm glad you're back, Olivia!
+           Your visual model of Site B has been incredibly helpful.
+{@player}   Really?? Is the ecosystem doing any better? 
+{@drKelp}   Well... not yet, Mija. It looks like Site B is what scientists call an Urchin Barren...
+{@drKelp}   Lots of urchins, and not much else. 
+{@drKelp}   I just finished compiling the rates for the eating rules in your model. 
+            Now we can use your model to simulate what will happen at Site B if we don't intervene. 
+            Use the {h}Modeling Whiteboard{/h} on your ship to get started.
 $set jobs:kelp-urchin-barren-predict.received.facts = false
 
 ::WhereToGoHelp
 @trigger    RequestPartnerHelp
 @when 	    scene:name != "Modeling", JobTaskTop("predictSiteB"), !jobs:kelp-urchin-barren.upgradedFacts
 @cutscene
-{@player} 	What am I doing again?
-{@guide}	Let's head back up to the surface and use the {h}Modeling Whiteboard{/h} 
+{@player} 	Okay, {nameof @guide}. Where to?
+{@guide}	Head to the surface and use your {h}Modeling Whiteboard{/h}! 
 
 // IN MODELING
 
@@ -28,24 +33,24 @@ $set jobs:kelp-urchin-barren-predict.received.facts = false
 
 $branch common.ringPhone
 
-{@drKelp}   So last time we observed that {pluralnameof Urchin} eat {critter-name}Kelp{/critter-name}.
-            And you also observed that {pluralnameof SeaOtter} eat {pluralnameof Urchin}.
-            Let's re-open our model for the Urchin Barren.
+{@guide}   Last time, you observed that {pluralnameof Urchin} eat {critter-name}Kelp{/critter-name}.
+           And you also observed that {pluralnameof SeaOtter} eat {pluralnameof Urchin}.
+           Go ahead and re-open your Visual Model for site B. 
 
 :: ModelingSetup-Wrong
 @trigger	VisualModelStarted
 @when       modeling:ecosystemSelected != "UrchinBarren", !jobs:kelp-urchin-barren.upgradedFacts
 @cutscene
 
-{@drKelp}   Ah, hang on, this isn't the right ecosystem.
+{@guide}   This isn't the right ecosystem, O. 
             Head back to the {h}Ecosystem{/h} tab and select the {nameof UrchinBarren}.
             
 :: ModelingSetup-WrongHelp
 @trigger	RequestPartnerHelp
 @when       modeling:ecosystemSelected != "UrchinBarren" 
 @cutscene
-{@player}   What do I need to do here?
-{@guide}    Remember, we need to open the {nameof UrchinBarren} {h}Ecosystem{/h}.
+{@player}   What now, {nameof @guide}?
+{@guide}    You need to open the {nameof UrchinBarren} {h}Ecosystem{/h}.
 
 :: ModelingSetupPhase
 @trigger    VisualModelStarted
@@ -53,10 +58,11 @@ $branch common.ringPhone
 @once
 @cutscene
 
-{@drKelp}   Remember how there's a sort of {h}web{/h} that emerges from these facts.
-            Now, we can see how you can do more than just create visual models. We are going to {h}simulate ecosystems{/h}.
+{@guide}    You've already used the eating rules you gathered to create a {h}Food Web{/h}.
+            With rates to go along with these rules, you can do more than create a model.
+            You can use your whiteboard to {h}simulate ecosystems{/h}!
 $if !jobs:kelp-urchin-barren-predict.received.facts
-			Let me just send you the missing data needed for this model...
+			Currently uploading the missing data... done!
 
 $branch common.download
 $call UpgradeFact(Urchin.Eats.GiantKelp, Rate, Batch)
@@ -66,11 +72,13 @@ $call GiveFact(GiantKelp.Reproduce, Batch)
 $call GiveFact(SeaOtter.Reproduce)
 $set jobs:kelp-urchin-barren-predict.received.facts = true
 
-{@drKelp}   The simulator doesn't really work unless you have numbers to go along with your facts.
-            But once you add these, then we should be good to go. 
-			Normally you will need to use the {nameof MeasurementTank} to determine rates, but this time we already have the rules on hand.
+{@guide}    The simulator requires numerical rates for the facts you gathered. 
+            Normally you will use the {nameof MeasurementTank} to determine rates.
+            This time, your mother sent over the missing data!
 $endif
-            Be sure to hit the {h}Import New Facts{/h} button again before moving on.
+{@player}   Wow, so much data. This is totally your thing, {nameof @guide}.
+            So what's next? 
+{@guide}    Hit the {h}Import New Facts{/h} button again. Then you can create your simulation!
             
 $set jobs:kelp-urchin-barren.upgradedFacts = true
 
@@ -80,32 +88,31 @@ $set jobs:kelp-urchin-barren.upgradedFacts = true
 @once
 @cutscene
 
-{@drKelp}   Nice, the simulator should be ready for you now.
-            Just hit the {h}Describe{/h} button up top to start the simulator up.
+{@guide}    Looks like the simulator is ready for you, O.
+            Hit the {h}Describe{/h} button on top to get started! 
 
 ::ModelHelp1.A
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Modeling", modeling:phase == "visual", JobTaskTop("predictSiteB"), modeling:ecosystemSelected == "UrchinBarren", !jobs:kelp-urchin-barren.upgradedFacts
 @cutscene
-{@player} 	What should I do next?
-{@guide}	We have to add our facts to the {h}Visual Model{/h}.
-            Use the {h}Import New Facts{/h} button to add the behaviors we've noticed so far. 
+{@player} 	What should I do next, {nameof @guide}?
+{@guide}	Use the {h}Import New Facts{/h} button to add the behaviors you've noticed so far. 
             
 ::ModelHelp1.B
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Modeling", modeling:phase == "visual", modeling:ecosystemSelected == "UrchinBarren", JobTaskTop("predictSiteB"), jobs:kelp-urchin-barren.upgradedFacts, modeling:hasPendingImport
 @cutscene
 {@player} 	What should I do next?
-{@guide}	They just gave us some new facts to add.
-            Let's get those imported!
+{@guide}	You've received some new facts to add to your model.
+            Time to get those imported!
 
 ::ModelHelp1.C
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Modeling", modeling:phase == "visual", modeling:ecosystemSelected == "UrchinBarren", JobTaskTop("predictSiteB"), jobs:kelp-urchin-barren.upgradedFacts, !modeling:hasPendingImport
 @cutscene
-{@player} 	What should I do next?
-{@guide}	We have everything imported. I think we should start up the simulator.
-            Use the {h}Describe{/h} tab on the top to start it.
+{@player} 	Okay, what now?
+{@guide}	You have imported everything you'll need.
+            It's time to start up the simulator with the {h}Describe{/h} button on the top!
 
 :: GetSync
 @trigger	SimulationModelStarted
@@ -113,7 +120,7 @@ $set jobs:kelp-urchin-barren.upgradedFacts = true
 @boostScore 1060 // trigger before V1ctor's sync intro, which is 1051
 @once
 @cutscene
-{@drKelp}	Hold on! Before you get started in here, let me just send you the missing data needed for this model...
+{@guide}	Good news, O! It appears that your mother is sending over the missing data we'll need!
 
 $branch common.download
 $call UpgradeFact(Urchin.Eats.GiantKelp, Rate, Batch)
@@ -123,43 +130,46 @@ $call GiveFact(GiantKelp.Reproduce, Batch)
 $call GiveFact(SeaOtter.Reproduce)
 $set jobs:kelp-urchin-barren-predict.received.facts = true
 
-{@drKelp}   The simulator doesn't really work unless you have numbers to go along with your facts.
-            But once you add these, then we should be good to go.
-			Normally you will need to use the {nameof MeasurementTank} to determine rates, but this time we already have the rules on hand.
-			Head back to the {h}Visualize{/h} tab to {h}Import New Facts{/h}, then return here.
+{@guide}   The simulator requires numerical rates for the facts you gathered. 
+            Normally you will use the {nameof MeasurementTank} to determine rates.
+            This time, we already have them on hand! 
+			Use the {h}Visualize{/h} tab to {h}Import New Facts{/h}, then return here.
 
 ::ModelHelp2
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Modeling", modeling:phase == "sync", JobTaskTop("predictSiteB"), modeling:phase == "describe"
 @cutscene
 {@player} 	What should I do next?
-{@guide}	Let's try hitting the {h}Simulate{/h} button over there.
+{@guide}	Run the simulation with the {h}Simulate{/h} button!
 
 :: ModelSynced
 @trigger	SimulationSyncSuccess
 @once
 @cutscene
-{@drKelp}  Perfect! The model's output lines up with actual past population data, so we know we've created a useful model.
-            Now let's see what it predicts will happen next. Hit the {h}Predict{/h} tab.
+{@guide}   Ah! Look at all this wonderful data!
+{@player}  Aww, {nameof @guide}. Now I know what to get you for your birthday. 
+{@player}  So what next?
+{@guide}   The model's output is lining up with actual past population data.
+            That means you've created a useful model!
+            Now you must see what it predicts will happen next. Use the {h}Predict{/h} tab!
 
 ::ModelHelp3
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Modeling", modeling:phase == "predict", JobTaskTop("predictSiteB")
 @cutscene
 {@player} 	What should I do next?
-{@guide}	There seems to be a big {h}Run Prediction{/h} button over there...
-            Let's give that a test.
+{@guide}	Use the {h}Run Prediction{/h} button to create your simulation! 
 
 :: ModelingGraphComplete
 @trigger	SimulationPredictSuccess
 @once
 @cutscene
-{@drKelp}   Nice work! You've just made a {h}model{/h}!
-            Now bring that back to the {map-name}research station{/map-name}.
+{@guide}   Satisfactory work, O! You just created a Prediction Model. 
 {hide-dialog}
 {wait 1}
-{@guide}    So it looks like the {pluralnameof GiantKelp} and {pluralnameof Urchin} will sort of stay at a low level.
-            That doesn't sound great...
+{@guide}    According to your data, it looks like the {pluralnameof GiantKelp} and {pluralnameof Urchin} will stay at a low level. 
+{@player}   Yeah. And no otters at all. 
+            I think this ecosystem is in trouble, {nameof @guide}.
 
 // SUGGEST ARGUMENTATION
 
@@ -168,15 +178,15 @@ $set jobs:kelp-urchin-barren-predict.received.facts = true
 @when 		JobTaskTop(reportBack)
 @cutscene
 $if scene:name == "Argumentation"
-    {@player}   What should I be doing again?
-    {@guide}    Report your findings to {nameof @drKelp}.
+    {@player}   What now, {nameof @guide}?
+    {@guide}    Report your findings to {nameof @drKelp}!
 $elseif !IsPlayerOnStation()
-    {@player}   What should we do now?
-    {@guide}    Let's report our findings to {nameof @drKelp}.
+    {@player}   What should I do now?
+    {@guide}    Report your findings to {nameof @drKelp}.
 $else
-    {@player} 	What should we do now?
-	{@guide}	Well, we've completed the modeling, so let's report back to {nameof @drKelp}.
-                We should first head back to the {map-name}research station{/map-name}.
+    {@player} 	What should I do now?
+	{@guide}	You've completed your task.
+                Now you need to report back to your mother at the {map-name}research station{/map-name}!
 $endif
 
 // CATCH-ALL GUIDE TEXT
@@ -211,7 +221,10 @@ $call ArgueLoad(urchinBarrenPredictArgue)
 
 	
 ::argue.hello
-{@drKelp}    Let's review, what's our prediction for the {nameof GiantKelp} population?
+{@drKelp}    Perfect timing, Olivia!
+             I just made some fried kelp chips, if you'd like to help taste-test.
+{@player}   Um, maybe later, Mom. The job, and everything...
+{@drKelp}   Oh, yes! What did your Prediction Model show about the {nameof GiantKelp} population?
 $goto .argue.chooseFacts
 
 ::argue.chooseFacts
@@ -232,18 +245,20 @@ $else
 	$if ArgueIsFactSubmitted(UrchinBarren.Model.Prediction)
 		{@drKelp}  Is something eating the {nameof GiantKelp}?
 	$else
-		{@drKelp}  I don't know if that's it.
+		{@drKelp}  That doesn't seem right, Sweetie. Try again. 
 	$endif
 $endif
 $call ArgueRejectIncorrect()
 $goto .argue.chooseFacts
 
 ::argue.giveUp
-{@drKelp}    OK get back to me when you're ready.
+{@drKelp}    Okay, Mija. Get back to me when you're ready.
 
 ::argue.done
 $call ArgueComplete()
-{@drKelp}   Ok then... That is rather bleak.
-{@player}   Yeah...
-{@drKelp}   But don't lose hope yet. I have one last job for you.
+{@drKelp}   Well. That's interesting. 
+{@player}   Interesting?? Mom, Site B is doomed! 
+{@player}  What happened to all the kelp? What if it's contagious? 
+{@player}   We'll never be able to create Mer's Refuge when whole ecosystems are dying. 
+{@drKelp}   Slow down, Olivia. I've got one more job for you.  
 $call CompleteJob()

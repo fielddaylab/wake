@@ -4,15 +4,25 @@
 @trigger    JobStarted
 @cutscene
 
-{@guide}	The Predictive Modeling tool should basically handle this for us.
-			Let's go to the {nameof Modeling}.
+{@drKelp}	Thank you, Olivia. It means so much that you're here.
+{@player}   Duh, Mom. We're in this together.
+			So what's our next move?
+{@drKelp}   We know Mer's Refuge is failing. 
+{@drKelp}   Your job is to figure out what will happen if we don't intervene.
+{@player}   I mean... it seems pretty obvious that the Bull Kelp will all die off.
+			Do we really need to waste time proving it? 
+{@drKelp}   It's not a waste, Olivia. We need specifics. Data.
+{@player}   But Mom...
+{@drKelp}	Head to your {nameof Modeling} and get some answers for me, okay, Sweetie?
+{@player}   Okay. Got it. 
 
 :: helpGoToModeling
 @trigger    RequestPartnerHelp
 @when 		JobTaskTop(createModel)
 @cutscene
-{@player}   Where should I go from here?
-{@guide}	You purchased the predictive modeling tool just for this kind of job.
+{@player}   Where should I go from here, {nameof @guide}?
+{@guide}	Your Predictive Modeling Tool should be perfect for this task!
+{@guide}    Head to the {nameof Modeling} on your ship. 
 $if scene:name == "Modeling"
 
 $else
@@ -26,21 +36,31 @@ $endif
 @when 		JobTaskTop(createModel), scene:name == "Modeling"
 @once
 @cutscene
-{@guide}	OK, let's let the predictive modeling tool do its thing.
+{@guide}	The Predictive Modeling Tool will use your data to predict the most likely outcome for the Bull Kelp.
+{@player}   Great. So basically, we get to find out if the Bull Kelp is dying fast, or dying super fast.
+{@guide}    Exactly, O!
+{@guide}    My sensors indicate you are experiencing sadness. Or possibly hunger.
+{@guide}    Would you like to visit the Kelp Forest's emotional support jellyfish, Kevin?
+{@player}   Nah. Thanks anyway, {nameof @guide}.
 
 :: modelComplete
 @trigger	SimulationSyncSuccess
 @once
 @cutscene
-{@guide}	It appears you will be the bearer of bad news.
-			Let's go bear it back to {nameof drKelp}.
+{@player}	Wow. The Bull Kelp... they died so fast.
+{@guide}    It appears you are experiencing sadness again.
+{@player}   Mom has been working toward this Refuge for years. She'll be crushed.
+{@guide}    Ah. Don't worry, O. 
+{@guide}    The water pressure at these depths aren't strong enough to crush a human--your mother should be fine.
+{@player}   ....Thanks, {nameof @guide}. 
+{@guide}    Don't mention it, O. 
 
 :: helpShareModel
 @trigger    RequestPartnerHelp
 @when 		JobTaskTop(shareModel)
 @cutscene
-{@player}   What now?
-{@guide}	Submit your predictive model to {nameof drKelp} as soon as you can at the {m}research station{/m}.
+{@player}   What now, {nameof @guide}?
+{@guide}	Head back to the {m}research station{/m} and tell your mother what you found out. 
 
 // CATCH-ALL GUIDE TEXT
 
@@ -49,7 +69,8 @@ $endif
 @when 		JobTaskActive(createModel)
 @boostScore -5
 @cutscene
-{@guide}   	Create a Prediction Model at the Modeling Lab.
+{@player}   What now, {nameof @guide}?
+{@guide}   	You need to create a Predictive Model at the Modeling Lab.
 
 :: catchShareModel
 @trigger    RequestPartnerHelp
@@ -65,7 +86,8 @@ $endif
 @when   !ArgueIsComplete(refugeFailureSimulationArgue)
 @cutscene
 $call ArgueLoad(refugeFailureSimulationArgue)
-{@drKelp} So how bad is it going to be?
+{@drKelp} Okay, Sweetie, let's see what you discovered.
+		  How bad is it going to be? 
 $if ArgueSetClaim(refugeFailureSimulationArgueClaim, jobs.kelp-refuge-failure-simulation.argue.claimLabel)
 			$call ArgueFactSlot(MixedKelp.Model.RefugeFailPredict)
 $endif
@@ -84,16 +106,21 @@ $endif
 
 :: argue.correctFacts
 $call ArgueComplete()
-{@drKelp}	Wow. Looks like there will be no more {nameof BullKelp} sooner than we thought.
-			We've got a Kelp Emergency on our hands. Thanks for figuring it out!
+{@drKelp}	Wow. Looks like we've got a Kelp Emergency on our hands. 
+{@player}   I'm sorry, Mom. I knew this job was a bad idea. 
+{@drKelp}   A bad idea?? Sweetie, this information is exactly what we needed.
+{@drKelp}   The Bull Kelp would still be dying whether we knew about it or not. 
+{@drKelp}   Now that we understand how bad it is, we can make a plan.
+{@drKelp}   I'm glad you figured it out. 
 $call CompleteJob()
 
 :: argue.incorrectFacts
-{@drKelp} That isn't what we're looking for. Did you make a predictive model of the site?
+{@drKelp} Hmm. That isn't what we're looking for. 
+		  Did you make a Predictive Model for Mer's Refuge? 
 $call ArgueRejectIncorrect()
 $goto .argue.defendClaim
 
 :: argue.giveUp
-{@drKelp} OK. Get back to me when you're ready.
+{@drKelp} Okay, Sweetie. Get back to me when you're ready.
 
 ::end
