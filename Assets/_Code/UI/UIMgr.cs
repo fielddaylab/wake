@@ -51,6 +51,7 @@ namespace Aqua
         #endregion // Inspector
 
         [NonSerialized] private int m_LetterboxCounter = 0;
+        [NonSerialized] private int m_LetterboxDisableFrameCount = 0;
         private Dictionary<StringHash32, DialogPanel> m_DialogStyleMap;
         private Dictionary<Type, SharedPanel> m_SharedPanels;
         [NonSerialized] private bool m_SkippingCutscene;
@@ -284,8 +285,13 @@ namespace Aqua
 
         private void LateUpdate()
         {
-            if (m_LetterboxCounter == 0 && m_Letterbox.IsShowing())
-                m_Letterbox.Hide();
+            if (m_LetterboxCounter == 0 && m_Letterbox.IsShowing()) {
+                if (++m_LetterboxDisableFrameCount > 1) {
+                    m_Letterbox.Hide();
+                }
+            } else {
+                m_LetterboxDisableFrameCount = 0;
+            }
 
             m_CursorHintMgr.Process(m_TooltipHoverTime);
             Vector2 cursorPos = m_Cursor.Process();

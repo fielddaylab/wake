@@ -452,7 +452,10 @@ namespace Aqua
             var args = inEvent.ExtractStringArgs();
 
             StringHash32 trigger = args[0];
-            StringHash32 who = args.Count > 1 ? args[1] : (thread != null ? thread.Target() : StringHash32.Null);
+            StringHash32 who = args.Count > 1 ? args[1] : StringHash32.Null;
+            if (who == "this") {
+                who = thread != null ? thread.Target() : null; 
+            }
             bool bWait = args.Count > 2 && args[2] == "wait";
 
             var response = Services.Script.TriggerResponse(trigger, who, thread?.Actor, thread?.Locals);
