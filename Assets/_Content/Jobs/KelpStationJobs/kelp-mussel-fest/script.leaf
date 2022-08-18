@@ -103,7 +103,7 @@
 @trigger    TryArgumentation
 @when   	!ArgueIsComplete(musselFestArgueMusselTemp)
 @cutscene
-{@drKelp}	Excellent! Did you find out what's been stressing the mussels at site C?
+{@drKelp}	Excellent! Did you find out what's been stressing the mussels here at site C?
 {@player} Um... honestly, Mom, I'm not sure.
 {@drKelp} Okay, Mija. Let's look at your data. 
 $if ArgueIsComplete(musselFestReasonChemistry)
@@ -155,7 +155,7 @@ $if ArgueSetClaim(musselFestReasonChemistryClaim, jobs.kelp-mussel-fest.argue.cl
     $call ArgueFactSlot(WarmKelpForest.PH)
 $endif
 $call ArgueDisplayClaim()
-{@drKelp}	Now compare the mussels' stress levels from the tank with the conditions at site C. 
+{@drKelp}	Now compare the mussels' stress levels from the tank with the conditions here at site C. 
 {@drKelp}	What are the temperature, pH, and light levels at the Warm Kelp Forest?
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.correctFactsReasonChemistry
