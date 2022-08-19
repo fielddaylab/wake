@@ -46,6 +46,8 @@ namespace Aqua.Cameras
         public Vector3 Offset;
         public Vector3 Look;
 
+        public bool LookFromOffset;
+
         internal Vector3 m_CachedPosition;
         internal Vector3 m_CachedLook;
     }

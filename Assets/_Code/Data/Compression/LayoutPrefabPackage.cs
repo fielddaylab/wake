@@ -45,6 +45,7 @@ namespace Aqua.Compression {
                     return CompressiblePrefab.Decompress(m_CompressedData, (int) entry.Offset, (int) entry.Length, m_Bank, decompressor);
                 }
             }
+            Log.Warn("No prefab for entry '{0}'", id);
             return null;
         }
 

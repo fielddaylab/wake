@@ -186,5 +186,21 @@ namespace Aqua.Editor
             Log.Msg("[PrefabTools] Compressed file '{0}' with ratio {1}", path, (float) read.Length / compressed.Length);
             EditorUtility.RevealInFinder(outputPath);
         }
+
+        [MenuItem("Aqualab/Align to Surface")]
+        static public void AlignToSurface() {
+            foreach(var obj in Selection.gameObjects) {
+                Transform t = obj.transform;
+                Ray r = new Ray(t.position + t.forward * 0.01f, t.forward);
+                Debug.DrawRay(r.origin, r.direction * 10, Color.red, 1);
+                bool hit = Physics.Raycast(r, out RaycastHit hitInfo);
+                if (hit) {
+                    Undo.RecordObject(t, "Aligning with surface");
+                    t.position = hitInfo.point;
+                    t.forward = -hitInfo.normal;
+                    Debug.DrawRay(hitInfo.point, hitInfo.normal, Color.blue, 2);
+                }
+            }
+        }
     }
 }

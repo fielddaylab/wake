@@ -297,7 +297,7 @@ namespace EasyAssetStreaming {
 
             static private Texture2D CreatePlaceholder(string name, bool final) {
                 Texture2D texture;
-                texture = new Texture2D(2, 2, TextureFormat.RGB24, false, false);
+                texture = new Texture2D(2, 2, TextureFormat.RGB24, 1, false);
                 texture.name = name;
                 texture.hideFlags = HideFlags.DontSave;
                 ApplyPlaceholderData(texture, final);
@@ -602,7 +602,7 @@ namespace EasyAssetStreaming {
                 string correctedPath = StreamingPath(address);
                 if (File.Exists(correctedPath)) {
                     byte[] bytes = File.ReadAllBytes(correctedPath);
-                    Texture2D texture = new Texture2D(1, 1);
+                    Texture2D texture = new Texture2D(4, 4, TextureFormat.RGB24, 1, false);
                     texture.name = address;
                     texture.hideFlags = HideFlags.DontSaveInEditor;
                     var settings = ApplySettings(id, texture);

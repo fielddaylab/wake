@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Aqua.Cameras;
 using Aqua.Profile;
 using Aqua.Scripting;
 using BeauRoutine;
@@ -14,6 +15,7 @@ namespace Aqua.View {
         #region Inspector
 
         [SerializeField, Required] public ViewNode DefaultNode = null;
+        [SerializeField] public CameraDrift Drift;
         [SerializeField, HideInInspector] private ViewNode[] m_AllNodes = null;
         [SerializeField, HideInInspector] private ViewLink[] m_AllLinks = null;
         [SerializeField] private TweenSettings m_DefaultTransition = new TweenSettings(0.3f, Curve.Smooth);
@@ -73,6 +75,10 @@ namespace Aqua.View {
             ActivateLinks(m_AllLinks, m_Current.GroupIds, false);
 
             Services.Camera.SnapToPose(m_Current.Camera);
+            if (Drift != null) {
+                Drift.Scale = node.CameraDriftScale;
+                Drift.PushChanges();
+            }
             Services.Events.Dispatch(GameEvents.ViewChanged, m_Current.Id.Source());
             Save.Map.RecordVisitedLocation(m_Current.Id);
 
@@ -114,6 +120,16 @@ namespace Aqua.View {
                     cameraTransition = Services.Camera.MoveToPose(node.Camera, settings.Time, settings.Curve, Cameras.CameraPoseProperties.All, Axis.XYZ);
                 }
 
+                IEnumerator driftTransition;
+                if (Drift && Drift.Scale != node.CameraDriftScale) {
+                    driftTransition = Tween.Float(Drift.Scale, node.CameraDriftScale, (f) => {
+                        Drift.Scale = f;
+                        Drift.PushChanges();
+                    }, settings.Time);
+                } else {
+                    driftTransition = null;
+                }
+
                 DeactivateLinks(m_AllLinks, false);
 
                 ViewNode old = m_Current;
@@ -130,7 +146,8 @@ namespace Aqua.View {
                     node.AudioLayers.SetLayerActive(node.AudioLayerId, true);
                 }
 
-                yield return cameraTransition;
+                yield return Routine.Combine(
+                    cameraTransition, driftTransition);
 
                 DeactivateNode(old, false, false);
                 ActivateNode(m_Current, false, true);

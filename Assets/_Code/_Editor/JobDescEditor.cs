@@ -62,7 +62,7 @@ namespace Aqua.Editor
         [SerializeField] private bool m_TextExpanded = true;
         [SerializeField] private bool m_PrerequisitesExpanded = true;
         [SerializeField] private bool m_LocationsExpanded = true;
-        [SerializeField] private bool m_RewardsExpanded = false;
+        [SerializeField] private bool m_RewardsExpanded = true;
         [SerializeField] private bool m_AssetsExpanded = true;
         [SerializeField] private bool m_DifficultyExpanded = false;
         [SerializeField] private bool m_TasksExpanded = true;

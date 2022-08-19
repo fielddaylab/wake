@@ -362,7 +362,13 @@ namespace Aqua
                 Services.Physics.Enabled = true;
 
                 Services.Events.Dispatch(GameEvents.SceneLoaded);
-                Services.Script.TriggerResponse(GameTriggers.SceneStart);
+
+                // if we're suppressing triggers, then only call functions
+                if ((inFlags & SceneLoadFlags.SuppressTriggers) != 0) {
+                    Services.Script.TryCallFunctions(GameTriggers.SceneStart);
+                } else {
+                    Services.Script.TriggerResponse(GameTriggers.SceneStart);
+                }
             }
             m_InitFrame = false;
         }
@@ -833,6 +839,7 @@ namespace Aqua
         DoNotDispatchPreUnload = 0x08,
         DoNotOverrideEntrance = 0x10,
         StopMusic = 0x20,
-        SuppressAutoSave = 0x40
+        SuppressAutoSave = 0x40,
+        SuppressTriggers = 0x80
     }
 }

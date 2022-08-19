@@ -11,6 +11,7 @@ namespace Aqua.Cameras
 
         public Vector2 Distance = new Vector2(5, 5);
         public Vector2 Period = new Vector2(1, 1.5f);
+        public float Scale = 1.0f;
 
         #endregion // Inspector
         
@@ -23,7 +24,7 @@ namespace Aqua.Cameras
 
         private void EnableTarget() {
             if (m_TargetHandle == 0) {
-                m_TargetHandle = Services.Camera.AddDrift(Distance, Period, RNG.Instance.NextVector2()).Id;
+                m_TargetHandle = Services.Camera.AddDrift(Distance * Scale, Period, RNG.Instance.NextVector2()).Id;
             }
         }
 
@@ -47,7 +48,7 @@ namespace Aqua.Cameras
             if (m_TargetHandle != 0)
             {
                 ref CameraDriftData data = ref Services.Camera.FindDrift(m_TargetHandle);
-                data.Distance = Distance;
+                data.Distance = Distance * Scale;
                 data.Period = Period;
             }
         }

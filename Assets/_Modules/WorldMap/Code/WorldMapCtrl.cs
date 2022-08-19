@@ -13,19 +13,40 @@ namespace Aqua.WorldMap
     public class WorldMapCtrl : MonoBehaviour, IScenePreloader, IBaked
     {
         static public readonly StringHash32 Event_RequestChangeStation = "worldmap:request-change-station"; // StringHash32 stationId
+        static public readonly StringHash32 Event_StationChanging = "worldmap:station-changing"; // StringHash32 stationId
 
-        [SerializeField] private Transform m_PlayerTransform = null;
-        [SerializeField] private Button m_ShipOutButton = null;
+        [SerializeField] private CanvasGroup m_SceneExitButtonGroup = null;
+        [SerializeField] private ShipOutPopup m_ShipOutPopup = null;
         [SerializeField, HideInInspector] private StationButton[] m_AllStations;
 
         [NonSerialized] private StringHash32 m_CurrentStation;
         [NonSerialized] private StringHash32 m_TargetStation;
+        [NonSerialized] private StationButton m_TargetButton;
+
+        private Routine m_ExitButtonRoutine;
+        private Routine m_ShipOutRoutine;
 
         private void Awake()
         {
-            Services.Events.Register<StringHash32>(Event_RequestChangeStation, OnRequestChangeStation, this);
+            Services.Events.Register<StationButton>(Event_RequestChangeStation, OnRequestChangeStation, this);
 
-            m_ShipOutButton.onClick.AddListener(OnShipOutClicked);
+            m_ShipOutPopup.OnShowEvent.AddListener((_) => {
+                m_ExitButtonRoutine.Replace(this, m_SceneExitButtonGroup.Hide(0.2f));
+            });
+            m_ShipOutPopup.OnHideCompleteEvent.AddListener((_) => {
+                if (m_ShipOutRoutine) {
+                    return;
+                }
+
+                m_SceneExitButtonGroup.alpha = 0;
+                m_ExitButtonRoutine.Replace(this, m_SceneExitButtonGroup.Show(0.2f));
+                if (m_TargetButton != null) {
+                    m_TargetButton.CancelSelected();
+                    m_TargetButton = null;
+                }
+            });
+
+            m_ShipOutPopup.OnShipOutClicked += OnShipOutClicked;
         }
 
         private void OnDestroy()
@@ -33,37 +54,45 @@ namespace Aqua.WorldMap
             Services.Events?.DeregisterAll(this);
         }
 
-        private void OnRequestChangeStation(StringHash32 inRequestChangeStation)
+        private void OnRequestChangeStation(StationButton inButton)
         {
-            if (m_TargetStation == inRequestChangeStation)
-                return;
+            m_TargetButton = inButton;
+            m_TargetStation = inButton.StationId();
 
-            m_TargetStation = inRequestChangeStation;
+            m_ShipOutPopup.Populate(Assets.Map(m_TargetStation), JobUtils.SummarizeJobProgress(m_TargetStation, Save.Current));
+            m_ShipOutPopup.Show();
 
-            StationButton button;
-            m_AllStations.TryGetValue(inRequestChangeStation, out button);
-            m_PlayerTransform.SetPosition(button.transform.position, Axis.XY, Space.Self);
-
-            m_ShipOutButton.gameObject.SetActive(m_TargetStation != m_CurrentStation);
+            // m_ShipOutButton.gameObject.SetActive(m_TargetStation != m_CurrentStation);
         }
 
         private void OnShipOutClicked()
         {
-            Routine.Start(this, ShipoutSequence()).Tick();
+            m_ShipOutRoutine.Replace(ShipoutSequence(m_TargetStation)).Tick();
         }
 
-        private IEnumerator ShipoutSequence()
+        static private IEnumerator ShipoutSequence(StringHash32 stationId)
         {
             Services.UI.ShowLetterbox();
 
             // TODO: SOmething fancy??
 
-            Save.Map.SetCurrentStationId(m_TargetStation);
-
             yield return 0.2f;
 
-            StateUtil.LoadPreviousSceneWithWipe();
+            StateUtil.LoadPreviousSceneWithWipe(null, null, SceneLoadFlags.Default | SceneLoadFlags.SuppressTriggers);
             yield return 0.3;
+
+            while(StateUtil.IsLoading) {
+                yield return null;
+            }
+
+            yield return 1;
+
+            Services.Camera.AddShake(new Vector2(0, 0.2f), new Vector2(0.1f, 0.1f), 0.8f);
+            yield return 1;
+
+            Save.Map.SetCurrentStationId(stationId);
+            StateUtil.LoadSceneWithWipe("Helm");
+            yield return 0.3f;
 
             Services.UI.HideLetterbox();
         }
@@ -77,6 +106,7 @@ namespace Aqua.WorldMap
 
             m_CurrentStation = profileData.CurrentStationId();
             m_TargetStation = m_CurrentStation;
+            StringHash32 jobStation = Save.CurrentJob.Job?.StationId() ?? StringHash32.Null;
 
             foreach(var station in m_AllStations)
             {
@@ -90,23 +120,21 @@ namespace Aqua.WorldMap
                     MapDesc desc = mapDB.Get(id);
 
                     bool seen = profileData.HasVisitedLocation(id);
-                    JobProgressSummary summary = JobUtils.SummarizeJobProgress(id, Save.Current);
-
+                    
                     if (m_CurrentStation == id)
                     {
-                        m_PlayerTransform.SetPosition(station.transform.position, Axis.XY, Space.Self);
-                        station.Show(desc, true, seen, summary);
+                        station.Show(desc, true, true, jobStation == id);
                     }
                     else
                     {
-                        station.Show(desc, false, seen, summary);
+                        station.Show(desc, false, seen, jobStation == id);
                     }
 
                     yield return null;
                 }
             }
 
-            m_ShipOutButton.gameObject.SetActive(false);
+            // m_ShipOutButton.gameObject.SetActive(false);
         }
 
         #if UNITY_EDITOR

@@ -23,7 +23,9 @@ namespace Aqua
         [SerializeField] private TextId m_LabelId = default;
         [SerializeField] private TextId m_ShortLabelId = default;
         [SerializeField] private TextId m_StationHeaderId = default;
+        [SerializeField] private TextId m_StationDescId = default;
         [SerializeField] private Sprite m_Icon = null;
+        [SerializeField, StreamingPath("png,jpg,jpeg,webm,mp4")] private string m_HeaderImagePath = null;
         [SerializeField] private MapDesc m_Parent = null;
         [SerializeField] private MapDesc m_QuickTravel = null;
         [SerializeField, FilterBestiaryId(BestiaryDescCategory.Environment)] private StringHash32 m_EnvironmentId = null;
@@ -44,7 +46,9 @@ namespace Aqua
         [LeafLookup("Name")] public TextId LabelId() { return m_LabelId; }
         [LeafLookup("ShortName")] public TextId ShortLabelId() { return m_ShortLabelId.IsEmpty ? m_LabelId : m_ShortLabelId; }
         public TextId StationHeaderId() { Assert.True(m_Category == MapCategory.Station, "MapDesc {0} is not a station", Id()); return m_StationHeaderId ;}
+        public TextId StationDescId() { Assert.True(m_Category == MapCategory.Station, "MapDesc {0} is not a station", Id()); return m_StationDescId ;}
         public Sprite Icon() { return m_Icon; }
+        public string HeaderImagePath() { return m_HeaderImagePath; }
         public MapDesc Parent() { return m_Parent; }
         public MapDesc QuickTravel() { return m_QuickTravel; }
 
@@ -65,7 +69,9 @@ namespace Aqua
             private SerializedProperty m_LabelIdProperty;
             private SerializedProperty m_ShortLabelIdProperty;
             private SerializedProperty m_StationHeaderIdProperty;
+            private SerializedProperty m_StationDescIdProperty;
             private SerializedProperty m_IconProperty;
+            private SerializedProperty m_HeaderImagePathProperty;
             private SerializedProperty m_ParentProperty;
             private SerializedProperty m_QuickTravelProperty;
             private SerializedProperty m_EnvironmentIdProperty;
@@ -81,7 +87,9 @@ namespace Aqua
                 m_LabelIdProperty = serializedObject.FindProperty("m_LabelId");
                 m_ShortLabelIdProperty = serializedObject.FindProperty("m_ShortLabelId");
                 m_StationHeaderIdProperty = serializedObject.FindProperty("m_StationHeaderId");
+                m_StationDescIdProperty = serializedObject.FindProperty("m_StationDescId");
                 m_IconProperty = serializedObject.FindProperty("m_Icon");
+                m_HeaderImagePathProperty = serializedObject.FindProperty("m_HeaderImagePath");
                 m_ParentProperty = serializedObject.FindProperty("m_Parent");
                 m_QuickTravelProperty = serializedObject.FindProperty("m_QuickTravel");
                 m_EnvironmentIdProperty = serializedObject.FindProperty("m_EnvironmentId");
@@ -112,14 +120,17 @@ namespace Aqua
                             EditorGUILayout.Space();
                             EditorGUILayout.PropertyField(m_EnvironmentIdProperty);
                             EditorGUILayout.PropertyField(m_ParentProperty);
+                            EditorGUILayout.PropertyField(m_HeaderImagePathProperty);
                             break;
                         }
 
                         case MapCategory.Station: {
                             EditorGUILayout.Space();
                             EditorGUILayout.PropertyField(m_StationHeaderIdProperty);
+                            EditorGUILayout.PropertyField(m_StationDescIdProperty);
                             EditorGUILayout.PropertyField(m_StationSortingOrderProperty);
                             EditorGUILayout.PropertyField(m_QuickTravelProperty);
+                            EditorGUILayout.PropertyField(m_HeaderImagePathProperty);
                             break;
                         }
 

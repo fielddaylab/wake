@@ -106,10 +106,11 @@ namespace Aqua.Cameras
         Height = 0x02,
         Zoom = 0x04,
         Rotation = 0x8,
+        FieldOfView = 0x10,
 
         [Hidden] PosAndZoom = Position | Zoom,
         [Hidden] HeightAndZoom = Height | Zoom,
         [Hidden] Default = Position | Height | Zoom,
-        [Hidden] All = Default | Rotation
+        [Hidden] All = Default | Rotation | FieldOfView
     }
 }

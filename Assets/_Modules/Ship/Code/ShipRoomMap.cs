@@ -16,6 +16,7 @@ namespace Aqua.Ship {
 
         [Header("Ship Map")]
         [SerializeField] private Button m_OpenButton = null;
+        [SerializeField] private CanvasGroup m_ButtonGroup = null;
         [SerializeField] private CanvasGroup m_Fader = null;
         [SerializeField] private Vector2 m_OffscreenPos = default;
         [SerializeField] private TweenSettings m_ShowAnim = new TweenSettings(0.2f);
@@ -25,15 +26,17 @@ namespace Aqua.Ship {
 
         [NonSerialized] private BaseInputLayer m_Input;
         [NonSerialized] private Vector2 m_OnscreenPos;
+        [NonSerialized] private Routine m_ButtonAnim;
 
         protected override void Awake() {
             m_Input = BaseInputLayer.Find(this);
             m_OnscreenPos = Root.anchoredPosition;
 
             m_OpenButton.onClick.AddListener(() => Show());
+            m_ButtonGroup.Show();
 
-            Services.Events.Register<TankType>(ExperimentEvents.ExperimentBegin, OnExperimentBegin, this)
-                .Register<TankType>(ExperimentEvents.ExperimentEnded, OnExperimentEnded, this);
+            Services.Events.Register(ExperimentEvents.ExperimentBegin, HideButton, this)
+                .Register(ExperimentEvents.ExperimentEnded, ShowButton, this);
         }
 
         private void OnDestroy() {
@@ -98,12 +101,12 @@ namespace Aqua.Ship {
 
         #region Handlers
 
-        private void OnExperimentBegin(TankType type) {
-            this.gameObject.SetActive(false);
+        private void HideButton() {
+            m_ButtonAnim.Replace(this, m_ButtonGroup.Hide(0.2f));
         }
 
-        private void OnExperimentEnded(TankType type) {
-            this.gameObject.SetActive(true);
+        private void ShowButton() {
+            m_ButtonAnim.Replace(this, m_ButtonGroup.Show(0.2f));
         }
 
         #endregion // Handlers
