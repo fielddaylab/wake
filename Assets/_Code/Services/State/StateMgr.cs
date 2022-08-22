@@ -38,6 +38,7 @@ namespace Aqua
         [NonSerialized] private bool m_InitFrame;
 
         private VariantTable m_TempSceneTable;
+        private Func<IEnumerator> m_OnSceneReadyFunc;
 
         private RingBuffer<SceneBinding> m_SceneHistory = new RingBuffer<SceneBinding>(8, RingBufferMode.Overwrite);
         private Dictionary<Type, SharedManager> m_SharedManagers;
@@ -319,6 +320,14 @@ namespace Aqua
             while(loadOp.progress < 0.9f)
                 yield return null;
 
+            DebugService.Log(LogMask.Loading, "[StateMgr] Scene ready to activate");
+
+            if (m_OnSceneReadyFunc != null) {
+                IEnumerator readyFunc = m_OnSceneReadyFunc();
+                m_OnSceneReadyFunc = null;
+                yield return readyFunc;
+            }
+
             loadOp.allowSceneActivation = true;
 
             while(!loadOp.isDone)
@@ -562,6 +571,10 @@ namespace Aqua
             while(m_OnLoadQueue.TryPopFront(out Action action)) {
                 action();
             }
+        }
+
+        public void OnSceneLoadReady(Func<IEnumerator> inFunc) {
+            m_OnSceneReadyFunc = inFunc;
         }
 
         #endregion // Scene Loading

@@ -39,8 +39,10 @@ namespace Aqua.Scripting
             if (m_Interaction && m_Interaction.Hint) {
                 // m_Interaction.Hint.Cursor = CursorImageType.Talk;
                 if (!m_CharacterId.IsEmpty) {
-                    m_Interaction.Hint.TooltipId = null;
-                    m_Interaction.Hint.TooltipOverride = Loc.Format("ui.talkTo.tooltip", Assets.Character(m_CharacterId).ShortNameId());
+                    Script.OnSceneLoad(() => {
+                        m_Interaction.Hint.TooltipId = null;
+                        m_Interaction.Hint.TooltipOverride = Loc.Format("ui.talkTo.tooltip", Assets.Character(m_CharacterId).ShortNameId());
+                    });
                 }
             }
         }

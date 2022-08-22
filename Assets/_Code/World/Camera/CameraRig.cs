@@ -49,10 +49,12 @@ namespace Aqua.Cameras
             data.Position = transform.position;
             data.Rotation = transform.rotation;
             if (FOVPlane != null) {
+                data.Mode = FOVPlane.enabled ? CameraFOVMode.Plane : CameraFOVMode.Direct;
                 data.Target = FOVPlane.Target;
                 data.Height = FOVPlane.Height;
                 data.Zoom = FOVPlane.Zoom;
             }
+            data.FOV = Camera.fieldOfView;
             data.Properties = CameraPoseProperties.All;
         }
 
@@ -69,10 +71,12 @@ namespace Aqua.Cameras
             #endif // UNITY_EDITOR
 
             transform.SetPositionAndRotation(data.Position, data.Rotation);
+            Camera.fieldOfView = data.FOV;
             if (FOVPlane) {
                 FOVPlane.Target = data.Target;
                 FOVPlane.Height = data.Height;
                 FOVPlane.Zoom = data.Zoom;
+                FOVPlane.enabled = data.Mode == CameraFOVMode.Plane;
             }
         }
 
@@ -111,12 +115,19 @@ namespace Aqua.Cameras
         [CustomEditor(typeof(CameraRig))]
         private class Inspector : UnityEditor.Editor
         {
+            static private readonly string[] EditTabs = new string[] {
+                "Pose" //, "Spline"
+            };
+
             private Editor m_FOVPlaneEditor;
             private Editor m_CameraEditor;
 
+            [SerializeField] private int m_SelectedTab = 0;
             [SerializeField] private CameraPose m_Pose;
+            [SerializeField] private CameraSpline m_Spline;
             [SerializeField] private CameraPose.Data m_DefaultPose;
             [SerializeField] private bool m_EditMode;
+            [SerializeField] private bool m_CameraExpanded = false;
 
             private void OnDisable()
             {
@@ -148,16 +159,46 @@ namespace Aqua.Cameras
                 {
                     EditorGUILayout.Space();
                     EditorGUILayout.LabelField("Plane", EditorStyles.boldLabel);
-                    CreateCachedEditor(rig.FOVPlane, null, ref m_FOVPlaneEditor);
-                    m_FOVPlaneEditor.OnInspectorGUI();
+
+                    EditorGUI.BeginChangeCheck();
+                    bool fovPlaneEnabled = EditorGUILayout.Toggle("Enabled", rig.FOVPlane.enabled);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        Undo.RecordObject(rig.FOVPlane, "Toggled fov plane enabled");
+                        rig.FOVPlane.enabled = fovPlaneEnabled;
+                        EditorUtility.SetDirty(rig.FOVPlane);
+                    }
+
+                    if (fovPlaneEnabled)
+                    {
+                        CreateCachedEditor(rig.FOVPlane, null, ref m_FOVPlaneEditor);
+                        m_FOVPlaneEditor.OnInspectorGUI();
+                    }
                 }
 
                 if (rig.Camera != null)
                 {
                     EditorGUILayout.Space();
                     EditorGUILayout.LabelField("Camera", EditorStyles.boldLabel);
-                    CreateCachedEditor(rig.Camera, null, ref m_CameraEditor);
-                    m_CameraEditor.OnInspectorGUI();
+
+                    using(new EditorGUI.DisabledScope(rig.FOVPlane != null && rig.FOVPlane.enabled))
+                    {
+                        EditorGUI.BeginChangeCheck();
+                        float newFOV = EditorGUILayout.Slider("Field Of View", rig.Camera.fieldOfView, 1E-05f, 179f);
+                        if (EditorGUI.EndChangeCheck())
+                        {
+                            Undo.RecordObject(rig.Camera, "Changing fov");
+                            rig.Camera.fieldOfView = newFOV;
+                            EditorUtility.SetDirty(rig.Camera);
+                        }
+                    }
+                    
+                    m_CameraExpanded = EditorGUILayout.Foldout(m_CameraExpanded, "Camera Details");
+                    if (m_CameraExpanded)
+                    {
+                        CreateCachedEditor(rig.Camera, null, ref m_CameraEditor);
+                        m_CameraEditor.OnInspectorGUI();
+                    }
                 }
 
                 EditorGUILayout.Space();
@@ -174,31 +215,64 @@ namespace Aqua.Cameras
                         rig.ReadData(ref m_DefaultPose);
                     }
                 }
+
+                using(new GUILayout.VerticalScope(EditorStyles.helpBox))
                 using(new EditorGUI.DisabledScope(!m_EditMode)) {
-                    m_Pose = (CameraPose)EditorGUILayout.ObjectField("Target Pose", m_Pose, typeof(CameraPose), true);
-                    EditorGUILayout.BeginHorizontal();
-                    using(new EditorGUI.DisabledScope(m_Pose == null)) {
-                        if (GUILayout.Button("Snap To Pose")) {
-                            CameraPose.Data data = default;
-                            m_Pose.ReadData(ref data);
-                            rig.WriteData(data);
+                    m_SelectedTab = GUILayout.Toolbar(m_SelectedTab, EditTabs, EditorStyles.toolbarButton);
+                    EditorGUILayout.Separator();
+                    switch(m_SelectedTab) {
+                        case 0: {
+                            m_Pose = (CameraPose)EditorGUILayout.ObjectField("Target Pose", m_Pose, typeof(CameraPose), true);
+                            EditorGUILayout.BeginHorizontal();
+                            using(new EditorGUI.DisabledScope(m_Pose == null)) {
+                                if (GUILayout.Button("Snap To Pose")) {
+                                    CameraPose.Data data = default;
+                                    m_Pose.ReadData(ref data);
+                                    rig.WriteData(data);
+                                }
+                                if (GUILayout.Button("Write Current to Pose")) {
+                                    CameraPose.Data data = default;
+                                    rig.ReadData(ref data);
+                                    m_Pose.WriteData(data);
+                                }
+                            }
+                            EditorGUILayout.EndHorizontal();
+                            break;
                         }
-                        if (GUILayout.Button("Write Current to Pose")) {
-                            CameraPose.Data data = default;
-                            rig.ReadData(ref data);
-                            m_Pose.WriteData(data);
+
+                        case 1: {
+                            m_Spline = (CameraSpline) EditorGUILayout.ObjectField("Target Spline", m_Spline, typeof(CameraSpline), true);
+                            EditorGUILayout.BeginHorizontal();
+                            using(new EditorGUI.DisabledScope(m_Spline == null)) {
+                                // TODO: Implement a better system
+                                // if (GUILayout.Button("Snap To Pose")) {
+                                //     CameraPose.Data data = default;
+                                //     m_Pose.ReadData(ref data);
+                                //     rig.WriteData(data);
+                                // }
+                                // if (GUILayout.Button("Write Current to Pose")) {
+                                //     CameraPose.Data data = default;
+                                //     rig.ReadData(ref data);
+                                //     m_Pose.WriteData(data);
+                                // }
+                                // Undo.
+                            }
+                            EditorGUILayout.EndHorizontal();
+                            break;
                         }
-                    }
-                    EditorGUILayout.EndHorizontal();
-
-                    if (GUILayout.Button("Reset")) {
-                        rig.WriteData(m_DefaultPose);
-                    }
-
-                    if (GUILayout.Button("Write Current To Root")) {
-                        rig.ReadData(ref m_DefaultPose);
                     }
                 }
+
+                EditorGUILayout.Space();
+
+                EditorGUILayout.BeginHorizontal();
+                if (GUILayout.Button("Reset")) {
+                    rig.WriteData(m_DefaultPose);
+                }
+                if (GUILayout.Button("Write Current To Root")) {
+                    rig.ReadData(ref m_DefaultPose);
+                }
+                EditorGUILayout.EndHorizontal();
             }
         }
 

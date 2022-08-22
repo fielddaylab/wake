@@ -32,6 +32,8 @@ namespace Aqua.Animation
         /// </summary>
         public float AnimationScale = 1;
 
+        [Header("Waves")]
+
         /// <summary>
         /// Position animation.
         /// </summary>

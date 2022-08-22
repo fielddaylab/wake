@@ -36,11 +36,10 @@ namespace Aqua.Title
         [SerializeField] private CanvasGroup m_ProfileGroup = null;
         [SerializeField] private LocText m_ProfileHeader = null;
         [SerializeField] private TMP_InputField m_ProfileName = null;
-        [SerializeField] private GameObject m_ProfileNameLocked = null;
+        [SerializeField] private Graphic m_EditableNameBG = null;
         [SerializeField] private Button m_StartButton = null;
         [SerializeField] private Button m_BackButton = null;
-        [SerializeField] private GameObject m_NameLoadingSpinner = null;
-        [SerializeField] private GameObject m_GameStartingSpinner = null;
+        [SerializeField] private GameObject m_LoadingSpinner = null;
 
         #endregion // Inspector
 
@@ -59,8 +58,7 @@ namespace Aqua.Title
             m_InitialGroup.gameObject.SetActive(true);
             m_ProfileGroup.gameObject.SetActive(false);
 
-            m_NameLoadingSpinner.SetActive(false);
-            m_GameStartingSpinner.SetActive(false);
+            m_LoadingSpinner.SetActive(false);
         }
 
         #region Handlers
@@ -104,14 +102,14 @@ namespace Aqua.Title
         }
 
         private IEnumerator NewGame() {
-            m_GameStartingSpinner.SetActive(true);
+            m_LoadingSpinner.SetActive(true);
 
             string profileName = m_ProfileName.text;
 
             Future<bool> newProfile = Services.Data.NewProfile(profileName);
             yield return newProfile;
 
-            m_GameStartingSpinner.SetActive(false);
+            m_LoadingSpinner.SetActive(false);
 
             if (!newProfile.IsComplete()) {
                 Services.Input.ResumeAll();
@@ -128,14 +126,14 @@ namespace Aqua.Title
 
         private IEnumerator ContinueGame()
         {
-            m_GameStartingSpinner.SetActive(true);
+            m_LoadingSpinner.SetActive(true);
 
             string profileName = m_ProfileName.text;
 
             Future<bool> load = Services.Data.LoadProfile(profileName);
             yield return load;
 
-            m_GameStartingSpinner.SetActive(false);
+            m_LoadingSpinner.SetActive(false);
 
             if (!load.IsComplete()) {
                 Services.Input.ResumeAll();
@@ -185,14 +183,15 @@ namespace Aqua.Title
                     {
                         m_ProfileHeader.SetText(NewHeader);
                         m_ProfileName.interactable = false;
-                        m_ProfileNameLocked.SetActive(true);
                         m_ProfileName.SetTextWithoutNotify("---");
+                        m_EditableNameBG.enabled = false;
+                        m_ProfileName.textComponent.color = Color.gray;
                         Routine.Start(this, m_InitialGroup.Hide(0.2f, false));
                         Routine.Start(this, m_ProfileGroup.Show(0.2f, true));
                         m_ProfileGroup.interactable = false;
                         UpdateInteractable();
                         Services.Input.PauseAll();
-                        m_NameLoadingSpinner.SetActive(true);
+                        m_LoadingSpinner.SetActive(true);
                         OGD.Player.NewId(OnNewNameSuccess, OnNewNameFail);
                         break;
                     }
@@ -201,8 +200,9 @@ namespace Aqua.Title
                     {
                         m_ProfileHeader.SetText(ContinueHeader);
                         m_ProfileName.interactable = true;
-                        m_ProfileNameLocked.SetActive(false);
                         m_ProfileName.SetTextWithoutNotify(Services.Data.LastProfileName());
+                        m_EditableNameBG.enabled = true;
+                        m_ProfileName.textComponent.color = Color.black;
                         Routine.Start(this, m_InitialGroup.Hide(0.2f, false));
                         Routine.Start(this, m_ProfileGroup.Show(0.2f, true));
                         UpdateInteractable();
@@ -216,14 +216,14 @@ namespace Aqua.Title
             m_ProfileName.text = inName;
             m_ProfileGroup.interactable = true;
             Services.Input.ResumeAll();
-            m_NameLoadingSpinner.SetActive(false);
+            m_LoadingSpinner.SetActive(false);
         }
 
         private void OnNewNameFail(OGD.Core.Error error)
         {
             Log.Error("[TitleInteractions] Generating new player id failed: {0}", error.Msg);
             Services.Input.ResumeAll();
-            m_NameLoadingSpinner.SetActive(false);
+            m_LoadingSpinner.SetActive(false);
             Services.UI.Popup.DisplayWithClose(
                 Loc.Find("ui.title.idGenerationError.header"),
                 Loc.Format("ui.title.idGenerationError.description", error.Msg))

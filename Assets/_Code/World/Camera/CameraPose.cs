@@ -16,17 +16,21 @@ namespace Aqua.Cameras
         public struct Data {
             public Vector3 Position;
             public Quaternion Rotation;
+            public CameraFOVMode Mode;
             public Transform Target;
             public float Height;
             public float Zoom;
+            public float FOV;
             public CameraPoseProperties Properties;
         }
 
         #region Inspector
 
-        public Transform Target = null;
-        public float Height = 10;
-        public float Zoom = 1;
+        public CameraFOVMode Mode;
+        [HideIfField("IsFOVDirect")] public Transform Target = null;
+        [HideIfField("IsFOVDirect")] public float Height = 10;
+        [HideIfField("IsFOVDirect")] public float Zoom = 1;
+        [ShowIfField("IsFOVDirect")] public float FieldOfView = 30;
 
         [AutoEnum] public CameraPoseProperties Properties = CameraPoseProperties.Default;
 
@@ -35,10 +39,12 @@ namespace Aqua.Cameras
         public void ReadData(ref Data data) {
             data.Position = transform.position;
             data.Rotation = transform.rotation;
+            data.Mode = Mode;
             data.Target = Target;
             data.Height = Height;
             data.Zoom = Zoom;
             data.Properties = Properties;
+            data.FOV = FieldOfView;
         }
 
         public void WriteData(in Data data) {
@@ -50,10 +56,12 @@ namespace Aqua.Cameras
             #endif // UNITY_EDITOR
 
             transform.SetPositionAndRotation(data.Position, data.Rotation);
+            Mode = data.Mode;
             Target = data.Target;
             Height = data.Height;
             Zoom = data.Zoom;
             Properties = data.Properties;
+            FieldOfView = data.FOV;
         }
 
         #region Editor
@@ -94,6 +102,11 @@ namespace Aqua.Cameras
             GizmoViz.Box(center, size, rot, ColorBank.Teal, ColorBank.White, RectEdges.All, inAlpha);
         }
 
+        private bool IsFOVDirect()
+        {
+            return Mode == CameraFOVMode.Direct;
+        }
+
         #endif // UNITY_EDITOR
 
         #endregion // Editor
@@ -112,5 +125,11 @@ namespace Aqua.Cameras
         [Hidden] HeightAndZoom = Height | Zoom,
         [Hidden] Default = Position | Height | Zoom,
         [Hidden] All = Default | Rotation | FieldOfView
+    }
+    
+    public enum CameraFOVMode : byte
+    {
+        Plane,
+        Direct
     }
 }

@@ -11,10 +11,8 @@ namespace Aqua.Cameras
     {
         #region Inspector
 
-        [Required] public Transform[] Nodes;
-        public float FieldOfView;
-
-        [AutoEnum] public CameraPoseProperties Properties = CameraPoseProperties.Default;
+        [Required] public CameraPose[] Nodes;
+        [AutoEnum] public CameraPoseProperties Properties = CameraPoseProperties.All;
 
         #endregion // Inspector
 
@@ -38,7 +36,7 @@ namespace Aqua.Cameras
             m_Spline.Process();
 
             Script.OnSceneLoad(() => {
-                Services.Camera.LockFOVPlane();
+                Services.Camera.SetFOVMode(CameraFOVMode.Direct);
                 Services.Camera.MoveAlongSpline(this, 5, CameraPoseProperties.All);
             });
         }
@@ -49,7 +47,19 @@ namespace Aqua.Cameras
 
             cameraState.Position = pos;
             cameraState.Rotation = Quaternion.SlerpUnclamped(m_Directions[seg.VertexA], m_Directions[seg.VertexB], seg.Interpolation);
-            cameraState.FieldOfView = FieldOfView;
+            cameraState.FieldOfView = Mathf.LerpUnclamped(Nodes[seg.VertexA].FieldOfView, Nodes[seg.VertexB].FieldOfView, seg.Interpolation);
         }
+
+        #if UNITY_EDITOR
+
+        [ContextMenu("Retrieve Nodes from Children")]
+        private void GetNodesFromChildren()
+        {
+            UnityEditor.Undo.RecordObject(this, "gathering poses");
+            Nodes = GetComponentsInChildren<CameraPose>();
+            UnityEditor.EditorUtility.SetDirty(this);
+        }
+
+        #endif // UNITY_EDITOR
     }
 }

@@ -44,6 +44,30 @@ namespace Aqua.Animation
 
         #endregion // Init
 
+        #region Reset
+
+        /// <summary>
+        /// Resets a Vec3 wave state.
+        /// </summary>
+        static public void ResetVec3Wave(ref AmbientVec3State ioState, ref AmbientVec3PropertyConfig ioConfig, float inTimestamp)
+        {
+            ResetWave(ref ioState.XYZ, ioConfig.WaveXYZ, inTimestamp);
+            ResetWave(ref ioState.X, ioConfig.WaveX, inTimestamp);
+            ResetWave(ref ioState.Y, ioConfig.WaveY, inTimestamp);
+            ResetWave(ref ioState.Z, ioConfig.WaveZ, inTimestamp);
+        }
+        
+        /// <summary>
+        /// Resets a wave.
+        /// </summary>
+        static public void ResetWave(ref AmbientWaveState ioState, in AmbientWaveConfig inConfig, float inTimestamp)
+        {
+            ioState.Length = inConfig.Duration;
+            ioState.Start = inTimestamp;
+        }
+
+        #endregion // Reset
+
         #region Process
 
         /// <summary>
