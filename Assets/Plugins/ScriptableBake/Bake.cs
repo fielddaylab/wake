@@ -412,7 +412,9 @@ namespace ScriptableBake {
                         }
 
                         try {
-                            if (bakedObj.Bake(flags)) {
+                            if (!object.ReferenceEquals(unityObj, null) && unityObj == null) {
+                                Debug.LogFormat("[Bake] Object was destroyed");
+                            } else if (bakedObj.Bake(flags)) {
                                 if (unityObj) {
                                     EditorUtility.SetDirty(unityObj);
                                     onModify?.Invoke(unityObj);

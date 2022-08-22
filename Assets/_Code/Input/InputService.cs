@@ -4,6 +4,7 @@ using BeauUtil;
 using BeauUtil.Debugger;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -14,6 +15,7 @@ namespace Aqua
     public class InputService : ServiceBehaviour
     {
         public const int DefaultPriority = int.MinValue;
+        public const float DefaultDoubleClickBuffer = 0.8f;
 
         #region Types
 
@@ -55,6 +57,7 @@ namespace Aqua
         [NonSerialized] private InputLayerFlags m_CurrentFlags = InputLayerFlags.Default;
         [NonSerialized] private int m_PauseAllCounter = 0;
         [NonSerialized] private int m_ForceClick = 0;
+        [NonSerialized] private RingBuffer<long> m_LastClickTimes = new RingBuffer<long>(2, RingBufferMode.Overwrite);
 
         [NonSerialized] private readonly List<PriorityRecord> m_PriorityStack = new List<PriorityRecord>(8);
         [NonSerialized] private readonly List<FlagsRecord> m_FlagsStack = new List<FlagsRecord>(8);
@@ -230,6 +233,17 @@ namespace Aqua
             return m_ForceClick > 0;
         }
 
+        public bool DoubleClick(float buffer = DefaultDoubleClickBuffer)
+        {
+            if (m_LastClickTimes.Count < 2) {
+                return false;
+            }
+
+            long timeSince = m_LastClickTimes[0] - m_LastClickTimes[1];
+            long bufferTicks = (long) (buffer * TimeSpan.TicksPerSecond);
+            return Input.GetMouseButtonDown(0) && timeSince <= bufferTicks;
+        }
+
         private void OnInputModeChanged(PointerInputMode inMode)
         {
             m_PointerMode = inMode;
@@ -272,6 +286,10 @@ namespace Aqua
 
         private void LateUpdate()
         {
+            if (Input.GetMouseButtonDown(0)) {
+                m_LastClickTimes.PushFront(Stopwatch.GetTimestamp());
+            }
+
             m_AllInputLayers.ForEach(UpdateDevice);
             DeviceInput.ClearBlock();
         }

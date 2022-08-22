@@ -8,6 +8,8 @@ namespace Aqua
 {
     public class FastBootController : MonoBehaviour, ISceneLoadHandler
     {
+        public AudioClip BootAudio;
+
         public void OnSceneLoad(SceneBinding inScene, object inContext)
         {
             int buildIdx = SceneHelper.ActiveScene().BuildIndex + 1;
