@@ -105,6 +105,7 @@ namespace Aqua.StationInterior
         }
 
         private IEnumerator AnimateSharedOff() {
+            yield return 0.1f;
             yield return Routine.Combine(
                 m_BackButtonGroup.Hide(m_SharedOffAnim.Time),
                 m_CurrencyUI.AnchorPosTo(m_CurrencyOffscreenPos, m_SharedOffAnim, Axis.Y)

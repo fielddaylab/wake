@@ -152,9 +152,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63a8cc9003b5504dbb86e6318d93ea8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Mode: 0
   Target: {fileID: 1467070698}
   Height: 32.6
   Zoom: 1
+  FieldOfView: 30
   Properties: 15
 --- !u!4 &100272172
 Transform:
@@ -5246,10 +5248,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DefaultNode: {fileID: 405092932}
+  Drift: {fileID: 0}
   m_AllNodes: []
   m_AllLinks: []
   m_DefaultTransition:
-    Time: 0.5
+    Time: 0.8
     Curve: 1
 --- !u!1 &405092930
 GameObject:
@@ -5301,6 +5304,7 @@ MonoBehaviour:
     m_Source: Base
     m_HashValue: 2763795448
   Camera: {fileID: 100272171}
+  CameraDriftScale: 1
   Group:
     GameObjects: []
     Behaviours: []
@@ -10368,9 +10372,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63a8cc9003b5504dbb86e6318d93ea8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Mode: 0
   Target: {fileID: 298861529}
   Height: 12
   Zoom: 1
+  FieldOfView: 30
   Properties: 15
 --- !u!1001 &611702065
 PrefabInstance:
@@ -10758,6 +10764,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Distance: {x: 0.12, y: 0.16}
   Period: {x: 12, y: 10.7}
+  Scale: 1
 --- !u!114 &722065696
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10840,6 +10847,7 @@ MonoBehaviour:
     m_Source: Desk
     m_HashValue: 4058162136
   Camera: {fileID: 572740490}
+  CameraDriftScale: 1
   Group:
     GameObjects: []
     Behaviours: []
@@ -15942,6 +15950,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EventId: Helm.Ambience
+  m_CrossfadeDuration: 0
 --- !u!114 &1146493866
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15998,6 +16007,7 @@ MonoBehaviour:
   m_EventId: ShipBGM
   m_Crossfade: 0.5
   m_StopOnDisable: 0
+  m_PlayOnLoad: 1
 --- !u!1 &1151386715
 GameObject:
   m_ObjectHideFlags: 0
@@ -16577,7 +16587,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Node: {fileID: 740321087}
   Transition:
-    Time: 0.5
+    Time: 0.8
     Curve: 1
   TransitionControlPoint: {fileID: 0}
   Group:

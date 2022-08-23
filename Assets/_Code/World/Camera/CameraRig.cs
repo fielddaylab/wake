@@ -97,6 +97,10 @@ namespace Aqua.Cameras
         {
             InitialTarget = null;
 
+            if (transform != RootTransform) {
+                transform.SetPosition(default(Vector3), Axis.XY, Space.Self);
+            }
+            
             EffectsTransform.SetPosition(default(Vector3), Axis.XY, Space.Self);
             
             var potentialTargets = FindObjectsOfType<CameraTarget>();

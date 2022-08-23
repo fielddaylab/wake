@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Aqua;
+using Aqua.Cameras;
 using BeauData;
 using BeauPools;
 using BeauRoutine;
@@ -40,6 +41,10 @@ namespace Aqua.JobBoard {
         [SerializeField] private TweenSettings m_TweenOffAnim = new TweenSettings(0.2f);
         [SerializeField] private float m_OffscreenPos = 0;
         [SerializeField] private float m_OnscreenPos = 0;
+
+        [Header("Camera")]
+        [SerializeField, InstanceOnly] private CameraPose m_DefaultPose = null;
+        [SerializeField, InstanceOnly] private CameraPose m_ZoomedPose = null;
 
         #endregion
 
@@ -263,6 +268,18 @@ namespace Aqua.JobBoard {
 
         #endregion // Job Buttons
 
+        #region Camera
+
+        private void MoveCameraToZoom() {
+            Services.Camera.MoveToPose(m_ZoomedPose, 0.5f, Curve.Smooth, Cameras.CameraPoseProperties.All);
+        }
+
+        private void MoveCameraToDefault() {
+            Services.Camera.MoveToPose(m_DefaultPose, 0.5f, Curve.Smooth, Cameras.CameraPoseProperties.All);
+        }
+
+        #endregion // Camera
+
         #region BasePanel
 
         protected override void OnShow(bool inbInstant) {
@@ -276,8 +293,8 @@ namespace Aqua.JobBoard {
             m_Info.Clear();
         }
 
-        protected override void OnHideComplete(bool _) {
-            base.OnHideComplete(_);
+        protected override void OnHideComplete(bool instant) {
+            base.OnHideComplete(instant);
 
             m_ButtonPool.Reset();
             m_HeaderPool.Reset();
@@ -297,13 +314,17 @@ namespace Aqua.JobBoard {
         }
 
         protected override IEnumerator TransitionToHide() {
-            yield return Root.AnchorPosTo(m_OffscreenPos, m_TweenOffAnim, Axis.Y);
+            yield return Routine.Combine(
+                Root.AnchorPosTo(m_OffscreenPos, m_TweenOffAnim, Axis.Y),
+                Routine.Delay(MoveCameraToDefault, m_TweenOffAnim.Time * 0.8f)
+            );
             CanvasGroup.Hide();
         }
 
         protected override IEnumerator TransitionToShow() {
             CanvasGroup.Show();
-            yield return Root.AnchorPosTo(m_OnscreenPos, m_TweenOnAnim, Axis.Y);
+            MoveCameraToZoom();
+            yield return Root.AnchorPosTo(m_OnscreenPos, m_TweenOnAnim, Axis.Y).DelayBy(0.2f);
         }
 
         #endregion // BasePanel

@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EventId: StationInterior.Ambience
+  m_CrossfadeDuration: 0
 --- !u!1 &1082751610912211348
 GameObject:
   m_ObjectHideFlags: 0
@@ -87,9 +88,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63a8cc9003b5504dbb86e6318d93ea8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Mode: 0
   Target: {fileID: 3916872537910687531}
   Height: 10
   Zoom: 1
+  FieldOfView: 30
   Properties: 15
 --- !u!1 &1619849408465508403
 GameObject:
@@ -487,6 +490,55 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 19.478266, y: 7.941598, z: 1.0000001}
   m_Center: {x: -0.5952921, y: 1.4707984, z: 0.0000012374669}
+--- !u!1 &2294789100984404396
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1516433482522371403}
+  - component: {fileID: 1231648899777763777}
+  m_Layer: 0
+  m_Name: JobPoseZoom
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1516433482522371403
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2294789100984404396}
+  m_LocalRotation: {x: -0.0000000037252903, y: 0.327153, z: -0.017145328, w: 0.9448159}
+  m_LocalPosition: {x: -26.369999, y: 0.7511487, z: 6.6898556}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5490044790406382887}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0.643, y: 38.188004, z: -1.8570001}
+--- !u!114 &1231648899777763777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2294789100984404396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f63a8cc9003b5504dbb86e6318d93ea8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Mode: 0
+  Target: {fileID: 5490044791353971447}
+  Height: 14
+  Zoom: 2
+  FieldOfView: 30
+  Properties: 31
 --- !u!1 &4990400950099867993
 GameObject:
   m_ObjectHideFlags: 0
@@ -643,9 +695,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63a8cc9003b5504dbb86e6318d93ea8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Mode: 0
   Target: {fileID: 5490044790493114008}
   Height: 25
   Zoom: 1
+  FieldOfView: 30
   Properties: 15
 --- !u!1 &5490044789823116355
 GameObject:
@@ -705,6 +759,7 @@ MonoBehaviour:
     m_Source: Shop
     m_HashValue: 678702281
   Camera: {fileID: 5490044790005167293}
+  CameraDriftScale: 1
   Group:
     GameObjects: []
     Behaviours: []
@@ -847,9 +902,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63a8cc9003b5504dbb86e6318d93ea8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Mode: 0
   Target: {fileID: 5490044790916907926}
   Height: 20
   Zoom: 1
+  FieldOfView: 30
   Properties: 15
 --- !u!1 &5490044790191985091
 GameObject:
@@ -894,9 +951,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63a8cc9003b5504dbb86e6318d93ea8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Mode: 0
   Target: {fileID: 5490044791353971447}
   Height: 14
   Zoom: 1
+  FieldOfView: 30
   Properties: 15
 --- !u!1 &5490044790406382936
 GameObject:
@@ -931,6 +990,7 @@ Transform:
   - {fileID: 2294403157738865871}
   - {fileID: 5490044790191985090}
   - {fileID: 5490044791353971447}
+  - {fileID: 1516433482522371403}
   m_Father: {fileID: 5490044790553121596}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 3.0000002, y: 0, z: 0}
@@ -950,6 +1010,7 @@ MonoBehaviour:
     m_Source: JobGiver
     m_HashValue: 1388761341
   Camera: {fileID: 5490044790191985089}
+  CameraDriftScale: 1
   Group:
     GameObjects: []
     Behaviours: []
@@ -1075,6 +1136,7 @@ MonoBehaviour:
     m_Source: Station
     m_HashValue: 3749812915
   Camera: {fileID: 5490044789545889929}
+  CameraDriftScale: 1
   Group:
     GameObjects:
     - {fileID: 5531893163476065654}
@@ -1282,6 +1344,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DefaultNode: {fileID: 5490044790534042012}
+  Drift: {fileID: 0}
   m_AllNodes: []
   m_AllLinks: []
   m_DefaultTransition:
@@ -1753,7 +1816,7 @@ PrefabInstance:
     - target: {fileID: 2229816169111045380, guid: 9948b6c241b51814db59656c4147d8f0,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 2229816169111045380, guid: 9948b6c241b51814db59656c4147d8f0,
         type: 3}
@@ -2273,7 +2336,7 @@ PrefabInstance:
     - target: {fileID: 588985989030871623, guid: fc882f508aae0704b868a274110d4bc1,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 588985989030871623, guid: fc882f508aae0704b868a274110d4bc1,
         type: 3}
@@ -2283,7 +2346,7 @@ PrefabInstance:
     - target: {fileID: 588985989030871623, guid: fc882f508aae0704b868a274110d4bc1,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 216
       objectReference: {fileID: 0}
     - target: {fileID: 588985989030871623, guid: fc882f508aae0704b868a274110d4bc1,
         type: 3}
@@ -2640,6 +2703,16 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2367973821132464674, guid: fc882f508aae0704b868a274110d4bc1,
+        type: 3}
+      propertyPath: m_ZoomedPose
+      value: 
+      objectReference: {fileID: 1231648899777763777}
+    - target: {fileID: 2367973821132464674, guid: fc882f508aae0704b868a274110d4bc1,
+        type: 3}
+      propertyPath: m_DefaultPose
+      value: 
+      objectReference: {fileID: 5490044790191985089}
     - target: {fileID: 2426829990380450765, guid: fc882f508aae0704b868a274110d4bc1,
         type: 3}
       propertyPath: m_AnchorMax.y
