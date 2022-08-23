@@ -11,14 +11,14 @@
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Helm", !jobs:coral-turtle-population.got.pop
+@when 		scene:name == "Helm", !JobTaskCompleted(countTurtle)
 @cutscene
 {@player}   Where should I go from here?
 {@guide}	Let's exit the ship and head to the sub.
 					
 :: helpGoToSiteV
 @trigger    RequestPartnerHelp
-@when 		scene:name == "CoralStation", !jobs:coral-turtle-population.got.pop
+@when 		scene:name == "CoralStation", !JobTaskCompleted(countTurtle)
 @cutscene
 {@player}   I think I'm lost?
 {@guide}	{h}Site V{/h} should be just East of the ship.
@@ -28,22 +28,7 @@
 @when       scene:name == "RS-2V"
 @once
 @cutscene
-$set    	jobs:coral-turtle-population.seen.bottom = true
 {@guide}   Let's look around for that Loggerhead Turtle.
-// $branch common.ringPhone
-// $if !HasUpgrade(ROVTagger)
-// 	{@profCoral} Once you've scanned a turtle, I'll need you to start counting how many are here.
-// 	$call GiveUpgrade(ROVTagger)
-// 	{@profCoral} You should see the {nameof ROVTagger} at the top of your view.  
-// 	{@profCoral} If you switch it on and move close to a scanned species, the {nameof ROVTagger} will {h}count{/h} it.
-// 	{@profCoral} Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
-// 	{@guide} That's really convenient.
-// 	$set    jobs:common-dive.seen.tagger-intro = true
-// $endif
-
-//:: countTurtles
-//@trigger JobTasksUpdated
-//@when    HasEntity(LoggerheadTurtle), !HasFact(ReefEdge.Population.LoggerheadTurtle)
 
 :: helpAtSiteR
 @trigger    RequestPartnerHelp
@@ -71,7 +56,7 @@ $set jobs:coral-turtle-population.got.pop = true
 
 :: navigation.return
 @trigger    SceneStart
-@when       scene:name == "CoralStation", jobs:coral-turtle-population.seen.bottom, !jobs:coral-turtle-population.got.pop
+@when       scene:name == "CoralStation", JobTaskTop(countTurtle)
 @once
 @cutscene
 {@guide}   Looks like you didn't get a representative count of the Turtles.
@@ -79,13 +64,13 @@ $set jobs:coral-turtle-population.got.pop = true
 
 :: navigation.return.again
 @trigger    SceneStart
-@when       scene:name == "CoralStation", jobs:coral-turtle-population.seen.bottom, Seen(job.coral-stressed.navigation.return), !jobs:coral-turtle-population.got.pop
+@when       scene:name == "CoralStation", JobTaskTop(countTurtle), Seen(job.coral-stressed.navigation.return)
 @cutscene
 {@guide}   	We still don't have a representative Count of Loggerhead Turtles at {h}Site V{/h}...
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "CoralStation", jobs:coral-turtle-population.got.pop
+@when 		scene:name == "CoralStation", JobTaskCompleted(countTurtle)
 @cutscene
 {@player} 	Where should we go from here?
 {@guide}	Let's head West and return to the ship.
@@ -93,7 +78,7 @@ $set jobs:coral-turtle-population.got.pop = true
 
 :: atShip
 @trigger    SceneStart
-@when       scene:name == "Helm", jobs:coral-turtle-population.got.pop
+@when       scene:name == "Helm", JobTaskCompleted(countTurtle)
 @once
 @cutscene
 {@player}   We're back. Now what?
@@ -102,7 +87,7 @@ $set jobs:coral-turtle-population.got.pop = true
 
 :: helpBackAtShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Helm", jobs:coral-turtle-population.got.pop
+@when 		scene:name == "Helm", JobTaskCompleted(countTurtle)
 @cutscene
 {@player} 	We're back at the ship, but what should we be doing now?
 {@guide}	Let's get back to the {nameof RS-Coral} and report our findings to {nameof @profCoral}.
@@ -116,9 +101,9 @@ $set jobs:coral-turtle-population.got.pop = true
 @cutscene
 {@guide}    Look for a turtle and scan it.
 
-:: catchTurtleModel
+:: catchCountTurtle
 @trigger    RequestPartnerHelp
-@when 		JobTaskActive(turtleModel)
+@when 		JobTaskActive(countTurtle)
 @boostScore -5
 @cutscene
 {@guide}    Count the turtle population at the Reef Edge.
