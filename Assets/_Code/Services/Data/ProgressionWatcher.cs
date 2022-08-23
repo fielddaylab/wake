@@ -245,12 +245,12 @@ namespace Aqua
             
             m_LoadedActId = (int) inAct;
             
-            if (m_ActScript)
+            if (!m_ActScript.IsReferenceNull())
                 Services.Script.UnloadScript(m_ActScript);
             
             m_ActScript = Assets.Act(inAct)?.Scripting();
             
-            if (m_ActScript)
+            if (!m_ActScript.IsReferenceNull())
                 Services.Script.LoadScriptNow(m_ActScript);
         }
 
@@ -261,14 +261,14 @@ namespace Aqua
             
             m_LoadedJobId = inJob;
 
-            if (m_JobScript)
+            if (!m_JobScript.IsReferenceNull())
                 Services.Script.UnloadScript(m_JobScript);
 
             JobDesc job = Assets.Job(inJob);
 
             m_JobScript = job?.Scripting();
             
-            if (m_JobScript)
+            if (!m_JobScript.IsReferenceNull())
                 Services.Script.LoadScriptNow(m_JobScript);
         }
 
