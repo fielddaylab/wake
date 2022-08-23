@@ -236,6 +236,9 @@ namespace Aqua.Cameras
                 m_Rig.EffectsTransform.SetPosition(offset, Axis.XY, Space.Self);
             } else {
                 m_Shakes.Clear();
+                if (!m_Rig.IsReferenceNull()) {
+                    m_Rig.EffectsTransform.SetPosition(default(Vector2), Axis.XY, Space.Self);
+                }
             }
 
             UpdateCachedPlanes();

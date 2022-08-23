@@ -16,6 +16,7 @@ namespace Aqua
 
         static public readonly StringHash32 ProfileAutosaveHint = "profile:autosave-hint"; // AutoSave.Mode mode
         static public readonly StringHash32 ProfileAutosaveSuppress = "profile:autosave-suppress"; // no args
+        static public readonly StringHash32 ProfileSpawnLocationUpdate = "profile:spawn-location-update"; // StringHash32 location
 
         static public readonly StringHash32 OptionsUpdated = "profile:options-updated"; // OptionsData options
 
