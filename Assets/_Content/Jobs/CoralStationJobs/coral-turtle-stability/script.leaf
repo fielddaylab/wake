@@ -7,7 +7,6 @@
 {@profCoral}	We need to know why the turtles are doing so well here.
 				I need you to scan all the species at the reef edge, 
 				then run some experiments to see what the turtles eat.
-$set jobs:turtle-stability-visual-model.saved = false
 
 // SCAN ALL
 :: helpLeaveShip
@@ -19,47 +18,36 @@ $set jobs:turtle-stability-visual-model.saved = false
 
 :: helpGoToSiteR
 @trigger    RequestPartnerHelp
-@when 		scene:name == "CoralStation", !jobs:coral-turtle-stability.got.scans
+@when 		scene:name == "CoralStation", !JobTaskCompleted(scanAll)
 @cutscene
 {@player}   Where should we go next?
 {@guide}	Site V should be to the East of the ship, let's head over and dive down!
-
-:: diveSite
-@trigger    SceneStart
-@when       scene:name == "RS-2V"
-@once
-// @cutscene
-$set    	jobs:coral-turtle-stability.seen.bottom = true
-// {@guide}   Looks like we made it! Time to see what species we can find here.
 
 :: helpAtSiteR
 @trigger    RequestPartnerHelp
 @when 		scene:name == "RS-2V"
 @cutscene
 {@player}   What do you think? Have we got everything?
-$if HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity(StaghornCoral),  HasEntity(LoggerheadTurtle) 
-	$set    jobs:coral-turtle-stability.got.scans = true
+$if JobTaskCompleted(scanAll)
 	{@guide}   I think so! Head back up to the surface when you're ready to leave.
 $else
 	{@guide}   Make sure to get all those little things swimming around in the cloudy spots, and the coral too.
 $endif
 
 :: navigation.goBackUp
-@trigger    JobTasksUpdated
-@when       JobTaskTop(behavior), HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity(StaghornCoral), HasEntity(LoggerheadTurtle)
+@trigger    JobTaskCompleted
+@when       scene:name == "RS-2V", taskId == "scanAll"
 @once
 @cutscene
-$set jobs:coral-turtle-stability.gotScans = true
 {@guide}    I think that's all the info we need from here for now! Feel free to head back up when you're ready.
 
 :: navigation.return
 @trigger    SceneStart
-@when       scene:name == "CoralStation", jobs:coral-turtle-stability.seen.bottom, jobs:coral-turtle-stability.got.scans == false
+@when       scene:name == "CoralStation", HasEntity(ReefEdge)
 @cutscene
 {@player}   Hmm, do you think we got everything?
 {@guide}   Let me check...
-$if HasEntity(Copepod), HasEntity(QueenConch), HasEntity(WhiteShrimp), HasEntity(StaghornCoral), HasEntity(LoggerheadTurtle)
-	$set    jobs:coral-turtle-stability.got.scans = true
+$if JobTaskCompleted(scanAll)
 	{@guide}   Yup! That's everything we needed, time to head back to the ship. 
 $else
 	{@guide}   Hmm... I think there's more we need to find. Let's head back down.
@@ -68,25 +56,14 @@ $endif
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "CoralStation", jobs:coral-turtle-stability.got.scans
+@when 		scene:name == "CoralStation", JobTaskCompleted(scanAll)
 @cutscene
 {@player} 	Where should we go from here?
 {@guide}	Let's head back into the ship.
 
-// BEHAVIOR
-// :: atShip
-// @trigger    SceneStart
-// @when       scene:name == "Ship", jobs:coral-turtle-stability.got.scans == true
-// @once
-// @cutscene
-// {@player}   We're back. Now what?
-// {@guide}   	Let's head to the {nameof Experimentation} and see what the turtles eat.
-// {@player}   On it!
-
 :: atShip
 @trigger    SceneStart
-@when       scene:name == "Helm", jobs:coral-turtle-stability.got.scans == true
-@once
+@when       scene:name == "Helm", JobTaskCompleted(scanAll)
 @cutscene
 {@player}   We're back. Now what?
 {@guide}   	Let's head to the {nameof Experimentation} and see what the turtles eat.
@@ -94,14 +71,14 @@ $endif
 
 :: helpBackAtShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Helm", jobs:coral-turtle-stability.got.scans == true
+@when 		scene:name == "Helm", JobTaskCompleted(scanAll)
 @cutscene
 {@player} 	We're back at the ship, but what should we be doing now?
 {@guide}	Let's head over to the {nameof Experimentation} and see what the turtles eat.
 
 :: startExperiment
 @trigger    SceneStart
-@when       scene:name == "ExperimentV2", jobs:coral-turtle-stability.got.scans == true
+@when       scene:name == "ExperimentV2", JobTaskCompleted(scanAll)
 @once
 @cutscene
 {@player}   What kind of experiment should we be doing this time?
@@ -109,7 +86,7 @@ $endif
 
 ::helpDoExperiment
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ExperimentV2", jobs:coral-turtle-stability.got.scans == true
+@when 		scene:name == "ExperimentV2", JobTaskCompleted(scanAll)
 @cutscene
 {@player} 	What kind of experiment should we be doing this time?
 $if ExperimentIsRunning(Observation)
@@ -161,12 +138,7 @@ $endif
 @cutscene
 {@guide}   Nice work! I think we know all the facts about what Turtles eat.
 {@profCoral}	Oh, are you ready to make the model?
-$if !RoomUnlocked("ModelingFoyer")
-    {@profCoral}	I've unlocked a new room on your Helm, {map-name}the Modeling Lab{/map-name}.
-    $call UnlockRoom("ModelingFoyer")
-    $call UnlockRoom("Modeling")
-$endif
-{@profCoral}	Use the {map-name}Modeling Lab{/map-name} to visualize {h}site V{/h}'s food web.
+{@profCoral}	Head the {map-name}Modeling Lab{/map-name} to visualize {h}site V{/h}'s food web.
 
 // TURTLE MODEL
 
@@ -179,7 +151,7 @@ $endif
 
 :: modelingStart
 @trigger	VisualModelStarted
-@when		!jobs:turtle-stability-visual-model.saved
+@when		!JobTaskCompleted(turtleModel)
 @cutscene
 {@guide}	So this is the {nameof VisualModel}.
 {@guide}	From here you'll import any new facts you have about the ecosystem.
@@ -195,7 +167,6 @@ $endif
 @cutscene
 {@guide}	Huh, turns out turtles eat a lot of things.
 {@guide}	Let's bring our model back to the {map-name}research station{/map-name}.
-$set jobs:turtle-stability-visual-model.saved = true
 
 // report back
 				

@@ -28,13 +28,11 @@ $endif
 
 :: enterAndScannedSargassum
 @trigger    SceneStart
-@when       scene:name = "RS-2R", HasEntity(Sargassum), !HasUpgrade(ProbeHacker)
+@when       scene:name = "RS-2R", HasEntity(Sargassum)
 @cutscene
 @once
 {@player} OK, I've already got the Sargassum, but how do we get the population history?
-{@profCoral} 	Look around for a Population Probe.  You'll need this to download the data.
-$call GiveUpgrade(ProbeHacker)
-{@player} 		Thanks!
+{@profCoral} 	Look around for a Population Probe.
 
 :: scannedSargassum
 @trigger    JobTasksUpdated
@@ -42,9 +40,7 @@ $call GiveUpgrade(ProbeHacker)
 @once
 @cutscene
 {@player} OK, I can see the Sargassum, but how do we get the population history?
-{@profCoral} 	Look around for a Population Probe.  You'll need this to download the data.
-$call GiveUpgrade(ProbeHacker)
-{@player} 		Thanks!
+{@profCoral} 	Look around for a Population Probe.
 
 :: helpScanProbe
 @trigger    RequestPartnerHelp
@@ -102,12 +98,7 @@ $if HasUpgrade(MeasurementTank)
 	{@guide}  	We want to know if Sargassum really does lower light, so I think a measurement tank is our best bet!
 $else
 	{@profCoral} Hmmmm... You need to measure effects of Sargassum. Your tanks can't do that. 
-	//{@profCoral} I don't have any spares. Maybe check with my colleagues at other stations.
-	// TODO: When the bayou is ready, restore to the above ^^
-	{@profCoral} I happen to have a spare measurement tank.  Here you go!
-	$call GiveUpgrade(MeasurementTank)
-	$call GiveUpgrade(WaterStabilizer)
-	{@profCoral} Why don't you focus on the Measurement Tank and I'll show you how it works.
+				I don't have any spares. Maybe check with my colleagues at other stations.
 $endif
 
 ::measurementTankSelectWater
