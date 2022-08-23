@@ -160,6 +160,8 @@ namespace Aqua.Scripting
 
             if (inOperation == HotReloadOperation.Modified)
             {
+                m_Source = inAsset;
+                
                 var self = this;
                 BlockParser.Parse(ref self, CharStreamParams.FromBytes(inAsset.Bytes(), m_Name), Parsing.Block, Generator.Instance);
 
@@ -185,6 +187,18 @@ namespace Aqua.Scripting
         }
 
         #endregion // Reload
+
+        public string DebugName()
+        {
+            #if UNITY_EDITOR
+            if (m_Source != null)
+            {
+                return UnityEditor.AssetDatabase.GetAssetPath(m_Source);
+            }
+            #endif
+
+            return Name();
+        }
 
         #region Generator
 
