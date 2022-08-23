@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Aqua.Scripting;
 using BeauPools;
+using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Services;
 using Leaf;
@@ -81,7 +82,10 @@ namespace Aqua
         {
             var table = TempVarTable.Alloc();
             table.Set("jobId", inJobId);
-            Services.Script.QueueTriggerResponse(GameTriggers.JobStarted, 600, table);
+            Services.Script.QueueTriggerResponse(GameTriggers.JobStarted, 600, table, null, out Future<ScriptThreadHandle> thread);
+            thread.OnComplete((c) => {
+                Services.Script.CancelQueuedTriggerResponse(GameTriggers.JobSwitched);
+            });
         }
 
         private void OnJobSwitched(StringHash32 inJobId)

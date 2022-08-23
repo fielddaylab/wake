@@ -1,5 +1,7 @@
 # basePath RS-4Y
 
+// engine check
+
 :: enableTrigger
 @trigger    SceneStart
 @when       !HasUpgrade("Engine"), scene:lastEntrance == "RS-4X"
@@ -43,3 +45,63 @@ $else
 $endif
 $set jobs:arctic-whalefall.num-attempts + 1
 $set jobs:arctic-whalefall.new-attempt = false
+
+// icebreaker check
+
+#const UpperBlockerGroup = "UpperBlocker"
+#const UpperBlockerCount = 5
+#const LowerBlockerGroup = "LowerBlocker"
+#const LowerBlockerCount = 3
+
+:: lowerBlockerFirst
+@trigger    PlayerExitRegion
+@when       regionId == "UnderIceBlocker", GroupCount($LowerBlockerGroup) == $LowerBlockerCount, GroupCount($UpperBlockerGroup) == $UpperBlockerCount, !world:RS-4Y.observedIceCount
+@cutscene
+@once
+
+$set    world:RS-4Y.observedIceCount + 1
+
+{@guide}    That ice looks solid...
+            We won't be able to surface here without some kind of {h}tool{/h}.
+
+$if HasUpgrade("Icebreaker")
+    {@player}   Wait, didn't I buy an {nameof Icebreaker}?
+                I could use that here.
+$elseif player:shop.seen.Icebreaker
+    {@player}   Didn't one of the mechanics have an {nameof Icebreaker} for sale?
+$endif
+
+:: upperBlockerFirst
+@trigger    PlayerExitRegion
+@when       regionId == "AboveIceBlocker", GroupCount($LowerBlockerGroup) == $LowerBlockerCount, GroupCount($UpperBlockerGroup) == $UpperBlockerCount, !world:RS-4Y.observedIceCount
+@cutscene
+@once
+
+$set    world:RS-4Y.observedIceCount + 1
+
+{@guide}    That ice isn't going anywhere...
+            We won't be able to dive further down without some kind of {h}tool{/h}.
+
+$if HasUpgrade("Icebreaker")
+    {@player}   Wait, didn't I buy an {nameof Icebreaker}?
+                I could use that here.
+$elseif player:shop.seen.Icebreaker
+    {@player}   Didn't one of the mechanics have an {nameof Icebreaker} for sale?
+$endif
+
+:: iceRegionSetup
+@function   SceneStart
+$branch .checkIceRegions
+
+:: iceRegionCheckTrigger
+@function   ScriptObjectDestroyed
+$branch .checkIceRegions
+
+:: checkIceRegions
+$if GroupCount($LowerBlockerGroup) < $LowerBlockerCount
+    $call   UnderIceBlocker->Deactivate()
+$endif
+
+$if GroupCount($UpperBlockerGroup) < $UpperBlockerCount
+    $call   AboveIceBlocker->Deactivate()
+$endif

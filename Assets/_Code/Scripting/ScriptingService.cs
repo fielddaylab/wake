@@ -385,29 +385,85 @@ namespace Aqua
         /// <summary>
         /// Queues up a trigger response.
         /// </summary>
-        public void QueueTriggerResponse(StringHash32 inTriggerId, int inPriority = 0, TempVarTable inContextTable = default, Action inOnCompleted = null)
+        public uint QueueTriggerResponse(StringHash32 inTriggerId, int inPriority = 0, TempVarTable inContextTable = default, Action inOnCompleted = null)
         {
+            uint id = QueuedEvent.NextId();
             m_QueuedTriggers.PushBack(new QueuedEvent()
             {
-                Id = QueuedEvent.NextId(),
+                Id = id,
                 TriggerId = inTriggerId,
                 Priority = inPriority,
                 Vars = inContextTable,
                 OnComplete = inOnCompleted
             });
+            return id;
+        }
+
+        /// <summary>
+        /// Queues up a trigger response.
+        /// </summary>
+        public uint QueueTriggerResponse(StringHash32 inTriggerId, int inPriority, TempVarTable inContextTable, Action inOnCompleted, out Future<ScriptThreadHandle> outReturn)
+        {
+            uint id = QueuedEvent.NextId();
+            m_QueuedTriggers.PushBack(new QueuedEvent()
+            {
+                Id = id,
+                TriggerId = inTriggerId,
+                Priority = inPriority,
+                Vars = inContextTable,
+                OnComplete = inOnCompleted,
+                Return = outReturn = new Future<ScriptThreadHandle>()
+            });
+            return id;
         }
 
         /// <summary>
         /// Queues up an invocation.
         /// </summary>
-        public void QueueInvoke(Action inInvoke, int inPriority = 0)
+        public uint QueueInvoke(Action inInvoke, int inPriority = 0)
         {
+            uint id = QueuedEvent.NextId();
             m_QueuedTriggers.PushBack(new QueuedEvent()
             {
-                Id = QueuedEvent.NextId(),
+                Id = id,
                 OnStart = inInvoke,
                 Priority = inPriority,
             });
+            return id;
+        }
+
+        /// <summary>
+        /// Cancels a queued response or invoke.
+        /// </summary>
+        public bool CancelQueued(uint inId)
+        {
+            for(int i = 0; i < m_QueuedTriggers.Count; i++)
+            {
+                if (m_QueuedTriggers[i].Id == inId)
+                {
+                    m_QueuedTriggers.FastRemoveAt(i);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Cancels a queued response or invoke.
+        /// </summary>
+        public bool CancelQueuedTriggerResponse(StringHash32 inTriggerId)
+        {
+            for(int i = 0; i < m_QueuedTriggers.Count; i++)
+            {
+                if (m_QueuedTriggers[i].TriggerId == inTriggerId)
+                {
+                    m_QueuedTriggers.FastRemoveAt(i);
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void ProcessQueuedTriggers()
@@ -429,6 +485,7 @@ namespace Aqua
             while(m_QueuedTriggers.TryPopFront(out trigger))
             {
                 int expectedSize = m_QueuedTriggers.Count;
+
                 trigger.OnStart?.Invoke();
 
                 if (!trigger.TriggerId.IsEmpty)

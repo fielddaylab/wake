@@ -24,6 +24,7 @@ namespace Aqua.Scripting
         [SerializeField] private bool m_Persistent = true;
         [SerializeField] private ActiveGroup m_Reveal = null;
         [SerializeField, HideInInspector] private StringHash32 m_VarId;
+        [SerializeField, HideInInspector] private ScriptGroupId m_GroupId;
 
         #endregion // Inspector
 
@@ -65,6 +66,10 @@ namespace Aqua.Scripting
                 Script.WriteWorldVariable(m_VarId, true);
             }
 
+            if (m_GroupId) {
+                m_GroupId.enabled = false;
+            }
+
             IEnumerator custom = OnDestruct?.Invoke(this);
             if (custom != null) {
                 m_Routine.Replace(this, DestroyRoutine(custom)).Tick();
@@ -92,6 +97,7 @@ namespace Aqua.Scripting
         int IBaked.Order { get { return 0; } }
 
         bool IBaked.Bake(BakeFlags flags) {
+            m_GroupId = GetComponent<ScriptGroupId>();
             if (m_Persistent) {
                 return Ref.Replace(ref m_VarId, ScriptObject.MapPersistenceId(GetComponent<ScriptObject>(), "destroyed"));
             } else {
