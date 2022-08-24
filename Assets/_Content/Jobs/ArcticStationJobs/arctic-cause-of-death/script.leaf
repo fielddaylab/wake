@@ -7,16 +7,37 @@
 @cutscene
 {@guide}    We should check out both of {nameof @profArctic}'s theories, one by one, to see which is most plausible.
             Whether it was the water conditions or a lack of food, we'll need some more information.
-$if JobTaskCompleted(getPopulationData)
+$set jobs:arctic-cause-of-death.grantedEat = false
+$set jobs:arctic-cause-of-death.grantedStress = false
+$if JobTaskCompleted(getHistPopulationData), !jobs:arctic-cause-of-death.grantedEats
     {@profArctic}   We know for a fact that these whales eat both diatoms and ice algae.
     $call GiveFact(BowheadWhale.Eats.Diatoms)
     $call GiveFact(BowheadWhale.Eats.IceAlgae)
+    $set jobs:arctic-cause-of-death.grantedEat = true
 $endif
-$if JobTaskCompleted(getEnvironmentData)
+$if JobTaskCompleted(getEnvironmentData), !jobs:arctic-cause-of-death.grantedStress
     {@profArctic}    These should be the water conditions that stress the whales. You can compare this to the water conditions at {h}site W{/h}.
     $call GiveFact(BowheadWhale.Light.Stressed)
     $call GiveFact(BowheadWhale.PH.Stressed)
     $call GiveFact(BowheadWhale.Temperature.Stressed)
+    $set jobs:arctic-cause-of-death.grantedStress = true
+$endif
+
+:: switchToJob
+@trigger    JobSwitched
+@cutscene
+$if JobTaskCompleted(getHistPopulationData), !jobs:arctic-cause-of-death.grantedEats
+    {@profArctic}   Hey, welcome back to the job! I forgot to tell you last time, but we know for a fact that these whales eat both diatoms and ice algae.
+    $call GiveFact(BowheadWhale.Eats.Diatoms)
+    $call GiveFact(BowheadWhale.Eats.IceAlgae)
+    $set jobs:arctic-cause-of-death.grantedEat = true
+$endif
+$if JobTaskCompleted(getEnvironmentData), !jobs:arctic-cause-of-death.grantedStress
+    {@profArctic}    Since you got the water conditions at {h}site W{/h}, you can compare those with the water conditions that stress the whales.
+    $call GiveFact(BowheadWhale.Light.Stressed)
+    $call GiveFact(BowheadWhale.PH.Stressed)
+    $call GiveFact(BowheadWhale.Temperature.Stressed)
+    $set jobs:arctic-cause-of-death.grantedStress = true
 $endif
 
 ::helpLost
@@ -36,7 +57,7 @@ $endif
 
 ::helpScanProbP
 @trigger    RequestPartnerHelp
-@when   scene:name == "RS-4W", JobTaskTop(getPopulationData)
+@when   scene:name == "RS-4W", JobTaskTop(getHistPopulationData)
 @cutscene
 {@guide}    If Linda died of starvation, we'd better see if there was a decline in a food population that is just bouncing back.
             I'm not sure what whales eat, so we might just have to count everything.
@@ -56,6 +77,7 @@ $endif
 {@profArctic}    Sorry I caught you late, but we know for a fact that these whales eat both diatoms and ice algae.
 $call GiveFact(BowheadWhale.Eats.Diatoms)
 $call GiveFact(BowheadWhale.Eats.IceAlgae)
+$set jobs:arctic-cause-of-death.grantedEat = true
 
 ::giveWhaleStress
 @trigger    JobTasksUpdated
@@ -66,6 +88,7 @@ $call GiveFact(BowheadWhale.Eats.IceAlgae)
 $call GiveFact(BowheadWhale.Light.Stressed)
 $call GiveFact(BowheadWhale.PH.Stressed)
 $call GiveFact(BowheadWhale.Temperature.Stressed)
+$set jobs:arctic-cause-of-death.grantedStress = true
 
 // CATCH-ALL GUIDE TEXT
 
@@ -76,12 +99,19 @@ $call GiveFact(BowheadWhale.Temperature.Stressed)
 @cutscene
 {@guide}    Collect water chemistry data from a probe at Site W.
 
-:: catchGetPopulationData
+:: catchGetHistPopulationData
 @trigger    RequestPartnerHelp
-@when 		JobTaskActive(getPopulationData)
+@when 		JobTaskActive(getHistPopulationData)
 @boostScore -5
 @cutscene
-{@guide}    Collect population history data from a probe at Site W, then count the current populations of organisms at the site.
+{@guide}    Collect population history data from a probe at Site W.
+
+:: catchGetCurrPopulationData
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(getCurrPopulationData)
+@boostScore -5
+@cutscene
+{@guide}    Count the current populations of organisms at the site.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp

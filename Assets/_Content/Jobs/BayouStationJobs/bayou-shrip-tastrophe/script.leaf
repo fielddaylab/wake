@@ -4,14 +4,13 @@
 @trigger    JobStarted
 @cutscene
 
-$set jobs:bayou-shrimp-tastrophe.measuredOxygen = 0
 {@profBayou}	Those oxygen levels were perplexing.  I'm curious to see if they could be directly caused by the shrimp.
 {@player} 	I can take a look.
 $call GiveUpgrade(MeasurementTank)
 
 :: helpMeasureOxygen
 @trigger    RequestPartnerHelp
-@when 		jobs:bayou-shrimp-tastrophe.measuredOxygen == 0
+@when 		JobTaskTop(measureOxygen)
 @cutscene
 {@player} 	What am I looking for again?
 {@guide}	We're trying to see if the bad oxygen levels are directly caused by the shrimp.
@@ -21,12 +20,11 @@ $call GiveUpgrade(MeasurementTank)
 @trigger    JobTasksUpdated
 @once
 @cutscene
-$set jobs:bayou-shrimp-tastrophe.measuredOxygen = 1
 {@guide} Okay, I think that oxygen measurement is what we were looking for!  Let's forward that to {nameof @profBayou}.
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
-@when 		jobs:bayou-shrimp-tastrophe.measuredOxygen == 1
+@when 		JobTaskTop(reportBack)
 @cutscene
 {@player} 	Where am I headed again?
 {@guide}	We've collected the oxygen data we needed, and I think {nameof @profBayou} wants to see the results.

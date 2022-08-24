@@ -4,7 +4,6 @@
 @trigger    JobStarted
 @cutscene
 
-$set jobs:arctic-missing-whale.foundWhale = 0
 {@profArctic}	Some of our researchers down south have been tracking a certain pod of whales for some time now.
                 Recently however, one of our trackers went out, and we haven't been able to find them since.
                 The tracker was attached to one of the matriarchs of the pod we call "Linda".
@@ -14,6 +13,23 @@ $set jobs:arctic-missing-whale.foundWhale = 0
 {@player}   When then, I reckon we ought to saddle-up and mosey on over.
 {@guide}    Oh, brother...
 $call UnlockSite(RS-4W)
+
+$if JobTaskTop(reportBack), !jobs:arctic-missing-whale.triggeredSwitch
+    {@guide}    Wait... haven't we already found all of this? The whale, the tracker, the detritus...
+                Yeah, we have everything we need. Get {nameof @profArctic}'s attention again.
+    $set jobs:arctic-missing-whale.triggeredSwitch = true
+$endif
+
+:: switchToJob
+@trigger    JobSwitched
+@once
+@cutscene
+$if JobTaskTop(reportBack), !jobs:arctic-missing-whale.triggeredSwitch
+    Looking at this job again, it seems we've finished everything we needed to do.
+    Let's report back to {nameof @profArctic}.
+    $set jobs:arctic-missing-whale.triggeredSwitch = true
+$endif
+
 
 :: helpFindWhale
 @trigger    RequestPartnerHelp
@@ -60,10 +76,9 @@ $endif
 
 :: gotScans
 @trigger    JobTasksUpdated
+@when 		JobTaskTop(reportBack)
 @once
-@when 		HasEntity(WhaleTracker), HasEntity(Detritus), HasFact(W_WhaleFall.Population.Detritus) 
 @cutscene
-$set jobs:arctic-missing-whale.foundWhale = 1
 {@guide} Looks like we were able to find her...
          Let's head back and let {nameof @profArctic} know.
 

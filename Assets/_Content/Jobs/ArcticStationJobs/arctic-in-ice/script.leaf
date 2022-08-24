@@ -4,9 +4,17 @@
 :: start
 @trigger    JobStarted
 @cutscene
-
-{@guide}    Time to discover the inner motivations of {nameof ArcticCod}.
 $set jobs:arctic-in-ice.triedScan = false
+
+$if JobTaskTop(scanAlgae)
+    {@guide}    Time to discover the inner motivations of {nameof ArcticCod}.
+$elseif JobTaskTop(countAlgae)
+    {@guide}    Let's collect a population sample of {nameof ArcticCod} at the {m}Frosted Sea{/m}.
+$else
+    {@player}   {nameof @guide} pull all our data {h}critters near the ice shelf{/h}.
+    {@guide}    Certainly O! Already have a theory?    
+    {@player}   I think it could be one of the species we've already scanned near the shelf...
+$endif
 
 // SCANNING ICE ALGAE
 
@@ -101,7 +109,8 @@ $set jobs:arctic-in-ice.triedScan = true
 @when       JobTaskTop(countAlgae)
 @once
 @cutscene
-{@guide}    You know the drill, it'll be good to count them too.
+{@player}   {nameof IceAlgae}! That could be the answer we were looking for...
+{@guide}    Let us conduct some experiments to investigate further.
 
 :: countedAlgae
 @trigger    JobTasksUpdated
