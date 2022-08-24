@@ -39,7 +39,6 @@ $if !HasEntity(LoggerheadTurtle)
 	{@guide}   Have you Scanned a Turtle, yet? There should be some around here somewhere...
 $else
 	$if HasFact(ReefEdge.Population.LoggerheadTurtle)
-		$set    jobs:coral-turtle-population.got.pop = true
 		{@guide}   We've gotten everything we need from here, head back up to the surface when you're ready to leave.
 	$else
 	{@guide}   Switch to Count mode and try to get near all the Turtles you can!
@@ -51,7 +50,6 @@ $endif
 @when       HasFact(ReefEdge.Population.LoggerheadTurtle)
 @once
 @cutscene
-$set jobs:coral-turtle-population.got.pop = true
 {@guide}    Nice.  We got the estimated population of Turtles at {h}Site V{/h}.  Let's head back.
 
 :: navigation.return
@@ -73,7 +71,7 @@ $set jobs:coral-turtle-population.got.pop = true
 @when 		scene:name == "CoralStation", JobTaskCompleted(countTurtle)
 @cutscene
 {@player} 	Where should we go from here?
-{@guide}	Let's head West and return to the ship.
+{@guide}	Let's return to the ship.
 
 
 :: atShip

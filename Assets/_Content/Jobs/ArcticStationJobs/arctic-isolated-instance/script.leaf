@@ -24,11 +24,10 @@ $endif
 
 :: scansComplete
 @trigger	JobTaskCompleted
-@when		JobTaskTop(experimentPredatorZ)
+@when		taskId == "scanAll"
 @once
 @cutscene
-{@guide}	Okay, let's use the Observation Tank to see if any of the predators here at Site Z eat Glass Sponges.
-$set jobs:arctic-isolated-instance.stressTriggered = false
+{@guide}	Okay, let's use the Observation Tank to see if any of the predators from Site Z eat Glass Sponges.
 
 :: experimentCompleteZ
 @trigger	ExperimentFinished
@@ -43,23 +42,6 @@ $if !JobTaskCompleted(determineStress)
 $else
 	{@guide}	Let's check in with {nameof @profArctic}.
 $endif
-// if player has not already tested for Pteraster eating Sponges
-//$if !HasFact(PterasterObscurus.Eats.GlassSponge)
-
-//$else
-	// player has already tested for Pteraster eating Sponges
-	//{@guide}	Must be the {nameof PterasterObscurus} then.
-	//$branch .predatorComplete
-//$endif
-
-	// if player still needs to find the Pteraster
-	//$if !JobTaskCompleted(findPredator)
-		//{@guide}	Let's try scanning for predators at nearby sites.
-					//The most likely next site would be the Ice Crevice floor, maybe we should check there.
-	//$else
-		// player has already found Pteraster, just needs to find eat rule
-		//{@guide}	Next let's try dropping in possible predators from nearby sites, like Site X or Y.
-	//$endif
 
 
 :: predatorFound
@@ -102,82 +84,23 @@ $endif
 
 // STRESS THEORY
 
-:: stressDeterminedLightFinal
-@trigger	BestiaryFactAdded
-@when		factId == "GlassSponge.Light.Stressed", JobTaskTop(discussFindings), !jobs:arctic-isolated-instance.stressTriggered
-@once
-@cutscene
-$branch .stressDeterminedFinal
-
-:: stressDeterminedTempFinal
-@trigger	BestiaryFactAdded
-@when		factId == "GlassSponge.Temperature.Stressed", JobTaskTop(discussFindings), !jobs:arctic-isolated-instance.stressTriggered
-@once
-@cutscene
-$branch .stressDeterminedFinal
-
-:: stressDeterminedPHFinal
-@trigger	BestiaryFactAdded
-@when		factId == "GlassSponge.PH.Stressed", JobTaskTop(discussFindings), !jobs:arctic-isolated-instance.stressTriggered
-@once
-@cutscene
-$branch .stressDeterminedFinal
-
 :: stressDeterminedFinal
+@trigger	JobTaskCompleted
+@when		taskId == "determineStress", JobTaskTop(discussFindings)
+@once
+@cutscene
 {@guide}	Be sure to compare those stress results with the conditions at Site Z to see if they are relevant.
-			So now we've got our two theories. Should we see what {nameof profArctic} thinks about them?
-$set jobs:arctic-isolated-instance.stressTriggered = true
-			
-:: stressDeterminedLightFirst
-@trigger	BestiaryFactAdded
-@when		factId == "GlassSponge.Light.Stressed", !JobTaskTop(discussFindings), JobTaskCompleted(determineStress), !jobs:arctic-isolated-instance.stressTriggered
-@once
-@cutscene
-$branch .stressDeterminedFirst
-
-:: stressDeterminedTempFirst
-@trigger	BestiaryFactAdded
-@when		factId == "GlassSponge.Temperature.Stressed", !JobTaskTop(discussFindings), JobTaskCompleted(determineStress), !jobs:arctic-isolated-instance.stressTriggered
-@once
-@cutscene
-$branch .stressDeterminedFirst
-
-:: stressDeterminedPHFirst
-@trigger	BestiaryFactAdded
-@when		factId == "GlassSponge.PH.Stressed", !JobTaskTop(discussFindings), JobTaskCompleted(determineStress), !jobs:arctic-isolated-instance.stressTriggered
-@once
-@cutscene
-$branch .stressDeterminedFirst
+			So now we've got our two theories. Should we see what {nameof profArctic} thinks about them?	
 
 :: stressDeterminedFirst
+@trigger	JobTaskCompleted
+@when		taskId == "determineStress", !JobTaskTop(discussFindings)
+@once
+@cutscene
 {@guide}	Be sure to compare those stress results with the conditions at Site Z to see if they are relevant.
-//$if JobTaskCompleted(scanProbe)
-	{@guide}	So that's one piece. What was the other piece? Something could be eating the sponges, right? Let's look into that next.
-//$else
-	//{@guide}	At some point we'll need to scan Site Y's water chemistry probe.
-//$endif
-$set jobs:arctic-isolated-instance.stressTriggered = true
-
-:: stressScannedProbeFinal
-@trigger	BestiaryFactAdded
-@when		factId == "Z_OpenOcean.Light", JobTaskTop(discussFindings)
-@once
-@cutscene
-{@guide}	So now we've got our two theories. Should we see what {nameof profArctic} thinks about them?
-$set jobs:arctic-isolated-instance.stressTriggered = true
-
-:: stressScannedProbeFirst
-@trigger	BestiaryFactAdded
-@when		factId == "Z_OpenOcean.Light", !JobTaskTop(discussFindings)
-@once
-@cutscene
-{@guide}	Nice, we can compare this against the Glass Sponge stress levels.
-{@guide}	So that's one piece. What was the other piece? Something could be eating the sponges, right? Let's look into that next.
-$set jobs:arctic-isolated-instance.stressTriggered = true
-
+			So that's one piece. What was the other piece? Something could be eating the sponges, right? Let's look into that next.
 
 // Put Glass Sponge in tank with predators
-
 
 :: checkPredators
 @trigger	ExperimentStarted

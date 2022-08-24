@@ -4,9 +4,36 @@
 @trigger    JobStarted
 @cutscene
 
-{@profCoral}  According to the data collected by our reasearch probe, the {nameof BlueTang} seem to be more {!}stressed{/!} than in the model you submitted. We need collect more data to improve our model's accuracy.
-{@guide}        Well, the first thing we can do is see what stress ranges the {nameof BlueTang} can tolerate.
+{@profCoral} 	According to the data collected by our reasearch probe, the {nameof BlueTang} seem to be more {!}stressed{/!} than in the model you submitted.
+				We need collect more data to improve our model's accuracy.
+$set jobs:coral-tang-checkup.grantedData = false
+$if JobTaskCompleted(observeIck)
+	{@profCoral} We noticed that you previously measured the stress ranges of the Tang.
+				Since then, we have measured their eating and reproduction rates when stressed. I'll send the data over now.
+	$branch .grantStressedData
+$elseif JobTaskTop(findStress)
+	{@guide}    Well, the first thing we can do is see what stress ranges the {nameof BlueTang} can tolerate.
                 For that, we'll need to conduct some {map-name}Experiments{/map-name} with the {h}Stress Tank{/h}.
+$endif
+
+:: switchToJob
+@trigger    JobSwitched
+@when		JobTaskCompleted(countIck), !jobs:coral-tang-checkup.grantedData
+@cutscene
+$branch common.ringPhone
+{@profCoral}	Welcome back to the job! After you measured the stress ranges of the Tang, we measured their eating and reproduction rates when stressed. I'll send the data over now.
+$branch .grantStressedData
+
+:: grantStressedData
+$call UpgradeFact(Ick.Stresses.BlueTang)
+$call UpgradeFact(BlueTang.Eats.TurfAlgae.Stressed)
+$call UpgradeFact(BlueTang.Reproduce.Stressed)
+$call GiveFact(BlueTang.Eats.TurfAlgae.Stressed)
+$call GiveFact(BlueTang.Reproduce.Stressed)
+$call GiveFact(StaghornCoral.Reproduce)
+$call GiveFact(Ick.Reproduce)
+$set jobs:coral-tang-checkup.grantedData = true
+{@player} Well that's convenient!
 
 :: microHint
 @trigger	JobTasksUpdated
@@ -42,15 +69,8 @@ $branch common.ringPhone
 @cutscene
 {@guide}	Now that we know {nameof Ick} stresses {nameof BlueTang}, we can measure the reproduction and eating rates of the stressed Tang to improve our model.
 $branch common.ringPhone
-{@profCoral} Sorry to intrude, after you measured the stress ranges of the Tang we measured their eating and reproduction rates when stressed. I'll send the data over now.
-$call UpgradeFact(Ick.Stresses.BlueTang)
-$call UpgradeFact(BlueTang.Eats.TurfAlgae.Stressed)
-$call UpgradeFact(BlueTang.Reproduce.Stressed)
-$call GiveFact(BlueTang.Eats.TurfAlgae.Stressed)
-$call GiveFact(BlueTang.Reproduce.Stressed)
-$call GiveFact(StaghornCoral.Reproduce)
-$call GiveFact(Ick.Reproduce)
-{@player} Well that's convenient!
+{@profCoral} Sorry to intrude. After you measured the stress ranges of the Tang, we measured their eating and reproduction rates when stressed. I'll send the data over now.
+$branch .grantStressedData
 
 :: helpMeasure1
 @trigger    RequestPartnerHelp

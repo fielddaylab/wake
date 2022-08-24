@@ -3,17 +3,13 @@
 :: start
 @trigger JobStarted
 @cutscene
-
-$set jobs:bayou-oxygen-tracking.doneScanning = false
-$set jobs:bayou-oxygen-tracking.doneMeasuring = false
-$set jobs:bayou-oxygen-tracking.doneModeling = false
 {@profBayou} Hey, the shrimp situation in the deadzone is still looking pretty dire.
 {@profBayou} Do you think that any of your more recently discovered tools could help with that?
 {@player} Yeah, I think I might have an idea.  Let's head back to site P, V1ctor.
 
 :: helpGoToSite
 @trigger RequestPartnerHelp
-@when jobs:bayou-oxygen-tracking.doneScanning = false, scene:name != "RS-3P"
+@when   JobTaskTop(getScans), scene:name != "RS-3P"
 @cutscene
 
 {@player} Where are we headed again?
@@ -22,7 +18,7 @@ $set jobs:bayou-oxygen-tracking.doneModeling = false
 
 :: helpScanWithMicroscope
 @trigger RequestPartnerHelp
-@when jobs:bayou-oxygen-tracking.doneScanning = false, scene:name == "RS-3P"
+@when   JobTaskTop(getScans), scene:name == "RS-3P"
 @cutscene
 
 {@player} What exactly are we looking for here?
@@ -31,7 +27,7 @@ $set jobs:bayou-oxygen-tracking.doneModeling = false
 
 :: helpMeasureOxygen
 @trigger RequestPartnerHelp
-@when jobs:bayou-oxygen-tracking.doneScanning = true, jobs:bayou-oxygen-tracking.doneMeasuring = false
+@When   JobTaskTop(measureOxygenUsage)
 @cutscene
 
 $if global:nav.shipRoom == "experiment"
@@ -45,7 +41,7 @@ $endif
 
 :: helpGetToModel
 @trigger RequestPartnerHelp
-@when jobs:bayou-oxygen-tracking.doneMeasuring = true, jobs:bayou-oxygen-tracking.doneModeling = false, global:nav.shipRoom != "modeling"
+@when JobTaskTop(createModel), global:nav.shipRoom != "modeling"
 @cutscene
 
 {@player} What's next?
@@ -53,7 +49,7 @@ $endif
 
 :: helpModel1
 @trigger RequestPartnerHelp
-@when jobs:bayou-oxygen-tracking.doneMeasuring = true, jobs:bayou-oxygen-tracking.doneModeling = false, modeling:phase == "visual"
+@when   JobTaskTop(createModel), modeling:phase == "visual"
 @cutscene
 
 {@player} Wait, how do I get this started again?
@@ -61,7 +57,7 @@ $endif
 
 :: helpModel2
 @trigger RequestPartnerHelp
-@when jobs:bayou-oxygen-tracking.doneMeasuring = true, jobs:bayou-oxygen-tracking.doneModeling = false, modeling:phase == "model"
+@when   JobTaskTop(createModel), modeling:phase == "model"
 @cutscene
 
 {@player} So how do I get this bit going again?
@@ -70,7 +66,7 @@ $endif
 
 :: helpReportBack
 @trigger RequestPartnerHelp
-@when jobs:bayou-oxygen-tracking.doneModeling = true,
+@when JobTaskTop(reportBack)
 @cutscene
 
 {@player} OK, what now?
@@ -83,24 +79,3 @@ $endif
 {@guide} Great work! I'm glad we finally figured out the cause of that bad shrimp-tuation! Congratula-shrimp to us!
 {@player} Yeah!! ... Wait, what?
 {@guide} Yeah, that one might've been a bit of a stretch.
-
-:: taskUpdate1
-@trigger JobTasksUpdated
-@when jobs:bayou-oxygen-tracking.doneScanning == false
-@chatter
-
-$set jobs:bayou-oxygen-tracking.doneScanning = true
-
-:: taskUpdate2
-@trigger JobTasksUpdated
-@when jobs:bayou-oxygen-tracking.doneMeasuring == false, jobs:bayou-oxygen-tracking.doneScanning == true
-@chatter
-
-$set jobs:bayou-oxygen-tracking.doneMeasuring = true
-
-:: taskUpdate3
-@trigger JobTasksUpdated
-@when jobs:bayou-oxygen-tracking.doneModeling == false, jobs:bayou-oxygen-tracking.doneMeasuring == true, jobs:bayou-oxygen-tracking.doneScanning == true
-@chatter
-
-$set jobs:bayou-oxygen-tracking.doneModeling = true
