@@ -88,4 +88,61 @@ namespace Aqua
 
         #endif // UNITY_EDITOR
     }
+
+    #if UNITY_EDITOR
+    public class ReloadableAssetRef<T> where T : ScriptableObject
+    {
+        private T m_Asset;
+        private string m_EditorPath;
+
+        public ReloadableAssetRef(T asset)
+        {
+            m_Asset = asset;
+            m_EditorPath = asset ? UnityEditor.AssetDatabase.GetAssetPath(m_Asset) : null;
+        }
+
+        public ReloadableAssetRef()
+        {
+            m_Asset = null;
+            m_EditorPath = null;
+        }
+
+        public T Asset
+        {
+            get {
+                if (m_Asset.IsReferenceDestroyed())
+                {
+                    m_Asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(m_EditorPath);
+                }
+                return m_Asset;
+            }
+        }
+
+        static public implicit operator T(ReloadableAssetRef<T> assetRef)
+        {
+            return assetRef.Asset;
+        }
+    }
+    #else
+    public struct ReloadableAssetRef<T> where T : ScriptableObject
+    {
+        private T m_Asset;
+
+        public ReloadableAssetRef(T asset)
+        {
+            m_Asset = asset;
+        }
+
+        public T Asset
+        {
+            get { return m_Asset; }
+        }
+
+        static public implicit operator T(ReloadableAssetRef<T> assetRef)
+        {
+            return assetRef.m_Asset;
+        }
+    }
+    
+    #endif // UNITY_EDITOR
 }

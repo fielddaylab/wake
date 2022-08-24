@@ -55,7 +55,14 @@ namespace AquaAudio
             }
             else
             {
-                m_BGM = Services.Audio.SetMusic(m_EventId, m_Crossfade);
+                if (m_BGM.Exists())
+                {
+                    Services.Audio.SetMusic(m_BGM, m_Crossfade);
+                }
+                else
+                {
+                    m_BGM = Services.Audio.SetMusic(m_EventId, m_Crossfade);
+                }
             }
         }
 

@@ -16,6 +16,24 @@ namespace Aqua
 
         #endregion // Inspector
 
-        public LeafAsset Scripting() { return m_Scripting; }
+        public LeafAsset Scripting()
+        {
+            #if UNITY_EDITOR
+            return m_ScriptingRef;
+            #else
+            return m_Scripting;
+            #endif // UNITY_EDITOR
+        }
+
+        #if UNITY_EDITOR
+
+        [NonSerialized] private ReloadableAssetRef<LeafAsset> m_ScriptingRef = null;
+
+        internal void EditorInit()
+        {
+            m_ScriptingRef = new ReloadableAssetRef<LeafAsset>(m_Scripting);
+        }
+
+        #endif // UNITY_EDITOR
     }
 }

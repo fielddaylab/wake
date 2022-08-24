@@ -54,11 +54,11 @@ namespace Aqua
 
         private void ClearState()
         {
-            if (m_JobScript)
+            if (!m_JobScript.IsReferenceNull())
                 Services.Script?.UnloadScript(m_JobScript);
             m_JobScript = null;
 
-            if (m_ActScript)
+            if (!m_ActScript.IsReferenceNull())
                 Services.Script?.UnloadScript(m_ActScript);
             m_ActScript = null;
 

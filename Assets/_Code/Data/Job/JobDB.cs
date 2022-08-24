@@ -71,6 +71,12 @@ namespace Aqua {
             }
 
             bucket.Add(inItem);
+
+            #if UNITY_EDITOR
+
+            inItem.EditorInit();
+
+            #endif // UNITY_EDITOR
         }
 
         #if UNITY_EDITOR

@@ -76,6 +76,7 @@ namespace Aqua.JobBoard {
         private void OnButtonSelected(JobButton inJobButton) {
             m_SelectedJobButton = inJobButton;
             m_Info.Populate(inJobButton.Job, inJobButton.Status);
+            m_JobToggle.allowSwitchOff = false;
         }
 
         private void OnJobAction() {
@@ -285,6 +286,7 @@ namespace Aqua.JobBoard {
         protected override void OnShow(bool inbInstant) {
             base.OnShow(inbInstant);
 
+            m_JobToggle.allowSwitchOff = true;
             AllocateButtons();
             UpdateButtonStatuses();
             OrderButtons();

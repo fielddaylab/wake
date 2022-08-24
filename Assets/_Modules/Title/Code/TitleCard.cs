@@ -9,5 +9,6 @@ namespace Aqua.Title {
         public CanvasGroup Group;
         public TMP_Text Text;
         public StreamingUGUITexture Logo;
+        public TMP_Text Text2;
     }
 }

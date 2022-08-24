@@ -14,7 +14,6 @@ namespace Aqua {
 
         [NonSerialized] private Routine m_ActiveAnim;
         [NonSerialized] private Routine m_ClickAnim;
-        [NonSerialized] private bool m_Visible;
 
         private void Awake() {
             Button.onClick.AddListener(OnClick);
@@ -23,7 +22,6 @@ namespace Aqua {
         private void OnDisable() {
             m_ClickAnim.Stop();
             m_ActiveAnim.Stop();
-            m_Visible = false;
         }
 
         public void SetVisible(bool visible, bool instant) {
@@ -37,11 +35,9 @@ namespace Aqua {
             }
 
             if (visible) {
-                m_Visible = true;
                 Group.blocksRaycasts = false;
                 m_ActiveAnim.Replace(this, EnableAnim()).ExecuteWhileDisabled();
             } else {
-                m_Visible = false;
                 Group.blocksRaycasts = false;
                 m_ActiveAnim.Replace(this, DisableAnim()).ExecuteWhileDisabled();
             }
@@ -64,7 +60,6 @@ namespace Aqua {
 
         private void InstantHide() {
             Rect.SetAnchorPos(-100f * Direction, Axis.X);
-            m_Visible = false;
             Group.blocksRaycasts = false;
             gameObject.SetActive(false);
             m_ActiveAnim.Stop();
@@ -72,7 +67,6 @@ namespace Aqua {
 
         private void InstantShow() {
             Rect.SetAnchorPos(0, Axis.X);
-            m_Visible = true;
             Group.blocksRaycasts = true;
             gameObject.SetActive(true);
             m_ActiveAnim.Stop();

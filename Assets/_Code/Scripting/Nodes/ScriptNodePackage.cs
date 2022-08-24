@@ -160,10 +160,19 @@ namespace Aqua.Scripting
 
             if (inOperation == HotReloadOperation.Modified)
             {
+                #if UNITY_EDITOR
+                if (object.ReferenceEquals(inAsset, m_Source))
+                {
+                    string sourcePath = UnityEditor.AssetDatabase.GetAssetPath(m_Source);
+                    UnityEditor.AssetDatabase.ImportAsset(sourcePath);
+                    m_Source = UnityEditor.AssetDatabase.LoadAssetAtPath<LeafAsset>(sourcePath);
+                }
+                #else
                 m_Source = inAsset;
+                #endif // UNITY_EDITOR
                 
                 var self = this;
-                BlockParser.Parse(ref self, CharStreamParams.FromBytes(inAsset.Bytes(), m_Name), Parsing.Block, Generator.Instance);
+                BlockParser.Parse(ref self, CharStreamParams.FromBytes(m_Source.Bytes(), m_Name), Parsing.Block, Generator.Instance);
 
                 if (mgr != null)
                 {

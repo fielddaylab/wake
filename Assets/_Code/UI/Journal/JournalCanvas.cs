@@ -200,6 +200,8 @@ namespace Aqua {
             LoadPage(left, m_LeftPage);
             LoadPage(right, m_RightPage);
             m_LoadRoutine.Replace(this, LoadShowRoutine(newIdx));
+
+            Streaming.UnloadUnusedAsync(30);
         }
 
         private void LoadPage(JournalDesc entry, JournalPageGroup page) {

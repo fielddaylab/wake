@@ -105,15 +105,14 @@ namespace Aqua.Title
             PlayWhaleSound();
             yield return CameraSweepPhase(0, 2, 1, null);
             yield return CameraSweepPhase(1, 4, 2, () => PlayWhaleSound());
-            
             Routine.Start(this, WhaleNoises());
-            yield return CameraSweepPhase(2, 0, 1.5f, () => m_TitleBGM.Play());
-
+            m_TitleBGM.Play();
+            
             m_CurrentFader.Object.Hide(0.3f, false);
             Services.Input.PauseAll();
 
             yield return Routine.Combine(
-                CameraTransition(m_Config.IntroPosePairs[6], m_Config.IntroPosePairs[7], 5, Curve.QuadOut),
+                CameraTransition(m_Config.IntroPosePairs[4], m_Config.IntroPosePairs[5], 5, Curve.QuadOut),
                 Tween.Float(m_Config.Drift.Scale, 1, (f) => {
                     m_Config.Drift.Scale = f;
                     m_Config.Drift.PushChanges();
@@ -159,7 +158,7 @@ namespace Aqua.Title
 
         private IEnumerator CameraSweepPhase(int phaseIdx, float whaleTime, float cardUpDuration, Action onCardShow) {
             float cameraSweepDuration;
-            IEnumerator cameraSweep = CameraSweep(m_Config.IntroPosePairs[phaseIdx * 2], m_Config.IntroPosePairs[phaseIdx * 2 + 1], 3.5f, out cameraSweepDuration);
+            IEnumerator cameraSweep = CameraSweep(m_Config.IntroPosePairs[phaseIdx * 2], m_Config.IntroPosePairs[phaseIdx * 2 + 1], 2f, out cameraSweepDuration);
             Services.Animation.AmbientTransforms.SyncTransform(m_Config.WhaleTransform, whaleTime);
             m_CurrentFader.Object.Hide(0.3f, false);
             yield return cameraSweepDuration - 0.6f;
@@ -188,12 +187,17 @@ namespace Aqua.Title
             if (card.Text != null) {
                 card.Text.maxVisibleCharacters = 0;
             }
+            if (card.Text2 != null) {
+                card.Text2.maxVisibleCharacters = 0;
+            }
             if (card.Logo != null) {
                 card.Logo.Alpha = 0;
             }
 
-            IEnumerator[] routines = new IEnumerator[2];
+            IEnumerator[] routines = new IEnumerator[3];
             int routineCount = 0;
+
+            float delay = 0;
 
             if (card.Text != null) {
                 int maxCharacters = card.Text.textInfo.characterCount;
@@ -205,12 +209,26 @@ namespace Aqua.Title
                         maxCharacters = card.Text.text.Length;
                     }
                 }
-                routines[routineCount++] = Tween.Int(0, maxCharacters, (i) => card.Text.maxVisibleCharacters = i, 1);
+                routines[routineCount++] = Tween.Int(0, maxCharacters, (i) => card.Text.maxVisibleCharacters = i, 1).DelayBy(delay);
+                delay += 1.1f;
             }
 
             if (card.Logo != null) {
-                float delay = routineCount * 1.1f;
                 routines[routineCount++] = Tween.Float(card.Logo.Alpha, 1, (f) => card.Logo.Alpha = f, 0.4f).DelayBy(delay);
+                delay += 0.5f;
+            }
+
+            if (card.Text2 != null) {
+                int maxCharacters = card.Text2.textInfo.characterCount;
+                if (maxCharacters == 0) {
+                    LocText loc = card.Text2.GetComponent<LocText>();
+                    if (loc != null) {
+                        maxCharacters = loc.CurrentText.VisibleText.Length;
+                    } else {
+                        maxCharacters = card.Text2.text.Length;
+                    }
+                }
+                routines[routineCount++] = Tween.Int(0, maxCharacters, (i) => card.Text2.maxVisibleCharacters = i, 1).DelayBy(delay);
             }
 
             yield return Routine.Combine(routines);
