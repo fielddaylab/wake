@@ -19,7 +19,9 @@ namespace ProtoAqua.ExperimentV2
     public class ActorDefinitions : ScriptableObject, IBaked
     {
         public ActorDefinition[] CritterDefinitions;
+        public Material[] CritterMaterials;
 
+        [NonSerialized] private bool m_MaterialOverridesConfigured = false;
         [NonSerialized] private Dictionary<StringHash32, ActorDefinition> m_DefinitionMap;
 
         public ActorDefinition FindDefinition(StringHash32 inCritterId)
@@ -40,6 +42,34 @@ namespace ProtoAqua.ExperimentV2
             if (!m_DefinitionMap.TryGetValue(inCritterId, out def))
                 Assert.Fail("Critter id '{0}' not recognized as a valid actor type for experimentation", inCritterId);
             return def;
+        }
+
+        public void ConfigureMaterials()
+        {
+            if (m_MaterialOverridesConfigured) {
+                return;
+            }
+
+            foreach(var material in CritterMaterials)
+            {
+                material.EnableKeyword("ADDITIONAL_LIGHTS_ON");
+            }
+
+            m_MaterialOverridesConfigured = true;
+        }
+
+        public void RevertMaterials()
+        {
+            if (!m_MaterialOverridesConfigured) {
+                return;
+            }
+
+            foreach(var material in CritterMaterials)
+            {
+                material.DisableKeyword("ADDITIONAL_LIGHTS_ON");
+            }
+
+            m_MaterialOverridesConfigured = false;
         }
 
         #if UNITY_EDITOR
@@ -185,6 +215,7 @@ namespace ProtoAqua.ExperimentV2
         private void LoadDefinitions()
         {
             List<ActorDefinition> definitions = new List<ActorDefinition>();
+            HashSet<Material> materials = new HashSet<Material>();
             var bestiaryDB = ValidationUtils.FindAsset<BestiaryDB>();
             foreach(var obj in bestiaryDB.Objects)
             {
@@ -194,10 +225,27 @@ namespace ProtoAqua.ExperimentV2
                 if (obj.HasFlags(BestiaryDescFlags.DoNotUseInExperimentation))
                     continue;
 
-                definitions.Add(FindOrCreateDefinition(obj));
+                ActorDefinition def = FindOrCreateDefinition(obj);
+                definitions.Add(def);
+
+                if (def.Prefab != null)
+                {
+                    foreach(var meshRenderer in def.Prefab.GetComponentsInChildren<MeshRenderer>(true))
+                    {
+                        foreach(var material in meshRenderer.sharedMaterials)
+                        {
+                            if (!material.IsKeywordEnabled("ADDITIONAL_LIGHTS_ON"))
+                            {
+                                materials.Add(material);
+                            }
+                        }
+                    }
+                }
             }
 
             CritterDefinitions = definitions.ToArray();
+            CritterMaterials = new Material[materials.Count];
+            materials.CopyTo(CritterMaterials);
         }
 
         #endif // UNITY_EDITOR
