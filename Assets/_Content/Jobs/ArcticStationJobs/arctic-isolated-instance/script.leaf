@@ -90,7 +90,7 @@ $endif
 @once
 @cutscene
 {@guide}	Be sure to compare those stress results with the conditions at Site Z to see if they are relevant.
-			So now we've got our two theories. Should we see what {nameof profArctic} thinks about them?	
+			So now we've got our two theories. Should we see what {nameof profArctic} thinks about them?
 
 :: stressDeterminedFirst
 @trigger	JobTaskCompleted
@@ -230,7 +230,7 @@ $if ArgueIsComplete(argueIsolatedInstanceGroundworkStress)
 $else
 	{@profArctic}	This seems like it could make sense. Do you have evidence about the current light levels?
 	$call ArgueLoad(argueIsolatedInstanceGroundworkStress)
-	$if ArgueSetClaim(IsolatedInstanceGroundworkStressClaim, jobs.arctic-isolated-instance.argue.claimLabelStress) 
+	$if ArgueSetClaim(IsolatedInstanceGroundworkStressClaim, jobs.arctic-isolated-instance.argue.claimLabelStress)
 		$call ArgueFactSlot(GlassSponge.Light.Stressed)
 		$call ArgueFactSlot(Z_OpenOcean.Light)
 	$endif
@@ -302,7 +302,7 @@ $call ArgueComplete()
 
 :: argue.final.intro
 @trigger    TryArgumentation
-@when   ArgueIsComplete(argueIsolatedInstanceGroundwork), !ArgueIsComplete(argueIsolatedInstanceFinal) 
+@when   ArgueIsComplete(argueIsolatedInstanceGroundwork), !ArgueIsComplete(argueIsolatedInstanceFinal)
 @cutscene
 $branch .argue.final.main-question
 
