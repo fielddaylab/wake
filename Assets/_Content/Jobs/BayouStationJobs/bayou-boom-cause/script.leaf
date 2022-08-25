@@ -5,10 +5,22 @@
 :: start
 @trigger    JobStarted
 @cutscene
+{@bayouSci} Okay, kid, let's get to it.
+            Last time I was down at Site N, there was an explosion. 
+            It took out our comms tower--I was lucky to escape. 
+            The professor here thinks it was my fault.
+{@profBayou} That's not accurate, Silias. I merely said that you've been known to drive recklessly...
+             And you're the only person who was down there. 
+{@bayouSci}  I'm tellin' you, Professor, it wasn't me. 
+{@player}   But then... what caused the explosion? What's down there? 
+{@bayouSci} That's what we need you to work out, kid. 
 $if HasEntity(Methane),HasEntity(Methanogen)
-    {@guide} I think we already have everything we need. You might want to look over AQOS again before we make any claims to {nameof profBayou}.
+    {@bayouSci}  If I'm recallin' rightly, you already gathered data from Site N.  
+                 Take a look at your AQOS and see if you can figure out what happened. 
 $else
-    {@guide} Let's just go down to {h}Site N{/h} and start scanning stuff, I guess.
+    {@bayouSci} What are you waitin' for? Head down to {h}Site N{/h} and start scanning some stuff.
+                Oh, and try not to crash, okay? I'd hate to have to tell your mother we got you blown up.  
+    {@player} Yeah. Me too.  
 $endif
 
 :: atSiteN
@@ -16,15 +28,22 @@ $endif
 @when    scene:name == "RS-3N", JobTaskActive(methaneScan)
 @once
 @cutscene
-{@guide} There must be something here that would indicate how this disaster happened. When you think you've found it, go talk to {nameof profBayou}.
+{@player} Wow. Dark down here, isn't it? 
+{@guide}  My sensors indicate you are experiencing stress.
+{@player} Let's just stay focused, V. We need to find something that could've triggered an explosion...
+          Without blowing ourselves up in the process. 
+{@guide} Don't worry, O. According to my analysis, our chances of experiencing a similar explosion are only 45.2%!
+{@player} {nameof @guide}, that is EXTREMELY unhelpful.
 
 :: methaneScanned
 @trigger JobTaskCompleted
 @when    JobTaskActive(reportBack)
 @once
 @cutscene
-{@guide}    Looks like there was some different types of methane down here.
-{@guide}    Let's not stay here longer than we need to, that stuff is explosive!
+{@player} Wow. I think we've solved it, V.
+{@player} Methane is explosive, right?
+{@guide} Very much so, O. Our chances of encountering an explosion have increased to 70.2%.
+{@player} Aaaand that's our cue to get out of here. 
 
 // CATCH-ALL GUIDE TEXT
 :: catchGoToSiteN
@@ -32,15 +51,16 @@ $endif
 @when 		scene:name != "RS-3N", JobTaskActive(methaneScan)
 @boostScore -5
 @cutscene
-{@guide}    Dive at {h}Site N{/h} and scan anything you think might have caused the wreckage.
+{@player} What should I do now, {nameof @guide}?
+{@guide}    Dive at {h}Site N{/h} and scan anything you think might have caused the explosion.
             We can get there by diving deep down into {h}Site O{/h}
-            Hope you aren't scared of the dark!
 
 :: catchAtSiteNScan
 @trigger    RequestPartnerHelp
 @when 		scene:name == "RS-3N", JobTaskActive(methaneScan)
 @boostScore -5
 @cutscene
+{@player} What's our next move, {nameof @guide}?
 {@guide}    Scan anything you think might have ruined the communications equipment.
 
 :: catchAtSiteNTag
@@ -48,14 +68,17 @@ $endif
 @when 		scene:name == "RS-3N", JobTaskActive(methaneTag)
 @boostScore -5
 @cutscene
-{@guide}    Tag the types of methane you found to get their population information.
+{@player}  What should I do now?
+{@guide}   Tag the types of methane you found to obtain the population information.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		
 @boostScore -10
 @cutscene
-{@guide}    You're ready to talk it through with {nameof profBayou}, though you might want to review your AQOS first.
+{@player}  What now, {nameof @guide}?
+{@guide}   You've obtained the data you need to report back to {nameof @bayouSci}!
+            You may want to review your AQOS first.
 
 
 // ARGUMENTATION
@@ -66,21 +89,23 @@ $endif
 $goto .argue.firstQuestion
 
 ::  argue.firstQuestion
-{@profBayou} What caused the communication tower to collapse?
+{@bayouSci} Alright, kid. Lay it on me.
+           What caused the comms tower to explode? 
 $if !ArgueIsComplete(bayouBoomArgueFishCriminals)
-    $choice .argue.methaneHere; There's methane here.
+    $choice .argue.methaneHere; There's methane at Site N.
     $choice .argue.fishersFault; Fishers blew it up.
     $choice .argue.giveUp; Let me get back to you.
     $choose branch
 $else
-    $choice .argue.methaneHere; There's methane here.
+    $choice .argue.methaneHere; There's methane at Site N.
     $choice .argue.giveUp; Let me get back to you.
     $choose branch
 $endif
 
 :: argue.methaneHere
 $call ArgueLoad(bayouBoomArgueMethane)
-{@profBayou} Really? What methane did you find at {h}Site N{/h}?
+{@bayouSci} Methane?? You sure about that, kid? 
+            What types of methane did you find?
 $goto .argue.chooseFacts
 
 :: argue.chooseFacts
@@ -101,7 +126,8 @@ $if ArgueSetClaim(Claim, jobs.bayou-boom-cause.argue.claimLabel2)
     $call ArgueFactSlot(SeaOtter.Eats.Urchin) 
 $endif
 $call ArgueDisplayClaim()
-{@profBayou} What evidence do you have of foul play?
+{@bayouSci} Whoa, back up. You messin' with me, kid?
+            What evidence do you have of foul play?
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.unrelatedFishers
     $answer *, .argue.unrelatedFishers
@@ -109,18 +135,19 @@ $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.unrelatedFishers
-{@profBayou} I don't think this actually indicates human involvement.
+{@bayouSci} Um. Kid, this doesn't add up. 
+            Maybe give it another try. 
 $call ArgueRejectIncorrect()
 $call ArgueComplete()
 $goto .argue.firstQuestion
 
 :: argue.unrelated
-{@profBayou}   That doesn't look like a type of Methane to me...
+{@bayouSci}  That's not a type of methane. Try again, kid. 
 $call ArgueRejectIncorrect()
 $goto .argue.chooseFacts
 
 :: argue.giveUp
-{@profBayou} OK. Get back to me when you're ready.
+{@bayouSci} No problem, kid. Let me know when you've worked it out. 
 $call ArgueCancelClaim()
 $call ArgueUnload()
 
@@ -128,5 +155,12 @@ $call ArgueUnload()
 :: argue.done
 $call ArgueLoad(bayouBoomArgue)
 $call ArgueComplete()
-{@profBayou}   Oh, I hear Methane is very explosive. It must have heated enough to ignite and explode. Good work!
+{@bayouSci} Ha! Told ya, Professor. I didn't even go near that comms tower.
+            The methane must've heated enough to ignite and cause an explosion. 
+{@profBayou} That adds up. I'm sorry for doubting you, Silias.
+{@bayouSci} Aw, no harm done, Professor.
+            The real question is, whose idea was it to put in a comms tower without checking for highly explosive methane vents??
+            We all better be real careful down there.
+            Thanks for figurin' it out, kid. 
+{@player}   De nada. I was happy to help. 
 $call CompleteJob()

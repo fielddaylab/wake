@@ -7,19 +7,15 @@
 @cutscene
 
 // write an intro to your job
-{@profBayou}   Okay, Ollie. It's time for us to make a decision about that Oil Rig Reef.
-{@bayouSci}    About flippin' time! 
-{@player}      Yikes... really? 
+{@profBayou}   Okay, Ollie. It's time for you to make a decision about that rig.
+{@bayouSci}    Well, it's about darned time! 
+{@player}      Wait... me?? 
                I mean, I thought YOU would handle the actual decision-making...
 {@profBayou}   You've proven yourself. I'd like your input.
-               If the rig goes, all the coral out there--and all the species that depend on coral--go with it.
-               If the rig stays, it could have unforseen consequences on the ecosystem.
-{@player}      Eek. Professor, that's a lot of responsibility.
-               My mom mostly has me confirm her findings and gather data and things like that... 
-{@profBayou}   No soy tu madre, Ms. Ramirez. Please stop deflecting. 
-               I need you to predict what will happen to turtle population if we remove the reef.
-               Then report back and tell me your recommendation.
-{@player}      Okay. Got it. 
+               If the ERC Industries Rig goes, all the coral out there--and all the species that depend on coral--go with it.
+               I need you to predict how removing the rig would affect the turtles. 
+               Then report back and give me your professional recommendation.
+{@player}      Okay. Got it, Professor. 
 
 // CATCH-ALL GUIDE TEXT
 
@@ -30,6 +26,21 @@
 @cutscene
 {@player}  Okay, {nameof @guide}. What now? 
 {@guide}   You need to create an Intervention Model using facts about the artificial reef.
+
+:: RigDecisionTime
+@trigger  JobTasksUpdated
+@when     JobTaskActive(reportBack)
+@once
+@cutscene
+
+{@guide} You've gathered the required data. Now you'll need to share your decision with {nameof @profBayou}!
+{@player}  Ugh. Back home, Mom handled this sort of thing
+          The turtles will be okay either way. So what's the right choice here? 
+{@guide}  Answer: inconclusive. 
+{@player} What about the Cyanobacteria? And the Sea Pearls? 
+{@guide}   Answer: inconclusive.
+{@player}  You're not going to tell me what to do, are you, {nameof @guide}?
+{@guide}  I'm afraid not, O. You are required to make this decision yourself. 
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
@@ -46,9 +57,9 @@
 @when   !ArgueIsComplete(siteOIntervene)
 @cutscene
 $call ArgueLoad(siteOIntervene) 
-{@profBayou} Okay then, Ollie.
+{@profBayou} Okay, Ollie.
              It's time to hear your recommendation. 
-             What should we do about the Oil Rig Reef?
+             What should we do about the ERC Industries Rig?
 $choice .argue.removeRig; We should remove the rig.
 $choice .argue.leaveRig; We should leave the rig.
 $choose branch
@@ -57,14 +68,14 @@ $choose branch
 $if ArgueSetClaim(Claim, jobs.bayou-reef-decision.argue.claimLabel1)
     $call ArgueFactSlot(O_OilRig.turtleDangerNoReef.Model.Intervene) 
 $endif
-{@profBayou} What makes you say that?
+{@profBayou} What data did you use to make this decision? 
 $branch argue.showClaim
 
 :: argue.leaveRig
 $if ArgueSetClaim(Claim, jobs.bayou-reef-decision.argue.claimLabel2) 
     $call ArgueFactSlot(O_OilRig.turtleDangerNoReef.Model.Intervene) 
 $endif
-{@profBayou} What makes you say that?
+{@profBayou} What data did you use to make this decision? 
 $branch argue.showClaim
 
 :: argue.showClaim
@@ -77,12 +88,12 @@ $choose branch
 
 :: argue.unrelated
 $call ArgueRejectIncorrect()
-{@profBayou} That's not helpful here, Ms. Ramirez. 
+{@profBayou} That's not helpful, Ms. Ramirez. 
 $call ArgueClearFacts()
 $branch .argue.showClaim
 
 :: argue.giveUp
-{@profBayou} Okay, then. Take a little more time. But not too much. A lot of people are waiting on our decision. 
+{@profBayou} Okay, then. But don't take too long. A lot of people are waiting on our decision. 
 $call ArgueClearFacts()
 $call ArgueCancelClaim()
 
@@ -91,13 +102,12 @@ $call ArgueCancelClaim()
 :: argue.complete
 $call ArgueComplete()
 {@profBayou}  Hmm. This is fascinating.
-              Whatever choice we make, the turtle populations will remain similar. 
-              I think we can go with your recommendation, Ollie.
-{@player}     Wait... ¿¿en serio?? 
-              But... Professor, what if I made the wrong choice?
-{@profBayou}  This isn't about right and wrong, Ollie.
-              It's about doing your best with the data available to you. 
-              I wasn't sure you'd have the courage to make a recommendation. I have to admit, I'm impressed. 
+              Either way, the turtle populations will remain stable... but it seems that other organisms will be affected. 
+              I'd like to go with your recommendation, Ollie.
+{@player}     Mine? ¿¿En serio??
+              But.. I'm only a junior scientist.
+{@profBayou}  You're also incredibly thoughtful, and you used your data to make the best choice you could.
+              I wasn't sure you'd have the courage to make a recommendation. I'm impressed. 
 {@bayouSci}   Well, well. The professor saying something nice? 
-              Maybe she is human after all. 
+              Maybe she is human, after all. 
 $call CompleteJob()
