@@ -17,7 +17,8 @@
 @trigger    ShopAttemptBuy \
 @when       itemId == "$itemId", $conditions \
 @who        $MerchantId \
-@cutscene
+@cutscene \
+$set    player:shop.seen.$itemId = true
 
 // Defines an item handler header
 #macro OverrideItemHandler(itemId, nodeId, ...conditions) \
@@ -25,7 +26,8 @@
 @trigger    ShopAttemptBuy \
 @when       itemId == "$itemId", $conditions \
 @who        $MerchantId \
-@cutscene
+@cutscene \
+$set    player:shop.seen.$itemId = true
 
 // Executes default item purchase logic
 #macro EvaluateItemPurchase() \

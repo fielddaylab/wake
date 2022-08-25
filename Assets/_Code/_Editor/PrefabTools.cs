@@ -202,5 +202,25 @@ namespace Aqua.Editor
                 }
             }
         }
+
+        [MenuItem("Aqualab/Align GameObject with Collider Offset")]
+        static public void AlignObjectWithColliderOffset() {
+            foreach(var obj in Selection.gameObjects) {
+                Transform t = obj.transform;
+                Collider2D c = obj.GetComponent<Collider2D>();
+                if (!c) {
+                    continue;
+                }
+
+                Undo.RecordObject(t, "Adjusting collider offset");
+                Undo.RecordObject(c, "Adjusting collider offset");
+
+                t.localPosition += (Vector3) c.offset;
+                c.offset = default(Vector2);
+
+                EditorUtility.SetDirty(t);
+                EditorUtility.SetDirty(c);
+            }
+        }
     }
 }

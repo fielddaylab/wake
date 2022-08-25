@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1173340625478143201}
   - component: {fileID: 1173340625478143215}
   - component: {fileID: 1173340625478143214}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: AmphipodFX_Cloud_Micro
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31,7 +31,7 @@ Transform:
   m_Children:
   - {fileID: 1173340626646013180}
   m_Father: {fileID: 5255705037164792385}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &1173340625478143215
 ParticleSystem:
@@ -4765,7 +4765,7 @@ GameObject:
   - component: {fileID: 1173340626646013180}
   - component: {fileID: 1173340626646013178}
   - component: {fileID: 1173340626646013181}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: AmphipodFX_Bugs_Micro
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9538,7 +9538,7 @@ Transform:
   m_Children:
   - {fileID: 5482197093959486153}
   m_Father: {fileID: 5255705037164792385}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &5424962057606241707
 ParticleSystem:
@@ -14289,9 +14289,9 @@ Transform:
   m_LocalPosition: {x: 0, y: -5.48, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 1173340625478143201}
   - {fileID: 4394517870573396614}
   - {fileID: 5722984772129372682}
-  - {fileID: 1173340625478143201}
   - {fileID: 4964124397049385339}
   - {fileID: 5601761634286239787}
   m_Father: {fileID: 0}
@@ -19119,7 +19119,7 @@ PrefabInstance:
     - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
         type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
         type: 3}
@@ -19183,15 +19183,21 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d43f84959769055489a36095d9d2631d, type: 3}
---- !u!1 &4394517870573396615 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3764296600150654375, guid: d43f84959769055489a36095d9d2631d,
+--- !u!114 &4730612167157808456 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5289341267380429416, guid: d43f84959769055489a36095d9d2631d,
     type: 3}
   m_PrefabInstance: {fileID: 630786969190965024}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &4394517870573396614 stripped
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a4f3b327b540ee49b125764505491c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &5563925326194857670 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
+  m_CorrespondingSourceObject: {fileID: 5041227772089223654, guid: d43f84959769055489a36095d9d2631d,
     type: 3}
   m_PrefabInstance: {fileID: 630786969190965024}
   m_PrefabAsset: {fileID: 0}
@@ -19207,24 +19213,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cef154ade890b4e46bf7a679d9c14b1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &5563925326194857670 stripped
+--- !u!4 &4394517870573396614 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 5041227772089223654, guid: d43f84959769055489a36095d9d2631d,
+  m_CorrespondingSourceObject: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
     type: 3}
   m_PrefabInstance: {fileID: 630786969190965024}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &4730612167157808456 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5289341267380429416, guid: d43f84959769055489a36095d9d2631d,
+--- !u!1 &4394517870573396615 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3764296600150654375, guid: d43f84959769055489a36095d9d2631d,
     type: 3}
   m_PrefabInstance: {fileID: 630786969190965024}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a4f3b327b540ee49b125764505491c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &4904877474390657368
 PrefabInstance:
   m_ObjectHideFlags: 0

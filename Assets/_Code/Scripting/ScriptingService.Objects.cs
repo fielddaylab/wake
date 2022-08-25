@@ -122,7 +122,7 @@ namespace Aqua
                 ScriptNode existingEntrypoint;
                 if (m_LoadedEntrypoints.TryGetValue(id, out existingEntrypoint))
                 {
-                    Log.Warn("[ScriptingService] Duplicate script node entrypoints '{0}' in package '{1}' and '{2}'", id, existingEntrypoint.Package().Name(), entrypoint.Package().Name());
+                    Log.Warn("[ScriptingService] Duplicate script node entrypoints '{0}' in package '{1}' and '{2}'", id, existingEntrypoint.Package().DebugName(), entrypoint.Package().DebugName());
                     continue;
                 }
 
@@ -160,7 +160,7 @@ namespace Aqua
                 ++responseCount;
             }
 
-            DebugService.Log(LogMask.Loading | LogMask.Scripting, "[ScriptingService] Added package '{0}' with {1} entrypoints, {2} responses, {3} functions", inPackage.Name(), entrypointCount, responseCount, functionCount);
+            DebugService.Log(LogMask.Loading | LogMask.Scripting, "[ScriptingService] Added package '{0}' with {1} entrypoints, {2} responses, {3} functions", inPackage.DebugName(), entrypointCount, responseCount, functionCount);
         }
 
         internal void RemovePackage(ScriptNodePackage inPackage)
@@ -198,12 +198,12 @@ namespace Aqua
                 }
             }
 
-            DebugService.Log(LogMask.Loading | LogMask.Scripting, "[ScriptingService] Removed package '{0}'", inPackage.Name());
+            DebugService.Log(LogMask.Loading | LogMask.Scripting, "[ScriptingService] Removed package '{0}'", inPackage.DebugName());
         }
 
         private bool CancelPackageLoad(LeafAsset inAsset)
         {
-            if (m_CurrentPackageBeingLoaded == inAsset)
+            if (m_CurrentPackageBeingLoaded.IsReferenceEquals(inAsset))
             {
                 m_CurrentPackageBeingLoaded = null;
                 m_CurrentPackageLoadHandle.Cancel();

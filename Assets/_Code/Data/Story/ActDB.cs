@@ -16,6 +16,14 @@ namespace Aqua
             return Objects[(int) inActIndex];
         }
 
+        protected override void ConstructLookupForItem(ActDesc inItem, int inIndex) {
+            base.ConstructLookupForItem(inItem, inIndex);
+
+            #if UNITY_EDITOR
+            inItem.EditorInit();
+            #endif // UNITY_EDITOR
+        }
+
         #if UNITY_EDITOR
 
         [UnityEditor.CustomEditor(typeof(ActDB))]

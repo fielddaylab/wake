@@ -1,3 +1,5 @@
+using System;
+using Aqua.Character;
 using Aqua.Debugging;
 using BeauUtil;
 using UnityEngine;
@@ -13,6 +15,8 @@ namespace Aqua.Scripting
 
         #endregion // Inspector
 
+        [NonSerialized] private int m_HasPlayer;
+
         private void Awake()
         {
             WorldUtils.ListenForPlayer(m_Collider, OnPlayerEnter, OnPlayerExit);
@@ -20,10 +24,18 @@ namespace Aqua.Scripting
 
         private void OnPlayerEnter(Collider2D inCollider)
         {
-            using(var table = TempVarTable.Alloc())
+            if (++m_HasPlayer == 1)
             {
-                table.Set("regionId", Parent.Id());
-                Trigger(GameTriggers.PlayerEnterRegion, table);
+                PlayerBody body = inCollider.GetComponentInParent<PlayerBody>();
+                if (body != null) {
+                    body.AddRegion(Parent.Id());
+                }
+
+                using(var table = TempVarTable.Alloc())
+                {
+                    table.Set("regionId", Parent.Id());
+                    Trigger(GameTriggers.PlayerEnterRegion, table);
+                }
             }
         }
 
@@ -31,11 +43,19 @@ namespace Aqua.Scripting
         {
             if (!Services.Script)
                 return;
-            
-            using(var table = TempVarTable.Alloc())
+
+            if (--m_HasPlayer == 0)
             {
-                table.Set("regionId", Parent.Id());
-                Trigger(GameTriggers.PlayerExitRegion, table);
+                PlayerBody body = inCollider.GetComponentInParent<PlayerBody>();
+                if (body != null) {
+                    body.RemoveRegion(Parent.Id());
+                }
+
+                using(var table = TempVarTable.Alloc())
+                {
+                    table.Set("regionId", Parent.Id());
+                    Trigger(GameTriggers.PlayerExitRegion, table);
+                }
             }
         }
 

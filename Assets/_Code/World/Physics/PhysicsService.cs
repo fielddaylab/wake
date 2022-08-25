@@ -1,3 +1,7 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#define DEVELOPMENT
+#endif // UNITY_EDITOR || DEVELOPMENT_BUILD
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -8,7 +12,7 @@ using UnityEngine;
 
 namespace Aqua
 {
-    public class PhysicsService : ServiceBehaviour, IPauseable
+    public class PhysicsService : ServiceBehaviour, IPauseable, IDebuggable
     {
         public const float DefaultContactOffset = (1f / 128f);
         private const float OverlapThreshold = DefaultContactOffset;
@@ -423,5 +427,25 @@ namespace Aqua
         private const float CollisionCheckTick = 1f / 65536f;
 
         #endregion // Utils
+
+        #region IDebuggable
+
+        #if DEVELOPMENT
+
+        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
+        {
+            DMInfo physicsMenu = new DMInfo("Physics", 8);
+            physicsMenu.AddToggle("Noclip (Free Player Movement)", () => {
+                return Services.State.Player != null && Services.State.Player.Kinematics.SolidMask == 0;
+            }, (b) => {
+                Services.State.Player.Kinematics.SolidMask = b ? 0 : GameLayers.Solid_Mask;
+            }, () => Services.State.Player != null);
+
+            yield return physicsMenu;
+        }
+
+        #endif // DEVELOPMENT
+
+        #endregion // IDebuggable
     }
 }

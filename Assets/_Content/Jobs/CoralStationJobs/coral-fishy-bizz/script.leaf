@@ -4,7 +4,6 @@
 @trigger    JobStarted
 @cutscene
 
-$set jobs:coral-fishy-bizz.gotScans = false
 {@profCoral}	Site V is a very popular fishing spot for Grouper. We are looking to maximize how much people can fish without causing the Grouper fish population to decline. 
 {@profCoral}	I need you to determine how much Red Grouper can be harvested sustainably.
 {@profCoral}	Start by heading outside to Site V and learning about the Grouper and the Fishers.
@@ -12,7 +11,7 @@ $set jobs:coral-fishy-bizz.gotScans = false
 
 :: helpGoOutside
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Helm", jobs:coral-fishy-bizz.gotScans == false
+@when 		scene:name == "Helm", !JobTaskCompleted(getScans)
 @cutscene
 {@player}   Any idea where I should go next?
 {@guide}	First let's exit the ship and head over to Site V.
@@ -27,7 +26,7 @@ $set jobs:coral-fishy-bizz.gotScans = false
 
 :: helpGoToSiteV
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Station2", jobs:coral-fishy-bizz.gotScans == false
+@when 		scene:name == "Station2", !JobTaskCompleted(getScans)
 @cutscene
 {@player} 	Where should I be going again?
 {@guide}	Site V should be at the southern buoy.
@@ -36,9 +35,8 @@ $set jobs:coral-fishy-bizz.gotScans = false
 
 :: gotScans
 @trigger    JobTasksUpdated
-@when 		scene:name == "RS-2V", HasEntity(Fishers), HasFact(RedGrouper.Reproduce), HasFact(ReefEdge.PopulationHistory.Fishers), jobs:coral-fishy-bizz.gotScans == false
+@when 		scene:name == "RS-2V", HasEntity(Fishers), HasFact(RedGrouper.Reproduce), HasFact(ReefEdge.PopulationHistory.Fishers), !JobTaskCompleted(getScans)
 @cutscene
-$set jobs:coral-fishy-bizz.gotScans = true
 {@guide} 	That should be all the data we need from here for now, back to the ship we go!
 
 :: helpAtSiteV
@@ -69,7 +67,7 @@ $endif
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Station2", jobs:coral-fishy-bizz.gotScans == true
+@when 		scene:name == "Station2", JobTaskCompleted(getScans)
 @boostScore 2
 @cutscene
 {@player} 	Where should I be going again?
@@ -78,14 +76,14 @@ $endif
 
 :: backAtShip
 @trigger    SceneStart
-@when       scene:name == "Helm", jobs:coral-fishy-bizz.gotScans == true
+@when       scene:name == "Helm", JobTaskCompleted(getScans)
 @once
 @cutscene
 {@guide}   	Let's head to the {nameof Modeling} and see if we can understand how the Grouper's population and Fisher population interacts.
 
 :: helpAfterExperiment
 @trigger    RequestPartnerHelp
-@when 		scene:name != "Modeling", jobs:coral-fishy-bizz.gotScans == true, !HasFact(ReefEdge.Model.GrouperFishingRate)
+@when 		scene:name != "Modeling", JobTaskCompleted(getScans), !HasFact(ReefEdge.Model.GrouperFishingRate)
 @cutscene
 {@player} 	What should we be doing next?
 {@guide}	Let's head to the {nameof Modeling} and figure out how many Fishers we have have at Site V.

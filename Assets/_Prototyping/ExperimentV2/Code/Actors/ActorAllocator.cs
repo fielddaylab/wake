@@ -27,10 +27,16 @@ namespace ProtoAqua.ExperimentV2 {
 
         private Dictionary<StringHash32, ActorInstancePool> m_PoolMap = new Dictionary<StringHash32, ActorInstancePool>(64);
 
+        private void Start() {
+            m_Definitions.ConfigureMaterials();
+        }
+
         private void OnDestroy() {
             foreach (var def in m_Definitions.CritterDefinitions) {
                 def.Prefab = null;
             }
+
+            m_Definitions.RevertMaterials();
         }
 
         public void Cleanup(float minAgeSeconds) {

@@ -100,7 +100,14 @@ namespace Aqua
         [LeafLookup("CashReward")] public int CashReward() { return m_CashReward; }
         [LeafLookup("JournalId")] public StringHash32 JournalId() { return m_JournalId; }
 
-        public LeafAsset Scripting() { return m_Scripting; }
+        public LeafAsset Scripting()
+        {
+            #if UNITY_EDITOR
+            return m_ScriptingRef;
+            #else
+            return m_Scripting;
+            #endif // UNITY_EDITOR
+        }
 
         public IEnumerable<T> FindAssets<T>() where T : ScriptableObject
         {
@@ -135,6 +142,17 @@ namespace Aqua
 
             return null;
         }
+
+        #if UNITY_EDITOR
+
+        [NonSerialized] private ReloadableAssetRef<LeafAsset> m_ScriptingRef;
+
+        internal void EditorInit()
+        {
+            m_ScriptingRef = new ReloadableAssetRef<LeafAsset>(m_Scripting);
+        }
+
+        #endif // UNITY_EDITOR
     }
 
     public enum JobCategory

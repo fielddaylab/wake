@@ -4,14 +4,13 @@
 @trigger    JobStarted
 @cutscene
 
-$set jobs:bayou-save-our-shrimp.gotScans = 0
 {@profBayou}	There seems to be something strange going on with the shrimp at Site P.
 {@profBayou}	I want you to head over there and investigate the environment and shrimp population.
 {@player} 	On it!
 
 :: helpGetScans
 @trigger    RequestPartnerHelp
-@when 		jobs:bayou-save-our-shrimp.gotScans == 0
+@when 		JobTaskTop(getScans)
 @cutscene
 {@player} 	What should I be doing again?
 {@guide}	We need to investigate the environment at site P and check on the shrimp population.
@@ -21,12 +20,11 @@ $set jobs:bayou-save-our-shrimp.gotScans = 0
 @trigger    JobTasksUpdated
 @once
 @cutscene
-$set jobs:bayou-save-our-shrimp.gotScans = 1
 {@guide} I think that's all we needed from here, time to head back.
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
-@when 		jobs:bayou-save-our-shrimp.gotScans == 1
+@when 		JobTaskTop(reportBack)
 @cutscene
 {@player} 	Where should I be going again?
 {@guide}	We got all the data from Site P, so let's report back to {@profBayou}.
