@@ -7,9 +7,19 @@
 @cutscene
 
 // write an intro to your job
-{@profBayou}   Right now there is a giant rig here in {h}Site O{/h} with a bunch of coral growing on it.
-                If the rig goes, there can't be any coral. So all the species that depend on coral would go too.
-                We are interested in knowing what would happen to turtle populations if the reef were removed.
+{@profBayou}   Okay, Ollie. It's time for us to make a decision about that Oil Rig Reef.
+{@bayouSci}    About flippin' time! 
+{@player}      Yikes... really? 
+               I mean, I thought YOU would handle the actual decision-making...
+{@profBayou}   You've proven yourself. I'd like your input.
+               If the rig goes, all the coral out there--and all the species that depend on coral--go with it.
+               If the rig stays, it could have unforseen consequences on the ecosystem.
+{@player}      Eek. Professor, that's a lot of responsibility.
+               My mom mostly has me confirm her findings and gather data and things like that... 
+{@profBayou}   No soy tu madre, Ms. Ramirez. Please stop deflecting. 
+               I need you to predict what will happen to turtle population if we remove the reef.
+               Then report back and tell me your recommendation.
+{@player}      Okay. Got it. 
 
 // CATCH-ALL GUIDE TEXT
 
@@ -18,14 +28,16 @@
 @when 		JobTaskActive(interventionDecision)
 @boostScore -5
 @cutscene
-{@guide}    Create an Intervention Model using facts surrounding the artificial reef.
+{@player}  Okay, {nameof @guide}. What now? 
+{@guide}   You need to create an Intervention Model using facts about the artificial reef.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Report back to {nameof profBayou}.
+{@player}   What should I do now, {nameof @guide}?
+{@guide}    Report back to {nameof profBayou}!
 
 // ARGUMENTATION
 
@@ -34,9 +46,11 @@
 @when   !ArgueIsComplete(siteOIntervene)
 @cutscene
 $call ArgueLoad(siteOIntervene) 
-{@profBayou} What should we do about the Oil rig in the reef?
-$choice .argue.removeRig; We should remove the rig
-$choice .argue.leaveRig; We should leave the rig
+{@profBayou} Okay then, Ollie.
+             It's time to hear your recommendation. 
+             What should we do about the Oil Rig Reef?
+$choice .argue.removeRig; We should remove the rig.
+$choice .argue.leaveRig; We should leave the rig.
 $choose branch
 
 :: argue.removeRig
@@ -63,12 +77,12 @@ $choose branch
 
 :: argue.unrelated
 $call ArgueRejectIncorrect()
-{@profBayou} Ok, that's interesting, but it's not answering my question.
+{@profBayou} That's not helpful here, Ms. Ramirez. 
 $call ArgueClearFacts()
 $branch .argue.showClaim
 
 :: argue.giveUp
-{@profBayou} OK. Get back to me when you're ready.
+{@profBayou} Okay, then. Take a little more time. But not too much. A lot of people are waiting on our decision. 
 $call ArgueClearFacts()
 $call ArgueCancelClaim()
 
@@ -76,7 +90,14 @@ $call ArgueCancelClaim()
 
 :: argue.complete
 $call ArgueComplete()
-{@profBayou}   Even without the reef, it seems like the populations would be similar. 
-                It really shouldn't matter either way.
-
+{@profBayou}  Hmm. This is fascinating.
+              Whatever choice we make, the turtle populations will remain similar. 
+              I think we can go with your recommendation, Ollie.
+{@player}     Wait... ¿¿en serio?? 
+              But... Professor, what if I made the wrong choice?
+{@profBayou}  This isn't about right and wrong, Ollie.
+              It's about doing your best with the data available to you. 
+              I wasn't sure you'd have the courage to make a recommendation. I have to admit, I'm impressed. 
+{@bayouSci}   Well, well. The professor saying something nice? 
+              Maybe she is human after all. 
 $call CompleteJob()

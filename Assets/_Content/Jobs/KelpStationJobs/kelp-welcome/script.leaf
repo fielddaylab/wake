@@ -89,8 +89,8 @@ $endif
 @when       scene:name == "RS-1C", !jobs:kelp-welcome.got.scans
 @cutscene
 {@player}   What now?  
-{@guide}    She said to document all the species down here.
-            I think we're missing some. Better keep looking. 
+{@guide}    According to your task list, you must scan all the species here at Site C.
+            You appear to be missing some. Better keep looking. 
 
 :: navigation.goBackUp
 @trigger    JobTasksUpdated
@@ -189,11 +189,11 @@ $call ship.map->ResetSorting()
 @once
 $branch common.ringPhone
 
-{@player} Wow. This ship... it's beautiful.
-{@player} I can't wait to tell Sam. 
-{@guide} "Sam" does not compute. 
-{@player} Oh, Sam is my best friend. They're out on a mission right now. 
-{@player}  Anyway... what now, {nameof @guide}?
+{@player} Wow. This ship... it's amazing.
+{@player} I wish Mer could see it. 
+{@guide} "Mer" does not compute.
+{@player} Oh... my big sister. She used to have a ship just like this.
+{@player}  Anyway, what now, {nameof @guide}?
 {@guide} Updating schametic... 
 {hide-dialog}
 
@@ -275,7 +275,7 @@ $endif
 @once
 
 $branch common.ringPhone
-{@guide}   Now head up to the helm and navigate your sub back to the {m}Research Station{/m}.
+{@guide}   Now return to the Helm and navigate your sub back to the {m}Research Station{/m}.
 
 // $call   UnlockRoom("office")
 
@@ -286,7 +286,7 @@ $branch common.ringPhone
 @when 		JobTaskActive(reportBack)
 @cutscene
 {@player} 	What now, {nameof @guide}?
-{@guide}	You need to report back to {nameof @drKelp}.
+{@guide}	You need to report your findings. 
 $if !IsPlayerOnStation()
 	{@guide}	Use your sub to navigate to the Site C Research Station. 
                 Your mother will be waiting for you there!
@@ -374,8 +374,7 @@ $call ArgueLoad(welcomeArgue)
            How are you feeling? Tired? Hungry?
            I've got a recipe for cinnamon kelp rolls that I've been dying to try...
 {@player}  Maybe later, Mom.
-{@drKelp}  Ok, Mija. If you're sure. 
-           Let's see what behaviors you discovered about the species here at Site C! 
+{@drKelp}  Ok, Mija. Let's see what behaviors you discovered about the species here at Site C! 
          
 $goto .argue.chooseFacts
 
@@ -418,7 +417,7 @@ $goto .argue.chooseFacts
 
 ::argue.done
 $call ArgueComplete()
-{@drKelp}    Excellent work, Olivia. You just explained the basis of the Kelp Forest Food Web!
+{@drKelp}    Excellent work. You just explained the basis of the Kelp Forest Food Web!
 $call CompleteJob()
 
 // DONE
@@ -426,9 +425,11 @@ $call CompleteJob()
 :: end
 @trigger    JobCompleted
 @cutscene
+@once
 
 {@drKelp}	I'm so thrilled, Mija. 
 {@drKelp}   With your help, we might actually be able to get the Kelp Refuge up and running!
+{@drKelp}   I can't think of a better way to honor your sister. 
 {@player}   Thanks, Mom.
 {@player}   What about the other science stations? Do they need help, too?
 {@drKelp}   Hmm. You mean in other ecosystems?
@@ -436,7 +437,7 @@ $call CompleteJob()
 {@drKelp}    But for now, I want you closer to home. Just in case. 
 {@player}    In case of what? 
 {@drKelp}    Never mind, Sweetie. Let's get you set up with your next job! 
-            Go ahead and check your {map-name}Job Board{/map-name}.
+             Talk to me to view your {map-name}Job Board{/map-name} whenever you're ready.
 
 $call hotbar.guide->Show()
 $call hotbar.portable->Show()

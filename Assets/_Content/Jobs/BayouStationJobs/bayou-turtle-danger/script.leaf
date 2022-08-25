@@ -6,13 +6,34 @@
 @trigger    JobStarted
 @cutscene
 
-{@profBayou}	People are concerned about the {pluralnameof LoggerheadTurtle} that live by the {h}Oil Rig Reef{/h}.
-				For this job, I need you to develop a food web with the species you found there.
-                We want to learn if there are any new predators of the Turtles.
+{@profBayou} Here's the situation, Ollie. The {pluralnameof LoggerheadTurtle} have lived here for a long time. 
+{@profBayou} People are concerned that the {h}Oil Rig Reef{/h} could disrupt their ecosystem. 
+             I need to know if the turtles have any new predators.
+{@bayouSci}  Dear Lord in heaven. Are we really gonna waste the kid's time on this?
+             If there's even a miniscule chance that this reef will mess with our ecosystem, it's gotta go.
+             The shrimping industry is already hurting enough.  
+{@profBayou} I see. And what about the new, thriving ecosystem that would end up destroyed? 
+{@bayouSci}  Look, science ain't pretty. 
+{@profBayou} "Pretty" has nothing to do with it. 
+            Ollie, please make a Food Web for Site O and report back. 
 $if !HasEntity(Cyanobacteria)
-	{@profBayou}	There is a new organism at the Oil Rig Reef you can research now that you have the {h}Microscope{/h}.
-                    Be sure to scan it and count the population like you did for the other species.
+	{@profBayou}	Also, I notice you've obtained a {h}Microscope{/h}.
+                    That means you'll be able to detect a new organism at Site O.
+                    Make sure to scan it and count its population, as you did for the other species. 
 $endif
+{@player} Copy that. I'll be back soon. 
+
+:: diveSite
+@trigger    SceneStart
+@when       scene:name == "RS-3O"
+@once
+@cutscene
+
+{@player} Ay. It was tense in there, {nameof @guide}.
+{@player} I think Harper and Silias need to touch some grass. Or kelp, or whatever.
+{@guide}  Ah. The nearest turf grass can be found approximately 32 kilometers away. 
+{@guide} Shall we offer them some of your mother's bull kelp cookies? 
+{@player} Never mind, V. Let's just get this job done, before those two kill each other. 
 
 // CATCH-ALL GUIDE TEXT
 
@@ -21,35 +42,40 @@ $endif
 @when 		JobTaskActive(scanCyano)
 @boostScore -5
 @cutscene
-{@guide}    Head to {h}Site O{/h} and scan the {nameof Cyanobacteria}. Make sure you have your {item}Microscope{/item} pulled out!
+{@player} What should I do now, {nameof @guide}? 
+{@guide}  Scan the {nameof Cyanobacteria} at Site O. Make sure to use your {item}Microscope{/item}!
 
 :: catchCountCyano
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(countCyano)
 @boostScore -5
 @cutscene
-{@guide}    Head to {h}Site O{/h} and count the {nameof Cyanobacteria} population. Make sure you have your {item}Microscope{/item} pulled out!
+{@player} So, what's next? 
+{@guide}    Count the {nameof Cyanobacteria} population at Site O. Make sure to use your {item}Microscope{/item} pulled out!
 
 :: catchExperimentsForSiteO
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(experimentsForSiteO)
 @boostScore -5
 @cutscene
-{@guide}    Use the {item}Observation Tank{/item} to find what Loggerhead Turtles eat at Site O.
+{@player} Okay, {nameof @guide}. What now?
+{@guide}  Use your {item}Observation Tank{/item} to find what Loggerhead Turtles eat at Site O.
 
 :: catchVisualModelO
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(visualModelO)
 @boostScore -5
 @cutscene
-{@guide}    Make a {item}Visual Model{/item} of what you found out from the Observation Tank.
+{@player} What should I do next, {nameof @guide}?
+{@guide}    Make a {item}Visual Model{/item} of what you discovered in the Observation Tank.
 
 :: catchReportback
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Report back to {nameof profBayou}.
+{@player} What should we do next?
+{@guide} You've completed your task. It's time to report back to {nameof profBayou}.
 
 // ARGUMENTATION
 
@@ -58,19 +84,20 @@ $endif
 @when   !ArgueIsComplete(siteOModel)
 @cutscene
 $call ArgueLoad(siteOModel)
-{@profBayou} What can you tell me about the safety of the turtles?
-$choice .argue.turtleSafe; The turtles should be safe from predators
-$choice .argue.turtleNotSafe; The turtles might not be safe from predators
+{@profBayou} Back already, Ollie? I'm impressed.
+             So what can you tell me? Are the turtles at Site O in danger?
+$choice .argue.turtleSafe; The turtles should be safe from predators.
+$choice .argue.turtleNotSafe; The turtles might not be safe from predators.
 $choose branch
 
 :: argue.turtleSafe
 $call ArgueSetClaim(Claim, jobs.bayou-turtle-danger.argue.claimLabel1) 
-{@profBayou} Do you have a model that shows the turtles are safe in {h}Site O{/h}?
+{@profBayou} Do you have a model that proves the turtles at {h}Site O{/h} are safe? 
 $goto argue.showSafeClaim
 
 :: argue.turtleNotSafe
 $call ArgueSetClaim(Claim, jobs.bayou-turtle-danger.argue.claimLabel2) 
-{@profBayou} Do you have a model that shows the turtles are not safe in {h}Site O{/h}?
+{@profBayou} Do you have a model that proves the turtles at {h}Site O{/h} are in danger?
 $goto argue.showUnsafeClaim
 
 :: argue.showUnsafeClaim
@@ -83,7 +110,7 @@ $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.goodEvidenceWrongClaim
-{@profBayou} That model doesn't indicate any danger to the turtles. 
+{@profBayou} That model doesn't indicate any danger to the turtles, Ms. Ramirez. 
     Let's start over.
 $call ArgueRejectIncorrect()
 $call ArgueClearFacts()
@@ -100,19 +127,23 @@ $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.unrelated
-{@profBayou} Ok, that's interesting, but it's not answering my question.
+{@profBayou} That's not helpful, Ms. Ramirez. Please try again. 
 $call ArgueRejectIncorrect()
 $call ArgueClearFacts()
 $call ArgueCancelClaim()
 $goto .argue.intro
 
 :: argue.giveUp
-{@profBayou} OK. Get back to me when you're ready.
+{@profBayou} Okay. Please get back to me as soon as you can.
 $call ArgueCancelClaim()
 
 :: argue.complete
 $call ArgueComplete()
-{@profBayou} Nice work! It looks like the Turtles are safe from any predators here.
-{@profBayou} We will need to see a descriptive model that looks at historic populations to know for certain.
+{@profBayou} Hmm. It appears the turtles aren't in danger here. 
+             But if we want to know for certain, we'll need to make a descriptive model using historic population data.
+{@profBayou} Thank you, Ollie. Your work was adequate.
+{@player}    Ha. I think you and my A.I. would get along great.
+{@profBayou} ¿Cómo?   
+{@player} Oh, uh, nothing. Happy to help, Professor. 
 $call CompleteJob()
 :: end
