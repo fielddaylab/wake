@@ -362,7 +362,7 @@ var UWTStreamLibraryImpl = {
             return false;
         }
 
-        element.resource.fastSeek(position);
+        element.resource.currentTime = position;
         return true;
     },
 

@@ -32,7 +32,6 @@ namespace Aqua.Shop
 
         [NonSerialized] private Routine m_ExplorePreviewTransition;
         [NonSerialized] private Routine m_SciencePreviewTransition;
-        [NonSerialized] private bool m_PreviewEnabled;
         [NonSerialized] private ShopPreviewShipItem m_CurrentSubPreview;
         [NonSerialized] private ShopBoard.CategoryId m_CurrentCategory;
 
@@ -63,7 +62,6 @@ namespace Aqua.Shop
                         }
 
                         m_CurrentSubPreview = preview;
-                        m_PreviewEnabled = true;
                         SetAsPreview(preview);
                         m_ExplorePreviewTransition.Replace(this, RotateSubJoint(preview.Rotation));
                         break;

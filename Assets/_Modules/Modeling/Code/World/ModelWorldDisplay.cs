@@ -66,7 +66,6 @@ namespace Aqua.Modeling {
         [SerializeField] private Canvas m_Canvas = null;
         [SerializeField] private CanvasGroup m_Group = null;
         [SerializeField] private InputRaycasterLayer m_Input = null;
-        [SerializeField] private PointerListener m_Click = null;
 
         [Header("Water Properties")]
         [SerializeField] private ModelWaterPropertyDisplay m_LightProperty = null;
