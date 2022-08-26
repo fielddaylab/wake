@@ -15,7 +15,7 @@ var NativeWebClickLib = {
                 var element = m.currentTarget;
                 var x = m.offsetX / element.clientWidth;
                 var y = 1 - (m.offsetY / element.clientHeight);
-                dynCall_vff(Cache.nativeCallback, [x, y]);
+                dynCall_vff(Cache.nativeCallback, x, y);
             }
         }
     },
