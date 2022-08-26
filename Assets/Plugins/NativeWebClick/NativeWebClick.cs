@@ -5,6 +5,7 @@
 using System.Runtime.InteropServices;
 using AOT;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace NativeWebClick
 {
