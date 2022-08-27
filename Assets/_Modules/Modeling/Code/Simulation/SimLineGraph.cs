@@ -15,6 +15,8 @@ namespace Aqua.Modeling {
         #region Inspector
 
         [SerializeField] private Color m_StressColor = Color.red;
+        [SerializeField] private Color m_InterventionGoalColor = Color.green;
+        [SerializeField] private Color m_InterventionDiscrepancyColor = Color.red;
         [SerializeField] private SimGraphBlock.Pool m_Blocks = null;
         [SerializeField] private GraphTargetRegion.Pool m_Targets = null;
         [SerializeField] private GraphStressPoint.Pool m_StressIcons = null;
@@ -30,6 +32,8 @@ namespace Aqua.Modeling {
         private readonly SimGraphBlock[] m_AllocatedWaterMap = new SimGraphBlock[(int) WaterProperties.TrackedMax];
 
         [NonSerialized] private SimGraphBlock m_InterventionBlock;
+        private List<GraphTargetRegion> m_InterveneRegions;
+        private static List<float> m_FinalBlockYs;
         private readonly GenerateStressPointsDelegate StressPointCallback;
         private readonly GenerateDivergenceDelegate DivergenceCallback;
 
@@ -84,6 +88,8 @@ namespace Aqua.Modeling {
                 obj.gameObject.SetActive(false);
                 block.Divergence = temp;
             };
+
+            Services.Events?.Register(ModelingConsts.Event_Intervene_Error, OnInterveneError);
         }
 
         private void Start() {
@@ -131,6 +137,7 @@ namespace Aqua.Modeling {
             if ((mask & SimRenderMask.Intervene) != 0) {
                 PopulateTargets(state, info);
             } else {
+                ResetInterveneError();
                 m_Targets.Reset();
             }
         }
@@ -141,6 +148,7 @@ namespace Aqua.Modeling {
 
         private void PopulateTargets(ModelState state, ModelProgressInfo info) {
             if (info.Scope) {
+                ResetInterveneError();
                 m_Targets.Reset();
                 foreach(var target in info.Scope.InterventionTargets) {
                     var block = GetBlock(target.Id, state);
@@ -149,14 +157,19 @@ namespace Aqua.Modeling {
                     targetObj.Object.Layout.SetParent(block.PredictGroup.transform, false);
                     targetObj.Object.MinValue = target.Population - target.Range;
                     targetObj.Object.MaxValue = target.Population + target.Range;
-                    targetObj.Object.Background.color = block.PrimaryColor;
+                    targetObj.Object.Background.color = m_InterventionGoalColor;
+                    targetObj.Object.LocText.SetText("modeling.intervene.target");
+
+                    m_InterveneRegions.Add(targetObj.Object);
                 }
             } else {
+                ResetInterveneError();
                 m_Targets.Reset();
             }
         }
 
         public void ClearBlocks() {
+            ResetInterveneError();
             m_Blocks.Reset();
             m_AllocatedBlockMap.Clear();
             m_AllocatedBlocks.Clear();
@@ -165,6 +178,16 @@ namespace Aqua.Modeling {
             m_Targets.Reset();
             m_InterventionBlock = null;
             Array.Clear(m_AllocatedWaterMap, 0, m_AllocatedWaterMap.Length);
+        }
+
+        private void ResetInterveneError() {
+            if (m_InterveneRegions != null) {
+                foreach(var obj in m_InterveneRegions) {
+                    obj.Discrepancy.gameObject.SetActive(false);
+                }
+            }
+            m_InterveneRegions = new List<GraphTargetRegion>();
+            m_FinalBlockYs = new List<float>();
         }
 
         #region Retrieving Blocks
@@ -365,11 +388,22 @@ namespace Aqua.Modeling {
 
                     changed |= block.Predict.ApplyScale(bounds);
 
+                    // temp setting
+                    block.IconPin.SetAnchorY(0f);
+                    if (block.Intervention != null) {
+                        if (block.Predict.PointCount != 0) {
+                            float newY = block.IconPin.position.y +
+                                block.Predict.Points[block.Predict.PointCount - 1].y / blocks.Length;
+                            m_FinalBlockYs.Add(newY);
+                        }
+                    }
+
                     if (showIntervene && pointCount < 2) {
                         block.IconPin.SetAnchorY(0.5f);
                     } else {
                         block.IconPin.SetAnchorY(block.Predict.Points[0].y);
                     }
+
                 }
 
                 if (showIntervene && block.Intervention != null) {
@@ -419,6 +453,7 @@ namespace Aqua.Modeling {
         static private void RenderIntervention(GraphTargetRegion region, Rect rect) {
             float min = MathUtil.Remap(region.MinValue, rect.yMin, rect.yMax, 0, 1);
             float max = MathUtil.Remap(region.MaxValue, rect.yMin, rect.yMax, 0, 1);
+            if (min > 1) { min = 0; }
             region.Layout.SetAnchorsY(min, max);
         }
 
@@ -538,6 +573,48 @@ namespace Aqua.Modeling {
         }
 
         #endregion // Generating Lines
+
+        #region Handlers
+
+        private void OnInterveneError() {
+            if (m_InterveneRegions == null || m_InterveneRegions.Count == 0) { return; }
+
+            for (int i = 0; i < m_InterveneRegions.Count; i++) {
+                GraphTargetRegion region = m_InterveneRegions[i];
+                if (region.Background == null) { continue; }
+
+                // TODO: Check if this *specific* region is incorrect
+                region.Background.color = m_InterventionDiscrepancyColor;
+                region.LocText.SetText("modeling.noIntervenePopup.header");
+
+                region.Discrepancy.gameObject.SetActive(true);
+
+                region.Discrepancy.Layout.SetPosition(new Vector3(0, 0, 0), Axis.XY, Space.Self);
+                
+                Vector3 upperPos = new Vector3(region.Layout.position.x, region.Layout.position.y, 1);
+                Vector3 lowerPos = new Vector3(region.Layout.position.x, m_FinalBlockYs[i], 1);
+
+                if (upperPos.y < lowerPos.y) {
+                    Vector3 tempPos = upperPos;
+                    upperPos = lowerPos;
+                    lowerPos = tempPos;
+                }
+
+                Vector3 midPos = (upperPos + lowerPos) / 2;
+
+                region.Discrepancy.UpperDot.gameObject.transform.position = new Vector3(region.Discrepancy.UpperDot.gameObject.transform.position.x, upperPos.y, 1);
+                region.Discrepancy.LowerDot.gameObject.transform.position = new Vector3(region.Discrepancy.LowerDot.gameObject.transform.position.x, lowerPos.y, 1);
+                region.Discrepancy.Circle.gameObject.transform.position = new Vector3(region.Discrepancy.Circle.gameObject.transform.position.x, midPos.y, 1);
+                region.Discrepancy.Line.gameObject.transform.position = new Vector3(region.Discrepancy.Line.gameObject.transform.position.x, midPos.y, 1);
+
+                // TODO: create individual lines connecting upper to lower dot, instead of just adjusting scale
+                float dotBuffer = region.Discrepancy.UpperDot.rectTransform.rect.height / 2;
+                region.Discrepancy.Line.rectTransform.sizeDelta = new Vector2(region.Discrepancy.Line.rectTransform.rect.width,
+                    Mathf.Abs(region.Discrepancy.UpperDot.gameObject.transform.localPosition.y - region.Discrepancy.LowerDot.gameObject.transform.localPosition.y + dotBuffer));
+            }
+        }
+
+        #endregion // Handlers
 
         public delegate void GenerateStressPointsDelegate(SimGraphBlock block, SimRenderMask phase, StressedRegion* stressRegions, int stressRegionCount);
         public delegate void GenerateDivergenceDelegate(SimGraphBlock block);

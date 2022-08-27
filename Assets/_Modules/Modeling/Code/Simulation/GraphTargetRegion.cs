@@ -1,6 +1,7 @@
 using System;
 using BeauPools;
 using BeauUtil;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,7 +12,9 @@ namespace Aqua.Modeling {
         #region Inspector
 
         public RectTransform Layout;
+        public LocText LocText;
         public Graphic Background;
+        public GraphTargetRegionDiscrepancy Discrepancy;
         
         #endregion // Inspector
 
