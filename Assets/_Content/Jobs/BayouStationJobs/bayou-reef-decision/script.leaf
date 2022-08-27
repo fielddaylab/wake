@@ -7,9 +7,15 @@
 @cutscene
 
 // write an intro to your job
-{@profBayou}   Right now there is a giant rig here in {h}Site O{/h} with a bunch of coral growing on it.
-                If the rig goes, there can't be any coral. So all the species that depend on coral would go too.
-                We are interested in knowing what would happen to turtle populations if the reef were removed.
+{@profBayou}   Okay, Ollie. It's time for you to make a decision about that rig.
+{@bayouSci}    Well, it's about darned time! 
+{@player}      Wait... me?? 
+               I mean, I thought YOU would handle the actual decision-making...
+{@profBayou}   You've proven yourself. I'd like your input.
+               If the ERC Industries Rig goes, all the coral out there--and all the species that depend on coral--go with it.
+               I need you to predict how removing the rig would affect the turtles. 
+               Then report back and give me your professional recommendation.
+{@player}      Okay. Got it, Professor. 
 
 // CATCH-ALL GUIDE TEXT
 
@@ -18,14 +24,31 @@
 @when 		JobTaskActive(interventionDecision)
 @boostScore -5
 @cutscene
-{@guide}    Create an Intervention Model using facts surrounding the artificial reef.
+{@player}  Okay, {nameof @guide}. What now? 
+{@guide}   You need to create an Intervention Model using facts about the artificial reef.
+
+:: RigDecisionTime
+@trigger  JobTasksUpdated
+@when     JobTaskActive(reportBack)
+@once
+@cutscene
+
+{@guide} You've gathered the required data. Now you'll need to share your decision with {nameof @profBayou}!
+{@player}  Ugh. Back home, Mom handled this sort of thing
+          The turtles will be okay either way. So what's the right choice here? 
+{@guide}  Answer: inconclusive. 
+{@player} What about the Cyanobacteria? And the Sea Pearls? 
+{@guide}   Answer: inconclusive.
+{@player}  You're not going to tell me what to do, are you, {nameof @guide}?
+{@guide}  I'm afraid not, O. You are required to make this decision yourself. 
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Report back to {nameof profBayou}.
+{@player}   What should I do now, {nameof @guide}?
+{@guide}    Report back to {nameof profBayou}!
 
 // ARGUMENTATION
 
@@ -34,23 +57,25 @@
 @when   !ArgueIsComplete(siteOIntervene)
 @cutscene
 $call ArgueLoad(siteOIntervene) 
-{@profBayou} What should we do about the ERC Industries Rig in the reef?
-$choice .argue.removeRig; We should remove the rig
-$choice .argue.leaveRig; We should leave the rig
+{@profBayou} Okay, Ollie.
+             It's time to hear your recommendation. 
+             What should we do about the ERC Industries Rig?
+$choice .argue.removeRig; We should remove the rig.
+$choice .argue.leaveRig; We should leave the rig.
 $choose branch
 
 :: argue.removeRig
 $if ArgueSetClaim(Claim, jobs.bayou-reef-decision.argue.claimLabel1)
     $call ArgueFactSlot(O_OilRig.turtleDangerNoReef.Model.Intervene) 
 $endif
-{@profBayou} What makes you say that?
+{@profBayou} What data did you use to make this decision? 
 $branch argue.showClaim
 
 :: argue.leaveRig
 $if ArgueSetClaim(Claim, jobs.bayou-reef-decision.argue.claimLabel2) 
     $call ArgueFactSlot(O_OilRig.turtleDangerNoReef.Model.Intervene) 
 $endif
-{@profBayou} What makes you say that?
+{@profBayou} What data did you use to make this decision? 
 $branch argue.showClaim
 
 :: argue.showClaim
@@ -63,12 +88,12 @@ $choose branch
 
 :: argue.unrelated
 $call ArgueRejectIncorrect()
-{@profBayou} Ok, that's interesting, but it's not answering my question.
+{@profBayou} That's not helpful, Ms. Ramirez. 
 $call ArgueClearFacts()
 $branch .argue.showClaim
 
 :: argue.giveUp
-{@profBayou} OK. Get back to me when you're ready.
+{@profBayou} Okay, then. But don't take too long. A lot of people are waiting on our decision. 
 $call ArgueClearFacts()
 $call ArgueCancelClaim()
 
@@ -76,7 +101,13 @@ $call ArgueCancelClaim()
 
 :: argue.complete
 $call ArgueComplete()
-{@profBayou}   Even without the reef, it seems like the populations would be similar. 
-                It really shouldn't matter either way.
-
+{@profBayou}  Hmm. This is fascinating.
+              Either way, the turtle populations will remain stable... but it seems that other organisms will be affected. 
+              I'd like to go with your recommendation, Ollie.
+{@player}     Mine? ¿¿En serio??
+              But.. I'm only a junior scientist.
+{@profBayou}  You're also incredibly thoughtful, and you used your data to make the best choice you could.
+              I wasn't sure you'd have the courage to make a recommendation. I'm impressed. 
+{@bayouSci}   Well, well. The professor saying something nice? 
+              Maybe she is human, after all. 
 $call CompleteJob()

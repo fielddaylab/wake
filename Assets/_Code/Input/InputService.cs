@@ -2,6 +2,7 @@ using Aqua.Debugging;
 using BeauData;
 using BeauUtil;
 using BeauUtil.Debugger;
+using NativeWebClick;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -296,6 +297,18 @@ namespace Aqua
 
         static private readonly Action<IInputLayer> UpdateDevice = (l) => l.Device.Update();
 
+        private void OnNativeMouseDown(float x, float y)
+        {
+            PointerEventData pointerData = m_InputModule.GetPointerEventData();
+            if (pointerData.pointerEnter != null) {
+                ExecuteEvents.Execute(pointerData.pointerEnter, pointerData, NativeMouseDownHandler);
+            }
+        }
+
+        static private readonly ExecuteEvents.EventFunction<INativePointerDownHandler> NativeMouseDownHandler = (INativePointerDownHandler handler, BaseEventData evtData) => {
+            handler.OnNativePointerDown(ExecuteEvents.ValidateEventData<PointerEventData>(evtData));
+        };
+
         #endregion // Unity Events
 
         #region Service
@@ -306,11 +319,17 @@ namespace Aqua
 
             Input.multiTouchEnabled = false;
             m_InputModule.OnModeChanged += OnInputModeChanged;
+
+            NativeClick.Initialize();
+            NativeClick.OnMouseDown += OnNativeMouseDown;
         }
 
         protected override void OnDestroy()
         {
             m_InputModule.OnModeChanged -= OnInputModeChanged;
+
+            NativeClick.OnMouseDown -= OnNativeMouseDown;
+            NativeClick.Shutdown();
 
             base.OnDestroy();
         }

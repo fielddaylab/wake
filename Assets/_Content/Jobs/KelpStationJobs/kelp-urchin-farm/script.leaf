@@ -8,9 +8,7 @@
 			I'm exploring an idea for a new side hustle... 
 			Urchin farming!
 {@player}   Wait... You want to farm urchins? On purpose??
-{@drKelp}   Don't act so surprised, Mija. The urchin population is a beautiful, essential part of our ecosystem.
-{@drKelp}   Plus, there's a high demand for urchins at the local seafood market.
-{@player}   No manches.
+{@drKelp}   Don't act so surprised, Mija. There's a high demand for urchins at the local market!
 {@drKelp}   We're having kelp noodles with sea urchin crema for dinner, by the way. You'll love it! 
             But for now, head to your {nameof MeasurementTank}.
 			I need to know how quickly the urchins eat the different species of kelp, so I know the most efficient food to give them. 
@@ -20,11 +18,9 @@
 @when		tankType == "Measurement"
 @once 
 @cutscene
-{@player}   Urchin crema... eek. The cinnamon kelp rolls were bad enough.  
-		    If I don't report back to work tomorrow, {nameof @guide}, can you tell Sam I love them? 
-{@guide}   Certainly, O.
-           Time to set up your tank! 
-	       We know the Urchins behave normally in the Kelp Forest. 
+{@player}   Where should we start, {nameof @guide}?
+{@guide}   It's time to set up your tank!
+		   Your mother needs to know which type of Kelp the urchins eat more quickly. 
 			
 :: measurementChooseKelp
 @trigger	ExperimentScreenViewed

@@ -39,14 +39,14 @@
 @when       JobTaskTop(getTagger)
 @cutscene
 {@player}   So... where do we head now?
-{@guide}    Talk to your uncle, he'll have some items for us.
+{@guide}    Talk to your uncle. He'll have some items for you!
 
 :: helpGetVisualModel
 @trigger    RequestPartnerHelp
 @when       JobTaskTop(getVisualModel)
 @cutscene
 {@player}   So... where do we head now?
-{@guide}    Talk to your uncle, he'll have some items for us.
+{@guide}    Talk to your uncle. He'll have some items for you! 
 
 :: helpReturnShip
 @trigger    RequestPartnerHelp
@@ -62,8 +62,14 @@
 @triggerPriority    High
 @cutscene
 $if JobTaskCompleted(getVisualModel), JobTaskCompleted(getTagger)
-    {@drKelp}   Hey guys! Just got back from my colleagues and they're excited to meet you guys.
-                Feel free to pay my colleagues a visit!
+    {@player}  I can't believe Mom's letting me leave the Kelp Forest... by myself!!
+                What are the odds?? 
+     {@guide}   Processing... processing...
+                Your odds of surviving a journey to another research station are 97.2%!
+     {@player}  Um. Okay, cool. That was a rhetorical question, but I like the optimism. 
+     {@player}  So, what now, {nameof @guide}?
+     {@guide}   Your map has nearly finished updating! Any second now... 
+
 
     $branch common.download
     $call UnlockStation(CoralStation)
@@ -74,9 +80,8 @@ $if JobTaskCompleted(getVisualModel), JobTaskCompleted(getTagger)
     $call ShowPopup(map.unlock.shipRoom.header, map.unlock.worldMap.desc)
     $call ShowPopup(map.unlock.stations.header, map.unlock.stations.desc)
 
-    {@player}   Thanks, {nameof @drKelp}!
-    {@drKelp}   No problem!
-                If you'd like to stay here, head back to the {map-name}Job Board{/map-name} where I have some new jobs for you!
+    {@guide} Your map is ready!
+    {@guide}  Use the map to view available jobs and travel to different ecosystems. 
     $call CompleteJob()
     $set    jobs:common-dive.seen.tagger-intro = false
     $set    jobs:common-dive.seen.probe-intro = false

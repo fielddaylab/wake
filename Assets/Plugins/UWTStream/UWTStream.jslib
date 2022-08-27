@@ -172,7 +172,7 @@ var UWTStreamLibraryImpl = {
             return false;
 
         element.resource.pause();
-        element.resource.src = null;
+        element.resource.src = "";
         element.active = false;
         return true;
     },

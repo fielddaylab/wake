@@ -4,27 +4,35 @@
 @trigger    JobStarted
 @cutscene
 
-{@profBayou}	There seems to be something strange going on with the shrimp at Site P.
-{@profBayou}	I want you to head over there and investigate the environment and shrimp population.
-{@player} 	On it!
+{@bayouSci}     Well, it's about time!
+                There's somethin' strange goin' on with the shrimp at Site P.
+                Shrimpers have been sayin' it's harder to bring in their catch.
+{@profBayou}    Keep in mind, Silias, those are anecdotes. Not data.
+{@bayouSci}     Well, exactly, Professor. More data is what we need here. 
+                This whole region depends on shrimping for its liveliehood.. including my folks. 
+                If the shrimp population really is falling, we need to do somethin' about it. 
+                Can you head out there and investigate, kid?
+{@player} 	    Por supuesto. I'm on it. 
 
 :: helpGetScans
 @trigger    RequestPartnerHelp
 @when 		JobTaskTop(getScans)
 @cutscene
-{@player} 	What should I be doing again?
-{@guide}	We need to investigate the environment at site P and check on the shrimp population.
-{@guide}	Make sure to scan the probe and shrimp, and then use the tagging functionality of your sub to get the shrimp's population.
+{@player} 	What should I be doing again, {nameof @guide}?
+{@guide}	You need to scan the shrimp and obtain data from the probe at Site P. 
+            Then use your sub's tagging functionality to obtain the shrimp's population.
 
 :: gotScans
 @trigger    JobTasksUpdated
 @once
 @cutscene
-{@guide} I think that's all we needed from here, time to head back.
+{@player} Uh oh. This doesn't look good, {nameof @guide}. 
+{@guide}  Yes. The shrimp don't appear to be doing well.
+{@player} I guess we better go tell Silias. Hopefully he'll have a plan for what to do next. 
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
 @when 		JobTaskTop(reportBack)
 @cutscene
 {@player} 	Where should I be going again?
-{@guide}	We got all the data from Site P, so let's report back to {@profBayou}.
+{@guide}	You need to report back to {@bayouSci} at the station. 

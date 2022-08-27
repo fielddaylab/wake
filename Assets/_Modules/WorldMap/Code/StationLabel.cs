@@ -9,7 +9,6 @@ namespace Aqua.WorldMap
     {
         #region Inspector
 
-        [SerializeField] private RectTransform m_Transform = null;
         [SerializeField] private LocText m_Label = null;
         [SerializeField] private Image m_Icon = null;
         [SerializeField] private GameObject m_NewStationBadge = null;

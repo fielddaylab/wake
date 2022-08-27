@@ -5,14 +5,21 @@
 @trigger    JobStarted
 @cutscene
 
-{@profBayou}   We want to figure out how the turtles are responding to the reef that has grown all around the ERC Industries Rig.
-                Specifically, we want you to collect the historic population data and develop a model using what you know about the food web.
-{@player}       I'm happy to help, but why build a model if we can easily get the historic population data? Can we just look at the trend?
-{@profBayou}   We need a model so we can understand why the populations are changing the way they are.
-                If you can build a model that outputs populations that match the historic data,
-                then we can start to assume that our model is describing how the ecosystem works. 
-{@player}       Got it. So the model is tested against the world?
-{@profBayou}   Exactly!  
+{@profBayou}  I'm still investigating the impact of the oil rig reef on the Loggerhead Turtles.
+              I need you to collect the historic population data for Site O... 
+              And then make a model using the historic data and your knowledge of the food web.
+{@player}     Oh... okay, sure.
+{@profBayou}  You sound uncertain, Ollie. Something bothering you? 
+{@player}     Well... why do we need to model what's been happening at Site O? 
+              You've been collecting data this whole time. It's all there. 
+{@bayouSci}    These new scientists sure are green, huh, Professor?
+{@bayouSci}   It's not just about WHAT'S happening at the ecosystem, kid. You need to work out WHY it's happening.
+              If your model and the real world match, that means your model is doin' what it's supposed to.
+             Then we can use it to make decisions about what to do next.
+{@profBayou}  We? I thought you had more important things to worry about, Silias.
+{@bayousci}   Oh... ah... I do, of course.
+              Just couldn't stand to leave the kid hangin'. She looked so clueless.
+{@player}     Um. Thanks, Silias. I guess. 
 
 // CATCH-ALL GUIDE TEXT
 :: catchHistoricalData
@@ -20,42 +27,51 @@
 @when 		JobTaskActive(historicalData)
 @boostScore -5
 @cutscene
-{@guide}    The first task for this job can be found in your trusty {item}AQOS{/item}.
+{@player} What should I do now, {nameof @guide}?
+{@guide}  Check your {item}AQOS{/item} to find your first task!
 
 :: helpProbe
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(historicalData), scene:name == "RS-3O"
 @boostScore -5
 @cutscene
-{@guide}    Remember, we can collect historic population data for a site from a {item}probe{/item} at the site.
+{@player}  Okay... I'm stuck. Can you help me out, {nameof @guide}?
+{@guide}   Certainly, O.
+           You can collect the historic population data from Site O's {item}probe{/item}.
 
 :: backToShip
 @trigger    RequestPartnerHelp
 @when 		JobTaskCompleted(measureStress), !IsPlayerOnShip()
 @cutscene
-{@guide}    Let's head back to the {m}ship{/m} to conduct our experiments.
+{@player}   What now, {nameof @guide}?
+{@guide}    You need to return to the Meredith to conduct your experiments!
 
 :: catchStressRanges
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(measureStress), IsPlayerOnShip(), scene:name != "ExperimentV2"
 @cutscene
-{@guide}    {item}Stress ranges{/item} can be studies with in the {m}Experimentation Lab{/m}
+{@player} What should we do next, {nameof @guide}?
+{@guide}  You'll need to get to the {m}Experiment Lab{m/} and investigate the {item}Stress ranges{/item} for these organisms!
 
 :: catchSyncModel
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(syncModel)
 @boostScore -5
 @cutscene
-{@guide}    We need to do some {m}experimenting{/m} to obtain rules about {h}Site O{/h} organisms. 
-            Then, head to the {m}Modeling Lab{/m} and make a {item}Descriptive Model{/item}, which should match the population history data you collected.
-            You can view missing rules by viewing your {item}Visual Model{/item} 
+{@player} What should I do now, {nameof @guide}?
+{@guide} You need to use your Experiment Lab to obtain rules about the {h}Site O{/h} organisms. 
+         Then head to the {m}Modeling Lab{/m} and make a {item}Descriptive Model{/item}.
+         Remember, the Descriptive Model should match the historic data you collected. 
+         To find out what rules you're missing, check your {item}Visual Model{/item}. 
 
 :: catchVisualize
 @trigger    RequestPartnerHelp
 @when       scene:name == "Modeling", modeling:phase == "visual", JobTaskTop(syncModel) 
 @cutscene
 @boostScore 100
-{@player}   Got any ideas what to do next, V1ctor?
+{@player}   I'm sort of stuck.
+            Can you help me out, {nameof @guide}?
+{@guide}    Certainly, O. 
 $if HasEntity(AngelFish),HasEntity(Cyanobacteria),HasEntity(ElkhornCoral),HasEntity(SeaPearl),HasEntity(LoggerheadTurtle),HasEntity(RedGrouper)
     //Player has all required critters
     $if HasFact(AngelFish.Reproduce.Stressed),HasFact(Cyanobacteria.Reproduce),HasFact(ElkhornCoral.Reproduce),HasFact(SeaPearl.Reproduce.Stressed),HasFact(LoggerheadTurtle.Reproduce),HasFact(RedGrouper.Reproduce)
@@ -63,38 +79,38 @@ $if HasEntity(AngelFish),HasEntity(Cyanobacteria),HasEntity(ElkhornCoral),HasEnt
 
         $if HasFact(AngelFish.Eats.SeaPearl.Stressed),HasFact(LoggerheadTurtle.Eats.Cyanobacteria),HasFact(LoggerheadTurtle.Eats.AngelFish),HasFact(RedGrouper.Eats.Cyanobacteria),HasFact(RedGrouper.Eats.AngelFish)
             //Has all eat facts
-            {@guide}    That should be all the rules we need, make sure you have all the rates and let's go!
+            {@guide}    You have obtained all the rules you need. Now you need to obtain the rates from the Measurement Tank.
         $else
-            {@guide}    Seems like we still are missing some consumption rules. Maybe take another look at the Observation Tank?
+            {@guide}    You are still missing some consumption rules. Perhaps you should take another look at the Observation Tank. 
         $endif
     $else
         $if HasFact(O_OilRig.turtleDanger.Model.Visual)
-            {@guide}    Head to the next tab to continue building your model.
+            {@guide}    You need to head to the next tab to continue building your model!
         $else
             //Missing at least 1 reproduction fact
-            {@guide}    It seems like we're missing some of the reproduction rates, how about you take a trip over to the Measurement Tank?
+            {@guide}    You are still missing at least 1 reproduction rate. I would suggest consulting your Measurement Tank.
         $endif
     $endif
 $else
     //Player is missing at least 1 critter
-    {@guide}    Looks like we're still missing some critters.
+    {@guide}    You seem to be missing some of the organisms from Site O. 
     $if !HasEntity(AngelFish)
-        {@guide}    Have you tried scanning the Angelfish yet?
+        {@guide}    Have scanned any Angelfish yet?
     $else
         $if !HasEntity(Cyanobacteria)
-            {@guide}    Have you tried scanning some Cyanobacteria yet?
+            {@guide}    Have you scanned the Cyanobacteria?
         $else
             $if !HasEntity(ElkhornCoral)
-                {@guide}    Have you tried scanning some Elkhorn Coral yet?
+                {@guide}    Have scanned the Elkhorn Coral?
             $else
                 $if !HasEntity(SeaPearl)
-                    {@guide}    Have you tried scanning any Sea Pearls yet?
+                    {@guide}    Have scanned any Sea Pearls yet?
                 $else
                     $if !HasEntity(LoggerheadTurtle)
-                        {@guide}    Have you tried scanning some Loggerhead Turtles yet?
+                        {@guide}    Have you scanned the Loggerhead Turtles yet?
                     $else
                         $if !HasEntity(RedGrouper)
-                            {@guide}    Have you tried scanning some Red Grouper yet?
+                            {@guide}    Have you scanned the Red Grouper?
                         $endif
                     $endif
                 $endif
@@ -108,7 +124,8 @@ $endif
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Report back to {nameof profBayou}.
+{@player}  What should I do now, {nameof @guide}?
+{@guide}    Report back to {nameof profBayou}!
 
 // ARGUMENTATION
 
@@ -117,16 +134,17 @@ $endif
 @when   !ArgueIsComplete(turtleDanger)
 @cutscene
 $call ArgueLoad(turtleDanger)
-{@profBayou} How are turtle populations responding?
-$choice .argue.turtlesSafe2; It seems the turtle populations are stable
-$choice .argue.giveUp; Let me get back to you
+{@profBayou} Okay, Ollie. I'm ready to hear your findings.
+             How have the turtle populations responded to the reef?
+$choice .argue.turtlesSafe2; The turtle populations are stable!
+$choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.turtlesSafe2
 $if ArgueSetClaim(Claim, jobs.bayou-turtle-danger2.argue.claimLabel) 
 	$call ArgueFactSlot(O_OilRig.turtleDanger.Model.Describe)
 $endif
-{@profBayou} Were you able to obtain a numerical model that describes the populations?
+{@profBayou} Interesting. Did you obtain a numerical model that describes the populations?
 $goto .argue.showClaim
 
 :: argue.showClaim
@@ -139,17 +157,23 @@ $choose branch
 
 :: argue.unrelated
 $call ArgueRejectIncorrect()
-{@profBayou} Ok, that's interesting, but it's not answering my question.
+{@profBayou} That's not relevant, Ms. Ramirez. 
 $goto .argue.showClaim
 
 :: argue.giveUp
-{@profBayou} OK. Get back to me when you're ready.
+{@profBayou} Hmmm. Well, don't take too long. A lot is riding on this. 
 $call ArgueCancelClaim()
 
 // END
 
 :: argue.complete
 $call ArgueComplete()
-{@profBayou}   The turtles do seem to be maintaining their populations. 
-                We will need a higher accuracy rating in the future, if we want to predict from this though.
+{@profBayou}   The turtles do seem to be maintaining their populations.
+{@bayouSci}    Huh. I gotta say, that's not what I expected.
+{@player}      So... this is a good thing, right? The reef isn't hurting anyone?
+{@profBayou}   I still don't have enough data to make that conclusion.
+{@bayouSci}    Oh, come ON...
+{@profBayou}   We'll need a higher accuracy rating if we want to make predictions based on this model.
+               Let me know when you have time for another job, Ollie. We'll keep working.
+               Nice work out there.  
 $call CompleteJob()

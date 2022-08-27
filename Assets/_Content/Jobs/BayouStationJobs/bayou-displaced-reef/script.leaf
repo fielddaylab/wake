@@ -4,16 +4,32 @@
 @trigger    JobStarted
 @cutscene
 
-{@profBayou}   Have you explored the {h}Bayou Station{/h} yet? There appears to be a new reef growing right here in the middle of {h}Site O{/h}. 
-                Would you be able to go pop out there and help us report back on what exactly is growing out there?
-{@player}   You can count on me!
+{@profBayou}  Thank you, Ollie,  
+              We need to assess whether the oil rig reef can stay without harming the ecosystem, or if it needs to be removed.
+             Can you take your sub out and get an estimated count of all the local species? 
+{@player}    Sure, Professor. Happy to help. 
+
+:: diveSite
+@trigger    SceneStart
+@when       scene:name == "RS-3O"
+@once
+@cutscene
+
+{@player} This is so wild. A whole new ecosystem growing on an old oil rig!
+{@player} That Silias guy doesn't seem happy about it, though. 
+{@guide} Processing "Silias"..... 
+{@guide} Records found. Esteemed marine scientist. The youngest in a long line of shrimpers. 
+{@player} Shrimpers?
+{@guide} Humans who make a living fishing for shrimp. 
+{@player} Hmm. I haven't seen many shrimp around here.  
+{@player} No wonder the guy's grumpy. 
 
 :: makeAModel
 @trigger    SceneStart
 @when       JobTaskActive(makeModel), scene:name == "Ship"
 @once
 @cutscene
-{@guide}    Let's head to our ship's modeling room to compile our data into a report for {nameof @profBayou}.
+{@guide} 
 
 // CATCH-ALL GUIDE TEXT
 
@@ -22,21 +38,23 @@
 @when 		JobTaskActive(visitSiteO)
 @boostScore -5
 @cutscene
-{@guide}    Head to {h}site O{/h}, it's right outside!
+{@guide}    Head to {h}site O{/h}. It's right outside!
 
 :: catchGetScans
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(getScans)
 @boostScore -5
 @cutscene
-{@guide}    Scan and count the species at {h}site O{/h}.
+{@player}  What should I do now, {nameof @guide}?
+{@guide}   You must scan and count all of the species at {h}Site O{/h}.
 
 :: catchGetCounts
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(getCounts)
 @boostScore -5
 @cutscene
-{@guide}    Count the species at {h}site O{/h}.
+{@player}   Okay, {nameof @guide}. What next? 
+{@guide}    You need to count all of the species at {h}Site O{/h}.
 
 :: catchMakeModel
 @trigger    RequestPartnerHelp
@@ -44,9 +62,11 @@
 @boostScore -5
 @cutscene
 $if IsPlayerOnShip()
-    {@guide}    We need to head to the {map-name}Modeling Lab{/map-name} to construct a {nameof VisualModel}.
+    {@player}  Hey {nameof @guide}... what's our next task again? 
+    {@guide}    You need to head to the {map-name}Modeling Lab{/map-name} to construct a {nameof VisualModel}.
 $else
-    {@guide}    Let's head back to our ship!
+    {@player} Can I have a little help, {nameof @guide}?
+    {@guide}    Certainly, O. You need to head to the surface and board your ship. 
 $endif
 
 :: catchReportback
@@ -54,7 +74,8 @@ $endif
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Report back to {nameof profBayou}.
+{@player} So... what now, {@nameof @guide}?
+{@guide}  You've completed your task, O. It's time to report back to {nameof profBayou}!
 
 // ARGUMENTATION
 ::argue.intro
@@ -66,7 +87,8 @@ $if ArgueSetClaim(Claim, jobs.bayou-displaced-reef.argue.claimLabel)
     $call ArgueFactSlot(O_OilRig.displacedReef.Model.Viz)
 $endif
 
-{@profBayou} Have you constructed a {h}visual model{/h} for the critters at {nameof O_OilRig}?
+{@profBayou} Okay, Ollie. Let's see what data you uncovered.
+             Did you construct a {h}visual model{/h} for the species at {nameof O_OilRig}?
 $branch .argue.showClaim
 
 :: argue.showClaim
@@ -79,17 +101,24 @@ $choose branch
 
 :: argue.incorrectPopulation
 $call ArgueRejectIncorrect()
-{@profBayou} Ok, that's interesting, but it's not answering my question.
+{@profBayou} That's not the answer I'm looking for, Ms. Ramirez.  
 $goto .argue.showClaim
 $call ArgueCancelClaim()
 
 :: argue.giveUp
-{@profBayou} OK. Get back to me when you're ready.
+{@profBayou} Hmmm. Okay, then. Do hurry back. 
 
 ::end
 
 :: argue.correctPopulation
 $call ArgueComplete()
-{@profBayou} That looks great. 
-{@profBayou} It looks like you are getting good at estimating populations with your sub.
+{@profBayou} Hmmm. Nice work, Ollie. 
+{@profBayou} I need to consider this and plan our next move. 
+{@bayouSci} Aw, you gotta be kiddin' me, Harper. 
+            The turtles were here first. Then these new critters moved in and started takin' over.
+            If you ask me, we need that reef outta here yesterday! Right, kid?
+{@player}   Oh... um...
+            I'm not really used to making these kind of decisions...
+{@profBayou} It's too early to decide anything, Silias. We need more data. 
+{@profBayou} Ollie, let me know if you'd like to help out again. I'm sure I'll have more work for you soon. 
 $call CompleteJob()
