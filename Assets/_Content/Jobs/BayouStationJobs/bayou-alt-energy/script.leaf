@@ -5,21 +5,21 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@profBayou} We need to learn more about the ecosystem down at Site N.
+{@profBayou} We need to learn more about the ecosystem down at {h}Site N{/h}.
             No sunlight reaches there. Something else must be keeping the organisms alive. 
             Ollie, I'd like you to create a visual model to show how energy flows through the ecosystem. 
-$if HasEntity(RedGorgonian), HasEntity(Detritus), HasEntity(Siphonophore), HasEntity(VentStar), HasEntity(Methanogen), HasEntity(Methane)
+$if HasEntity(Detritus), HasEntity(VentStar), HasEntity(Methanogen), HasEntity(Methane)
     //Has all entities from Site N
-    $if HasFact(RedGorgonian.Eats.Detritus), HasFact(Siphonophore.Eats.Detritus), HasFact(VentStar.Eats.Detritus), HasFact(Methanogen.Eats.Methane)
+    $if HasFact(VentStar.Eats.Detritus), HasFact(Methanogen.Eats.H_Gas)
         //Has all eat rules
-        {@profBayou}  You've already gathered data from Site N, so you can head straight to your {h}Modeling Lab{/h}.
+        {@profBayou}  Using the data you've already gathered data from Site N, so you can head straight to your {h}Modeling Lab{/h}.
     $else
         //Missing some eat rules
-        {@guide}    But first, you'll need to do some experiments to see how these organisms relate to one another.
+        {@guide}    First, you'll need to do some experiments to see how these organisms relate to one another.
     $endif  
 $else
     //Missing some entities from Site N
-    {@guide}    But first, you'll need to finish scanning all the critters at {h}Site N{/h}.
+    {@guide}    You'll need to finish scanning all the critters at {h}Site N{/h} to create a comprehensive model.
 $endif
 
 
@@ -87,7 +87,9 @@ $goto .argue.firstQuestion
 {@profBayou} Ollie! Are you here to solve the mystery for us? 
 {@bayouSci} I gotta admit, I'm dyin' to hear this one, too.
             Where is all that energy at {h}Site N{/h} even coming from?
+$goto argue.selectClaim
 
+:: argue.selectClaim
 $if !ArgueIsComplete(bayouAltEnergy_Branch3)
     $choice .argue.1_Methane; It's the methane from the vents.
     $choice .argue.2_Detritus; It's the falling detritus.
@@ -184,7 +186,7 @@ $goto .argue.3_Heat_ChooseFacts
              But heat doesn't directly support life.
              Do you have another hypothesis, Ollie? 
 $call ArgueComplete()
-$goto .argue.firstQuestion
+$goto .argue.selectClaim
 
 //GiveUp
 :: argue.giveUp
