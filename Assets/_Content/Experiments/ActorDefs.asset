@@ -2450,6 +2450,70 @@ MonoBehaviour:
       width: 1.522625
       height: 3.5367131
   - Id:
+      m_HashValue: 11869649
+    Type: {fileID: 11400000, guid: 7fc35fead45c9784ab2be7585d97a727, type: 2}
+    PrefabName: 
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 0.2
+      AvoidTankTopBottomRadius: 0
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 0
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: 10
+        AliveMax: 40
+        StressedMin: -5
+        StressedMax: 55
+      Light:
+        AliveMin: 0
+        AliveMax: 25
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: 3.5
+        AliveMax: 8.3
+        StressedMin: 2
+        StressedMax: 8.8
+    AliveEatTargets: []
+    StressedEatTargets: []
+    ParasiteTargets: []
+    SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
+    IsPlant: 0
+    IsLivingOrganism: 1
+    IsDistributed: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+  - Id:
       m_HashValue: 1161043395
     Type: {fileID: 11400000, guid: 1c311155169539e4e953923e74855abb, type: 2}
     PrefabName: PlasticBag
@@ -2681,6 +2745,70 @@ MonoBehaviour:
       y: -0.34
       width: 0.68
       height: 0.68
+  - Id:
+      m_HashValue: 1456926888
+    Type: {fileID: 11400000, guid: 44f66d87e63c6894caca6d7b3f3acbd2, type: 2}
+    PrefabName: RedGorgonian
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 0.2
+      AvoidTankTopBottomRadius: 0
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 0
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: 10
+        AliveMax: 40
+        StressedMin: -5
+        StressedMax: 55
+      Light:
+        AliveMin: 0
+        AliveMax: 25
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: 3.5
+        AliveMax: 8.3
+        StressedMin: 2
+        StressedMax: 8.8
+    AliveEatTargets: []
+    StressedEatTargets: []
+    ParasiteTargets: []
+    SpawnCount: 8
+    SpawnMax: 24
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
+    IsPlant: 0
+    IsLivingOrganism: 1
+    IsDistributed: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: -0.74469084
+      y: -0.045522094
+      width: 1.2553494
+      height: 1.1183805
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: -0.8144325
+      y: -0.10765433
+      width: 1.3948327
+      height: 1.242645
   - Id:
       m_HashValue: 1605956068
     Type: {fileID: 11400000, guid: 9053ff33b55f144a08d9bcf323fe8070, type: 2}
@@ -3533,8 +3661,8 @@ MonoBehaviour:
       Temperature:
         AliveMin: 10
         AliveMax: 40
-        StressedMin: 0
-        StressedMax: 80
+        StressedMin: -5
+        StressedMax: 55
       Light:
         AliveMin: 0
         AliveMax: 15
@@ -3820,17 +3948,17 @@ MonoBehaviour:
     StateEvaluator:
       Temperature:
         AliveMin: 25
-        AliveMax: 35
-        StressedMin: 20
-        StressedMax: 40
+        AliveMax: 40
+        StressedMin: 10
+        StressedMax: 55
       Light:
         AliveMin: 0
-        AliveMax: 100
+        AliveMax: 25
         StressedMin: -Infinity
         StressedMax: Infinity
       PH:
         AliveMin: 7.5
-        AliveMax: 8.2
+        AliveMax: 8.25
         StressedMin: 7.1
         StressedMax: 8.4
     AliveEatTargets:
