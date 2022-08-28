@@ -30,7 +30,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4875577485573058526}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &1528910632305069249
 MeshFilter:
@@ -107,6 +107,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 5048132497187711852}
   - {fileID: 5185294459999443203}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -125,3 +126,103 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Recursive: 0
   DestroyGameObject: 1
+--- !u!1001 &8229173912354297546
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 4875577485573058526}
+    m_Modifications:
+    - target: {fileID: 3219354949484214776, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: CritterId.m_Source
+      value: OceanDandelion
+      objectReference: {fileID: 0}
+    - target: {fileID: 3219354949484214776, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: CritterId.m_HashValue
+      value: 11869649
+      objectReference: {fileID: 0}
+    - target: {fileID: 3764296600150654372, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: TrackTransform
+      value: 
+      objectReference: {fileID: 5048132497187711852}
+    - target: {fileID: 3764296600150654372, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: ScanId.m_Source
+      value: bestiary.oceanDandelion
+      objectReference: {fileID: 0}
+    - target: {fileID: 3764296600150654372, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: ScanId.m_HashValue
+      value: 2830367746
+      objectReference: {fileID: 0}
+    - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3764296600150654375, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: m_Name
+      value: Taggable
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d43f84959769055489a36095d9d2631d, type: 3}
+--- !u!4 &5048132497187711852 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
+    type: 3}
+  m_PrefabInstance: {fileID: 8229173912354297546}
+  m_PrefabAsset: {fileID: 0}

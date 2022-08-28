@@ -83,11 +83,11 @@ $endif
 @cutscene
 $goto .argue.firstQuestion
 
-::  argue.firstQuestion
-{@profBayou} Ollie! Are you here to solve the mystery for us? 
+:: argue.firstQuestion
+{@profBayou} {nameof @player}! Are you here to solve the mystery for us? 
 {@bayouSci} I gotta admit, I'm dyin' to hear this one, too.
             Where is all that energy at {h}Site N{/h} even coming from?
-$goto argue.selectClaim
+$goto .argue.selectClaim
 
 :: argue.selectClaim
 $if !ArgueIsComplete(bayouAltEnergy_Branch3)
@@ -198,7 +198,7 @@ $call ArgueUnload()
 :: argue.done
 $call ArgueLoad(bayouAltEnergy)
 $call ArgueComplete()
-{@profBayou}  Oh, this is fascinating! Both Methane and Detritus are primary sources of energy!
+{@profBayou}  Oh, this is fascinating! Both {h}Methane{/h} and {h}Detritus{/h} are primary sources of energy!
 {@bayouSci}   I gotta admit, that's a pretty cool finding, kid. Maybe even groundbreaking. 
               I'll keep lookin' into it after the professor moves on outta here. You can help me, if you like. 
 {@player}     That would be amazing! Thanks, Silias. 

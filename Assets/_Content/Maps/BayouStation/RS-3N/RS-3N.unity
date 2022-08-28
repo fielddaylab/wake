@@ -564,6 +564,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EventId: RS-3N.Ambience
+  m_CrossfadeDuration: 0
 --- !u!114 &468511362
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -579,6 +580,7 @@ MonoBehaviour:
   m_EventId: RS-3N.Music
   m_Crossfade: 0.5
   m_StopOnDisable: 1
+  m_PlayOnLoad: 1
 --- !u!4 &622486489 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1439181330075514184, guid: 1bc3999d7c9928c40b3d6cf018bfa355,
@@ -772,7 +774,7 @@ PrefabInstance:
     - target: {fileID: 4118583866171764164, guid: 879ecb243a571fa4a99eff0c46a5e956,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 44.3
+      value: 49.1
       objectReference: {fileID: 0}
     - target: {fileID: 4118583866171764164, guid: 879ecb243a571fa4a99eff0c46a5e956,
         type: 3}
@@ -822,7 +824,7 @@ PrefabInstance:
     - target: {fileID: 4118583866171764165, guid: 879ecb243a571fa4a99eff0c46a5e956,
         type: 3}
       propertyPath: m_Size.x
-      value: 84.5
+      value: 90.9
       objectReference: {fileID: 0}
     - target: {fileID: 4118583866171764165, guid: 879ecb243a571fa4a99eff0c46a5e956,
         type: 3}
@@ -837,7 +839,7 @@ PrefabInstance:
     - target: {fileID: 4118583866171764166, guid: 879ecb243a571fa4a99eff0c46a5e956,
         type: 3}
       propertyPath: m_Size.x
-      value: 84.5
+      value: 90.9
       objectReference: {fileID: 0}
     - target: {fileID: 4118583866171764166, guid: 879ecb243a571fa4a99eff0c46a5e956,
         type: 3}
@@ -877,7 +879,7 @@ PrefabInstance:
     - target: {fileID: 4118583866171764167, guid: 879ecb243a571fa4a99eff0c46a5e956,
         type: 3}
       propertyPath: m_Offset.x
-      value: 42.25
+      value: 45.45
       objectReference: {fileID: 0}
     - target: {fileID: 4118583866171764216, guid: 879ecb243a571fa4a99eff0c46a5e956,
         type: 3}
@@ -892,12 +894,12 @@ PrefabInstance:
     - target: {fileID: 4118583866171764216, guid: 879ecb243a571fa4a99eff0c46a5e956,
         type: 3}
       propertyPath: m_Offset.x
-      value: -42.25
+      value: -45.45
       objectReference: {fileID: 0}
     - target: {fileID: 4118583866171764217, guid: 879ecb243a571fa4a99eff0c46a5e956,
         type: 3}
       propertyPath: m_Size.x
-      value: 83.5
+      value: 89.9
       objectReference: {fileID: 0}
     - target: {fileID: 4118583866171764217, guid: 879ecb243a571fa4a99eff0c46a5e956,
         type: 3}
@@ -1362,6 +1364,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsDark
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692682611703932763, guid: 5bb9310724bb09040a9209c1cd8895f5,
+        type: 3}
+      propertyPath: m_CritterProportionOverrides.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692682611703932763, guid: 5bb9310724bb09040a9209c1cd8895f5,
+        type: 3}
+      propertyPath: m_CritterProportionOverrides.Array.data[0].CritterId.m_Source
+      value: Tubeworm
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692682611703932763, guid: 5bb9310724bb09040a9209c1cd8895f5,
+        type: 3}
+      propertyPath: m_CritterProportionOverrides.Array.data[0].Proportion.m_Value
+      value: 22937
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692682611703932763, guid: 5bb9310724bb09040a9209c1cd8895f5,
+        type: 3}
+      propertyPath: m_CritterProportionOverrides.Array.data[0].CritterId.m_HashValue
+      value: 1644201784
       objectReference: {fileID: 0}
     - target: {fileID: 6507453316614211376, guid: 5bb9310724bb09040a9209c1cd8895f5,
         type: 3}
@@ -2522,6 +2544,7 @@ MonoBehaviour:
     m_ScenePath: Assets/_Content/Maps/BayouStation/RS-3N/RS-3N-Visuals.unity
     m_GUID: 7a8c2ba9c9d214b9190e5b000ecc4c3a
   ImportLighting: 0
+  Transform: {fileID: 0}
 --- !u!4 &1711863581
 Transform:
   m_ObjectHideFlags: 0
