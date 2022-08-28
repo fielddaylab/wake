@@ -5,7 +5,7 @@
 @cutscene
 
 {@drKelp}  Oh, Olivia. Thank goodness.
-            The Urchin Barren at Site B is looking quite... well, barren.
+            Arch Oasis at Site B is looking quite... well, barren.
            Our funders are talking about pulling the funding for Mer's Refuge.
 {@player}   What?? Why?
 {@drKelp}   Think about how this looks, Olivia. If we can't keep Site B healthy, how can they trust us to create a whole new ecosystem?
@@ -33,7 +33,7 @@ $endif
 @cutscene
 $branch common.ringPhone
 
-{@player}  Okay, {nameof @guide}. We need a plan to repair the Urchin Barren.
+{@player}  Okay, {nameof @guide}. We need a plan to repair Arch Oasis.
            Mom said the {h}Modeling Whiteboard{/h} could help.
 {@guide}   Ah, yes! One of my favorite predictive modeling functions!
 {@player}  Ooookay... 
@@ -156,7 +156,7 @@ $choice .argue.giveUpHopeless; Let me get back to you.
 
 ::argue.currentModel
 {@drKelp}    That's not relevant, Olivia. 
-              Show me your Intervention Model of the Urchin Barren.
+              Show me your Intervention Model of Arch Oasis.
 $call ArgueClearFacts()
 $goto .argue.chooseFactsHopeless
 

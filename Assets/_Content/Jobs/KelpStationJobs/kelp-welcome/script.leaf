@@ -33,7 +33,7 @@ $branch common.ringPhone
 {@guide}   Did your job-giver not inform you that I would be uploaded to your sub?
 {@player}  Nah. Mom's been pretty distracted lately.  
 {@player}  Okay, {nameof @guide}. What do we do first? 
-{@guide}  Use your {item-name}Scanner{/item-name} to ID all the species here at the Warm Kelp Forest. 
+{@guide}  Use your {item-name}Scanner{/item-name} to ID all the species here at the Forested Lagoon. 
 $call GiveUpgrade(ROVScanner, Silent)
 $call Player->SetTool(Scanner)
 {@guide}  The {item-name}Scanner{/item-name} searches for life forms automatically. 
@@ -417,7 +417,7 @@ $goto .argue.chooseFacts
 
 ::argue.done
 $call ArgueComplete()
-{@drKelp}    Excellent work. You just explained the basis of the Kelp Forest Food Web!
+{@drKelp}    Excellent work. You just explained the basis of the Forested Lagoon Food Web!
 $call CompleteJob()
 
 // DONE

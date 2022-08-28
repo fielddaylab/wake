@@ -10,7 +10,7 @@
 {@drKelp} Our people keep getting called away to other stations.
 {@drKelp} Not that I blame them, of course. There's just not enough scientists.
 {@drKelp} Well... never mind all that, Mija. 
-{@drKelp} The mussels at the Warm Kelp Forest look strange.
+{@drKelp} The mussels at the Forested Lagoon look strange.
 {@drKelp} I need to find out if something is stressing them. 
 {@drKelp} Head outside to {h}site C{/h}, and {nameof @guide} will guide you from there. 
 
@@ -155,7 +155,7 @@ $if ArgueSetClaim(musselFestReasonChemistryClaim, jobs.kelp-mussel-fest.argue.cl
 $endif
 $call ArgueDisplayClaim()
 {@drKelp}	Now compare the mussels' stress levels from the tank with the conditions here at site C. 
-{@drKelp}	What are the temperature, pH, and light levels at the Warm Kelp Forest?
+{@drKelp}	What are the temperature, pH, and light levels at the Forested Lagoon?
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.correctFactsReasonChemistry
     $answer incorrect, .argue.incorrectFactsReasonChemistry
@@ -196,7 +196,7 @@ $goto .argue.giveUp
 {@drKelp} Okay, Olivia. Get back to me when you're ready.
 
 ::argue.tempStress
-{@drKelp}	Perfect, Olivia! Looks like the Warm Kelp Forest is too... well, warm. 
+{@drKelp}	Perfect, Olivia! Looks like the Forested Lagoon is too... well, warm. 
 {@drKelp}	Hmm. I wonder if the mussels will continue to reproduce.
 $call ArgueComplete()
 $call CompleteJob()

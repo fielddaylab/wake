@@ -5,15 +5,15 @@
 @cutscene
 
 {@profCoral}	You scanned plastic!? In the reef? This won't do.
-{@profCoral}  What will happen if the makes its way to the Reef Edge?
+{@profCoral}  What will happen if the plastic makes its way to Serenity Meadow?
 $if JobTaskTop(scanReefEdge)
-    {@profCoral}  Head to the Reef Edge here at Site V to construct a food web for the Loggerhead Turtle.
+    {@profCoral}  Head to Serenity Meadow here at Site V to construct a food web for the Loggerhead Turtle.
     {@player}       We're on our way!
 $elseif JobTaskTop(whatTurtlesEat)
-    {@profCoral}  Experiment in the Observation tank with the organisms you've scanned in the Reef Edge here at Site V.
+    {@profCoral}  Experiment in the Observation tank with the organisms you've scanned in Serenity Meadow here at Site V.
     {@player}       On it!
 $else
-    {@profCoral}  Take what you know about the Reef Edge here at Site V interactions and construct a food web for the Loggerhead Turtle.
+    {@profCoral}  Take what you know about Serenity Meadow here at Site V interactions and construct a food web for the Loggerhead Turtle.
     {@player}       Copy that!
 $endif
 
@@ -91,7 +91,7 @@ $set    	jobs:coral-turtle-population.seen.bottom = true
 @when   !ArgueIsComplete(oceanPlasticArgue)
 @cutscene
 $call ArgueLoad(oceanPlasticArgue)
-{@profCoral} What will be impacted if the plastic enters the Reef Edge?
+{@profCoral} What will be impacted if the plastic enters Serenity Meadow?
 $choice .argue.turtles; Only the turtles will be impacted.
 $choice .argue.all; All species may be impacted.
 //$choice .argue.queen; The conch will be impacted.
