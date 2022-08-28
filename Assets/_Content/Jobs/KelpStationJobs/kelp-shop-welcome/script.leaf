@@ -1,5 +1,22 @@
 # basePath job.kelp-shop-welcome
 
+:: stopLeaveStation
+@trigger InteractObject
+@when objectId == "ExitStation"
+@cutscene
+$if  JobTaskCompleted(getVisualModel)
+    $if JobTaskCompleted(getTagger)
+        //have both, do nothing
+    $else
+        //missing at least 1 upgrade, show text and cancel interact
+        {@guide} Seems like we're still missing some upgrades, let's get those before heading out.
+        $call CancelInteract()
+    $endif
+$else
+        {@guide} Seems like we're still missing some upgrades, let's get those before heading out.
+        $call CancelInteract()
+$endif
+
 :: helpGoShop
 @trigger    RequestPartnerHelp
 @when 		scene:name != "Shop", JobTaskTop(gotoShop)
