@@ -89,6 +89,8 @@ namespace ProtoAqua.ExperimentV2
                 );
             }
 
+            LoadMaterials();
+
             return true;
         }
 
@@ -215,7 +217,6 @@ namespace ProtoAqua.ExperimentV2
         private void LoadDefinitions()
         {
             List<ActorDefinition> definitions = new List<ActorDefinition>();
-            HashSet<Material> materials = new HashSet<Material>();
             var bestiaryDB = ValidationUtils.FindAsset<BestiaryDB>();
             foreach(var obj in bestiaryDB.Objects)
             {
@@ -227,10 +228,21 @@ namespace ProtoAqua.ExperimentV2
 
                 ActorDefinition def = FindOrCreateDefinition(obj);
                 definitions.Add(def);
+            }
 
+            CritterDefinitions = definitions.ToArray();
+        }
+
+        private void LoadMaterials()
+        {
+            HashSet<Material> materials = new HashSet<Material>();
+
+            foreach(var def in CritterDefinitions)
+            {
                 if (def.Prefab != null)
                 {
-                    foreach(var meshRenderer in def.Prefab.GetComponentsInChildren<MeshRenderer>(true))
+                    ActorInstance prefabInstance = GameObject.Instantiate(def.Prefab);
+                    foreach(var meshRenderer in prefabInstance.GetComponentsInChildren<MeshRenderer>(true))
                     {
                         foreach(var material in meshRenderer.sharedMaterials)
                         {
@@ -240,10 +252,10 @@ namespace ProtoAqua.ExperimentV2
                             }
                         }
                     }
+                    DestroyImmediate(prefabInstance.gameObject);
                 }
             }
 
-            CritterDefinitions = definitions.ToArray();
             CritterMaterials = new Material[materials.Count];
             materials.CopyTo(CritterMaterials);
         }
