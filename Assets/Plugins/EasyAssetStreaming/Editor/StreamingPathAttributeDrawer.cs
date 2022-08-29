@@ -49,6 +49,14 @@ namespace EasyAssetStreaming.Editor {
                         property.stringValue = strippedPath;
                     }
                 }
+
+                #if UNITY_2018_1_OR_NEWER
+
+                property.serializedObject.ApplyModifiedProperties();
+                GUIUtility.ExitGUI();
+                return;
+
+                #endif // UNITY_2018_1_OR_NEWER
             }
 
             using (new UnityEditor.EditorGUI.DisabledScope(!property.hasMultipleDifferentValues && string.IsNullOrEmpty(property.stringValue))) {

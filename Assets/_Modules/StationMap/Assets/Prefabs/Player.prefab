@@ -56,11 +56,12 @@ MonoBehaviour:
   m_Input: {fileID: 2635531021390785891}
   m_Animator: {fileID: 1950210926}
   m_MoveParams:
-    MaxSpeed: 20
+    MaxSpeed: 25
     SpeedCurve: 0
-    Acceleration: 15
+    Acceleration: 18
     TurnRate: 30
     InPlaceRotationSpeedThreshold: 5
+    InPlaceRotationMultiplier: 1.5
   m_DragEngineOn: 2
   m_DragEngineOff: 3
 --- !u!50 &2635531021390785892
@@ -172,6 +173,8 @@ MonoBehaviour:
   m_Id:
     m_Source: PlayerSub
     m_HashValue: 873304418
+  m_IsPersistent: 0
+  m_StartDisabled: 0
 --- !u!114 &2053204097849824396
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -188,6 +191,7 @@ MonoBehaviour:
   Zoom: 1
   Flags: 7
   Offset: {x: 0, y: -108.5, z: -80}
+  LookFromOffset: 0
   Look: {x: -0, y: 1.6, z: 0.65}
 --- !u!1 &2635531022056122133
 GameObject:

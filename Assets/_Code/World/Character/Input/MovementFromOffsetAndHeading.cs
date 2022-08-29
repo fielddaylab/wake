@@ -13,6 +13,7 @@ namespace Aqua.Character
         public float Acceleration;
         public float TurnRate;
         public float InPlaceRotationSpeedThreshold;
+        public float InPlaceRotationMultiplier;
 
         public bool Apply(Vector2 inNormalizedOffset, KinematicObject2D inKinematics, float inDeltaTime, float inMultiplier)
         {
@@ -28,7 +29,11 @@ namespace Aqua.Character
                 float currentRotation = inKinematics.Transform.localEulerAngles.z;
                 float delta = MathUtil.DegreeAngleDifference(currentRotation, desiredRotation);
                 bool inPlace = currentSpeed < InPlaceRotationSpeedThreshold && (delta < -TurnRate || delta > TurnRate);
-                float newRotation = currentRotation + Mathf.Clamp(delta, -TurnRate, TurnRate) * inDeltaTime;
+                float turnRate = TurnRate;
+                if (inPlace && InPlaceRotationMultiplier > 0) {
+                    turnRate *= InPlaceRotationMultiplier;
+                }
+                float newRotation = currentRotation + Mathf.Clamp(delta, -turnRate, turnRate) * inDeltaTime;
 
                 if (inPlace)
                 {
