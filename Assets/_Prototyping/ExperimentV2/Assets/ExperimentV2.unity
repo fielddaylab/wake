@@ -205,7 +205,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Camera
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 641861089}
     - target: {fileID: 1924925053396413062, guid: 77c6ecefd8d2301469d35399fb833037,
         type: 3}
       propertyPath: m_SizeDelta.y
@@ -8338,6 +8338,7 @@ MonoBehaviour:
   m_EventId: ExperimentBGM
   m_Crossfade: 1
   m_StopOnDisable: 1
+  m_PlayOnLoad: 1
 --- !u!114 &668201882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25551,7 +25552,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Camera
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 641861089}
     - target: {fileID: 7339432511396441668, guid: d602dd612ce2a7d4d9a917b7a18e3bb8,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -44318,21 +44319,11 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: -0.39
       objectReference: {fileID: 0}
-    - target: {fileID: 6447733024363967629, guid: c825e03a409f7054b8432d9f9feba841,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6447733024363967629, guid: c825e03a409f7054b8432d9f9feba841,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 10.33
-      objectReference: {fileID: 0}
     - target: {fileID: 7056202524934880386, guid: c825e03a409f7054b8432d9f9feba841,
         type: 3}
       propertyPath: m_Camera
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 641861089}
     - target: {fileID: 7861849106979038026, guid: c825e03a409f7054b8432d9f9feba841,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -56955,9 +56946,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63a8cc9003b5504dbb86e6318d93ea8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Mode: 0
   Target: {fileID: 15670702}
   Height: 17
   Zoom: 1
+  FieldOfView: 30
   Properties: 7
 --- !u!114 &2067863041
 MonoBehaviour:
