@@ -118,7 +118,7 @@ $call ArgueCancelClaim()
 $goto .argue.intro
 
 :: argue.showSafeClaim
-$call ArgueFactSlot(O_OilRig.turtleDanger.Model.Visual) 
+$call ArgueFactSlot(O_OilRig.turtleDanger.Model.Visual)
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.complete 

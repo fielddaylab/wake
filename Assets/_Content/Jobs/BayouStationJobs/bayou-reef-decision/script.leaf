@@ -69,14 +69,14 @@ $if ArgueSetClaim(Claim, jobs.bayou-reef-decision.argue.claimLabel1)
     $call ArgueFactSlot(O_OilRig.turtleDangerNoReef.Model.Intervene) 
 $endif
 {@profBayou} What data did you use to make this decision? 
-$branch argue.showClaim
+$branch .argue.showClaim
 
 :: argue.leaveRig
 $if ArgueSetClaim(Claim, jobs.bayou-reef-decision.argue.claimLabel2) 
     $call ArgueFactSlot(O_OilRig.turtleDangerNoReef.Model.Intervene) 
 $endif
 {@profBayou} What data did you use to make this decision? 
-$branch argue.showClaim
+$branch .argue.showClaim
 
 :: argue.showClaim
 $call ArgueDisplayClaim()

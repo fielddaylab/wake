@@ -169,21 +169,21 @@ $if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1)
     $call ArgueFactSlot(O_OilRig.turtleDangerJellies.Model.Predict)
 $endif
 {@profBayou} Have you increased the accuracy of your model from last time?
-$branch argue.showClaim
+$branch .argue.showClaim
 
 :: argue.increaseTurtle
 $if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel2)
     $call ArgueFactSlot(O_OilRig.turtleDangerJellies.Model.Predict)
 $endif
 {@profBayou} Can I see your model?
-$branch argue.chooseFactsDummy
+$branch .argue.chooseFactsDummy
 
 :: argue.decreaseTurtle
 $if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel3)
     $call ArgueFactSlot(O_OilRig.turtleDangerJellies.Model.Predict)
 $endif
 {@profBayou} Can I see your model?
-$branch argue.chooseFactsDummy
+$branch .argue.chooseFactsDummy
 
 :: argue.showClaim
 $call ArgueDisplayClaim()
