@@ -56,14 +56,14 @@ MonoBehaviour:
   m_Input: {fileID: 2635531021390785891}
   m_Animator: {fileID: 1950210926}
   m_MoveParams:
-    MaxSpeed: 25
+    MaxSpeed: 50
     SpeedCurve: 0
-    Acceleration: 18
-    TurnRate: 30
+    Acceleration: 36
+    TurnRate: 45
     InPlaceRotationSpeedThreshold: 5
     InPlaceRotationMultiplier: 1.5
   m_DragEngineOn: 2
-  m_DragEngineOff: 3
+  m_DragEngineOff: 4.5
 --- !u!50 &2635531021390785892
 Rigidbody2D:
   serializedVersion: 4
@@ -152,7 +152,7 @@ MonoBehaviour:
     Gravity: {x: 0, y: 0}
     Drag: 2
     Friction: {x: 0.1, y: 0.1}
-    MaxSpeed: 35
+    MaxSpeed: 100
   Body: {fileID: 2635531021390785892}
   Collider: {fileID: 1145269169524055499}
   SolidMask:
