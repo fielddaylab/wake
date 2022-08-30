@@ -6,22 +6,35 @@
 @cutscene
 
 // write an intro to your job
-{@guide}    The only thing that will clear up this mystery is a {h}visual model{/h}.
-            We'll need to observe the relationships between the species we've discovered at {h}site X{/h}.
+{@profSci} Oh, I'm glad you're looking into the life under the ice!
+           The whole station's talking about it. 
+            We've even got people taking bets on how the critters are surviving... 
+            And a guy in HR who bet his whole paycheck that you're making the whole thing up. 
+{@player}   Whoa... the whole station knows about this?? 
+{@profSci}  We're a tight-knit community. People talk.
+{@player}   Phew. Okay. No pressure.
+            So how can I figure out what's keeping these creatures alive? 
+{@profSci}  You'll need to observe the relationships between the species you discovered at {h}site X{/h}.
+            Then create a {h}Visual Model{/h} and see what it reveals. 
+            Good luck, Ollie!
 
 ::weDidIt
 @trigger    JobTasksUpdated
 @when   JobTaskCompleted(visualModel)
 @cutscene
-{@guide}    I think we're ready to show this to {nameof @profArctic}.
+{@guide}    Sufficient work, O! Your model is full of wonderful data!
+{@player}   Wow... I think we solved it!
+            Let's report back to {nameof profArctic}. There's some poor guy in HR who's about to lose a lot of money.
 
 ::helpMe
 @trigger    RequestPartnerHelp
 @when       JobTaskTop(visualModel)
 @cutscene 
-{@guide}    In order to make a {h}visual model{/h}, we'll need to first understand the interactions of the species at {h}site X{/h}.
-            These can be discovered using your {h}Observation Tank{/h}. 
-            Once you have discovered all the species interactions, head to the {nameof Modeling} to construct the appropriate model.
+{@player}   What should I do first, {nameof @guide}?
+{@guide}    In order to create your {h}model{/h}, you'll need to first understand how the species interact with each other.
+{@player}   Oh... so I need to start with the {h}Observation Tank{/h}. 
+{@guide}    Affirmative, O.
+            Once you're done there, head to the {nameof Modeling} to construct the appropriate model.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -30,21 +43,24 @@
 @when		JobTaskTop(visualModel)
 @boostScore -5
 @cutscene
-{@guide}    Make a Visual Model of organism interactions at Site W.
+{@player}   What now, {nameof @guide}?
+{@guide}    Make a Visual Model of organism interactions at Site X!
 
 :: catchReport
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(report)
 @boostScore -5
 @cutscene
-{@guide}	Return to the station and talk to {nameof @profArctic}.
+{@player} What's next, {nameof @guide}?
+{@guide}  Return to the station and talk to {nameof @profArctic}!
 
 // ARGUMENTATION
 ::argue.intro
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(siteXVisual) 
 @cutscene
-{@profArctic} Did you determine how they survive?
+{@profArctic} Ollie! How'd it go out there?
+              Did you figure out how the creatures under the ice are surviving? 
 $call ArgueLoad(siteXVisual)
 $call ArgueSetClaim(Claim, jobs.arctic-stationary-survival.argue.claimLabel) 
 	$call ArgueFactSlot(X_UnderTheIce.Model.StationaryViz)
@@ -60,22 +76,28 @@ $choose branch
 
 :: argue.unrelated
 $call ArgueRejectIncorrect()
-{@profArctic}    Hmmmm, this doesn't really show what you think it does.
-            Do you have a model that might demonstrate how these creatures survive?
+{@profArctic}  Um... did you mean to show me this? 
+               We were talking about the life under the ice. Do you have a model that demonstrates how these creatures survive?
 $goto .argue.showClaim
 
 :: argue.giveUp
-{@profArctic}    No worries, I'm sure you'll figure it out!
+{@profArctic}    No worries, Ollie. I'm sure you'll figure it out!
 $call ArgueUnload()
 $call ArgueCancelClaim()
 
 // END
 :: argue.complete
 $call ArgueComplete()
-{@profArctic}   Detritus... Of course!
-                No plants could grow down there to feed the other species,
-                but instead, they all eat the Detritus that is pulled in by that current.
-                It seems old Linda's death gives energy to a whole ecosystem!
-                Your discoveries never cease to amaze {nameof @player}!
+    {@profArctic}   Detritus... of course!
+                    Without sunlight, no plants can survive down there to feed the species.
+                    So instead, they're eating the Detritus that's being pulled in by the current!
+    {@arcticSci}    Oh my. What a surprise.
+                    It seems Linda's death is giving energy to a whole ecosystem!
+                    I suppose you've solved this one, Ollie. 
+    {@player}       Actually... I did notice something strange.  
+                    I noticed this amazing species called Glass Sponges at Site X. I think I've spotted them at Site Y, too.
+                    But there are none here at Site Z. 
+    {@profArctic}   Hmm. That is unusual. I wonder why the sponges are missing here?  
+                    I'll put that job up on the job board. Let me know when you're ready to check it out. 
 
 $call CompleteJob()
