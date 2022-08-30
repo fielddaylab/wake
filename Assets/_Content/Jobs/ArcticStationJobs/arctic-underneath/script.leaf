@@ -16,7 +16,7 @@
 {@profArctic} I do believe you, Ollie. That's why I was hoping you'd check it out for me.
              Sounds like the current swept you through, so you'll need an upgraded engine.
               And Ollie... be careful. It's not unusual for newcomers to get a little overwhelmed out here.
-{@olayer}   Got it. Thanks, {nameof profArctic}.
+{@player}   Got it. Thanks, {nameof profArctic}.
 
 :: getTheEngine
 @trigger    RequestPartnerHelp
@@ -51,10 +51,11 @@
 :: report
 @trigger    JobTasksUpdated
 @when 		JobTaskTop(reportBack)
+@once
 @cutscene
 {@player}   Wow. {nameof @guide}, this is amazing!
             A whole ecosystem that no one even knew was here.
-            We have so much new data to bring to {nameof @profArtic}!
+            We have so much new data to bring to {nameof @profArctic}!
 {@guide}    Yes. And you didn't get lost and die, which is also a positive outcome! 
 {@player}   That's the spirit, V. 
             Let's head back to the station. 
@@ -92,18 +93,20 @@
 {@player}   Okay, {nameof @guide}. What now? 
 {@guide}	You need to report your findings to {nameof @profArctic}!
 
+:: argue.intro
 @trigger    TryArgumentation
-@when   !ArgueIsComplete(siteXAnalysis) 
+@when   !ArgueIsComplete(siteXAnalysis)
 @cutscene
 {@profArctic}  Ollie! Nice work. I wasn't sure you'd finish this one.
                A lot of people wouldn't have the guts to go down there alone.
                So? Let's hear it! What populations did you count beneath the ice? 
-$call ArgueLoad(siteXAnalysis) 
-$call ArgueSetClaim(Claim, jobs.arctic-underneath.argue.claimLabel) 
+$call ArgueLoad(siteXAnalysis)
+$if ArgueSetClaim(Claim, jobs.arctic-underneath.argue.claimLabel) 
     $call ArgueFactSlot(X_UnderTheIce.Population.AstarteBorealis)  
     $call ArgueFactSlot(X_UnderTheIce.Population.GlassSponge)  
-    $call ArgueFactSlot(X_UnderTheIce.Population.NorthernSeaNettle)  
-$goto argue.showClaim
+    $call ArgueFactSlot(X_UnderTheIce.Population.NorthernSeaNettle)
+$endif
+$goto .argue.showClaim
 
 :: argue.showClaim
 $call ArgueDisplayClaim()

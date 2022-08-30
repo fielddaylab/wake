@@ -32,7 +32,7 @@ $endif
 @once
 @cutscene
 $if JobTaskTop(reportBack), !jobs:arctic-missing-whale.triggeredSwitch
-   {@player} What now, {namoef @guide}?
+   {@player} What now, {nameof @guide}?
    {@guide} Hmmm. It appears you've finished all of your tasks, Ollie!
             All that's left is to report back to {nameof @arcticSci}.
     $set jobs:arctic-missing-whale.triggeredSwitch = true
@@ -106,7 +106,7 @@ $endif
 {@guide}	My sensors indicate that you are stalling, O.
 {@player}   What? Of course I'm not stalling!
 {@guide}    Ah. I must have misinterpreted the data. 
-            You need to report back to {nameof @profArctic} and tell him that Linda has been found. 
+            You need to report back to {nameof @profArctic} and tell her that Linda has been found. 
 
 // CATCH-ALL GUIDE TEXT
 
@@ -123,7 +123,7 @@ $endif
 @when		JobTaskTop(findWhale)
 @boostScore -5
 @cutscene
-{@player}   Okay, {namoef @guide}. We've got the tracker. What now?
+{@player}   Okay, {nameof @guide}. We've got the tracker. What now?
 {@guide}    You need to search the area for any proof that Linda is here.
 {@player}   I'm sure she's close. I can feel it!
             Let's keep searching. 
