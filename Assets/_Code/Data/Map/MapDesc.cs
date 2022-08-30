@@ -24,7 +24,6 @@ namespace Aqua
         [SerializeField] private TextId m_ShortLabelId = default;
         [SerializeField] private TextId m_ProperNameId = default;
         [SerializeField] private TextId m_MarkerLabelId = default;
-        [SerializeField] private TextId m_ShortMarkerLabelId = default;
         [SerializeField] private TextId m_StationHeaderId = default;
         [SerializeField] private TextId m_StationDescId = default;
         [SerializeField] private Sprite m_Icon = null;
@@ -48,8 +47,8 @@ namespace Aqua
         public string SceneName() { return m_SceneName; }
         [LeafLookup("Name")] public TextId LabelId() { return m_LabelId; }
         [LeafLookup("ShortName")] public TextId ShortLabelId() { return m_ShortLabelId.IsEmpty ? m_LabelId : m_ShortLabelId; }
+        [LeafLookup("ProperName")] public TextId ProperNameId() { return m_ProperNameId.IsEmpty ? m_LabelId : m_ProperNameId; }
         public TextId MarkerLabelId() { Assert.True(m_Category == MapCategory.DiveSite, "MapDesc {0} is not a dive site", Id()); return m_MarkerLabelId; }
-        public TextId ShortMarkerLabelId() { Assert.True(m_Category == MapCategory.DiveSite, "MapDesc {0} is not a dive site", Id()); return m_ShortMarkerLabelId.IsEmpty ? m_MarkerLabelId : m_ShortMarkerLabelId; }
         public TextId StationHeaderId() { Assert.True(m_Category == MapCategory.Station, "MapDesc {0} is not a station", Id()); return m_StationHeaderId ;}
         public TextId StationDescId() { Assert.True(m_Category == MapCategory.Station, "MapDesc {0} is not a station", Id()); return m_StationDescId ;}
         public Sprite Icon() { return m_Icon; }
