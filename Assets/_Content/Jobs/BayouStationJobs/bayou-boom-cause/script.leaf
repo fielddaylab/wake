@@ -35,6 +35,13 @@ $endif
 {@guide} Don't worry, O. According to my analysis, our chances of experiencing a similar explosion are only 45.2%!
 {@player} {nameof @guide}, that is EXTREMELY unhelpful.
 
+:: methaneTag
+@trigger JobTaskCompleted
+@when    JobTaskActive(methaneTag)
+@once
+@cutscene
+{@player} Hmmmm... I wonder how much {nameof Methane} is down here...
+
 :: methaneScanned
 @trigger JobTaskCompleted
 @when    JobTaskActive(reportBack)
@@ -85,10 +92,10 @@ $endif
 ::  argue.intro
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(bayouBoomArgue)
-@cutscene
 $goto .argue.firstQuestion
 
 ::  argue.firstQuestion
+@cutscene
 {@bayouSci} Alright, kid. Lay it on me.
            What caused the comms tower to explode? 
 $if !ArgueIsComplete(bayouBoomArgueFishCriminals)
