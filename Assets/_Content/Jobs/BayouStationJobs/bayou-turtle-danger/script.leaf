@@ -93,12 +93,12 @@ $choose branch
 :: argue.turtleSafe
 $call ArgueSetClaim(Claim, jobs.bayou-turtle-danger.argue.claimLabel1) 
 {@profBayou} Do you have a model that proves the turtles at {h}Site O{/h} are safe? 
-$goto argue.showSafeClaim
+$goto .argue.showSafeClaim
 
 :: argue.turtleNotSafe
 $call ArgueSetClaim(Claim, jobs.bayou-turtle-danger.argue.claimLabel2) 
 {@profBayou} Do you have a model that proves the turtles at {h}Site O{/h} are in danger?
-$goto argue.showUnsafeClaim
+$goto .argue.showUnsafeClaim
 
 :: argue.showUnsafeClaim
 $call ArgueFactSlot(O_OilRig.turtleDanger.Model.Visual) 
@@ -118,7 +118,7 @@ $call ArgueCancelClaim()
 $goto .argue.intro
 
 :: argue.showSafeClaim
-$call ArgueFactSlot(O_OilRig.turtleDanger.Model.Visual) 
+$call ArgueFactSlot(O_OilRig.turtleDanger.Model.Visual)
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.complete 

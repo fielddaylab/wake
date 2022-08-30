@@ -22,7 +22,9 @@ namespace Aqua
         [SerializeField] private string m_SceneName = null;
         [SerializeField] private TextId m_LabelId = default;
         [SerializeField] private TextId m_ShortLabelId = default;
+        [SerializeField] private TextId m_ProperNameId = default;
         [SerializeField] private TextId m_MarkerLabelId = default;
+        [SerializeField] private TextId m_ShortMarkerLabelId = default;
         [SerializeField] private TextId m_StationHeaderId = default;
         [SerializeField] private TextId m_StationDescId = default;
         [SerializeField] private Sprite m_Icon = null;
@@ -47,6 +49,7 @@ namespace Aqua
         [LeafLookup("Name")] public TextId LabelId() { return m_LabelId; }
         [LeafLookup("ShortName")] public TextId ShortLabelId() { return m_ShortLabelId.IsEmpty ? m_LabelId : m_ShortLabelId; }
         public TextId MarkerLabelId() { Assert.True(m_Category == MapCategory.DiveSite, "MapDesc {0} is not a dive site", Id()); return m_MarkerLabelId; }
+        public TextId ShortMarkerLabelId() { Assert.True(m_Category == MapCategory.DiveSite, "MapDesc {0} is not a dive site", Id()); return m_ShortMarkerLabelId.IsEmpty ? m_MarkerLabelId : m_ShortMarkerLabelId; }
         public TextId StationHeaderId() { Assert.True(m_Category == MapCategory.Station, "MapDesc {0} is not a station", Id()); return m_StationHeaderId ;}
         public TextId StationDescId() { Assert.True(m_Category == MapCategory.Station, "MapDesc {0} is not a station", Id()); return m_StationDescId ;}
         public Sprite Icon() { return m_Icon; }
@@ -70,6 +73,7 @@ namespace Aqua
             private SerializedProperty m_SceneNameProperty;
             private SerializedProperty m_LabelIdProperty;
             private SerializedProperty m_ShortLabelIdProperty;
+            private SerializedProperty m_ProperNameIdProperty;
             private SerializedProperty m_MarkerLabelIdProperty;
             private SerializedProperty m_StationHeaderIdProperty;
             private SerializedProperty m_StationDescIdProperty;
@@ -90,6 +94,7 @@ namespace Aqua
                 m_LabelIdProperty = serializedObject.FindProperty("m_LabelId");
                 m_ShortLabelIdProperty = serializedObject.FindProperty("m_ShortLabelId");
                 m_MarkerLabelIdProperty = serializedObject.FindProperty("m_MarkerLabelId");
+                m_ProperNameIdProperty = serializedObject.FindProperty("m_ProperNameId");
                 m_StationHeaderIdProperty = serializedObject.FindProperty("m_StationHeaderId");
                 m_StationDescIdProperty = serializedObject.FindProperty("m_StationDescId");
                 m_IconProperty = serializedObject.FindProperty("m_Icon");
@@ -116,6 +121,7 @@ namespace Aqua
                 EditorGUILayout.PropertyField(m_SceneNameProperty);
                 EditorGUILayout.PropertyField(m_LabelIdProperty);
                 EditorGUILayout.PropertyField(m_ShortLabelIdProperty);
+                EditorGUILayout.PropertyField(m_ProperNameIdProperty);
                 EditorGUILayout.PropertyField(m_IconProperty);
 
                 if (!m_CategoryProperty.hasMultipleDifferentValues) {
@@ -125,6 +131,7 @@ namespace Aqua
                             EditorGUILayout.PropertyField(m_EnvironmentIdProperty);
                             EditorGUILayout.PropertyField(m_ParentProperty);
                             EditorGUILayout.PropertyField(m_HeaderImagePathProperty);
+                            EditorGUILayout.Space();
                             EditorGUILayout.PropertyField(m_MarkerLabelIdProperty);
                             break;
                         }

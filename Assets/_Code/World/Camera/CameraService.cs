@@ -811,7 +811,7 @@ namespace Aqua.Cameras
         {
             Assert.NotNull(inTarget);
 
-            ref CameraTargetData targetData = ref PushTarget(inTarget.transform, inTarget.Lerp, inTarget.Zoom, inTarget.Flags);
+            ref CameraTargetData targetData = ref PushTarget(inTarget.TransformOverride ? inTarget.TransformOverride : inTarget.transform, inTarget.Lerp, inTarget.Zoom, inTarget.Flags);
             targetData.Offset = inTarget.Offset;
             targetData.Look = inTarget.Look;
             targetData.LookFromOffset = inTarget.LookFromOffset;
