@@ -13,7 +13,53 @@
 {@player}   Wow, that's amazing!
             How can I help?
 {@profArctic} To start with, you'll need to venture below the ice and track down a Ribbon Seal. 
-              Use your {nameof IceBreaker} to reach the {m}Ephemeral Impass{/m}.
+              Use your {nameof Icebreaker} to reach the {m}Ephemeral Impass{/m}.
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchFindRibbon
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(findRibbon)
+@boostScore -5
+@cutscene
+{@guide}    Scan a {nameof RibbonSeal} where it lives.
+
+:: catchFindHabitat
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(findHabitat)
+@boostScore -5
+@cutscene
+{@guide}    Head to the {m}Ephemeral Impass{/m} and find where {pluralnameof RibbonSeal} live.
+
+:: catchFindMicro
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(findMicro)
+@boostScore -5
+@cutscene
+{@guide}    Look around for microscopic species in {nameof RS-4Y} using your {nameof Microscope}.
+
+:: catchCountMicro
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(countMicro)
+@boostScore -5
+@cutscene
+{@guide}   Count the population of the microscopic species in {nameof RS-4Y} using your {nameof Microscope}.
+
+:: catchFindPop
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(findPop)
+@boostScore -5
+@cutscene
+{@guide}    Count the population of the {pluralnameof RibbonSeal} in {nameof RS-4Y}.
+
+:: catchReport
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(report)
+@boostScore -5
+@cutscene
+{@player}   What now, {nameof @guide}?
+{@guide}    You need to return to the station and talk to {nameof @profArctic}!
+
 
 // ARGUMENTATION
 ::argue.intro

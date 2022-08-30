@@ -52,25 +52,40 @@ $endif
 
 :: catchGoObservation
 @trigger    RequestPartnerHelp
-@when 		JobTaskActive(wormEat)
-@boostScore -5
+@when 		JobTaskActive(wormEat), scene:name != "ExperimentV2"
 @cutscene
-{@player} What should I do next, {nameof @guide}?
-{@guide}     Use your {h}Observation Tank{/h} to determine the relationships between the organisms from Site N.
+{@player}   What should I do next, {nameof @guide}?
+{@guide}    Use your {h}Observation Tank{/h} to determine the relationships between the organisms from Site N.
+
+:: helpwExp
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(wormEat), scene:name == "ExperimentV2"
+{@player}   Hmmm, any advice {nameof @guide}?
+{@guide}    Our objective is to find the {h}producers{/h} for this ecosystem.
+            That means we want to discover what what organisms are {h}eaten by nothing else{/h}
 
 :: catchAtSiteNScan
 @trigger    RequestPartnerHelp
-@when 		JobTaskActive(getModel)
-@boostScore -5
+@when 		JobTaskActive(getModel), scene:name != "Modeling"
 @cutscene
 {@player} What should I do now? 
-{@guide}  You need to use the facts you've gathered to create a visual model!
+{@guide}  You need to use the facts you've gathered to create a {h}visual model{/h}!
+
+:: helpwMod
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(getModel), scene:name == "Modeling", modeling:phase == "visual"
+@cutscene
+{@player}   {nameof @guide},| I think I'm stuck.
+{@guide}    If you've already imported your data, we may need to return to the {m}Experiment Lab{/m} in order to collect more data for {!}missing behaviors{/!}
+            If you are {!}missing organisms{/!} we may need to return to the {h}dive site{/h} in order to find all missing organisms for our model
+
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		
 @boostScore -10
 @cutscene
+
 {@player} What now, {nameof @guide}?
 {@guide}  You have uncovered the energy sources for the Site N ecosystem.
           Return to the station and share your findings with {nameof profBayou}! 
@@ -81,15 +96,15 @@ $endif
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(bayouAltEnergy)
 @cutscene
-$goto .argue.firstQuestion
 
-:: argue.firstQuestion
 {@profBayou} {nameof @player}! Are you here to solve the mystery for us? 
 {@bayouSci} I gotta admit, I'm dyin' to hear this one, too.
             Where is all that energy at {h}Site N{/h} even coming from?
 $goto .argue.selectClaim
 
 :: argue.selectClaim
+@cutscene
+
 $if !ArgueIsComplete(bayouAltEnergy_Branch3)
     $choice .argue.1_Methane; It's the methane from the vents.
     $choice .argue.2_Detritus; It's the falling detritus.
