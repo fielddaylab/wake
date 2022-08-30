@@ -30,9 +30,18 @@ $else
     {@coralMechanic}  Hey O! Welcome back! Glad me shoving my wares in your face didn't, uh, scare you off!
     {@player}   Oh, no, not at all!
     {@coralMechanic}    So, are you interested in taking another look at my shop?
+    $choice .action.openShop; You bet!
+    $choice .action.cancel; Not right now!
 $endif
 
 #ShopHandler(a)
+$if JobCompleted(coral-hunting-lions)
+    // After Hunting Lions
+    //{@$MerchantId} I told you so.
+$else
+    // Before Hunting Lions
+    //{@$MerchantId} Investigate the lionfish!
+$endif
 {@$MerchantId} {random Hey|What's up}, O! Need anything from my shop?
 $choice .action.openShop; Sure do!
 $choice .action.cancel; Not right now!
