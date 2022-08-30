@@ -19,6 +19,13 @@ namespace Aqua
             public JobTask Task;
         }
 
+        public enum TaskStatusMask
+        {
+            Active = 0x01,
+            Completed = 0x02,
+            Inactive = 0x04
+        }
+
         private enum TaskEventMask : uint
         {
             SceneLoad = 0x01,
@@ -274,6 +281,7 @@ namespace Aqua
             }
 
             ulong taskMask;
+            TaskStatusMask statusMask = 0;
             
             for(int taskIdx = 0, taskCount = m_TaskGraph.Count; taskIdx < taskCount; taskIdx++)
             {
@@ -286,19 +294,22 @@ namespace Aqua
                 {
                     case JobTaskStatus.Active:
                         Services.Events.Dispatch(GameEvents.JobTaskAdded, state.Task.Id.Hash());
+                        statusMask |= TaskStatusMask.Active;
                         break;
 
                     case JobTaskStatus.Complete:
                         Services.Events.Dispatch(GameEvents.JobTaskCompleted, state.Task.Id.Hash());
+                        statusMask |= TaskStatusMask.Completed;
                         break;
 
                     case JobTaskStatus.Inactive:
                         Services.Events.Dispatch(GameEvents.JobTaskRemoved, state.Task.Id.Hash());
+                        statusMask |= TaskStatusMask.Inactive;
                         break;
                 }
             }
 
-            Services.Events.Dispatch(GameEvents.JobTasksUpdated);
+            Services.Events.Dispatch(GameEvents.JobTasksUpdated, statusMask);
 
             m_TaskUpdateMask = 0;
         }

@@ -133,12 +133,12 @@
                 },
                 {
                     "id": "Cash",
-                    "amount": 2500,
+                    "amount": 500,
                     "consume": true
                 },
                 {
                     "id": "Exp",
-                    "amount": 500
+                    "amount": 80
                 }
             ]
         },
@@ -150,12 +150,12 @@
                 },
                 {
                     "id": "Cash",
-                    "amount": 2500,
+                    "amount": 500,
                     "consume": true
                 },
                 {
                     "id": "Exp",
-                    "amount": 500
+                    "amount": 80
                 }
             ]
         },
@@ -320,7 +320,7 @@
                     "id": "ArcticStation"
                 },
                 {
-                    "id": "arctic-seal-habbits"
+                    "id": "arctic-seal-habitats"
                 }
             ],
             "results": [
@@ -335,7 +335,8 @@
                 {
                     "id": "RS-4Y"
                 }
-            ]
+            ],
+            "unlockType": "manual"
         },
         "arctic-cause-of-death": {
             "type": "job",
@@ -586,7 +587,7 @@
                 }
             ]
         },
-        "arctic-seal-habbits": {
+        "arctic-seal-habitats": {
             "type": "job",
             "requires": [
                 {
@@ -611,7 +612,8 @@
                     "id": "Exp",
                     "amount": 5
                 }
-            ]
+            ],
+            "unlockType": "manual"
         },
         "arctic-stationary-survival": {
             "type": "job",
@@ -1676,6 +1678,12 @@
                     "id": "KelpStation"
                 },
                 {
+                    "id": "VisualModel"
+                },
+                {
+                    "id": "ROVTagger"
+                },
+                {
                     "id": "kelp-bull-kelp-forest"
                 }
             ],
@@ -1885,8 +1893,7 @@
             "disableTraversal": true
         },
         "RS-Arctic": {
-            "type": "map",
-            "unlockType": "manual"
+            "type": "map"
         },
         "RS-4W": {
             "type": "map",
@@ -1944,8 +1951,7 @@
             "unlockType": "manual"
         },
         "RS-Bayou": {
-            "type": "map",
-            "unlockType": "manual"
+            "type": "map"
         },
         "RS-3N": {
             "type": "map",
@@ -1985,8 +1991,7 @@
             "unlockType": "manual"
         },
         "RS-Coral": {
-            "type": "map",
-            "unlockType": "manual"
+            "type": "map"
         },
         "RS-2R": {
             "type": "map",
@@ -2010,15 +2015,6 @@
             ]
         },
         "RS-2S": {
-            "type": "map",
-            "disableTraversal": true,
-            "requires": [
-                {
-                    "id": "CoralStation"
-                }
-            ]
-        },
-        "RS-2T": {
             "type": "map",
             "disableTraversal": true,
             "requires": [
@@ -2054,8 +2050,7 @@
             ]
         },
         "RS-Kelp": {
-            "type": "map",
-            "unlockType": "manual"
+            "type": "map"
         },
         "RS-1A": {
             "type": "map",
@@ -2085,6 +2080,10 @@
         "Exp": 10,
         "Helm": true,
         "JobBoard": true,
+        "RS-Arctic": true,
+        "RS-Bayou": true,
+        "RS-Coral": true,
+        "RS-Kelp": true,
         "RS-1C": true,
         "KelpStation": true
     }

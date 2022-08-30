@@ -18,6 +18,7 @@ namespace Aqua
         [NonSerialized] private int m_LoadedActId = -1;
         [NonSerialized] private StringHash32 m_LoadedJobId;
         [NonSerialized] private bool m_JobLoading;
+        [NonSerialized] private bool m_ProfileLoading;
 
         protected override void Initialize()
         {
@@ -28,12 +29,14 @@ namespace Aqua
                 .Register<StringHash32>(GameEvents.JobSwitched, OnJobSwitched, this)
                 .Register<StringHash32>(GameEvents.JobCompleted, OnJobCompleted, this)
                 .Register<StringHash32>(GameEvents.JobTaskCompleted, OnJobTaskCompleted, this)
-                .Register(GameEvents.JobTasksUpdated, OnJobTasksUpdated, this)
+                .Register<JobTaskService.TaskStatusMask>(GameEvents.JobTasksUpdated, OnJobTasksUpdated, this)
                 .Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, OnBestiaryUpdated, this)
                 .Register<uint>(GameEvents.ActChanged, OnActChanged, this)
                 .Register(GameEvents.ProfileLoaded, InitScripts, this)
                 .Register<StringHash32>(GameEvents.InventoryUpdated, OnItemUpdated, this)
-                .Register<ScienceLevelUp>(GameEvents.ScienceLevelUpdated, OnScienceLevelUpdated, this);
+                .Register<ScienceLevelUp>(GameEvents.ScienceLevelUpdated, OnScienceLevelUpdated, this)
+                .Register(GameEvents.ProfileLoaded, () => m_ProfileLoading = true, this)
+                .Register(GameEvents.ProfileStarted, () => m_ProfileLoading = false, this);
         }
 
         protected override void Shutdown()
@@ -153,6 +156,9 @@ namespace Aqua
 
         private void OnJobTaskCompleted(StringHash32 inTaskId)
         {
+            if (m_ProfileLoading)
+                return;
+            
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("jobId", m_LoadedJobId);
@@ -161,8 +167,11 @@ namespace Aqua
             }
         }
 
-        private void OnJobTasksUpdated()
+        private void OnJobTasksUpdated(JobTaskService.TaskStatusMask statusMask)
         {
+            if (m_ProfileLoading || !Bits.Contains(statusMask, JobTaskService.TaskStatusMask.Completed))
+                return;
+
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("jobId", m_LoadedJobId);

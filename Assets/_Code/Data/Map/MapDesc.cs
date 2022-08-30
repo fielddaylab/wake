@@ -175,7 +175,8 @@ namespace Aqua
     public enum MapFlags
     {
         UnlockedByDefault = 0x01,
-        HasRooms = 0x02
+        HasRooms = 0x02,
+        IsStationInterior = 0x04
     }
 
     public class MapIdAttribute : DBObjectIdAttribute {

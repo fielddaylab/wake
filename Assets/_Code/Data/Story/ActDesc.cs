@@ -19,6 +19,10 @@ namespace Aqua
         public LeafAsset Scripting()
         {
             #if UNITY_EDITOR
+            if (m_ScriptingRef == null)
+            {
+                m_ScriptingRef = new ReloadableAssetRef<LeafAsset>(m_Scripting);
+            }
             return m_ScriptingRef;
             #else
             return m_Scripting;
