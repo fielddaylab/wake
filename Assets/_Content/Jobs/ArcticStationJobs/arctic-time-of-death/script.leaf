@@ -6,26 +6,19 @@
 @trigger    JobStarted
 @cutscene
 
-{@articSci} Thank you, Ollie. I'll be glad to finally determine Linda's time of death.
+{@arcticSci} Thank you, Ollie. I'll be glad to finally determine Linda's time of death.
 {@player}   Claro que sí. I'm happy to help. 
             But Professor... how is it possible to solve this? 
             All we have to look at are detritus and old bones. 
 {@arcticSci} Those are all the clues we'll need. 
              Scientists have studied other whalefalls and determined what they look like in different stages.
-             My team made a descriptive model. Here, take a look: 
+             My team has created a descriptive model. Here, take a look: 
 $call GiveFact(W_WhaleFall.Model.Stages)
 {@arcticSci}  You can view the model under {h}Site W{/h} in that fancy tablet of yours.   
-          You'll need to collect population data for all the species at {h}site W{/h}..
+          You'll need to collect population data for all the species at {h}site W{/h}.
           And then see where the numbers fit within the model.
 {@player} Oh, that makes sense! 
           Don't worry, Professor. I'll figure this out--you won't have to wait long. 
-
-:: helpMe
-@trigger RequestPartnerHelp
-@cutscene
-{@player} Hey {nameof @guide}, what should we be doing now?
-{@guide}  You'll need to collect all the population data for the species at {h}Site W{/h}.
-          Then compare the data with {nameof arcticSci}'s model, which you can find under {h}Site W{/h} in your AQOS!
 
 // CATCH-ALL GUIDE TEXT
 
@@ -34,8 +27,9 @@ $call GiveFact(W_WhaleFall.Model.Stages)
 @when		JobTaskTop(getPops)
 @boostScore -5
 @cutscene
-{@player} Okay, {nameof @guide}, what should I do first?
-{@guide}  Scan the Population Probe at Site W and count the current organism populations at the site.
+{@player} Hey {nameof @guide}, what should we be doing now?
+{@guide}  You'll need to collect all the population data for the species at {h}Site W{/h}.
+          Then compare the data with {nameof arcticSci}'s model, which you can find under {h}Site W{/h} in your AQOS!
 
 :: catchReportBack
 @trigger	RequestPartnerHelp
