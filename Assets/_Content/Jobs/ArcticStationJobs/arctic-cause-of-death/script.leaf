@@ -98,7 +98,7 @@ $endif
            Incidentally, I've received a transmission from {nameof @arcticSci}.
            According to his data, Bowhead Whales eat both diatoms and ice algae.
            This should help in your investigation! 
-{@player}  ....(nameof @guide)...
+{@player}  ....{nameof @guide}...
 {@guide}   Yes, O?
 {@player}   Did you wait to tell me this information so that I would have to gather all that extra data from the probe?
 {@guide}    Processing... processing...
@@ -144,7 +144,7 @@ $set jobs:arctic-cause-of-death.grantedStress = true
 @when 		JobTaskActive(getCurrPopulationData)
 @boostScore -5
 @cutscene
-{@guide}    Count the current populations of organisms at the site.
+{@guide}    We need to collect the current populations of all organisms at the {h}whalefall site{/h}.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
@@ -177,7 +177,7 @@ $choose branch
 
 :: argue.foodClaim
 {@arcticSci}  Hmmm. Okay, let's take it step by step.
-               For the sake of being thorough, can you tell me what Bowhead Whales eat?
+               For the sake of being thorough, do you recall what Bowhead Whales eat?
 $call ArgueLoad(foodCauseDeath)
 $if ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel1) 
 	$call ArgueFactSlot(BowheadWhale.Eats.IceAlgae) 
@@ -223,7 +223,7 @@ $call ArgueCancelClaim()
 $call ArgueComplete()
 {@arcticSci}   Exactly right, Ollie.
                 And what did you determine about the populations for Diatoms and Ice Algae?
-$goto argue.populationHistory
+$goto .argue.populationHistory
 
 ::argue.populationHistory
 $call ArgueLoad(PopulationHistory)
