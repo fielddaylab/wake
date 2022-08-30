@@ -9,59 +9,70 @@
 {@profArctic} So. Let's start at the beginning.
               What's this rumor about you seeing something under the ice?
 {@player}     It's not a rumor. There's a whole ecosystem down there!
-{@profArctic} We've had a station out here for years. Why has no one noticed it before?
-{@player}   I don't know. Maybe you're so busy obsessing over the salmon that you never thought to look?
-{@profArctic}  Excuse me, Ollie? "Obsessing" over the salmon? 
-{@player}   I... I didn't mean it like that. I know your work with the salmon is super important.  
-            But this new ecosystem is amazing. I'm not making it up!
-{@profArctic} I believe you, Ollie. But we don't have the resources to send our people out on a hunch.
-             That's why I was hoping you'd check it out for me.
-{@player}   Oh. I'd love to! 
-{@profArctic}  Sounds like the current swept you through, so you'll need an upgraded engine.
-               And Ollie... be careful.
-               It's not unusual for newcomers to get a little overwhelmed out here.
-{@olayer}   Got it. Thanks, {nameof @profArctic}.
+{@profArctic} That's highly implausible. 
+              How has no one noticed it before? How would an ecosystem survive under such conditions? 
+{@player}   I... I don't know. 
+            But there's life down there, under the ice. You have to believe me!
+{@profArctic} I do believe you, Ollie. That's why I was hoping you'd check it out for me.
+             Sounds like the current swept you through, so you'll need an upgraded engine.
+              And Ollie... be careful. It's not unusual for newcomers to get a little overwhelmed out here.
+{@olayer}   Got it. Thanks, {nameof profArctic}.
 
 :: getTheEngine
 @trigger    RequestPartnerHelp
 @when 		!HasUpgrade("Engine")
 @cutscene
-{@guide}	Have you upgraded your {h}engine{/h} yet? Let's ask {nameof @arcticMechanic} if he has something that can help us.
+{@player}   What should I do first, {nameof @guide}?
+{@guide}	You'll need a more powerful {h}engine{/h} in order to fight the ocean currents.
+            I'd suggest asking {nameof @arcticMechanic} if he has something that can help us.
 
 :: toSiteX
 @trigger    RequestPartnerHelp
 @when   !JobTaskTop(reportBack), HasUpgrade("Engine"), scene:name != "RS-4X"
 @cutscene
-{@guide}    Lets return {h}beneath the ice{/h}, perhaps through {h}Site W{/h}. Check your AQOS for more Site information.
+{@player}   Okay, {nameof @guide}. What now?
+{@guide}    You need to return {h}beneath the ice{/h}! 
+             Last time you reached that mysterious ecosystem through {h}Site W{/h}. 
+             You can check your AQOS for more site information. 
              
 :: useFlashlight
 @trigger    SceneStart
 @when   scene:name == "RS-4X"
 @once
 @cutscene
-{@guide}    Goodness it's dark. We might need to use your {nameof Flashlight} tool to be able to scan critters here.
-            If you can visualize a what might be called a "[3] button" on your "keyboard", pressing that should also activate your {nameof Flashlight}
+{@player}   Wow. It's so dark down here. 
+{@guide}    Yes. I predict that you have a 23.5% chance of getting lost and never returning. Much like Linda.
+{@player}   Yeah.... I really didn't need those odds, {nameof @guide}.
+            How about something helpful?
+{@guide}    Processing.... ah! You can decrease your odds of dying to only 8.2% by using your {nameof Flashlight} tool! 
+            The {nameof Flashlight} will help you scan the species more effectively, too. 
+            As a shortcut, you may activate your {nameof Flashlight} with the [3] button on your keyboard.
 
 :: report
 @trigger    JobTasksUpdated
 @when 		JobTaskTop(reportBack)
 @cutscene
-{@guide}	It looks like you've got a good sample of the life to be found under the ice.
-            Lets report back to {nameof profArctic} with everything you've found.
+{@player}   Wow. {nameof @guide}, this is amazing!
+            A whole ecosystem that no one even knew was here.
+            We have so much new data to bring to {nameof @profArtic}!
+{@guide}    Yes. And you didn't get lost and die, which is also a positive outcome! 
+{@player}   That's the spirit, V. 
+            Let's head back to the station. 
 
 :: LookAround
 @trigger    RequestPartnerHelp
 @when   !JobTaskTop(reportBack), HasUpgrade("Engine"), HasUpgrade("Flashlight"), scene:name == "RS-4X"
 @cutscene
-{@guide}    I wonder what kinds of creatures might be living here.
-            Be sure to check your {h}AQOS{/h} for job specifics.
+{@player} I wonder what kind of creatures might be living here
+{@guide} Yes. You'll need to make sure to scan all that you can find.
+         Be sure to check your {h}AQOS{/h} to see what you're missing!
 
 :: reportBack
 @trigger    RequestPartnerHelp 
 @when 	    JobTaskTop(reportBack)
 @cutscene
-{@guide}	It looks like you've got a good sample of the life to be found under the ice.
-            Lets report back to {nameof profArctic} with everything you've found.
+{@guide}	Looks like you've obtained an adequate sample of the life under the ice.
+            It's time to report back to {nameof profArctic}!
 
 // CATCH-ALL GUIDE TEXT
 
@@ -70,19 +81,23 @@
 @when		JobTaskTop(explore)
 @boostScore -5
 @cutscene
-{@guide}    Count the species populations at Site X. That's the region under the ice.
+{@player}   What should we do now, {nameof @guide}?
+{@guide}    You need to count the species populations under the ice, at Site X. 
 
 :: catchReportBack
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(reportBack)
 @boostScore -5
 @cutscene
-{@guide}	Return to the station and talk to {nameof @profArctic}.
+{@player}   Okay, {nameof @guide}. What now? 
+{@guide}	You need to report your findings to {nameof @profArctic}!
 
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(siteXAnalysis) 
 @cutscene
-{@profArctic}   What populations did you count beneath the ice?
+{@profArctic}  Ollie! Nice work. I wasn't sure you'd finish this one.
+               A lot of people wouldn't have the guts to go down there alone.
+               So? Let's hear it! What populations did you count beneath the ice? 
 $call ArgueLoad(siteXAnalysis) 
 $call ArgueSetClaim(Claim, jobs.arctic-underneath.argue.claimLabel) 
     $call ArgueFactSlot(X_UnderTheIce.Population.AstarteBorealis)  
@@ -99,20 +114,27 @@ $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.unrelated
-{@profArctic} Ok, that's interesting, but it's not answering my question.
+{@profArctic} Hmm. Not sure how that's relevant, Ollie. 
 $if ArgueIsFactSubmitted(X_UnderTheIce.Population.Detritus)
-    {@profArctic} You don't need to tell me the count of detritus, that stuff isn't alive.
+    {@profArctic}  I don't need to know about the detritus. That stuff isn't alive.
 $endif
 $call ArgueRejectIncorrect()
 $goto .argue.showClaim
 
 :: argue.giveUp
-{@profArctic}   Make sure you get a complete picture of all the populations down there.
+{@profArctic}  Okay, Ollie. Make sure you get a complete picture of all the populations down there!
+               I can't wait to hear about it. 
 
 // END
 :: argue.complete
 $call ArgueComplete()
-{@profArctic}   Whoa! That's amazing! I wonder what they are doing down there! 
-                How are they living? What do they eat? Is there light? We need to get more information, stat!
-
+{@profArctic}   Wow! Looks like you're living up to your sister's name. 
+                Amazing work, Ollie. 
+{@player}       Wait... that's it? We have so much more to learn!
+                How are all those critters surviving without sunlight to power a food supply? What do they eat? Is there light?
+{@profArctic}   Well, that's up to you to find out. This is your project.
+{@player}       Whoa. Really?
+{@profArctic}   Absolutely. 
+                I'll update the job board. Let me know when you're ready to dive in.
+             
 $call CompleteJob()

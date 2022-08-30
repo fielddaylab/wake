@@ -5,19 +5,25 @@
 @trigger    JobStarted
 @cutscene
 
-{@guide}    We need to figure out why Glass Sponges aren't found here at Site Z.
-			Usually organisms are missing if they are too stressed to stick around, or something eats all of them.
-			Let's start by seeing if either of those are true in this case.
+{@player} Okay, I'm ready to figure out what's going on with those mysterious Glass Sponges!
+		  They seemed so happy at Site X, but there are none here at Site Z.
+{@profArctic} Yeah, that's definitely odd. 
+		   Apart from the light conditions, Site X and Site Z are similar... and sponges don't react poorly to light.
+{@player}   What do you think is happening to them? 
+{@profArctic}	Usually organisms are missing if they're too stressed to stick around, or if something eats all of them.
+			You'll need to figure out if either of these are true for the sponges.	
 $if !HasEntity(GlassSponge)
-	{@guide}	But first, make sure to scan the Glass Sponge at Site X so we know what we're dealing with.
+	{@guide}	But first, make sure to scan the Glass Sponge at Site X.
 $endif
+{@player} Got it. Thanks!  
 
 :: scanSpongeComplete
 @trigger	JobTaskCompleted
 @when		JobTaskTop(scanAll)
 @once
 @cutscene
-{@guide}	All right, you've got the Sponge. Now we'll need to scan any new species out in the Frosted Sea, right here at Site Z.
+{@guide}  Adequate work, O! You've scanned the Glass Sponge.
+		  Now you'll need to scan any new species out in the Frosted Sea, here at Site Z. 
 
 // PREDATOR THEORY
 
@@ -27,20 +33,26 @@ $endif
 @when		taskId == "scanAll"
 @once
 @cutscene
-{@guide}	Okay, let's use the Observation Tank to see if any of the predators from Site Z eat Glass Sponges.
+{@player} Okay, I think that's all the species!
+		  Now I need to find out if any of the predators from Site Z eat the Glass Sponges.
+		  Time to head back to the Meredith.
 
 :: experimentCompleteZ
 @trigger	ExperimentFinished
 @when		tankType == "Observation", jobs:arctic-isolated-instance.checkedCrab, jobs:arctic-isolated-instance.checkedSeal, jobs:arctic-isolated-instance.checkedShark
 @once
 @cutscene
-{@guide}	None of the obvious predators eat Glass Sponges, huh?
-			That's weird. I know I've seen half-eaten Glass Sponges lying around. Something must be eating them.
+{@player} Huh. No lo entiendo.
+	      None of these predators seem to eat Glass Sponges... but I feel like I've seen some half-eaten Glass Sponges lying around.
+{@guide} Yes. It is, as humans might say, perplexing.
+{@player} Something else must be eating them.
 $if !JobTaskCompleted(determineStress)
-	{@guide}	So that's one branch. What was the other possibility? That Site Z stressed the sponges, right?
-				Let's see if testing that gives us a better perspective.
+	{@guide} According to my data, {nameof profArctic} had one other theory.
+	{@player} Oh yeah... we still need to figure out if Site Z is stressing the sponges!
+			  Maybe the Stress Tank will help us solve this. 
 $else
-	{@guide}	Let's check in with {nameof @profArctic}.
+	{@player} What should I do now, {nameof @guide}?	
+	{@guide} I'd recommend checking in with {nameof @profArctic}. Maybe she'll have a new idea. 
 $endif
 
 
@@ -49,19 +61,24 @@ $endif
 @when		entryId == "PterasterObscurus", JobTaskTop(experimentPredatorAll)
 @once
 @cutscene
-{@guide}	This could be it! Let's head back to the Observation Tank and check if it likes the taste of Glass Sponges.
+{@player} Yes! We found a new predator!
+		  Kinda cute, aren't they?
+		  Now we just need to find out if Cushion Stars like snacking on Glass Sponges.
 
 :: experimentCompleteAll
 @trigger	BestiaryFactAdded
 @when		factId == "PterasterObscurus.Eats.GlassSponge", JobTaskCompleted(experimentPredatorAll)
 @once
 @cutscene
-{@guide}	Okay! We've finally found something that eats Glass Sponges.
+{@player} Finally! We've found a species that eats Glass Sponges!
 $if HasFact(Y_IceCrevice.Population.PterasterObscurus)
-	{@guide}	And we've already counted the population of Cushion Stars at Site Y.
+	{@guide}	And you've already counted the population of Cushion Stars at Site Y.
 	$branch .predatorComplete
 $else
-	{@guide}	Let's get a count of the population so we have evidence there are Cushion Stars at Site Y.
+	{@guide} Yes, this looks quite promising, O!
+	{@player} But... we still don't have proof the Cushion Stars live at Site Y.
+	{@guide} Affirmative. You will need to return to Site Y and count the Cushion Star population.
+	{@player} Got it. Thanks, {nameof @guide}.
 $endif
 
 :: populationComplete
@@ -69,17 +86,19 @@ $endif
 @when		taskId == "countPopulations", scene:name == "RS-4Y"
 @once
 @cutscene
-{@guide}	All right! I think that is everything we need to make the case that these {pluralnameof PterasterObscurus} are the reason we don't see {pluralnameof GlassSponge} in Site Z.
-			{h}Site Y{/h} lies between {h}Site X{/h} and {h}Site Z{/h}, so when the {pluralnameof GlassSponge} try to move through, they all get gobbled up by the {pluralnameof PterasterObscurus}!
+{@player} Okay, {nameof@guide}. I think we've solved it!
+		  The {pluralnameof GlassSponge} at Site X would need to pass through Site Y in order to reach Site Z.
+		  But when the sponges get to Site Y, the {pluralnameof PterasterObscurus} eat them all.
+		  That would explain why they're missing from Site Z!
 $branch .predatorComplete
-
 
 :: predatorComplete
 $if !JobTaskCompleted(determineStress)
-	{@guide}	So that's one branch. What was the other possibility? That Site Z stressed the sponges, right?
-				Let's see if testing that gives us a better perspective.
+	{@guide} According to my data, {nameof profArctic} had one other theory.
+	{@player} Oh yeah... we still need to figure out if Site Z is stressing the sponges!
+			  Maybe the Stress Tank will help us solve this. 
 $else
-	{@guide}	Let's go show {nameof @profArctic} what we've found.
+	{@guide}	Sounds like it's time to show {nameof profArctic} what you've found!
 $endif
 
 // STRESS THEORY
@@ -89,16 +108,21 @@ $endif
 @when		taskId == "determineStress", JobTaskTop(discussFindings)
 @once
 @cutscene
-{@guide}	Be sure to compare those stress results with the conditions at Site Z to see if they are relevant.
-			So now we've got our two theories. Should we see what {nameof @profArctic} thinks about them?
+{@player} Okay. We've got the stress ranges for the Glass Sponges!
+		I'll just need to compare them with the conditions at Site Z, to see if they're relevant.
+		What now, {nameof @guide}?
+{@guide} You have investigated both of {nameof profArctic}'s theories.
+		 I think you're ready to report back!
 
 :: stressDeterminedFirst
 @trigger	JobTaskCompleted
 @when		taskId == "determineStress", !JobTaskTop(discussFindings)
 @once
 @cutscene
-{@guide}	Be sure to compare those stress results with the conditions at Site Z to see if they are relevant.
-			So that's one piece. What was the other piece? Something could be eating the sponges, right? Let's look into that next.
+{@guide}  Adequate work, O! You'll just need to compare those results with the conditions at Site Z to see if they are relevant.
+		 According to my data, {nameof profArctic} had another theory about why the Glass Sponges are missing.
+{@player}  Oh yeah... something might be eating them!
+		  Let's look into that next. 
 
 // Put Glass Sponge in tank with predators
 
@@ -123,6 +147,7 @@ $endif
 @when		JobTaskTop(scanSponge)
 @boostScore -5
 @cutscene
+{@player} What now, {nameof @guide}?
 {@guide}	Go to Site X and scan a {nameof GlassSponge}.
 
 :: catchScanAll
@@ -130,42 +155,48 @@ $endif
 @when		JobTaskTop(scanAll)
 @boostScore -5
 @cutscene
-{@guide}	Go to Site Z and scan all the new species.
+{@player} What should we do next?
+{@guide}	Go to Site Z and scan any new species.
 
 :: catchCheckCrab
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(checkCrab), !jobs:arctic-isolated-instance.checkedCrab
 @boostScore -5
 @cutscene
-{@guide}	Check if any predators from Site Z eat Glass Sponges by placing them together in the Observation Tank.
+{@player} What now, {nameof guide}?
+{@guide}  You need to find out if any predators from Site Z eat Glass Sponges.
+		  I would suggest placing them together in your {h}Observation Tank{/h}. 
 
 :: catchCheckSeal
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(checkSeal), !jobs:arctic-isolated-instance.checkedSeal
 @boostScore -5
 @cutscene
-{@guide}	Check if any predators from Site Z eat Glass Sponges by placing them together in the Observation Tank.
+{@guide}	Use your Observation Tank to find out if any predators from Site Z eat Glass Sponges.
+			I believe you have more species to observe. 
 
 :: catchCheckShark
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(checkShark), !jobs:arctic-isolated-instance.checkedShark
 @boostScore -5
 @cutscene
-{@guide}	Check if any predators from Site Z eat Glass Sponges by placing them together in the Observation Tank.
+{@guide}	Use your Observation Tank to find out if any predators from Site Z eat Glass Sponges.
+			I believe you have more species to observe. 
 
 :: catchChecksBeforeTaskUpdate
 @trigger	RequestPartnerHelp
 @when		!JobTaskCompleted(findPredator)
 @boostScore -6
 @cutscene
-{@guide}	We can probably wrap up this experiment...
+{@guide}	It appears you've gathered all the information you need, O! Time to end the experiment.
 
 :: catchDiscussFindings
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(discussFindings)
 @boostScore -5
 @cutscene
-{@guide}	Return to the research station and talk to {nameof @profArctic}.
+{@player} What should we do now, {nameof @guide}?
+{@guide}  Return to the research station and report your findings to {nameof @profArctic}!
 
 :: catchFindPredator
 @trigger	RequestPartnerHelp
@@ -200,7 +231,8 @@ $endif
 @when		JobTaskTop(reportFinal)
 @boostScore -5
 @cutscene
-{@guide}	Return to the station and talk to {nameof @profArctic}.
+{@player}   What should I do next, {nameof @guide}?
+{@guide}	Return to the station and talk to {nameof @profArctic}!
 
 
 // ARGUMENTATION
@@ -211,13 +243,13 @@ $endif
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(argueIsolatedInstanceGroundwork)
 @cutscene
-{@profArctic}	How is it coming along?
+{@profArctic}  How'd it go out there, Ollie? 
 $branch .argue.groundwork.main-question
 
 :: argue.groundwork.main-question
-{@profArctic}	What can you tell me about these theories for why we don't see Glass Sponges in the Frosted Sea?
+{@profArctic}	Did you figure out which theory might explain why there are no Glass Sponges in the Frosted Sea?
 $choice .argue.groundwork.lightClaim; The Sponges are stressed by the light levels.
-$choice .argue.groundwork.predatorClaim; There is a predator eating the Sponges.
+$choice .argue.groundwork.predatorClaim; There's a predator eating the Sponges.
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
@@ -225,10 +257,11 @@ $choose branch
 
 :: argue.groundwork.lightClaim
 $if ArgueIsComplete(argueIsolatedInstanceGroundworkStress)
-	{@profArctic}	I believe we've already covered this. The light levels seem fine. Something else must be going on.
+	{@profArctic}   Oh... I thought we'd already covered this, Ollie. 	
+			        The light levels seem fine. Something else must be going on.
 	$branch .argue.groundwork.main-question
 $else
-	{@profArctic}	This seems like it could make sense. Do you have evidence about the current light levels?
+	{@profArctic}	Hmm. That could be it. Do you have evidence about the current light levels at Site Z?
 	$call ArgueLoad(argueIsolatedInstanceGroundworkStress)
 	$if ArgueSetClaim(IsolatedInstanceGroundworkStressClaim, jobs.arctic-isolated-instance.argue.claimLabelStress)
 		$call ArgueFactSlot(GlassSponge.Light.Stressed)
@@ -247,7 +280,7 @@ $choose branch
 
 :: argue.groundwork.lightComplete
 $call ArgueComplete()
-{@profArctic}	These light levels seem fine. It seems like something else is going on.
+{@profArctic}	Actually, these light levels seem fine. It seems like something else is going on.
 $if ArgueIsComplete(argueIsolatedInstanceGroundworkPredator)
 	$branch .argue.groundwork.bothComplete
 $else
@@ -256,17 +289,17 @@ $endif
 
 :: argue.groundwork.unrelated
 $call ArgueRejectIncorrect()
-{@profArctic}	Hmm, that doesn't seem to explain everything. Got anything else?
+{@profArctic} I don't think that's the answer we need, Ollie. Got anything else?
 $branch .argue.groundwork.chooseLightFacts
 
 	// PREDATOR
 
 :: argue.groundwork.predatorClaim
 $if ArgueIsComplete(argueIsolatedInstanceGroundworkPredator)
-	{@profArctic}	Haven't we already established this? There are no predators that eat Glass Sponges in Site Z.
+	{@profArctic}  I thought we already talked about this, Ollie. There are no predators that eat Glass Sponges in Site Z.
 	$branch .argue.groundwork.main-question
 $else
-	{@profArctic}	Have you observed this?
+	{@profArctic}	Hmmm. Have you observed this?
 	$call ArgueLoad(argueIsolatedInstanceGroundworkPredator)
 
 	$if JobTaskTop(discussFindings)
@@ -280,7 +313,7 @@ $endif
 
 :: argue.groundwork.predatorComplete
 $call ArgueComplete()
-{@profArctic}	Really? Well, that is good to know. There must be something else going on.
+{@profArctic}  Oh, that's interesting! Then there must be something else going on.	
 $if ArgueIsComplete(argueIsolatedInstanceGroundworkStress)
 	$branch .argue.groundwork.bothComplete
 $else
@@ -292,10 +325,14 @@ $endif
 :: argue.groundwork.bothComplete
 $call ArgueLoad(argueIsolatedInstanceGroundwork)
 $call ArgueComplete()
-{@profArctic}	I can see you've done your research, but neither theory fully solves the issue.
-				You know, sometimes we have to delve a little deeper to understand an issue -- where we need to read between the lines, if you will.
-				It is possible there are predators {h}between{/h} the sites which eat all the sponges before they can complete their journey.
-				That may be a good place to investigate next.
+{@profArctic}	Hmmm. I can see you've done your research, but we still don't have an answer.
+{@player}	  Ugh. I don't get it. ¡Esto es imposible! How do you stay so patient?
+{@profArctic}  Trust me, it takes practice.
+				Let's dig a little deeper. We know there are plenty of Glass Sponges at Site X, and none of them at Site Z.
+			   Could something be happening to them on the way?
+{@player} 	You mean... at Site Y? 
+{@profActic} Exactly. A predator at Site Y may be eating all the Glass Sponges before they can go any farther.
+				That may be a good place to check out next.
 
 // ARGUMENT 2: Final (missing) piece
 
@@ -307,7 +344,7 @@ $call ArgueComplete()
 $branch .argue.final.main-question
 
 :: argue.final.main-question
-{@profArctic}	Have you found any predators between {h}Site X{/h} and {h}Site Z{/h} which may be the reason why Glass Sponges are not found in the Frosted Sea?
+{@profArctic}	Have you found any predators between {h}Site X{/h} and {h}Site Z{/h} that could be stopping the Glass Sponges from reaching the Frosted Sea? 
 $call ArgueLoad(argueIsolatedInstanceFinal)
 $if ArgueSetClaim(IsolatedInstanceFinalClaim, jobs.arctic-isolated-instance.argue.claimLabelFinal)
 	$call ArgueFactSlot(PterasterObscurus.Eats.GlassSponge)
@@ -323,21 +360,25 @@ $choose branch
 :: argue.final.unrelated
 $call ArgueClearFacts()
 $call ArgueHideClaim()
-{@profArctic}	Hmmmm. I don't see how that is relevant.
-				We're looking for a predator of the Glass Sponges and a population count of the predator to prove they live in the area.
+{@profArctic}	Um... did you mean to show me this?
+				We need a predator of Glass Sponges, and a population count of the predator to prove they live at Site Y.
 $branch .argue.final.main-question
 
 :: argue.giveUp
-{@profArctic}    No worries, I'm sure you'll figure it out!
+{@profArctic}    Okay, Ollie. No worries. I'm sure you'll figure it out!
 
 :: argue.giveUpArgument
-{@profArctic}    No worries, I'm sure you'll figure it out!
+{@profArctic}    No worries, Ollie. Just let me know when you're ready!
 $call ArgueUnload()
 $call ArgueCancelClaim()
 
 // END
 :: argue.final.complete
 $call ArgueComplete()
-{@profArctic}	Aha! The Cushion Stars eat the Glass Sponges in Site Y before they can make it to Site Z.
-				Nice thinking!
+{@profArctic} Aha! So the Cushion Stars eat all the Glass Sponges at Site Y, before they can make it here to Site Z.
+			  This was a tricky one. I'm impressed by your persistance. 
+{@player}	  Ha. My mom would call it stubbornness. 
+{@profArctic}  Well, whatever you want to call it, I think your sister had it, too. 
+			   Amazing work out there, Ollie. Whenever you want another job, just let me know.  
+
 $call CompleteJob()
