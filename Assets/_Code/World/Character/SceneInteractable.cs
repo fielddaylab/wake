@@ -36,8 +36,10 @@ namespace Aqua.Character {
 
         [Header("Display")]
         [SerializeField] private TextId m_LabelOverride = null;
+        [SerializeField] private ContextButtonDisplay.LabelMode m_LabelMode = ContextButtonDisplay.LabelMode.MapLabel;
         [SerializeField] private TextId m_ActionLabelOverride = null;
         [SerializeField] private TextId m_LockMessageOverride = null;
+        [SerializeField] private ContextButtonDisplay.BadgeMode m_BadgeMode = ContextButtonDisplay.BadgeMode.None;
 
         [Header("Pin")]
         [SerializeField] private Transform m_PinLocationOverride = null;
@@ -75,6 +77,10 @@ namespace Aqua.Character {
             m_AutoExecute = newAuto;
         }
 
+        public ContextButtonDisplay.LabelMode LabelMode() {
+            return m_LabelMode;
+        }
+
         public TextId Label(TextId defaultLabel) {
             return !m_LabelOverride.IsEmpty ? m_LabelOverride : defaultLabel;
         }
@@ -85,6 +91,10 @@ namespace Aqua.Character {
 
         public TextId LockedActionLabel(TextId defaultLabel) {
             return !m_LockMessageOverride.IsEmpty ? m_LockMessageOverride : defaultLabel;
+        }
+
+        public ContextButtonDisplay.BadgeMode BadgeMode() {
+            return m_BadgeMode;
         }
 
         #region Unity Events

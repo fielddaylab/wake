@@ -39,6 +39,7 @@ namespace Aqua.StationMap {
 
         public void Pin(Transform transform, StringHash32 mapId) {
             m_Pin.Pin(transform);
+            m_Pin.OnClampUpdate.Invoke(transform, m_Pin.LastClampedEdges);
 
             MapDesc mapInfo = Assets.Map(mapId);
             TextId label = mapInfo.MarkerLabelId();
