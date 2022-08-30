@@ -4,8 +4,16 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@profArctic}   Ooh, you're tackling the Ribbon Seal job. Those creatures are pretty rare.
-                They're loners,| like me. If you're gonna find one, you'll need the {nameof IceBreaker} to reach the {m}Ephemeral Impass{/m}.
+{@profArctic} Oh, this is great, Ollie! I've been curious about the Ribbon Seals for so long.
+              Though I can't promise you'll see one. They're a pretty rare find. 
+{@arcticSci}  It's true. Your sister called them loners... like a lot of us here. 
+              I've never seen one, but Juno here has stumbled upon them once or twice--
+{@player}     Wait. My sister told you about them?? 
+{@arcticSci}  Of course. Legend says she was the first to spot a Ribbon Seal around here.
+{@player}   Wow, that's amazing!
+            How can I help?
+{@profArctic} To start with, you'll need to venture below the ice and track down a Ribbon Seal. 
+              Use your {nameof IceBreaker} to reach the {m}Ephemeral Impass{/m}.
 
 // ARGUMENTATION
 ::argue.intro
@@ -28,17 +36,24 @@ $choose branch
 
 :: argue.unrelated
 $call ArgueRejectIncorrect()
-{@guide} Ok, that's interesting, but it's not answering my question.
+{@profArctic} Hmm. That's interesting, but not really helpful here. 
 $goto .argue.showClaim
 
 :: argue.giveUp
-{@guide} OK. Get back to me when you're ready.
+{@profArctic} No problem, Ollie. Just let me know when you're ready. 
 $call ArgueCancelClaim()
 
 // END
 :: argue.complete
 $call ArgueComplete()
-{@guide} This looks great!
-         This is the conclusion to the arctic-seal-habbits job!
+{@profArctic} Wow, so many microorganisms! Nice job, Ollie.
+              And I can't believe you saw a Ribbon Seal! I've been here 6 years and I've seen one maybe twice. 
+              Gorgeous down there, isn't it? 
+{@player}     Yeah. A little eerie, too. 
+{@profArctic} Really? I find it comforting. All that ice and quiet. 
+              But if ice crevices aren't your thing, no biggie. I'm sure I can find someone else for the next job--
+{@player}     Oh, there's another job down there?? What is it? When do I leave? 
+{@arcticSci}  Well, now you really sound like your sister. 
+{@profArctic} It's all yours if you want it, Ollie. Just check the Job Board when you're ready. 
 
 $call CompleteJob()

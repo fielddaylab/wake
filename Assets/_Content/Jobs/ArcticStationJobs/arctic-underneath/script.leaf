@@ -1,6 +1,27 @@
 # basePath job.arctic-underneath
 
+
 // INTRO
+:: start
+@trigger    JobStarted
+@cutscene
+
+{@profArctic} So. Let's start at the beginning.
+              What's this rumor about you seeing something under the ice?
+{@player}     It's not a rumor. There's a whole ecosystem down there!
+{@profArctic} We've had a station out here for years. Why has no one noticed it before?
+{@player}   I don't know. Maybe you're so busy obsessing over the salmon that you never thought to look?
+{@profArctic}  Excuse me, Ollie? "Obsessing" over the salmon? 
+{@player}   I... I didn't mean it like that. I know your work with the salmon is super important.  
+            But this new ecosystem is amazing. I'm not making it up!
+{@profArctic} I believe you, Ollie. But we don't have the resources to send our people out on a hunch.
+             That's why I was hoping you'd check it out for me.
+{@player}   Oh. I'd love to! 
+{@profArctic}  Sounds like the current swept you through, so you'll need an upgraded engine.
+               And Ollie... be careful.
+               It's not unusual for newcomers to get a little overwhelmed out here.
+{@olayer}   Got it. Thanks, {nameof profArctic}.
+
 :: getTheEngine
 @trigger    RequestPartnerHelp
 @when 		!HasUpgrade("Engine")

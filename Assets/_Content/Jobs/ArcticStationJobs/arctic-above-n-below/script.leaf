@@ -4,8 +4,16 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@profArctic}   Oh good, I've been curious about some of the other species in the {m}Ephemeral Impass{/m}.
-                Could you make a {nameof VisualModel} of how all the species interact?
+
+{@profArctic} Thank you, Ollie! 
+              I noticed from the probe data that some other species live in the {m}Ephemeral Impass{/m}.
+              I'm so curious to find out whether they interact with the Ribbon Seals!
+              Wish I could figure it out myself... it seems like there's never enough time.
+{@player}     Well, you are running an entire science station in extreme conditions, in what a lot of people would call the middle of nowhere.
+{@profArctic}  Ha. Well, it may be the middle of nowhere, but it's our middle of nowhere.
+               And it's not a bad view, either. 
+               Anyhow, what do you say, Ollie? Can you make a {nameof VisualModel} of how all the species interact?
+{@player}      I'd love to. I'll let you know what I find out!
 
 // ARGUMENTATION
 ::argue.intro
@@ -28,17 +36,21 @@ $choose branch
 
 :: argue.unrelated
 $call ArgueRejectIncorrect()
-{@guide} Ok, that's interesting, but it's not answering my question.
+{@profArctic} Huh. That's interesting, Ollie, but it's not really relevant. 
 $goto .argue.showClaim
 
 :: argue.giveUp
-{@guide} OK. Get back to me when you're ready.
+{@profArctic} No problem, Ollie. Just let me know when you're ready. 
 $call ArgueCancelClaim()
 
 // END
 :: argue.complete
 $call ArgueComplete()
-{@guide} This looks great!
-         This is the conclusion to the above-n-below job!
+{@profArctic} Oh, this is fascinating!
+              So it seems the Ribbon Seals and the other species don't really interact...
+              Except through detritus, I guess. 
+              Thank you, Ollie. I've been wondering about that place for years! 
+              
+               
 
 $call CompleteJob()

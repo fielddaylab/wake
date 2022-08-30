@@ -4,19 +4,26 @@
 @trigger    JobStarted
 @cutscene
 
-{@profArctic}	Some of our researchers down south have been tracking a certain pod of whales for some time now.
-                Recently however, one of our trackers went out, and we haven't been able to find them since.
-                The tracker was attached to one of the matriarchs of the pod we call "Linda".
-                Would you be able to go check her last known location and see if you can find her?  
-{@player}   Can do!
-{@profArctic}  A mother whale is called a Cow, so sending you off to find her makes you a cowboy!
-{@player}   When then, I reckon we ought to saddle-up and mosey on over.
-{@guide}    Oh, brother...
+{@arcticSci}    Oh, thank you, Ollie. I've been worried sick about poor Linda.
+{@player}       Linda?
+{@arcticSci}    Our missing whale. One of the matriarchs of her pod. 
+                My team has been tracking the pod for some time now. 
+                Every year, they migrate through here before returning south.
+                This year, however, one was missing. 
+                We checked Linda's tracking device, but it seems to have stopped transmitting.
+{@player}       Aw, no te preocupes, Professor. I'm sure you'll see Linda again.
+                I mean, how hard can it be to find a whale? They're not exactly small.
+{@player}       I'll get out there and start searching. 
+{@arcticSci}    Thank you, Ollie. Do let me know what you find. 
+
 $call UnlockSite(RS-4W)
 
 $if JobTaskTop(reportBack), !jobs:arctic-missing-whale.triggeredSwitch
-    {@guide}    Wait... haven't we already found all of this? The whale, the tracker, the detritus...
-                Yeah, we have everything we need. Get {nameof @profArctic}'s attention again.
+    {@guide}   Hmmm. It seems you've already completed all of your job tasks!
+    {@player}  Oh yeah... I guess you're right.
+    {@guide}   You seem hesitant to report your findings.
+    {@player}   I just... I wish it was better news. 
+                Guess it's time to tell {nameof @arcticSci} what we discovered. 
     $set jobs:arctic-missing-whale.triggeredSwitch = true
 $endif
 
@@ -25,22 +32,25 @@ $endif
 @once
 @cutscene
 $if JobTaskTop(reportBack), !jobs:arctic-missing-whale.triggeredSwitch
-    Looking at this job again, it seems we've finished everything we needed to do.
-    Let's report back to {nameof @profArctic}.
+   {@player} What now, {namoef @guide}?
+   {@guide} Hmmm. It appears you've finished all of your tasks, Ollie!
+            All that's left is to report back to {nameof @arcticSci}.
     $set jobs:arctic-missing-whale.triggeredSwitch = true
 $endif
-
 
 :: helpFindWhale
 @trigger    RequestPartnerHelp
 @when 		scene:name != "RS-4W", !JobTaskTop(reportBack)
 @cutscene
-{@player} 	What should I be doing again?
+{@player} 	What should we do next, {nameof @guide}?
 $if !HasEntity(Detritus), jobs:arctic-whalefall.num-attempts > 0, !HasUpgrade(Engine)
-    {@guide}	You'll need to look into Linda's remains. But first, you'll need an engine.
+    {@guide}	You will need to investigate Linda's remains.
+                But first, you'll need a stronger engine.
+                Otherwise that undersea current will keep sweeping you past the skeleton.
+     {@player}  Hmm. A stronger engine? I think I saw something in the shop like that. 
 $else
-    {@guide}	We need to see if we can locate the Linda.
-                Why don't you check your AQOS to see her last known location?
+    {@guide}	You need to track down Linda, the missing whale.
+                Check your AQOS to see her last known location. 
 $endif
 
 :: enterScene
@@ -48,23 +58,26 @@ $endif
 @when       scene:name == "RS-4W", JobStartedOrComplete(arctic-missing-whale)
 @once
 @cutscene
-{@guide}    Look's like we're picking up a faint signal. The tracker is definitely here.
-            Either Linda's here somewhere, or her tracker fell off.
+{@player}   Okay. Let's do this. Can you scan for Linda's tracker, {nameof @guide}?
+{@guide}    Processing,... processing...
+            Yes! It appears we're picking up a faint signal.
+{@player}   Oh, that's amazing! Linda must be nearby!
+            I told Professor Whalen we'd find her. He'll be so happy.  
 			
 :: LookAround
 @trigger    RequestPartnerHelp
 @when       scene:name == "RS-4W"
 @cutscene
-{@player}   What should I be doing?
+{@player}   What should I be doing, {nameof @guide}?
 $if !HasEntity(WhaleTracker)
-{@guide}    Let's start by seeing if we can find that tracker.
+{@guide}    Start by seeing if you can find Linda's tracker. 
 $elseif !HasEntity(Detritus), jobs:arctic-whalefall.num-attempts > 0, !HasUpgrade(Engine)
-{@guide}    Well, you can't do much more here until you get an engine.
-            I bet the shop has one in stock.
+{@guide}    You will need a stronger engine to investigate further. 
+            According to my data, the shop should have one in stock!
 $elseif !HasEntity(Detritus)	
-{@guide}    Have you found any evidence of Linda herself?
+{@guide}    See if you can find any evidence of Linda herself. 
 $elseif	HasEntity(Detritus), !HasFact(W_WhaleFall.Population.Detritus)
-{@guide}	Detritus, huh? How much did you scan? A whale amount? 
+{@guide}	You will need to scan more of the detritus, O. 
 $endif
 
 :: gotDetritus
@@ -72,22 +85,28 @@ $endif
 @once
 @when 		HasEntity(WhaleTracker), HasEntity(Detritus), !HasFact(W_WhaleFall.Population.Detritus) 
 @cutscene
-{@guide}	Detritus, huh? How much did you scan? A whale amount? 
+{@player}   Okay, {nameof @guide}. What now?
+{@guide}	You'll need to scan more of the detritus in order to complete your task. 
 
 :: gotScans
 @trigger    JobTasksUpdated
 @when 		JobTaskTop(reportBack)
 @once
 @cutscene
-{@guide} Looks like we were able to find her...
-         Let's head back and let {nameof @profArctic} know.
+{@player}   Looks like we've got all we need.
+{@guide}    Yes! A windfall of data. 
+{@player}   And some bad news for {nameof @arcticSci}.
+            I guess we better go tell him. At least now he'll know where she is. 
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
 @when 		JobTaskTop(reportBack)
 @cutscene
-{@player} 	Where should I be going again?
-{@guide}	We located the whale, so let's report back to {nameof @profArctic}.
+{@player} 	Can you remind me where to go, {nameof @guide}?
+{@guide}	My sensors indicate that you are stalling, O.
+{@player}   What? Of course I'm not stalling!
+{@guide}    Ah. I must have misinterpreted the data. 
+            You need to report back to {nameof @profArctic} and tell him that Linda has been found. 
 
 // CATCH-ALL GUIDE TEXT
 
@@ -96,28 +115,36 @@ $endif
 @when		JobTaskTop(findTracker)
 @boostScore -5
 @cutscene
-{@guide}    Look around Site W. There's a missing tracker somewhere.	
+{@player}   Where should we start, {nameof @guide}?
+{@guide}    You need to search Site W for Linda's tracking device. 
 
 :: catchFindWhale
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(findWhale)
 @boostScore -5
 @cutscene
-{@guide}	Search Site W for signs of the whale named Linda.
+{@player}   Okay, {namoef @guide}. We've got the tracker. What now?
+{@guide}    You need to search the area for any proof that Linda is here.
+{@player}   I'm sure she's close. I can feel it!
+            Let's keep searching. 
 
 :: catchFoundDetritus
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(foundDetritus)
 @boostScore -5
 @cutscene
-{@guide}	Count how much detritus is on the whale remains.
+{@player} Wow. Poor Linda.
+          I guess it really is her. 
+          What should we do now, {nameof @guide}?
+{@guide}  You need to count all of the detritus.
+          A whale-sized amount will prove to {nameof @arcticSci} that Linda is here.
 
 :: catchReportBack
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(reportBack)
 @boostScore -5
 @cutscene
-{@guide}	Return to the station to talk to {nameof @profArctic}.
+{@guide}	Return to the station to talk to {nameof @arcticSci}.
 
 // ARGUMENTATION
 ::argue.intro
@@ -130,8 +157,8 @@ $if ArgueSetClaim(Claim, jobs.arctic-missing-whale.argue.claimLabel)
     $call ArgueFactSlot(W_WhaleFall.Population.WhaleTracker) 
 $endif
 {@profArctic}   Have you found Linda?
-$choice .argue.showClaim; Yes
-$choice .argue.cantFind; No
+$choice .argue.showClaim; Yes... but I'm sorry. It's not good news.
+$choice .argue.cantFind; No, sorry. No sign of her yet. 
 $choose branch
 
 :: argue.showClaim
@@ -147,8 +174,9 @@ $choose branch
 $if ArgueIsFactSubmitted(W_WhaleFall.Population.WhaleTracker)
     $goto .argue.complete
 $else
-{@profArctic}   That's a LOT of detritus. It might be a whale, but did you happen to find our tracker?
-                That would confirm that it's her...
+{@profArctic}  Oh dear. That's certainly enough detritus to be a whale's remains.
+               It might be Linda... but there are many Bowhead Whales that pass through here. 
+               Did you find anything to confirm that it's her? 
 $endif
 $goto .argue.showClaim
 
@@ -156,28 +184,35 @@ $goto .argue.showClaim
 $if ArgueIsFactSubmitted(W_WhaleFall.Population.Detritus)
     $goto .argue.complete
 $else
-{@profArctic}   Oh no. Maybe it just fell off? 
-                You didn't happen to see anything that resembled a dead whale, did you?
+{@profArctic}   Oh dear... Linda's tracker. This explains why we lost the signal.
+                But that means she could be anywhere.
+                Unless you found more evidence of her whereabouts...? 
 $endif
 $goto .argue.showClaim
 
 :: argue.unrelated
 $call ArgueRejectIncorrect()
-{@profArctic} Ok, that's interesting, but it's not answering my question.
+{@profArctic} That is undoubtedly fascinating, Ollie. But I'm not sure it's helpful here. 
 $goto .argue.showClaim
 
 :: argue.giveUp
-{@profArctic} OK. Get back to me when you're ready.
+{@profArctic} Okay, Ollie. Please let me know if you find anything. 
 
 :: argue.cantFind
-{@profArctic}   She's got to be out there somewhere. I hope something hasn't happened to her...
-                Don't come back until you've found some evidence of her. 
+{@profArctic}   Alas. I had a feeling this would happen.
+                We may never track her down. I hope nothing bad has happened to her...
 
 // END
 :: argue.complete
 $call ArgueComplete()
-{@profArctic}   Oh. With both pieces of evidence... Well, that's unfortunate.
-                I'm sure she will be missed by her pod. I wonder who will take over as leader...
-                Anyhow, thanks for letting us know.
+{@profArctic}   Oh. Well, then. 
+                Well. That's unfortunate.
+{@player}       I'm so sorry, Professor. I know you've been studyihng Linda for a long time. 
+{@profArctic}   Oh, don't be sorry, Ollie. I'm grateful to you. Now we know where she is.
+                Though I do wonder how she died.
+                If you ever want to help out again, perhaps we could get to the bottom of this together.
+{@player}       Of course. 
+{@profArctic}   Thank you, Ollie. You're incredibly like your sister, you know.
+                Come back anytime.
 
 $call CompleteJob()
