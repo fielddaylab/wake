@@ -1333,6 +1333,7 @@ Transform:
   - {fileID: 1554943918}
   - {fileID: 1975615722}
   - {fileID: 6320233223080324260}
+  - {fileID: 665692220}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2234,6 +2235,54 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 663363392}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &665692219
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 665692220}
+  - component: {fileID: 665692221}
+  m_Layer: 0
+  m_Name: DefaultMechanicNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &665692220
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 665692219}
+  m_LocalRotation: {x: 0.030411094, y: -0.7068204, z: -0.70641804, w: 0.021299794}
+  m_LocalPosition: {x: 0.22495037, y: -1.7263249, z: -0.539999}
+  m_LocalScale: {x: 0.9999999, y: 1, z: 0.9999999}
+  m_Children: []
+  m_Father: {fileID: 503058231}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &665692221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 665692219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced02461c9fab16498d5d024212b8a9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Id:
+    m_Source: mechanic-default-pos
+    m_HashValue: 1281926024
+  m_IsPersistent: 0
+  m_StartDisabled: 0
 --- !u!4 &681043990 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: bb18bd56d12680347901d0df9b91d7f5,
@@ -8856,6 +8905,54 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1557074723830614564}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1405659618
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1405659619}
+  - component: {fileID: 1405659620}
+  m_Layer: 0
+  m_Name: MechanicAtJobNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1405659619
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1405659618}
+  m_LocalRotation: {x: -0.03574775, y: -0.71113646, z: -0.70121396, w: -0.036138907}
+  m_LocalPosition: {x: 5.798555, y: -0.25996065, z: -0.5400009}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1421265092}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1405659620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1405659618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced02461c9fab16498d5d024212b8a9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Id:
+    m_Source: mechanic-intro-pos
+    m_HashValue: 942331031
+  m_IsPersistent: 0
+  m_StartDisabled: 0
 --- !u!1001 &1409867764
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8959,6 +9056,7 @@ Transform:
   - {fileID: 462139473}
   - {fileID: 6185317888739758755}
   - {fileID: 7464043979525531114}
+  - {fileID: 1405659619}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -28142,6 +28240,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: CoralReefMechanic00
       objectReference: {fileID: 0}
+    - target: {fileID: 2849592068886092067, guid: 7505649ec1afaf245a8d21d624e57f9b,
+        type: 3}
+      propertyPath: m_DefaultNode
+      value: 
+      objectReference: {fileID: 665692221}
     - target: {fileID: 5131542425279016290, guid: 7505649ec1afaf245a8d21d624e57f9b,
         type: 3}
       propertyPath: m_RootOrder
