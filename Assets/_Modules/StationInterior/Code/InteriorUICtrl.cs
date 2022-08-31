@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
+using Aqua.Scripting;
 using BeauRoutine;
 using BeauRoutine.Extensions;
+using BeauUtil;
 using BeauUtil.Debugger;
 using Leaf.Runtime;
 using UnityEngine;
@@ -33,11 +35,17 @@ namespace Aqua.StationInterior
         [SerializeField] private BasePanel m_JobBoard = null;
         [SerializeField] private BasePanel m_ShopPanel = null;
 
+        [Header("Leave")]
+        [SerializeField] private RectTransform m_LeavePanel = null;
+        [SerializeField] private CanvasGroup m_LeavePanelGroup = null;
+        [SerializeField] private ScriptInspectable m_WarpButton = null;
+
         #endregion // Inspector
 
         [NonSerialized] private BaseInputLayer m_BaseInput;
         [NonSerialized] private BasePanel m_CurrentPanel;
         [NonSerialized] private Routine m_SharedAnim;
+        [NonSerialized] private Routine m_LeaveAnim;
 
         protected override void Awake() {
             base.Awake();
@@ -52,9 +60,28 @@ namespace Aqua.StationInterior
             m_BackButton.onClick.AddListener(OnBackClicked);
 
             m_BaseInput = BaseInputLayer.Find(this);
+
+            m_LeavePanelGroup.Hide();
+            m_LeavePanel.SetAnchorPos(-64, Axis.Y);
+
+            Script.OnSceneLoad(OnSceneLoad);
+
+            Services.Events.Register<StringHash32>(GameEvents.ViewLeaving, OnViewLeaving, this)
+                .Register<StringHash32>(GameEvents.ViewArrived, OnViewArrived, this);
+        }
+
+        protected override void OnDestroy() {
+            Services.Events?.DeregisterAll(this);
+            base.OnDestroy();
         }
 
         #region Handlers
+
+        private void OnSceneLoad() {
+            bool hasSeenSurface = Save.Map.HasVisitedLocation(m_WarpButton.Config.TargetId);
+            m_WarpButton.Locked = !hasSeenSurface;
+            m_WarpButton.RefreshState();
+        }
 
         private void OnBackClicked() {
             m_CurrentPanel?.Hide();
@@ -92,6 +119,22 @@ namespace Aqua.StationInterior
             }
         }
 
+        private void OnViewLeaving(StringHash32 viewId) {
+            if (viewId != "Station") {
+                return;
+            }
+
+            m_LeaveAnim.Replace(this, AnimateLeaveOff());
+        }
+
+        private void OnViewArrived(StringHash32 viewId) {
+            if (viewId != "Station") {
+                return;
+            }
+
+            m_LeaveAnim.Replace(this, AnimateLeaveOn());
+        }
+
         #endregion // Handlers
 
         #region Animations
@@ -113,6 +156,20 @@ namespace Aqua.StationInterior
                 m_CurrencyUI.AnchorPosTo(m_CurrencyOffscreenPos, m_SharedOffAnim, Axis.Y)
             );
             m_CurrencyUI.gameObject.SetActive(false);
+        }
+
+        private IEnumerator AnimateLeaveOn() {
+            yield return Routine.Combine(
+                m_LeavePanel.AnchorPosTo(0, 0.3f, Axis.Y).Ease(Curve.CubeOut),
+                m_LeavePanelGroup.Show(0.25f)
+            );
+        }
+
+        private IEnumerator AnimateLeaveOff() {
+            yield return Routine.Combine(
+                m_LeavePanel.AnchorPosTo(-64, 0.3f, Axis.Y).Ease(Curve.CubeIn),
+                m_LeavePanelGroup.Hide(0.25f)
+            );
         }
 
         #endregion // Animations

@@ -65,6 +65,7 @@ namespace Aqua.View {
             }
 
             if (m_Current) {
+                Services.Events.Dispatch(GameEvents.ViewLeaving, m_Current.Id.Hash());
                 DeactivateNode(m_Current, false, true);
             }
 
@@ -80,6 +81,7 @@ namespace Aqua.View {
                 Drift.PushChanges();
             }
             Services.Events.Dispatch(GameEvents.ViewChanged, m_Current.Id.Source());
+            Services.Events.Dispatch(GameEvents.ViewArrived, m_Current.Id.Hash());
             Save.Map.RecordVisitedLocation(m_Current.Id);
 
             using(var table = TempVarTable.Alloc()) {
@@ -135,6 +137,8 @@ namespace Aqua.View {
                 ViewNode old = m_Current;
                 m_Current = node;
 
+                Services.Events.Dispatch(GameEvents.ViewLeaving, old.Id.Hash());
+
                 if (old.AudioLayers) {
                     old.AudioLayers.SetLayerActive(old.AudioLayerId, false);
                 }
@@ -146,6 +150,8 @@ namespace Aqua.View {
                     node.AudioLayers.SetLayerActive(node.AudioLayerId, true);
                 }
 
+                Services.Events.Dispatch(GameEvents.ViewChanged, m_Current.Id.Source());
+
                 yield return Routine.Combine(
                     cameraTransition, driftTransition);
 
@@ -153,6 +159,8 @@ namespace Aqua.View {
                 ActivateNode(m_Current, false, true);
 
                 ActivateLinks(m_AllLinks, m_Current.GroupIds, false);
+
+                Services.Events.Dispatch(GameEvents.ViewArrived, m_Current.Id.Hash());
 
                 using(var table = TempVarTable.Alloc()) {
                     table.Set("viewId", m_Current.Id);

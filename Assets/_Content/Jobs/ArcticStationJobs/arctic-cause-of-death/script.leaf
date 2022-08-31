@@ -87,7 +87,11 @@ $endif
 @when   JobTaskTop(reportBack)
 @cutscene
 {@player}   Okay, V. What now? 
+$if scene:name != "RS-4Z-StationInterior"
 {@guide}    It's time to report back to {nameof @arcticSci}!
+$else
+{@guide}    Be sure to review your data and the hypotheses of {nameof @arcticSci} before presenting your findings.
+$endif
 
 ::giveWhaleEat
 @trigger    JobTasksUpdated
