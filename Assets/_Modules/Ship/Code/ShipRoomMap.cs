@@ -27,6 +27,7 @@ namespace Aqua.Ship {
         [NonSerialized] private BaseInputLayer m_Input;
         [NonSerialized] private Vector2 m_OnscreenPos;
         [NonSerialized] private Routine m_ButtonAnim;
+        [NonSerialized] private int m_ButtonHideCount;
 
         protected override void Awake() {
             m_Input = BaseInputLayer.Find(this);
@@ -36,7 +37,9 @@ namespace Aqua.Ship {
             m_ButtonGroup.Show();
 
             Services.Events.Register(ExperimentEvents.ExperimentBegin, HideButton, this)
-                .Register(ExperimentEvents.ExperimentEnded, ShowButton, this);
+                .Register(ExperimentEvents.ExperimentEnded, ShowButton, this)
+                .Register(GameEvents.PortableOpened, HideButton, this)
+                .Register(GameEvents.PortableClosed, ShowButton, this);
         }
 
         private void OnDestroy() {
@@ -48,11 +51,16 @@ namespace Aqua.Ship {
 
             m_Input.PushPriority();
             m_OpenButton.interactable = false;
+            Services.Events.Dispatch(GameEvents.HotbarHide);
         }
 
         protected override void OnHide(bool inbInstant) {
             if (!Services.Valid) {
                 return;
+            }
+
+            if (WasShowing()) {
+                Services.Events?.Dispatch(GameEvents.HotbarShow);
             }
 
             m_Input?.PopPriority();
@@ -102,11 +110,15 @@ namespace Aqua.Ship {
         #region Handlers
 
         private void HideButton() {
-            m_ButtonAnim.Replace(this, m_ButtonGroup.Hide(0.2f));
+            if (++m_ButtonHideCount == 1) {
+                m_ButtonAnim.Replace(this, m_ButtonGroup.Hide(0.2f));
+            }
         }
 
         private void ShowButton() {
-            m_ButtonAnim.Replace(this, m_ButtonGroup.Show(0.2f));
+            if (--m_ButtonHideCount == 0) {
+                m_ButtonAnim.Replace(this, m_ButtonGroup.Show(0.2f));
+            }
         }
 
         #endregion // Handlers

@@ -155,7 +155,9 @@ namespace Aqua.Portable {
                 button.App.ClearRequest();
             }
 
-            Services.Events?.Dispatch(GameEvents.PortableClosed);
+            if (WasShowing()) {
+                Services.Events?.Dispatch(GameEvents.PortableClosed);
+            }
 
             base.OnHide(inbInstant);
         }

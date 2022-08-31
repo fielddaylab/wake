@@ -86,6 +86,7 @@ namespace Aqua.StationInterior
                 m_BaseInput.PushPriority();
                 m_CurrentPanel.Show();
                 m_SharedAnim.Replace(this, AnimateSharedOn(currencyOffsetX));
+                Services.Events.Dispatch(GameEvents.HotbarHide);
             } else {
                 m_SharedAnim.Replace(this, AnimateSharedOff());
             }
@@ -106,6 +107,7 @@ namespace Aqua.StationInterior
 
         private IEnumerator AnimateSharedOff() {
             yield return 0.1f;
+            Services.Events.Dispatch(GameEvents.HotbarShow);
             yield return Routine.Combine(
                 m_BackButtonGroup.Hide(m_SharedOffAnim.Time),
                 m_CurrencyUI.AnchorPosTo(m_CurrencyOffscreenPos, m_SharedOffAnim, Axis.Y)

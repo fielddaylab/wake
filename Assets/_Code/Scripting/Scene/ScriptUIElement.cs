@@ -15,7 +15,7 @@ namespace Aqua.Scripting
 
         [SerializeField] private CanvasGroup m_Group = null;
         [SerializeField] private Canvas m_Canvas = null;
-
+        
         #endregion // Inspector
 
         [NonSerialized] private int m_OriginalCanvasLayer;
