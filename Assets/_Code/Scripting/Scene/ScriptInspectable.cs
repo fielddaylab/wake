@@ -17,6 +17,7 @@ namespace Aqua.Scripting {
         [SerializeField] private PointerListener m_Proxy = null;
         [SerializeField] private Selectable m_Selectable = null;
         [SerializeField] private SerializedHash32 m_GroupId = null;
+        [SerializeField] private ActiveGroup m_VisibleWhenInteractive = null;
         private Routine m_Execute;
 
         [NonSerialized] public CursorInteractionHint Hint;
@@ -102,12 +103,17 @@ namespace Aqua.Scripting {
 
         internal void UpdateGroupState(bool parentState) {
             bool interactable = parentState && !Locked && isActiveAndEnabled;
+
             if (m_Proxy) {
                 m_Proxy.enabled = interactable;
             }
             if (Hint) {
                 Hint.enabled = interactable;
             }
+            if (m_Selectable) {
+                m_Selectable.interactable = interactable;
+            }
+            m_VisibleWhenInteractive.SetActive(interactable);
         }
 
         public void RefreshState() {
@@ -122,6 +128,10 @@ namespace Aqua.Scripting {
             if (Hint) {
                 Hint.enabled = interactable;
             }
+            if (m_Selectable) {
+                m_Selectable.interactable = interactable;
+            }
+            m_VisibleWhenInteractive.SetActive(interactable);
         }
 
         #region IScriptComponent
@@ -153,6 +163,7 @@ namespace Aqua.Scripting {
                 Hint = this.EnsureComponent<CursorInteractionHint>();
             }
 
+            m_VisibleWhenInteractive.ForceActive(true);
             RefreshState();
         }
 
