@@ -102,7 +102,7 @@ namespace Aqua.Scripting {
         }
 
         internal void UpdateGroupState(bool parentState) {
-            bool interactable = parentState && !Locked && isActiveAndEnabled;
+            bool interactable = parentState && !Locked;
 
             if (m_Proxy) {
                 m_Proxy.enabled = interactable;

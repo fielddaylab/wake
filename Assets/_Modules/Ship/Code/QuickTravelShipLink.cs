@@ -24,8 +24,8 @@ namespace Aqua.Ship
             inspect.Config.Action = ScriptInteractAction.GoToMap;
             inspect.Config.PreTrigger = (ref ScriptInteractParams p) => {
                 MapDesc travelDest = Assets.Map(Save.Map.CurrentStationId()).QuickTravel();
-                p.Config.TargetId = travelDest.Parent().Id();
-                p.Config.TargetEntranceId = travelDest.Id();
+                p.Config.TargetId = travelDest.Id();
+                p.Config.TargetEntranceId = null;
             };
         }
 
