@@ -83,10 +83,10 @@ $choose branch
 
 :: argue.metabolize
 $call ArgueLoad(MethanoMeta)
-{@profBayou}   Hmmm. It's true that they eat methane...
-               But can they really consume enough of it to survive and reproduce?
+{@profBayou}   Hmmm. It's true that they consume hydrogen...
+               But can they really metabolize enough of it to survive and reproduce?
 $if ArgueSetClaim(Claim, jobs.bayou-methanogen.argue.claimLabel2) 
-    $call ArgueFactSlot(Methanogen.Eats.Methane) 
+    $call ArgueFactSlot(Methanogen.Eats.H_Gas) 
 $endif
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
