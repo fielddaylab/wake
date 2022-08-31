@@ -8,8 +8,8 @@
 {@player}  But... I don't get it. 
 		   It looks like you already counted the current salmon populations.
 {@profSci}  Sure, once. That means it's time to count again.
-{@player} ....En serio?? You do this twice, every time? 
-{@profSci}	Yep. My work requires long-term monitoring of the salmon. It's fascinating! 
+{@player}   ¿En serio? You count them twice, every time? 
+{@profSci}	Yep. My work requires detailed, long-term monitoring of the salmon. It's fascinating! 
 			I'll take care of it, if you're too busy--I'm used to handling things myself.	
 {@player}	Nah, I've got this.
 			We do counts like this all the time back at my mom's station. I'm basically an expert.
@@ -71,12 +71,15 @@ $choice .argue.giveUp; Let me get back to you
 :: argue.correctFacts
 $call ArgueComplete()
 {@profArctic}  Oh, this is great! Looks like the counts are accurate.
-			   Salmon populations across the world are declining, so I keep a close eye on these specimens here.
+			   I like to keep a close eye on our salmon populations here. 
 {@player} I totally get it. My mom is the same way with the Kelp and Otters back home.
-		 I'd love to help out more, if you have other jobs available.
-{@profArctic}   Whoa. Really? I gotta say, that's a first. 
-				Here, I'll send you some of the preliminary data you'll need.
-				Thanks again for your help, Ollie! 
+		  Do you need any more help?
+{@profArctic}   Well... yes. Always.
+				But outsiders usually leave this place as fast as possible.
+				I mean, it is remote and extreme. And super cold. 
+{@player}		That's true. But I think I kind of love it.
+{@profArctic}   Well, if you're gonna be helping out around here, I'll need to send you some preliminary data.
+				Here you go. Look for it in your AQOS!
 $call GiveFact(ChinookSalmon.Eats.Diatoms)
 $call UpgradeFact(ChinookSalmon.Eats.Diatoms)
 $call GiveFact(ChinookSalmon.Reproduce)

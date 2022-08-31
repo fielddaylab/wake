@@ -6,15 +6,23 @@
 @cutscene
 $set jobs:arctic-in-ice.triedScan = false
 
+{@profArctic} It's been the weirdest thing.
+              I've noticed cod out there, just sort of hanging around the ice shelf.
+{@player}     So?
+{@profArctic} There are never cod by the ice shelf!
+               I know every inch of this place. Something must've changed.
+              I need you to figure out what the cod are up to out there. 
+{@player}   Okay. Any idea where I should start?
 $if JobTaskTop(scanAlgae)
-    {@guide}    Time to discover the inner motivations of {nameof ArcticCod}.
+    {@profArctic} I'd suggest heading out to the ice shelf and seeing what you can find.   
+                  Maybe something's luring the cod in. 
 $elseif JobTaskTop(countAlgae)
-    {@guide}    Let's collect a population sample of {nameof ArcticCod} at the {m}Frosted Sea{/m}.
+    {@profArctic}  Hmm... you'll probably need to collect a population sample of {nameof ArcticCod} at the {m}Frosted Sea{/m}.
 $else
-    {@player}   {nameof @guide} pull all our data {h}critters near the ice shelf{/h}.
-    {@guide}    Certainly O! Already have a theory?    
-    {@player}   I think it could be one of the species we've already scanned near the shelf...
+    {@profArctic} I'd suggest checking your AQOS for all the {{h}species near the ice shelf{/h}.
+    {@profArctic} You've already collected a lot of data. Maybe you'll find a clue there.  
 $endif
+{@player}Got it. Thanks, {nameof @profArctic}.
 
 // SCANNING ICE ALGAE
 
@@ -22,84 +30,84 @@ $endif
 @trigger    ScannedNewObject
 @when       scanId == "tools.microscope.disabled", scene:name == "RS-4Y"
 @cutscene
-{@guide}    We may need to get a microscope before we can fully investigate this organism.
+{@guide}  You will need a microscope in order to fully investigate this organism.
 $set jobs:arctic-in-ice.triedScan = true
 
 :: tryScanAlgaeY
 @trigger    ScannedObject
 @when       scanId == "tools.microscope.disabled", scene:name == "RS-4Y"
 @cutscene
-{@guide}    We may need to get a microscope before we can fully investigate this organism.
+{@guide}    You will need a microscope in order to fully investigate this organism.
 $set jobs:arctic-in-ice.triedScan = true
 
 :: tryScanAlgaeNewMicroscopeY
 @trigger    ScannedNewObject
 @when       scanId == "tools.microscope", scene:name == "RS-4Y"
 @cutscene
-{@guide}    We should be able to use our microscope to scan this organism.
+{@guide}   Use your microscope to scan this organism. 
 $set jobs:arctic-in-ice.triedScan = true
 
 :: tryScanAlgaeMicroscopeY
 @trigger    ScannedObject
 @when       scanId == "tools.microscope",  scene:name == "RS-4Y"
 @cutscene
-{@guide}    We should be able to use our microscope to scan this organism.
+{@guide}    Use your microscope to scan this organism. 
 $set jobs:arctic-in-ice.triedScan = true
 
 :: tryScanAlgaeNewX
 @trigger    ScannedNewObject
 @when       scanId == "tools.microscope.disabled", scene:name == "RS-4X"
 @cutscene
-{@guide}    We may need to get a microscope before we can fully investigate this organism.
+{@guide}    You will need a microscope in order to fully investigate this organism.
 $set jobs:arctic-in-ice.triedScan = true
 
 :: tryScanAlgaeX
 @trigger    ScannedObject
 @when       scanId == "tools.microscope.disabled", scene:name == "RS-4X"
 @cutscene
-{@guide}    We may need to get a microscope before we can fully investigate this organism.
+{@guide}    You will need a microscope in order to fully investigate this organism.
 $set jobs:arctic-in-ice.triedScan = true
 
 :: tryScanAlgaeNewMicroscopeX
 @trigger    ScannedNewObject
 @when       scanId == "tools.microscope", scene:name == "RS-4X"
 @cutscene
-{@guide}    We should be able to use our microscope to scan this organism.
+{@guide}    Use your microscope to scan this organism. 
 $set jobs:arctic-in-ice.triedScan = true
 
 :: tryScanAlgaeMicroscopeX
 @trigger    ScannedObject
 @when       scanId == "tools.microscope",  scene:name == "RS-4X"
 @cutscene
-{@guide}    We should be able to use our microscope to scan this organism.
+{@guide}    Use your microscope to scan this organism. 
 $set jobs:arctic-in-ice.triedScan = true
 
 :: tryScanAlgaeNewZ
 @trigger    ScannedNewObject
 @when       scanId == "tools.microscope.disabled", scene:name == "RS-4Z"
 @cutscene
-{@guide}    We may need to get a microscope before we can fully investigate this organism.
+{@guide}    You will need a microscope in order to fully investigate this organism.
 $set jobs:arctic-in-ice.triedScan = true
 
 :: tryScanAlgaeZ
 @trigger    ScannedObject
 @when       scanId == "tools.microscope.disabled", scene:name == "RS-4Z"
 @cutscene
-{@guide}    We may need to get a microscope before we can fully investigate this organism.
+{@guide}    You will need a microscope in order to fully investigate this organism.
 $set jobs:arctic-in-ice.triedScan = true
 
 :: tryScanAlgaeNewMicroscopeZ
 @trigger    ScannedNewObject
 @when       scanId == "tools.microscope", scene:name == "RS-4Z"
 @cutscene
-{@guide}    We should be able to use our microscope to scan this organism.
+{@guide}    Use your microscope to scan this organism. 
 $set jobs:arctic-in-ice.triedScan = true
 
 :: tryScanAlgaeMicroscopeZ
 @trigger    ScannedObject
 @when       scanId == "tools.microscope",  scene:name == "RS-4Z"
 @cutscene
-{@guide}    We should be able to use our microscope to scan this organism.
+{@guide}    Use your microscope to scan this organism. 
 $set jobs:arctic-in-ice.triedScan = true
 
 // JOB PROGRESSION
@@ -109,35 +117,41 @@ $set jobs:arctic-in-ice.triedScan = true
 @when       JobTaskTop(countAlgae)
 @once
 @cutscene
-{@player}   {nameof IceAlgae}! That could be the answer we were looking for...
-{@guide}    Let us conduct some experiments to investigate further.
+{@player} I think we've got something here, {nameof @guide}!
+{@guide} Yes. Ice algae... a new species! 
+         I would suggest counting them before you proceed with experimentation.
 
 :: countedAlgae
 @trigger    JobTasksUpdated
 @when       JobTaskTop(observeEat)
 @once
 @cutscene
-{@guide}    Let's place some Cod in the Observation Tank with this Ice Algae and see if there is any connection.
+{@player} Wow. There's a ton of {nameof IceAlgae} out here, {nameof @guide}.
+          Maybe the algae drew the cod in toward the ice shelf!
+{@guide}  Ah! So cod are known to eat {nameof IceAlgae}?
+{@player} I... have no idea. But that's what the Observation Tank is for.
 
 :: observedEatRules
 @trigger    JobTasksUpdated
 @when       JobTaskTop(reportback)
 @once
 @cutscene
-{@guide}    The researchers will be glad to learn what we found. Well, maybe.
+{@player} I think this explains what the cod are doing out there.
+{@guide}  Yes. Time to report back to {nameof @profArtic}!
 
 :: helpScanWithoutMicroscope
 @trigger    RequestPartnerHelp
 @when       JobTaskTop(scanAlgae), !HasUpgrade(Microscope), jobs:arctic-in-ice.triedScan
 @cutscene
-{@guide}    We'll need to pick up a microscope before we can make any headway on learning about the Cod.
-
+{@player}  What now, {nameof @guide}?
+{@guide}    You will need to obtain a microscope before you can make any progress here. 
 
 :: helpScanWithMicroscope
 @trigger    RequestPartnerHelp
 @when       JobTaskTop(scanAlgae), HasUpgrade(Microscope), jobs:arctic-in-ice.triedScan
 @cutscene
-{@guide}    Now that you've got the microscope, let's take another look at that organism you couldn't scan.
+{@player} What should I do next, {nameof @guide}?
+{@guide}  Now that you have a microscope, you should take another look at that organism you couldn't scan.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -146,28 +160,32 @@ $set jobs:arctic-in-ice.triedScan = true
 @when		JobTaskTop(scanAlgae)
 @boostScore -5
 @cutscene
-{@guide}     Let's find the Ice Algae in the Frosted Sea.
+{@player} What should I be doing, {nameof @guide}?
+{@guide}     See if you can find the Ice Algae at the Frosted Sea.
 
 :: catchCountAlgae
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(countAlgae)
 @boostScore -5
 @cutscene
-{@guide}	 Don't forget to count the Ice Algae too. Make sure you're using your microscope.
+{@player}  What should we do now, {nameof @guide}?
+{@guide}	 You still need to count the Ice Algae. Make sure to use your microscope!
 
 :: catchObserveEat
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(observeEat)
 @boostScore -5
 @cutscene
-{@guide}	 Head to the Observation Tank and stick some Arctic Cod and Ice Algae in there.
+{@player} Okay, {nameof @guide}. What's our next step?
+{@guide}  Head to your Observation Tank. You'll need to obsesrve how the Arctic Cod and Ice Algae interact.
 
 :: catchReportBack
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(reportBack)
 @boostScore -5
 @cutscene
-{@guide}	 Nothing more for us to learn about the Cod, it's time to show the researchers what we found.
+{@player} Where should we go now, {nameof @guide}?
+{@guide}  It's time to report back and tell {nameof profArctic} what you discovered!
 
 // ARGUMENTATION
 
@@ -183,7 +201,7 @@ $else
         $call ArgueFactSlot(ArcticCod.Eats.IceAlgae)
     $endif
     $call ArgueDisplayClaim()
-    {@profArctic}   Did you figure out what the cod are doing near that ice shelf?
+    {@profArctic}  I'm dying to know! Did you figure out why those cod are hanging out near the ice shelf? 
     $branch .argue.chooseFactsEat
 $endif
 
@@ -202,7 +220,7 @@ $call ArgueRejectIncorrect()
 $branch .argue.chooseFactsEat
 
 :: argue.notSure
-{@profArctic}   Okay. Get back to me when you're ready.
+{@profArctic}   Okay, Ollie. Let me know when you're ready. 
 
 :: argue.correctEat
 {@profArctic}   Interesting.
@@ -213,7 +231,7 @@ $branch .argue.startPop
 // Population Branch
 
 :: argue.alreadyDiscussed
-{@profArctic}   Last time we spoke, you told me the cod were hanging out at the ice shelf because they eat the Ice Algae there.
+{@profArctic}  Last time, you said the cod might've been drawn in by the Ice Algae.
 $branch .argue.startPop
 
 :: argue.startPop
@@ -236,11 +254,17 @@ $choice .argue.notSure; Let me get back to you.
 $choose branch
 
 :: argue.unrelatedPop
-{@profArctic}   I'm not seeing how that relates.
+{@profArctic}   Um... sorry, Ollie, I'm not seeing how that's relevant. 
 $call ArgueRejectIncorrect()
 $branch .argue.popQuery
 
 :: argue.correctPop
 $call ArgueComplete()
-{@profArctic}   Oh! That's certainly enough to draw them in. I wonder if the Salmon interact with them too...
+{@profArctic}  Nice work, Ollie!
+               That's definitely enough algae to draw them in.
+               Hmmm. I wonder if the Salmon interact with the Cod, too...
+               This could really help with that salmon summering model I've been stuck on!
+{@player}   Ooh, sounds intriguing... anything I can help with?
+{@profArctic} Seriously, Ollie, I think your help is my good luck charm.
+              Check the job board soon. I'll make sure it's updated! 
 $call CompleteJob()

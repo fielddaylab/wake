@@ -5,15 +5,21 @@
 @trigger    JobStarted
 @cutscene
 
-{@profArctic}   We're trying to feed the Cod equal amounts of what they eat, but they seem to want only Diatoms.
-                A trip to the Measurement Tank should be all you need.
+{@profArctic} I'm excited to see you taking another job, Ollie!
+{@profArctic}  I've been trying to feed the Cod equal amounts of Algae and Diatoms...
+               But it seems like they're mostly going for the Diatoms.
+               Our mechanic has been annoyed at all the Algae clogging up people's engines.
+{@player}   Weird. Why do you think the Cod aren't eating the algae?
+{@profArctic} That's what I need you to solve.
+{@player}   Okay. Muy fácil. I'll just head back to the Meredith and use the Measurement Tank.
+{@profArctic} Great. Let me know what you find!
 
 :: measureAlgaeOnly
 @trigger    JobTaskCompleted
 @when       taskId == "obtainRateAlgae", !JobTaskCompleted(obtainRateDiatoms)
 @once
 @cutscene
-{@guide}   One down, one to go!
+{@guide} One down, one to go!
 
 :: measureDiatomsOnly
 @trigger    JobTaskCompleted
@@ -27,8 +33,10 @@
 @when       JobTaskCompleted(obtainRateAlgae), JobTaskCompleted(obtainRateDiatoms)
 @once
 @cutscene
-{@guide}    That's everything we need to figure out which species Cod eats more of! Let's head back to {nameof @profArctic}.
-
+{@guide}  Adequate work, Ollie! You've gathered all the data you need.
+{@player} Yeah... but what does it mean?
+{@guide}  Processing.. processing...
+          My data is inconclusive, O. I suggest reporting back to {nameof @profArctic}. 
 
 // CATCH-ALL GUIDE TEXT
 
@@ -37,21 +45,23 @@
 @when		JobTaskTop(obtainRateAlgae)
 @boostScore -5
 @cutscene
-{@guide}     Place Cod in the Measurement Tank with things it eats.
+{@player} What should I do now, {nameof @guide}?
+{@guide}     Place the Cod in the Measurement Tank with something it eats!
 
 :: catchObtainRateDiatoms
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(obtainRateDiatoms)
 @boostScore -5
 @cutscene
-{@guide}	 Place Cod in the Measurement Tank with things it eats.
+{@player} Okay, {nameof @guide}. What now? 
+{@guide}	 Place the Cod in the Measurement Tank with something it eats! 
 
 :: catchReportBack
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(reportBack)
 @boostScore -5
 @cutscene
-{@guide}	 Compare the rates you just got and talk to {nameof @profArctic} about what you figured out.
+{@guide}	 Compare the rates you just obtained. Then report your findings to {nameof @profArctic}!
 
 
 // ARGUMENTATION
@@ -60,11 +70,16 @@
 @when       !ArgueIsComplete(pickyArgue) 
 @cutscene
 $call ArgueLoad(pickyArgue)
-{@profArctic}   Feeding rates can tell us a lot about how much energy a species needs.
+{@profArctic}  How'd it go out there, Ollie?
+{@player} So... I got the rates we needed. But I'm not totally sure what they mean. 
+{@profArctic} Well, feeding rates can tell us a lot about how much energy a species needs.
 $branch .argue.firstQuery
 
 :: argue.firstQuery
-{@profArctic}   If a species eats more of one species, it usually means it's low in nutrition. Which species is more nutritious?
+{@profArctic}   If a species eats larger amounts of one species, it usually means that species is low on nutrition.
+{@player} Oh... like how I need to eat about a million of Mom's kelp rolls in order to feel full.
+          Um... not that I'd recommend that.
+{@profArctic} Exactly. So according to your data, which species is more nutritious for the Cod? 
 $branch .argue.chooseClaim
 
 :: argue.chooseClaim
@@ -85,7 +100,7 @@ $call ArgueDisplayClaim()
 $branch .argue.diatomQuery
 
 :: argue.diatomQuery
-{@profArctic}   How do the rates compare?
+{@profArctic}  Okay, let's verify that. How do the rates compare?
 $branch .argue.chooseFactsDiatoms
 
 :: argue.chooseFactsDiatoms
@@ -97,22 +112,23 @@ $choose branch
 
 :: argue.revise
 $if IsFactFullyUpgraded(ArcticCod.Eats.IceAlgae), IsFactFullyUpgraded(ArcticCod.Eats.Diatoms)
-    {@profArctic}   Oh, I think these facts show the opposite of what you claimed, actually.
-                    High nutrition means lower rates, low nutrition means higher rates.
-                    Want to revise your claim?
+    {@profArctic}  Oh... actually, Ollie, these rate show the opposite.
+                   High nutrition means lower rates, because the Cod won't need to eat as much of it.
+                   Low nutrition means higher rates, because the Cod need to eat a lot to fill up.  
+                    Want to take another guess?
     $call ArgueHideClaim()
     $call ArgueClearFacts()
     $branch .argue.firstQuery
 $else
-    {@profArctic}   You seem to be missing the rates for at least one of these facts.
-                    Come back once you have the rates.
+    {@profArctic}   Looks like you're missing the rates for at least one of these facts.
+                    You'll need to head back to your Measurement Tank and find the rates we need. 
     $call ArgueHideClaim()
     $call ArgueClearFacts()
 $endif
 
 
 :: argue.unrelatedDiatoms
-{@profArctic}   I'm not following how this relates to Cod eating rates.
+{@profArctic}   Um... did you mean to show me this, Ollie? We need to look at the Cod's eating rates. 
 $call ArgueRejectIncorrect()
 $branch .argue.diatomQuery
 
@@ -126,7 +142,7 @@ $call ArgueDisplayClaim()
 $branch .argue.algaeQuery
 
 :: argue.algaeQuery
-{@profArctic}   How do the rates compare?
+{@profArctic}  Okay, let's double check. How do the rates compare?
 $branch .argue.chooseFactsAlgae
 
 :: argue.chooseFactsAlgae
@@ -148,12 +164,14 @@ $branch .argue.algaeQuery
 :: argue.complete
 $if IsFactFullyUpgraded(ArcticCod.Eats.IceAlgae), IsFactFullyUpgraded(ArcticCod.Eats.Diatoms)
     $call ArgueComplete()
-    {@profArctic}   Wow! The nutritional potency of the Ice Algae must really be something.
-                    I wonder if this has anything to do with what happened to that missing whale.
+    {@profArctic}  Amazing job, Ollie! Looks like the Cod aren't eating much Ice Algae because small amounts provide a lot of nutrition.
+    {@player} Wow. The Ice Algae must be, like, an Arctic Cod protein shake.
+    {@profArctic} I wonder if this has anything to do with what happened to that missing whale...
+                  Anyway, thanks for your help, Ollie. I owe you one. 
     $call CompleteJob()
 $else
-    {@profArctic}   You seem to be missing the rates for at least one of these facts.
-                    Come back once you have the rates.
+    {@profArctic}   Looks like you're missing the rates for at least one of these facts.
+                    You'll need to head back to your Measurement Tank and find the rates we need. 
     $call ArgueHideClaim()
     $call ArgueClearFacts()
 $endif

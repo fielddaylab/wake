@@ -5,25 +5,35 @@
 @trigger    JobStarted
 @cutscene
 
-{@profArctic}   Here, take this. It's some information we've already gathered about Salmon.
+{@profArctic}  Awesome! I've been super stuck on this model.
+               First, here's some data my team has already gathered about Salmon.
 $call GiveEntity(ChinookSalmon, Silent)
 $call GiveFact(ChinookSalmon.Eats.IceAlgae)
 $call GiveFact(ChinookSalmon.Eats.Clione)
 $call GiveFact(ChinookSalmon.Reproduce)
 $call GiveFact(ChinookSalmon.Reproduce.Stressed)
-{@guide}        This is a good start! Let's find out more about Cod and the things they eat.
+{@player} So where are you stuck?
+{@profSci}  I'm not happy with how the model is looking. 
+          I wonder if the Arctic Cod are the missing piece. 
+          Can you figure out what the Cod eat and add them to our model? 
+{@player}  I'd love to!
+{@profSci} Um... that wasn't sarcasm, was it?
+{@player}  What? Claro que no, of course not, I just love figuring out stuff like this--
+{@profSci}  Okay, okay. I'm just not used to people geeking out about this work as much as I do.
 
 :: allSet
 @trigger    JobTaskCompleted
 @when       taskId == "observeCod"
 @once
-{@guide}    With that, we should be set. To the Modeling Lab!
+{@guide} Adequate work, O! You've obtained the data you needed here.
+         Time to head to the Modeling Lab!
 
 :: modelsComplete
 @trigger    JobTaskCompleted
 @when       taskId == "modelFish"
 @once
-{@guide}    Let's show the researchers how we were able to update their model.
+{@player} Yes!! This model is looking a lot better.
+          Can't wait to show {nameof @profArctic}!
 
 // CATCH-ALL GUIDE TEXT
 
@@ -32,21 +42,25 @@ $call GiveFact(ChinookSalmon.Reproduce.Stressed)
 @when		JobTaskTop(observeCod)
 @boostScore -5
 @cutscene
-{@guide}     We need more information about Arctic Cod and what they eat.
+{@player}  What now, {nameof @guide}?
+{@guide}   You will need to observe the Arctic Cod to find out what they eat!
 
 :: catchModelFish
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(modelFish)
 @boostScore -5
 @cutscene
-{@guide}	 Take your new facts to the modeling lab. There you can make a {nameof VisualModel} and a {nameof SyncModel}.
+{@player}  Okay, V. What's next? 
+{@guide} I would suggest heading to the Modeling Lab.
+         There, you can make a {nameof VisualModel} and a {nameof SyncModel}!
 
 :: catchReportBack
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(reportBack)
 @boostScore -5
 @cutscene
-{@guide}	 Head to the station to report what you found.
+{@player} What should I be doing now, {nameof @guide}?
+{@guide}  Head back to the station to report what you found!
 
 // ARGUMENTATION
 
@@ -58,13 +72,14 @@ $if ArgueIsComplete(competitionArgue1)
     $branch .argue.noImpact
 $else
     $call ArgueLoad(competitionArgue1)
-    {@profArctic}   Is there an ecosystem imbalance when Cod and Salmon are both present?
+    {@profArctic}  Okay, Ollie, hope you've got an answer for me, because this model is driving me up the wall.
+                   Did you discover an ecosystem imbalance that could've affected our model?
     $branch .argue.chooseClaim
 $endif
 
 :: argue.chooseClaim
-$choice .argue.noImpact; Cod and Salmon are balanced
-$choice .argue.imbalance; Cod and Salmon are unbalanced
+$choice .argue.noImpact; The Cod and Salmon are balanced
+$choice .argue.imbalance; The Cod and Salmon are unbalanced
 $choose branch
 
 // Cod branch
@@ -74,7 +89,7 @@ $if ArgueSetClaim(Claim, jobs.arctic-salmon-competition.argue.claimLabelImbalanc
     $call ArgueFactSlot(ArcticCod.Eats.IceAlgae)
 $endif
 $call ArgueDisplayClaim()
-{@profArctic}   Why do you think that?
+{@profArctic}  Hmm, interesting. What makes you think that? 
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.unrelatedCod
     $answer *, .argue.unrelatedCod
@@ -82,14 +97,14 @@ $choice .argue.notSure; Let me get back to you.
 $choose branch
 
 :: argue.unrelatedCod
-{@profArctic}   I don't think so. It doesn't seem like this is pointing to any sort of imbalance.
+{@profArctic}  Sorry, Ollie, but this isn't exactly helpful.  
 $call ArgueClearFacts()
 
 // Neither branch
 
 :: argue.noImpact
 $if ArgueIsComplete(competitionArgue1)
-    {@profArctic}   You already showed me the historic populations of Cod's prey.
+    {@profArctic}   You already showed me the historic populations of the Artic Cods' prey.
     $branch .argue.modelQuery
 $else
     $call ArgueLoad(competitionArgue1)
@@ -98,12 +113,12 @@ $else
         $call ArgueFactSlot(Z_OpenOcean.PopulationHistory.IceAlgae)
     $endif
     $call ArgueDisplayClaim()
-    {@profArctic}   Intriguing. Are Salmon's food sources not affected by the Cod growth?
+    {@profArctic}   Oh, that's fascinating! Are Salmons' food sources not affected by the Cod growth?
     $branch .argue.noImpactQuery
 $endif
 
 :: argue.noImpactQuery
-{@profArctic}   What are historic populations of Cod's prey like?
+{@profArctic}   Can you show me the historic populations of Cods' prey?
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.correctPopulations
     $answer *, .argue.unrelatedPopulations
@@ -111,7 +126,7 @@ $choice .argue.notSure; Let me get back to you.
 $choose branch
 
 :: argue.unrelatedPopulations
-{@profArctic}   These don't seem like the population histories of Cod's food sources.
+{@profArctic}  That doesn't look right, Ollie. I need to see the historic populations of the Cods' food sources.
 $call ArgueRejectIncorrect()
 $branch .argue.noImpactQuery
 
@@ -121,7 +136,7 @@ $call ArgueCancelClaim()
 $goto .argue.modelQuery
 
 :: argue.modelQuery
-{@profArctic}   Did your information on the Cod improve our prior model?
+{@profArctic}  Did your information about the Cod improve our model?
 $call ArgueLoad(competitionArgue2)
 $if ArgueSetClaim(Claim2, jobs.arctic-salmon-competition.argue.claimLabelImproved)
     $call ArgueFactSlot(Z_OpenOcean.SalmonCompetition.Model.Sync)
@@ -138,16 +153,18 @@ $choose branch
 
 :: argue.correctModel
 $call ArgueComplete()
-{@profArctic}   Improved! We need to keep working at it, but your efforts have helped unstick us. Thanks!
+{@profArctic}  Oh, that is definitely looking better!
+               We'll need to keep working. But this data is the breakthrough we needed.
+               Thanks, Ollie! Don't know what I would do without you. 
 $call CompleteJob()
 
 :: argue.unrelatedModel
-{@profArctic}   We're looking for an updated Numerical model about Salmon and Cod.
+{@profArctic}   That's not it, Ollie. I need to see an updated Numerical model about Salmon and Cod.
 $call ArgueRejectIncorrect()
-{@profArctic}   Did your information on the Cod improve our prior model?
+{@profArctic}   Did your information about the Cod improve our model?
 $branch .argue.chooseFactsModel
 
 // Shared
 
 :: argue.notSure
-{@profArctic}   Okay. Get back to me when you're ready.
+{@profArctic}   No worries, Ollie. Let me know when you're ready.  
