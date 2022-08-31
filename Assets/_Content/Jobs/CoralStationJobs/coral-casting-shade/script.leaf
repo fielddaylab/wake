@@ -5,7 +5,7 @@
 @cutscene
 
 {@profCoral}	Thank you, Ollie. I'm becoming extremely concerned about Site R.
-{@player}		How can I help, {@profCoral}?
+{@player}		How can I help, {nameof @profCoral}?
 			    Want me to get in there and remove all that muck from the water?
 {@profCoral}	The Sargassum? Oh, no. I suggest we slow down, Ollie. 
 {@player} Slow down?? But... Professor, isn't this urgent? 
@@ -131,7 +131,7 @@ $endif
 
 ::measurementTankSelectFeatures
 @trigger	ExperimentScreenViewed
-@when		screenId == "measurement.features", JobTaskCompleted(popProbe), JobTaskCompleted(chemHistory)
+@when		screenId == "measurement.features", JobTaskCompleted(popProbe), JobTaskCompleted(chemHistory), !JobTaskCompleted(sargGrowthRate)
 @once 
 @cutscene
 {@guide} You need to measure the reproduction rate.
@@ -215,12 +215,12 @@ $endif
 
 :: allExperimentsDone
 @trigger    JobTasksUpdated
-@when HasFact(Sargassum.Reproduce), HasFact(Sargassum.Consume.Light), HasFact(StaghornCoral.Reproduce.Stressed), HasFact(StaghornCoral.Reproduce)
+@when 		JobTaskTop(sargModel)
 @cutscene
 @once
 {@player} Whew. Okay, {nameof @guide}, what now? 
 {@guide}	Head to the Modeling Lab. It's time to build your model!
-{@player}	Okay. Let's get this done fast. I bet {@nameof @profCoral} is getting stressed out waiting for us. 
+{@player}	Okay. Let's get this done fast. I bet {nameof @profCoral} is getting stressed out waiting for us. 
 {@guide} Perhaps we should determine his Stress Ranges.
 {@player} Ha! {nameof @guide}, you made a joke. Que adorable. 
 
@@ -398,7 +398,7 @@ $choose branch
 
 :: argue.disagree
 {@profCoral} Well... considering the Sargassum covering Site R, I find that difficult to believe.
-{@profCoral} It's clear the Sargassum is doing {i}something{/i} to the ecosystem. 
+{@profCoral} It's clear the Sargassum is doing <i>something</i> to the ecosystem. 
 {@profCoral} I just need you to confirm it with data.
 $goto .argue.introRevisit
 
