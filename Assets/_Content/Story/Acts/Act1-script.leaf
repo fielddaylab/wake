@@ -53,18 +53,6 @@ $CutsceneDelayed(8, .intro-part2)
 {@player}Copy that, Mom. On my way.
 $call StationEntrance->Activate()
 
-
-// On unlocking world map
-:: afterUnlockWorldMap
-@trigger    ViewEnter
-@when       viewId == "helm", RoomUnlocked(WorldMap)
-@once
-@cutscene
-@boostScore 100
-
-{@guide}    Hey, {nameof @drKelp} gave us coordinates to some new stations!
-            We could stay here and keep doing jobs for her...{wait 0.5} or we could check out the {map-name}Map{/map-name} and explore a new station!
-
 // Intro
 
 :: EnterStation
@@ -108,7 +96,6 @@ $set global:Act1.TalkedToMomMad = true
 {@drKelp}   This is your {map-name}Job Board{/map-name}.
             Go ahead. Select a job on the left.
             Then accept it on the right!
-
 
 :: LoopKelpWelcome
 @trigger    Talk
