@@ -66,7 +66,7 @@ $endif
 			
 :: LookAround
 @trigger    RequestPartnerHelp
-@when       scene:name == "RS-4W"
+@when       scene:name == "RS-4W", !JobTaskTop(reportBack)
 @cutscene
 {@player}   What should I be doing, {nameof @guide}?
 $if !HasEntity(WhaleTracker)
@@ -106,7 +106,7 @@ $endif
 {@guide}	My sensors indicate that you are stalling, O.
 {@player}   What? Of course I'm not stalling!
 {@guide}    Ah. I must have misinterpreted the data. 
-            You need to report back to {nameof @profArctic} and tell her that Linda has been found. 
+            You need to report back to {nameof @arcticSci} and tell them that Linda has been found. 
 
 // CATCH-ALL GUIDE TEXT
 
@@ -156,7 +156,7 @@ $if ArgueSetClaim(Claim, jobs.arctic-missing-whale.argue.claimLabel)
     $call ArgueFactSlot(W_WhaleFall.Population.Detritus) 
     $call ArgueFactSlot(W_WhaleFall.Population.WhaleTracker) 
 $endif
-{@profArctic}   Have you found Linda?
+{@arcticSci}   Have you found Linda?
 $choice .argue.showClaim; Yes... but I'm sorry. It's not good news.
 $choice .argue.cantFind; No, sorry. No sign of her yet. 
 $choose branch
@@ -174,7 +174,7 @@ $choose branch
 $if ArgueIsFactSubmitted(W_WhaleFall.Population.WhaleTracker)
     $goto .argue.complete
 $else
-{@profArctic}  Oh dear. That's certainly enough detritus to be a whale's remains.
+{@arcticSci}  Oh dear. That's certainly enough detritus to be a whale's remains.
                It might be Linda... but there are many Bowhead Whales that pass through here. 
                Did you find anything to confirm that it's her? 
 $endif
@@ -184,7 +184,7 @@ $goto .argue.showClaim
 $if ArgueIsFactSubmitted(W_WhaleFall.Population.Detritus)
     $goto .argue.complete
 $else
-{@profArctic}   Oh dear... Linda's tracker. This explains why we lost the signal.
+{@arcticSci}   Oh dear... Linda's tracker. This explains why we lost the signal.
                 But that means she could be anywhere.
                 Unless you found more evidence of her whereabouts...? 
 $endif
@@ -192,27 +192,27 @@ $goto .argue.showClaim
 
 :: argue.unrelated
 $call ArgueRejectIncorrect()
-{@profArctic} That is undoubtedly fascinating, Ollie. But I'm not sure it's helpful here. 
+{@arcticSci} That is undoubtedly fascinating, Ollie. But I'm not sure it's helpful here. 
 $goto .argue.showClaim
 
 :: argue.giveUp
-{@profArctic} Okay, Ollie. Please let me know if you find anything. 
+{@arcticSci} Okay, Ollie. Please let me know if you find anything. 
 
 :: argue.cantFind
-{@profArctic}   Alas. I had a feeling this would happen.
+{@arcticSci}   Alas. I had a feeling this would happen.
                 We may never track her down. I hope nothing bad has happened to her...
 
 // END
 :: argue.complete
 $call ArgueComplete()
-{@profArctic}   Oh. Well, then. 
+{@arcticSci}   Oh. Well, then. 
                 Well. That's unfortunate.
 {@player}       I'm so sorry, Professor. I know you've been studyihng Linda for a long time. 
-{@profArctic}   Oh, don't be sorry, Ollie. I'm grateful to you. Now we know where she is.
+{@arcticSci}   Oh, don't be sorry, Ollie. I'm grateful to you. Now we know where she is.
                 Though I do wonder how she died.
                 If you ever want to help out again, perhaps we could get to the bottom of this together.
 {@player}       Of course. 
-{@profArctic}   Thank you, Ollie. You're incredibly like your sister, you know.
+{@arcticSci}   Thank you, Ollie. You're incredibly like your sister, you know.
                 Come back anytime.
 
 $call CompleteJob()

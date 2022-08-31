@@ -4,23 +4,23 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@profSci} Thank you, Ollie! No one ever offers to help with the salmon counts. 
+{@profArctic} Thank you, Ollie! No one ever offers to help with the salmon counts. 
 {@player}  But... I don't get it. 
 		   It looks like you already counted the current salmon populations.
-{@profSci}  Sure, once. That means it's time to count again.
+{@profArctic}  Sure, once. That means it's time to count again.
 {@player}   ¿En serio? You count them twice, every time? 
-{@profSci}	Yep. My work requires detailed, long-term monitoring of the salmon. It's fascinating! 
+{@profArctic}	Yep. My work requires detailed, long-term monitoring of the salmon. It's fascinating! 
 			I'll take care of it, if you're too busy--I'm used to handling things myself.	
 {@player}	Nah, I've got this.
 			We do counts like this all the time back at my mom's station. I'm basically an expert.
-{@profSci}  Oh, that's perfect! Let me know what you find! 
+{@profArctic}  Oh, that's perfect! Let me know what you find! 
 
 :: countsComplete
 @trigger	JobTaskCompleted
 @when		JobTaskTop(reportBack)
 @once
 @cutscene
-{@player} I can't believe {@profArctic} does this by herself every time.
+{@player} I can't believe {nameof @profArctic} does this by herself every time.
 		  She must really care about the salmon! 
 	  	What should we do next, {nameof @guide}? 
 {@guide}  You need to verify that your counts match the researchers' records!
@@ -33,8 +33,8 @@
 @boostScore -5
 @cutscene
 {@player} What's next, {nameof @guide}?
-{@guide}  You need to count the salmon populations!
-	      Turn on your Population Count Mode when you're close to the salmon in the Frosted Sea.
+{@guide}  You need to count the {nameof ChinookSalmon} populations!
+	      Turn on your {h}Population Count Mode{/h} when you're close to the salmon in the {m}Frosted Sea{/m}.
 
 :: catchReportBack
 @trigger	RequestPartnerHelp
@@ -96,4 +96,4 @@ $call ArgueUnload()
 $branch .argue.mainQuestion
 
 :: argue.giveUp
-{@profCoral}	No problem, Ollie. Just let me know when you're ready. 
+{@profArctic}	No problem, Ollie. Just let me know when you're ready. 
