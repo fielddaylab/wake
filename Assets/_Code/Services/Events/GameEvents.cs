@@ -28,6 +28,8 @@ namespace Aqua
         static public readonly StringHash32 SceneLoaded = "scene:loaded"; // no args
 
         static public readonly StringHash32 ViewChanged = "view:changed"; // string viewName
+        static public readonly StringHash32 ViewLeaving = "view:leaving"; // StringHash32 viewName
+        static public readonly StringHash32 ViewArrived = "view:arrived"; // StringHash32 viewName
         static public readonly StringHash32 ViewLockChanged = "view:lockChanged"; // no args
 
         static public readonly StringHash32 CutsceneStart = "cutscene:start"; // no args
