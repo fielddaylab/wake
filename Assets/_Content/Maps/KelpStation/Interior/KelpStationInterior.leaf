@@ -5,9 +5,9 @@
 :: lockExit
 @function   SceneStart
 @when       !JobStartedOrComplete("kelp-welcome")
-$call   ExitStation->LockInteract()
+$call   ExitStationGroup->LockGroup()
 
 :: unlockExit
 @function   JobStarted
 @when       jobId == "kelp-welcome"
-$call   ExitStation->UnlockInteract()
+$call   ExitStationGroup->UnlockGroup()

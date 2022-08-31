@@ -111,6 +111,7 @@ namespace ProtoAqua.ExperimentV2 {
 
         private void OnBackClick() {
             ExperimentScreen.Transition(m_OrganismScreen, m_World, Routine.Call(() => m_OrganismScreen.Panel.ClearSelection()));
+            Services.Events.Dispatch(ExperimentEvents.ExperimentEnded, m_ParentTank.Type);
         }
 
         private IEnumerator TransitionToDone(ExperimentResult inResult) {

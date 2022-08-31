@@ -4,17 +4,23 @@
 @trigger    JobStarted
 @cutscene
 
-{@profCoral}	Welcome back {player-name}! It's time for us to figure out if we should remove that pesky Sargassum.
-{@player} 		So, what do you need me to do?
+{@profCoral}	Thank you, Ollie. I'm becoming extremely concerned about Site R.
+{@player}		How can I help, {@profCoral}?
+			    Want me to get in there and remove all that muck from the water?
+{@profCoral}	The Sargassum? Oh, no. I suggest we slow down, Ollie. 
+{@player} Slow down?? But... Professor, isn't this urgent? 
+{@profCoral} Ay. Aún no tienes aletas y ya quieres nadar.
+{@player} "You don't have flippers yet, and already you want to swim." 
+		   My mom has a saying like that, too. Hers was about wings and flying, though.
+		   Fine. What should I do first? 
 {@profCoral}	I need you find out if sargassum is really what's causing the coral to be stressed. Can it block light?
-{@player} 		Got it, I'll get started on it now.
 $if HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
-	{@guide}		{player-name}, let's start by heading to the {nameof Experimentation}!
+	{@profCoral}	Start by heading to the {nameof Experimentation} on your ship. 
 $else
 	$if HasEntity(Sargassum)
-		{@guide}		{player-name}, let's start by heading back to Site R to get the population history!
+		{@profCoral}	Start by heading back to Site R to get the population history.
 	$else 
-		{@guide}		{player-name}, let's start by heading back to Site R to scan the Sargassum!
+		{@profCoral}    Start by heading back to Site R to scan the Sargassum.
 	$endif
 $endif
 
@@ -23,70 +29,75 @@ $endif
 @when 		scene:name == "CoralStation", !HasEntity(Sargassum)
 @boostScore 1
 @cutscene
-{@player} 	What should we be doing now?
-{@guide} 	First, let's head back to Site R and scan some Sargassum.
+{@player} 	What should I be doing, {nameof @guide}?
+{@guide} 	You will need to return to Site R and scan the Sargassum. 
 
 :: enterAndScannedSargassum
 @trigger    SceneStart
 @when       scene:name = "RS-2R", HasEntity(Sargassum)
 @cutscene
 @once
-{@player} OK, I've already got the Sargassum, but how do we get the population history?
-{@profCoral} 	Look around for a Population Probe.
+{@player} Okay. Let's see.
+		  I've already scanned the Sargassum... but how do I get its Population History?
+{@guide} You will need to find and scan the Population Probe!
 
 :: scannedSargassum
 @trigger    JobTasksUpdated
 @when 		HasEntity(Sargassum), !HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
 @once
 @cutscene
-{@player} OK, I can see the Sargassum, but how do we get the population history?
-{@profCoral} 	Look around for a Population Probe.
+{@player} Hmmm. The Sargassum is here, but how do I get it's Population History? 
+{@guide}  You will need to find the Population Probe, O. 
 
 :: helpScanProbe
 @trigger    RequestPartnerHelp
 @when 		scene:name == "CoralStation", !HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
 @boostScore 1
 @cutscene
-{@player} 	What should we be doing now?
-{@guide} 	First, let's head back to Site R and scan the population Probe.
+{@player} 	What now, {nameof @guide}?
+{@guide} 	I suggest returning to Site R and scanning the Population Probe.
+		    That should give you the historical population data you need. 
 
 :: helpScanProbeAtSite
 @trigger    RequestPartnerHelp
 @when 		scene:name == "RS-2R", HasEntity(Sargassum), !HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
 @boostScore 1
 @cutscene
-{@player} 	What should we be doing now?
-{@guide} 	Find the Population Probe and try to scan it.
+{@player} 	What should I do now, {nameof @guide}?
+{@guide} 	Find and scan the Population Probe!
 
 :: probeScanned
 @trigger    JobTasksUpdated
 @when		HasFact(SargassumCoveredReef.PopulationHistory.Sargassum), !HasFact(SargassumCoveredReef.WaterChemHistory.Light)
 @cutscene
-{@guide} There should be another probe around here with the Light History. Let's scan that one, too.
+{@guide} Sufficient work, O!
+{@player} Thanks, {nameof @guide}.
+{@guide} There should be another probe with the area's Light History. You will need to scan that one, too. 
 
 :: gotPopHistory
 @trigger    JobTasksUpdated
 @when 		HasFact(SargassumCoveredReef.PopulationHistory.Sargassum), HasFact(SargassumCoveredReef.WaterChemHistory.Light)
 @cutscene
 @once
-{@player} I guess we need to do some Experimentation now, right?
-{@guide} Right.  Let's get back to the ship.
+{@guide} Adequate work, O!
+		 Time to head back to the Meredith and run your experiment.
 
 
 :: helpGoToExperiment
 @trigger    RequestPartnerHelp
 @when 		scene:name != "ExperimentV2", !HasFact(Sargassum.Consume.Light), HasFact(SargassumCoveredReef.PopulationHistory.Sargassum)
 @cutscene
-{@player} 	What should we be doing now?
-{@guide}	Let's head over to the {nameof Experimentation} and try to learn more about Sargassum.
+{@player} 	What should I do now, {nameof @guide}?
+{@guide}	Head to {nameof Experimentation} and learn more about Sargassum.
 
 :: helpAtExperiment
 @trigger    RequestPartnerHelp
 @when 		scene:name == "ExperimentV2", !HasFact(Sargassum.Consume.Light), JobTaskCompleted(popProbe), JobTaskCompleted(chemHistory)
 @cutscene
-{@player} 	How should this go again?
-{@guide}	We want to determine if Sargassum is really to blame for the low light at Site R.
-{@guide}	Try putting some Sargassum in a measurement tank and see if the light levels change.
+{@player} 	Can I have some help here, {nameof @guide}?
+{@guide}	Certainly, O.
+			You need to determine if the Sargassum is truly to blame for the low light at Site R. 
+{@guide}	Try putting some Sargassum in a Measurement Tank and see if the light levels change.
 
 :: startExperiment
 @trigger    SceneStart
@@ -94,11 +105,13 @@ $endif
 @once
 @cutscene
 $if HasUpgrade(MeasurementTank)
-	{@player}   Any tips of what we should to this time?
-	{@guide}  	We want to know if Sargassum really does lower light, so I think a measurement tank is our best bet!
+	{@player} Okay, let's see... This sounds like a job for our Measurement Tank. 
 $else
-	{@profCoral} Hmmmm... You need to measure effects of Sargassum. Your tanks can't do that. 
-				I don't have any spares. Maybe check with my colleagues at other stations.
+	{@player} Hmm. {nameof @guide}, I need to measure how the Sargassum affects the environment.
+	{@guide} Yes, O!
+	{@player} Um... how do we do that, exactly?
+	{@guide} Ah. I see the problem. None of your tanks have this capability. 
+			  I suggest stopping by the shop. They might have the upgrade you need.
 $endif
 
 ::measurementTankSelectWater
@@ -106,23 +119,25 @@ $endif
 @when		tankType == "Measurement", JobTaskCompleted(popProbe), JobTaskCompleted(chemHistory)
 @once 
 @cutscene
-{@profCoral} Let's start by figuring out the Sargassum reproduction rate.
-{@profCoral} We need to match the conditions of the site we're interested in.
-{@profCoral} Let's select the water of the Sargassum Covered Reef.
+{@guide} Start by figuring out the Sargassum reproduction rate. 
+{@guide} You need to match the conditions of Site R, so try selecting the of the Sargassum Covered Reef.
 
 ::measurementTankSelectSpecies
 @trigger	ExperimentScreenViewed
 @when		screenId == "measurement.organisms", JobTaskCompleted(popProbe), JobTaskCompleted(chemHistory)
 @once 
 @cutscene
-{@profCoral} Now add only the Sargassum. We don't want the species interacting with each other.
+{@guide} Now add only the Sargassum. You don't want other species affecting your results. 
 
 ::measurementTankSelectFeatures
 @trigger	ExperimentScreenViewed
 @when		screenId == "measurement.features", JobTaskCompleted(popProbe), JobTaskCompleted(chemHistory)
 @once 
 @cutscene
-{@profCoral} Since we want to measure the reproduction rate, turn on the tank stabilizer and auto feeder.
+{@guide} You need to measure the reproduction rate.
+{@player} Okay. So I need to, um... 
+{@guide} Turn on the tank stabilizer and auto feeder.
+{@player} Oh, yeah. Thanks, {nameof @guide}. 
 
 :: experimentEnd
 @trigger    JobTasksUpdated
@@ -130,7 +145,8 @@ $endif
 @once
 @cutscene
 $set    	jobs:coral-casting-shade.gotMeasurement = true
-{@guide}	Great! You measured how quickly Sargassum grow in an ideal environment. 
+{@player} Wow. Those Sargasum grow fast.
+{@guide}  Yes. They seem to reproduce quickly in their ideal environment. 
 
 :: experimentEndOtherLight
 @trigger    JobTasksUpdated
@@ -138,10 +154,9 @@ $set    	jobs:coral-casting-shade.gotMeasurement = true
 @once
 @cutscene
 $set    	jobs:coral-casting-shade.gotMeasurement = true
-{@guide}	OK! Looks like you're really experimenting!
-{@guide}	These numerical facts are what's required to run simulations in the Modeling Lab.
-{@guide}	Set up a few more experiments to determine the other rates we need to build a simulation model. 
-{@guide}	You can use different combinations of environments that stress an organism, the tank stabilizer and auto feeder. 
+{@guide}	You will need these numerical facts to run simulations in the Modeling Lab.
+{@guide}	Set up a few more experiments to determine the other rates you'll need to build a simulation model. 
+{@guide}	Use different combinations of environments that stress an organism, the tank stabilizer and auto feeder. 
 
 :: experimentEndOtherCoralGrowStressed
 @trigger    JobTasksUpdated
@@ -149,9 +164,8 @@ $set    	jobs:coral-casting-shade.gotMeasurement = true
 @once
 @cutscene
 $set    	jobs:coral-casting-shade.gotMeasurement = true
-{@guide}	OK! Looks like you're really experimenting!
-{@guide}	These numerical facts are what's required to run simulations in the Modeling Lab.
-{@guide}	Set up a few more experiments to determine the other rates we need to build a simulation model. 
+{@guide}	You will need these numerical facts to run simulations in the Modeling Lab.
+{@guide}	Set up a few more experiments to determine the other rates you'll need to build a simulation model. 
 {@guide}	You can use different combinations of environments that stress an organism, the tank stabilizer and auto feeder. 
 
 :: experimentEndOtherCoralGrow
@@ -160,8 +174,7 @@ $set    	jobs:coral-casting-shade.gotMeasurement = true
 @once
 @cutscene
 $set    	jobs:coral-casting-shade.gotMeasurement = true
-{@guide}	OK! Looks like you're really experimenting!
-{@guide}	These numerical facts are what's required to run simulations in the Modeling Lab.
+{@guide}	You will need these numerical facts to run simulations in the Modeling Lab.
 {@guide}	Set up a few more experiments to determine the other rates we need to build a simulation model. 
 {@guide}	You can use different combinations of environments that stress an organism, the tank stabilizer and auto feeder. 
 
@@ -197,43 +210,48 @@ $endif
 @trigger    RequestPartnerHelp
 @when 		scene:name != "ExperimentV2", jobs:coral-casting-shade.gotMeasurement, !VisualModelStarted
 @cutscene
-{@guide} We still need more information about how Sargassum and Staghorn Coral behave.
-{@guide} Go back to the Experiment Lab.
+{@guide} You still need more information about how Sargassum and Staghorn Coral behave.
+{@guide} I suggest returning to the Experiment Lab.
 
 :: allExperimentsDone
 @trigger    JobTasksUpdated
 @when HasFact(Sargassum.Reproduce), HasFact(Sargassum.Consume.Light), HasFact(StaghornCoral.Reproduce.Stressed), HasFact(StaghornCoral.Reproduce)
 @cutscene
 @once
-{@guide}	I think we're finally ready to build a model!
+{@player} Whew. Okay, {nameof @guide}, what now? 
+{@guide}	Head to the Modeling Lab. It's time to build your model!
+{@player}	Okay. Let's get this done fast. I bet {@nameof @profCoral} is getting stressed out waiting for us. 
+{@guide} Perhaps we should determine his Stress Ranges.
+{@player} Ha! {nameof @guide}, you made a joke. Que adorable. 
 
 :: helpAllExperimentsDone
 @trigger    RequestPartnerHelp
 @when HasFact(Sargassum.Reproduce), HasFact(Sargassum.Consume.Light), HasFact(StaghornCoral.Reproduce.Stressed), HasFact(StaghornCoral.Reproduce)
 @cutscene
 {@guide}	Head over to the Modeling Lab.
-{@guide}	We need to build a descriptive model of how Sargassum affects Staghorn Coral.
+{@guide}	You need to build a descriptive model of how Sargassum affects Staghorn Coral.
 
 
 :: InterventionModelingSetup
 @trigger	VisualModelStarted
 @once
 @cutscene
-{@guide} 	Make sure you add the facts we just learned, and let's get started!
+{@player} Okay, {nameof @guide}. What now? 
+{@guide} 	Add the facts you just gathered, and then press Simulation.
 
 ::ModelHelp1
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Modeling", modeling:phase == "visual", !HasFact(SargassumCoveredReef.Model.LightPrediction)
 @cutscene
-{@player} 	What should I do next?
-{@guide}	Make sure to import the new facts we just learned, and then press "Simulate"
+{@player} 	Can you remind me what to do here, {nameof @guide}? 
+{@guide}	Make sure to import the new facts you just learned, and then press "Simulate"
 
 
 :: InterventionGetSync
 @trigger	SimulationModelStarted
 @once
 @cutscene
-{@guide} 	Now, let's match up the historical data again.
+{@guide} 	Now you need to match up the historical data again.
 
 ::ModelHelp2
 @trigger    RequestPartnerHelp
@@ -249,7 +267,9 @@ $endif
 @who        guide
 @once
 @chatter
-{@guide} 	Looks good!!
+{@guide} 	You did it! Acceptable work, O! 
+{@player} Whew. Finally!! I don't know how {nameof @profCoral} is so patient all the time.
+		  Though I guess working with turtles might help... they're not exactly in a hurry.
 
 ::ModelHelp3
 @trigger    RequestPartnerHelp
@@ -264,14 +284,16 @@ $endif
 @trigger	SimulationPredictSuccess
 @once
 @cutscene
-{@guide} 	Nicely done! Looks like Sargassum is to blame for the low light at Site R. Let's report this back to {nameof @profCoral}.
+{@player} I knew it. Looks like the Sargassum did cause the low light at Site R.
+{@guide} Yes. It is as we suspected.
+	     Time to report back to {nameof @profCoral}!
 
 :: helpAfterModel
 @trigger    RequestPartnerHelp
 @when 		HasFact(SargassumCoveredReef.Model.LightPrediction)
 @cutscene
 {@player} 	What should we be doing next?
-{@guide}	Let's report back to the {m}research station{/m} with our findings!
+{@guide}	You need to report back to the {m}research station{/m} with your findings!
 
 // CATCH-ALL GUIDE TEXT
 
@@ -280,6 +302,7 @@ $endif
 @when 		JobTaskActive(scanSarg)
 @boostScore -5
 @cutscene
+{@player} What now, {nameof @guide}?
 {@guide}    Go to Site R and scan the Sargassum.
 
 :: catchPopProbe
@@ -287,6 +310,7 @@ $endif
 @when 		JobTaskActive(popProbe)
 @boostScore -5
 @cutscene
+{@player} What should I do next, {nameof @guide}?
 {@guide}    Find the population probe at Site R and scan it.
 
 :: catchChemHistory
@@ -294,6 +318,7 @@ $endif
 @when 		JobTaskActive(chemHistory)
 @boostScore -5
 @cutscene
+{@player} What should I do next? 
 {@guide}    Find the water chemistry probe at Site R and scan it.
 
 :: catchSargGrowthRate
@@ -301,22 +326,25 @@ $endif
 @when 		JobTaskActive(sargGrowthRate)
 @boostScore -5
 @cutscene
+{@player} Okay, {nameof @guide}. What should I do now? 
 {@guide}    Put the {nameof Sargassum} in the Measurement Tank and find its reproduction rate.
-			You may have to mess with the Auto Feeder and {nameof WaterStabilizer} settings to measure what you want.
+			You may have to adjust the Auto Feeder and {nameof WaterStabilizer} settings in order to obtain the appropriate measurements. 
 
 :: catchSargLight
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(sargLight)
 @boostScore -5
 @cutscene
+{@player} What should I do here, {nameof @guide}?
 {@guide}    Put the {nameof Sargassum} in the Measurement Tank and find how much light it consumes.
-			You may have to mess with the Auto Feeder and {nameof WaterStabilizer} settings to measure what you want.
+			You may have to adjust the Auto Feeder and {nameof WaterStabilizer} settings to obtain the measurements you need.
 
 :: catchCoralGrowthRate
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(coralGrowthRate)
 @boostScore -5
 @cutscene
+{@player} What now, {nameof @guide}?
 {@guide}    Put the {nameof StaghornCoral} in the Measurement Tank in an environment that does not stress it.
 
 :: catchCoralGrowthStressed
@@ -324,6 +352,7 @@ $endif
 @when 		JobTaskActive(coralGrowthStressed)
 @boostScore -5
 @cutscene
+{@player} What should I do now? 
 {@guide}    Put the {nameof StaghornCoral} in the Measurement Tank in an environment that stresses it.
 
 :: catchSargModel
@@ -331,6 +360,7 @@ $endif
 @when 		JobTaskActive(sargModel)
 @boostScore -5
 @cutscene
+{@player} What's our next move, {nameof @guide}?
 {@guide}    Create a prediction model using the Modeling Lab based on the {nameof Sargassum}.
 
 :: catchSargArgue
@@ -338,7 +368,8 @@ $endif
 @when 		JobTaskActive(sargArgue)
 @boostScore -5
 @cutscene
-{@guide}    Return to the station to talk to {nameof @profCoral}.
+{@player} So, where do I need to go now? 
+{@guide}    Return to the station to talk to {nameof @profCoral}!
 
 // ARGUMENTATION
 
@@ -347,25 +378,28 @@ $endif
 @when   !ArgueIsComplete(castingShadeArgue)
 @cutscene
 $call ArgueLoad(castingShadeArgue)
-{@profCoral} Have you got evidence that Sargassum is hurting the Staghorn Coral?
+{@profCoral} Ah. Wonderful. And back much faster than I expected!
+Do you have evidence that Sargassum is hurting the Staghorn Coral?
 	$choice .argue.yesEvidence; Yes, I've got the evidence.
-	$choice .argue.noEvidence; No, I don't have it, yet.
-	$choice .argue.disagree; I disagree that Sargassum is the problem.
+	$choice .argue.noEvidence; No, not yet.
+	$choice .argue.disagree; I don't think Sargassum is the problem.
 $choose branch
 
 :: argue.introRevisit
 {@profCoral} So, do you have the model showing Sargassum is hurting the Staghorn Coral?
 	$choice .argue.yesEvidence; Yes, I've got the evidence.
-	$choice .argue.noEvidence; No, I don't have it, yet.
-	$choice .argue.disagree; I disagree that Sargassum is the problem.
+	$choice .argue.noEvidence; No, not yet.
+	$choice .argue.disagree; I don't think Sargassum is the problem.
 $choose branch
 
 :: argue.noEvidence
-{@profCoral} Let me know when you have something for me to review.
+{@profCoral} Hmmm. I need evidence before I can move forward, O.
+			 Let me know when you have findings for me to review. 
 
 :: argue.disagree
-{@profCoral} Have you been down to Site R?  It's pretty obvious.
-{@profCoral} I just need you to confirm it numerically.
+{@profCoral} Well... considering the Sargassum covering Site R, I find that difficult to believe.
+{@profCoral} It's clear the Sargassum is doing {i}something{/i} to the ecosystem. 
+{@profCoral} I just need you to confirm it with data.
 $goto .argue.introRevisit
 
 :: argue.yesEvidence
@@ -376,22 +410,27 @@ $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
 		$answer correct, .argue.correctModelSupplied
 		$answer incorrect, .argue.wrongModelSupplied
-$choice .argue.giveUp; Let me get back to you
+$choice .argue.giveUp; Let me get back to you.
 
 :: argue.correctModelSupplied
 $call ArgueComplete()
-{@profCoral} Thank you! 
-{@profCoral} We need to reduce the Sargassum population, but yanking it out would be STINKY.
-{@profCoral} Maybe there's another solution...
+{@profCoral} Ah. This confirms our suspicions.
+		     Thank you, O.
+{@player}   So... now can I go rip out all that Sargassum?
+{@profCoral} I don't think so, Ollie. You don't have the appropriate training.
+			 Also... your mother is an old friend. She would be unhappy with me if I sent you out to clean up highly toxic, extremely pungent algae. 
+{@player}   My mom isn't in charge here, Professor. She trusted me to go out on my own. 
+{@profCoral} Still. Why don't you let me mull on it?
+			There might be a better solution... 
 $call CompleteJob()
 
 :: argue.wrongModelSupplied
-{@profCoral} If I'm going to convince people to pull the Sargassum, I need a model.
-{@profCoral} It should show that Sargassum is hurting the Staghorn Coral.
+{@profCoral} That's not what I need, O. 
+		      See if you have a model that proves the Sargassum is hurting the Staghorn Coral.
 $call ArgueRejectIncorrect()
 $goto .argue.yesEvidence
 
 :: argue.giveUp
-{@profCoral} OK. Get back to me when you're ready.
+{@profCoral} No rush, Ollie. If a job's worth doing, it's worth doing well. Come back here when you're done. 
 
 :: end

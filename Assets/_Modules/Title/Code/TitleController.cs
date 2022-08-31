@@ -45,7 +45,9 @@ namespace Aqua.Title
 
         private void OnDestroy()
         {
+            Services.UI?.StopSkipCutscene();
             Services.Events?.DeregisterAll(this);
+            Services.UI?.StopSkipCutscene();
         }
 
         private void LateUpdate() {
