@@ -29,7 +29,7 @@ $call GiveFact(W_WhaleFall.Model.Stages)
 @cutscene
 {@player} Hey {nameof @guide}, what should we be doing now?
 {@guide}  You'll need to collect all the population data for the species at {h}Site W{/h}.
-          Then compare the data with {nameof arcticSci}'s model, which you can find under {h}Site W{/h} in your AQOS!
+          Then compare the data with {nameof @arcticSci}'s model, which you can find under {h}Site W{/h} in your AQOS!
 
 :: catchReportBack
 @trigger	RequestPartnerHelp
@@ -37,7 +37,13 @@ $call GiveFact(W_WhaleFall.Model.Stages)
 @boostScore -5
 @cutscene
 {@player}   What now, {nameof @guide}?
+
+$if scene:name != "RS-4Z-StationInterior"
 {@guide}	You will need to return to the station and talk to {nameof @arcticSci}.
+$else
+{@guide}    You will need to compare the data with {nameof @arcticSci}'s model, which you can find under {h}Site W{/h} in your AQOS!
+            Then, you will need to report back to {nameof @arcticSci}
+$endif
 
 // ARGUMENTATION
 
