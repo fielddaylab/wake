@@ -265,6 +265,8 @@ namespace Aqua
         private IEnumerator SceneSwap(SceneBinding inNextScene, StringHash32 inEntrance, object inContext, SceneLoadFlags inFlags)
         {
             Services.Input.PauseAll();
+
+            Services.Script.TryCallFunctions(GameTriggers.SceneLeave);
             Services.Script.KillLowPriorityThreads(TriggerPriority.Cutscene, true);
             Services.Physics.Enabled = false;
             BootParams.ClearStartFlag();

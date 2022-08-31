@@ -13,13 +13,13 @@ $call GiveFact(ChinookSalmon.Eats.Clione)
 $call GiveFact(ChinookSalmon.Reproduce)
 $call GiveFact(ChinookSalmon.Reproduce.Stressed)
 {@player} So where are you stuck?
-{@arcticSci}  I'm not happy with how the model is looking. 
+{@profArctic}  I'm not happy with how the model is looking. 
           I wonder if the Arctic Cod are the missing piece. 
           Can you figure out what the Cod eat and add them to our model? 
 {@player}  I'd love to!
-{@arcticSci} Um... that wasn't sarcasm, was it?
+{@profArctic} Um... that wasn't sarcasm, was it?
 {@player}  What? Claro que no, of course not, I just love figuring out stuff like this--
-{@arcticSci}  Okay, okay. I'm just not used to people geeking out about this work as much as I do.
+{@profArctic}  Okay, okay. I'm just not used to people geeking out about this work as much as I do.
 
 :: allSet
 @trigger    JobTaskCompleted
@@ -43,16 +43,20 @@ $call GiveFact(ChinookSalmon.Reproduce.Stressed)
 @boostScore -5
 @cutscene
 {@player}  What now, {nameof @guide}?
-{@guide}   You will need to observe the Arctic Cod to find out what they eat!
+{@guide}   You will need to observe the {nameof ArcticCod} to find out what they eat!
+            We shall need comprehensive scan-data on any organism they might eat.
 
 :: catchModelFish
 @trigger	RequestPartnerHelp
-@when		JobTaskTop(modelFish)
+@when		JobTaskTop(modelFish), scene:name != "Modeling"
 @boostScore -5
 @cutscene
+
 {@player}  Okay, V. What's next? 
-{@guide} I would suggest heading to the Modeling Lab.
-         There, you can make a {nameof VisualModel} and a {nameof SyncModel}!
+$if scene:name != "ModelingFoyer"
+{@guide}    I would suggest heading to the {m}Modeling Lab{/m}.
+$endif
+{@guide}    We need to construct a {h}Visual Model{/h} and a {h}Sync Model{/h}!
 
 :: catchReportBack
 @trigger	RequestPartnerHelp
