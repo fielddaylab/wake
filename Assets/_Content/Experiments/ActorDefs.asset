@@ -1534,6 +1534,70 @@ MonoBehaviour:
       width: 2.001432
       height: 2.5744529
   - Id:
+      m_HashValue: 2881543797
+    Type: {fileID: 11400000, guid: e1bb4d7c66925914b809969c4454ea76, type: 2}
+    PrefabName: H_Gas
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 3
+      SpawnAnimation: 2
+      AvoidTankSidesRadius: 0.4
+      AvoidTankTopBottomRadius: 0
+    Movement:
+      MoveType: 0
+      MovementIdleDistance: 2
+      MovementSpeed: 2
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 0
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      Light:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: -Infinity
+        AliveMax: Infinity
+        StressedMin: -Infinity
+        StressedMax: Infinity
+    AliveEatTargets: []
+    StressedEatTargets: []
+    ParasiteTargets: []
+    SpawnCount: 1
+    SpawnMax: 3
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
+    IsPlant: 0
+    IsLivingOrganism: 0
+    IsDistributed: 1
+    TargetLimit: 8
+    FreeOnEaten: 0
+    EatOffsetRange:
+      serializedVersion: 2
+      x: -7.3
+      y: -3.9
+      width: 14.6
+      height: 7.8
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: -7.3
+      y: -3.9
+      width: 14.6
+      height: 7.8
+  - Id:
       m_HashValue: 339695989
     Type: {fileID: 11400000, guid: ea9eb6c2233744f44b0f69ef8b3f0aaa, type: 2}
     PrefabName: Hagfish
@@ -1605,70 +1669,6 @@ MonoBehaviour:
       y: -1.4392483
       width: 1.7879889
       height: 0.20350838
-  - Id:
-      m_HashValue: 2881543797
-    Type: {fileID: 11400000, guid: e1bb4d7c66925914b809969c4454ea76, type: 2}
-    PrefabName: H_Gas
-    SpawnAmountOverride: -1
-    Spawning:
-      SpawnLocation: 3
-      SpawnAnimation: 2
-      AvoidTankSidesRadius: 0.4
-      AvoidTankTopBottomRadius: 0
-    Movement:
-      MoveType: 0
-      MovementIdleDistance: 2
-      MovementSpeed: 2
-      MovementCurve: 1
-      MovementInterval: 1.5
-      MovementIntervalRandom: 1
-    Eating:
-      EatType: 0
-      MovementMultiplier: 1
-    Stress:
-      MovementSpeedMultiplier: 0.8
-      MovementIntervalMultiplier: 0.9
-      AmbientAnimationSpeedMultiplier: 1
-    StateEvaluator:
-      Temperature:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      Light:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-      PH:
-        AliveMin: -Infinity
-        AliveMax: Infinity
-        StressedMin: -Infinity
-        StressedMax: Infinity
-    AliveEatTargets: []
-    StressedEatTargets: []
-    ParasiteTargets: []
-    SpawnCount: 1
-    SpawnMax: 3
-    AliveReproduceRate: 0
-    StressedReproduceRate: 0
-    IsPlant: 0
-    IsLivingOrganism: 0
-    IsDistributed: 1
-    TargetLimit: 8
-    FreeOnEaten: 0
-    EatOffsetRange:
-      serializedVersion: 2
-      x: -7.3
-      y: -3.9
-      width: 14.6
-      height: 7.8
-    LocalBoundsRect:
-      serializedVersion: 2
-      x: -7.3
-      y: -3.9
-      width: 14.6
-      height: 7.8
   - Id:
       m_HashValue: 2471897816
     Type: {fileID: 11400000, guid: d879fdc6c3fa16147afd792721c5d099, type: 2}
@@ -1991,16 +1991,16 @@ MonoBehaviour:
     FreeOnEaten: 1
     EatOffsetRange:
       serializedVersion: 2
-      x: -1.9572718
-      y: -0.26458573
-      width: 3.9648924
-      height: 1.1305962
+      x: -0.813186
+      y: -0.7360236
+      width: 2.1970012
+      height: 1.0541471
     LocalBoundsRect:
       serializedVersion: 2
-      x: -2.1775436
-      y: -0.32739663
-      width: 4.405436
-      height: 1.256218
+      x: -0.93524164
+      y: -0.7945874
+      width: 2.4411125
+      height: 1.1712747
   - Id:
       m_HashValue: 722380343
     Type: {fileID: 11400000, guid: e9ba57579bd86024dab9af9a665286b6, type: 2}
@@ -4081,4 +4081,5 @@ MonoBehaviour:
       y: -0.45400387
       width: 1.1399213
       height: 0.9154129
-  CritterMaterials: []
+  CritterMaterials:
+  - {fileID: 2100000, guid: 06428ad1f7e594ba5961bb6bb19969c9, type: 2}
