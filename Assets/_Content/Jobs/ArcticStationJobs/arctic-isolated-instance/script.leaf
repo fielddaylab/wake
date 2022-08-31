@@ -160,7 +160,7 @@ $endif
 
 :: catchCheckCrab
 @trigger	RequestPartnerHelp
-@when		JobTaskTop(checkCrab), !jobs:arctic-isolated-instance.checkedCrab
+@when		JobTaskTop(checkPredator), !jobs:arctic-isolated-instance.checkedCrab
 @boostScore -5
 @cutscene
 {@player} What now, {nameof guide}?
@@ -169,18 +169,18 @@ $endif
 
 :: catchCheckSeal
 @trigger	RequestPartnerHelp
-@when		JobTaskTop(checkSeal), !jobs:arctic-isolated-instance.checkedSeal
+@when		JobTaskTop(checkPredator), !jobs:arctic-isolated-instance.checkedSeal
 @boostScore -5
 @cutscene
-{@guide}	Use your Observation Tank to find out if any predators from Site Z eat Glass Sponges.
+{@guide}	Use your Observation Tank to find out if any predators from {h}Site Z{/h} eat Glass Sponges.
 			I believe you have more species to observe. 
 
 :: catchCheckShark
 @trigger	RequestPartnerHelp
-@when		JobTaskTop(checkShark), !jobs:arctic-isolated-instance.checkedShark
+@when		JobTaskTop(checkPredator), !jobs:arctic-isolated-instance.checkedShark
 @boostScore -5
 @cutscene
-{@guide}	Use your Observation Tank to find out if any predators from Site Z eat Glass Sponges.
+{@guide}	Use your Observation Tank to find out if any predators from {h}Site Z{/h} eat Glass Sponges.
 			I believe you have more species to observe. 
 
 :: catchChecksBeforeTaskUpdate
@@ -247,7 +247,7 @@ $endif
 $branch .argue.groundwork.main-question
 
 :: argue.groundwork.main-question
-{@profArctic}	Did you figure out which theory might explain why there are no Glass Sponges in the Frosted Sea?
+{@profArctic}	Did you figure out which theory might explain why there are no {pluralnameof GlassSponge} in the {m}Frosted Sea{/m}?
 $choice .argue.groundwork.lightClaim; The Sponges are stressed by the light levels.
 $choice .argue.groundwork.predatorClaim; There's a predator eating the Sponges.
 $choice .argue.giveUp; Let me get back to you.
@@ -326,12 +326,17 @@ $endif
 $call ArgueLoad(argueIsolatedInstanceGroundwork)
 $call ArgueComplete()
 {@profArctic}	Hmmm. I can see you've done your research, but we still don't have an answer.
+
+$if HasFact(PterasterObscurus.Eats.GlassSponge), HasFact(Y_IceCrevice.Population.PterasterObscurus)
+	$goto .argue.final.intro
+$endif
+
 {@player}	  Ugh. I don't get it. ¡Esto es imposible! How do you stay so patient?
 {@profArctic}  Trust me, it takes practice.
 				Let's dig a little deeper. We know there are plenty of Glass Sponges at Site X, and none of them at Site Z.
 			   Could something be happening to them on the way?
 {@player} 	You mean... at Site Y? 
-{@profActic} Exactly. A predator at Site Y may be eating all the Glass Sponges before they can go any farther.
+{@profArctic} Exactly. A predator at Site Y may be eating all the Glass Sponges before they can go any farther.
 				That may be a good place to check out next.
 
 // ARGUMENT 2: Final (missing) piece
