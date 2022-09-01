@@ -74,22 +74,20 @@
 {@guide}    Certainly, O. 
 $if HasEntity(AngelFish),HasEntity(Cyanobacteria),HasEntity(ElkhornCoral),HasEntity(SeaPearl),HasEntity(LoggerheadTurtle),HasEntity(RedGrouper)
     //Player has all required critters
-    $if HasFact(AngelFish.Reproduce.Stressed),HasFact(Cyanobacteria.Reproduce),HasFact(ElkhornCoral.Reproduce),HasFact(SeaPearl.Reproduce.Stressed),HasFact(LoggerheadTurtle.Reproduce),HasFact(RedGrouper.Reproduce)
+
+    $if HasFact(AngelFish.Reproduce.Stressed),HasFact(Cyanobacteria.Reproduce),HasFact(ElkhornCoral.Reproduce.Stressed),HasFact(SeaPearl.Reproduce.Stressed),HasFact(LoggerheadTurtle.Reproduce),HasFact(RedGrouper.Reproduce)
         //Has all reproduce facts
 
         $if HasFact(AngelFish.Eats.SeaPearl.Stressed),HasFact(LoggerheadTurtle.Eats.Cyanobacteria),HasFact(LoggerheadTurtle.Eats.AngelFish),HasFact(RedGrouper.Eats.Cyanobacteria),HasFact(RedGrouper.Eats.AngelFish)
             //Has all eat facts
-            {@guide}    You have obtained all the rules you need. Now you need to obtain the rates from the Measurement Tank.
+            {@guide}    You have obtained all the rules you need. Check to make sure you have all the rates from the Measurement Tank before moving on.
         $else
             {@guide}    You are still missing some consumption rules. Perhaps you should take another look at the Observation Tank. 
         $endif
     $else
-        $if HasFact(O_OilRig.turtleDanger.Model.Visual)
-            {@guide}    You need to head to the next tab to continue building your model!
-        $else
-            //Missing at least 1 reproduction fact
-            {@guide}    You are still missing at least 1 reproduction rate. I would suggest consulting your Measurement Tank.
-        $endif
+        //Missing at least 1 reproduction fact
+        {@guide}    You are still missing at least 1 reproduction rate. I would suggest consulting your Measurement Tank.
+        {@guide}    You might want to also make sure you have gotten both the stressed and unstressed rates.
     $endif
 $else
     //Player is missing at least 1 critter

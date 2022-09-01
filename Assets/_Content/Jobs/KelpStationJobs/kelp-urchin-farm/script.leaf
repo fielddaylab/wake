@@ -136,6 +136,14 @@ $call CompleteJob()
 @cutscene
 {@drKelp}	Thank you for your help, Olivia. 
 			Want to make dinner together, since you're here?
-{@player}   Oh... um, I'm so sorry, Mom. I promised I'd stop by a potluck at the Arctic station tonight. 
-{@drKelp}   Aww, Sweetie. I love that you're making new friends and getting out there. Mer would be proud. 
+$if LocationVisited("RS-4Z-StationInterior")
+    {@player}   Oh... um, I'm so sorry, Mom. I promised I'd stop by a potluck at the Arctic Station tonight. 
+$elseif LocationVisited("RS-3O-StationInterior")
+    {@player}   Oh... um, sorry Mom. I promised I'd stop by a potluck at the Bayou Station tonight. 
+$elseif LocationVisited("RS-2V-StationInterior")
+    {@player}   Oh... um, sorry Mom. I promised I'd stop by a potluck at the Coral Station tonight. 
+$else
+    {@player}   Oh... um, sorry Mom. I wanna try to get back out to one of the other stations tonight.
+$endif
+{@drKelp}   Aww, Sweetie. I love that you're getting out there. Mer would be proud. 
 			Travel safe. I'll save you the leftovers!  
