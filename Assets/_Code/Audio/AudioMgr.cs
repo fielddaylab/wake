@@ -583,4 +583,6 @@ namespace AquaAudio
     public enum AudioPlaybackFlags {
         PreloadOnly = 0x01
     }
+
+    public delegate void AudioCallback(AudioHandle handle);
 }

@@ -77,6 +77,14 @@ namespace AquaAudio {
             return this;
         }
 
+        public AudioHandle OverrideLoop(bool loop) {
+            var track = GetTrack();
+            if (!object.ReferenceEquals(track, null)) {
+                AudioTrackState.SetLoop(track, loop);
+            }
+            return this;
+        }
+
         #endregion // Operations
 
         #region Checks
@@ -128,6 +136,18 @@ namespace AquaAudio {
         }
 
         #endregion // Checks
+
+        #region Callbacks
+
+        public AudioHandle SetLoopCallback(AudioCallback callback) {
+            var track = GetTrack();
+            if (!object.ReferenceEquals(track, null)) {
+                track.OnLoop = callback;
+            }
+            return this;
+        }
+
+        #endregion // Callbacks
 
         #region Overrides
 

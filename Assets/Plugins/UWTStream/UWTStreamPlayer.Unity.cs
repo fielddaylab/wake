@@ -161,7 +161,7 @@ namespace BeauUWT
         private int GetHiResTime()
         {
             if (m_UnitySource)
-                return m_UnitySource.timeSamples;
+                return (int) (m_UnitySource.time * 1000);
             return 0;
         }
 
@@ -169,12 +169,12 @@ namespace BeauUWT
         {
             if (m_PlayRequested)
             {
-                m_QueuedTimeHiRes = inTime;
-                m_QueuedTimeMode = TimeMode.HiRes;
+                m_QueuedTime = inTime / 1000f;
+                m_QueuedTimeMode = TimeMode.Seconds;
             }
             if (m_StreamingClip)
             {
-                EnsureSource().timeSamples = inTime;
+                EnsureSource().time = inTime / 1000f;
             }
         }
 

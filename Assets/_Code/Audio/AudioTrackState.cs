@@ -30,6 +30,8 @@ namespace AquaAudio
         public int LastKnownTime;
         public double LastStartTime;
 
+        public AudioCallback OnLoop;
+
         public AudioPropertyBlock EventProperties;
         public AudioPropertyBlock LocalProperties;
         public AudioPropertyBlock LastKnownProperties;
@@ -94,6 +96,7 @@ namespace AquaAudio
             state.Stream = null;
             state.Position = null;
             state.Event = null;
+            state.OnLoop = null;
             state.Bus = AudioBusId.Master;
             state.VolumeChangeRoutine.Stop();
             state.PitchChangeRoutine.Stop();
@@ -128,6 +131,19 @@ namespace AquaAudio
 
         static public void Resume(AudioTrackState state) {
             state.LocalProperties.Pause = false;
+        }
+
+        static public void SetLoop(AudioTrackState state, bool loop) {
+            switch(state.Mode) {
+                case AudioEvent.PlaybackMode.Sample: {
+                    state.Sample.loop = loop;
+                    break;
+                }
+                case AudioEvent.PlaybackMode.Stream: {
+                    state.Stream.Loop = loop;
+                    break;
+                }
+            }
         }
 
         static public void Stop(AudioTrackState state, float duration = 0, Curve curve = Curve.Linear) {
@@ -338,6 +354,9 @@ namespace AquaAudio
                     return true;
                 }
             } else {
+                if (state.LastKnownTime > currentTime) {
+                    state.OnLoop?.Invoke(new AudioHandle(state, state.InstanceId));
+                }
                 state.LastKnownTime = currentTime;
                 state.StopCounter = 0;
                 return true;
