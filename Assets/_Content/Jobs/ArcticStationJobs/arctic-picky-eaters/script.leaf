@@ -8,11 +8,21 @@
 {@profArctic} I'm excited to see you taking another job, Ollie!
 {@profArctic}  I've been trying to feed the Cod equal amounts of Algae and Diatoms...
                But it seems like they're mostly going for the Diatoms.
-               Our mechanic has been annoyed at all the Algae clogging up people's engines.
+$if !HasEntity(ArcticCod)
+{@profArctic}   I'll send you the data we have collected so far.
+$elseif !HasFact(ArcticCod.Eats.Diatoms)
+{@profArctic}   I'll send you the data we have collected so far.
+$endif
+
+$call GiveEntity(ArcticCod)
+$call GiveFact(ArcticCod.Eats.Diatoms)
+
+{@profArctic}   Our mechanic has been annoyed at all the Algae clogging up people's engines.
 {@player}   Weird. Why do you think the Cod aren't eating the algae?
 {@profArctic} That's what I need you to solve.
 {@player}   Okay. Muy fácil. I'll just head back to the Meredith and use the Measurement Tank.
 {@profArctic} Great. Let me know what you find!
+
 
 :: measureAlgaeOnly
 @trigger    JobTaskCompleted

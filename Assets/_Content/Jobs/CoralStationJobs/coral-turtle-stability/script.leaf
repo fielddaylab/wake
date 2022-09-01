@@ -76,21 +76,14 @@ $endif
 
 :: atShip
 @trigger    SceneStart
-@when       scene:name == "Helm", JobTaskCompleted(scanAll)
+@when       scene:name == "Helm", JobTaskTop(behavior)
 @cutscene
 {@player}   What should I do now, {nameof @guide}?
 {@guide}   	Head to the {nameof Experimentation} and see what the turtles eat!
 
-:: helpBackAtShip
-@trigger    RequestPartnerHelp
-@when 		scene:name == "Helm", JobTaskCompleted(scanAll)
-@cutscene
-{@player} 	Can you remind me where to go, {nameof @guide}?
-{@guide}	Head to {nameof Experimentation} and see what the turtles eat!
-
 :: startExperiment
 @trigger    SceneStart
-@when       scene:name == "ExperimentV2", JobTaskCompleted(scanAll)
+@when       scene:name == "ExperimentV2", JobTaskTop(behavior)
 @once
 @cutscene
 {@guide} Now you need to determine what the turtles eat.
@@ -98,7 +91,7 @@ $endif
 
 ::helpDoExperiment
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ExperimentV2", JobTaskCompleted(scanAll)
+@when 		scene:name == "ExperimentV2", JobTaskTop(behavior)
 @cutscene
 {@player} 	What kind of experiment do we need, {nameof @guide}?
 $if ExperimentIsRunning(Observation)
@@ -201,7 +194,7 @@ $endif
 @boostScore -5
 @cutscene
 {@player} What now, {nameof @guide}?
-{@guide}    Head to Site V and scan the species there.
+{@guide}    Head to {nameof RS-2V} and scan the species there.
 
 :: catchBehavior
 @trigger    RequestPartnerHelp
@@ -216,8 +209,8 @@ $endif
 @when 		JobTaskActive(turtleModel)
 @boostScore -5
 @cutscene
-{@player} Okay, V, what's next? 
-{@guide}    Head to the Modeling lab and create a Visual Model.
+{@player}   Okay, V, what's next? 
+{@guide}    Head to the {m}Modeling Lab{/m} and create a {h}Visual Model{/h}.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
@@ -256,7 +249,7 @@ $endif
 
 :: argue.chooseFacts
 $if ArgueAllFactsCorrect()
-    $goto .argue.done
+    $goto .argue.turtleModel
 $else
     $choice #argueFact; Present facts from AQOS
 		$answer ReefEdge.Model.TurtleVisual, .argue.turtleModel
