@@ -2599,12 +2599,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a34e73a396ddeba4595f0186b08ec06f, type: 3}
---- !u!4 &289879678 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5041227772089223654, guid: d43f84959769055489a36095d9d2631d,
-    type: 3}
-  m_PrefabInstance: {fileID: 5553959291903229929}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &299697224
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10383,6 +10377,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: Microalgae (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 6023052745990973829, guid: c90dd50cc0c475648a4db23859dc6af2,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.59
+      objectReference: {fileID: 0}
+    - target: {fileID: 6023052745990973829, guid: c90dd50cc0c475648a4db23859dc6af2,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.62
+      objectReference: {fileID: 0}
+    - target: {fileID: 6023052745990973829, guid: c90dd50cc0c475648a4db23859dc6af2,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.022
+      objectReference: {fileID: 0}
     - target: {fileID: 9161116738374420450, guid: c90dd50cc0c475648a4db23859dc6af2,
         type: 3}
       propertyPath: m_LocalScale.x
@@ -12612,12 +12621,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2853694286139605314, guid: c90dd50cc0c475648a4db23859dc6af2,
     type: 3}
   m_PrefabInstance: {fileID: 1882884455}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &761749305 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
-    type: 3}
-  m_PrefabInstance: {fileID: 5553959291903229929}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &775934889
 PrefabInstance:
@@ -23905,6 +23908,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: Microalgae (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 6023052745990973829, guid: c90dd50cc0c475648a4db23859dc6af2,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6023052745990973829, guid: c90dd50cc0c475648a4db23859dc6af2,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6023052745990973829, guid: c90dd50cc0c475648a4db23859dc6af2,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.35
+      objectReference: {fileID: 0}
     - target: {fileID: 9161116738374420450, guid: c90dd50cc0c475648a4db23859dc6af2,
         type: 3}
       propertyPath: m_LocalScale.x
@@ -28997,23 +29015,6 @@ Transform:
   m_Father: {fileID: 654668939}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: -2.13, y: 15.357, z: -0.75500005}
---- !u!1 &462026515472560178
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 946497019986176648}
-  - component: {fileID: 9107792179129660158}
-  m_Layer: 0
-  m_Name: IceAlgaeMicroscopic
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!23 &555527253779044362
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -29092,21 +29093,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!4 &946497019986176648
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 462026515472560178}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 761749305}
-  m_Father: {fileID: 4875577486018875108}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1031250897223107341
 Transform:
   m_ObjectHideFlags: 0
@@ -30837,7 +30823,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2748499173664585347}
-  - {fileID: 946497019986176648}
   m_Father: {fileID: 1927622055}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: -197.836, y: 218.169, z: -109.11301}
@@ -31032,125 +31017,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1001 &5553959291903229929
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 946497019986176648}
-    m_Modifications:
-    - target: {fileID: 2093335033074129574, guid: d43f84959769055489a36095d9d2631d,
-        type: 3}
-      propertyPath: m_Radius
-      value: 0.64
-      objectReference: {fileID: 0}
-    - target: {fileID: 3219354949484214776, guid: d43f84959769055489a36095d9d2631d,
-        type: 3}
-      propertyPath: CritterId.m_Hash
-      value: 1605956068
-      objectReference: {fileID: 0}
-    - target: {fileID: 3219354949484214776, guid: d43f84959769055489a36095d9d2631d,
-        type: 3}
-      propertyPath: CritterId.m_Source
-      value: IceAlgae
-      objectReference: {fileID: 0}
-    - target: {fileID: 3219354949484214776, guid: d43f84959769055489a36095d9d2631d,
-        type: 3}
-      propertyPath: CritterId.m_HashValue
-      value: 2471897816
-      objectReference: {fileID: 0}
-    - target: {fileID: 3764296598843751388, guid: d43f84959769055489a36095d9d2631d,
-        type: 3}
-      propertyPath: m_Radius
-      value: 0.64
-      objectReference: {fileID: 0}
-    - target: {fileID: 3764296600150654372, guid: d43f84959769055489a36095d9d2631d,
-        type: 3}
-      propertyPath: ScanId.m_Hash
-      value: 1563870007
-      objectReference: {fileID: 0}
-    - target: {fileID: 3764296600150654372, guid: d43f84959769055489a36095d9d2631d,
-        type: 3}
-      propertyPath: ScanId.m_Source
-      value: bestiary.iceAlgae
-      objectReference: {fileID: 0}
-    - target: {fileID: 3764296600150654372, guid: d43f84959769055489a36095d9d2631d,
-        type: 3}
-      propertyPath: IconRootOverride
-      value: 
-      objectReference: {fileID: 289879678}
-    - target: {fileID: 3764296600150654372, guid: d43f84959769055489a36095d9d2631d,
-        type: 3}
-      propertyPath: ScanId.m_HashValue
-      value: 1279917767
-      objectReference: {fileID: 0}
-    - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3764296600150654375, guid: d43f84959769055489a36095d9d2631d,
-        type: 3}
-      propertyPath: m_Name
-      value: Taggable
-      objectReference: {fileID: 0}
-    - target: {fileID: 3764296600150654375, guid: d43f84959769055489a36095d9d2631d,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: d43f84959769055489a36095d9d2631d, type: 3}
 --- !u!4 &5663643264488161267
 Transform:
   m_ObjectHideFlags: 0
@@ -32453,17 +32319,3 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7276977806882689777}
   m_Mesh: {fileID: -7854008837328068858, guid: c2bc94b0fefd54840843a2484546609c, type: 3}
---- !u!114 &9107792179129660158
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 462026515472560178}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Recursive: 0
-  DestroyGameObject: 1
