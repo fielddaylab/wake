@@ -25,12 +25,12 @@ namespace Aqua
 
             if (inTickCount > m_Ticks.Length)
             {
-                Log.Error("[TickDisplay] Too many ticks {0} to display with {1} objects", inTickCount, m_Ticks.Length);
+                Log.Warn("[TickDisplay] Too many ticks {0} to display with {1} objects", inTickCount, m_Ticks.Length);
                 inTickCount = m_Ticks.Length;
             }
             if (target > m_Ticks.Length)
             {
-                Log.Error("[TickDisplay] Target value {0} cannot be displayed with {1} objects", target, m_Ticks.Length);
+                Log.Warn("[TickDisplay] Target value {0} cannot be displayed with {1} objects", target, m_Ticks.Length);
                 target = -1;
             }
 

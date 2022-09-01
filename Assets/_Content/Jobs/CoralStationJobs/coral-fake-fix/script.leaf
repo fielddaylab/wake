@@ -66,15 +66,15 @@
 {@player} 	What now, {nameof @guide}?
 {@guide}	You're ready to present your findings! Return to the Serenity Meadows station.
 
-:: helpReturnArgue
-@trigger	RequestPartnerHelp
-@when		JobTaskTop(argue), scene:name != "Helm"
-@cutscene
-{@guide}	Head back to the station so you can report your findings. 
+// :: helpReturnArgue
+// @trigger	RequestPartnerHelp
+// @when		JobTaskTop(argue), scene:name != "Helm"
+// @cutscene
+// {@guide}	Get back to the ship so you can make your case.
 
 :: helpReturnArgue2
 @trigger	RequestPartnerHelp
-@when		JobTaskTop(argue), scene:name == "Helm"
+@when		JobTaskTop(argue)
 @cutscene
 {@guide}	{nameof profCoral} is waiting for your findings about the effectiveness of the coral reef.
 
@@ -104,13 +104,12 @@
 {@player} What should I do now, {nameof @guide}?
 {@guide}    Count how much {nameof StaghornCoral} and {critter-name}artificial reef{/critter-name} can be found at {h}Site S{/h}.
 
-:: catchArgue
-@trigger    RequestPartnerHelp
-@when 		JobTaskActive(argue)
-@boostScore -5
-@cutscene
-{@player} What's next, {nameof @guide}?
-{@guide}    Return to the research station to talk to {nameof profCoral}!
+// :: catchArgue
+// @trigger    RequestPartnerHelp
+// @when 		JobTaskActive(argue)
+// @boostScore -5
+// @cutscene
+// {@guide}    Return to the research station to talk to {nameof profCoral}.
 
 // ARGUMENTATION
 
