@@ -4,9 +4,14 @@
 @trigger    JobStarted
 @cutscene
 
-{@profCoral}	We need to know why the turtles are doing so well here.
-				I need you to scan all the species at Serenity Meadow, 
-				then run some experiments to see what the turtles eat.
+{@profCoral}  Oh, I'm glad you'll be learning more about our turtles! Aren't they wonderful?
+              The ecosystem has been thriving here at Serenity Meadows... especially our turtles.
+              I'd like to find out what's keeping turtles so happy.
+{@player}     Awww. That's so heartwarming, Professor. 
+              Sounds like my mom's dream job. I mean, except with otters and kelp instead of turtles.  
+              What should I do first?
+{@profCoral}  You'll need to scan all the species here at Serenity Meadow.
+              Then run some experiments to see what the turtles eat!
 
 // SCAN ALL
 :: helpLeaveShip
@@ -14,81 +19,88 @@
 @when 		scene:name == "Helm", JobTaskTop(scanAll)
 @cutscene
 {@player}   Where should I go from here?
-{@guide}	Let's exit the ship and head to the sub.
+{@guide}	You will need to head to Site V. 
 
 :: helpGoToSiteR
 @trigger    RequestPartnerHelp
 @when 		scene:name == "CoralStation", !JobTaskCompleted(scanAll)
 @cutscene
-{@player}   Where should we go next?
-{@guide}	Site V should be to the East of the ship, let's head over and dive down!
+{@player}   Where should we go next, {nameof @guide}?
+{@guide}	You need to find Site V, and then dive!
 
 :: helpAtSiteR
 @trigger    RequestPartnerHelp
 @when 		scene:name == "RS-2V"
 @cutscene
-{@player}   What do you think? Have we got everything?
+{@player}   Okay, {nameof @guide}. Is that everything? 
 $if JobTaskCompleted(scanAll)
-	{@guide}   I think so! Head back up to the surface when you're ready to leave.
+	{@guide}  I believe so! Time to head back to the Meredith and find out what the turtles eat. 
 $else
-	{@guide}   Make sure to get all those little things swimming around in the cloudy spots, and the coral too.
+	{@guide}  Hmmm. I believe you've missed something, O.
+              Make sure you've scanned the tiny organisms swimming in the cloudy spots, and the coral, as well.
 $endif
 
 :: navigation.goBackUp
-@trigger    JobTaskCompleted
+@trigger    JobTaskCompleted 
 @when       scene:name == "RS-2V", taskId == "scanAll"
 @once
 @cutscene
-{@guide}    I think that's all the info we need from here for now! Feel free to head back up when you're ready.
+{@player} You know, I can see why {nameof @profCoral} is so obsessed with the turtles. 
+          They're almost as adorable as Ovid!
+{@guide} Ah, yes! Your probably-dead otter friend!
+{@player} Nope, no negativity here, V. It's called Serenity Meadows for a reason. 
+{@guide} Processing... processing...
+{@guide} Ah, yes! Your probably-dead-but-possibly-geriatric otter friend! 
+{@player} Um. Slightly better, I guess.
+          What should we do now, {nameof @guide}?
+{@guide}  You've gathered all the data you need here. It's time to return to the Meredith!
 
 :: navigation.return
 @trigger    SceneStart
 @when       scene:name == "CoralStation", HasEntity(ReefEdge)
 @cutscene
-{@player}   Hmm, do you think we got everything?
-{@guide}   Let me check...
+{@player}   Do you think we have everything, {nameof @guide}?
 $if JobTaskCompleted(scanAll)
-	{@guide}   Yup! That's everything we needed, time to head into the ship.
+	{@guide}   Affirmative, O! Time to head back to the ship. 
 $else
-	{@guide}   Hmm... I think there's more we need to find. Let's head back down.
-	{@guide}   Make sure to get all those little things swimming around in the cloudy spots, and the coral too.
+	{@guide}   Hmm... I believe there's more you need to find. I suggest diving back down. 
+	{@guide}   Make sure to get all the tiny organisms swimming around in the cloudy spots, and the coral, too.
 $endif
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
 @when 		scene:name == "CoralStation", JobTaskCompleted(scanAll)
 @cutscene
-{@player} 	Where should we go from here?
-{@guide}	Let's head back into the ship.
+{@player} 	What now, {nameof @guide}?
+{@guide}	Return to your ship and conduct some experiments! 
 
 :: atShip
 @trigger    SceneStart
 @when       scene:name == "Helm", JobTaskCompleted(scanAll)
 @cutscene
-{@player}   We're back. Now what?
-{@guide}   	Let's head to the {nameof Experimentation} and see what the turtles eat.
-{@player}   On it!
+{@player}   What should I do now, {nameof @guide}?
+{@guide}   	Head to the {nameof Experimentation} and see what the turtles eat!
 
 :: helpBackAtShip
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Helm", JobTaskCompleted(scanAll)
 @cutscene
-{@player} 	We're back at the ship, but what should we be doing now?
-{@guide}	Let's head over to the {nameof Experimentation} and see what the turtles eat.
+{@player} 	Can you remind me where to go, {nameof @guide}?
+{@guide}	Head to {nameof Experimentation} and see what the turtles eat!
 
 :: startExperiment
 @trigger    SceneStart
 @when       scene:name == "ExperimentV2", JobTaskCompleted(scanAll)
 @once
 @cutscene
-{@player}   What kind of experiment should we be doing this time?
-{@guide}  	Let's put the organisms in the tank and see what eats what.
+{@guide} Now you need to determine what the turtles eat.
+         Add the species from Site V to your Observation Tank!
 
 ::helpDoExperiment
 @trigger    RequestPartnerHelp
 @when 		scene:name == "ExperimentV2", JobTaskCompleted(scanAll)
 @cutscene
-{@player} 	What kind of experiment should we be doing this time?
+{@player} 	What kind of experiment do we need, {nameof @guide}?
 $if ExperimentIsRunning(Observation)
     $branch .helpDoExperiment.InExperiment
 $elseif ExperimentViewed(Observation)
@@ -105,68 +117,71 @@ $elseif ExperimentHasCritter(QueenConch)
 $elseif ExperimentHasCritter(WhiteShrimp)
     {@guide}    Is anything interacting with the {pluralnameof WhiteShrimp}?
 $else
-    {@guide}    Is it possible to get any new information from this experiment?
-                Maybe add some of the swimmers, like {pluralnameof WhiteShrimp} or {pluralnameof Copepod}.
+    {@guide}    I'm not sure it's possible to obtain any new information from this experiment. 
+                I suggest adding some of the swimmers, like {pluralnameof WhiteShrimp} or {pluralnameof Copepod}.
 $endif
 
 :: helpDoExperiment.TankView
-{@guide}    We have a few new species - let's see which of them the turtle eats.
+{@guide}    You've scanned some new species. Now you need to see which of them the turtles eat. 
 $if ExperimentHasCritter(Copepod)
-    {@guide}    Well, we've added some {pluralnameof Copepod} - what might it interact with?
+    {@guide}    You have added some {pluralnameof Copepod}! What might it interact with?
 $elseif ExperimentHasCritter(QueenConch)
-    {@guide}    Well, we've added some {pluralnameof QueenConch} - what might it interact with?
+    {@guide}    You have added some {pluralnameof QueenConch}! What might it interact with? 
 $elseif ExperimentHasCritter(WhiteShrimp)
-    {@guide}    Well, we've added some {pluralnameof WhiteShrimp} - what might it interact with?
+    {@guide}    You have added some {pluralnameof WhiteShrimp}! What might it interact with? 
 $else
-    {@guide}    Maybe we should add some {pluralnameof Copepod}?
+    {@guide}    I suggest adding some {pluralnameof Copepod}.
 $endif
 
 :: helpDoExperiment.None
-{@guide}    We have a few new species - let's see which of them the turtle eats.
-            We should be able to run an {h}Observation Tank{/h} experiment for that.
+{@guide}    You've scanned some new species. Now you need to see which of them the turtle eats.
+            Run an {h}Observation Tank{/h} experiment and see what you discover. 
 			
 :: helpReturnExperiment
 @trigger	ExperimentTankExited
 @when		JobTaskTop(behavior)
 @cutscene
-{@guide}	Maybe we should test turtles individually with each species to make sure we got all the eat rules.
+{@player} What should I be doing here, {nameof @guide}?
+{@guide}  Try observing the turtles individually with each species to make sure you've obtained all the eat rules.
 			
 :: completedExperiment
 @trigger    JobTaskCompleted
 @when       scene:name == "ExperimentV2", JobTaskTop(turtleModel)
 @once
 @cutscene
-{@guide}   Nice work! I think we know all the facts about what Turtles eat.
-{@profCoral}	Oh, are you ready to make the model?
-{@profCoral}	Head the {map-name}Modeling Lab{/map-name} to visualize {h}site V{/h}'s food web.
-
+{@guide} Adequate work, O! You've obtained all the facts about what Turtles eat!
+{@guide} Now head to your {map-name}Modeling Lab{/map-name} to visualize {h}Site V{/h}'s food web.
 // TURTLE MODEL
 
 :: helpModeling
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Modeling", JobTaskTop(turtleModel)
 @cutscene
-{@player}   Any idea what to do here?
-{@guide}	When we make a food web, the first step is to import our facts into the model.
+{@player}   What should I do first, {nameof @guide}?
+{@guide}	You will need to import your facts into the model. 
 
 :: modelingStart
 @trigger	VisualModelStarted
 @when		!JobTaskCompleted(turtleModel)
 @cutscene
-{@guide}	So this is the {nameof VisualModel}.
-{@guide}	From here you'll import any new facts you have about the ecosystem.
-{@guide}	If you have all the facts you need, you'll see a button to {h}Import New Facts{/h}
-{@guide}	If you don't see the button, you may need to gather more data!
-{@guide}	You will only be able to {h}Save{/h} a model if your current job requires it and you are working in the correct ecosystem.
-{@guide}	Always double check that you have the right ecosystem pulled up!
+{@guide}	This is the {nameof VisualModel}.
+            If you've gathered all the facts you need, you'll see a button to {h}Import New Facts{/h}
+{@guide}	If you don't see the button, you will need to gather more data.
+{@guide}	You will only be able to {h}Save{/h} a model if your current job requires it and if you have selected the correct ecosystem.
+            Always make sure to double-check that you have the correct ecosystem pulled up! 
 
 :: modelingComplete
 @trigger    JobTasksUpdated
 @when		JobTaskTop(reportBack)
 @once		
 @cutscene
-{@guide}	Huh, turns out turtles eat a lot of things.
-{@guide}	Let's bring our model back to the {map-name}research station{/map-name}.
+{@player} Wow, the turtles have so many food sources at Site V. 
+          It's like an all-you-can-eat buffet out there!
+{@guide} Yes! And so much new data for me to consume!
+          Apologies, O... you must be hungry too.
+          Perhaps some of your mother's protein-flax-kelp bars?
+{@player}  I'm not <i>that</i> hungry, V. 
+           Come on. Let's report back to {nameof @profCoral}!
 
 // report back
 				
@@ -175,8 +190,8 @@ $endif
 @when 		HasFact(ReefEdge.Model.TurtleVisual)
 @boostScore 1
 @cutscene
-{@player} 	What should we be doing now?
-{@guide}	That should be everything we need for now. Let's report back to {nameof @profCoral}.
+{@player} 	What should I do now, {nameof @guide}?
+{@guide}	Report back to {nameof @profCoral}!
 
 // CATCH-ALL GUIDE TEXT
 
@@ -185,6 +200,7 @@ $endif
 @when 		JobTaskActive(scanAll)
 @boostScore -5
 @cutscene
+{@player} What now, {nameof @guide}?
 {@guide}    Head to Site V and scan the species there.
 
 :: catchBehavior
@@ -192,6 +208,7 @@ $endif
 @when 		JobTaskActive(behavior)
 @boostScore -5
 @cutscene
+{@player} What should I do next, {nameof @guide}?
 {@guide}    Use the Observation Tank to find what the turtles eat.
 
 :: catchTurtleModel
@@ -199,14 +216,16 @@ $endif
 @when 		JobTaskActive(turtleModel)
 @boostScore -5
 @cutscene
-{@guide}    Head to the Modeling lab and make a Visual Model.
+{@player} Okay, V, what's next? 
+{@guide}    Head to the Modeling lab and create a Visual Model.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Take your Visual Model to {nameof profCoral}.
+{@player} We're done here, right, {nameof @guide}?
+{@guide}   Affirmative, O. Bring your Visual Model to {nameof profCoral}!
 
 // ARGUMENTATION
 
@@ -216,10 +235,11 @@ $endif
 @when   !ArgueIsComplete(turtleStabilityArgue)
 @cutscene
 $call ArgueLoad(turtleStabilityArgue)
-{@profCoral} So, why are the turtles so well-fed here?
+{@profCoral} Wonderful, thank you, Ollie!
+             Can you tell me how the turtles are staying so happy and well-fed?
 $choice .argue.coralMultipleFood; There are multiple food sources for the turtles.
+$choice .argue.giveUp; Can I get back to you on that?
 $choose branch
-
 
 ::argue.coralMultipleFood
 $if ArgueSetClaim(turtleStabilityArgueClaim, jobs.coral-turtle-stability.argue.claimLabel)
@@ -227,14 +247,12 @@ $if ArgueSetClaim(turtleStabilityArgueClaim, jobs.coral-turtle-stability.argue.c
 $endif
 $call ArgueDisplayClaim()
 $if ArgueIsFactSubmitted(ReefEdge.Model.TurtleVisual)
-	$goto .argue.done
+	$goto .argue.turtleModel
 $else
-	{@profCoral}	That would make sense that a buffet is a big draw.
-					What species are being consumed by turtles?
-					Do you have a model of those connections?
+	{@profCoral}  Oh. that's fascinating! No wonder the turtles are so happy.
+                  Which species do the turtles eat? Did you create a visual model? 
 	$goto .argue.chooseFacts
 $endif
-`
 
 :: argue.chooseFacts
 $if ArgueAllFactsCorrect()
@@ -243,21 +261,26 @@ $else
     $choice #argueFact; Present facts from AQOS
 		$answer ReefEdge.Model.TurtleVisual, .argue.turtleModel
         $answer *, .argue.unrelated
-    $choice .argue.giveUp; Let me get back to you
+    $choice .argue.giveUp; Can I get back to you on that?
 $endif
-
-:: argue.turtleModel
-$call ArgueComplete()
-{@profCoral}	Thank you! Eventually we may need more information to complete this food web.
-$call CompleteJob()
 
 :: argue.unrelated
 $call ArgueRejectIncorrect()
-{@profCoral}  Ok, that's interesting, but it's not answering my question.
-                Do you have a model of the food web which shows what species turtles are consuming?
+{@profCoral}  Hmmm. That's interesting, but not relevant. 
+              Do you have a food web model that shows which species the turtles are consuming?
 $goto .argue.chooseFacts
 
 :: argue.giveUp
-{@profCoral} OK. Get back to me when you're ready.
+$if ArgueHideClaim()
+$endif
+{@profCoral}    No hurry, Ollie... these things take time. Just let me know when you're ready. 
 
-
+:: argue.turtleModel
+$call ArgueComplete()
+{@profCoral}  Perfect. Thank you, Ollie.
+{@player}     ....
+{@player}    Um... Professor? 
+{@profCoral}  Oh, you're still here!
+              Sorry if I was distracted. I was just thinking about how great turtles are.
+              I'd love to work with you again. Let me know if you'd like to learn more about our wonderful turtles!
+$call CompleteJob()

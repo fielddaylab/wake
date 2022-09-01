@@ -1,6 +1,9 @@
 # Aqualab
 Aqualab is an NSF Funded (DRL #1907384) science practices and life science content learning game produced by Field Day @ University of Wisconsin - Madison, Harvard University and University of Pennslvania.
 
+## Debugging Tools
+[Job Pricing / Sequence Explorer](https://beauprime.github.io/ProgressionGraph/)
+
 ## Firebase Telemetry Events
 
 Firebase automatically adds the following parameters to all events, documented [here](https://support.google.com/firebase/answer/7061705?hl=en). Event data is then dumped to BigQuery daily - the BigQuery schema can be found [here](https://support.google.com/firebase/answer/7029846?hl=en&ref_topic=7029512).
