@@ -32,14 +32,6 @@ $endif
 @cutscene
 {@player}   What should I be doing, {nameof @guide}?
 {@guide}	Head to Site V and scan anything that the Loggerhead Turtle might eat.
-
-:: navigation
-@trigger    SceneStart
-@when       scene:name == "CoralStation"
-@once
-@cutscene
-{@player} What should I do now, {nameof @guide}?
-{@guide} Let's head to Site V and scan anything that the Loggerhead Turtle might eat.
 					
 :: helpGoToSiteV
 @trigger    RequestPartnerHelp
