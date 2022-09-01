@@ -238,8 +238,8 @@ $call ArgueLoad(turtleStabilityArgue)
 {@profCoral} Wonderful, thank you, Ollie!
              Can you tell me how the turtles are staying so happy and well-fed?
 $choice .argue.coralMultipleFood; There are multiple food sources for the turtles.
+$choice .argue.giveUp; Can I get back to you on that?
 $choose branch
-
 
 ::argue.coralMultipleFood
 $if ArgueSetClaim(turtleStabilityArgueClaim, jobs.coral-turtle-stability.argue.claimLabel)
@@ -247,13 +247,12 @@ $if ArgueSetClaim(turtleStabilityArgueClaim, jobs.coral-turtle-stability.argue.c
 $endif
 $call ArgueDisplayClaim()
 $if ArgueIsFactSubmitted(ReefEdge.Model.TurtleVisual)
-	$goto .argue.done
+	$goto .argue.turtleModel
 $else
 	{@profCoral}  Oh. that's fascinating! No wonder the turtles are so happy.
                   Which species do the turtles eat? Did you create a visual model? 
 	$goto .argue.chooseFacts
 $endif
-`
 
 :: argue.chooseFacts
 $if ArgueAllFactsCorrect()
@@ -262,18 +261,8 @@ $else
     $choice #argueFact; Present facts from AQOS
 		$answer ReefEdge.Model.TurtleVisual, .argue.turtleModel
         $answer *, .argue.unrelated
-    $choice .argue.giveUp; Let me get back to you
+    $choice .argue.giveUp; Can I get back to you on that?
 $endif
-
-:: argue.turtleModel
-$call ArgueComplete()
-{@profCoral}  Perfect. Thank you, Ollie.
-{@player}     ....
-{@player}    Um... Professor? 
-{@profCoral}  Oh, you're still here!
-              Sorry if I was distracted. I was just thinking about how great turtles are.
-              I'd love to work with you again, Ollie. Let me know if you'd like to learn more about our wonderful turtles!
-$call CompleteJob()
 
 :: argue.unrelated
 $call ArgueRejectIncorrect()
@@ -282,6 +271,14 @@ $call ArgueRejectIncorrect()
 $goto .argue.chooseFacts
 
 :: argue.giveUp
-{@profCoral} Of course, Ollie. No hurry. 
+$if ArgueHideClaim()
+$endif
+{@profCoral}    No can do.
+{@player}   ...
+{@profCoral}    Ha ha, just kidding.
+            Get back to me when you're ready.
 
-
+:: argue.turtleModel
+$call ArgueComplete()
+{@profCoral}	Thank you! Eventually we may need more information to complete this food web.
+$call CompleteJob()
