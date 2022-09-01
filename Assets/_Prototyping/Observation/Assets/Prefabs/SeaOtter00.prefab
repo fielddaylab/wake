@@ -658,7 +658,7 @@ GameObject:
   m_Component:
   - component: {fileID: 419180000054039361}
   - component: {fileID: 4659973492489693215}
-  - component: {fileID: 8053511933298970998}
+  - component: {fileID: 412171438964261977}
   m_Layer: 0
   m_Name: SeaOtter
   m_TagString: Untagged
@@ -701,7 +701,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &8053511933298970998
+--- !u!114 &412171438964261977
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -710,12 +710,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 3713886558369980754}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe5430d5ba33440b9beec0906cb760f2, type: 3}
+  m_Script: {fileID: 11500000, guid: 563f4bbdbd73243cc9ac764fc0f2155a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startDelay: 0
-  idleRepeat: 1
+  delayMin: 5
+  delayMax: 10
   animator: {fileID: 4659973492489693215}
+  idleExitParam: swimAway
+  cycleOffsetParam: cycleOffset
+  speedParam: speed
+  speedMax: 1.2
+  speedMin: 0.8
 --- !u!1 &4017353050799416552
 GameObject:
   m_ObjectHideFlags: 0
