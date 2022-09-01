@@ -18,11 +18,12 @@ public class GuideCursorFollow : WorldInput
     [NonSerialized] private Vector2 m_SpriteOffset;
     [NonSerialized] private Vector3? m_LookAtTarget;
     [NonSerialized] private Plane m_LookPlane;
+    [SerializeField] private float m_PlaneOffset = 15f;
 
     void Start() {
         m_SpriteMaterial = sprite.sharedMaterial;
         m_SpriteMaterial.SetVector("_spriteOffset", m_SpriteOffset);
-        m_LookPlane = new Plane(Vector3.back, v1ctorHead.position + Vector3.back * 15);
+        m_LookPlane = new Plane(Vector3.back, v1ctorHead.position + Vector3.back * m_PlaneOffset);
 
         Device.OnUpdate += UpdateInput;
     }
