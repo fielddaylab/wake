@@ -79,15 +79,24 @@ $endif
 
 // ARGUMENTATION
 
-::argue.intro
+:: argue.intro
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(siteOModel)
 @cutscene
+@boostScore 100
+@once
 $call ArgueLoad(siteOModel)
 {@profBayou} Back already, Ollie? I'm impressed.
-             So what can you tell me? Are the turtles at Site O in danger?
+$goto .argue.showMe
+
+:: argue.showMe //WhatUGot
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(siteOModel)
+@cutscene
+{@profBayou} What did you observe in {h}Site O{/h}? Are the {pluralnameof LoggerheadTurtle} in danger?
 $choice .argue.turtleSafe; The turtles should be safe from predators.
 $choice .argue.turtleNotSafe; The turtles might not be safe from predators.
+$choice .argue.giveUp; I might need some more time...
 $choose branch
 
 :: argue.turtleSafe
