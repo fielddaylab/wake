@@ -4,8 +4,17 @@
 @trigger    JobStarted
 @cutscene
 
-{@guide}	Okay -- to prove that the {critter-name}artificial reefs{/critter-name} are working, you would need evidence that they're still there,
-			and that the population of {nameof StaghornCoral} has increased. For both things the first step is to go down to {h}Site S{/h}.
+{@profCoral} The site that we call Restoration Reef has been struggling.
+			 A while back, I had my team add an Artifical Reef. 
+			 We hoped it might boost the Staghorn Coral population.
+{@player}	Is it working?
+{@profCoral} I was hoping you'd find that out for us, Ollie.
+		     We need to know if the {critter-name}artificial reefs{/critter-name} is still there...
+			 And if the population of {nameof StaghornCoral} has increased.
+{@player}    Copy that.
+{@profCoral}  Oh, and Ollie... look out for spears out there.
+{@player}	Um... excuse me? {i}Spears??{i/}
+{@profCoral} Good luck! Now if you'll excuse me, the turtles in my lab need their mid-morning shrimp cakes... 
 
 // SCANNING
 
@@ -14,51 +23,60 @@
 @when       scene:name == "RS-2S"
 @once
 @cutscene
-{@guide} 	We have three things to do while we're down here. Check the job description to see what they are.
-			Let's get to it!
+{@player} Oh no. {nameof @guide}, look at this place.
+		  {nameof @profCoral} was right, there are spears everywhere. No wonder the coral is struggling!
+{@guide}	Ah. Do humans typically spear-fish for Staghorn Coral?
+{@player}	Um... well, no. But a bunch of spears everywhere can't be a good thing, right?
+			We need to talk to the Professor about this... but I guess I better finish the job first. 
+{@guide} Affirmative, O. Check your AQOS to see your current tasks!
 
 :: helpEnterSite
 @trigger	RequestPartnerHelp
 @when		!HasEntity(ArtificialReef), !JobTaskTop(argue), scene:name != "RS-2S"
 @cutscene
+{@player} What now, {nameof @guide}?
 {@guide}	Go to {h}Site S{/h} to scan the {critter-name}artificial reef{/critter-name} and find the current and historical coral population.
 
 :: helpScanPop
 @trigger	RequestPartnerHelp
 @when		scene:name == "RS-2S", !JobTaskCompleted(scanProbes)
 @cutscene
-{@guide}	There's another thing to do before we surface: collect the population probe data.
+{@guide}	You still need to collect the historical data for the Coral. See if you can find the population probe!
 
 :: helpCount
 @trigger	RequestPartnerHelp
 @when		scene:name == "RS-2S", !JobTaskCompleted(countPopulation)
 @cutscene
-{@guide}	There's another thing to do before we surface: count the {nameof StaghornCoral} and {critter-name}artificial reefs{/critter-name} using your Counting tool.
+{@player} What am I missing, {nameof @guide}?
+{@guide}	You still need to count the {nameof StaghornCoral} and {critter-name}artificial reefs{/critter-name} using your Counting tool.
 
 :: siteCompleted
 @trigger	JobTasksUpdated
 @when		scene:name == "RS-2S", JobTaskTop(argue)
 @once
 @cutscene
-{@guide}	All right! You've got enough data here to make an argument about the effectiveness of the artificial reef.
+{@guide} Acceptable work, O!
+		 You've gathered enough data to report back to {nameof @profCoral}.
+{@player}  Good. All these spears and dead fish are creeping me out. 
 
 :: helpSurface
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(argue), scene:name == "RS-2S"
 @cutscene
-{@guide}	You're ready to present your findings. Let's return to the research station where we got this job.
+{@player} 	What now, {nameof @guide}?
+{@guide}	You're ready to present your findings! Return to the Serenity Meadows station.
 
 :: helpReturnArgue
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(argue), scene:name != "Helm"
 @cutscene
-{@guide}	Get back to the ship so you can make your case.
+{@guide}	Head back to the station so you can report your findings. 
 
 :: helpReturnArgue2
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(argue), scene:name == "Helm"
 @cutscene
-{@guide}	{nameof profCoral} is waiting to hear your findings about the effectiveness of the coral reef.
+{@guide}	{nameof profCoral} is waiting for your findings about the effectiveness of the coral reef.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -67,6 +85,7 @@
 @when 		JobTaskActive(findReef)
 @boostScore -5
 @cutscene
+{@player} What now, {nameof @guide}?
 {@guide}    Look for an {critter-name}artificial reef{/critter-name} at {h}Site S{/h}.
 
 :: catchScanProbes
@@ -74,21 +93,24 @@
 @when 		JobTaskActive(scanProbes)
 @boostScore -5
 @cutscene
-{@guide}    There should be a population probe at {h}Site S{/h}. We need to collect data from it.
+{@player} What should I do now, {nameof @guide}?
+{@guide}    There should be a population probe at {h}Site S{/h}. You will need to collect its data.
 
 :: catchCountPopulations
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(countPopulations)
 @boostScore -5
 @cutscene
-{@guide}    Count how much {nameof StaghornCoral} and {critter-name}artificial reef{/critter-name} is at {h}Site S{/h}.
+{@player} What should I do now, {nameof @guide}?
+{@guide}    Count how much {nameof StaghornCoral} and {critter-name}artificial reef{/critter-name} can be found at {h}Site S{/h}.
 
 :: catchArgue
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(argue)
 @boostScore -5
 @cutscene
-{@guide}    Return to the research station to talk to {nameof profCoral}.
+{@player} What's next, {nameof @guide}?
+{@guide}    Return to the research station to talk to {nameof profCoral}!
 
 // ARGUMENTATION
 
@@ -100,10 +122,15 @@ $branch .argue.chooseClaim
 
 :: argue.chooseClaim
 $call ArgueCancelClaim()
-{@profCoral}	Have the artificial reefs increased coral populations?
-	$choice .argue.claimNoHelp; No, the artificial reefs have not helped.
+{@profCoral} Okay, then. What did you find at the reef?
+{@player} Ugh, it was muy loco, Professor. Spears everywhere, and tons of dead, creepy-looking fish!
+	      We need to do something, report this to someone, before they wreck the whole reef——
+{@profCoral} Just a moment, Ollie. I'd like to talk about your current job.
+{@player} But... 
+{@profCoral} Have the artificial reefs increased coral populations?
+	$choice .argue.claimNoHelp; No, the artificial reefs haven't helped.
 	$choice .argue.claimHelp; Yes, the artificial reefs helped!
-	$choice .argue.giveUp; Let me check my notes and get back to you
+	$choice .argue.giveUp; Let me check my notes and get back to you. 
 $choose branch	
 
 // BRANCH: NO HELP
@@ -126,27 +153,35 @@ $choice .argue.giveUp; Let me get back to you
 
 :: argue.correctFactsAB
 $call ArgueComplete()
-{@profCoral}	I see. The artificial reefs really have no effect.
+{@profCoral} Hmmm. So it seems the artifical reef hasn't helped.
+{@player} That's because there's something else going on out there, Professor!
+		  What's the deal with all those spears?
+{@profCoral}   Lionfish hunting is common here, Ollie. They're considered a delicacy. 
+{@player}	Wait... those creepy dead fish were lionfish?? 
+{@profCoral} Yes. If you're interested, I'll be looking into the impact of the lionfish soon...
+			 Sofia is refusing to fix my engine until I investigate her conspiracy th——ahem, I mean, her theory. 
+			 In the meantime, great work out there, Ollie. 
+
 $call CompleteJob()
 
 :: argue.incorrectFacts
 $if ArgueIsFactSubmitted(LionfishInvasion.PopulationHistory.StaghornCoral)
 	// B only
-	{@profCoral}	The coral seem to be continuing to stay the same.
-					Was the installation successful? Are the artificial reefs still there?
+	{@profCoral}	Hmmm. The coral population hasn't seemed to improve. 
+					Was our installation successful? Are the artificial reefs still there?
 	$call ArgueClearFacts()
 	$call ArgueSubmitFact(LionfishInvasion.PopulationHistory.StaghornCoral)
 	$goto .argue.chooseFactsNoHelp
 $else
 	$if ArgueIsFactSubmitted(LionfishInvasion.Population.ArtificialReef)
 		// A only 
-		{@profCoral}	I see the installation was successful. How are the coral affected?
+		{@profCoral}	I see. So our installation was successful. And what did you discover about the coral population?
 		$call ArgueClearFacts()
 		$call ArgueSubmitFact(LionfishInvasion.Population.ArtificialReef)
 		$goto .argue.chooseFactsNoHelp
 	$else
 		// neither
-		{@profCoral}	I don't think that is important for answering this question.
+		{@profCoral}	That doesn't really help us, Ollie. 
 		$call ArgueRejectIncorrect()
 		$call ArgueClearFacts()
         $goto .argue.chooseFactsNoHelp
@@ -155,7 +190,7 @@ $else
 $endif
 
 :: argue.giveUp
-{@profCoral}	OK. Get back to me when you're ready.
+{@profCoral}	No hurry, Ollie. Get back to me when you're ready. 
 
 // BRANCH: HELP
 
@@ -172,7 +207,8 @@ $choice #argueFactSet; Present facts from AQOS
 $choice .argue.giveUp; Let me get back to you
 
 :: argue.correctFactsIncorrect
-{@profCoral}	This shows the coral populations staying the same. I think you should reconsider your claim.
+{@profCoral}	This doesn't seem right, Ollie.
+			    Can you reconsider your claim?
 $call ArgueRejectIncorrect()
 $call ArgueClearFacts()
 $call ArgueHideClaim()
@@ -187,9 +223,10 @@ $if ArgueIsFactSubmitted(LionfishInvasion.PopulationHistory.ArtificialReef)
 $else
     $call ArgueRejectIncorrect()
     $call ArgueClearFacts()
-    {@profCoral}	Hmmm... That's not the fact I was looking for, Are you reconsidering your claim?
-        $choice #argue.argue.chooseClaim; Let me amend my claim
-        $choice .argue.giveUp; Let me get back to you
+    {@profCoral}	Hmmm... That's not the fact we need, Ollie. 
+				    Would you like to amend your claim? 
+        $choice #argue.argue.chooseClaim; Yeah, I'll give it another try. 
+        $choice .argue.giveUp; Let me get back to you.
         $choose branch
 $endif
 
