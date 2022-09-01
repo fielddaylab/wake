@@ -13,7 +13,7 @@
 			 And if the population of {nameof StaghornCoral} has increased.
 {@player}    Copy that.
 {@profCoral}  Oh, and Ollie... look out for spears out there.
-{@player}	Um... excuse me? {i}Spears??{i/}
+{@player}	Um... excuse me? <i>Spears??<i/>
 {@profCoral} Good luck! Now if you'll excuse me, the turtles in my lab need their mid-morning shrimp cakes... 
 
 // SCANNING
@@ -224,9 +224,7 @@ $else
     $call ArgueClearFacts()
     {@profCoral}	Hmmm... That's not the fact we need, Ollie. 
 				    Would you like to amend your claim? 
-        $choice #argue.argue.chooseClaim; Yeah, I'll give it another try. 
+        $choice .argue.chooseClaim; Yeah, I'll give it another try. 
         $choice .argue.giveUp; Let me get back to you.
         $choose branch
 $endif
-
-$goto .argue.chooseClaim
