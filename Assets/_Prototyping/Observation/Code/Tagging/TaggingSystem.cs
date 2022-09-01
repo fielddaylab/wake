@@ -265,7 +265,7 @@ namespace ProtoAqua.Observation {
             effect.Transform.SetScale(0, Axis.XY);
             effect.Animation = Routine.Start(effect, PlayEffect(effect));
 
-            Services.Audio.PostEvent("dive.critterTagged");
+            Services.Audio.PostEvent("ROV.Tagger.Tagged");
 
             int idx = IndexOf(inCritter.CritterId);
             TaggingManifest manifest = m_SceneManifest[idx];

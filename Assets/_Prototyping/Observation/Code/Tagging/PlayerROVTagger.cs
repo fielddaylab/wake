@@ -6,6 +6,7 @@ using System.Collections;
 using Aqua;
 using Aqua.Entity;
 using Aqua.Character;
+using AquaAudio;
 
 namespace ProtoAqua.Observation
 {
@@ -27,6 +28,7 @@ namespace ProtoAqua.Observation
         [NonSerialized] private float m_CurrentRange;
         [NonSerialized] private Routine m_EnableRoutine;
         [NonSerialized] private TaggingSystem m_System;
+        [NonSerialized] private AudioHandle m_Loop;
 
         #region Unity Events
 
@@ -55,6 +57,8 @@ namespace ProtoAqua.Observation
             m_EnableRoutine.Replace(this, TurnOnAnim());
             Services.UI.FindPanel<TaggingUI>().Show();
             Visual2DSystem.Activate(GameLayers.CritterTag_Mask);
+
+            m_Loop = Services.Audio.PostEvent("ROV.Tagger.Enabled");
         }
 
         public void Disable()
@@ -66,6 +70,14 @@ namespace ProtoAqua.Observation
             m_EnableRoutine.Replace(this, TurnOffAnim());
             Services.UI?.FindPanel<TaggingUI>()?.Hide();
             Visual2DSystem.Deactivate(GameLayers.CritterTag_Mask);
+
+            if (!Services.Valid) {
+                return;
+            }
+
+            m_Loop.Stop(1f);
+            m_Loop.OverrideLoop(false);
+            m_Loop = default;
         }
 
         public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody)
@@ -128,12 +140,12 @@ namespace ProtoAqua.Observation
 
         private IEnumerator TurnOnAnim()
         {
-            yield return Tween.Float(m_CurrentRange, m_MaxRange, SetRange, 0.25f).Ease(Curve.CubeOut);
+            return Tween.Float(m_CurrentRange, m_MaxRange, SetRange, 0.25f).Ease(Curve.CubeOut);
         }
 
         private IEnumerator TurnOffAnim()
         {
-            yield return Tween.Float(m_CurrentRange, 0, SetRange, 0.1f).Ease(Curve.CubeOut);
+            return Tween.Float(m_CurrentRange, 0, SetRange, 0.1f).Ease(Curve.CubeOut);
         }
 
         private void SetRange(float inRange)
