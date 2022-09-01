@@ -14,8 +14,14 @@
 {@player}   I... I don't know. 
             But there's life down there, under the ice. You have to believe me!
 {@profArctic} I do believe you, Ollie. That's why I was hoping you'd check it out for me.
-             Sounds like the current swept you through, so you'll need an upgraded engine.
-              And Ollie... be careful. It's not unusual for newcomers to get a little overwhelmed out here.
+$if !HasUpgrade("Engine")
+    {@profArctic} Sounds like the current swept you through, so you'll need an upgraded engine.
+    {@profArctic} And Ollie... be careful. It's not unusual for newcomers to get a little overwhelmed out here.   
+$else
+    {@profArctic} There are some strong currents down there, so make sure to be careful down there.
+    {@profArctic} It's not unusual for newcomers to get a little overwhelmed out here.   
+$endif
+     
 {@player}   Got it. Thanks, {nameof profArctic}.
 
 :: getTheEngine
