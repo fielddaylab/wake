@@ -47,7 +47,12 @@ $endif
 @trigger    RequestPartnerHelp
 @when       JobTaskTop(scanAll) // BRANCH A
 @cutscene
-{@guide} 	Go to {h}Site S{/h} and scan all species.
+
+$if scene:name != "RS-2S"
+    {@guide} 	Go to {h}Site S{/h} and scan all species.
+$else
+    {@guide} 	It seems as though we still need to scan more species here.
+$endif
 
 // EXPERIMENT
 	
@@ -220,7 +225,7 @@ $else
 		{@profCoral}	I don't think that is important for answering this question.
 		$call ArgueRejectIncorrect()
 		$call ArgueClearFacts()
-		$call ArgueHideClaim()
+        $goto .chooseFactsSparseFish
 	$endif
 $endif
 
