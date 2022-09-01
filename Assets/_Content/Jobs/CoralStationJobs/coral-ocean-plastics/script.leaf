@@ -111,8 +111,10 @@ $set    	jobs:coral-turtle-population.seen.bottom = true
 $call ArgueLoad(oceanPlasticArgue)
 {@profCoral} Okay, O. Let's get to the bottom of this, and quickly.
              How would plastic affect Serenity Meadows? 
-$choice .argue.turtles; The plastic will only affect the turtles. 
-$choice .argue.all; The plastic could affect all species. 
+$goto .argue.firstClaim
+
+::argue.firstClaim
+$choice .argue.turtles; I've found a cirtter here that interacts with the plastic.
 //$choice .argue.queen; The conch will be impacted.
 //$choice .argue.staghorn; The coral will be impacted.
 $choice .argue.nan; The plastic won't affect anything. 
@@ -123,68 +125,23 @@ $choose branch
 $if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimLabel1)
     $call ArgueFactSlot(LoggerheadTurtle.Eats.PlasticBag)
 $endif
-{@profCoral}  Oh no.... the poor turtles. This is awful! 
+{@profCoral}  Oh no.... This is awful! 
               Do you have evidence to support your claim, Ollie? 
 $goto .argue.chooseFacts
-
-::argue.all
-$if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimLabel4)
-    $call ArgueFactSlot(ReefEdge.Model.PlasticsVisual)
-$endif
-{@profCoral} Oh dear. I was afraid of this--everything here is so connected.
-             Do you have evidence to support your claim? 
-$goto .argue.chooseFacts
-
-::argue.queen
-$if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimLabel3)
-    $call ArgueFactSlot(LoggerheadTurtle.Eats.PlasticBag)
-$endif
-{@profCoral} Oh no. That doesn't sound good.
-            Do you have evidence to support your claim? 	
-$goto .argue.chooseFactsDummy
 
 ::argue.nan
 {@profCoral} Hmmm. That doesn't sound right, Ollie. 
              We've never noticed plastic here at Serenity Meadows, but I've see the harm it's done to other ecosystems. 
              Can you double-check your observations? 
-
-::argue.staghorn
-$if ArgueSetClaim(oceanPlasticClaim, jobs.coral-ocean-plastic.argue.claimLabel2)
-		$call ArgueFactSlot(QueenConch.Light.Stressed)
-$endif
-{@profCoral}  Oh no. That doesn't sound good. 
-              Do you have evidence to support your claim? 
-$goto .argue.chooseFactsDummy
+$goto .argue.firstClaim
 
 ::argue.chooseFacts
 $call ArgueDisplayClaim()
 $choice #argueFact; Present facts from AQOS
-    $answer ReefEdge.Model.PlasticsVisual, .argue.done
     $answer LoggerheadTurtle.Eats.PlasticBag, .argue.done2
     $answer *, .argue.unrelated
 $choice .argue.giveUp; Let me get back to you
 $choose branch
-
-::argue.chooseFactsDummy
-$call ArgueDisplayClaim()
-$choice #argueFact; Present facts from AQOS
-    $answer *, .argue.unrelated
-$choice .argue.giveUp; Let me get back to you
-$choose branch
-
-::argue.done
-$call ArgueComplete()
-{@profCoral}  Well done, Ollie. Unfortunately, this all makes sense.
-              Our poor turtles will eat the plastic... and all the other species will get thrown out of balance.
-              It's a mess. A travesty
-{@player}   I'm so sorry, Professor.
-{@profCoral} Don't worry. We aren't going to take this lying down.
-{@profCoral} We need to do something to get rid of this plastic, as soon as possible.
-             For the turtles!!
-             ....And, um, for the other species too, of course. 
-{@player}    Ha. No judgment here, Professor. 
-
-$call CompleteJob()
 
 ::argue.done2
 $call ArgueComplete()
@@ -200,10 +157,8 @@ $call CompleteJob()
 $call ArgueRejectIncorrect()
 {@profCoral} Hmmm. I'm not seeing a clear relationship between that species and the plastic. 
              Can you double-check your observations? 
-$call ArgueCancelClaim()
+$goto .argue.chooseFacts
 
 :: argue.giveUp
 {@profCoral} Very well, Ollie. Let me know when you're ready. 
 $call ArgueCancelClaim()
-
-::end
