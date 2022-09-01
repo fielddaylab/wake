@@ -174,6 +174,7 @@ namespace Aqua.Modeling
             if (bLogging) {
                 Report(buffer, "Initial environment conditions: {0}", buffer.Water.ToString());
             }
+            Report(buffer, "\n");
 
             // light reductions
             for(int i = 0; i < profile.ActorCount; i++) {
@@ -185,6 +186,7 @@ namespace Aqua.Modeling
                     Report(buffer, "{0} reduced light by {1}", actorInfo->Id.ToDebugString(), lightReduced);
                 }
             }
+            Report(buffer, "\n");
             
             // water stress eval
             for(int i = 0; i < profile.ActorCount; i++) {
@@ -217,6 +219,7 @@ namespace Aqua.Modeling
                     Report(buffer, "{0} parasited {1} {2}", profile.Actors[parasite.Index].Id.ToDebugString(), newAffected, profile.Actors[parasite.Target].Id.ToDebugString());
                 }
             }
+            Report(buffer, "\n");
 
             // report final states
             if (bLogging) {
@@ -225,6 +228,7 @@ namespace Aqua.Modeling
                     Report(buffer, "{0} population: {1} alive, {2} stressed", actorInfo->Id.ToDebugString(), buffer.Populations[i].Alive, buffer.Populations[i].Stressed);
                 }
             }
+            Report(buffer, "\n");
 
             // produce (environment)
             buffer.Water.Oxygen += profile.OxygenPerTick;
@@ -243,6 +247,7 @@ namespace Aqua.Modeling
                     Report(buffer, "{0} produced {1} oxygen and {2} carbon dioxide", actorInfo->Id.ToDebugString(), alive.Oxygen + stress.Oxygen, alive.CarbonDioxide + stress.CarbonDioxide);
                 }
             }
+            Report(buffer, "\n");
 
             // consume (actor)
             for(int i = 0; i < profile.ActorCount; i++) {
@@ -255,6 +260,7 @@ namespace Aqua.Modeling
                     Report(buffer, "{0} consumed {1} oxygen and {2} carbon dioxide", actorInfo->Id.ToDebugString(), alive.Oxygen + stress.Oxygen, alive.CarbonDioxide + stress.CarbonDioxide);
                 }
             }
+            Report(buffer, "\n");
 
             // carbon dioxide / ph exchange
             float phAdjust;
@@ -266,6 +272,7 @@ namespace Aqua.Modeling
             if (bLogging) {
                 Report(buffer, "Current environment conditions: {0}", buffer.Water.ToString());
             }
+            Report(buffer, "\n");
 
             // stress eval (the second) + hunger values
             for(int i = 0; i < profile.ActorCount; i++) {
@@ -289,6 +296,7 @@ namespace Aqua.Modeling
                     buffer.Hungers[i].Stressed = 0;
                 }
             }
+            Report(buffer, "\n");
 
             // eating
             for(int i = 0; i < profile.ActorCount; i++) {
@@ -367,6 +375,7 @@ namespace Aqua.Modeling
                     }
                 }
             }
+            Report(buffer, "\n");
 
             // death
             uint detritusProduced = 0;
@@ -394,6 +403,7 @@ namespace Aqua.Modeling
                     Report(buffer, "{0} of {1} died ({2} requested starvation)", totalDeath, actorInfo->Id.ToDebugString(), starve.Total());
                 }
             }
+            Report(buffer, "\n");
 
             // add to detritus population, if it's being tracked
             if (profile.DetritusIndex >= 0 && detritusProduced > 0) {
@@ -417,6 +427,7 @@ namespace Aqua.Modeling
                     Report(buffer, "{0} grew population by {1}", actorInfo->Id.ToDebugString(), growth);
                 }
             }
+            Report(buffer, "\n");
 
             if (bLogging) {
                 for(int i = 0; i < profile.ActorCount; i++) {
@@ -426,6 +437,7 @@ namespace Aqua.Modeling
 
                 Report(buffer, "--- Tick {0} finished!", inTimestamp);
             }
+            Report(buffer, "\n");
 
             return Export(buffer, profile);
         }
