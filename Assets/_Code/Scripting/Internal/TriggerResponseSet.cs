@@ -84,7 +84,7 @@ namespace Aqua.Scripting {
                 }
 
                 // not the right target
-                if (!inTarget.IsEmpty && inTarget != node.TargetId())
+                if ((node.Flags() & ScriptNodeFlags.AnyTarget) == 0 && !inTarget.IsEmpty && inTarget != node.TargetId())
                 {
                     DebugService.Log(LogMask.Scripting, "...node has mismatched target (desired '{0}', node '{1}')", inTarget, node.TargetId());
                     continue;

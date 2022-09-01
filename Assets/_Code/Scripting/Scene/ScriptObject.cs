@@ -195,6 +195,7 @@ namespace Aqua
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("objectId", inObject.m_Id.Hash());
+                table.Set("objectGroupId", ScriptGroupId.GetGroup(inObject));
                 return Services.Script.TriggerResponse(GameTriggers.InspectObject, null, inObject, table);
             }
         }
@@ -205,6 +206,7 @@ namespace Aqua
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("objectId", inObject.m_Id.Hash());
+                table.Set("objectGroupId", ScriptGroupId.GetGroup(inObject));
                 return Services.Script.TriggerResponse(GameTriggers.Talk, inCharacterId, inObject, table);
             }
         }
@@ -215,6 +217,7 @@ namespace Aqua
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("objectId", inObject.m_Id.Hash());
+                table.Set("objectGroupId", ScriptGroupId.GetGroup(inObject));
                 table.Set("locked", inbLocked);
                 table.Set("target", inTarget);
                 return Services.Script.TriggerResponse(GameTriggers.InteractObject, null, inObject, table);

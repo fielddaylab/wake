@@ -185,6 +185,7 @@ GameObject:
   - component: {fileID: 3614983897685894600}
   - component: {fileID: 534475101625325290}
   - component: {fileID: 1261642973743083921}
+  - component: {fileID: -2793094483698500107}
   m_Layer: 0
   m_Name: BayouLeadSci00
   m_TagString: Untagged
@@ -254,6 +255,7 @@ MonoBehaviour:
   m_CharacterId:
     m_HashValue: 3347434154
   m_Interaction: {fileID: 534475101625325290}
+  m_DefaultNode: {fileID: 0}
 --- !u!114 &534475101625325290
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,7 +270,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Proxy: {fileID: 5888326584774169793}
   m_Selectable: {fileID: 0}
-  m_Group: {fileID: 0}
+  m_GroupId:
+    m_Source: 
+    m_HashValue: 0
+  m_VisibleWhenInteractive:
+    GameObjects: []
+    Behaviours: []
   Config:
     Action: 0
     TargetId:
@@ -297,6 +304,21 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &-2793094483698500107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6884615345610127475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b211c139a4269d74eb81764baa01d0ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_GroupId:
+    m_Source: Job
+    m_HashValue: 1121529980
 --- !u!1001 &2698716984248931566
 PrefabInstance:
   m_ObjectHideFlags: 0

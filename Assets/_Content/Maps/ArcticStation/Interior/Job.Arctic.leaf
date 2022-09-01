@@ -3,6 +3,7 @@
 #include "Headers/Common.leaf"
 
 #const JobGiverId = profArctic
+#const JobGiverCameraPose = "JobGiverCameraPose"
 
 #include "Headers/CommonJob.leaf"
 
@@ -28,6 +29,10 @@ $choice .action.cancel; No thanks.
                 Still want to see the {h}Job Board{/h}?
     $choice .action.openJobBoard; Yes.
     $choice .action.cancel; Nah.
+
+#WrongCharacterJobHandler(a)
+{@$JobGiverId}  Ah, hang on, your current job is with {nameof @arcticSci}.
+                Why don't you talk to him?
 
 #JobHandler(a)
 {@$JobGiverId}  {random Hey, got|So, do you have} anything to report for your current job?

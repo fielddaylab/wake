@@ -70,8 +70,8 @@ $call Uncle->TeleportTo(tio-intro-pos)
 
 :: momMadEnd
 @trigger    Talk
-@who        drKelp
-@when       !JobStartedOrComplete(kelp-welcome)
+@who        *
+@when       scene:name == "RS-1C-StationInterior", !JobStartedOrComplete(kelp-welcome)
 @boostScore 100
 @once
 @entrypoint

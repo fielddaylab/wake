@@ -53,6 +53,7 @@ namespace Aqua.JobBoard {
         [NonSerialized] private Dictionary<StringHash32, JobButton> m_JobButtonMap = new Dictionary<StringHash32, JobButton>(32);
         [NonSerialized] private bool m_HasLockedJobs = false;
         [NonSerialized] private bool m_HasAvailableJobs = false;
+        [NonSerialized] private CameraPose m_OverrideZoomPose = null;
 
         #region Unity Events
 
@@ -70,6 +71,14 @@ namespace Aqua.JobBoard {
         }
 
         #endregion // Unity Events
+
+        public void OverrideZoomPose(ScriptObject obj) {
+            if (obj != null) {
+                m_OverrideZoomPose = obj.GetComponent<CameraPose>();
+            } else {
+                m_OverrideZoomPose = null;
+            }
+        }
 
         #region Handlers
 
@@ -272,7 +281,8 @@ namespace Aqua.JobBoard {
         #region Camera
 
         private void MoveCameraToZoom() {
-            Services.Camera.MoveToPose(m_ZoomedPose, 0.5f, Curve.Smooth, Cameras.CameraPoseProperties.All);
+            CameraPose pose = m_OverrideZoomPose != null ? m_OverrideZoomPose : m_ZoomedPose;
+            Services.Camera.MoveToPose(pose, 0.5f, Curve.Smooth, Cameras.CameraPoseProperties.All);
         }
 
         private void MoveCameraToDefault() {

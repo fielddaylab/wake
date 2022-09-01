@@ -95,6 +95,7 @@ GameObject:
   - component: {fileID: 3681849448172144692}
   - component: {fileID: 6869255445913943011}
   - component: {fileID: 1334549688379812562}
+  - component: {fileID: 8374221428324338887}
   m_Layer: 0
   m_Name: ArcticWhaleSci00
   m_TagString: Untagged
@@ -183,6 +184,7 @@ MonoBehaviour:
   m_CharacterId:
     m_HashValue: 3534583286
   m_Interaction: {fileID: 1334549688379812562}
+  m_DefaultNode: {fileID: 0}
 --- !u!114 &1334549688379812562
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -197,7 +199,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Proxy: {fileID: 5475200924947451346}
   m_Selectable: {fileID: 0}
-  m_Group: {fileID: 0}
+  m_GroupId:
+    m_Source: 
+    m_HashValue: 0
+  m_VisibleWhenInteractive:
+    GameObjects: []
+    Behaviours: []
   Config:
     Action: 0
     TargetId:
@@ -207,6 +214,21 @@ MonoBehaviour:
       m_Source: 
       m_HashValue: 0
     LoadFlags: 0
+--- !u!114 &8374221428324338887
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4181692959630442016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b211c139a4269d74eb81764baa01d0ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_GroupId:
+    m_Source: Job
+    m_HashValue: 1121529980
 --- !u!1 &4513477547301606619
 GameObject:
   m_ObjectHideFlags: 0

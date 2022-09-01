@@ -165,6 +165,9 @@ namespace Aqua.Scripting
         private void SetTriggerTarget(StringHash32 inTargetId)
         {
             m_Target = inTargetId;
+            if (inTargetId == "*") {
+                m_Flags |= ScriptNodeFlags.AnyTarget;
+            }
         }
 
         [BlockMeta("triggerPriority"), Preserve]
@@ -241,6 +244,7 @@ namespace Aqua.Scripting
         Function = 0x40,
         Autosave = 0x80,
         Interrupt = 0x100,
-        NoDelay = 0x200
+        NoDelay = 0x200,
+        AnyTarget = 0x400
     }
 }

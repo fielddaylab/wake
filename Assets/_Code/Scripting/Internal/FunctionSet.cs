@@ -65,7 +65,7 @@ namespace Aqua.Scripting
                     continue;
                 
                 // not the right target
-                if (!inTarget.IsEmpty && inTarget != node.TargetId())
+                if ((node.Flags() & ScriptNodeFlags.AnyTarget) == 0 && !inTarget.IsEmpty && inTarget != node.TargetId())
                     continue;
 
                 // cannot play due to conditions

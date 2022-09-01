@@ -1,9 +1,9 @@
-# basePath interior.job.bayou
+# basePath interior.job.bayou_alt
 
 #include "Headers/Common.leaf"
 
-#const JobGiverId = profBayou
-#const JobGiverCameraPose = "JobGiverCameraPose"
+#const JobGiverId = bayouSci
+#const JobGiverCameraPose = "JobGiverCameraAltPose"
 
 #include "Headers/CommonJob.leaf"
 
@@ -31,12 +31,8 @@ $choice .action.cancel; No thanks.
     $choice .action.cancel; Nah.
 
 #WrongCharacterJobHandler(a)
-{@$JobGiverId}  You seem to have a job with {nameof @bayouSci}...
-                You should talk to him instead.
-
-#WrongCharacterJobHandler(b)
-{@$JobGiverId}  Ah, I believe you need to talk to {nameof @bayouSci} instead.
-                He's the one for your current job.
+{@$JobGiverId}  Bah,| you've got a job with her.
+                Talk to her instead.
 
 #JobHandler(a)
 {@$JobGiverId}  {random Hey, got|So, do you have} anything to report for your current job?

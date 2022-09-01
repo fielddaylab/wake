@@ -1,5 +1,6 @@
 // requirements
 // $const JobGiverId
+// $const JobGiverCameraPose
 
 // MACROS
 
@@ -17,6 +18,13 @@
 @when       player:currentJob, !JobIsAtCurrentStation(), $conditions \
 @cutscene
 
+#macro  WrongCharacterJobHandler(nodeId, ...conditions) \
+:: jobGiver.wrongCharacter.$nodeId \
+@trigger    Talk \
+@who        $JobGiverId \
+@when       player:currentJob, JobIsAtCurrentStation(), Lookup($player:currentJob, "PosterId") != "$JobGiverId", $conditions \
+@cutscene
+
 #macro  JobHandler(nodeId, ...conditions) \
 :: jobGiver.hasJob.$nodeId \
 @trigger    Talk \
@@ -27,7 +35,7 @@
 // ACTIONS
 
 :: action.openJobBoard
-$call InteriorOpenJobBoard()
+$call InteriorOpenJobBoard($JobGiverCameraPose)
 
 :: action.report
 {trigger-response TryArgumentation}

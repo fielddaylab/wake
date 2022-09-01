@@ -9,6 +9,7 @@ using Leaf.Runtime;
 using UnityEngine;
 using UnityEngine.Scripting;
 using UnityEngine.UI;
+using Aqua.JobBoard;
 
 namespace Aqua.StationInterior
 {
@@ -32,7 +33,7 @@ namespace Aqua.StationInterior
         [SerializeField] private TweenSettings m_SharedOffAnim = new TweenSettings(0.2f);
 
         [Header("Panels")]
-        [SerializeField] private BasePanel m_JobBoard = null;
+        [SerializeField] private JobBoard.JobBoard m_JobBoard = null;
         [SerializeField] private BasePanel m_ShopPanel = null;
 
         [Header("Leave")]
@@ -177,9 +178,10 @@ namespace Aqua.StationInterior
         #region Leaf
 
         [LeafMember("InteriorOpenJobBoard"), Preserve]
-        static private void LeafOpenJobBoard() {
+        static private void LeafOpenJobBoard(ScriptObject inCameraPose = null) {
             var ctrl = Services.State.FindManager<InteriorUICtrl>();
             Assert.NotNull(ctrl);
+            ctrl.m_JobBoard.OverrideZoomPose(inCameraPose);
             ctrl.SetPanel(ctrl.m_JobBoard, ctrl.m_CurrencyJobOffsetX);
         }
 

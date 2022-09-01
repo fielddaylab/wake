@@ -185,6 +185,7 @@ GameObject:
   - component: {fileID: 7972069266745568899}
   - component: {fileID: 7207956264969528925}
   - component: {fileID: 7459768256494274673}
+  - component: {fileID: 2147470855393029566}
   m_Layer: 0
   m_Name: BayouScientist00
   m_TagString: Untagged
@@ -273,6 +274,7 @@ MonoBehaviour:
   m_CharacterId:
     m_HashValue: 4040268820
   m_Interaction: {fileID: 7459768256494274673}
+  m_DefaultNode: {fileID: 0}
 --- !u!114 &7459768256494274673
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -287,7 +289,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Proxy: {fileID: 4984014407354274597}
   m_Selectable: {fileID: 0}
-  m_Group: {fileID: 0}
+  m_GroupId:
+    m_Source: 
+    m_HashValue: 0
+  m_VisibleWhenInteractive:
+    GameObjects: []
+    Behaviours: []
   Config:
     Action: 0
     TargetId:
@@ -297,6 +304,21 @@ MonoBehaviour:
       m_Source: 
       m_HashValue: 0
     LoadFlags: 0
+--- !u!114 &2147470855393029566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7962609932312169439}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b211c139a4269d74eb81764baa01d0ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_GroupId:
+    m_Source: Job
+    m_HashValue: 1121529980
 --- !u!1001 &8854265497121393075
 PrefabInstance:
   m_ObjectHideFlags: 0

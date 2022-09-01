@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4315266813506674864}
   - component: {fileID: 4207026712171259696}
   - component: {fileID: 8034438831662985132}
+  - component: {fileID: -5948451395302684432}
   m_Layer: 0
   m_Name: CoralReefTurtleSci00
   m_TagString: Untagged
@@ -102,6 +103,7 @@ MonoBehaviour:
   m_CharacterId:
     m_HashValue: 2754821319
   m_Interaction: {fileID: 8034438831662985132}
+  m_DefaultNode: {fileID: 0}
 --- !u!114 &8034438831662985132
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116,7 +118,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Proxy: {fileID: 5821106280271626573}
   m_Selectable: {fileID: 0}
-  m_Group: {fileID: 0}
+  m_GroupId:
+    m_Source: 
+    m_HashValue: 0
+  m_VisibleWhenInteractive:
+    GameObjects: []
+    Behaviours: []
   Config:
     Action: 0
     TargetId:
@@ -126,6 +133,21 @@ MonoBehaviour:
       m_Source: 
       m_HashValue: 0
     LoadFlags: 0
+--- !u!114 &-5948451395302684432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2128786120218239823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b211c139a4269d74eb81764baa01d0ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_GroupId:
+    m_Source: Job
+    m_HashValue: 1121529980
 --- !u!1 &3586802585338403561
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6841512089781156105}
   - component: {fileID: 2154108146784618308}
   - component: {fileID: 4996924235528802009}
+  - component: {fileID: -1874578758753692420}
   m_Layer: 0
   m_Name: Mom00
   m_TagString: Untagged
@@ -102,6 +103,7 @@ MonoBehaviour:
   m_CharacterId:
     m_HashValue: 46959747
   m_Interaction: {fileID: 4996924235528802009}
+  m_DefaultNode: {fileID: 0}
 --- !u!114 &4996924235528802009
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116,7 +118,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Proxy: {fileID: 9170813046592165548}
   m_Selectable: {fileID: 0}
-  m_Group: {fileID: 0}
+  m_GroupId:
+    m_Source: 
+    m_HashValue: 0
+  m_VisibleWhenInteractive:
+    GameObjects: []
+    Behaviours: []
   Config:
     Action: 0
     TargetId:
@@ -126,6 +133,21 @@ MonoBehaviour:
       m_Source: 
       m_HashValue: 0
     LoadFlags: 0
+--- !u!114 &-1874578758753692420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2340691853987452450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b211c139a4269d74eb81764baa01d0ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_GroupId:
+    m_Source: Job
+    m_HashValue: 1121529980
 --- !u!1 &2340691854056846826
 GameObject:
   m_ObjectHideFlags: 0
