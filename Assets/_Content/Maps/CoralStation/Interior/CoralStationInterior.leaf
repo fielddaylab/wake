@@ -10,10 +10,9 @@
 @noDelay
 
 {wait 1}
-{@coralMechanic}    Oh my gosh a new arrival!
-{@profCoral}        Hello there!
+{@coralMechanic}    Oh my gosh, a new arrival!
 {@coralMechanic}    And they've got a {slow}sweet{/slow} sub.
-{@profCoral}        Come talk to me over here.
+{@profCoral}        Welcome to our station. Come and check in with us over here!
 
 :: on-leave
 @function   SceneLeave
@@ -39,23 +38,25 @@ $call       CoralMechanic->TeleportTo(mechanic-intro-pos)
 @once
 @cutscene
 
-{@profCoral}    Hello! I recognize your sub - you are from the Kelp Station, correct?
-{@player}       Yes! I'm O!
-{@profCoral}    Well, welcome to the {map-name}Coral Station{/map-name}, O. I am {nameof @profCoral}, the chief scientist here.
-				I hope you like turtles! They are |everywhere| in this region.
-{@player}       Yeah! Very excited to see them!
-{@profCoral}    Unfortunately| you will have to give yourself the grand tour - we have been a bit preoccupied lately.
-                We maintain a handful of sites in the region. You should check them out when you have the time.
-
+{@profCoral} Hello, there. Welcome to--
+{@coralMechanic} Yeah, yeah. Serenity Meadows, the happiest ecosystem on Earth...
+                 Except for the killer Lionfish who are literally out there ruining everything.
+{@player}   Oh, um... is this a bad time?
+{@profCoral} Of course not. We were just about to get back to work.
+{@profCoral} You must be O. I'm {nameof @profCoral}, and this is--
+{@coralMechanic} Sofia. Mechanic extraordinaire.  
+                 I hope you like turtles, O. He's obsessed. 
+{@profCoral} The Loggerhead Turtles are my research interest, but you'll find several other species here, too.
+             We maintain a few different sites in the region. I'll send you the coordinates.
 $branch common.download
 
 $call UnlockSite(RS-2R)
 $call UnlockSite(RS-2S)
 
-{@profCoral}    I just uploaded their coordinates to your device. Both are relatively close.
-{@player}       Thank you!
-{@profCoral}    ...hang on. Are you looking for work by any chance?
-                We could use the help right now.
+{@player}       Thanks! 
+                Um... what was that about killer Lionfish?
+{@profCoral}    Don't worry, O. Serenity Meadows is perfectly safe. 
+                Let me know if you'd like to view the job board! 
 
 $set    world:coral.metScientist = true
 $call InteriorOpenJobBoard()
@@ -70,41 +71,35 @@ $call InteriorOpenJobBoard()
 $set    world:coral.metMechanic = true
 
 $if world:coral.mechanic.leftBeforeTalking
-    {@coralMechanic}    Oh gosh, hi there! Hope I didn't scare you off earlier.
-                        I'm {nameof @coralMechanic}! Mechanic extraordinaire!
-                        Can fix or build anything! Including your ship there!
-                        ...it| didn't rhyme when I said it in my head, haha!
-                        Anyways... I think I know the answer, but who's the owner of that {slow}magnificent{/slow} sub?
-    {@player}           Oh, no worries! That's my sub! I'm Ollie, or O for short!
+    {@coralMechanic}    Hey, O! Hope I didn't scare you off earlier.
+                        I get a little... passionate... about those stupid Lionfish. 
+                        But, you know. They're the actual worst. 
+                        So, I think I know the answer, but who's the owner of that {slow}magnificent{/slow} sub?
 $else    
-    {@coralMechanic}    Hi there! I'm {nameof @coralMechanic}, mechanic extraordinaire!
-                        Can fix or build anything! Including your sub there!
-                        I did not intend to rhyme but... who| cares?
-                        So, who's the owner of that {slow}magnificent{/slow} sub?
-    {@player}           That would be me! I'm Ollie, or O for short!
+    {@coralMechanic}    Hey, O! Nice to see you again. 
+                        I usually forget people's names the first time... luckily, you're very memorable. 
+                        So, I think I know the answer, but who's the owner of that {slow}magnificent{/slow} sub?
 $endif
 
-{@coralMechanic}    Ooh, very bold name! For a bold person!
-{@player}           Thank you! Nice to meet you too!
-{@coralMechanic}    So, if you're in a sub like that, you must be some big shot scientist, right?
+{@player} Oh, that's my sub! Is it a good one?
+          Really hoping I don't crash it this time...
+{@coralMechanic} Ha. Didn't peg you for the daredevil type.
+                 Don't worry, O. I can fix anything. 
 
-$choice .intro.mechanic.bigshot; Something like that?
-$choice .intro.mechanic.notbigshot; Not exactly...
 $choose branch
 
 $if world:coral.metScientist
     $if PawnAtNode(CoralMechanic, "mechanic-default-pos")
-        {@coralMechanic}    Anyways, let me show you what I can build for you!
+        {@coralMechanic}    Let me show you what I can build for you! 
         $call InteriorOpenShopBoard()
     $else
-        {@coralMechanic}    Anyways, my shop is over on the other side of the station.
-                            Come talk to me later and let's see if I can build something for you!
+        {@coralMechanic}    My shop is over there. If you convince {nameof @profCoral} to get rid of the Lionfish, everything's half off!
         $set    world:coral.mechanic.toldToReturn = true
         $branch .warpMechanicToDefault
     $endif
 $else
-    {@coralMechanic}    Anyways, I shouldn't keep you. You should go talk to {h}Mr. Turtle{/h} over there.
-                        Come back and talk to me later though!
+    {@coralMechanic}    Anyways, I shouldn't keep you. Probably time to go talk to {h}Mr. Turtle{/h} over there.
+                        Come back and talk to me later, though!
     $set    world:coral.mechanic.toldToReturn = true
     $branch .warpMechanicToDefault
 $endif
