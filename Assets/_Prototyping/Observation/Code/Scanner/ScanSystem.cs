@@ -111,7 +111,9 @@ namespace ProtoAqua.Observation {
                     Transform iconRoot = region.IconRootOverride;
                     if (!iconRoot)
                         iconRoot = region.TrackTransform;
-                    region.CurrentIcon.transform.position = iconRoot.position;
+                    Vector3 position = iconRoot.position;
+                    position.z += region.IconZAdjust;
+                    region.CurrentIcon.transform.position = position;
                 }
             }
         }

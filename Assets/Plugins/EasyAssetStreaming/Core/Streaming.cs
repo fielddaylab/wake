@@ -26,8 +26,8 @@ namespace EasyAssetStreaming {
         #region Consts
 
         private const int RetryLimit = 10;
-        private const float RetryDelayBase = 2f;
-        private const float RetryDelayExtra = 0.5f;
+        private const float RetryDelayBase = 1f;
+        private const float RetryDelayExtra = 0.1f;
 
         #endregion // Consts
 
