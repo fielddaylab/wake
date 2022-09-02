@@ -4,23 +4,30 @@
 @trigger    JobStarted
 @cutscene
 
-{@guide}	 We need to develop a sense of why the {nameof TurfAlgae} population has gotten big enough to cover the coral.
+{@profCoral} Ah, thank you, Ollie!
+			 Another researcher has reported that the coral at Site S is covered in turf algae.
+			 Can you help determine why the {nameof TurfAlgae} population has grown so much? 
+{@player}   Sure! Where do you think I should start?  
 $if !JobTaskCompleted(scanAll)
 	// BRANCH A
-	{@guide}	We need to know the species at {h}Site S{/h} that could be affecting the Turf Algae. Let's dive!
+	{@profCoral} Hmmm. You should probably start by scanning all the species at {h}Site S{/h}. 
+				 One of them might be affecting the turf algae.
 $else
 	$if !JobTaskCompleted(observeEatAlgae)
 		// BRANCH B
-		{@guide}	In a balanced ecosystem, something would be eating the Turf Algae and reducing its population.
-					Have you used a tank to Observe what species from {h}Site S{/h} eats Turf Algae?
+		{@profCoral}  Well... in a balanced ecosystem, something would be eating the Turf Algae and reducing its population.
+				     I'd suggest using your Observation Tank to figure out what species from {h}Site S{/h} eats Turf Algae?
 	$else
 		$if !JobTaskCompleted(measureEatRate)
 			// BRANCH C
-			{@guide}	We'll need to use the measurement tank to figure out how much Turf Algae the Blue Tang eat.
+			{@profCoral} Hmmm. You've already determined that Blue Tang eat Turf Algae.
+					     Perhaps you should use the Measurement Tank to figure out their eating rate.
 		$else
 			$if !JobTaskCompleted(modelPopulations)
 				//BRANCH D
-				{@guide}	We've got numbers, but we won't know if that number makes sense until we build a Descriptive Model.
+				{@guide}	Well, let's see. You've already gathered plenty of data... including the rate at which Blue Tang eat Turf Algae.
+							But we don't know yet if that number matches with what's actually happening at Site S. 
+							I'd suggest building a Descriptive Model. 
 			$endif
 		$endif
 	$endif
@@ -34,24 +41,30 @@ $endif
 @when       scene:name == "RS-2S", !JobTaskCompleted(scanAll) // BRANCH A
 @once
 @cutscene
-{@guide} 	You should probably scan absolutely everything. Go crazy.
+{@player}   Eek. This still isn't my favorite place.
+			Time to start scanning, I guess.
+{@guide} 	Yes. We don't know yet which species might be affecting the Algae... 
+			So I would suggest scanning everything you can find!
 
 :: continueSite
 @trigger    JobTasksUpdated
 @when       scene:name == "RS-2S", JobTaskTop(observeEatAlgae) // BRANCH A
 @once
 @cutscene
-{@guide} 	That's pretty much everything that lives in this area.
+{@guide} 	Adequate work, O! I believe you've scanned all the species here. 
+{@player}   Good. Let's get back to the Meredith. 
+			Something about this place just doesn't feel right. 
 
 :: helpEnterSite
 @trigger    RequestPartnerHelp
 @when       JobTaskTop(scanAll) // BRANCH A
 @cutscene
 
+{@player} What should I do now, {nameof @guide}?
 $if scene:name != "RS-2S"
-    {@guide} 	Go to {h}Site S{/h} and scan all species.
+    {@guide} 	Go to {h}Site S{/h} and scan all the species there!
 $else
-    {@guide} 	It seems as though we still need to scan more species here.
+    {@guide} 	You still need to scan more species, O. See if you can find anything you've missed. 
 $endif
 
 // EXPERIMENT
@@ -60,20 +73,22 @@ $endif
 @trigger    RequestPartnerHelp
 @when       JobTaskTop(observeEatAlgae) // BRANCH B
 @cutscene
-{@guide} 	Use the {map-name}Observation Tank{/map-name} to determine what eats {nameof TurfAlgae} and is native to {h}Site S{/h}.
+{@player} What should I do next? 
+{@guide} 	Use your {map-name}Observation Tank{/map-name} to find a species from {h}Site S{/h} that eats {nameof TurfAlgae}!
 
 :: rateMeasured
 @trigger    JobTasksUpdated
 @when       JobTaskTop(measureEatRate) // BRANCH B
 @once
 @cutscene
-{@guide} 	All right, so it's the {nameof BlueTang} that eat {nameof TurfAlgae}.
+{@player} Got it! The {nameof BlueTang} eats {nameof TurfAlgae}!
 
 :: helpMeasure
 @trigger    RequestPartnerHelp
 @when       JobTaskTop(measureEatRate) // BRANCH C
 @cutscene
-{@guide} 	Use the {map-name}Measurement Tank{/map-name} to get the rate that {nameof BlueTang} eat {nameof TurfAlgae}.
+{@player} What's our next move, {nameof @guide}?
+{@guide} 	Use the {map-name}Measurement Tank{/map-name} to obtain the rate at which {nameof BlueTang} eat {nameof TurfAlgae}.
 
 // MODELING
 
@@ -82,28 +97,33 @@ $endif
 @when		JobTaskTop(modelPopulations)
 @once
 @cutscene
-{@guide}	We've got numbers, but we won't know if that number makes sense until we build a {map-name}Descriptive Model{/map-name}.
+{@player} Okay, let's see. We've got the eating rate... now what?
+{@guide}  You need to find out if the number actually describes what's happening at Site S. 
+		  That means you'll need to build a {map-name}Descriptive Model{/map-name}.
 
 :: helpBuildModel
 @trigger    RequestPartnerHelp
 @when       JobTaskTop(modelPopulations) // BRANCH D
 @cutscene
-{@guide} 	Build a {map-name}Descriptive Model{/map-name} of the {h}Site S{/h} ecosystem, focusing on the {nameof BlueTang} and {nameof TurfAlgae}.
+{@guide} 	Build a {map-name}Descriptive Model{/map-name} of {h}Site S{/h}! Be sure to focus on the {nameof BlueTang} and {nameof TurfAlgae}.
 
 :: inModeling
 @trigger	SceneStart
 @when		scene:name == "Modeling"
 @once
 @cutscene
-{@guide}	You'll need to build a Visual Model first, if you haven't done that yet. Then make a Descriptive Model so we can compare it to the empirical data.
+{@guide}	It is time to obtain more data!!
+			You'll need to build a Visual Model first, if you haven't yet. 
+		    Then create a Descriptive Model so we can compare it to the empirical data.
 
 :: insufficientData
 @trigger	SimulationModelStarted
 @boostScore 1060 // higher than generic script
 @when		scene:name == "Modeling", !JobTaskCompleted(histPop)
 @cutscene
-{@guide}	I think we're missing some critical population data. When making a Sync model, the program needs historical population data to check against. 
-			We should head back to Site S and scan the population data before we try to do anything here.
+{@guide}	Hmmm. You seem to be missing some critical population data. 
+			When making a Sync model, the program needs historical population data to check against. 
+			You'll need to return to Site S and obtain the population data before you can proceed.
 
 //modeling needs historical data for all the species to validate against
 
@@ -112,8 +132,12 @@ $endif
 @when		scene:name == "Modeling", JobTaskTop(reportBack)
 @once
 @cutscene
-{@guide}	We have a model, but for some reason it doesn't match what we've observed. The {nameof BlueTang} aren't eating as much as we'd expect.
-			Let's talk through it with {nameof profCoral}.
+{@player} Huh. Something's off here.
+{@guide}	Yes. The {nameof BlueTang} aren't eating as the model would suggest.
+{@player}	Better go talk it over with {nameof @profCoral}. I'm sure he'll be able to fix this. 
+		    I mean, if he ever takes a break from studying turtles.
+{@guide} Estimated probability: 1.2%.
+{@player} Ha. You're a little bit snarky today, V. Qué chido.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -122,6 +146,7 @@ $endif
 @when 		JobTaskActive(scanAll)
 @boostScore -5
 @cutscene
+{@player} What should I do now, {nameof @guide}?
 {@guide}    Scan all the species at Site S.
 
 :: catchHistPop
@@ -129,6 +154,7 @@ $endif
 @when 		JobTaskActive(histPop)
 @boostScore -5
 @cutscene
+{@player} What now, {nameof @guide}?
 {@guide}    Find the population probe at Site S and scan it.
 
 :: catchObserveEatAlgae
@@ -136,6 +162,7 @@ $endif
 @when 		JobTaskActive(observeEatAlgae)
 @boostScore -5
 @cutscene
+{@player} What's next, {nameof @guide}?
 {@guide}    Use the {map-name}Observation Tank{map-name} and see if anything eats TurfAlgae.
 
 :: catchMeasureEatRate
@@ -143,6 +170,7 @@ $endif
 @when 		JobTaskActive(measureEatRate)
 @boostScore -5
 @cutscene
+{@player} Okay, {nameof @guide}. What should I do next? 
 {@guide}    Put {nameof BlueTang} and {nameof TurfAlgae} in the {map-name}Measurement Tank{/map-name} and see how quickly Blue Tang eats the algae.
 
 :: catchModelPopulations
@@ -150,6 +178,7 @@ $endif
 @when 		JobTaskActive(modelPopulations)
 @boostScore -5
 @cutscene
+{@player} What should I do next? 
 {@guide}    Create a {h}Sync Model{/h} at the {map-name}Modeling Lab{map-name}.
 
 :: catchReportBack
@@ -157,7 +186,8 @@ $endif
 @when 		JobTaskActive(sargArgue)
 @boostScore -5
 @cutscene
-{@guide}    Talk to {nameof profCoral} in the {m}research station{/m}.
+{@player} What should I do now, {nameof @guide}?
+{@guide}   You've gathered the data you need. Go talk to {nameof profCoral} at the Serenity Meadows station!
 
 
 // ARGUMENTATION
@@ -166,7 +196,7 @@ $endif
 @trigger    RequestPartnerHelp
 @when       JobTaskTop(reportBack) // BRANCH D
 @cutscene
-{@guide} 	Return to the research station and describe your results to {nameof profCoral}.
+{@guide} 	Return to the station and describe your results to {nameof profCoral}.
 
 :: argue.intro
 @trigger    TryArgumentation
@@ -175,7 +205,8 @@ $endif
 $branch .argue.chooseClaim
 
 :: argue.chooseClaim
-{@profCoral}	Why is there so much algae at Site S?
+{@profCoral} Okay, let's talk through what you found.
+			  Why is there so much algae at Site S?
 	$choice .argue.claimSparseFish; There aren't enough fish there to eat it.
 	$choice .argue.claimLionfishQuicken; The lionfish are making it reproduce faster!
 	$choice .argue.giveUp; Let me get back to you.
@@ -185,7 +216,8 @@ $choose branch
 // BRANCH: SPARSE FISH
 
 :: argue.claimSparseFish
-{@profCoral}	What is supposed to eat the turf algae?
+{@profCoral}	Hmmm. That does make sense.
+			    What is supposed to eat the Turf Algae?
 $call ArgueLoad(coralMuchAlgaeArgue)
 $if ArgueSetClaim(coralMuchAlgaeArgueClaim, jobs.coral-much-algae.argue.claimLabel)
 		$call ArgueFactSlot(LionfishInvasion.Model.MuchAlgaeDescriptive)
@@ -202,27 +234,30 @@ $choice .argue.giveUp; Let me get back to you
 
 :: argue.correctFacts
 $call ArgueComplete()
-{@profCoral}	It looks like the {nameof BlueTang} are not eating enough of the algae. We should look into why.
+{@profCoral}  How fascinating. For some reason, the {nameof BlueTang} aren't eating enough of the algae. 
+			  We should look into why.
+			  Let me know if you'd like another job, Ollie. I think the {nameof @BlueTang} could use a check-up. 
 $call CompleteJob()
 
 :: argue.incorrectFacts
 $if ArgueIsFactSubmitted(LionfishInvasion.Model.MuchAlgaeVisual)
-	{@profCoral}	Oops! This is a {h}Visual Model{/h}. This isn't the model we're looking for.
+	{@profCoral}	Hmmm. This is a {h}Visual Model{/h}. Why don't you try again? 
 $endif
 $if ArgueIsFactSubmitted(LionfishInvasion.Model.MuchAlgaeDescriptive)
 	// A only
-	{@profCoral}	I'm not sure how that second fact relates, but your model seems good.
+	{@profCoral}	Your model is sound, Ollie. But I'm not sure how that second fact is relevant. 
 	$goto .argue.correctFacts
 $else
 	$if ArgueIsFactSubmitted(BlueTang.Eats.TurfAlgae.Stressed)
 		// B only 
-		{@profCoral}	So the tang are supposed to be there to eat the {nameof TurfAlgae}. Have you created a {h}Descriptive Model{/h} this?
+		{@profCoral}	Hmmm. So the Tang would normally be keeping the {nameof TurfAlgae} under control. 
+				 		Have you created a {h}Descriptive Model{/h} with this data?
 		$call ArgueClearFacts()
 		$call ArgueSubmitFact(BlueTang.Eats.TurfAlgae.Stressed)
 		$goto .argue.chooseFactsSparseFish
 	$else
 		// neither
-		{@profCoral}	I don't think that is important for answering this question.
+		{@profCoral}	I don't think that's helpful here, Ollie. 
 		$call ArgueRejectIncorrect()
 		$call ArgueClearFacts()
         $goto .chooseFactsSparseFish
@@ -230,12 +265,12 @@ $else
 $endif
 
 :: argue.giveUp
-{@profCoral}	OK. Get back to me when you're ready.
+{@profCoral}	Of course. Let me know whenever you're ready. 
 
 // BRANCH: LIONFISH QUICKEN
 
 :: argue.claimLionfishQuicken
-{@profCoral}	Ugh, creepy buggers! Do you have an experiment that shows this?
+{@profCoral}	I see. Do you have an experiment that shows this? 
 $call ArgueLoad(coralMuchAlgaeIncorrectArgue)
 $if ArgueSetClaim(coralMuchAlgaeIncorrectArgueClaim, jobs.coral-much-algae.argue.claimLabelIncorrect)
 			$call ArgueFactSlot(LionfishInvasion.Model.MuchAlgaeDescriptive)
@@ -244,10 +279,10 @@ $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
 		$answer correct, .argue.incorrectFactsIncorrect
 		$answer incorrect, .argue.incorrectFactsIncorrect
-$choice .argue.giveUp; Let me get back to you
+$choice .argue.giveUp; Let me get back to you.
 
 :: argue.incorrectFactsIncorrect
-{@profCoral}	Hmmmm... Maybe that's not the case.
+{@profCoral}	Hmmmm... that doesn't seem right, Ollie. 
 $call ArgueRejectIncorrect()
 $call ArgueClearFacts()
 $call ArgueHideClaim()
