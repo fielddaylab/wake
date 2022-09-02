@@ -14,7 +14,7 @@
 $set jobs:arctic-cause-of-death.grantedEat = false
 $set jobs:arctic-cause-of-death.grantedStress = false
 $if JobTaskCompleted(getHistPopulationData), !jobs:arctic-cause-of-death.grantedEats
-    {@arcticSci}   We already know that Bowhead Whales eat both diatoms and ice algae.
+    {@arcticSci}   We already know that {pluralnameof BowheadWhale} eat both diatoms and ice algae.
                    This data should be useful to you here. 
     $call GiveFact(BowheadWhale.Eats.Diatoms)
     $call GiveFact(BowheadWhale.Eats.IceAlgae)
