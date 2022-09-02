@@ -84,5 +84,6 @@ namespace Aqua.Character
         Stunned = 0x01,
         Slowed = 0x02,
         PowerEngineEngaged = 0x04,
+        DraggedByCurrent = 0x08
     }
 }
