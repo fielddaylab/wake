@@ -116,7 +116,8 @@ namespace Aqua.Modeling {
         private Routine m_DebugReload;
 
         private void LateUpdate() {
-            if (m_InputLayer.Device.KeyPressed(KeyCode.F8)) {
+            if (m_InputLayer.Device.KeyPressed(KeyCode.F8) || (m_InputLayer.Device.KeyPressed(KeyCode.M) && m_InputLayer.Device.KeyDown(KeyCode.LeftShift))) {
+                Log.Msg("[SimulationUI] Debug reloading simulation data");
                 m_DebugReload.Replace(this, DebugReloadGraph());
             }
         }
