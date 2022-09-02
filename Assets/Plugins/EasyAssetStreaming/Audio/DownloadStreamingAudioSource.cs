@@ -243,7 +243,7 @@ namespace EasyAssetStreaming {
                 m_AudioSource.clip = null;
             }
 
-            if (Streaming.Unload(ref m_Handle)) {
+            if (Streaming.Unload(ref m_Handle, m_OnUpdatedEvent)) {
                 m_LoadedClip = null;
                 OnUpdated?.Invoke(this, Streaming.AssetStatus.Unloaded);
             }

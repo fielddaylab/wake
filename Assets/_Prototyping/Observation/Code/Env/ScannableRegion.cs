@@ -14,6 +14,7 @@ namespace ProtoAqua.Observation {
         public SerializedHash32 ScanId;
         public Visual2DTransform Click;
         public Transform IconRootOverride;
+        public float IconZAdjust;
 
         #endregion // Inspector
 
