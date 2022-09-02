@@ -18,20 +18,23 @@
 
 #ShopLockedHandler(a)
 @boostScore -100
-{@$MerchantId} Nice to see you again, {nameof @player}.
-                I'm still working on getting things here setup. How about you help out your mom and head back later?
-                Oh, and make sure to stay safe out there!
-{@player}       Thanks {nameof @$MerchantId}, but I know I've got this!
+{@$MerchantId} Sorry, shop's closed!
+               I need to go grab a coffee. Or an energy drink.
+               Maybe both. 
+               But definitely stop by soon! 
 
 #ShopHandler(first)
 @boostScore 100
 @once
-{@$MerchantId}  Hey kiddo! Workshop's all ready - do you need me to build you anything?
-$choice .action.openShop; Sure do!
+{@$MerchantId}  Hey! You're O, right? Thank God you're here. 
+                I swear, those two have been driving me crazy.
+                If I have to hear them bickering about that stupid oil rig one more time...
+                Anyway. Wanna take a look around? We've got the best upgrades around. 
+$choice .action.openShop; Sure!
 $choice .action.cancel; Not right now!
 
 #ShopHandler(a)
-{@$MerchantId} How's it going out there kiddo? Need any upgrades from your dear ol' uncle?
+{@$MerchantId} Hey! Welcome back, O. Wanna take a look around?
 $choice .action.openShop; Sure do!
 $choice .action.cancel; Not right now!
 
@@ -47,7 +50,7 @@ $choice .action.cancel; Not right now!
 {@$MerchantId}   {random Whoa,|Hey,|As a bonus,} this would unlock some jobs over at the {nameof $local:hintStation}!
 
 :: lowExp
-{@$MerchantId}   Oh, {random hang on|I'm sorry}... I can't let you have this just yet. You'll need {exp}{$local:needExp}{/exp} more before I can trust you with it.
+{@$MerchantId}   Oh, {random hang on|I'm sorry}... Sorry, O. Not enough {exp}{$local:needExp}{/exp}.
 
 :: freeItem
 {@$MerchantId}   So, want the {nameof $local:itemId}? Won't cost you anything.
@@ -60,7 +63,7 @@ $choice .action.cancel; Not right now!
 {@$MerchantId}   Suit yourself!
 
 :: notEnoughCash
-{@$MerchantId}   Not enough cash, child.
+{@$MerchantId}   Sorry. Not enough cash for that one. 
 
 :: purchased
 {@$MerchantId}   {random Good choice!|Good call.|Alright, it's yours!}
@@ -74,7 +77,7 @@ $choice .action.cancel; Not right now!
 {@$MerchantId}  Anything catch your eye?
 
 #CloseHandler(a)
-{@$MerchantId}  Thank ya!
+{@$MerchantId}  Thank you!
 
 #CloseHandler(purchased, shop:purchaseCount)
 @boostScore 10
@@ -101,62 +104,66 @@ $choice .action.cancel; Not right now!
 // Exploration
 
 #ItemHandler(ROVTagger)
-{@$MerchantId}  Ah, the {nameof ROVTagger}!| A wise choice!
-                You should see the {nameof ROVTagger} at the top of your view.
+{@$MerchantId}  The {nameof ROVTagger}!
+                This thing's super useful. It'll show up at the top of your view. 
                 If you switch it on and move close to a species you've already scanned, the {nameof ROVTagger} will {h}count{/h} it.
                 Count enough of them and it'll do the rest and give you a population estimate.
-{@guide}    That's very convenient. We should definitely get this.
 $set    jobs:common-dive.seen.tagger-intro = true
 $EvaluateItemPurchase()
 
 #OverrideItemHandler(Flashlight, flashlight.first)
 @boostScore 100
 @once
-{@$MerchantId}  Oh hey, the {nameof Flashlight}!
-                The ocean can be pretty dangerous if you can't see what's coming.
-                We should |definitely| get this on your sub as soon as we can.
-                ...
+{@$MerchantId}  The {nameof Flashlight}!
+                Every explorer should have one of these. 
+                Unless you want to end up lost in the Lower Depths with no light...
+                Been there, done that, don't recommend it. 
 $EvaluateItemPurchase()
 
 #ItemHandler(Flashlight)
-{@$MerchantId}  Yep, that's the {nameof Flashlight}!
-                I'd like to get that on your sub as soon as possible.
+{@$MerchantId}  That's the {nameof Flashlight}!
+                Definitely worth the money, if you've got it. 
 $EvaluateItemPurchase()
 
 #ItemHandler(ProbeHacker)
-{@$MerchantId}  The {nameof ProbeHacker}! Helped develop this one myself!
-                It will allow you to read data from any {h}probes{/h} you find out there.
-                Essential for getting any historical data off of them.
+{@$MerchantId}  The {nameof ProbeHacker}! 
+                Use it to read data from any {h}probes{/h} you find out there.
+                You'll need historical data for a lot of your jobs, so this one's a must. 
 $EvaluateItemPurchase()
 
 #ItemHandler(Microscope)
-{@$MerchantId}  Oh nice, that's the {nameof Microscope}!
-                There are creatures out there that you can't see individually with the naked eye.
-                Sometimes they look like clouds or mist. With this you can see them more closely.
+{@$MerchantId}  The {nameof Microscope}!
+                Use it to see and scan all the microscopic critters out there. 
+                Sometimes they're cute. Most of the time they're creepy.
+                Either way, you're gonna need to see 'em eventually. 
 $EvaluateItemPurchase()
 
 // Navigation
 
 #ItemHandler(PropGuard)
-{@$MerchantId}  The {nameof PropGuard}?| Not a bad idea.
-                You don't want your propeller getting tangled up out there when navigating through thick vegetation.
+{@$MerchantId}  The {nameof PropGuard}!
+                This is a super important upgrade, especially if you like going off the beaten path.
+                Or... um... the beaten... current?
+                Anyway, use this to stop your propeller from getting tangled up in thick vegetation. 
 $EvaluateItemPurchase()
 
 #ItemHandler(Engine)
-{@$MerchantId}  Hey, that's the {nameof Engine}!
-                It boosts the power of the sub's engine, so it can move against strong currents.
-                It's a little harder to control though, so just be careful with it.
+{@$MerchantId}  The {nameof Engine}!
+                Love, love, love this one.
+                It's strong enough to help you move against strong currents.
+                Just be careful... it's pretty powerful. 
 $EvaluateItemPurchase()
 
 #ItemHandler(Hull)
-{@$MerchantId}  Oh, are you looking to venture {h}deep{/h}? Then the {nameof Hull} might be helpful!
-                With this plating, your sub will be able to withstand much more pressure.
+{@$MerchantId}  The {nameof Hull}! 
+                Essential for deep sea jobs. I'm talking Lower Depths-deep.  
+                With this plating, your sub will be able to withstand a lot more pressure.
 $EvaluateItemPurchase()
 
 #ItemHandler(Icebreaker)
-{@$MerchantId}  Whoa, careful! That's the {nameof Icebreaker}!
-                It's able to shatter ice by emitting a strong localized electrical field.
-                And it's |not| a toy!
+{@$MerchantId}  That's the {nameof Icebreaker}!
+                It shatters ice by emitting a strong localized electrical field.
+                We don't get much ice around here... I still keep it around, though. Ya never know.  
 $EvaluateItemPurchase()
 
 // Experimentation
