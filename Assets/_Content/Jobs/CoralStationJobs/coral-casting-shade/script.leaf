@@ -226,7 +226,7 @@ $endif
 
 :: helpAllExperimentsDone
 @trigger    RequestPartnerHelp
-@when HasFact(Sargassum.Reproduce), HasFact(Sargassum.Consume.Light), HasFact(StaghornCoral.Reproduce.Stressed), HasFact(StaghornCoral.Reproduce)
+@when       JobTaskTop(sargModel)
 @cutscene
 {@guide}	Head over to the Modeling Lab.
 {@guide}	You need to build a descriptive model of how Sargassum affects Staghorn Coral.
