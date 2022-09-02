@@ -109,15 +109,20 @@ $endif
 
 :: catchFoodWeb
 @trigger    RequestPartnerHelp
-@when 		JobTaskActive(foodWeb)
-@boostScore -5
+@when 		JobTaskTop(foodweb)
 @cutscene
-{@guide}    Create a Visual Model of the Forested Lagoon.
+{@guide}    We need to create a {h}Visual Model{/h} of the {nameof RS-1C}.
+$if !IsPlayerOnShip()
+    {@guide}    We should head to the {m}Modeling Lab{/m} on the {h}Meredith{/h}.
+$elseif
+    $if scene:name != "Modeling", scene:name != "ModelingFoyer"
+        {@guide}    We should head to the {m}Modeling Lab{/m} to create a {h}Visual Model{/h}.
+    $endif
+$endif
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
-@when 		JobTaskActive(reportBack)
-@boostScore -5
+@when 		JobTaskTop(reportBack)
 @cutscene
 {@guide}    Talk to {nameof drKelp} at the research station.
 
@@ -131,7 +136,6 @@ $endif
 $call ArgueLoad(energyArgue)
 	$branch .argue.hello
 
-	
 :: argue.hello
 {@player}  How's Osa doing, Mom?
 {@drKelp}  Oh, don't worry, Sweetie. I'm sure she'll be okay.
@@ -140,7 +144,6 @@ $call ArgueLoad(energyArgue)
 {@drKelp}   According to your Food Web, what is the source of energy in the Forested Lagoon?
 {@drKelp}   What is the thing that is consumed, but doesn't consume anything else?
 $goto .argue.chooseEnergy
-
 
 :: argue.chooseEnergy
 $if ArgueAllFactsCorrect()

@@ -180,8 +180,8 @@ $endif
 $choose branch
 
 :: argue.foodClaim
-{@arcticSci}  Hmmm. Okay, let's take it step by step.
-               For the sake of being thorough, do you recall what Bowhead Whales eat?
+{@arcticSci}    Hmmm. Okay, let's take it step by step.
+                What possible food sources for {nameof BowheadWhale} are at {nameof RS-4W}?
 $call ArgueLoad(foodCauseDeath)
 $if ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel1) 
 	$call ArgueFactSlot(BowheadWhale.Eats.IceAlgae) 
