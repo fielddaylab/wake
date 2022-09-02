@@ -5,18 +5,18 @@
 @cutscene
 
 {@profCoral} Okay, Ollie, let's get started. 
-			 For this job, you'll need to create an intervention model.
-			 Sofia has...{i}suggested{i/} that we get rid of the lionfish, and the local community would be happy to do more lionfish hunting.
+			 For this job, you'll need to create an {h}intervention model{/h}.
+			 Sofia has...<i>suggested</i> that we get rid of the lionfish, and the local community would be happy to do more lionfish hunting.
 			 I want to investigate what would happen if we did allow——or even encourage——more spearfishing. 
 {@player}	Awesome. Let's do it! 
 {@profCoral} Aguas, mi amiga... this one's a little tricky. 
-		     First, you'll need to make sure all the species are scanned and counted.
-			 Then you'll observe how every pair of species interact with each other. 
+		     First, you'll need to make sure all the species are {h}scanned{/h} and {h}counted{/h}.
+			 Then you'll {h}observe{/h} how every pair of species interact with each other. 
 {@player}	 Well, that's not too bad——
-{@profCoral} Next, you'll need to figure out what stresses each species...
-			 As well as their eating and reproduction rates when stressed and unstressed.
-		     And finally, you'll need to know how each species affects the water chemistry of its environment.
-{@player} ....Ooookay. You almost had me there, Professor. Muy divertido.
+{@profCoral} Then, you'll need to figure out what stresses each species...
+			 As well as their {h}eating{/h} and {h}reproduction rates{/h} when stressed and unstressed.
+		     And finally, you'll need to know how each species affects the {h}water chemistry{/h} of its environment.
+{@player} .|.|.|Ooookay.| You almost had me there, Professor.| Muy divertido.
 {@profCoral} It's not a joke, Ollie. But we'll take it one step at a time. Slow and steady, remember?
 		     You can decide if you're ready to take this one on, or if you'd like to come back later. 
 
@@ -27,7 +27,7 @@
 @when		scene:name == "RS-2S", JobTaskCompleted(scanCritters)
 @once
 @cutscene
-{@guide}	Adequate work, O! You've scanned all the organisms at Site S!
+{@guide}	Adequate work, O! You've scanned all the organisms at {m}Site S{/m}!
 {@player}	Well, at least that's one task down.
 {@guide}	Yes! And many more tasks full of data still ahead of us! Isn't it exciting? 
 
@@ -40,7 +40,7 @@
 {@player} Okay. We've got the historic populations and water chemistry data.
 		  What now, {nameof @guide}?
 {@guide}  You will need to continue gathering data in order to complete your model for the Restoration Reef.
-		  Check AQOS for your next task!
+		  Check {item}AQOS{/item} for your next task!
 
 
 :: countPopulationsComplete
@@ -63,7 +63,7 @@
 @cutscene
 {@player} Okay. We've got the basics!
 {@guide}	Affirmative, O. But you will need quite a bit more data for an intervention model.
-		Check AQOS for your next task!
+		Check {item}AQOS{/item} for your next task!
 
 :: obtainStressRulesComplete
 @trigger    JobTasksUpdated
@@ -73,7 +73,7 @@
 {@player} Okay, {nameof @guide}, we've got the stress ranges.	
 		  What do I need to do next?
 {@guide} You have discovered the conditions that stress each species.
-		 Now you will need to use your Measurement Tank to determine how they behave under stress. 
+		 Now you will need to use your {item}Measurement Tank{/item} to determine how they behave under stress. 
 
 :: measureStressEatRatesComplete
 @trigger    JobTasksUpdated
@@ -97,7 +97,7 @@
 @once
 @cutscene
 {@player} So... that's it, right? The last piece of the puzzle? 
-{@guide} That is correct, O. It's time to use your Modeling tool!
+{@guide} That is correct, O. It's time to use your {item}Modeling tool{/item}!
 
 // MODELING
 :: predictModelComplete
@@ -131,16 +131,16 @@ $call ArgueLoad(huntingLionsArgue)
 {@profCoral} Thank you, Ollie. We've all been waiting eagerly for your results.
 {@player} Engine's still wrecked, huh?
 {@profCoral} Ahem. Let's just get to it.
-			 Have you used a model to determine how Lionfish hunting might affect Site S?
-	$choice .argue.haveModel; Yes! Lionfish hunting would help the ecosystem! 
-	$choice .argue.noModel; No, not yet.
+			 Have you used a model to determine how Lionfish hunting might affect {m}Site S{/m}?
+    $choice .argue.haveModel; Yes! Lionfish hunting would help the ecosystem! 
+    $choice .argue.noModel; No, not yet.
 $choose branch	
 
 :: argue.noModel
 {@profCoral}	Okay, Ollie. Let me know when you're ready. 
 
 :: argue.haveModel
-{@profCoral} Very well. I need a model that shows three things:
+{@profCoral} To advocate for an intervention I need a model that shows three things:
 			 Evidence that the coral will come back, an observation of what species are affected by Lionfish, and a connection between the Lionfish and the Coral.
 $if ArgueSetClaim(hunting-lionsClaim, jobs.coral-hunting-lions.argue.claimEvidence)
 		$call ArgueFactSlot(LionfishInvasion.Model.HuntingLionsIntervene)
@@ -153,6 +153,7 @@ $choice #argueFactSet; Present facts from AQOS
 		$answer correct, .argue.correctFacts
 		$answer incorrect, .argue.incorrectFacts
 $choice .argue.giveUp; Let me get back to you
+$choose branch
 
 :: argue.giveUp
 {@profCoral}	No worries, Ollie. Just let me know when you're ready. 
@@ -160,7 +161,8 @@ $choice .argue.giveUp; Let me get back to you
 :: argue.incorrectFacts
 {@profCoral}	Hmmm. This isn't quite what I'm looking for. 
 $call ArgueRejectIncorrect()
-$call ArgueClearFacts()
+// $call ArgueClearFacts()
+$goto .argue.haveModel
 
 :: argue.correctFacts
 {@profCoral}	Wow! This is impressive work, Ollie.
@@ -181,7 +183,7 @@ $call CompleteJob()
 @when   scene:name != "RS-2S", !JobTaskCompleted(countPopulation), !JobTaskCompleted(scanCritters), !JobTaskCompleted(scanHistory)
 @cutscene
 {@player} What now, {nameof @guide}?
-{@guide}	You need to collect more data at {h}Site S{/h}.
+{@guide}	You need to collect more data at {m}Site S{/m}.
 
 :: requestHelpScans
 @trigger    RequestPartnerHelp
@@ -215,7 +217,7 @@ $call CompleteJob()
 @when		JobTaskTop(observeEatRules), IsPlayerOnShip()
 @cutscene
 {@player} What should I do now, {nameof @guide}?
-{@guide}	Use the {item}Observation Tank{/item} to find what eats what. Check AQOS to see which species you haven't observed yet.
+{@guide}	Use the {item}Observation Tank{/item} to find what eats what. Check {item}AQOS{/item} to see which species you haven't observed yet.
 	  		You can also find {h}missing eat behaviors{/h} by examining your {m}Visual Model{/m}.
 
 :: blueTangTurfAlgaeStress
@@ -230,38 +232,38 @@ $call CompleteJob()
 @when		JobTaskTop(obtainStressRules)
 @cutscene
 {@player} What now, {nameof @guide}?
-{@guide}	Use your {item}Stress Tank{/item} to obtain the stress ranges for each Site S species. 
- 			Check AQOS to see which species you haven't covered yet.
+{@guide}	Use your {item}Stress Tank{/item} to obtain the stress ranges for each {m}Site S{/m} species. 
+ 			Check {item}AQOS{/item} to see which species you haven't covered yet.
 
 :: requestHelpStressEatRates
 @trigger    RequestPartnerHelp
 @when		JobTaskTop(measureEatRates)
 @cutscene
 {@player} Okay, {nameof @guide}. What's our next step? 
-{@guide}  Use your {item}Measurement Tank{/item} to find the rate at which each creature at {h}Site S{/h} eats its prey.            
-		  To figure out what you're missing, check the blue eat lines in your {m}Visual Model{/m}.
+{@guide}  Use your {item}Measurement Tank{/item} to find the rate at which each creature at {m}Site S{/m} eats its prey.            
+		  To figure out what you're missing, check the blue eat lines in your {item}Visual Model{/item}.
 
 :: requestHelpStressReproduceRates
 @trigger    RequestPartnerHelp
 @when		JobTaskTop(measureStressReproduceRates)
 @cutscene
 {@player} What now, {nameof @guide}?
-{@guide}	Use the Measurement Tank to get each Site S species' rate of reproduction.  
-		   Check AQOS to see which species you haven't covered yet.
+{@guide}	Use the {item}Measurement Tank{/item} to get each {m}Site S{/m} species' rate of reproduction.  
+		   Check {item}AQOS{/item} to see which species you haven't covered yet.
 
 :: requestHelpObtainChemistry
 @trigger    RequestPartnerHelp
 @when		JobTaskTop(obtainChemistry)
 @cutscene
 {@player} What should I do now, {nameof @guide}?
-{@guide} 	Use your Measurement Tank to find out how each species at Site S affects water chemistry. 
+{@guide} 	Use your {item}Measurement Tank{/item} to find out how each species at {m}Site S{/m} affects water chemistry. 
 
 :: requestHelpPredictModel
 @trigger    RequestPartnerHelp
 @when		JobTaskTop(predictModel)
 @cutscene
 {@player} What's next, {nameof @guide}?
-{@guide}  You will need to create a model of Site S using the Modeling tool. 
+{@guide}  You will need to create a model of {m}Site S{/m} using the {item}Modeling tool{/item}. 
 		  Use your data to make the model as complete and comprehensive as possible!
 
 :: requestHelpArgueIncentive
