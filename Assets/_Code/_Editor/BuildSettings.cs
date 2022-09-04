@@ -213,14 +213,14 @@ namespace Aqua.Editor {
                         Bake.Assets(bBatch ? 0 : BakeFlags.Verbose);
                     }
                     AssetDatabase.SaveAssets();
+                    if (!ValidateAllScripts()) {
+                        throw new Exception("Invalid scripts present");
+                    }
                     if (bBatch) {
                         CodeGen.GenerateJobsConsts();
                         NoOverridesAllowed.RevertInAllScenes();
                         StripEditorInfoFromAssets();
                         CompressBookmarks();
-                        if (!ValidateAllScripts()) {
-                            throw new Exception("Invalid scripts present");
-                        }
                     }
                 } catch (Exception e) {
                     throw new BuildFailedException(e);
