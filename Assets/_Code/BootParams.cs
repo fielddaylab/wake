@@ -1,4 +1,4 @@
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if (UNITY_EDITOR && !IGNORE_UNITY_EDITOR) || DEVELOPMENT_BUILD
 #define DEVELOPMENT
 #endif
 
@@ -14,6 +14,7 @@ using BeauUtil.Debugger;
 using System.Collections.Generic;
 
 [assembly: InternalsVisibleTo("Aqua.Shared.Editor")]
+[assembly: InternalsVisibleTo("Assembly-CSharp-Editor")]
 
 namespace Aqua
 {
@@ -55,7 +56,7 @@ namespace Aqua
             #if UNITY_EDITOR
             DebugService debug = GetComponentInChildren<DebugService>();
             if (debug)
-                DestroyImmediate(m_Debug.gameObject);
+                DestroyImmediate(debug.gameObject);
             #endif // UNITY_EDITOR
             #else
             DebugService debug = GetComponentInChildren<DebugService>();

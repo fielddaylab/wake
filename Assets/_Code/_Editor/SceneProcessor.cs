@@ -115,5 +115,19 @@ namespace Aqua.Editor
                 }
             }
         }
+    
+        [MenuItem("Aqualab/DEBUG/Bake Scene")]
+        static private void DEBUGBakeScene() {
+            if (EditorApplication.isPlaying)
+                return;
+
+            Scene scene = EditorSceneManager.GetActiveScene();
+            
+            LoadSubscenes(scene);
+            RemoveBootstrap(scene);
+            RemoveDebug(scene);
+            BakeScene(scene);
+            StripEditorInfo(scene);
+        }
     }
 }

@@ -78,9 +78,6 @@ namespace Aqua.Shop {
         protected override void Awake() {
             base.Awake();
 
-            m_ExplorationCategory.Group.ForceActive(false);
-            m_ScienceCategory.Group.ForceActive(false);
-
             m_ExplorationCategory.Toggle.onValueChanged.AddListener((_) => UpdateCategory(m_ExplorationCategory, CategoryId.Exploration, ShopConsts.Trigger_OpenExploration));
             m_ScienceCategory.Toggle.onValueChanged.AddListener((_) => UpdateCategory(m_ScienceCategory, CategoryId.Science, ShopConsts.Trigger_OpenScience));
 
@@ -95,6 +92,13 @@ namespace Aqua.Shop {
                 var cachedBtn = button;
                 cachedBtn.Button.onClick.AddListener(() => OnButtonClicked(cachedBtn));
             }
+        }
+
+        protected override void Start() {
+            base.Start();
+
+            m_ExplorationCategory.Group.ForceActive(false);
+            m_ScienceCategory.Group.ForceActive(false);
         }
 
         protected override void OnEnable() {

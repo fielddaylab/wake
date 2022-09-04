@@ -4,9 +4,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Aqua.Profile;
+using Aqua.Scripting;
 using BeauUtil;
 using BeauUtil.Debugger;
 using BeauUtil.Editor;
+using Leaf;
+using Leaf.Runtime;
 using ScriptableBake;
 using UnityEditor;
 using UnityEditor.Build;
@@ -117,6 +120,51 @@ namespace Aqua.Editor {
             }
         }
 
+        [MenuItem("Aqualab/Leaf/Validate All Scripts")]
+        static private void DEBUGValidateAllScripts() {
+            ValidateAllScripts();
+        }
+
+        static public bool ValidateAllScripts() {
+            try {
+                ScriptNodePackage.Generator generator = new ScriptNodePackage.Generator(Leaf.Compiler.LeafCompilerFlags.Default_Strict);
+                MethodCache<LeafMember> methodCache = LeafUtils.CreateMethodCache(typeof(IScriptComponent));
+                methodCache.LoadStatic();
+                foreach(var type in Reflect.FindDerivedTypes(typeof(IScriptComponent), Reflect.FindAllUserAssemblies())) {
+                    methodCache.Load(type);
+                }
+
+                bool hasErrors = false;
+
+                var allScripts = AssetDBUtils.FindAssets<LeafAsset>();
+                int idx = 0;
+
+                foreach(var asset in allScripts)
+                {
+                    idx++;
+                    if (asset.name.Contains(".template")) {
+                        continue;
+                    }
+
+                    string assetPath = AssetDatabase.GetAssetPath(asset);
+
+                    EditorUtility.DisplayProgressBar("Compiling all leaf scripts", assetPath, idx / (float) allScripts.Length);
+
+                    ScriptNodePackage package = LeafAsset.Compile<ScriptNode, ScriptNodePackage>(asset, generator);
+                    var errorState = package.ErrorState();
+                    if (errorState.ErrorMask != 0) {
+                        Debug.LogErrorFormat("Leaf Script '{0}' has compilation errors - see previous error log for detail", assetPath);
+                        hasErrors = true;
+                    }
+                }
+
+                return hasErrors;
+            }
+            finally {
+                EditorUtility.ClearProgressBar();
+            }
+        }
+
         static private void StripEditorInfoFromAssets() {
             List<IEditorOnlyData> allStrippable = new List<IEditorOnlyData>(512);
             using (Profiling.Time("strip scriptable objects")) {
@@ -170,6 +218,9 @@ namespace Aqua.Editor {
                         NoOverridesAllowed.RevertInAllScenes();
                         StripEditorInfoFromAssets();
                         CompressBookmarks();
+                        if (!ValidateAllScripts()) {
+                            throw new Exception("Invalid scripts present");
+                        }
                     }
                 } catch (Exception e) {
                     throw new BuildFailedException(e);

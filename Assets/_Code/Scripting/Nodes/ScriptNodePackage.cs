@@ -216,6 +216,16 @@ namespace Aqua.Scripting
         {
             static public readonly Generator Instance = new Generator();
 
+            #if UNITY_EDITOR
+            private LeafCompilerFlags? m_FlagsOverride;
+            #endif // UNITY_EDITOR
+
+            #if UNITY_EDITOR
+            public Generator(LeafCompilerFlags? overrideFlags = null) {
+                m_FlagsOverride = overrideFlags;
+            }
+            #endif // UNITY_EDITOR
+
             public override bool IsVerbose
             {
                 get
@@ -230,6 +240,10 @@ namespace Aqua.Scripting
 
             public override LeafCompilerFlags CompilerFlags {
                 get {
+                    #if UNITY_EDITOR
+                    if (m_FlagsOverride.HasValue)
+                        return m_FlagsOverride.Value;
+                    #endif // UNITY_EDITOR 
                     #if PRODUCTION
                     return LeafCompilerFlags.Debug | LeafCompilerFlags.Validate_MethodInvocation;
                     #else

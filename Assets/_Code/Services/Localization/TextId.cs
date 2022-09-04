@@ -44,13 +44,7 @@ namespace Aqua
 
         public StringHash32 Hash()
         {
-            // #if UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
-            // if (!string.IsNullOrEmpty(m_Source))
-            //     return new StringHash32(m_Source);
-            // return new StringHash32(m_HashValue);
-            // #else
             return new StringHash32(m_HashValue);
-            // #endif // UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
         }
 
         public string ToDebugString()

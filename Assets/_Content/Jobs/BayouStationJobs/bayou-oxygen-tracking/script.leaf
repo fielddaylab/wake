@@ -27,7 +27,7 @@
 
 :: helpMeasureOxygen
 @trigger RequestPartnerHelp
-@When   JobTaskTop(measureOxygenUsage)
+@when   JobTaskTop(measureOxygenUsage)
 @cutscene
 
 $if global:nav.shipRoom == "experiment"
