@@ -55,7 +55,7 @@ namespace Aqua.Scripting {
         public void RegisterInspectable(ScriptInspectable inspectable) {
             if (!m_Children.Contains(inspectable)) {
                 m_Children.PushBack(inspectable);
-                inspectable.UpdateGroupState(m_Interactable);
+                inspectable.UpdateGroupState(CanInteract());
             }
         }
 

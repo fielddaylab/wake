@@ -171,7 +171,9 @@ namespace Aqua.Scripting {
             base.PostRegister();
 
             if (!m_GroupId.IsEmpty) {
-                Group = ScriptInteractionGroup.Find(m_GroupId);
+                Script.OnSceneLoad(() => {
+                    Group = ScriptInteractionGroup.Find(m_GroupId);
+                });
             }
         }
 
