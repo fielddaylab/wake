@@ -158,7 +158,7 @@ namespace Aqua.Editor {
                     }
                 }
 
-                return hasErrors;
+                return !hasErrors;
             }
             finally {
                 EditorUtility.ClearProgressBar();
