@@ -233,7 +233,7 @@ namespace Aqua.Scripting {
 
         #endregion // Handlers
 
-        [LeafMember("SetAudioLayer")]
+        [LeafMember("SetAudioLayer"), Preserve]
         public void SetLayerActive(StringHash32 id, bool active) {
             Layer layer = GetLayer(id);
             if (layer != null) {

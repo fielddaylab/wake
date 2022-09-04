@@ -50,12 +50,12 @@ namespace Aqua.Scripting
             }
         }
 
-        [LeafMember("IsDestroyed")]
+        [LeafMember("IsDestroyed"), Preserve]
         public bool IsDestroyed() {
             return m_CachedDestroyed;
         }
 
-        [LeafMember("Destroy")]
+        [LeafMember("Destroy"), Preserve]
         public void TriggerDestroy() {
             if (m_CachedDestroyed) {
                 return;

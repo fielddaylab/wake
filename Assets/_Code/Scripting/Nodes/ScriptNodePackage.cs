@@ -10,6 +10,7 @@ using Leaf.Runtime;
 using BeauUtil.Debugger;
 using BeauUtil.Tags;
 using BeauUtil.Streaming;
+using UnityEngine.Scripting;
 
 namespace Aqua.Scripting
 {
@@ -19,7 +20,7 @@ namespace Aqua.Scripting
         private IHotReloadable m_HotReload;
         private int m_UseCount;
         private bool m_Active;
-        [BlockMeta("defaultWho")] private StringHash32 m_DefaultWho;
+        [BlockMeta("defaultWho"), Preserve] private StringHash32 m_DefaultWho;
 
         public ScriptNodePackage(string inName)
             : base(inName)
@@ -227,6 +228,16 @@ namespace Aqua.Scripting
                 }
             }
 
+            public override LeafCompilerFlags CompilerFlags {
+                get {
+                    #if PRODUCTION
+                    return LeafCompilerFlags.Debug | LeafCompilerFlags.Validate_MethodInvocation;
+                    #else
+                    return base.CompilerFlags;
+                    #endif 
+                }
+            }
+
             public override ScriptNodePackage CreatePackage(string inFileName)
             {
                 return new ScriptNodePackage(inFileName);
@@ -241,6 +252,14 @@ namespace Aqua.Scripting
             {
                 base.CompleteBlock(inUtil, inPackage, inBlock, inbError);
                 inBlock.ApplyDefaults(inPackage.m_DefaultWho);
+            }
+
+            public override void OnEnd(IBlockParserUtil inUtil, ScriptNodePackage inPackage, bool inbError) {
+                base.OnEnd(inUtil, inPackage, inbError);
+
+                if (inbError) {
+                    UnityEngine.Debug.LogErrorFormat("[ScriptNodePackage] Package '{0}' failed to compile", inPackage.Name());
+                }
             }
         }
 

@@ -4,6 +4,7 @@ using BeauUtil;
 using Leaf.Runtime;
 using ScriptableBake;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Aqua.Character
 {
@@ -49,7 +50,7 @@ namespace Aqua.Character
 
         #region Leaf
 
-        [LeafMember("PlayerInRegion")]
+        [LeafMember("PlayerInRegion"), Preserve]
         static private bool PlayerInRegion(StringHash32 inId)
         {
             return Script.CurrentPlayer?.InRegion(inId) ?? false;

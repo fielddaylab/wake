@@ -37,12 +37,12 @@ namespace Aqua {
             get { return StateUtil.IsLoading || Services.Pause.IsPaused(); }
         }
 
-        [LeafMember("ScriptBlocking")]
+        [LeafMember("ScriptBlocking"), Preserve]
         static public bool ShouldBlock() {
             return !Services.Valid || Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.UI.IsLetterboxed() || StateUtil.IsLoading;
         }
 
-        [LeafMember("ScriptBlockingIgnoreLetterbox")]
+        [LeafMember("ScriptBlockingIgnoreLetterbox"), Preserve]
         static public bool ShouldBlockIgnoreLetterbox() {
             return Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || StateUtil.IsLoading;
         }

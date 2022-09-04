@@ -34,7 +34,7 @@ namespace Aqua.Scripting {
             return m_Interactable && m_LockCount == 0;
         }
 
-        [LeafMember("LockGroup")]
+        [LeafMember("LockGroup"), Preserve]
         public void Lock() {
             m_LockCount++;
             if (m_LockCount == 1) {
@@ -42,7 +42,7 @@ namespace Aqua.Scripting {
             }
         }
 
-        [LeafMember("UnlockGroup")]
+        [LeafMember("UnlockGroup"), Preserve]
         public void Unlock() {
             if (m_LockCount > 0) {
                 m_LockCount--;

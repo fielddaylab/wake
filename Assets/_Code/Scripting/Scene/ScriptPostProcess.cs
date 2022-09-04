@@ -6,6 +6,7 @@ using BeauUtil.Debugger;
 using Leaf.Runtime;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Scripting;
 
 namespace Aqua.Scripting {
     public sealed class ScriptPostProcess : ScriptComponent {
@@ -25,7 +26,7 @@ namespace Aqua.Scripting {
             m_CrossfadeVolume.sharedProfile = null;
         }
 
-        [LeafMember("SetPostProcessProfile")]
+        [LeafMember("SetPostProcessProfile"), Preserve]
         public void SetProfile(StringSlice profileName, float crossFade = 0) {
             VolumeProfile profile = GetProfile(profileName);
             if (profile != null) {

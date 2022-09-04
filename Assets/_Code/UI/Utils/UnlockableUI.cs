@@ -10,6 +10,7 @@ using BeauUtil;
 using BeauUtil.Variants;
 using Aqua.Scripting;
 using Leaf.Runtime;
+using UnityEngine.Scripting;
 
 namespace Aqua
 {
@@ -85,17 +86,17 @@ namespace Aqua
     
         #region Leaf
 
-        [LeafMember("SetLocked")]
+        [LeafMember("SetLocked"), Preserve]
         public void SetLocked(bool locked) {
             Script.WriteVariable(m_VarPair, locked);
         }
 
-        [LeafMember("Lock")]
+        [LeafMember("Lock"), Preserve]
         public void Lock() {
             Script.WriteVariable(m_VarPair, true);
         }
 
-        [LeafMember("Unlock")]
+        [LeafMember("Unlock"), Preserve]
         public void Unlock() {
             Script.WriteVariable(m_VarPair, false);
         }
