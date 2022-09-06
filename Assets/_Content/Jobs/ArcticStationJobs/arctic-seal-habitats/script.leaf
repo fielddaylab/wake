@@ -1,6 +1,7 @@
 # basePath job.arctic-seal-habbits
 
 // INTRO
+
 :: start
 @trigger    JobStarted
 @cutscene
@@ -15,7 +16,85 @@
 {@profArctic} To start with, you'll need to venture below the ice and track down a Ribbon Seal. 
               Use your {nameof Icebreaker} to reach the {m}Ephemeral Impass{/m}.
 
+// DEFINING DIALOGUE
+
+:: wrongPlace
+@trigger    ScannedNewObject
+@when       scanId == "bestiary.ribbonSeal", scene:name == "RS-4Z"
+@cutscene
+{@guide}    This is definitely the kind of seal we're looking for, but there don't seem to be many here.
+            We need to keep looking for their main habitat.
+
+:: rightPlace
+@trigger    JobTaskCompleted
+@when       taskId == "findHabitat", scene:name == "RS-4Y"
+@cutscene
+{@guide}    I'm detecting many seals in the area, which indicates that this is the seals' main habitat.
+$if !HasEntity(RibbonSeal)
+    {@guide}    Make sure to scan a seal while you're here!
+$endif
+
+:: microLeft
+@trigger    JobTasksUpdated
+@when       JobTaskTop("findMicro"), scene:name == "RS-4Y"
+@cutscene
+{@guide}    {nameof @profArctic} will also want to know about microscopic creatures here, so be sure to scan those too.
+
+:: microCount
+@trigger    JobTasksUpdated
+@when       JobTaskTop("countMicro"), scene:name == "RS-4Y"
+@cutscene
+{@guide}    I think that's all of them. Next let's count all the populations, just to be thorough.
+
+:: reportBack
+@trigger    JobTasksUpdated
+@when       JobTaskTop(report)
+@cutscene
+{@guide}    That's everything! Let's report back to {nameof @profArctic}!
+
+
+// GUIDE TEXT
+
+:: helpStart
+@trigger    RequestPartnerHelp
+@when       !JobTaskCompleted(findRibbon), !JobTaskCompleted(findHabitat)
+@cutscene
+{@guide}    We should check the ice crevice for {pluralnameof RibbonSeal}.
+
+:: helpWrongPlace
+@trigger    RequestPartnerHelp
+@when       JobTaskCompleted(findRibbon), !JobTaskCompleted(findHabitat)
+@cutscene
+{@guide}    We saw a seal in {nameof RS-4Z}, but that was an outlier. We need to find their home base.
+            Keep looking in different sites.
+
+:: helpMicro
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(findMicro)
+@cutscene
+{@guide}    Look around for microscopic critters in {nameof RS-4Y}.
+
+:: helpCount
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(countMicro)
+@cutscene
+{@guide}    Count all the species we found.
+
+:: helpReportBack
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(report)
+@cutscene
+{@guide}    We have everything we need. Let's talk to {nameof @profArctic}.
+
+
 // CATCH-ALL GUIDE TEXT
+
+:: catchFindHabitat
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(findHabitat)
+@boostScore -5
+@cutscene
+{@guide}    Head to the {m}Ephemeral Impass{/m} and find where {pluralnameof RibbonSeal} live.
 
 :: catchFindRibbon
 @trigger    RequestPartnerHelp
@@ -24,12 +103,12 @@
 @cutscene
 {@guide}    Scan a {nameof RibbonSeal} where it lives.
 
-:: catchFindHabitat
+:: catchCountSeal
 @trigger    RequestPartnerHelp
-@when 		JobTaskActive(findHabitat)
+@when 		JobTaskActive(countSeal)
 @boostScore -5
 @cutscene
-{@guide}    Head to the {m}Ephemeral Impass{/m} and find where {pluralnameof RibbonSeal} live.
+{@guide}    Count the {nameof RibbonSeal} population at {nameof RS-4Y}.
 
 :: catchFindMicro
 @trigger    RequestPartnerHelp
@@ -44,13 +123,6 @@
 @boostScore -5
 @cutscene
 {@guide}   Count the population of the microscopic species in {nameof RS-4Y} using your {nameof Microscope}.
-
-:: catchFindPop
-@trigger    RequestPartnerHelp
-@when 		JobTaskActive(findPop)
-@boostScore -5
-@cutscene
-{@guide}    Count the population of the {pluralnameof RibbonSeal} in {nameof RS-4Y}.
 
 :: catchReport
 @trigger    RequestPartnerHelp
