@@ -136,33 +136,77 @@ $endif
 // ARGUMENTATION
 ::argue.intro
 @trigger    TryArgumentation
-@when   !ArgueIsComplete() // TODO: NAME ME
+@when       !ArgueIsComplete(SealHabitatsArgueSpecies)
 @cutscene
-$call ArgueLoad() // TODO: SAME NAME HERE
-// TODO: add your claim label to jobs.aqloc
-$if ArgueSetClaim(Claim, jobs.station-job-name.argue.claimLabel) 
-    $call ArgueFactSlot() // TODO: put fact slot info here 
+$if ArgueIsComplete(SealHabitatsArgueSite)
+    {@profArctic} We've already talked about the seal habitat conditions at {nameof RS-4Y}.
+    $branch .argue.beforeSpeciesClaim
+$else
+    $call ArgueLoad(SealHabitatsArgueSite)
+    $if ArgueSetClaim(Claim, jobs.arctic-seal-habbits.argue.claimLabelSite) 
+        $call ArgueFactSlot(Y_IceCrevice.Light)
+        $call ArgueFactSlot(Y_IceCrevice.PH)
+        $call ArgueFactSlot(Y_IceCrevice.Temperature)
+    $endif
+    {@profArctic} The seals are pretty cool, right?
+    $branch .argue.showClaimSite
 $endif
 
-:: argue.showClaim
+// Site Argument
+
+:: argue.showClaimSite
+{@profArctic} What did you learn about the {pluralnameof RibbonSeal} habitat conditions?
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
-    $answer correct, .argue.complete 
-    $answer *, .argue.unrelated
+    $answer correct, .argue.completeSite
+    $answer *, .argue.unrelatedSite
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
-:: argue.unrelated
+:: argue.completeSite
+$call ArgueComplete()
+$branch .argue.beforeSpeciesClaim
+
+:: argue.unrelatedSite
 $call ArgueRejectIncorrect()
 {@profArctic} Hmm. That's interesting, but not really helpful here. 
-$goto .argue.showClaim
+$goto .argue.showClaimSite
+
+// Species Argument
+
+:: argue.beforeSpeciesClaim
+{@profArctic} I can see why seals might like to cozy up in there.
+$call ArgueLoad(SealHabitatsArgueSpecies)
+$if ArgueSetClaim(Claim, jobs.arctic-seal-habbits.argue.claimLabelSpecies) 
+    $call ArgueFactSlot(Y_IceCrevice.Population.GlacialAmphipod)
+    $call ArgueFactSlot(Y_IceCrevice.Population.ArcticCopepod)
+    $call ArgueFactSlot(Y_IceCrevice.Population.IceAlgae)
+    $call ArgueFactSlot(Y_IceCrevice.Population.Clione)
+$endif
+$branch .argue.showClaimSpecies
+
+:: argue.showClaimSpecies
+{@profArctic} What about microscopic species? Did you find any?
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.completeSpecies
+    $answer *, .argue.unrelatedSpecies
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedSpecies
+$call ArgueRejectIncorrect()
+{@profArctic} Hmm. That's interesting, but not really helpful here. 
+$goto .argue.showClaimSpecies
+
+// Both
 
 :: argue.giveUp
 {@profArctic} No problem, Ollie. Just let me know when you're ready. 
 $call ArgueCancelClaim()
 
 // END
-:: argue.complete
+:: argue.completeSpecies
 $call ArgueComplete()
 {@profArctic} Wow, so many microorganisms! Nice job, Ollie.
               And I can't believe you saw a Ribbon Seal! I've been here 6 years and I've seen one maybe twice. 
