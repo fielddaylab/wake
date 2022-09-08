@@ -48,8 +48,8 @@ namespace Aqua {
         }
 
         [MethodImpl(256)]
-        static public void OnSceneLoad(Action action) {
-            Services.State.OnLoad(action);
+        static public void OnSceneLoad(Action action, int priority = 0) {
+            Services.State.OnLoad(action, priority);
         }
 
         static public PlayerBody CurrentPlayer {

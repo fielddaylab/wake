@@ -140,7 +140,6 @@ GameObject:
   - component: {fileID: 54456075}
   - component: {fileID: 54456074}
   - component: {fileID: 54456073}
-  - component: {fileID: 54456072}
   m_Layer: 8
   m_Name: Water
   m_TagString: Untagged
@@ -148,20 +147,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
   m_IsActive: 1
---- !u!64 &54456072
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 54456071}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &54456073
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2167,6 +2152,7 @@ GameObject:
   - component: {fileID: 482623078}
   - component: {fileID: 482623077}
   - component: {fileID: 482623076}
+  - component: {fileID: 482623079}
   m_Layer: 0
   m_Name: Terrain
   m_TagString: Untagged
@@ -2232,6 +2218,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &482623079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 482623075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b587641419b101842b62d5046fca3f18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &489321937
 GameObject:
   m_ObjectHideFlags: 0

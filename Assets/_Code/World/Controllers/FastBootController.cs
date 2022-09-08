@@ -119,7 +119,7 @@ namespace Aqua {
             var fader = Services.UI.WorldFaders.AllocFader();
             Services.State.OnLoad(() => {
                 fader.Dispose();
-            });
+            }, 0);
             yield return fader.Object.Show(Color.black, 0.3f);
 
             if (BootAudio != null) {

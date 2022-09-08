@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -27830,6 +27830,7 @@ MonoBehaviour:
   m_ColorGroup: {fileID: 0}
   m_Path: Textures/Observation/UnderwaterBG02.png
   m_Material: {fileID: 2100000, guid: c8b6641b5a3b33b458c8057d085962b8, type: 2}
+  m_Tessellation: 0
   m_Color:
     serializedVersion: 2
     rgba: 4294967295
@@ -32400,6 +32401,7 @@ GameObject:
   - component: {fileID: 1114687992}
   - component: {fileID: 1114687991}
   - component: {fileID: 1114687990}
+  - component: {fileID: 1114687993}
   m_Layer: 0
   m_Name: Terrain
   m_TagString: Untagged
@@ -32465,6 +32467,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1114687993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1114687989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b587641419b101842b62d5046fca3f18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1117118888
 PrefabInstance:
   m_ObjectHideFlags: 0
