@@ -60,16 +60,17 @@ $set    jobs:common-dive.seen.micro-intro = true
 
 // Specters
 
-:: specter.default
+:: specterTrigger.default
 @trigger    ScannedObject
 @when		scanId == "specter.default"
 //@once
 @cutscene
 {@guide}	This is a Specter! Spooky...
 
-:: specter.urchin-barren
+:: specterTrigger.urchin-barren-viz
 @trigger    ScannedObject
 @when		scanId == "specter.urchinBarrenViz"
 //@once
 @cutscene
-{@guide}	This is a Specter in the Urchin Barren! Spooky...
+{@guide}	This is a Specter in the Urchin Barren!
+			It only appears after completing the Urchin Barren Viz job. Spooky...
