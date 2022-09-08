@@ -74,3 +74,10 @@ $set    jobs:common-dive.seen.micro-intro = true
 @cutscene
 {@guide}	This is a Specter in the Urchin Barren!
 			It only appears after completing the Urchin Barren Viz job. Spooky...
+
+:: specterTrigger.job2
+@trigger    ScannedObject
+@when		scanId == "specter.job2"
+//@once
+@cutscene
+{@guide}	This is a Specter in the Bull Kelp!
