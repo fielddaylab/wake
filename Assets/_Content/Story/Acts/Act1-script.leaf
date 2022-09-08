@@ -73,9 +73,9 @@ $call Uncle->TeleportTo(tio-intro-pos)
 @who        *
 @when       scene:name == "RS-1C-StationInterior", !JobStartedOrComplete(kelp-welcome)
 @boostScore 100
-@once
 @entrypoint
 @cutscene
+@once
 
 {@drKelp}Olivia! Honey, thank goodness you're okay!
 {@player}I'm fine, Mom. It was no big deal. 
@@ -84,9 +84,10 @@ $call Uncle->TeleportTo(tio-intro-pos)
 {@kelpMechanic}Actually, she's not on probation anymore. 
 {@kelpMechanic}Good news, mijita. You passed.  
 {@player}YES!!!
-{@drKelp}Wow. Olivia.... this is fantastic! You're a junior scientist now!
+{@drKelp}Wow. Olivia.|.|.|
+{@drKelp}This is fantastic! You're a junior scientist now!
 {@drKelp}And just in time. I could really use your help. 
-{@player}You mean... you want me to work here? At the Forested Lagoon? 
+{@player}You mean...| you want me to work here!? At the {nameof RS-1C}? 
 {@drKelp}Of course! You know this place better than anyone. 
 {@drKelp}Sun's almost up. Let's get you started with your first job!
 $call InteriorOpenJobBoard()

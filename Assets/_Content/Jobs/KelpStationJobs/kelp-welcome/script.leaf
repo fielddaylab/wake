@@ -325,7 +325,12 @@ $endif
 @when 		JobTaskActive(returnToShip)
 @boostScore -5
 @cutscene
-{@guide}    Head to the surface and board your ship!
+
+$if !IsPlayerOnShip()
+    {@guide}    Head to the surface and board your ship!
+$else 
+    {@guide}    Head to the {m}helm{/m} when you're ready to continue.
+$endif
 
 :: catchRunExperiment
 @trigger    RequestPartnerHelp
@@ -365,7 +370,7 @@ $call ArgueLoad(welcomeArgue)
 {@drKelp}  Wow, that was quick! Are you sure you're ready?
 {@player}  Actually, I've still got a few things to do.
 // TODO: add a branch if player has not received V1ct0r help button yet
-{@drKelp}  Well, don't be afraid to ask {nameof @guide} if you need some help.
+{@drKelp}  Well, don't be afraid to ask if you need some help.
 {@drKelp}  I'll be here when you're ready. 
 	
 	
