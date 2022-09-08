@@ -16,7 +16,7 @@
 
 // Intros
 
-#ShopLockedHandler(intro, !JobStartedOrComplete(kelp-welcome))
+#ShopLockedHandler(intro, !JobStartedOrComplete(kelp-welcome), !global:Act1.TalkedToMomMad)
 @boostScore 100
 $goto act1.momMadEnd
 

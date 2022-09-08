@@ -325,7 +325,12 @@ $endif
 @when 		JobTaskActive(returnToShip)
 @boostScore -5
 @cutscene
-{@guide}    Head to the surface and board your ship!
+
+$if !IsPlayerOnShip()
+    {@guide}    Head to the surface and board your ship!
+$else 
+    {@guide}    Head to the {m}helm{/m} when you're ready to continue.
+$endif
 
 :: catchRunExperiment
 @trigger    RequestPartnerHelp
