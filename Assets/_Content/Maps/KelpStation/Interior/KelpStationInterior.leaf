@@ -11,3 +11,17 @@ $call   ExitStationGroup->LockGroup()
 @function   JobStarted
 @when       jobId == "kelp-welcome"
 $call   ExitStationGroup->UnlockGroup()
+
+:: warpMechanicToDefault
+@entrypoint
+{hide-dialog} {fade-out black, 0.3, wait}
+$call Uncle->TeleportTo("mechanic-default-pos")
+{wait 0.3}
+{fade-in 0.3, wait}
+
+:: warpMechanicToResearcher
+@entrypoint
+{hide-dialog} {fade-out black, 0.3, wait}
+$call Uncle->TeleportTo("tio-intro-pos")
+{wait 0.3}
+{fade-in 0.3, wait}

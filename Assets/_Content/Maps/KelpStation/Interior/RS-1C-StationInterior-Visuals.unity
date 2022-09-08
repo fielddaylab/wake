@@ -1500,6 +1500,7 @@ Transform:
   - {fileID: 1554943918}
   - {fileID: 1975615722}
   - {fileID: 1471209191577700605}
+  - {fileID: 1319791500}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -8718,6 +8719,54 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 4057640791062951474}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1319791499
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1319791500}
+  - component: {fileID: 1319791501}
+  m_Layer: 0
+  m_Name: uncle-default-pose
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1319791500
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1319791499}
+  m_LocalRotation: {x: -0.027887609, y: -0.7065567, z: -0.7065567, w: -0.027887609}
+  m_LocalPosition: {x: 2.1241972, y: -1.7137628, z: -4.6100006}
+  m_LocalScale: {x: 0.9999999, y: 1, z: 0.9999999}
+  m_Children: []
+  m_Father: {fileID: 503058231}
+  m_RootOrder: 11
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1319791501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1319791499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced02461c9fab16498d5d024212b8a9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Id:
+    m_Source: mechanic-default-pos
+    m_HashValue: 1281926024
+  m_IsPersistent: 0
+  m_StartDisabled: 0
 --- !u!4 &1325815246 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: af863519ba9569d4c8e97bc6c40d0d85,
@@ -12728,6 +12777,11 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1953271754209383109, guid: e30bb94fb61502344837e7d5f3017a8c,
+        type: 3}
+      propertyPath: m_DefaultNode
+      value: 
+      objectReference: {fileID: 1319791501}
     - target: {fileID: 2442365382309728772, guid: e30bb94fb61502344837e7d5f3017a8c,
         type: 3}
       propertyPath: m_Name
