@@ -43,7 +43,7 @@
 @when 		scene:name == "RS-2V", HasEntity(Fishers), HasFact(RedGrouper.Reproduce), HasFact(ReefEdge.PopulationHistory.Fishers), !JobTaskCompleted(getScans)
 @cutscene
 {@guide} 	Sufficient work, O!
-			Time to head back to the Meredith and run your experiment.
+			Time to head back to the AquaLab and run your experiment.
 
 :: helpAtSiteV
 @trigger    RequestPartnerHelp
@@ -77,7 +77,7 @@ $endif
 @boostScore 2
 @cutscene
 {@player} 	What should I do now, {nameof @guide}?
-{@guide}	You've obtained all the data you need at Site V. Time to head back to the Meredith!
+{@guide}	You've obtained all the data you need at Site V. Time to head back to the AquaLab!
 
 
 :: backAtShip

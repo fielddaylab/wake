@@ -53,7 +53,7 @@ $set    	jobs:coral-stressed.seen.bottom = true
 $if HasEntity(StaghornCoral)
 	$set    jobs:coral-stressed.got.scans = true
 	{@guide}   You've obtained all the necessary data, O.
-			   Time to return to the Meredith!
+			   Time to return to the AquaLab!
 $else
 	{@guide}   You still need to scan the coral, O. 
 $endif
@@ -65,7 +65,7 @@ $endif
 @cutscene
 $set jobs:coral-stressed.gotScans = true
 {@guide}   You've gathered all the data you need, O!
-		   Time to return to the Meredith and use your Stress Tank.
+		   Time to return to the AquaLab and use your Stress Tank.
 
 
 :: helpBackToShip

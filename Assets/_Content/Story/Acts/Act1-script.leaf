@@ -90,6 +90,7 @@ $call Uncle->TeleportTo(tio-intro-pos)
 {@player}You mean...| you want me to work here!? At the {nameof RS-1C}? 
 {@drKelp}Of course! You know this place better than anyone. 
 {@drKelp}Sun's almost up. Let's get you started with your first job!
+         Hmmm. And you'll need a ship, too. I think I've got a second generation AquaLab that nobody's using... 
 $call InteriorOpenJobBoard()
 $set global:Act1.TalkedToMomMad = true
 {hide-dialog}
@@ -103,7 +104,7 @@ $set global:Act1.TalkedToMomMad = true
 @who        drKelp
 @when       !JobStartedOrComplete(kelp-welcome)
 @cutscene
-{@drKelp}   You think you're ready to handle more responsibility? Complete this task for me and we'll see about giving you more to do around here. 
+{@drKelp}   You've got your first job, Olivia! Let's see how it goes, then we'll talk about giving you more to do around here. 
 $call InteriorOpenJobBoard()
 
 // :: momMad
