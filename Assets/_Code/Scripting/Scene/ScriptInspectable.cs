@@ -173,7 +173,7 @@ namespace Aqua.Scripting {
             if (!m_GroupId.IsEmpty) {
                 Script.OnSceneLoad(() => {
                     Group = ScriptInteractionGroup.Find(m_GroupId);
-                });
+                }, 5);
             }
         }
 

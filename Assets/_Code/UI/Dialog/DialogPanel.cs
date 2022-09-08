@@ -16,10 +16,12 @@ namespace Aqua
 {
     public class DialogPanel : BasePanel
     {
+        public delegate void UpdatePortraitDelegate(StringHash32 characterId, StringHash32 poseId);
+
         private const float SkipMultiplier = 1f / 1024;
         private const float DefaultMultiplier = 0.55f;
 
-        public static Action<StringHash32, StringHash32> UpdatePortrait;
+        public static UpdatePortraitDelegate UpdatePortrait;
 
         #region Types
 

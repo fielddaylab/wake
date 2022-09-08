@@ -131,6 +131,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 109386352}
+  - component: {fileID: 109386353}
   m_Layer: 0
   m_Name: Lights
   m_TagString: Untagged
@@ -159,6 +160,20 @@ Transform:
   m_Father: {fileID: 1008225337}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &109386353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 109386351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 1
+  DestroyGameObject: 1
 --- !u!1001 &153492826
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5174,6 +5189,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 603868754}
+  - component: {fileID: 603868755}
   m_Layer: 0
   m_Name: ParticleFX
   m_TagString: Untagged
@@ -5200,6 +5216,20 @@ Transform:
   m_Father: {fileID: 1008225337}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &603868755
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603868753}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 0
+  DestroyGameObject: 1
 --- !u!1 &633127362
 GameObject:
   m_ObjectHideFlags: 0
@@ -10249,16 +10279,6 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 2306239266753568082, guid: 8a74e79b42859fc4a87005877f51f12a,
-        type: 3}
-      propertyPath: TooltipId.m_Source
-      value: ui.ship.helm.guide.tooltip
-      objectReference: {fileID: 0}
-    - target: {fileID: 2306239266753568082, guid: 8a74e79b42859fc4a87005877f51f12a,
-        type: 3}
-      propertyPath: TooltipId.m_HashValue
-      value: 2749820570
-      objectReference: {fileID: 0}
     - target: {fileID: 5983256456486292616, guid: 8a74e79b42859fc4a87005877f51f12a,
         type: 3}
       propertyPath: m_Name
@@ -10341,6 +10361,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1008225337}
+  - component: {fileID: 1008225338}
   m_Layer: 0
   m_Name: Room
   m_TagString: Untagged
@@ -10369,6 +10390,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1008225338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1008225336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 0
+  DestroyGameObject: 0
 --- !u!1001 &1012268653
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10724,6 +10759,26 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1012268653}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1012268655 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 56ef21d2008261040bbd5a18a2801442,
+    type: 3}
+  m_PrefabInstance: {fileID: 1012268653}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1012268656
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1012268655}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 1
+  DestroyGameObject: 1
 --- !u!1 &1067493712
 GameObject:
   m_ObjectHideFlags: 0
