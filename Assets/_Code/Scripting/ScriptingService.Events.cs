@@ -217,7 +217,7 @@ namespace Aqua
             MapDesc map = obj as MapDesc;
             if (!map.IsReferenceNull())
             {
-                return Loc.FormatFromString("<" + ColorTags.MapColorString + ">" + "{0}</color>", map.LabelId());
+                return Loc.FormatFromString("<" + ColorTags.MapColorString + ">" + "{0}</color>", map.ProperNameId());
             }
 
             ScriptCharacterDef charDef = obj as ScriptCharacterDef;
@@ -276,6 +276,12 @@ namespace Aqua
             if (!charDef.IsReferenceNull())
             {
                 return Loc.Find(charDef.NameId());
+            }
+
+            MapDesc map = obj as MapDesc;
+            if (!map.IsReferenceNull())
+            {
+                return Loc.FormatFromString("<" + ColorTags.MapColorString + ">" + "{0}</color>", map.LabelId());
             }
 
             return ReplaceNameOf(inTag, inContext);
