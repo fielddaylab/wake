@@ -16,6 +16,7 @@ $set    player:noProbeHacker.triedToScan = true
 $set    player:noProbeHacker.triedToScan = true
 {@guide}    Looks like we'll need some new equipment if we're going to scan these probes.
 
+
 // intro scripts
 
 :: generic.tagger.intro
@@ -55,3 +56,20 @@ $set    jobs:common-dive.seen.probe-intro = true
 {@guide}	Your new {nameof Microscope} allows you to scan and tag microscopic species!
             You can click to activate your {nameof Microscope} at the top of your task bar or by pressing the [5] on your keyboard.
 $set    jobs:common-dive.seen.micro-intro = true
+
+
+// Specters
+
+:: specter.default
+@trigger    ScannedObject
+@when		scanId == "specter.default"
+//@once
+@cutscene
+{@guide}	This is a Specter! Spooky...
+
+:: specter.urchin-barren
+@trigger    ScannedObject
+@when		scanId == "specter.urchinBarrenViz"
+//@once
+@cutscene
+{@guide}	This is a Specter in the Urchin Barren! Spooky...
