@@ -21,7 +21,6 @@ namespace Aqua
         [SerializeField, ScriptCharacterId] private StringHash32 m_PosterId = default;
         [SerializeField] private TextId m_DescId = default;
         [SerializeField] private TextId m_DescShortId = default;
-        [SerializeField] private TextId m_DescCompletedId = default;
 
         [SerializeField, Range(0, 5)] private int m_ExperimentDifficulty = 0;
         [SerializeField, Range(0, 5)] private int m_ModelingDifficulty = 0;
@@ -57,7 +56,6 @@ namespace Aqua
         [LeafLookup("PosterId")] public StringHash32 PosterId() { return m_PosterId; }
         public TextId DescId() { return m_DescId; }
         public TextId DescShortId() { return m_DescShortId.IsEmpty ? m_DescId : m_DescShortId; }
-        public TextId DescCompletedId() { return m_DescCompletedId.IsEmpty ? m_DescId : m_DescCompletedId; }
 
         public int Difficulty(ScienceActivityType inType)
         {

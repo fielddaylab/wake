@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -21583,8 +21583,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Recursive: 1
-  DestroyGameObject: 0
+  Recursive: 0
+  DestroyGameObject: 1
 --- !u!4 &1767397645 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4875577485573058526, guid: 0742fd0a94824fa4aa4c9b93dfcbc24e,
@@ -22072,6 +22072,26 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1853991943}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1853991945 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 2d64702fe14fe44d2a60ada4fe6fdb9b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1853991943}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1853991946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1853991945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 0
+  DestroyGameObject: 0
 --- !u!4 &1872414050 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4875577485573058526, guid: 122ec6e6af0bf9d48a547adc313058fc,

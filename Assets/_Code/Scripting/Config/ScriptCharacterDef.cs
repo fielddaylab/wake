@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab Content/Character Definition")]
-    public class ScriptCharacterDef : DBObject
+    public class ScriptCharacterDef : DBObject, IEditorOnlyData
     {
         [Serializable]
         private struct PortraitDef : IKeyValuePair<StringHash32, Sprite>
@@ -79,6 +79,20 @@ namespace Aqua
         {
             return (m_Flags & inFlags) != 0;
         }
+
+        #if UNITY_EDITOR
+
+        void IEditorOnlyData.ClearEditorOnlyData() {
+            ValidationUtils.StripDebugInfo(ref m_NameId);
+            ValidationUtils.StripDebugInfo(ref m_ShortNameId);
+            ValidationUtils.StripDebugInfo(ref m_DefaultTypeSFX);
+
+            for(int i = 0; i < m_Portraits.Length; i++) {
+                ValidationUtils.StripDebugInfo(ref m_Portraits[i].Id);
+            }
+        }
+
+        #endif // UNITY_EDITOR
     }
 
     [Flags]

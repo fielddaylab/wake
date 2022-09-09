@@ -57,6 +57,14 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
+        static public void StripDebugInfo(ref SerializedHash32 hash) {
+            hash = new SerializedHash32(hash.Hash());
+        }
+
+        static public void StripDebugInfo(ref TextId id) {
+            id = id.Hash();
+        }
+
         static public T FindAsset<T>() where T : UnityEngine.Object
         {
             string[] assetGuids = AssetDatabase.FindAssets(NameFilter(typeof(T)));

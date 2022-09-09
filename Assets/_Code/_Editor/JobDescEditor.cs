@@ -22,7 +22,6 @@ namespace Aqua.Editor
         private SerializedProperty m_PosterIdProperty;
         private SerializedProperty m_DescIdProperty;
         private SerializedProperty m_DescShortIdProperty;
-        private SerializedProperty m_DescCompletedIdProperty;
 
         private SerializedProperty m_ExperimentDifficultyProperty;
         private SerializedProperty m_ModelingDifficultyProperty;
@@ -93,7 +92,6 @@ namespace Aqua.Editor
             m_PosterIdProperty = serializedObject.FindProperty("m_PosterId");
             m_DescIdProperty = serializedObject.FindProperty("m_DescId");
             m_DescShortIdProperty = serializedObject.FindProperty("m_DescShortId");
-            m_DescCompletedIdProperty = serializedObject.FindProperty("m_DescCompletedId");
             m_ExperimentDifficultyProperty = serializedObject.FindProperty("m_ExperimentDifficulty");
             m_ModelingDifficultyProperty = serializedObject.FindProperty("m_ModelingDifficulty");
             m_ArgumentationDifficultyProperty = serializedObject.FindProperty("m_ArgumentationDifficulty");
@@ -156,7 +154,6 @@ namespace Aqua.Editor
                 EditorGUILayout.PropertyField(m_PosterIdProperty);
                 EditorGUILayout.PropertyField(m_DescIdProperty);
                 EditorGUILayout.PropertyField(m_DescShortIdProperty);
-                EditorGUILayout.PropertyField(m_DescCompletedIdProperty);
             }
 
             if (Section("Prerequisites", ref m_PrerequisitesExpanded)) {
