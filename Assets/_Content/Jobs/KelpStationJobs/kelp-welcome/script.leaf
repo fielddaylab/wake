@@ -38,8 +38,8 @@ $call GiveUpgrade(ROVScanner, Silent)
 $call Player->SetTool(Scanner)
 {@guide}  The {item-name}Scanner{/item-name} searches for life forms automatically. 
             Click the red targets to ID a new plant or animal species. 
-{wait 0.5}
 {hide-dialog}
+{wait 0.5}
 
 {fade-out black.60, 0.5, wait}
 {@}
@@ -99,7 +99,6 @@ $endif
 @cutscene
 @once
 $set    jobs:kelp-welcome.got.scans = true
-$branch common.ringPhone
 
 {@guide}   You have scanned all of the local species. Your work is acceptable!
 {@player} Thanks, {nameof @guide}. 
@@ -126,7 +125,6 @@ $call Surface->Activate()
 @cutscene
 @once
 
-$branch common.ringPhone
 {@player}My own ship!! I can't believe Mom trusted me with this.
 {@guide}Yes. And it includes several built-in safety features!
 {@player}Oh. Yeah, that tracks. 
@@ -157,7 +155,6 @@ $call ship.map->ResetSorting()
 @trigger    SceneStart
 @when       scene:name == "KelpStation", JobTaskCompleted(gotoSiteC), !jobs:kelp-welcome.got.scans
 @cutscene
-$branch common.ringPhone
 
 {@player}   Is that everything, {nameof @guide}? 
 {@guide}   Hmmm. It appears you missed something. 
@@ -187,7 +184,6 @@ $call ship.map->ResetSorting()
 @boostScore 100
 @cutscene
 @once
-$branch common.ringPhone
 
 {@player} Wow. This ship... it's amazing.
 {@player} I wish Mer could see it. 
@@ -274,7 +270,6 @@ $endif
 @cutscene
 @once
 
-$branch common.ringPhone
 {@guide}   Now return to the Helm and navigate your sub back to the {m}Research Station{/m}.
 
 // $call   UnlockRoom("office")
