@@ -25,7 +25,6 @@ $call UnlockSite(RS-1B)
 @triggerPriority   High
 @once
 @cutscene
-$branch common.ringPhone
 
 {@player}It's so strange down here. 
 {@guide} Yes. Something is clearly off balance in this ecosystem.
@@ -122,7 +121,6 @@ $endif
 @when       scene:name == "Helm", JobTaskTop(visualSiteB)
 @once
 @cutscene
-$branch common.ringPhone
 
 {@player} Phew. We made it back! 
           Um... not that I was worried, or anything. 
