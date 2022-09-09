@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: above-n-below
   m_EditorClassIdentifier: 
   m_Category: 0
-  m_Flags: 1
+  m_Flags: 0
   m_NameId:
     m_Source: jobs.arctic-above-n-below.name
     m_HashValue: 3351688551
@@ -25,9 +25,6 @@ MonoBehaviour:
   m_DescShortId:
     m_Source: jobs.arctic-above-n-below.desc.short
     m_HashValue: 1565165233
-  m_DescCompletedId:
-    m_Source: 
-    m_HashValue: 0
   m_ExperimentDifficulty: 1
   m_ModelingDifficulty: 2
   m_ArgumentationDifficulty: 1
@@ -40,12 +37,243 @@ MonoBehaviour:
     m_HashValue: 1297447963
   m_DiveSiteIds:
   - m_HashValue: 1976919334
-  m_Tasks: []
-  m_OptimizedTaskList: []
-  m_CashReward: 100
+  m_Tasks:
+  - Id:
+      m_Source: scanNew
+      m_HashValue: 730217158
+    LabelId:
+      m_Source: jobs.arctic-above-n-below.task.scanNew
+      m_HashValue: 2211061590
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: SnowCrab
+        m_HashValue: 1824142092
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: AstarteBorealis
+        m_HashValue: 3388301900
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: PterasterObscurus
+        m_HashValue: 1470134365
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: ArcticCod
+        m_HashValue: 2545375201
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: countNew
+      m_HashValue: 1760192562
+    LabelId:
+      m_Source: jobs.arctic-above-n-below.task.countNew
+      m_HashValue: 1901418690
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Y_IceCrevice.Population.SnowCrab
+        m_HashValue: 3607800065
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Y_IceCrevice.Population.AstarteBorealis
+        m_HashValue: 1323898499
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Y_IceCrevice.Population.PterasterObscurus
+        m_HashValue: 3870369418
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Y_IceCrevice.Population.ArcticCod
+        m_HashValue: 3171788746
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: scanNew
+      m_HashValue: 730217158
+  - Id:
+      m_Source: experimentInteractions
+      m_HashValue: 2119170003
+    LabelId:
+      m_Source: jobs.arctic-above-n-below.task.experimentInteractions
+      m_HashValue: 1293197251
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: RibbonSeal.Eats.ArcticCod
+        m_HashValue: 1939753477
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: countNew
+      m_HashValue: 1760192562
+  - Id:
+      m_Source: createModel
+      m_HashValue: 2425868018
+    LabelId:
+      m_Source: jobs.arctic-above-n-below.task.createModel
+      m_HashValue: 3081049218
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Y_IceCrevice.Model.AboveAndBelowVisual
+        m_HashValue: 755100527
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: experimentInteractions
+      m_HashValue: 2119170003
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    LabelId:
+      m_Source: jobs.arctic-above-n-below.task.reportBack
+      m_HashValue: 2565893556
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: createModel
+      m_HashValue: 2425868018
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: scanNew
+      m_HashValue: 730217158
+    IdString: scanNew
+    Index: 0
+    LabelId:
+      m_Source: jobs.arctic-above-n-below.task.scanNew
+      m_HashValue: 2211061590
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: SnowCrab
+        m_HashValue: 1824142092
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: AstarteBorealis
+        m_HashValue: 3388301900
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: PterasterObscurus
+        m_HashValue: 1470134365
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: ArcticCod
+        m_HashValue: 2545375201
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: countNew
+      m_HashValue: 1760192562
+    IdString: countNew
+    Index: 1
+    LabelId:
+      m_Source: jobs.arctic-above-n-below.task.countNew
+      m_HashValue: 1901418690
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Y_IceCrevice.Population.SnowCrab
+        m_HashValue: 3607800065
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Y_IceCrevice.Population.AstarteBorealis
+        m_HashValue: 1323898499
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Y_IceCrevice.Population.PterasterObscurus
+        m_HashValue: 3870369418
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Y_IceCrevice.Population.ArcticCod
+        m_HashValue: 3171788746
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: experimentInteractions
+      m_HashValue: 2119170003
+    IdString: experimentInteractions
+    Index: 2
+    LabelId:
+      m_Source: jobs.arctic-above-n-below.task.experimentInteractions
+      m_HashValue: 1293197251
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: RibbonSeal.Eats.ArcticCod
+        m_HashValue: 1939753477
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0100
+  - Id:
+      m_Source: createModel
+      m_HashValue: 2425868018
+    IdString: createModel
+    Index: 3
+    LabelId:
+      m_Source: jobs.arctic-above-n-below.task.createModel
+      m_HashValue: 3081049218
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Y_IceCrevice.Model.AboveAndBelowVisual
+        m_HashValue: 755100527
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0200
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    IdString: reportBack
+    Index: 4
+    LabelId:
+      m_Source: jobs.arctic-above-n-below.task.reportBack
+      m_HashValue: 2565893556
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0300
+  m_CashReward: 50
   m_ExpReward: 5
   m_JournalId:
     m_HashValue: 3932877866
   m_Scripting: {fileID: -1942890987711236906, guid: a4b8750da99218211b1d3707e259afcb,
     type: 3}
-  m_ExtraAssets: []
+  m_ExtraAssets:
+  - {fileID: 11400000, guid: 251a3af6ac403c84293725e4b220342e, type: 2}

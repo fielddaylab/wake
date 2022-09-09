@@ -15,42 +15,129 @@
                Anyhow, what do you say, Ollie? Can you make a {nameof VisualModel} of how all the species interact?
 {@player}      I'd love to. I'll let you know what I find out!
 
+:: speciesScanned
+@trigger        JobTasksUpdated
+@when           JobTaskTop(experimentInteractions)
+@cutscene
+{@guide}        Now that we have these species scanned and counted, let's drop them in the observation tank.
+
+:: experimentsCompleted
+@trigger        JobTasksUpdated
+@when           JobTaskTop(createModel)
+@cutscene
+{@guide}        Time to head to the modeling lab to show how seals and other species interact.
+
+
+:: modelCompleted
+@trigger        JobTasksUpdated
+@when           JobTaskTop(reportBack)
+@cutscene
+{@guide}        Looks good! {nameof profArctic} is waiting.
+
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchScanNew
+@trigger        RequestPartnerHelp
+@when           JobTaskTop(scanNew)
+@cutscene
+{@guide}        Head to {nameof RS-4Y} and scan the species there.
+
+:: catchCountNew
+@trigger        RequestPartnerHelp
+@when           JobTaskTop(countNew)
+@cutscene
+{@guide}        Count the species in the {nameof RS-4Y}.
+
+:: catchExperimentInteractions
+@trigger        RequestPartnerHelp
+@when           JobTaskTop(experimentInteractions)
+@cutscene
+{@guide}        Place seals in the observation tank with other bottom-dwelling species and watch for any interactions.
+
+:: catchCreateModel
+@trigger        RequestPartnerHelp
+@when           JobTaskTop(createModel)
+@cutscene
+{@guide}        Take what you learned from experimentation and create a Visual Model out of it.
+
+:: catchReportBack
+@trigger        RequestPartnerHelp
+@when           JobTaskTop(reportBack)
+@cutscene
+{@guide}        Report back to {nameof profArctic}.
+
+
 // ARGUMENTATION
 ::argue.intro
 @trigger    TryArgumentation
-@when   !ArgueIsComplete() // TODO: NAME ME
+@when       !ArgueIsComplete(AboveAndBelowArgue)
 @cutscene
-$call ArgueLoad() // TODO: SAME NAME HERE
-// TODO: add your claim label to jobs.aqloc
-$if ArgueSetClaim(Claim, jobs.station-job-name.argue.claimLabel) 
-    $call ArgueFactSlot() // TODO: put fact slot info here 
-$endif
+$call ArgueLoad(AboveAndBelowArgue)
+{@profArctic}   Do the seals and bottom-dwelling species interact?
+$choice .argue.yesInteract; Yes
+$choice .argue.noInteract; No
+$choose branch
 
-:: argue.showClaim
+// Yes
+
+:: argue.yesInteract
+$if ArgueSetClaim(Claim, jobs.arctic-above-n-below.argue.claimLabelYes)
+    $call ArgueFactSlot(Y_IceCrevice.Model.AboveAndBelowVisual)
+$endif
+$branch .argue.showClaimYes
+
+:: argue.showClaimYes
+{@profArctic}   Can I see your model?
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
-    $answer correct, .argue.complete 
-    $answer *, .argue.unrelated
+    $answer correct, .argue.completeYes
+    $answer *, .argue.unrelatedYes
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
-:: argue.unrelated
+:: argue.unrelatedYes
 $call ArgueRejectIncorrect()
 {@profArctic} Huh. That's interesting, Ollie, but it's not really relevant. 
-$goto .argue.showClaim
+$goto .argue.showClaimYes
+
+:: argue.completeYes
+$call ArgueComplete()
+{@profArctic}   Hmm, I'm not sure I see how based on your model.
+                It looks they only <i>might</i> interact through detritus.
+                Good to know though!
+$call CompleteJob()
+
+// No
+
+:: argue.noInteract
+$if ArgueSetClaim(Claim, jobs.arctic-above-n-below.argue.claimLabelNo)
+   $call ArgueFactSlot(Y_IceCrevice.Model.AboveAndBelowVisual)
+$endif
+$branch .argue.showClaimNo
+
+:: argue.showClaimNo
+{@profArctic}   Can I see your model?
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.completeNo
+    $answer *, .argue.unrelatedNo
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedNo
+$call ArgueRejectIncorrect()
+{@profArctic} Huh. That's interesting, Ollie, but it's not really relevant. 
+$goto .argue.showClaimNo
 
 :: argue.giveUp
 {@profArctic} No problem, Ollie. Just let me know when you're ready. 
 $call ArgueCancelClaim()
 
-// END
-:: argue.complete
+:: argue.completeNo
 $call ArgueComplete()
 {@profArctic} Oh, this is fascinating!
               So it seems the Ribbon Seals and the other species don't really interact...
               Except through detritus, I guess. 
               Thank you, Ollie. I've been wondering about that place for years! 
-              
-               
-
 $call CompleteJob()
