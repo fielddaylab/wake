@@ -5,6 +5,7 @@ using BeauUtil.Debugger;
 using BeauUWT;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Aqua;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif // UNITY_EDITOR
@@ -57,6 +58,11 @@ namespace AquaAudio {
             }
         }
 
+        public string StreamingPath() {
+            Assert.True(m_Mode == PlaybackMode.Stream, "Event '{0}' is not a stream event", name);
+            return m_StreamingPath;
+        }
+
         #region Streaming
 
         public void LoadStream(UWTStreamPlayer inPlayer, System.Random inRandom, out AudioPropertyBlock outProperties, out float outDelay) {
@@ -106,6 +112,16 @@ namespace AquaAudio {
         #endregion // Sample
 
         #if UNITY_EDITOR
+
+        static public void BuildManifestFromEventString(string eventId, SceneManifestBuilder manifest) {
+            AudioEvent evt = ValidationUtils.FindAsset<AudioEvent>(eventId);
+            if (evt != null) {
+                manifest.Assets.Add(evt);
+                if (evt.Mode() == AudioEvent.PlaybackMode.Stream) {
+                    manifest.Paths.Add(evt.StreamingPath());
+                }
+            }
+        }
 
         // TODO:    Add commands to generate AudioEvent from an AudioClip,
         //          or combine multiple AudioClips into a single AudioEvent

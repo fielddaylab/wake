@@ -35,5 +35,15 @@ namespace ProtoAqua.Observation
                 scanMgr.Unload(m_ScanData[i]);
             }
         }
+
+        #if UNITY_EDITOR
+
+        public void BuildManifest(SceneManifestBuilder builder) {
+            foreach(var script in m_ScanData) {
+                builder.Assets.Add(script);
+            }
+        }
+
+        #endif // UNITY_EDITOR
     }
 }

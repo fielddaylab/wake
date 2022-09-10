@@ -14,7 +14,7 @@ namespace Aqua {
 
     [ExecuteAlways]
     [RequireComponent(typeof(RawImage), typeof(VideoPlayer))]
-    public class StreamedVideoImage : MonoBehaviour, IScenePreloader, ISceneUnloadHandler {
+    public class StreamedVideoImage : MonoBehaviour, IScenePreloader, ISceneUnloadHandler, ISceneManifestElement {
 
         public enum AutoSizeMode {
             StretchX,
@@ -175,6 +175,10 @@ namespace Aqua {
         #endregion // Scene Loading
 
         #if UNITY_EDITOR
+
+        public void BuildManifest(SceneManifestBuilder builder) {
+            builder.Paths.Add(m_Url);
+        }
 
         private void Reset() {
             m_RawImage = GetComponent<RawImage>();
