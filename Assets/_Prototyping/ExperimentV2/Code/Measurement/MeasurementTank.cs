@@ -491,6 +491,7 @@ namespace ProtoAqua.ExperimentV2
             ExperimentResult result = new ExperimentResult();
             if (inWorld.EnvDeaths > 0) {
                 result.Feedback |= ExperimentFeedbackFlags.DeadOrganisms;
+                result.Facts = Array.Empty<ExperimentFactResult>();
             }
             else {
                 IsolatedVariable iso = (IsolatedVariable)inData.CustomData;
