@@ -7,7 +7,7 @@ using System.Collections;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
-using NativeWebClick;
+using NativeWebUtils;
 using UnityEngine;
 using System.Runtime.InteropServices;
 using TMPro;
