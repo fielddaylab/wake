@@ -1,0 +1,95 @@
+# basePath job.arctic-endangered-seals
+
+// INTRO
+:: start
+@trigger    JobStarted
+@cutscene
+{@arcticSci}  I did a bit of digging and found these experimental results. They should help with your model.
+$call GiveFact(Clione.Reproduce)
+$call GiveFact(Clione.Reproduce.Stressed)
+$call GiveFact(GlacialAmphipod.Reproduce)
+$call GiveFact(GlacialAmphipod.Reproduce.Stressed)
+$call GiveFact(IceAlgae.Reproduce)
+$call GiveFact(IceAlgae.Reproduce.Stressed)
+$call GiveFact(ArcticCopepod.Reproduce)
+$call GiveFact(ArcticCopepod.Reproduce.Stressed)
+
+:: afterModelSync
+@trigger    JobTaskCompleted
+@when       taskId == "modelSync"
+@cutscene
+{@guide}    Cool, we've established a baseline of what has happened. Now let's project our findings into the future with a Predict Model.
+
+:: afterModelPredict
+@trigger    JobTaskCompleted
+@when       taskId == "modelPredict"
+@cutscene
+{@guide}    All right, back to {nameof arcticSci}!
+
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchModelSync
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(modelSync)
+@boostScore -5
+@cutscene
+{@guide}    Create a Describe Model of the {nameof RS-4Y} in the Modeling Lab.
+
+:: catchModelPredict
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(modelPredict)
+@boostScore -5
+@cutscene
+{@guide}    Create a Predict Model of the {nameof RS-4Y} in the Modeling Lab.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@guide}    Head back to the station to let {nameof arcticSci} what you discovered!
+
+
+// ARGUMENTATION
+
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(whaleModel)
+@cutscene
+$call ArgueLoad(whaleModel)
+$if ArgueSetClaim(Claim, jobs.arctic-disappearing-act.argue.claimLabel) 
+		$call ArgueFactSlot(W_WhaleFall.Model.WhaleFallVisual)
+$endif
+{@arcticSci} Excellent! Let's see what you discovered.
+              May I have a look at your visual model of Site W? 
+$goto .argue.showClaim
+            
+:: argue.showClaim
+$call ArgueDisplayClaim()
+$choice #argueFact; Present facts from AQOS
+    $answer W_WhaleFall.Model.WhaleFallVisual, .argue.complete 
+    $answer *, .argue.unrelated
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelated
+$call ArgueRejectIncorrect()
+{@arcticSci} Ah. Forgive me, Ollie but I don't think that's what you were looking for.
+$goto .argue.showClaim
+
+:: argue.giveUp
+{@arcticSci} Perfectly understandable. These things take time. 
+              Just let me know when you're ready. 
+
+// END
+:: argue.complete
+$call ArgueComplete()
+{@arcticSci}  Ollie, this is fascinating! What a beautiful, intricate web of organisms.
+               And all of them thriving where there was no life, no ecosystem... until now. 
+{@player}      But Linda's body already looks so decayed. How much longer do you think the ecosystem will last?
+{@arcticSci}   Well, that depends on when she died, and what state of decomposition she's in...
+               But I've already rambled on for too long!
+               Thank you again, Ollie. Until next time!
+
+$call CompleteJob()
