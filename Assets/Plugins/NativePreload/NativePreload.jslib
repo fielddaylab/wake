@@ -4,14 +4,25 @@ var NativePreloadLib = {
         /**
          * @type {Map<string, HTMLLinkElement>}
         */
-        preloadLinkMap: null
+        preloadLinkMap: null,
+
+        /**
+         * @type {string[]}
+         */
+        resourceTypeStrings: [
+            "",
+            "audio",
+            "image",
+            "video"
+        ]
     },
 
     /**
      * Begins preloading from the given url.
      * @param {string} url 
+     * @param {number} resourceType
      */
-    NativePreload_Start: function(url) {
+    NativePreload_Start: function(url, resourceType) {
         if (!Cache.preloadLinkMap) {
             Cache.preloadLinkMap = new Map();
         }
@@ -23,6 +34,7 @@ var NativePreloadLib = {
             var preloadElement = document.createElement("link");
             preloadElement.href = urlStr;
             preloadElement.rel = "preload";
+            preloadElement.as = Cache.resourceTypeStrings[resourceType | 0];
             document.head.appendChild(preloadElement);
             Cache.preloadLinkMap.set(urlStr, preloadElement);
 
@@ -41,6 +53,7 @@ var NativePreloadLib = {
         if (Cache.preloadLinkMap && Cache.preloadLinkMap.has(urlStr)) {
             var preloadElement = Cache.preloadLinkMap.get(urlStr);
             document.head.removeChild(preloadElement);
+            preloadElement.
             Cache.preloadLinkMap.delete(urlStr);
 
             console.log("[NativePreload] Canceling preload of", urlStr);

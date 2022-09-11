@@ -24,7 +24,7 @@ var NativeWebClickLib = {
          * @param {TouchEvent} m 
          */
          InvokeNativeCallbackFromTouch: function(m) {
-            if (m.button == 0 && Cache.nativeClickCallback) {
+            if (Cache.nativeClickCallback) {
                 /** @type {HTMLCanvasElement} */
                 var element = m.currentTarget;
                 var touch = m.targetTouches[0];

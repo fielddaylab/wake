@@ -217,6 +217,7 @@ namespace Aqua.Editor {
                     if (!ValidateAllScripts()) {
                         throw new Exception("Invalid scripts present");
                     }
+                    SceneManifestUtility.BuildPreloadManifest();
                     if (bBatch) {
                         #if !PRESERVE_DEBUG_SYMBOLS && !DEVELOPMENT
                         CodeStringStripping.ProcessAllFiles(false);

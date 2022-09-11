@@ -11,10 +11,10 @@ namespace NativeWebUtils {
         #if USE_JSLIB
 
         [DllImport("__Internal")]
-        static private extern void NativePreload_Start(string url);
+        static private extern void NativePreload_Start(string url, int resourceType);
 
         [DllImport("__Internal")]
-        static private extern void NativePreload_Cancel(string url);
+        static private extern void NativePreload_Cancel(string url, int resourceType);
 
         #endif // USE_JSLIB
 
@@ -47,18 +47,28 @@ namespace NativeWebUtils {
         }
 
         /// <summary>
+        /// Type of resource
+        /// </summary>
+        public enum ResourceType {
+            Unknown,
+            Audio,
+            Image,
+            Video
+        }
+
+        /// <summary>
         /// Preloads the resource with the given url.
         /// </summary>
-        static public void Preload(string url) {
+        static public void Preload(string url, ResourceType resourceType) {
             if (url == null || !url.Contains("://")) {
                 UnityEngine.Debug.LogWarningFormat("[NativePreload] Cannot preload invalid url '{0}'", url);
                 return;
             }
 
             #if USE_JSLIB
-            NativePreload_Start(url);
+            NativePreload_Start(url, (int) resourceType);
             #else
-            UnityEngine.Debug.LogFormat("[NativePreload] Requested preload of '{0}'", url);
+            UnityEngine.Debug.LogFormat("[NativePreload] Requested preload of '{0}' of type {1}", url, resourceType);
             #endif // USE_JSLIB
         }
 

@@ -44,6 +44,7 @@ namespace Aqua {
 
         private void Awake() {
             NativeClick.OnMouseDown += OnNativeMouseDown;
+            Services.Assets.PreloadGroup("Scene/Title");
         }
 
         private void OnDestroy() {

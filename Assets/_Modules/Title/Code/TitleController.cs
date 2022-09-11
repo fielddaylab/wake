@@ -260,6 +260,8 @@ namespace Aqua.Title
 
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
         {
+            Services.Assets.CancelPreload("Scene/Title");
+
             m_Config = FindObjectOfType<TitleConfig>();
             m_BuildIdText.SetText(string.Format("Build: {0} ({1})", BuildInfo.Id(), BuildInfo.Date()));
 
