@@ -2,7 +2,7 @@ using Aqua.Debugging;
 using BeauData;
 using BeauUtil;
 using BeauUtil.Debugger;
-using NativeWebClick;
+using NativeWebUtils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

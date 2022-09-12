@@ -2450,6 +2450,70 @@ MonoBehaviour:
       width: 1.522625
       height: 3.5367131
   - Id:
+      m_HashValue: 11869649
+    Type: {fileID: 11400000, guid: 7fc35fead45c9784ab2be7585d97a727, type: 2}
+    PrefabName: OceanDandelion
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 0.2
+      AvoidTankTopBottomRadius: 0
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 0
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: 10
+        AliveMax: 40
+        StressedMin: -5
+        StressedMax: 55
+      Light:
+        AliveMin: 0
+        AliveMax: 25
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: 3.5
+        AliveMax: 8.3
+        StressedMin: 2
+        StressedMax: 8.8
+    AliveEatTargets: []
+    StressedEatTargets: []
+    ParasiteTargets: []
+    SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
+    IsPlant: 0
+    IsLivingOrganism: 1
+    IsDistributed: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: -0.33601487
+      y: -0.63680196
+      width: 0.83879995
+      height: 1.1736
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: -0.38261488
+      y: -0.702002
+      width: 0.9319999
+      height: 1.304
+  - Id:
       m_HashValue: 1161043395
     Type: {fileID: 11400000, guid: 1c311155169539e4e953923e74855abb, type: 2}
     PrefabName: PlasticBag

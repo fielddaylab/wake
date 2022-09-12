@@ -117,7 +117,7 @@ namespace Aqua.Editor
         }
     
         [MenuItem("Aqualab/DEBUG/Bake Scene")]
-        static private void DEBUGBakeScene() {
+        static public void DEBUGBakeScene() {
             if (EditorApplication.isPlaying)
                 return;
 

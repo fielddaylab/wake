@@ -119,22 +119,32 @@ $endif
 @cutscene
 
 $call ArgueLoad(saveBarrenArgue)
-{@drKelp} Okay, Mija. What do you think? Can we save Site B? 
+{@drKelp} Okay, Mija. What do you think? Can we save {nameof RS-1B}? 
+$if JobTaskTop(return)
 	$choice .argue.hopeless; I'm sorry, Mom. Site B is hopeless.
 	$choice .argue.otterSolution; We can save Site B by adding {pluralnameof SeaOtter}!
 $choose branch
+$else
+	$choice .argue.hopeless; I'm sorry, Mom. Site B is hopeless.
+$choose branch
+$endif
 
 ::argue.introRevisit
-{@drKelp} What do you think?  Can we fix Site B?
-	$choice .argue.hopeless; Site B is hopeless. There's nothing we can do. 
+{@drKelp} What do you think? Can we save {nameof RS-1B}? 
+$if JobTaskTop(return)
+	$choice .argue.hopeless; I'm sorry, Mom. Site B is hopeless.
 	$choice .argue.otterSolution; We can save Site B by adding {pluralnameof SeaOtter}!
 $choose branch
+$else
+	$choice .argue.hopeless; I'm sorry, Mom. Site B is hopeless.
+$choose branch
+$endif
 
 //it's hopeless
 
 :: argue.hopeless
 $if ArgueSetClaim(saveBarrenClaim, jobs.kelp-save-urchin-barren.argue.claimHopeless)
-		$call ArgueFactSlot(UrchinBarren.Model.Prediction)
+    $call ArgueFactSlot(UrchinBarren.Model.Prediction)
 $endif
 $goto .argue.checkHopeless
 
@@ -155,7 +165,7 @@ $choice .argue.giveUpHopeless; Let me get back to you.
 
 ::argue.currentModel
 {@drKelp}    That's not relevant, Olivia. 
-              Show me your Intervention Model of Arch Oasis.
+            Show me your Intervention Model of Arch Oasis.
 $call ArgueClearFacts()
 $goto .argue.chooseFactsHopeless
 
