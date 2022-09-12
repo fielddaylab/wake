@@ -14,7 +14,7 @@ namespace NativeWebUtils {
         static private extern void NativePreload_Start(string url, int resourceType);
 
         [DllImport("__Internal")]
-        static private extern void NativePreload_Cancel(string url, int resourceType);
+        static private extern void NativePreload_Cancel(string url);
 
         #endif // USE_JSLIB
 

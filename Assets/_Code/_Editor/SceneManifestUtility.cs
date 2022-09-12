@@ -97,7 +97,7 @@ namespace Aqua.Editor
 
                 package.Groups = groups.ToArray();
                 Serializer.WriteFile(package, PreloadManifestPath, OutputOptions.PrettyPrint, Serializer.Format.JSON);
-                if (!UnityEditorInternal.InternalEditorUtility.inBatchMode) {
+                if (!UnityEditorInternal.InternalEditorUtility.inBatchMode && !BuildPipeline.isBuildingPlayer) {
                     EditorUtility.OpenWithDefaultApp(PreloadManifestPath);
                 }
                 AssetDatabase.ImportAsset(PreloadManifestPath);

@@ -5,10 +5,11 @@ using BeauUtil;
 using BeauUtil.Blocks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Scripting;
 
 namespace Aqua
 {
-    public class PreloadManifest : ISerializedObject {
+    public struct PreloadManifest : ISerializedObject {
         public PreloadGroup[] Groups;
 
         public void Serialize(Serializer ioSerializer) {
@@ -25,6 +26,9 @@ namespace Aqua
 
         // Non-serialized
         public int RefCount;
+
+        [Preserve]
+        public PreloadGroup() { }
 
         public void Serialize(Serializer ioSerializer) {
             ioSerializer.Serialize("id", ref Id, FieldOptions.PreferAttribute);
