@@ -121,61 +121,6 @@
 {@guide} Well, you really were quite excellent. And all that data!!!
 		 Time to head back to the station and tell {nameof @profCoral} what you found!
 
-// ARGUMENTATION
-
-:: argue.intro
-@trigger    TryArgumentation
-@when   !ArgueIsComplete(huntingLionsArgue)
-@cutscene
-$call ArgueLoad(huntingLionsArgue)
-{@profCoral} Thank you, Ollie. We've all been waiting eagerly for your results.
-{@player} Engine's still wrecked, huh?
-{@profCoral} Ahem. Let's just get to it.
-			 Have you used a model to determine how Lionfish hunting might affect {m}Site S{/m}?
-    $choice .argue.haveModel; Yes! Lionfish hunting would help the ecosystem! 
-    $choice .argue.noModel; No, not yet.
-$choose branch	
-
-:: argue.noModel
-{@profCoral}	Okay, Ollie. Let me know when you're ready. 
-
-:: argue.haveModel
-{@profCoral} To advocate for an intervention I need a model that shows three things:
-			 Evidence that the coral will come back, an observation of what species are affected by Lionfish, and a connection between the Lionfish and the Coral.
-$if ArgueSetClaim(hunting-lionsClaim, jobs.coral-hunting-lions.argue.claimEvidence)
-		$call ArgueFactSlot(LionfishInvasion.Model.HuntingLionsIntervene)
-		$call ArgueFactSlot(Lionfish.Eats.BlueTang)
-		$call ArgueFactSlot(Lionfish.Eats.BlueheadWrasse)
-		$call ArgueFactSlot(StaghornCoral.Light.Stressed)
-$endif
-$call ArgueDisplayClaim()
-$choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.correctFacts
-		$answer incorrect, .argue.incorrectFacts
-$choice .argue.giveUp; Let me get back to you
-$choose branch
-
-:: argue.giveUp
-{@profCoral}	No worries, Ollie. Just let me know when you're ready. 
-
-:: argue.incorrectFacts
-{@profCoral}	Hmmm. This isn't quite what I'm looking for. 
-$call ArgueRejectIncorrect()
-// $call ArgueClearFacts()
-$goto .argue.haveModel
-
-:: argue.correctFacts
-{@profCoral}	Wow! This is impressive work, Ollie.
-			    It looks like less Lionfish means more small fish.
-				More small fish means less algae, more light, and happier coral!
-			    This was incredibly complex, but you did it! Great work, Ollie.
-{@player}		Thanks, Professor. 
-{@profCoral}	Ay... now I just have to tell Sofia.
-			    Guess I'd better prepare myself for a few years' worth of I-Told-You-So's... 
-$call ArgueComplete()
-$call CompleteJob()
-
-
 // REQUEST HELP
 
 :: collectData
@@ -275,4 +220,107 @@ $call CompleteJob()
 {@player} Don't you mean, show off my "excellent" model? 
 {@guide} Processing... processing...
 {@player} Ha. Just teasing you, V. Let's head back to the Station. 
-		  
+
+
+// ARGUMENTATION
+
+:: argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(huntingLionsArgue)
+@cutscene
+$call ArgueLoad(huntingLionsArgue)
+{@profCoral} Thank you, Ollie. We've all been waiting eagerly for your results.
+{@player} Engine's still wrecked, huh?
+{@profCoral} Ahem. Let's just get to it.
+			 Have you used a model to determine how Lionfish hunting might affect {m}Site S{/m}?
+$choice .argue.haveModel; Yes! Lionfish hunting would help the ecosystem! 
+$choice .argue.noModel; No, not yet.
+
+:: argue.noModel
+{@profCoral}	Okay, Ollie. Let me know when you're ready.
+
+:: argue.haveModel
+{@profCoral}	Can I see the model you've made?
+$if ArgueSetClaim(hunting-lionsClaimModel, jobs.coral-hunting-lions.argue.claimModel)
+		$call ArgueFactSlot(LionfishInvasion.Model.HuntingLionsIntervene)
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.coralClaim
+		$answer incorrect, .argue.incorrectFactsModel
+$choice .argue.giveUpArg; Let me get back to you
+$choose branch
+
+:: argue.incorrectFactsModel
+{@profCoral}	Hmmm. This isn't quite what I'm looking for.
+$call ArgueRejectIncorrect()
+$goto .argue.haveModel
+
+// What is stressing the coral?
+:: argue.coralClaim
+$call ArgueHideClaim()
+$if  ArgueSetClaim(hunting-lionsClaimCoral, jobs.coral-hunting-lions.argue.claimCoral)
+		$call ArgueFactSlot(TurfAlgae.Consume.Light)
+		$call ArgueFactSlot(StaghornCoral.Light.Stressed)
+$endif
+$call ArgueDisplayClaim()
+{@profCoral}	To advocate for an intervention I need to see how this model outlines a chain of interactions linking the Lionfish to the Coral.
+$branch .argue.chooseFactsCoral
+
+:: argue.chooseFactsCoral
+ {@profCoral}	First off: are there any organisms stressing the {nameof StaghornCoral}? And if so, how?
+ $choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.lionfishClaim
+		$answer incorrect, .argue.incorrectFactsCoral
+$choice .argue.giveUpArg; Let me get back to you
+$choose branch
+
+:: argue.incorrectFactsCoral
+{@profCoral}	Hmmm. This isn't quite what I'm looking for.
+$call ArgueRejectIncorrect()
+$goto .argue.chooseFactsCoral
+
+// Why are Blue Tang stressed?
+:: argue.lionfishClaim
+{@profCoral}	I ask because in a previous job we determined that Lionfish don't directly interact with the coral. However, I think there is something indirect involving multiple organisms happening here.
+$call ArgueHideClaim()
+$if ArgueSetClaim(hunting-lionsClaimLionfish, jobs.coral-hunting-lions.argue.claimLionfish)
+		$call ArgueFactSlot(Lionfish.Eats.BlueheadWrasse)
+		$call ArgueFactSlot(BlueheadWrasse.Eats.Ick)
+		$call ArgueFactSlot(Ick.Stresses.BlueTang)
+		$call ArgueFactSlot(BlueTang.Eats.TurfAlgae.Stressed)
+$endif
+$call ArgueDisplayClaim()
+$branch .argue.chooseFactsLionfish
+
+:: argue.chooseFactsLionfish
+ {@profCoral}	Okay, so. Given that the population of {nameof TurfAlgae} affects whether {nameof StaghornCoral} is stressed, how does the presence of Lionfish affect the {nameof StaghornCoral} populations?
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.correctFactsLionfish
+		$answer incorrect, .argue.incorrectFactsLionfish
+$choice .argue.giveUpArg; Let me get back to you
+$choose branch
+
+:: argue.incorrectFactsLionfish
+{@profCoral}	Hmmm. This isn't quite what I'm looking for. 
+$call ArgueRejectIncorrect()
+$goto .argue.chooseFactsLionfish
+
+:: argue.giveUpArg
+$call ArgueClearFacts()
+$call ArgueCancelClaim()
+$branch .argue.giveUp
+
+:: argue.giveUp
+{@profCoral}    Of course. Take your time, O. This is a tough problem that has stumped us for a while now.
+
+:: argue.correctFactsLionfish
+$call ArgueComplete()
+{@profCoral}	Wow! This is impressive work, Ollie.
+			    It looks like less Lionfish means more small fish.
+				More small fish means less ick, which means the {nameof BlueTang} are less stressed. That in turn means less algae, more light, and happier coral!
+			    This was incredibly complex, but you did it! Great work, Ollie.
+{@player}		Thanks, Professor. 
+{@profCoral}	Ay... now I just have to tell Sofia.
+			    Guess I'd better prepare myself for a few years' worth of I-Told-You-So's... 
+$call CompleteJob()
