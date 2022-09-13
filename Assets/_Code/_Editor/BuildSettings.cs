@@ -57,7 +57,7 @@ namespace Aqua.Editor {
             }
 
             if (bDesiredDevBuild) {
-                BuildUtils.WriteDefines("DEVELOPMENT");
+                BuildUtils.WriteDefines("DEVELOPMENT,PRESERVE_DEBUG_SYMBOLS");
             } else if (bDesiredPreviewBuild) {
                 BuildUtils.WriteDefines("PREVIEW,ENABLE_LOGGING_ERRORS_BEAUUTIL,ENABLE_LOGGING_WARNINGS_BEAUUTIL,PRESERVE_DEBUG_SYMBOLS");
             } else {
@@ -200,7 +200,8 @@ namespace Aqua.Editor {
 
             public void OnPreprocessBuild(BuildReport report) {
                 string branch = BuildUtils.GetSourceControlBranchName();
-                bool bBatch = UnityEditorInternal.InternalEditorUtility.inBatchMode;
+                bool bBatch = UnityEditorInternal.InternalEditorUtility.inBatchMode || !UnityEditorInternal.InternalEditorUtility.isHumanControllingUs;
+                // bool bBatch = true;
                 if (bBatch) {
                     PlayerSettings.SplashScreen.show = false;
                     PlayerSettings.SplashScreen.showUnityLogo = false;
@@ -216,7 +217,11 @@ namespace Aqua.Editor {
                     if (!ValidateAllScripts()) {
                         throw new Exception("Invalid scripts present");
                     }
+                    SceneManifestUtility.BuildPreloadManifest();
                     if (bBatch) {
+                        #if !PRESERVE_DEBUG_SYMBOLS && !DEVELOPMENT
+                        CodeStringStripping.ProcessAllFiles(false);
+                        #endif // PRESERVE_DEBUG_SYMBOLS && !DEVELOPMENT
                         CodeGen.GenerateJobsConsts();
                         NoOverridesAllowed.RevertInAllScenes();
                         StripEditorInfoFromAssets();

@@ -4745,7 +4745,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -10
   m_RenderMode: 0
   m_SortMode: 0
   m_MinParticleSize: 0
@@ -4779,8 +4779,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7475199891950128551}
   - component: {fileID: 7475199891950128545}
-  - component: {fileID: 7475199891950128550}
   - component: {fileID: 4408435464606247706}
+  - component: {fileID: 341661439969072841}
   m_Layer: 0
   m_Name: PopulationProbe
   m_TagString: Untagged
@@ -4946,17 +4946,6 @@ MonoBehaviour:
       DurationRandom:
         m_Value: 38
     DistanceZ: 2
---- !u!210 &7475199891950128550
-SortingGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7475199891950128548}
-  m_Enabled: 1
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: -10
 --- !u!114 &4408435464606247706
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4970,6 +4959,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Recursive: 1
+  DestroyGameObject: 0
+--- !u!114 &341661439969072841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7475199891950128548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 0
   DestroyGameObject: 0
 --- !u!1001 &4014309725683205669
 PrefabInstance:

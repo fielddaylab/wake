@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab System/Water Property Description", fileName = "NewWaterProp")]
-    public class WaterPropertyDesc : DBObject
+    public class WaterPropertyDesc : DBObject, IEditorOnlyData
     {
         #region Inspector
 
@@ -85,6 +85,19 @@ namespace Aqua
         {
             return m_MinValue + (m_MaxValue - m_MinValue) * inFraction;
         }
+
+        #if UNITY_EDITOR
+
+        void IEditorOnlyData.ClearEditorOnlyData() {
+            ValidationUtils.StripDebugInfo(ref m_LabelId);
+            ValidationUtils.StripDebugInfo(ref m_EnvironmentFactFormat);
+            ValidationUtils.StripDebugInfo(ref m_EnvironmentHistoryFormat);
+            ValidationUtils.StripDebugInfo(ref m_StateChangeFormat);
+            ValidationUtils.StripDebugInfo(ref m_StateChangeStressOnlyFormat);
+            ValidationUtils.StripDebugInfo(ref m_StateChangeUnaffectedFormat);
+        }
+
+        #endif // UNITY_EDITOR
     }
 
     [Flags]

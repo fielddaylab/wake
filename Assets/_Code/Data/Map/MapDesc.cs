@@ -11,7 +11,7 @@ using UnityEditor;
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab Content/Map Description", fileName = "NewMapDesc")]
-    public class MapDesc : DBObject
+    public class MapDesc : DBObject, IEditorOnlyData
     {
         #region Inspector
 
@@ -64,6 +64,16 @@ namespace Aqua
         public T GetProperty<T>(string inName, T inDefault) { return m_AdditionalProperties.Get<T>(inName, inDefault); }
 
         #if UNITY_EDITOR
+
+        void IEditorOnlyData.ClearEditorOnlyData()
+        {
+            ValidationUtils.StripDebugInfo(ref m_LabelId);
+            ValidationUtils.StripDebugInfo(ref m_ShortLabelId);
+            ValidationUtils.StripDebugInfo(ref m_ProperNameId);
+            ValidationUtils.StripDebugInfo(ref m_MarkerLabelId);
+            ValidationUtils.StripDebugInfo(ref m_StationHeaderId);
+            ValidationUtils.StripDebugInfo(ref m_StationDescId);
+        }
 
         [CustomEditor(typeof(MapDesc)), CanEditMultipleObjects]
         private class Inspector : Editor {

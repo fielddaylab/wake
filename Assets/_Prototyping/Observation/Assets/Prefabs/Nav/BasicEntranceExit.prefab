@@ -43,6 +43,7 @@ GameObject:
   - component: {fileID: 8489822869482343444}
   - component: {fileID: 8489822869482343445}
   - component: {fileID: 8489822869482343446}
+  - component: {fileID: 2655953786020206285}
   m_Layer: 0
   m_Name: BasicEntranceExit
   m_TagString: Untagged
@@ -80,6 +81,8 @@ MonoBehaviour:
   m_Id:
     m_Source: 
     m_HashValue: 0
+  m_IsPersistent: 0
+  m_StartDisabled: 0
 --- !u!114 &8489822869482343444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -101,18 +104,22 @@ MonoBehaviour:
   m_TargetEntrance:
     m_Source: 
     m_HashValue: 0
+  m_TargetCharacter:
+    m_HashValue: 0
   m_MapLoadFlags: 4
   m_StopMusic: 1
   m_AutoExecute: 0
   m_LabelOverride:
     m_Source: 
     m_HashValue: 0
+  m_LabelMode: 0
   m_ActionLabelOverride:
     m_Source: ui.interact.map.button
     m_HashValue: 3142770861
   m_LockMessageOverride:
     m_Source: ui.interact.blocked
     m_HashValue: 2610774631
+  m_BadgeMode: 0
   m_PinLocationOverride: {fileID: 0}
   m_PinToPlayer: 1
   m_LocationOffset:
@@ -161,3 +168,18 @@ MonoBehaviour:
     m_HashValue: 0
   m_LocationOverride: {fileID: 8489822868808885372}
   m_Facing: 1
+  m_TriggerRegion: {fileID: 0}
+--- !u!114 &2655953786020206285
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8489822869482343448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 0
+  DestroyGameObject: 0

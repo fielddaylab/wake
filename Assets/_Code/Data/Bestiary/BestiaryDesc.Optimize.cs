@@ -177,6 +177,10 @@ namespace Aqua
         void IEditorOnlyData.ClearEditorOnlyData()
         {
             m_Facts = null;
+
+            ValidationUtils.StripDebugInfo(ref m_CommonNameId);
+            ValidationUtils.StripDebugInfo(ref m_PluralCommonNameId);
+            ValidationUtils.StripDebugInfo(ref m_DescriptionId);
         }
 
         #endif // UNITY_EDITOR

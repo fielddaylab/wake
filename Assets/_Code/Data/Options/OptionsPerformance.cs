@@ -27,7 +27,7 @@ namespace Aqua.Option
 
         public void SetDefaults()
         {
-            Framerate = FramerateMode.Stable;
+            Framerate = FramerateMode.High;
         }
     }
 }

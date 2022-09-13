@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace NativeWebClick
+namespace NativeWebUtils
 {
     /// <summary>
     /// Handler for a native pointer down event.

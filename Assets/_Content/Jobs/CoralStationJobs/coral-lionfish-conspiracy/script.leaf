@@ -4,6 +4,7 @@
 @trigger    JobStarted
 @cutscene
 
+$set jobs:coral-lionfish-conspiracy.checkedCoral = false
 {@profCoral} Okay, Ollie. As you know, Lionfish have moved into the Restoration Reef.
 {@player}	Yeah, uh, Sofia might've mentioned that.
 		     But I thought you said you didn't have the resources for this job.
@@ -23,7 +24,6 @@ $else
 	{@profCoral}	First we need to make sure we have all the pieces.
 	{@profCoral}	Go down to Site S and scan everything you can find, especially the Lionfish.
 $endif
-
 
 // SCANNING
 
@@ -62,6 +62,23 @@ $endif
 {@guide}	Head to the {map-name}Experiment Room{/map-name} and see how the {nameof Lionfish} interact with other species you've found.
 
 
+// EXPERIMENT CORAL
+
+:: helpBeginExperimentCoral
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(observeCoral), scene:name == "ExperimentV2"
+@cutscene
+{@player}	What now, {nameof @guide}?
+{@guide}	Place {nameof StaghornCoral} and {nameof Lionfish} in the Observation Tank and see if there are any direct interactions.
+
+:: checkStaghorn
+@trigger	ExperimentStarted
+@when		tankType == "Observation"
+@cutscene
+$if ExperimentHasCritter("StaghornCoral"), ExperimentHasCritter("Lionfish")
+	$set jobs:coral-lionfish-conspiracy.checkedCoral = true
+$endif
+
 // EXPERIMENTATION
 
 :: helpBeginExperiment
@@ -71,6 +88,7 @@ $endif
 {@player} What now, {nameof @guide}?
 {@guide}	Use the Observation Tank to see how the Lionfish interact with other species you found.
 
+
 :: beginExperiment
 @trigger	SceneStart
 @when		scene:name == "ExperimentV2", JobTaskTop(observeInteractions)
@@ -79,14 +97,15 @@ $endif
 {@guide}	Remember, no one seems quite sure how the Lionfish fit into this ecosystem.
 		    You will need to observe the Lionfish with as many other species as possible. 
 			// Especially with the coral.
-			
+
 :: experimentComplete
 @trigger JobTasksUpdated
 @when	JobTaskTop(arguePredator)
 @cutscene
-{@player} Wow. Sofia was so sure that the Lionfish were the problem... but they don't seem to interact with the coral at all.
+{@player}	Wow. Sofia was so sure that the {pluralnameof Lionfish} were the problem... but we haven't seen anything that points to {pluralnameof Lionfish} directly affecting the coral.
+			The {pluralnameof Lionfish} just eat a bunch of the other fish.
 {@guide}  Yes. You have found the data that {nameof @profCoral} requested.
-		  Perhaps Sofia will be glad to know that the Lionfish aren't harming the coral!
+		  Perhaps Sofia will be glad to know that the {pluralnameof Lionfish} aren't harming the coral!
 {@player} Yeah... somehow I doubt that, V. 
 
 :: helpReportBack
@@ -103,6 +122,13 @@ $endif
 @boostScore -5
 @cutscene
 {@guide}    Head to Site S and scan any new species you can find.
+
+:: catchObserveCoral
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(observeCoral)
+@boostScore -5
+@cutscene
+{@guide}    Place {nameof StaghornCoral} and {nameof Lionfish} in the Observation Tank and see if there are any direct interactions.
 
 :: catchObserveInteractions
 @trigger    RequestPartnerHelp

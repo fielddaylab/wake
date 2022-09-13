@@ -157,6 +157,19 @@ namespace Aqua
         void IEditorOnlyData.ClearEditorOnlyData()
         {
             m_Tasks = null;
+
+            ValidationUtils.StripDebugInfo(ref m_NameId);
+            ValidationUtils.StripDebugInfo(ref m_DescId);
+            ValidationUtils.StripDebugInfo(ref m_DescShortId);
+
+            foreach(var task in m_OptimizedTaskList) {
+                ValidationUtils.StripDebugInfo(ref task.LabelId);
+                ValidationUtils.StripDebugInfo(ref task.Id);
+
+                for(int i = 0; i < task.Steps.Length; i++) {
+                    ValidationUtils.StripDebugInfo(ref task.Steps[i].Target);
+                }
+            }
         }
 
         static internal bool ValidateTaskIds(JobDesc inItem)

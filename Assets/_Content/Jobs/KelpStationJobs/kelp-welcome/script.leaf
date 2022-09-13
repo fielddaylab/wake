@@ -38,8 +38,8 @@ $call GiveUpgrade(ROVScanner, Silent)
 $call Player->SetTool(Scanner)
 {@guide}  The {item-name}Scanner{/item-name} searches for life forms automatically. 
             Click the red targets to ID a new plant or animal species. 
-{wait 0.5}
 {hide-dialog}
+{wait 0.5}
 
 {fade-out black.60, 0.5, wait}
 {@}
@@ -99,7 +99,6 @@ $endif
 @cutscene
 @once
 $set    jobs:kelp-welcome.got.scans = true
-$branch common.ringPhone
 
 {@guide}   You have scanned all of the local species. Your work is acceptable!
 {@player} Thanks, {nameof @guide}. 
@@ -157,7 +156,6 @@ $call ship.map->ResetSorting()
 @trigger    SceneStart
 @when       scene:name == "KelpStation", JobTaskCompleted(gotoSiteC), !jobs:kelp-welcome.got.scans
 @cutscene
-$branch common.ringPhone
 
 {@player}   Is that everything, {nameof @guide}? 
 {@guide}   Hmmm. It appears you missed something. 
@@ -187,7 +185,6 @@ $call ship.map->ResetSorting()
 @boostScore 100
 @cutscene
 @once
-$branch common.ringPhone
 
 {@guide} This is your helm!
          You appear to be receiving a transmission from a vessel called the Nautilus.
@@ -293,7 +290,6 @@ $endif
 @cutscene
 @once
 
-$branch common.ringPhone
 {@guide}   Now return to the Helm and navigate your sub back to the {m}Research Station{/m}.
 
 // $call   UnlockRoom("office")

@@ -13,7 +13,7 @@ using UnityEditor;
 namespace Aqua.Compression {
 
     [CreateAssetMenu(menuName = "Aqualab/Layout Prefab Package")]
-    public class LayoutPrefabPackage : ScriptableObject {
+    public class LayoutPrefabPackage : ScriptableObject, IEditorOnlyData {
         #region Type
         
         [Serializable]
@@ -121,6 +121,12 @@ namespace Aqua.Compression {
         #region Editor
 
         #if UNITY_EDITOR
+
+        void IEditorOnlyData.ClearEditorOnlyData() {
+            for(int i = 0; i < m_TOC.Length; i++) {
+                ValidationUtils.StripDebugInfo(ref m_TOC[i].Id);
+            }
+        }
 
         [CustomEditor(typeof(LayoutPrefabPackage), true)]
         private class Inspector : UnityEditor.Editor

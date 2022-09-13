@@ -96,14 +96,13 @@ namespace Aqua.Title
             m_SubtitleGroup.Hide();
             m_ControlsGroup.Hide();
             m_CreatedByGroup.Hide();
-
-            m_AllowSkip = true;
         }
 
         private IEnumerator BootupSequence()
         {
             yield return 0.5f;
 
+            m_AllowSkip = true;
             PlayWhaleSound();
             yield return CameraSweepPhase(0, 2, 1, null);
             yield return CameraSweepPhase(1, 4, 2, () => PlayWhaleSound());
@@ -261,6 +260,8 @@ namespace Aqua.Title
 
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
         {
+            Services.Assets.CancelPreload("Scene/Title");
+
             m_Config = FindObjectOfType<TitleConfig>();
             m_BuildIdText.SetText(string.Format("Build: {0} ({1})", BuildInfo.Id(), BuildInfo.Date()));
 

@@ -7,7 +7,7 @@ using System.Collections;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
-using NativeWebClick;
+using NativeWebUtils;
 using UnityEngine;
 using System.Runtime.InteropServices;
 using TMPro;
@@ -44,6 +44,7 @@ namespace Aqua {
 
         private void Awake() {
             NativeClick.OnMouseDown += OnNativeMouseDown;
+            Services.Assets.PreloadGroup("Scene/Title");
         }
 
         private void OnDestroy() {
