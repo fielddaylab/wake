@@ -139,6 +139,7 @@ $endif
 $if ExperimentHasCritter("GlassSponge"), ExperimentHasCritter("SalmonShark")
 	$set jobs:arctic-isolated-instance.checkedShark = true
 $endif
+$call CheckJobTasks()
 
 // CATCH-ALL GUIDE TEXT
 
