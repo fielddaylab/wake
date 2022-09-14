@@ -10362,6 +10362,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1008225337}
   - component: {fileID: 1008225338}
+  - component: {fileID: 1008225339}
+  - component: {fileID: 1008225340}
   m_Layer: 0
   m_Name: Room
   m_TagString: Untagged
@@ -10404,6 +10406,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Recursive: 0
   DestroyGameObject: 0
+--- !u!114 &1008225339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1008225336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3731a7275aefa24e86e7fe3f70dbb71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Packages:
+  - {fileID: 11400000, guid: d9e7d57e4a95c2a41be45add719e232b, type: 2}
+--- !u!114 &1008225340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1008225336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd21237e2bc1d7141b90c7a2747e28c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EventId: ModelingFoyerAmbience
+  m_CrossfadeDuration: 0
 --- !u!1001 &1012268653
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10478,7 +10508,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -6511448444661673425, guid: 56ef21d2008261040bbd5a18a2801442,
         type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -6511448444661673425, guid: 56ef21d2008261040bbd5a18a2801442,
+        type: 3}
       propertyPath: m_StaticEditorFlags
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -6389172197847794856, guid: 56ef21d2008261040bbd5a18a2801442,
+        type: 3}
+      propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -6389172197847794856, guid: 56ef21d2008261040bbd5a18a2801442,
@@ -10489,6 +10529,11 @@ PrefabInstance:
     - target: {fileID: -5793878386122672780, guid: 56ef21d2008261040bbd5a18a2801442,
         type: 3}
       propertyPath: m_StaticEditorFlags
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -5770212215128677521, guid: 56ef21d2008261040bbd5a18a2801442,
+        type: 3}
+      propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -5770212215128677521, guid: 56ef21d2008261040bbd5a18a2801442,
@@ -10573,7 +10618,17 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: a816f5eb691a34042811d00ae3f4f531, type: 2}
     - target: {fileID: -3033394899483287192, guid: 56ef21d2008261040bbd5a18a2801442,
         type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3033394899483287192, guid: 56ef21d2008261040bbd5a18a2801442,
+        type: 3}
       propertyPath: m_StaticEditorFlags
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -2280269523535639082, guid: 56ef21d2008261040bbd5a18a2801442,
+        type: 3}
+      propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -2280269523535639082, guid: 56ef21d2008261040bbd5a18a2801442,
@@ -10664,6 +10719,11 @@ PrefabInstance:
     - target: {fileID: 2358168941660672935, guid: 56ef21d2008261040bbd5a18a2801442,
         type: 3}
       propertyPath: m_StaticEditorFlags
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2843070460373601329, guid: 56ef21d2008261040bbd5a18a2801442,
+        type: 3}
+      propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2843070460373601329, guid: 56ef21d2008261040bbd5a18a2801442,

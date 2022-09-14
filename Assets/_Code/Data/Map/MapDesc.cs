@@ -38,6 +38,8 @@ namespace Aqua
 
         #endregion // Inspector
 
+        [NonSerialized] private StringHash32 m_PreloadGroup;
+
         public MapCategory Category() { return m_Category; }
         public MapFlags Flags() { return m_Flags; }
 
@@ -55,6 +57,7 @@ namespace Aqua
         public string HeaderImagePath() { return m_HeaderImagePath; }
         public MapDesc Parent() { return m_Parent; }
         public MapDesc QuickTravel() { return m_QuickTravel; }
+        public StringHash32 PreloadGroup() { return m_PreloadGroup; }
 
         [LeafLookup("Environment")] public StringHash32 EnvironmentId() { return m_EnvironmentId; }
         public int SortingOrder() { Assert.True(m_Category == MapCategory.Station, "MapDesc {0} is not a station", Id()); return m_StationSortingOrder; }
@@ -62,6 +65,10 @@ namespace Aqua
         public IReadOnlyPropertyBlock<PropertyName> AdditionalProperties() { return m_AdditionalProperties; }
         public T GetProperty<T>(string inName) { return m_AdditionalProperties.Get<T>(inName); }
         public T GetProperty<T>(string inName, T inDefault) { return m_AdditionalProperties.Get<T>(inName, inDefault); }
+
+        internal void InitializePreloadGroup() {
+            m_PreloadGroup = "Scene/" + m_SceneName;
+        }
 
         #if UNITY_EDITOR
 

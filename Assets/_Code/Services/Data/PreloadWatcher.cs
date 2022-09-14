@@ -84,6 +84,14 @@ namespace Aqua
             }
         }
 
+        private void PreloadAll() {
+            Services.Assets.PreloadGroup("Ship");
+            Services.Assets.PreloadGroup("KelpStation");
+            Services.Assets.PreloadGroup("CoralStation");
+            Services.Assets.PreloadGroup("BayouStation");
+            Services.Assets.PreloadGroup("ArcticStation");
+        }
+
         protected override void Shutdown()
         {
             Services.Events?.DeregisterAll(this);

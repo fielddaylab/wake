@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Aqua.Profile;
+using Aqua.Scripting;
 using BeauRoutine;
 using BeauUtil;
 using ScriptableBake;
@@ -74,27 +75,41 @@ namespace Aqua.WorldMap
         {
             Services.UI.ShowLetterbox();
 
-            // TODO: SOmething fancy??
-
             yield return 0.2f;
 
-            StateUtil.LoadPreviousSceneWithWipe(null, null, SceneLoadFlags.Default | SceneLoadFlags.SuppressTriggers);
-            yield return 0.3;
+            // todo: play sound effects
+
+            StringHash32 oldStationId = Save.Map.CurrentStationId();
+            Save.Map.SetCurrentStationId(stationId);
+            StateUtil.LoadSceneWithFader("StationTransition", null, null, SceneLoadFlags.StopMusic | SceneLoadFlags.SuppressTriggers | SceneLoadFlags.SuppressAutoSave);
+            yield return 0.3f;
+
+            Services.UI.HideLetterbox();
 
             while(StateUtil.IsLoading) {
                 yield return null;
             }
 
-            yield return 1;
+            yield return 5f;
 
-            Services.Camera.AddShake(new Vector2(0, 0.2f), new Vector2(0.1f, 0.1f), 0.8f);
-            yield return 1;
+            using(var table = TempVarTable.Alloc()) {
+                table.Set("previousStation", oldStationId);
+                table.Set("nextStation", stationId);
 
-            Save.Map.SetCurrentStationId(stationId);
-            StateUtil.LoadSceneWithWipe("Helm");
-            yield return 0.3f;
+                Services.Script.TriggerResponse(GameTriggers.TravelingToStation, table);
+            }
 
-            Services.UI.HideLetterbox();
+            while(Script.ShouldBlock() || !Services.Assets.PreloadGroupIsPrimaryLoaded(stationId)) {
+                yield return 0.5f;
+            }
+
+            // TODO: dream implementation
+
+            using(var fader = Services.UI.WorldFaders.AllocFader()) {
+                yield return fader.Object.Show(Color.black, 0.25f);
+                StateUtil.LoadSceneWithFader("Cabin");
+                yield return 0.25f;
+            }
         }
 
         #region IScene

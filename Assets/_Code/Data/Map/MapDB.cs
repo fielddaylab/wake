@@ -36,6 +36,7 @@ namespace Aqua
             base.ConstructLookupForItem(inItem, inIndex);
             
             m_SceneMapping.Add(inItem.SceneName(), inItem.Id());
+            inItem.InitializePreloadGroup();
 
             switch(inItem.Category())
             {

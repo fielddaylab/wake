@@ -2,6 +2,7 @@
 #define USE_JSLIB
 #endif // !UNITY_EDITOR && UNITY_WEBGL
 
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using UnityEngine;
@@ -14,7 +15,14 @@ namespace NativeWebUtils {
         static private extern void NativePreload_Start(string url, int resourceType);
 
         [DllImport("__Internal")]
+        static private extern bool NativePreload_IsLoaded(string url);
+
+        [DllImport("__Internal")]
         static private extern void NativePreload_Cancel(string url);
+
+        #else
+
+        static private readonly HashSet<string> s_DebugPreloadedURLS = new HashSet<string>();
 
         #endif // USE_JSLIB
 
@@ -69,6 +77,23 @@ namespace NativeWebUtils {
             NativePreload_Start(url, (int) resourceType);
             #else
             UnityEngine.Debug.LogFormat("[NativePreload] Requested preload of '{0}' of type {1}", url, resourceType);
+            s_DebugPreloadedURLS.Add(url);
+            #endif // USE_JSLIB
+        }
+
+        /// <summary>
+        /// Returns if the resource with the given url has been preloaded.
+        /// </summary>
+        static public bool IsLoaded(string url) {
+            if (url == null || !url.Contains("://")) {
+                UnityEngine.Debug.LogWarningFormat("[NativePreload] Cannot preload invalid url '{0}'", url);
+                return false;
+            }
+
+            #if USE_JSLIB
+            return NativePreload_IsLoaded(url);
+            #else
+            return s_DebugPreloadedURLS.Contains(url);
             #endif // USE_JSLIB
         }
 
@@ -85,6 +110,7 @@ namespace NativeWebUtils {
             NativePreload_Cancel(url);
             #else
             UnityEngine.Debug.LogFormat("[NativePreload] Requested cancel preload of '{0}'", url);
+            s_DebugPreloadedURLS.Remove(url);
             #endif // USE_JSLIB
         }
     }
