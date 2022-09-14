@@ -53,43 +53,129 @@ $call GiveFact(ArcticCopepod.Reproduce.Stressed)
 
 // ARGUMENTATION
 
-::argue.intro
+:: argue.intro
 @trigger    TryArgumentation
-@when   !ArgueIsComplete(whaleModel)
+@when   !ArgueIsComplete(sealArgue)
 @cutscene
-$call ArgueLoad(whaleModel)
-$if ArgueSetClaim(Claim, jobs.arctic-disappearing-act.argue.claimLabel) 
-		$call ArgueFactSlot(W_WhaleFall.Model.WhaleFallVisual)
+$call ArgueLoad(sealArgue)
+$branch .argue.initialClaim
+
+:: argue.initialClaim
+{@arcticSci}    How are the {nameof RibbonSeal} futures looking?
+$choice .argue.danger; Seals are in danger
+$choice .argue.fine; Seals will be fine
+$choice .argue.giveUp; Let me get back to you.
+
+// Choosing Claim
+
+:: argue.danger
+{@arcticSci}    How do you know that?
+$if ArgueSetClaim(Claim, jobs.arctic-endangered-seals.argue.claimLabelDanger) 
+		$call ArgueFactSlot(Y_IceCrevice.Model.EndangeredSealsPredict)
 $endif
-{@arcticSci} Excellent! Let's see what you discovered.
-              May I have a look at your visual model of Site W? 
-$goto .argue.showClaim
-            
-:: argue.showClaim
+$branch .argue.showClaimDanger
+
+:: argue.fine
+{@arcticSci}    How do you know the seal populations will be fine?
+$choice .argue.increase; Their populations will go up.
+$choice .argue.stable; Their populations will be stable.
+$choice .argue.giveUp; On second thought, I need a little more time.
+
+:: argue.increase
+{@arcticSci}    Does your model show that the populations will increase?
+$if ArgueSetClaim(Claim, jobs.arctic-endangered-seals.argue.claimLabelIncrease) 
+		$call ArgueFactSlot(Y_IceCrevice.Model.EndangeredSealsPredict)
+$endif
+$branch .argue.showClaimIncrease
+
+:: argue.stable
+{@arcticSci}    Does your model show that the populations will remain stable?
+$if ArgueSetClaim(Claim, jobs.arctic-endangered-seals.argue.claimLabelStable) 
+		$call ArgueFactSlot(Y_IceCrevice.Model.EndangeredSealsPredict)
+$endif
+$branch .argue.showClaimStable
+
+// Danger
+
+:: argue.showClaimDanger
 $call ArgueDisplayClaim()
 $choice #argueFact; Present facts from AQOS
-    $answer W_WhaleFall.Model.WhaleFallVisual, .argue.complete 
-    $answer *, .argue.unrelated
-$choice .argue.giveUp; Let me get back to you.
+    $answer Y_IceCrevice.Model.EndangeredSealsPredict, .argue.completeDanger
+    $answer *, .argue.unrelatedDanger
+$choice .argue.giveUpArg; Let me get back to you.
 $choose branch
 
-:: argue.unrelated
+:: argue.unrelatedDanger
 $call ArgueRejectIncorrect()
-{@arcticSci} Ah. Forgive me, Ollie but I don't think that's what you were looking for.
-$goto .argue.showClaim
+{@arcticSci}    That doesn't support your data. Do you have a prediction model?
+$goto .argue.showClaimDanger
 
-:: argue.giveUp
-{@arcticSci} Perfectly understandable. These things take time. 
-              Just let me know when you're ready. 
+:: argue.completeDanger
+{@arcticSci}   Hmm. I'm not seeing anything in this model that poses a threat to the seals.
+                Want to revisit your claim?
+$call ArgueClearFacts()
+$call ArgueCancelClaim()
+$goto .argue.initialClaim
+
+// Stable
+
+:: argue.showClaimStable
+$call ArgueDisplayClaim()
+$choice #argueFact; Present facts from AQOS
+    $answer Y_IceCrevice.Model.EndangeredSealsPredict, .argue.completeStable
+    $answer *, .argue.unrelatedStable
+$choice .argue.giveUpArg; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedStable
+$if ArgueIsFactSubmitted(Y_IceCrevice.Model.EndangeredSealsDescribe)
+    {@arcticSci}   I need to see the future model, not what's already happened.
+                    Do you have a prediction model?
+    $branch .argue.showClaimStable
+$else
+    $call ArgueRejectIncorrect()
+    {@arcticSci}   That doesn't support your data. Do you have a prediction model?
+    $branch .argue.showClaimStable
+$endif
+
+:: argue.completeStable
+{@arcticSci}   Hmm. It looks like your model isn't agreeing with you.
+$call ArgueClearFacts()
+$call ArgueCancelClaim()
+$branch .argue.initialClaim
+
+// Increase
+
+:: argue.showClaimIncrease
+$call ArgueDisplayClaim()
+$choice #argueFact; Present facts from AQOS
+    $answer Y_IceCrevice.Model.EndangeredSealsPredict, .argue.completeIncrease
+    $answer *, .argue.unrelatedIncrease
+$choice .argue.giveUpArg; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedIncrease
+$if ArgueIsFactSubmitted(Y_IceCrevice.Model.EndangeredSealsDescribe)
+    {@arcticSci}   I need to see the future model, not what's already happened.
+                    Do you have a prediction model?
+    $branch .argue.showClaimIncrease
+$else
+    $call ArgueRejectIncorrect()
+    {@arcticSci}    That doesn't support your data. Do you have a prediction model?
+    $branch .argue.showClaimIncrease
+$endif
 
 // END
-:: argue.complete
-$call ArgueComplete()
-{@arcticSci}  Ollie, this is fascinating! What a beautiful, intricate web of organisms.
-               And all of them thriving where there was no life, no ecosystem... until now. 
-{@player}      But Linda's body already looks so decayed. How much longer do you think the ecosystem will last?
-{@arcticSci}   Well, that depends on when she died, and what state of decomposition she's in...
-               But I've already rambled on for too long!
-               Thank you again, Ollie. Until next time!
 
+:: argue.giveUpArg
+$call ArgueCancelClaim()
+$branch .argue.giveUp
+
+:: argue.giveUp
+{@arcticSci}    Perfectly understandable. These things take time. 
+                Just let me know when you're ready. 
+
+:: argue.completeIncrease
+$call ArgueComplete()
+{@arcticSci}   Brilliant! They are just having a party in that ice!
 $call CompleteJob()
