@@ -38,12 +38,27 @@ MonoBehaviour:
   - m_HashValue: 1109988049
   - m_HashValue: 283353415
   - m_HashValue: 313138705
+  - m_HashValue: 3544853027
   m_PrereqExp: 0
   m_StationId:
     m_HashValue: 1297447963
   m_DiveSiteIds:
   - m_HashValue: 1976919334
   m_Tasks:
+  - Id:
+      m_Source: scanProbe
+      m_HashValue: 2534789426
+    LabelId:
+      m_Source: jobs.arctic-endangered-seals.task.scanProb
+      m_HashValue: 1456992639
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Y_IceCrevice.PopulationHistory.IceAlgae
+        m_HashValue: 1281038529
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
   - Id:
       m_Source: modelSync
       m_HashValue: 637638609
@@ -57,7 +72,9 @@ MonoBehaviour:
         m_HashValue: 169082212
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds: []
+    PrerequisiteTaskIds:
+    - m_Source: scanProbe
+      m_HashValue: 2534789426
   - Id:
       m_Source: modelPredict
       m_HashValue: 815962003
@@ -92,10 +109,26 @@ MonoBehaviour:
       m_HashValue: 815962003
   m_OptimizedTaskList:
   - Id:
+      m_Source: scanProbe
+      m_HashValue: 2534789426
+    IdString: scanProbe
+    Index: 0
+    LabelId:
+      m_Source: jobs.arctic-endangered-seals.task.scanProb
+      m_HashValue: 1456992639
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Y_IceCrevice.PopulationHistory.IceAlgae
+        m_HashValue: 1281038529
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
       m_Source: modelSync
       m_HashValue: 637638609
     IdString: modelSync
-    Index: 0
+    Index: 1
     LabelId:
       m_Source: jobs.arctic-endangered-seals.task.modelSync
       m_HashValue: 922265941
@@ -106,12 +139,12 @@ MonoBehaviour:
         m_HashValue: 169082212
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 
+    PrerequisiteTaskIndices: 0000
   - Id:
       m_Source: modelPredict
       m_HashValue: 815962003
     IdString: modelPredict
-    Index: 1
+    Index: 2
     LabelId:
       m_Source: jobs.arctic-endangered-seals.task.modelPredict
       m_HashValue: 3368937103
@@ -122,12 +155,12 @@ MonoBehaviour:
         m_HashValue: 3420689758
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0000
+    PrerequisiteTaskIndices: 0100
   - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
     IdString: reportBack
-    Index: 2
+    Index: 3
     LabelId:
       m_Source: jobs.arctic-endangered-seals.task.reportBack
       m_HashValue: 3448420776
@@ -138,7 +171,7 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0100
+    PrerequisiteTaskIndices: 0200
   m_CashReward: 200
   m_ExpReward: 10
   m_JournalId:

@@ -13,6 +13,8 @@ $call GiveFact(IceAlgae.Reproduce)
 $call GiveFact(IceAlgae.Reproduce.Stressed)
 $call GiveFact(ArcticCopepod.Reproduce)
 $call GiveFact(ArcticCopepod.Reproduce.Stressed)
+{@arcticSci}    In addition, we deployed a population history probe after you discovered {fullnameof RS-4Y}.
+                The data is limited because it's only been out a short while, but every bit counts.
 
 :: afterModelSync
 @trigger    JobTaskCompleted
@@ -28,6 +30,13 @@ $call GiveFact(ArcticCopepod.Reproduce.Stressed)
 
 
 // CATCH-ALL GUIDE TEXT
+
+:: catchScanProbe
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanProbe)
+@boostScore -5
+@cutscene
+{@guide}    There's a probe at {fullnameof RS-4Y}. We need to scan it.
 
 :: catchModelSync
 @trigger    RequestPartnerHelp
