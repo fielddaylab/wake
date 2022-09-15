@@ -36,13 +36,20 @@ $goto act1.momMadEnd
 {@player}       Great. I think Mom's gonna let me travel to another ecosystem!
 {@$MerchantId}  Well, then, we better make sure you're prepared. 
                 Want to look at some ship upgrades?
+$set jobs:kelp-mechanic.givenJournal = false
 $choice .action.openShop; Sure, I'll take a look! 
 $choice .action.cancel; No thanks, Tío. I'll come back later.  
 
 #ShopHandler(a)
-{@$MerchantId} Welcome back, mijita. Need any upgrades for your ship? 
-$choice .action.openShop; Sure, I'll take a look. Thanks, Tío!
-$choice .action.cancel; Nah. I'm good for now. 
+$if jobs:bayou-mechanic.givenArticle, !jobs:kelp-mechanic.givenJournal
+    {@player}   Tio, did you know Mer worked on Challenger Deep?
+    // He tells you Mer created Victor. Get Mer’s journal page that shows Victor 1.0 version.
+    $set jobs:kelp-mechanic.givenJournal = true
+$else
+    {@$MerchantId} Welcome back, mijita. Need any upgrades for your ship? 
+    $choice .action.openShop; Sure, I'll take a look. Thanks, Tío!
+    $choice .action.cancel; Nah. I'm good for now. 
+$endif
 
 :: action.cancel
 @cutscene

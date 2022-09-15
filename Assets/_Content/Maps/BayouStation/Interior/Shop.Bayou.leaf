@@ -29,14 +29,24 @@
 {@$MerchantId}  Hey! You're O, right? Thank God you're here. 
                 I swear, those two have been driving me crazy.
                 If I have to hear them bickering about that stupid oil rig one more time...
-                Anyway. Wanna take a look around? We've got the best upgrades around. 
+                Anyway. Wanna take a look around? We've got the best upgrades around.
+$set jobs:bayou-mechanic.trackBayou = true
+$set jobs:bayou-mechanic.leftBayou = false
+$set jobs:bayou-mechanic.givenArticle = false
 $choice .action.openShop; Sure!
 $choice .action.cancel; Not right now!
 
 #ShopHandler(a)
-{@$MerchantId} Hey! Welcome back, O. Wanna take a look around?
-$choice .action.openShop; Sure do!
-$choice .action.cancel; Not right now!
+$if jobs:bayou-mechanic.trackBayou, jobs:bayou-mechanic.leftBayou
+    {@$MerchantId}  By the way, I found that article about your sister! 
+                    I thought you should have it.
+    $set jobs:bayou-mechanic.trackBayou = false
+    $set jobs:bayou-mechanic.givenArticle = true
+$else
+    {@$MerchantId} Hey! Welcome back, O. Wanna take a look around?
+    $choice .action.openShop; Sure do!
+    $choice .action.cancel; Not right now!
+$endif
 
 :: action.cancel
 {@$MerchantId}  Alright,| well you know where to find me!
