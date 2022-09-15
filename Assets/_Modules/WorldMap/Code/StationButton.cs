@@ -92,6 +92,7 @@ namespace Aqua.WorldMap
             }
 
             m_HighlightColorRoutine.Replace(this, ColorGroupTween(m_RegionColor, AQColors.BrightBlue.WithAlpha(0.15f), 0.2f));
+            Services.Audio.PostEvent("ui_hover");
         }
 
         private void OnPointerExit(PointerEventData _) {

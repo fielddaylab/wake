@@ -20,8 +20,8 @@ namespace Aqua
     public class PreloadGroup : ISerializedObject {
         // Serialized
         public string Id;
-        public string[] IncludeBefore;
-        public string[] IncludeAfter;
+        public string[] Include;
+        public string[] LowPriority;
         public string[] Paths;
 
         // Non-serialized
@@ -32,8 +32,8 @@ namespace Aqua
 
         public void Serialize(Serializer ioSerializer) {
             ioSerializer.Serialize("id", ref Id, FieldOptions.PreferAttribute);
-            ioSerializer.Array("include", ref IncludeBefore, FieldOptions.Optional);
-            ioSerializer.Array("lowPriority", ref IncludeAfter, FieldOptions.Optional);
+            ioSerializer.Array("include", ref Include, FieldOptions.Optional);
+            ioSerializer.Array("lowPriority", ref LowPriority, FieldOptions.Optional);
             ioSerializer.Array("paths", ref Paths, FieldOptions.Optional);
         }
     }

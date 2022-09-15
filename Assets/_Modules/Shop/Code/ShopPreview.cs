@@ -64,18 +64,21 @@ namespace Aqua.Shop
                         m_CurrentSubPreview = preview;
                         SetAsPreview(preview);
                         m_ExplorePreviewTransition.Replace(this, RotateSubJoint(preview.Rotation));
+                        Services.Audio.PostEvent("Shop.Preview");
                         break;
                     }
                     break;
                 }
 
                 case ShopBoard.CategoryId.Science: {
-                    m_SciencePreviewGroup.SetActive(true);
                     var hiRes = item.SketchPath();
                     if (!string.IsNullOrEmpty(hiRes)) {
+                        m_SciencePreviewGroup.SetActive(true);
                         m_SciencePreview.Path = hiRes;
+                        Services.Audio.PostEvent("Shop.Preview");
                     } else {
                         m_SciencePreview.Path = string.Empty;
+                        m_SciencePreviewGroup.SetActive(false);
                     }
                     break;
                 }

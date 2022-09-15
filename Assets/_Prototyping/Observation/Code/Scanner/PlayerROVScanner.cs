@@ -271,14 +271,14 @@ namespace ProtoAqua.Observation
                         var bestiary = Assets.Bestiary(data.BestiaryId());
                         Script.PopupNewFacts(newFacts, default, bestiary, data.Text());
                     }
-                    else if ((result & ScanResult.NewLogbook) != 0)
-                    {
-                        Services.Audio.PostEvent("scan_logbook");
-                    }
-                    else if ((result & ScanResult.NewScan) != 0)
+                    else
                     {
                         Services.Audio.PostEvent("scan_complete");
                     }
+                }
+                else
+                {
+                    Services.Audio.PostEvent("scan_complete");
                 }
             }
 

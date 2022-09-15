@@ -106,6 +106,10 @@ namespace Aqua {
         }
 
         private IEnumerator SceneLoadReady() {
+            while(!Services.Assets.PreloadGroupIsPrimaryLoaded("Scene/Title")) {
+                yield return 0.1f;
+            }
+
             m_ReadyPhase = ReadyPhase.AudioClick;
             Routine.Start(this, SwapToPrompt());
 

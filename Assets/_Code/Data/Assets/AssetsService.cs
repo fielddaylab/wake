@@ -85,6 +85,12 @@ namespace Aqua {
             foreach(var file in m_PreloadGroupFiles) {
                 PreloadManifest preloadManifest = Serializer.Read<PreloadManifest>(file);
                 foreach(var group in preloadManifest.Groups) {
+                    if (group.Paths != null) {
+                        // pre-translate to streaming assets url
+                        for(int i = 0; i < group.Paths.Length; i++) {
+                            group.Paths[i] = NativePreload.StreamingAssetsURL(group.Paths[i]);
+                        }
+                    }
                     m_PreloadGroupMap.Add(group.Id, group);
                 }
             }
@@ -125,11 +131,47 @@ namespace Aqua {
             TryPreloadGroup(groupId);
         }
 
+        public bool PreloadGroupIsPrimaryLoaded(StringHash32 groupId) {
+            if (groupId.IsEmpty) {
+                return true;
+            }
+
+            return IsPreloadGroupLoaded(groupId);
+        }
+
         public void CancelPreload(StringHash32 groupId) {
             if (groupId.IsEmpty) {
                 return;
             }
             TryCancelPreloadGroup(groupId);
+        }
+
+        private bool IsPreloadGroupLoaded(StringHash32 id) {
+            if (!m_PreloadGroupMap.TryGetValue(id, out PreloadGroup group)) {
+                Log.Error("[AssetsService] Preload group with id '{0}' does not exist", id);
+                return false;
+            }
+
+            if (group.RefCount <= 0) {
+                return false;
+            }
+
+            if (group.Include != null) {
+                foreach(var include in group.Include) {
+                    if (!IsPreloadGroupLoaded(include)) {
+                        return false;
+                    }
+                }
+            }
+            if (group.Paths != null) {
+                foreach(var path in group.Paths) {
+                    if (!IsPathLoaded(path)) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         private void TryPreloadGroup(StringHash32 id) {
@@ -141,8 +183,8 @@ namespace Aqua {
             group.RefCount++;
             if (group.RefCount == 1) {
                 Log.Msg("[AssetsService] Preloading group '{0}'", id);
-                if (group.IncludeBefore != null) {
-                    foreach(var include in group.IncludeBefore) {
+                if (group.Include != null) {
+                    foreach(var include in group.Include) {
                         TryPreloadGroup(include);
                     }
                 }
@@ -151,8 +193,8 @@ namespace Aqua {
                         TryPreloadPath(path);
                     }
                 }
-                if (group.IncludeAfter != null) {
-                    foreach(var include in group.IncludeAfter) {
+                if (group.LowPriority != null) {
+                    foreach(var include in group.LowPriority) {
                         TryPreloadGroup(include);
                     }
                 }
@@ -169,8 +211,8 @@ namespace Aqua {
                 group.RefCount--;
                 if (group.RefCount == 0) {
                     Log.Msg("[AssetsService] Canceling preload group '{0}'", id);
-                    if (group.IncludeBefore != null) {
-                        foreach(var include in group.IncludeBefore) {
+                    if (group.Include != null) {
+                        foreach(var include in group.Include) {
                             TryCancelPreloadGroup(include);
                         }
                     }
@@ -179,8 +221,8 @@ namespace Aqua {
                             TryCancelPreloadPath(path);
                         }
                     }
-                    if (group.IncludeAfter != null) {
-                        foreach(var include in group.IncludeAfter) {
+                    if (group.LowPriority != null) {
+                        foreach(var include in group.LowPriority) {
                             TryCancelPreloadGroup(include);
                         }
                     }
@@ -195,13 +237,16 @@ namespace Aqua {
             m_PreloadPathRefCountMap[id] = refCount;
             if (refCount == 1) {
                 string extension = Path.GetExtension(path).ToLowerInvariant();
-                string url = NativePreload.StreamingAssetsURL(path);
                 NativePreload.ResourceType type = NativePreload.ResourceType.Unknown;
                 if (extension == ".mp3") {
                     type = NativePreload.ResourceType.Audio;
                 }
-                NativePreload.Preload(url, type);
+                NativePreload.Preload(path, type);
             }
+        }
+
+        private bool IsPathLoaded(string path) {
+            return m_PreloadPathRefCountMap.ContainsKey(path) && NativePreload.IsLoaded(path);
         }
 
         private void TryCancelPreloadPath(string path) {
@@ -210,8 +255,7 @@ namespace Aqua {
                 refCount--;
                 m_PreloadPathRefCountMap[id] = refCount;
                 if (refCount == 0) {
-                    string url = NativePreload.StreamingAssetsURL(path);
-                    NativePreload.Cancel(url);
+                    NativePreload.Cancel(path);
                 }
             }
         }

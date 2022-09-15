@@ -134,6 +134,7 @@ namespace Aqua.Portable {
 
             base.OnShow(inbInstant);
 
+            Services.Audio.PostEvent("portable.open");
             Services.Script.TriggerResponse(GameTriggers.PortableOpened);
         }
 

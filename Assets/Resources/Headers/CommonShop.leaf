@@ -183,6 +183,7 @@ $set    shop:lastFailure = local:itemId
 $set    shop:lastFailureReason = "cash"
 $set    player:hasAttemptedPurchaseNoCash = local:itemId
 
+$call AudioOneShot(Shop.NotEnoughCash)
 $set    shop:notEnoughCount + 1
 
 $branch $NotEnoughCashNodeId
