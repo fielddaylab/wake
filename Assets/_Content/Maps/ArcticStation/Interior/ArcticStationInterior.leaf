@@ -34,6 +34,7 @@ $call InteriorOpenJobBoard()
 @once
 @cutscene
 $if CompletedJobCount(ArcticStation, 1)
+    // STORY BEAT B
     {@profArctic}   By the way, I found one of your sister’s journal pages!
     // GiveJournalEntry()
 $else

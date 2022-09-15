@@ -42,10 +42,12 @@ $choice .action.cancel; No thanks, Tío. I'll come back later.
 
 #ShopHandler(a)
 $if jobs:bayou-mechanic.givenArticle, !jobs:kelp-mechanic.givenJournal
+    // STORY BEAT E
     {@player}   Tio, did you know Mer worked on Challenger Deep?
     // He tells you Mer created Victor. Get Mer’s journal page that shows Victor 1.0 version.
     $set jobs:kelp-mechanic.givenJournal = true
 $elseif jobs:num-specters-seen >= 6, !jobs:specter6-comms.kelp.discussed
+    // STORY BEAT G
     {@player}   I’ve been getting these weird communications from Sam.
                 Not messages… just data. Sort of like ghosts.
                 They show up in AQOS, but the entries don’t make any sense.

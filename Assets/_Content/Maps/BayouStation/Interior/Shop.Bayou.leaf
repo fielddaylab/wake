@@ -38,6 +38,7 @@ $choice .action.cancel; Not right now!
 
 #ShopHandler(a)
 $if jobs:bayou-mechanic.trackBayou, jobs:bayou-mechanic.leftBayou
+    // STORY BEAT D
     {@$MerchantId}  By the way, I found that article about your sister! 
                     I thought you should have it.
     $set jobs:bayou-mechanic.trackBayou = false
