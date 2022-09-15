@@ -14,11 +14,15 @@ $if CompletedJobCount(ArcticStation, 3), !jobs:arctic-job3-journal.received
     {@profArctic}   I found another of Meredith’s journal pages! Check this out.
     $set jobs:arctic-job3-journal.received = true
     // GiveJournalEntry()
-$elseif jobs:num-specters-seen >= 5, !jobs:arctic-job5-worried.discussed
+$elseif jobs:num-specters-seen >= 5, !jobs:specter5-worried.discussed
     {@player}   Mom, I’m worried about Sam. They should’ve contacted me by now.
                 I think something might’ve gone wrong down there. 
     // You tell Mom you’re worried about Sam and all these weird, glitchy messages. She tells you not to worry, Sam is fine. 
-    $set jobs:arctic-job5-worried.discussed = true
+    $set jobs:specter5-worried.discussed = true
+$elseif jobs:specter6-comms.kelp.discussed, !jobs:specter6-comms.arctic.discussed
+    {@player}   My sister was working on something to unscramble the glitches. Do you know anything about that? 
+    {@profArctic}   I’m not sure. But there might be something in my old notes. I’ll see what I can find.
+    $set jobs:specter6-comms.arctic.discussed = true
 $else
     {@$JobGiverId}  Hey, want to see the {h}Job Board{/h}?
     $choice .action.openJobBoard; Sure!

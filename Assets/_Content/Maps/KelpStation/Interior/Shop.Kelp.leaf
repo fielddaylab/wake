@@ -45,14 +45,14 @@ $if jobs:bayou-mechanic.givenArticle, !jobs:kelp-mechanic.givenJournal
     {@player}   Tio, did you know Mer worked on Challenger Deep?
     // He tells you Mer created Victor. Get Mer’s journal page that shows Victor 1.0 version.
     $set jobs:kelp-mechanic.givenJournal = true
-$elseif jobs:num-specters-seen >= 6, !jobs:arctic-job6-comms.discussed
+$elseif jobs:num-specters-seen >= 6, !jobs:specter6-comms.kelp.discussed
     {@player}   I’ve been getting these weird communications from Sam.
                 Not messages… just data. Sort of like ghosts.
                 They show up in AQOS, but the entries don’t make any sense.
     {@$MerchantId}  Hmm. Mer mentioned there might be glitches. 
                     She was working on an upgrade to fix the bugs.
                     Not sure if she ever finished it, though. 
-    $set jobs:arctic-job6-comms.discussed = true
+    $set jobs:specter6-comms.kelp.discussed = true
 $else
     {@$MerchantId} Welcome back, mijita. Need any upgrades for your ship? 
     $choice .action.openShop; Sure, I'll take a look. Thanks, Tío!
