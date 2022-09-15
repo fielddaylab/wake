@@ -28,3 +28,14 @@
 $call UnlockSite(RS-4X)
 $call UnlockSite(RS-4Y)
 $call InteriorOpenJobBoard()
+
+:: job1.journal-mer
+@trigger    JournalHidden
+@once
+@cutscene
+$if CompletedJobCount(ArcticStation, 1)
+    {@profArctic}   By the way, I found one of your sister’s journal pages!
+    // GiveJournalEntry()
+$else
+    {@profArctic}   Still broken, I'm afraid.
+$endif

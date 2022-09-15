@@ -33,5 +33,7 @@ namespace Aqua
 
         static public readonly StringHash32 PlayerEnterRegion = "PlayerEnterRegion";
         static public readonly StringHash32 PlayerExitRegion = "PlayerExitRegion";
+
+        static public readonly StringHash32 JournalHidden = "JournalHidden";
     }
 }

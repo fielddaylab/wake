@@ -762,6 +762,12 @@ namespace Aqua
                 return jobStation.IsEmpty || jobStation == Save.Map.CurrentStationId();
             }
 
+            [LeafMember("CompletedJobCount"), UnityEngine.Scripting.Preserve]
+            static private bool CompletedJobCount(StringHash32 inStationId, int inCount)
+            {
+                return JobUtils.SummarizeJobProgress(inStationId, Save.Current).Completed >= inCount;
+            }
+
             #endregion // Jobs
 
             #region World

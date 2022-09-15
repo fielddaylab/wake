@@ -327,6 +327,10 @@ namespace Aqua {
             m_RightPage.DisableMasking();
             m_CurrentSection = -1;
             m_NewEntryRoutine.Stop();
+
+            if (Services.Script != null) {
+                Services.Script.TriggerResponse(GameTriggers.JournalHidden);
+            }
         }
 
         #endregion // Events

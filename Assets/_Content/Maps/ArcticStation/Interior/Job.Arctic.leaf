@@ -10,6 +10,11 @@
 // Generic
 
 #NoJobHandler(a)
+$if CompletedJobCount(ArcticStation, 3), !jobs:arctic-job3-journal.received
+    {@profArctic}   I found another of Meredith’s journal pages! Check this out.
+    $set jobs:arctic-job3-journal.received = true
+    // GiveJournalEntry()
+$endif
 {@$JobGiverId}  Hey, want to see the {h}Job Board{/h}?
 $choice .action.openJobBoard; Sure!
 $choice .action.cancel; No thanks.
@@ -36,9 +41,9 @@ $choice .action.cancel; No thanks.
 
 #JobHandler(a)
 {@$JobGiverId}  {random Hey, got|So, do you have} anything to report for your current job?
-    $choice .action.report; Yep!
-    $choice .action.openJobBoard; Let me {random see|look at} the {h}Job Board{/h}.
-    $choice .action.cancel.currentJob; Nope.
+$choice .action.report; Yep!
+$choice .action.openJobBoard; Let me {random see|look at} the {h}Job Board{/h}.
+$choice .action.cancel.currentJob; Nope.
 
 :: action.cancel
 @cutscene
