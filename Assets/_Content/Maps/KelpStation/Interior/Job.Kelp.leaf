@@ -10,9 +10,17 @@
 // Generic
 
 #NoJobHandler(a)
-{@$JobGiverId}  Would you like to see the {h}Job Board{/h}, Mija?
-$choice .action.openJobBoard; Sure!
-$choice .action.cancel; No thanks.
+$if jobs:num-specters-seen >= 5, !jobs:specter5-worried.discussed
+    // STORY BEAT F
+    {@player}   Mom, I’m worried about Sam. They should’ve contacted me by now.
+                I think something might’ve gone wrong down there.
+    // You tell Mom you’re worried about Sam and all these weird, glitchy messages. She tells you not to worry, Sam is fine. 
+    $set jobs:specter5-worried.discussed = true
+$else
+    {@$JobGiverId}  Would you like to see the {h}Job Board{/h}, Mija?
+    $choice .action.openJobBoard; Sure!
+    $choice .action.cancel; No thanks.
+$endif
 
 #WrongStationJobHandler(a)
 {@$JobGiverId}  Looks like you've got a job at another station. 

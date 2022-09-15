@@ -15,12 +15,6 @@ $if CompletedJobCount(ArcticStation, 3), !jobs:arctic-job3-journal.received
     {@profArctic}   I found another of Meredith’s journal pages! Check this out.
     $set jobs:arctic-job3-journal.received = true
     // GiveJournalEntry()
-$elseif jobs:num-specters-seen >= 5, !jobs:specter5-worried.discussed
-    // STORY BEAT F
-    {@player}   Mom, I’m worried about Sam. They should’ve contacted me by now.
-                I think something might’ve gone wrong down there.
-    // You tell Mom you’re worried about Sam and all these weird, glitchy messages. She tells you not to worry, Sam is fine. 
-    $set jobs:specter5-worried.discussed = true
 $elseif jobs:specter6-comms.kelp.discussed, !jobs:specter6-comms.arctic.discussed
     // STORY BEAT H
     {@player}   My sister was working on something to unscramble the glitches. Do you know anything about that? 
