@@ -66,6 +66,7 @@ $set    jobs:common-dive.seen.micro-intro = true
 //@once
 @cutscene
 {@guide}	This is a Specter! Spooky...
+$set jobs:num-specters-seen + 1
 
 :: specterTrigger.urchin-barren-viz
 @trigger    ScannedObject
@@ -74,6 +75,7 @@ $set    jobs:common-dive.seen.micro-intro = true
 @cutscene
 {@guide}	This is a Specter in the Urchin Barren!
 			It only appears after completing the Urchin Barren Viz job. Spooky...
+$set jobs:num-specters-seen + 1
 
 :: specterTrigger.job2
 @trigger    ScannedObject
@@ -85,6 +87,7 @@ $set    jobs:common-dive.seen.micro-intro = true
 		    The signal seems to have originated from the Challenger Deep probe.
 {@player}	That's where Sam was going!
 			Do you think they got the probe working? Why would they send us this... this ghost thing?  
-{@guide}	Data inconclusive. 
+{@guide}	Data inconclusive.
+$set jobs:num-specters-seen + 1
 
 
