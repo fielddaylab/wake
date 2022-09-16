@@ -1,7 +1,8 @@
-# basePath Cabin
+# basePath StationTransition
 
 :: bayouMechanicArticleTracking
 @trigger    TravelingToStation
+@once
 @chatter
-{@guide}    Tracking! // placeholder to confirm the node is triggering
+{@guide}    Tracking!
 $set jobs:bayou-mechanic.leftBayou = true
