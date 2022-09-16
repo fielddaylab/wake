@@ -48,13 +48,12 @@ $call GiveFact(ChinookSalmon.Reproduce.Stressed)
 
 :: catchModelFish
 @trigger	RequestPartnerHelp
-@when		JobTaskTop(modelFish), scene:name != "Modeling"
+@when		JobTaskTop(modelFish)
 @boostScore -5
 @cutscene
-
 {@player}  Okay, V. What's next? 
-$if scene:name != "ModelingFoyer"
-{@guide}    I would suggest heading to the {m}Modeling Lab{/m}.
+$if scene:name != "ModelingFoyer", scene:name != "Modeling"
+    {@guide}    I would suggest heading to the {m}Modeling Lab{/m}.
 $endif
 {@guide}    We need to construct a {h}Visual Model{/h} and a {h}Sync Model{/h}!
 
