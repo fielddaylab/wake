@@ -1094,6 +1094,12 @@
                "date": {
                   "added": 1.32914936623526E+17
                }
+            },
+            {
+               "id": "observeCoral",
+               "date": {
+                  "added": 1.33080912981555E+17
+               }
             }
          ]
       },
@@ -2623,7 +2629,8 @@
             {
                "id": "arctic-seal-habbits",
                "date": {
-                  "added": 1.3305916268445E+17
+                  "added": 1.3305916268445E+17,
+                  "deprecated": 1.33080912981555E+17
                }
             },
             {
@@ -2641,6 +2648,36 @@
             "argumentation": 1
          },
          "tasks": [
+            {
+               "id": "scanNew",
+               "date": {
+                  "added": 1.33080912981555E+17
+               }
+            },
+            {
+               "id": "countNew",
+               "date": {
+                  "added": 1.33080912981555E+17
+               }
+            },
+            {
+               "id": "experimentInteractions",
+               "date": {
+                  "added": 1.33080912981555E+17
+               }
+            },
+            {
+               "id": "createModel",
+               "date": {
+                  "added": 1.33080912981555E+17
+               }
+            },
+            {
+               "id": "reportBack",
+               "date": {
+                  "added": 1.33080912981555E+17
+               }
+            }
          ]
       },
       {
@@ -2798,6 +2835,12 @@
                "date": {
                   "added": 1.3305916268445E+17
                }
+            },
+            {
+               "id": "ProbeHacker",
+               "date": {
+                  "added": 1.33080912981555E+17
+               }
             }
          ],
          "difficulties": {
@@ -2870,7 +2913,8 @@
       {
          "id": "arctic-seal-habbits",
          "date": {
-            "added": 1.3305916268445E+17
+            "added": 1.3305916268445E+17,
+            "deprecated": 1.33080912981555E+17
          },
          "requiredJobs": [
          ],
@@ -3289,8 +3333,129 @@
                "date": {
                   "added": 1.33067919669553E+17
                }
+            },
+            {
+               "id": "countSeal",
+               "date": {
+                  "added": 1.33080912981555E+17
+               }
+            }
+         ]
+      },
+      {
+         "id": "arctic-endangered-seals",
+         "date": {
+            "added": 1.33080912981555E+17
+         },
+         "requiredJobs": [
+            {
+               "id": "above-n-below",
+               "date": {
+                  "added": 1.33080912981555E+17
+               }
+            }
+         ],
+         "requiredUpgrades": [
+            {
+               "id": "ObservationTank",
+               "date": {
+                  "added": 1.33080912981555E+17
+               }
+            },
+            {
+               "id": "ROVTagger",
+               "date": {
+                  "added": 1.33080912981555E+17
+               }
+            },
+            {
+               "id": "ROVScanner",
+               "date": {
+                  "added": 1.33080912981555E+17
+               }
+            },
+            {
+               "id": "PredictionModel",
+               "date": {
+                  "added": 1.33080912981555E+17
+               }
+            },
+            {
+               "id": "MeasurementTank",
+               "date": {
+                  "added": 1.33080912981555E+17
+               }
+            },
+            {
+               "id": "Microscope",
+               "date": {
+                  "added": 1.33080912981555E+17
+               }
+            },
+            {
+               "id": "ProbeHacker",
+               "date": {
+                  "added": 1.33080912981555E+17
+               }
+            }
+         ],
+         "difficulties": {
+            "experimentation": 5,
+            "modeling": 4,
+            "argumentation": 5
+         },
+         "tasks": [
+            {
+               "id": "scanProbe",
+               "date": {
+                  "added": 1.33080912981555E+17
+               }
+            },
+            {
+               "id": "modelSync",
+               "date": {
+                  "added": 1.33080912981555E+17
+               }
+            },
+            {
+               "id": "modelPredict",
+               "date": {
+                  "added": 1.33080912981555E+17
+               }
+            },
+            {
+               "id": "reportBack",
+               "date": {
+                  "added": 1.33080912981555E+17
+               }
             }
          ]
       }
-   ]
+   ],
+   "jobsSummary": {
+      "experimentSummary": [
+         18,
+         13,
+         12,
+         6,
+         2,
+         2
+      ],
+      "modelingSummary": [
+         28,
+         10,
+         8,
+         2,
+         4,
+         1
+      ],
+      "argumentationSummary": [
+         10,
+         30,
+         5,
+         3,
+         2,
+         3
+      ]
+   }
 }
