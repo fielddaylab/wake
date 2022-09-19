@@ -180,18 +180,21 @@ namespace Aqua.Editor {
                 jobData.Difficulties.ModelingDifficulty = job.Difficulty(ScienceActivityType.Modeling);
                 jobData.Difficulties.ArgumentationDifficulty = job.Difficulty(ScienceActivityType.Argumentation);
 
-                // add to summary table
-                int oldVal = db.Summary.ExperimentationSummary[job.Difficulty(ScienceActivityType.Experimentation)];
-                int newVal = oldVal + 1;
-                db.Summary.ExperimentationSummary[job.Difficulty(ScienceActivityType.Experimentation)] = newVal;
+                // Unimplemented jobs should be left out. They have an argumentation rating of 0
+                if (job.Difficulty(ScienceActivityType.Argumentation) != 0) {
+                    // add to summary table
+                    int oldVal = db.Summary.ExperimentationSummary[job.Difficulty(ScienceActivityType.Experimentation)];
+                    int newVal = oldVal + 1;
+                    db.Summary.ExperimentationSummary[job.Difficulty(ScienceActivityType.Experimentation)] = newVal;
 
-                oldVal = db.Summary.ModelingSummary[job.Difficulty(ScienceActivityType.Modeling)];
-                newVal = oldVal + 1;
-                db.Summary.ModelingSummary[job.Difficulty(ScienceActivityType.Modeling)] = newVal;
+                    oldVal = db.Summary.ModelingSummary[job.Difficulty(ScienceActivityType.Modeling)];
+                    newVal = oldVal + 1;
+                    db.Summary.ModelingSummary[job.Difficulty(ScienceActivityType.Modeling)] = newVal;
 
-                oldVal = db.Summary.ArgumentationSummary[job.Difficulty(ScienceActivityType.Argumentation)];
-                newVal = oldVal + 1;
-                db.Summary.ArgumentationSummary[job.Difficulty(ScienceActivityType.Argumentation)] = newVal;               
+                    oldVal = db.Summary.ArgumentationSummary[job.Difficulty(ScienceActivityType.Argumentation)];
+                    newVal = oldVal + 1;
+                    db.Summary.ArgumentationSummary[job.Difficulty(ScienceActivityType.Argumentation)] = newVal;
+                }            
             }
 
             // Deprecate stuff
