@@ -67,25 +67,54 @@ $set    jobs:common-dive.seen.micro-intro = true
 @cutscene
 $if jobs:num-specters-seen == 0
 	// first specter
-	{@guide}	This is the first Specter we've seen! Spooky...
+	{@player}	Whoa! {nameof @guide}, what is that thing?
+	{@guide}	Data inconclusive. 
+			    It appears to have originated at the Challenger Deep probe. 
+	{@player}   That's where Sam is! They must've gotten the probe back online!
+				Wow... kinda spooky, isn't it?
 $elseif jobs:num-specters-seen == 1
 	// second specter
-	{@guide}	This is the second Specter we've seen! Spooky...
+	{@player}	Wow... another one of those glitchy ghost species!
+				Can you pinpoint its origin, {nameof @guide}?
+	{@guide}	Certainly, O. The specter originated at Challenger Deep.
+	{@player}	That must be Sam!
+				But... why did they send us this? 
+	{@guide}	Data inconclusive, O. 
 $elseif jobs:num-specters-seen == 2
 	// third specter
-	{@guide}	This is the third Specter we've seen! Spooky...
+	{@player}   Wow. Another one.
+				Are you able to get the source location, {nameof @guide}?
+	{@guide}	Affirmative, O. Point of origin: the Challenger Deep probe.
+	{@player}	I don't understand. Why does Sam keep sending me these ghosts?
+				Why haven't they contacted us? 
+	{@guide}	I'm sorry, O. The data is inconclusive. 
 $elseif jobs:num-specters-seen == 3
 	// fourth specter
-	{@guide}	This is the fourth Specter we've seen! Spooky...
+	{@player}	Oh no. Another ghost.
+				{nameof @guide}, can you try contacting Sam on the Nautilus?
+	{@guide}	Apologies, O. I cannot get a message through.
 $elseif jobs:num-specters-seen == 4
 	// fifth specter
-	{@guide}	This is the fifth Specter we've seen! Spooky...
+	{@player}	Another ghost from Sam.
+				Something must be wrong {nameof @guide}.
+	{@guide}	Yes. At this point, the probability of Sam returning safely on their own are 21.4%.
+	{@player}   I need to go home and tell Mom.
+				I just hope she'll listen.  
 $elseif jobs:num-specters-seen == 5
 	// sixth specter
-	{@guide}	This is the sixth Specter we've seen! Spooky...
+	{@player}	Another ghost.
+				I think Sam needs our help, {nameof @guide}. 
+	{@guide}	Your mother suggested that Sam is fine. 
+	{@player}	Yeah. Well, she also told me Mer wanted to spend her whole life studying the otters...
+				Turns out that wasn't true either.
+				Next time I'm home, I'll talk to Tío. Maybe he can help. 
 $elseif jobs:num-specters-seen == 6
 	// seventh specter
-	{@guide}	This is the seventh Specter we've seen! Spooky...
+	{@player}	Ugh. I don't know what to do, {nameof @guide}.
+				We need to unscramble all this data!
+				Can you try contacting the Nautilus? 
+	{@guide}	Processing... processing...
+				I'm sorry, O. The Nautilus is still unreachable. 
 $elseif jobs:num-specters-seen > 6
 	// seventh specter
 	{@guide}	We've already seen all the specters!

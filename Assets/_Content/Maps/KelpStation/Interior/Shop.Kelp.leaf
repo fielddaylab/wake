@@ -43,17 +43,29 @@ $choice .action.cancel; No thanks, Tío. I'll come back later.
 #ShopHandler(a)
 $if jobs:bayou-mechanic.givenArticle, !jobs:kelp-mechanic.givenJournal
     // STORY BEAT E
-    {@player}   Tio, did you know Mer worked on Challenger Deep?
+    {@player}   Hey Tío.... did you know Mer worked on the Challenger Deep probe?
+    {@$MerchantId} Where did you hear about that, mijita?
+    {@player} On a job. Is it true? 
+    {@$MerchantId} Yes. Mer designed the probe.
+                   She even created an experimental A.I. that was capable of picking up its transmissions.
+                   {@nameof @guide}, I believe she called it.
+    {@player}   Wait... Mer created {nameof @guide}??
+                Is that why I'm getting all these glitchy messages? 
+    {@$MerchantId} It might be best to save this talk for later, Ollie.
+                    Your mother probably had a reason for not telling you. 
+                   But.... I suppose it couldn't hurt to give you this. Meredith's specs from when she created {nameof @guide}.
+                   Now. Por favor, let's stay focused on the job. 
     // He tells you Mer created Victor. Get Mer’s journal page that shows Victor 1.0 version.
     $set jobs:kelp-mechanic.givenJournal = true
 $elseif jobs:num-specters-seen >= 6, !jobs:specter6-comms.kelp.discussed
     // STORY BEAT G
-    {@player}   I’ve been getting these weird communications from Sam.
-                Not messages… just data. Sort of like ghosts.
+    {@player}  Tío, I need to ask you something.
+               I've been getting weird communications from Sam. 
+               Not messages.... just scrambled data. Sort of like ghosts. 
                 They show up in AQOS, but the entries don’t make any sense.
-    {@$MerchantId}  Hmm. Mer mentioned there might be glitches. 
-                    She was working on an upgrade to fix the bugs.
-                    Not sure if she ever finished it, though. 
+    {@$MerchantId}  Hmm. Meredith mentioned there might be glitches. 
+                    She was working on an upgrade, but I'm not sure if she ever finished it. 
+                    You could try asking one of her old colleagues. I'm sorry I can't be more help, mijita. 
     $set jobs:specter6-comms.kelp.discussed = true
 $else
     {@$MerchantId} Welcome back, mijita. Need any upgrades for your ship? 

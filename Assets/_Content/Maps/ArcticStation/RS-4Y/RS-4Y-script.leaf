@@ -17,17 +17,15 @@ $set jobs:arctic-whalefall.new-attempt = true // whether the player has exited t
 @cutscene
 $if JobStartedOrComplete(arctic-missing-whale)
     {@player}   Whoa. What just happened, {nameof @guide}?
-    {@guide}    It appears we were caught in a current.
-    {@player}   No, I mean… what were all those creatures?
-    {@guide}    Data inconclusive. 
-    {@player}   What about that skeleton? Could it have been a dead whale?
-    {@guide}    It appeared to have the appropriate dimensions. 
+    {@guide}    It appears we were swept up in a current. 
+    {@player}   No, I mean... what were all those creatures? 
+    {@player}   And what about that skeleton? Could it have been a whale? 
+    {@guide}    It did appear to have the appropriate dimensions. 
                 Perhaps we should inform {nameof @arcticSci}. 
     {@player}   No, wait. Hold on, {nameof @guide}. 
                 We have no idea if that was Linda. We saw it for, like, three seconds.
     {@guide}    But according to my data—
-    {@player}   We need more proof, Victor. Linda might be just fine!
-    {@guide}    ….Affirmative, O.
+    {@player}   We need more proof. Linda might be just fine.
 $else
     {@player}   What| just happened!?
     {@guide}    It seems like our ship's {h}engine{/h} isn't strong enough to resist the pull of the current!
