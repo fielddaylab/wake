@@ -65,7 +65,31 @@ $set    jobs:common-dive.seen.micro-intro = true
 @when		scanId == "specter.default"
 //@once
 @cutscene
-{@guide}	This is a Specter! Spooky...
+$if jobs:num-specters-seen == 0
+	// first specter
+	{@guide}	This is the first Specter we've seen! Spooky...
+$elseif jobs:num-specters-seen == 1
+	// second specter
+	{@guide}	This is the second Specter we've seen! Spooky...
+$elseif jobs:num-specters-seen == 2
+	// third specter
+	{@guide}	This is the third Specter we've seen! Spooky...
+$elseif jobs:num-specters-seen == 3
+	// fourth specter
+	{@guide}	This is the fourth Specter we've seen! Spooky...
+$elseif jobs:num-specters-seen == 4
+	// fifth specter
+	{@guide}	This is the fifth Specter we've seen! Spooky...
+$elseif jobs:num-specters-seen == 5
+	// sixth specter
+	{@guide}	This is the sixth Specter we've seen! Spooky...
+$elseif jobs:num-specters-seen == 6
+	// seventh specter
+	{@guide}	This is the seventh Specter we've seen! Spooky...
+$elseif jobs:num-specters-seen > 6
+	// seventh specter
+	{@guide}	We've already seen all the specters!
+$endif
 $set jobs:num-specters-seen + 1
 
 :: specterTrigger.urchin-barren-viz
@@ -77,6 +101,7 @@ $set jobs:num-specters-seen + 1
 			It only appears after completing the Urchin Barren Viz job. Spooky...
 $set jobs:num-specters-seen + 1
 
+// first specter
 :: specterTrigger.job2
 @trigger    ScannedObject
 @when		scanId == "specter.job2"
