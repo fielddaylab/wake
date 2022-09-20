@@ -109,7 +109,7 @@ $choose branch
 :: argue.incorrectPopulation
 $call ArgueRejectIncorrect()
 {@profBayou} That's not the answer I'm looking for, Ms. Ramirez.  
-             What are the populatrions for {pluralnameof LoggerheadTurtle}, {pluralnameof SeaPearl}, and {pluralnameof ElkhornCoral}?
+             What are the populations for {pluralnameof LoggerheadTurtle}, {pluralnameof SeaPearl}, and {pluralnameof ElkhornCoral}?
 $goto .argue.showClaim
 $call ArgueCancelClaim()
 
@@ -124,7 +124,7 @@ $if ArgueSetClaim(Claim, jobs.bayou-displaced-reef.argue.claimLabel)
     $call ArgueFactSlot(O_OilRig.Population.RedGrouper)
 $endif
 
-{@profBayou} How about the populatrions for {pluralnameof RedGrouper} and {pluralnameof AngelFish}?
+{@profBayou} How about the populations for {pluralnameof RedGrouper} and {pluralnameof AngelFish}?
 $goto .argue.showClaim2
 
 :: argue.showClaim2
@@ -138,7 +138,7 @@ $choose branch
 :: argue.incorrectPopulation2
 $call ArgueRejectIncorrect()
 {@profBayou} That's not the answer I'm looking for, Ms. Ramirez.  
-        What are the populatrions for {pluralnameof RedGrouper} and {pluralnameof AngelFish}?
+        What are the populations for {pluralnameof RedGrouper} and {pluralnameof AngelFish}?
 $goto .argue.showClaim2
 $call ArgueCancelClaim()
 

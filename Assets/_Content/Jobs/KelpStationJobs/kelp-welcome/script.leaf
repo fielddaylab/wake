@@ -201,7 +201,7 @@ $call schematic.button->ForceClick()
 {hide-dialog}{wait 1}{style default}
 // $call HelmButton->ForceOnTop()
 $call FocusHighlight->Focus(ExperimentationButton, 200, 200)
-    Click here to enter your {h}Experimentation Lab{/h}.
+    Click here to enter your {nameof Experimentation}.
 $call FocusHighlight->Clear()
 {hide-dialog}{fade-in 0.5, wait}
 $call ship.map->ResetSorting()
@@ -216,7 +216,7 @@ $call AutoSaveNow()
 @cutscene
 {@player}   Can you help me find my way, {nameof @guide}?
 {@guide}    Certainly, O. Open your schematic in the upper left.
-{@guide}  Then head to {nameof Experimentation}!
+{@guide}  Then head to your {nameof Experimentation}!
 
 :: firstCaptureCircle
 @trigger    BehaviorCaptureChance
