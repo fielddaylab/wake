@@ -108,13 +108,13 @@ $goto .argue.selectClaim
 $if !ArgueIsComplete(bayouAltEnergy_Branch3)
     $choice .argue.1_Methane; It's the methane from the vents.
     $choice .argue.2_Detritus; It's the falling detritus.
+    $choice .argue.4_Both; It's the methane AND detritus: it depends on the species.
     $choice .argue.3_Heat; It's the heat from the vents.
-    $choice .argue.giveUp; Let me get back to you.
     $choose branch
 $else
     $choice .argue.1_Methane; It's the methane from the vents.
     $choice .argue.2_Detritus; It's the falling detritus.
-    $choice .argue.giveUp; Let me get back to you.
+    $choice .argue.4_Both; Both: it depends on the species.
     $choose branch
 $endif
 
@@ -202,6 +202,34 @@ $goto .argue.3_Heat_ChooseFacts
              Do you have another hypothesis, Ollie? 
 $call ArgueComplete()
 $goto .argue.selectClaim
+
+//Branch 4
+:: argue.4_Both
+$call ArgueLoad(bayouAltEnergy_Branch4)
+{@profBayou} Wow... that's amazing! Can you show me your Visual Model, Ollie? 
+             I'd like to see what species at Site N consume Methane and Detritus.
+$goto .argue.4_Both_ChooseFacts
+
+:: argue.4_Both_ChooseFacts
+$if ArgueSetClaim(Claim, jobs.bayou-alt-energy.argue.claimLabel_4) 
+    $call ArgueFactSlot(N_ThermalVent.Model.Visual) 
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFact; Present facts from AQOS
+    $answer N_ThermalVent.Model.Visual, .argue.4_Both_BranchEnd
+    $answer *, .argue.4_Both_Unrelated
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.4_Both_Unrelated
+{@profBayou}   That's not the right model, Ms. Ramirez. 
+$call ArgueRejectIncorrect()
+$goto .argue.4_Both_ChooseFacts
+
+:: argue.4_Both_BranchEnd
+{@profBayou} You appear to be spot-on.
+$call ArgueComplete()
+$goto .argue.done
 
 //GiveUp
 :: argue.giveUp
