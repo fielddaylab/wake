@@ -1,0 +1,17 @@
+# basePath RS-4X
+
+// Swept along
+
+:: enterCurrent
+@trigger    SceneStart
+@boostScore 10
+@chatter
+{@guide}    This current is unexpectedly strong.
+            Just hang tight and follow it!
+
+:: requestHelpCurrent
+@trigger    RequestPartnerHelp
+@when       !HasUpgrade("Engine")
+@boostScore 10
+@chatter
+{@guide}    Hang tight and follow the current!
