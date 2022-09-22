@@ -46,6 +46,8 @@ namespace Aqua.Editor {
                     bDesiredPreviewBuild = true;
                 } else if (branch.StartsWith("production")) {
                     bDesiredProdBuild = true;
+                } else {
+                    bDesiredDevBuild = true;
                 }
             }
 

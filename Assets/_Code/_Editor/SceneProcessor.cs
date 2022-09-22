@@ -56,7 +56,7 @@ namespace Aqua.Editor
             if (debug)
             {
                 Debug.LogFormat("[SceneProcessor] Removing debug service from scene '{0}'...", scene.name);
-                GameObject.DestroyImmediate(debug.gameObject);
+                Bake.Destroy(debug.gameObject);
             }
         }
 
