@@ -368,6 +368,14 @@ namespace ScriptableBake {
         /// </summary>
         static public void Destroy(UnityEngine.Object obj) {
             if (!Application.isPlaying) {
+                #if UNITY_EDITOR
+                if (obj is GameObject) {
+                    GameObject prefabRoot = PrefabUtility.GetOutermostPrefabInstanceRoot(obj);
+                    if (prefabRoot != null) {
+                        PrefabUtility.UnpackPrefabInstance(prefabRoot, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+                    }
+                }
+                #endif // UNITY_EDITOR
                 GameObject.DestroyImmediate(obj);
             } else {
                 GameObject.Destroy(obj);
