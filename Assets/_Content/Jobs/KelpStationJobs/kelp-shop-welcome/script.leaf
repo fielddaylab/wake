@@ -4,17 +4,20 @@
 @trigger InteractObject
 @when objectId == "ExitStation"
 @cutscene
-$if  JobTaskCompleted(getVisualModel)
-    $if JobTaskCompleted(getTagger)
-        //have both, do nothing
-    $else
-        //missing at least 1 upgrade, show text and cancel interact
-        {@guide} Seems like we're still missing some upgrades, let's get those before heading out.
-        $call CancelInteract()
-    $endif
+$if JobTaskCompleted(getVisualModel), JobTaskCompleted(getTagger)
+    //have both, do nothing
+$elseif JobTaskCompleted(getVisualModel)
+    // have 1 upgrade, show text and cancel interact
+    {@guide} Seems like we're still missing the {nameof ROVTagger}, let's pick that up before heading out.
+    $call CancelInteract()
+$elseif JobTaskCompleted(getTagger)
+    // have 1 upgrade, show text and cancel interact
+    {@guide} Seems like we're still missing the {nameof VisualModel}, let's pick that up before heading out.
+    $call CancelInteract()
 $else
-        {@guide} Seems like we're still missing some upgrades, let's get those before heading out.
-        $call CancelInteract()
+    // have neither, show text and cancel interact
+    {@guide} Seems like we're still missing some upgrades, let's grab those before heading out.
+    $call CancelInteract()
 $endif
 
 :: helpGoShop
