@@ -12,16 +12,16 @@
 {@player}	Is that... it?
 {@profCoral} Hmm? Oh, yes. You'll need to go outside and use your Scanner to locate a Turtle.
 			 Then switch to Counting mode and get a representative sample of the Turtle population.
+$if JobTaskCompleted(scanTurtle), JobTaskCompleted(countTurtle)
+	{@profCoral}	Though, it looks like you've already scanned a Turtle. And you've counted them, too!
+					Well, then. I guess we can dive right into it.
+					$goto .argue.intro
+$elseif JobTaskCompleted(scanTurtle)
+	{@profCoral}	Though, it looks like you've already scanned a Turtle. So all that's left to do is count them.
+$endif
 {@player}	Cool. You can <i>count</i> on me!
 {@profCoral}	...
 {@player}	Oookay then. I'll be back soon. 
-
-:: helpLeaveShip
-@trigger    RequestPartnerHelp
-@when 		scene:name == "Helm", !JobTaskCompleted(countTurtle)
-@cutscene
-{@player}   Where should I go from here?
-{@guide}	You will need to scan the turtles at Site V. 
 					
 :: helpGoToSiteV
 @trigger    RequestPartnerHelp
@@ -39,9 +39,11 @@
 {@player} No wonder {nameof @profCoral} calls his station Serenity Meadows. 
 		  There's something so calming about this place.
 {@guide}  Yes. And so much new data to gather!
-		  See if you can find a turtle to scan, O!
+$if !JobTaskCompleted(scanTurtle)
+	{@guide}  See if you can find a turtle to scan, O!
+$endif
 
-:: helpAtSiteR
+:: helpAtSiteV
 @trigger    RequestPartnerHelp
 @when 		scene:name == "RS-2V"
 @cutscene
@@ -119,7 +121,7 @@ $endif
 @boostScore -5
 @cutscene
 {@player} Okay. What now, {nameof @guide}?
-{@guide}  Count the turtle population at Serenity Meadow!
+{@guide}  Count the turtle population at {h}Site V{/h}!
 
 :: catchReportBack
 @trigger    RequestPartnerHelp

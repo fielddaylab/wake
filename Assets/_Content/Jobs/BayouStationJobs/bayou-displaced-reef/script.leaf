@@ -24,13 +24,6 @@
 {@player} Hmm. I haven't seen many shrimp around here.  
 {@player} No wonder the guy's grumpy. 
 
-:: makeAModel
-@trigger    SceneStart
-@when       JobTaskActive(makeModel), scene:name == "Ship"
-@once
-@cutscene
-{@guide} 
-
 // CATCH-ALL GUIDE TEXT
 
 :: catchVisitSiteO
@@ -55,19 +48,6 @@
 @cutscene
 {@player}   Okay, {nameof @guide}. What next? 
 {@guide}    You need to count all of the species at {h}Site O{/h}.
-
-:: catchMakeModel
-@trigger    RequestPartnerHelp
-@when       JobTaskActive(makeModel)
-@boostScore -5
-@cutscene
-$if IsPlayerOnShip()
-    {@player}  Hey {nameof @guide}... what's our next task again? 
-    {@guide}    You need to head to the {map-name}Modeling Lab{/map-name} to construct a {nameof VisualModel}.
-$else
-    {@player} Can I have a little help, {nameof @guide}?
-    {@guide}    Certainly, O. You need to head to the surface and board your ship. 
-$endif
 
 :: catchReportback
 @trigger    RequestPartnerHelp
