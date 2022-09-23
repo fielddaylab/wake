@@ -297,14 +297,14 @@ namespace ProtoAqua.Observation {
                         Assets.Fact(population.Id),
                         Save.Bestiary.GetDiscoveredFlags(population.Id)
                     );
-                }, -5);
+                }, 5);
             } else {
                 Services.Script.QueueInvoke(() => {
                     Services.UI.Popup.DisplayWithClose(
                         "ERROR",
                         Loc.FormatFromString("Site '{0}' has no population data for critter id '{1}'", m_EnvironmentType.CommonName(), Assets.Bestiary(manifest.Id).CommonName())
                     );
-                }, -5);
+                }, 5);
             }
 
             return true;
