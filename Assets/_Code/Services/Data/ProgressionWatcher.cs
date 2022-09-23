@@ -163,7 +163,7 @@ namespace Aqua
             {
                 table.Set("jobId", m_LoadedJobId);
                 table.Set("taskId", inTaskId);
-                Services.Script.TriggerResponse(GameTriggers.JobTaskCompleted, table);
+                Services.Script.QueueTriggerResponse(GameTriggers.JobTaskCompleted, 0, table);
             }
         }
 
@@ -175,7 +175,7 @@ namespace Aqua
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("jobId", m_LoadedJobId);
-                Services.Script.TriggerResponse(GameTriggers.JobTasksUpdated, table);
+                Services.Script.QueueTriggerResponse(GameTriggers.JobTasksUpdated, 0, table);
             }
         }
 
