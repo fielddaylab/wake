@@ -159,12 +159,10 @@ namespace Aqua
             if (m_ProfileLoading)
                 return;
             
-            using(var table = TempVarTable.Alloc())
-            {
-                table.Set("jobId", m_LoadedJobId);
-                table.Set("taskId", inTaskId);
-                Services.Script.QueueTriggerResponse(GameTriggers.JobTaskCompleted, 0, table);
-            }
+            var table = TempVarTable.Alloc();
+            table.Set("jobId", m_LoadedJobId);
+            table.Set("taskId", inTaskId);
+            Services.Script.QueueTriggerResponse(GameTriggers.JobTaskCompleted, 0, table);
         }
 
         private void OnJobTasksUpdated(JobTaskService.TaskStatusMask statusMask)
@@ -172,11 +170,9 @@ namespace Aqua
             if (m_ProfileLoading || !Bits.Contains(statusMask, JobTaskService.TaskStatusMask.Completed))
                 return;
 
-            using(var table = TempVarTable.Alloc())
-            {
-                table.Set("jobId", m_LoadedJobId);
-                Services.Script.QueueTriggerResponse(GameTriggers.JobTasksUpdated, 0, table);
-            }
+            var table = TempVarTable.Alloc();
+            table.Set("jobId", m_LoadedJobId);
+            Services.Script.QueueTriggerResponse(GameTriggers.JobTasksUpdated, 0, table);
         }
 
         private void OnBestiaryUpdated(BestiaryUpdateParams inUpdateParams)
