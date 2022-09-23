@@ -24,6 +24,8 @@ namespace Aqua
         [Header("Text")]
         [SerializeField] private string m_Format = "{0}";
         [SerializeField] private float m_DisplayScale = 1;
+        [SerializeField] private string m_AdjustFormat = "{0}";
+        [SerializeField] private float m_AdjustDisplayScale = 1;
 
         [Header("Facts")]
         [SerializeField] private TextId m_EnvironmentFactFormat = default;
@@ -58,7 +60,12 @@ namespace Aqua
         
         public string FormatValue(float inValue)
         {
-            return string.IsNullOrEmpty(m_Format) ? (inValue * m_DisplayScale).ToString() : string.Format(m_Format, inValue * m_DisplayScale);;
+            return string.IsNullOrEmpty(m_Format) ? (inValue * m_DisplayScale).ToString() : string.Format(m_Format, inValue * m_DisplayScale);
+        }
+
+        public string FormatValueAdjust(float inValue)
+        {
+            return string.IsNullOrEmpty(m_AdjustFormat) ? (inValue * m_AdjustDisplayScale).ToString() : string.Format(m_AdjustFormat, inValue * m_AdjustDisplayScale);
         }
 
         public float DisplayValue(float inValue)
