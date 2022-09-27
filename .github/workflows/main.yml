@@ -42,10 +42,6 @@ jobs:
       with:
         args:  |
           git config --global --add safe.directory "/github/workspace"
-          git config --global --add safe.directory /github/workspace/Submodules/BeauUtil
-          git config --global --add safe.directory /github/workspace/Submodules/Leaf
-          git config --global --add safe.directory /github/workspace/Submodules/Leaf/Submodules/BeauUtil
-          git config --global --add safe.directory /github/workspace/Submodules/opengamedata-unity
           git config --global --add safe.directory /github/workspace/Submodules/unity-aesprite-importer
           git submodule update --init --recursive
 
