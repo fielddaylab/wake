@@ -37,7 +37,12 @@ namespace Aqua.Entity {
             m_UpdateSet.UpdateActive = UpdateActive;
         }
 
-        static private bool UpdateTransform(Visual2DTransform transform, in UpdateArgs updateArgs) {
+        static private UpdateAwakeResult UpdateTransform(Visual2DTransform transform, in UpdateArgs updateArgs) {
+            if (transform.OffscreenTickDelay > 0) {
+                transform.OffscreenTickDelay--;
+                return UpdateAwakeResult.Skip;
+            }
+
             Vector3 position;
             float scale;
             if (transform.CustomPosition != null) {
@@ -48,8 +53,14 @@ namespace Aqua.Entity {
             
             transform.WritePosition(updateArgs.FrameIndex, position, scale);
 
-            Vector2 dist = (Vector2) position - updateArgs.CenterPos;
-            return dist.sqrMagnitude < (updateArgs.RadiusSq + (transform.Radius * transform.Radius));
+            float dist = Vector2.SqrMagnitude((Vector2) position - updateArgs.CenterPos);
+            float distOffset = dist - (updateArgs.RadiusSq + (transform.Radius * transform.Radius));
+            if (distOffset <= 0) {
+                return UpdateAwakeResult.Active;
+            } else {
+                transform.OffscreenTickDelay = Math.Min((int) distOffset / 30, 60);
+                return UpdateAwakeResult.Inactive;
+            }
         }
 
         static private void UpdateActive(Visual2DTransform transform, in UpdateArgs updateArgs) {

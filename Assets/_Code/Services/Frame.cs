@@ -6,6 +6,7 @@ using BeauUtil;
 using UnityEngine;
 using System;
 using BeauUtil.Debugger;
+using System.Runtime.CompilerServices;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -21,6 +22,16 @@ namespace Aqua {
         static private Unsafe.ArenaHandle s_FrameHeap;
         static private int s_HeapSize;
         static private bool s_HeapInitialized = false;
+
+        [MethodImpl(256)]
+        static public bool Interval(int interval) {
+            return (Index % interval) == 0;
+        }
+
+        [MethodImpl(256)]
+        static public bool Interval(int interval, int offset) {
+            return ((Index - offset) % interval) == 0;
+        }
 
         static internal void IncrementFrame() {
             Index = (ushort) ((Index + 1) % InvalidIndex);
