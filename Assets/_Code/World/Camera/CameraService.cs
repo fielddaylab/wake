@@ -74,23 +74,6 @@ namespace Aqua.Cameras
             public Matrix4x4 WorldToCamera;
             public Matrix4x4 CameraToWorld;
             public float GameplayDistance;
-
-            [MethodImpl(256)]
-            public Vector3 CastToPlane(Transform inTransform, out float outDistanceRatio)
-            {
-                return CastToPlane(inTransform.position, out outDistanceRatio);
-            }
-
-            public Vector3 CastToPlane(Vector3 inPosition, out float outDistanceRatio)
-            {
-                Vector3 cameraSpace = WorldToCamera.MultiplyPoint3x4(inPosition);
-                float scale = GameplayDistance / Math.Abs(cameraSpace.z);
-                outDistanceRatio = 1 / scale;
-                cameraSpace.x *= scale;
-                cameraSpace.y *= scale;
-                cameraSpace.z = GameplayDistance;
-                return CameraToWorld.MultiplyPoint3x4(cameraSpace);
-            }
         }
 
         #endregion // Types
@@ -1565,6 +1548,26 @@ namespace Aqua.Cameras
             size.y = inPlane.ZoomedHeight(inZoom);
             size.x = inCamera.aspect * size.y;
             return size;
+        }
+
+        [MethodImpl(256)]
+        static public Vector3 CastToPlane(in PlanePositionHelper inHelper, Transform inTransform, out float outDistanceRatio)
+        {
+            return CastToPlane(inHelper, inTransform.position, out outDistanceRatio);
+        }
+
+        static public Vector3 CastToPlane(in PlanePositionHelper inHelper, Vector3 inPosition, out float outDistanceRatio)
+        {
+            UnityEngine.Profiling.Profiler.BeginSample("CameraPositionCast");
+            Vector3 cameraSpace = inHelper.WorldToCamera.MultiplyPoint3x4(inPosition);
+            float scale = inHelper.GameplayDistance / Math.Abs(cameraSpace.z);
+            outDistanceRatio = 1 / scale;
+            cameraSpace.x *= scale;
+            cameraSpace.y *= scale;
+            cameraSpace.z = inHelper.GameplayDistance;
+            Vector3 worldSpace = inHelper.CameraToWorld.MultiplyPoint3x4(cameraSpace);
+            UnityEngine.Profiling.Profiler.EndSample();
+            return worldSpace;
         }
 
         #endregion // Utils

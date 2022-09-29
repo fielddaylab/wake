@@ -67,7 +67,7 @@ namespace Aqua.Entity {
         public void CalculatePosition(ushort frameIndex, in CameraService.PlanePositionHelper positionHelper) {
             if (frameIndex != LastUpdatedFrame) {
                 LastUpdatedFrame = frameIndex;
-                LastKnownPosition = positionHelper.CastToPlane(Source, out LastKnownScale);
+                LastKnownPosition = CameraService.CastToPlane(positionHelper, Source, out LastKnownScale);
             }
         }
 

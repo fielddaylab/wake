@@ -68,7 +68,7 @@ namespace Aqua.Scripting {
                 node = m_TriggerNodes[nodeIdx];
                 triggerData = node.TriggerData;
 
-                DebugService.Log(LogMask.Scripting, "Evaluating trigger node '{0}'...", node.Id());
+                DebugService.Log(LogMask.Scripting, "Evaluating trigger node '{0}'...", node.Id().ToDebugString());
 
                 if (!node.Package().IsActive())
                 {
@@ -86,7 +86,7 @@ namespace Aqua.Scripting {
                 // not the right target
                 if ((node.Flags() & ScriptNodeFlags.AnyTarget) == 0 && !inTarget.IsEmpty && inTarget != node.TargetId())
                 {
-                    DebugService.Log(LogMask.Scripting, "...node has mismatched target (desired '{0}', node '{1}')", inTarget, node.TargetId());
+                    DebugService.Log(LogMask.Scripting, "...node has mismatched target (desired '{0}', node '{1}')", inTarget.ToDebugString(), node.TargetId().ToDebugString());
                     continue;
                 }
 
@@ -125,7 +125,7 @@ namespace Aqua.Scripting {
                             
                         if (higherPriority)
                         {
-                            DebugService.Log(LogMask.Scripting, "...higher-priority node ({0}) is executing for target '{1}'", currentThread.InitialNodeName(), node.TargetId());
+                            DebugService.Log(LogMask.Scripting, "...higher-priority node ({0}) is executing for target '{1}'", currentThread.InitialNodeName(), node.TargetId().ToDebugString());
                             continue;
                         }
                     }

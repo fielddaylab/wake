@@ -29,16 +29,16 @@ namespace Aqua.Entity {
         [NonSerialized] private int m_LastUpdateMask;
 
         // everything sleeping
-        private readonly RingBuffer<RuntimeObjectHandle<TEntity>> m_Sleeping = new RingBuffer<RuntimeObjectHandle<TEntity>>(64, RingBufferMode.Expand);
+        private readonly RingBuffer<TEntity> m_Sleeping = new RingBuffer<TEntity>(64, RingBufferMode.Expand);
         
         // everything not sleeping
-        private readonly RingBuffer<RuntimeObjectHandle<TEntity>> m_Awake = new RingBuffer<RuntimeObjectHandle<TEntity>>(64, RingBufferMode.Expand);
+        private readonly RingBuffer<TEntity> m_Awake = new RingBuffer<TEntity>(64, RingBufferMode.Expand);
         
         // everything active
-        private readonly RingBuffer<RuntimeObjectHandle<TEntity>> m_Active = new RingBuffer<RuntimeObjectHandle<TEntity>>(32, RingBufferMode.Expand);
+        private readonly RingBuffer<TEntity> m_Active = new RingBuffer<TEntity>(32, RingBufferMode.Expand);
         
         // all entities
-        private readonly HashSet<RuntimeObjectHandle<TEntity>> m_All = new HashSet<RuntimeObjectHandle<TEntity>>();
+        private readonly HashSet<TEntity> m_All = new HashSet<TEntity>();
 
         [NonSerialized] private bool m_ForceSleep = false;
         [NonSerialized] private ListModifiedFlags m_DirtyLists;
@@ -67,12 +67,12 @@ namespace Aqua.Entity {
         /// <summary>
         /// Set of all active entities.
         /// </summary>
-        public ListSlice<RuntimeObjectHandle<TEntity>> AllActive { get { return m_Active; } }
+        public ListSlice<TEntity> AllActive { get { return m_Active; } }
         
         /// <summary>
         /// Set of all awake entities.
         /// </summary>
-        public ListSlice<RuntimeObjectHandle<TEntity>> AllAwake { get { return m_Awake; } }
+        public ListSlice<TEntity> AllAwake { get { return m_Awake; } }
 
         /// <summary>
         /// Updates the entity set.
@@ -87,14 +87,12 @@ namespace Aqua.Entity {
             HandleActiveUpdate(args);
         }
 
-        private void HandleAwakeUpdate(TUpdateContext args) {
+        private void HandleAwakeUpdate(in TUpdateContext args) {
              m_DirtyLists &= ~ListModifiedFlags.Awake;
 
-            RuntimeObjectHandle<TEntity> handle;
             TEntity entity;
             for(int i = 0, length = m_Awake.Count; i < length; i++) {
-                handle = m_Awake[i];
-                entity = handle.Object;
+                entity = m_Awake[i];
                 bool wasActive = (entity.ActiveStatus & EntityActiveStatus.Active) != 0;
                 UpdateAwakeResult result = UpdateAwake(entity, args);
                 if (result == UpdateAwakeResult.Skip) {
@@ -103,25 +101,31 @@ namespace Aqua.Entity {
 
                 bool nowActive = result == UpdateAwakeResult.Active;
                 if (nowActive && !wasActive) {
-                    m_Active.PushBack(handle);
+                    m_Active.PushBack(entity);
                     SetStatus(entity, entity.ActiveStatus | EntityActiveStatus.Active, false);
                     m_DirtyLists |= ListModifiedFlags.Active;
                 } else if (wasActive && !nowActive) {
-                    m_Active.FastRemove(handle);
+                    // m_Active.FastRemove(entity); // defer this to the active processing step
                     SetStatus(entity, entity.ActiveStatus & ~EntityActiveStatus.Active, false);
                     m_DirtyLists |= ListModifiedFlags.Active;
                 }
             }
         }
 
-        private void HandleActiveUpdate(TUpdateContext args) {
+        private void HandleActiveUpdate(in TUpdateContext args) {
             if (UpdateActive != null) {
                 m_DirtyLists &= ~ListModifiedFlags.Active;
 
                 TEntity entity;
                 for(int i = 0, length = m_Active.Count; i < length; i++) {
-                    entity = m_Active[i].Object;
-                    UpdateActive(entity, args);
+                    entity = m_Active[i];
+                    if (entity.ActiveStatus != EntityActiveStatus.AwakeAndActive) {
+                        m_Active.FastRemoveAt(i);
+                        i--;
+                        length--;
+                        continue;
+                    }
+                    UpdateActive(m_Active[i], args);
                 }
             }
         }
@@ -136,10 +140,9 @@ namespace Aqua.Entity {
             int awakeCount = m_Awake.Count;
             int sleepCount = m_Sleeping.Count;
 
-            RuntimeObjectHandle<TEntity> handle;
             TEntity entity;
             for(int i = m_Active.Count - 1; i >= 0; i--) {
-                entity = m_Active[i].Object;
+                entity = m_Active[i];
                 if ((entity.UpdateMask & newMask) == 0) {
                     m_Active.FastRemoveAt(i);
                     m_DirtyLists |= ListModifiedFlags.Active;
@@ -147,10 +150,9 @@ namespace Aqua.Entity {
             }
 
             for(int i = awakeCount - 1; i >= 0; i--) {
-                handle = m_Awake[i];
-                entity = handle.Object;
+                entity = m_Awake[i];
                 if ((entity.UpdateMask & newMask) == 0) {
-                    m_Sleeping.PushBack(handle);
+                    m_Sleeping.PushBack(entity);
                     m_Awake.FastRemoveAt(i);
                     SetStatus(entity, EntityActiveStatus.Sleeping, false);
                     m_DirtyLists |= ListModifiedFlags.Awake | ListModifiedFlags.Sleeping;
@@ -158,10 +160,9 @@ namespace Aqua.Entity {
             }
 
             for(int i = sleepCount - 1; i >= 0; i--) {
-                handle = m_Sleeping[i];
-                entity = handle.Object;
+                entity = m_Sleeping[i];
                 if ((entity.UpdateMask & newMask) != 0) {
-                    m_Awake.PushBack(handle);
+                    m_Awake.PushBack(entity);
                     m_Sleeping.FastRemoveAt(i);
                     SetStatus(entity, EntityActiveStatus.Awake, false);
                     m_DirtyLists |= ListModifiedFlags.Sleeping | ListModifiedFlags.Awake;
@@ -173,17 +174,16 @@ namespace Aqua.Entity {
         /// Tracks the given entity.
         /// </summary>
         public void Track(TEntity entity) {
-            RuntimeObjectHandle<TEntity> handle = entity;
-            if (!m_All.Add(handle)) {
+            if (!m_All.Add(entity)) {
                 return;
             }
 
             if (!m_ForceSleep && (entity.UpdateMask & m_LastUpdateMask) != 0) {
-                m_Awake.PushBack(handle);
+                m_Awake.PushBack(entity);
                 m_DirtyLists |= ListModifiedFlags.Awake;
                 SetStatus(entity, EntityActiveStatus.Awake, true);
             } else {
-                m_Sleeping.PushBack(handle);
+                m_Sleeping.PushBack(entity);
                 m_DirtyLists |= ListModifiedFlags.Sleeping;
                 SetStatus(entity, EntityActiveStatus.Sleeping, true);
             }
@@ -227,11 +227,11 @@ namespace Aqua.Entity {
             m_LastUpdateMask = 0;
             m_ForceSleep = true;
 
-            RuntimeObjectHandle<TEntity> entity;
+            TEntity entity;
             for(int i = m_Awake.Count - 1; i >= 0; i--) {
                 entity = m_Awake[i];
                 m_Sleeping.PushBack(entity);
-                SetStatus(entity.Object, EntityActiveStatus.Sleeping, true);
+                SetStatus(entity, EntityActiveStatus.Sleeping, true);
             }
 
             m_Awake.Clear();

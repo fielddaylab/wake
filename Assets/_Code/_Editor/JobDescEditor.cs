@@ -30,6 +30,8 @@ namespace Aqua.Editor
         private SerializedProperty m_PrerequisiteJobsProperty;
         private SerializedProperty m_PrereqConditionsProperty;
         private SerializedProperty m_PrereqUpgradesProperty;
+        private SerializedProperty m_PrereqBestiaryEntryProperty;
+        private SerializedProperty m_PrereqScanIdProperty;
         private SerializedProperty m_PrereqExpProperty;
 
         private SerializedProperty m_StationIdProperty;
@@ -97,6 +99,8 @@ namespace Aqua.Editor
             m_ArgumentationDifficultyProperty = serializedObject.FindProperty("m_ArgumentationDifficulty");
             m_PrerequisiteJobsProperty = serializedObject.FindProperty("m_PrerequisiteJobs");
             m_PrereqConditionsProperty = serializedObject.FindProperty("m_PrereqConditions");
+            m_PrereqBestiaryEntryProperty = serializedObject.FindProperty("m_PrereqBestiaryEntry");
+            m_PrereqScanIdProperty = serializedObject.FindProperty("m_PrereqScanId");
             m_PrereqUpgradesProperty = serializedObject.FindProperty("m_PrereqUpgrades");
             m_PrereqExpProperty = serializedObject.FindProperty("m_PrereqExp");
             m_StationIdProperty = serializedObject.FindProperty("m_StationId");
@@ -161,6 +165,8 @@ namespace Aqua.Editor
                 m_PrereqUpgradesList.DoLayoutList();
                 EditorGUILayout.PropertyField(m_PrereqExpProperty);
                 EditorGUILayout.PropertyField(m_PrereqConditionsProperty);
+                EditorGUILayout.PropertyField(m_PrereqBestiaryEntryProperty);
+                EditorGUILayout.PropertyField(m_PrereqScanIdProperty);
             }
 
             if (Section("Locations", ref m_LocationsExpanded)) {
