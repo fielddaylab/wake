@@ -66,7 +66,14 @@ namespace ProtoAqua.Observation {
             if (Script.IsPausedOrLoading)
                 return;
 
-            m_Listener.ProcessOccupants();
+            if (Frame.Interval(4)) {
+                m_Listener.ProcessOccupants();
+            }
+
+            // only update this every 8 frames
+            if (!Frame.Interval(8)) {
+                return;
+            }
 
             Vector3 gameplayPlanePos;
             Vector2 gameplayPlaneDist;
@@ -297,14 +304,14 @@ namespace ProtoAqua.Observation {
                         Assets.Fact(population.Id),
                         Save.Bestiary.GetDiscoveredFlags(population.Id)
                     );
-                }, -5);
+                }, 5);
             } else {
                 Services.Script.QueueInvoke(() => {
                     Services.UI.Popup.DisplayWithClose(
                         "ERROR",
                         Loc.FormatFromString("Site '{0}' has no population data for critter id '{1}'", m_EnvironmentType.CommonName(), Assets.Bestiary(manifest.Id).CommonName())
                     );
-                }, -5);
+                }, 5);
             }
 
             return true;

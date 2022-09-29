@@ -159,7 +159,10 @@ namespace Aqua
 
             BFBase fact;
             m_FactMap.TryGetValue(inFactId, out fact);
-            Assert.NotNull(fact, "Could not find BFBase with id '{0}'", inFactId);
+            if (object.ReferenceEquals(fact, null))
+            {
+                Assert.NotNull(fact, "Could not find BFBase with id '{0}'", inFactId);
+            }
             return fact;
         }
 

@@ -16,7 +16,7 @@ namespace Aqua
     {
         public const float DefaultContactOffset = (1f / 128f);
         private const float OverlapThreshold = DefaultContactOffset;
-        private const int TickIterations = 2;
+        private const int TickIterations = 1;
 
         #region Inspector
 
@@ -89,7 +89,7 @@ namespace Aqua
 
             BeginTick();
             Physics.Simulate(deltaTime);
-            contactCount += Tick(deltaTime, TickIterations, m_KinematicObjects, m_Contacts, contactCount, m_TickCount);
+            contactCount += Tick(deltaTime, m_KinematicObjects, m_Contacts, contactCount, m_TickCount);
             EndTick();
 
             // Pass contacts off
@@ -163,7 +163,7 @@ namespace Aqua
             Physics2D.autoSyncTransforms = true;
         }
 
-        static private unsafe int Tick(float inDeltaTime, int inIterations, BufferedCollection<KinematicObject2D> inObjects, PhysicsContact[] outContacts, int inContactStartIdx, ulong inTickIdx)
+        static private unsafe int Tick(float inDeltaTime, BufferedCollection<KinematicObject2D> inObjects, PhysicsContact[] outContacts, int inContactStartIdx, ulong inTickIdx)
         {
             int outContactIdx = inContactStartIdx;
             int maxOutputContacts = outContacts.Length;
@@ -202,10 +202,10 @@ namespace Aqua
                 objIdx++;
             }
 
-            float incrementDeltaTime = inDeltaTime / inIterations;
+            float incrementDeltaTime = inDeltaTime / TickIterations;
             float invDeltaTime = 1f / incrementDeltaTime;
 
-            for(int iterationIdx = 0; iterationIdx < inIterations; ++iterationIdx)
+            for(int iterationIdx = 0; iterationIdx < TickIterations; iterationIdx++)
             {
                 // integrate state
                 for(objIdx = 0; objIdx < objectCount; objIdx++)

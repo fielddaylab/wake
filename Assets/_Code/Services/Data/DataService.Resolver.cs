@@ -7,6 +7,7 @@ using BeauUtil.Debugger;
 using Leaf.Runtime;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Aqua
 {
@@ -251,7 +252,7 @@ namespace Aqua
 
         static private Variant GetSceneName()
         {
-            return SceneHelper.ActiveScene().Name;
+            return Services.State.SceneName;
         }
 
         private Variant GetJobId()

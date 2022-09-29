@@ -166,7 +166,7 @@ namespace Aqua {
             status.Job = job;
             status.Status = saveData.Jobs.GetBaseStatus(status.JobId);
 
-            int exp = (int) saveData.Inventory.ItemCount(ItemIds.Exp);
+            int exp = (int) saveData.Inventory.Exp();
 
             // if no progress at all, and we're still listed as visible, let's check
             if ((status.Status & JobStatusFlags.Mask_Progress) == 0 && (status.Status & JobStatusFlags.Mask_Available) != 0) {
@@ -185,6 +185,20 @@ namespace Aqua {
                         status.Status &= ~JobStatusFlags.Mask_Available;
                         return status;
                     }
+                }
+
+                // if we haven't gotten the requisite bestiary entry, not visible
+                StringHash32 requiredEntity = job.RequiredBestiaryEntry();
+                if (!requiredEntity.IsEmpty && !saveData.Bestiary.HasEntity(requiredEntity)) {
+                    status.Status &= ~JobStatusFlags.Mask_Available;
+                    return status;
+                }
+
+                // if we haven't gotten the requisite scan, not visible
+                StringHash32 requiredScan = job.RequiredScanId();
+                if (!requiredScan.IsEmpty && !saveData.Inventory.WasScanned(requiredScan)) {
+                    status.Status &= ~JobStatusFlags.Mask_Available;
+                    return status;
                 }
 
                 // if haven't completed the required jobs, not visible
