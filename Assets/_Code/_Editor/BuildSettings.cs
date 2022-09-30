@@ -87,7 +87,7 @@ namespace Aqua.Editor {
         static private void BakeAllAssets() {
             using (Profiling.Time("bake assets")) {
                 using (Log.DisableMsgStackTrace()) {
-                    Bake.Assets(BakeFlags.Verbose | BakeFlags.ShowProgressBar);
+                    Bake.Assets(BakeFlags.ShowProgressBar);
                 }
             }
             using (Profiling.Time("post-bake save assets")) {
