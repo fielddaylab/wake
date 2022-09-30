@@ -36,7 +36,6 @@ namespace Aqua.Editor {
             string branch = BuildUtils.GetSourceControlBranchName();
             bool bDesiredDevBuild = false;
             bool bDesiredPreviewBuild = false;
-            bool bDesiredProdBuild = false;
 
             if (branch != null) {
                 if (branch.StartsWith("feature/") || branch.StartsWith("fix/") || branch.StartsWith("improvement/") || branch.StartsWith("experimental/")
@@ -44,9 +43,7 @@ namespace Aqua.Editor {
                     bDesiredDevBuild = true;
                 } else if (branch.StartsWith("milestone") || branch.Contains("preview")) {
                     bDesiredPreviewBuild = true;
-                } else if (branch.StartsWith("production")) {
-                    bDesiredProdBuild = true;
-                } else {
+                } else if (!branch.StartsWith("production") && !branch.StartsWith("staging")) {
                     bDesiredDevBuild = true;
                 }
             }
