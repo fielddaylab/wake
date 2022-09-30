@@ -114,13 +114,6 @@ namespace Aqua
 
         #region Tagged
 
-        public TagString LocalizeTagged(TextId inKey, object inContext = null)
-        {
-            TagString tagString = new TagString();
-            LocalizeTagged(ref tagString, inKey, inContext);
-            return tagString;
-        }
-
         public bool LocalizeTagged(ref TagString ioTagString, TextId inKey, object inContext = null)
         {
             if (ioTagString == null)

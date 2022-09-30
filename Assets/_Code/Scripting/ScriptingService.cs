@@ -565,16 +565,6 @@ namespace Aqua
         /// <summary>
         /// Parses a string into a TagString.
         /// </summary>
-        public TagString ParseToTag(StringSlice inLine, object inContext = null)
-        {
-            TagString str = new TagString();
-            ParseToTag(ref str, inLine, inContext);
-            return str;
-        }
-
-        /// <summary>
-        /// Parses a string into a TagString.
-        /// </summary>
         public void ParseToTag(ref TagString ioTag, StringSlice inLine, object inContext = null)
         {
             TagStringParser parser = m_ParserPool.Alloc();
