@@ -42,10 +42,6 @@ jobs:
       with:
         args:  |
           git config --global --add safe.directory "/github/workspace"
-          git config --global --add safe.directory /github/workspace/Submodules/BeauUtil
-          git config --global --add safe.directory /github/workspace/Submodules/Leaf
-          git config --global --add safe.directory /github/workspace/Submodules/Leaf/Submodules/BeauUtil
-          git config --global --add safe.directory /github/workspace/Submodules/opengamedata-unity
           git config --global --add safe.directory /github/workspace/Submodules/unity-aesprite-importer
           git submodule update --init --recursive
 
@@ -90,7 +86,7 @@ jobs:
 
     # If this succeeded, and we're on the staging branch, then we can merge staging into production
     - name: Merge into production
-      if: github.ref == "ref/heads/staging"
+      if: github.ref == 'ref/heads/staging'
       uses: devmasx/merge-branch@master
       with:
         type: now

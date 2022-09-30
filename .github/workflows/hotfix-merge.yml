@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 jobs:
   merge:
-    if: github.ref == "ref/heads/hotfix"
+    if: github.ref == 'ref/heads/hotfix'
     name: Merge hotfix to production
     runs-on: ubuntu-latest
 
