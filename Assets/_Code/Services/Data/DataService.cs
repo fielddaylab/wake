@@ -715,6 +715,12 @@ namespace Aqua
             OGD.Core.Configure(m_ServerAddress, GameId);
         }
 
+        private void LateUpdate() {
+            if (m_CurrentSaveData != null && !Services.State.IsLoadingScene()) {
+                m_CurrentSaveData.Playtime += Time.unscaledDeltaTime;
+            }
+        }
+
         protected override void Shutdown()
         {
             Services.Events?.DeregisterAll(this);

@@ -217,13 +217,15 @@ namespace Aqua
             m_VariableResolver.SetVar(GameVars.MapId, () => MapDB.LookupCurrentMap());
             m_VariableResolver.SetVar(GameVars.LastEntrance, () => Services.State.LastEntranceId);
 
-            m_VariableResolver.SetVar(GameVars.PlayerGender, GetPlayerPronouns);
             m_VariableResolver.SetVar(GameVars.CurrentJob, GetJobId);
             m_VariableResolver.SetVar(GameVars.CurrentStation, GetStationId);
             m_VariableResolver.SetVar(GameVars.ActNumber, GetActNumber);
             m_VariableResolver.SetVar(GameVars.PlayerCash, () => (int) Save.Cash);
             m_VariableResolver.SetVar(GameVars.PlayerExp, () => (int) Save.Exp);
             m_VariableResolver.SetVar(GameVars.PlayerLevel, () => (int) Save.ExpLevel);
+
+            m_VariableResolver.SetVar(GameVars.TotalPlayTime_Seconds, () => (float) Save.Current.Playtime);
+            m_VariableResolver.SetVar(GameVars.TotalPlayTime_Minutes, () => (float) (Save.Current.Playtime / 60));
         }
 
         private void HookSaveDataToVariableResolver(SaveData inData)
@@ -236,19 +238,6 @@ namespace Aqua
         }
 
         #region Callbacks
-
-        private Variant GetPlayerPronouns()
-        {
-            switch(Save.Pronouns)
-            {
-                case Pronouns.Masculine:
-                    return "m";
-                case Pronouns.Feminine:
-                    return "f";
-                default:
-                    return "x";
-            }
-        }
 
         static private Variant GetSceneName()
         {
@@ -633,6 +622,22 @@ namespace Aqua
             #region Shop
 
             #endregion // Shop
+
+            #region Time
+
+            [LeafMember("ScheduledEventReady"), UnityEngine.Scripting.Preserve]
+            static private bool ScheduledEventReady(float inTime)
+            {
+                return Save.Current.Playtime >= inTime;
+            }
+
+            [LeafMember("ScheduledEventTime"), UnityEngine.Scripting.Preserve]
+            static private float ScheduledEventWithOffset(float inSecondsOffset)
+            {
+                return (float) (Save.Current.Playtime + inSecondsOffset);
+            }
+
+            #endregion // Time
 
             #region Jobs
 

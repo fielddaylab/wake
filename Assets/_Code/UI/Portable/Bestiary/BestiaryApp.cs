@@ -104,14 +104,17 @@ namespace Aqua.Portable {
 
         private void OnFactClicked(BFBase inFact) {
             Script.WriteVariable("portable:lastSelectedFactId", inFact.Id);
+
+            BFDiscoveredFlags flags = Save.Bestiary.GetDiscoveredFlags(inFact.Id);
             NamedOption[] options;
-            if (m_Request.Type == PortableRequestType.SelectFact || m_Request.Type == PortableRequestType.SelectFactSet) {
+            if ((flags & BFDiscoveredFlags.IsEncrypted) == 0 // encrypted facts cannot be presented
+                && (m_Request.Type == PortableRequestType.SelectFact || m_Request.Type == PortableRequestType.SelectFactSet)) {
                 options = PresentFactOptions;
             } else {
                 options = Array.Empty<NamedOption>();
             }
 
-            var request = Script.PopupFactDetails(inFact, Save.Bestiary.GetDiscoveredFlags(inFact.Id), m_CurrentEntry, options);
+            var request = Script.PopupFactDetails(inFact, flags, m_CurrentEntry, options);
             request.OnComplete((o) => {
                 if (!o.IsEmpty) {
                     Assert.True(m_Request.Type == PortableRequestType.SelectFact || m_Request.Type == PortableRequestType.SelectFactSet);
@@ -226,15 +229,16 @@ namespace Aqua.Portable {
 
             using(PooledList<BFBase> facts = PooledList<BFBase>.Create()) {
                 Save.Bestiary.GetFactsForEntity(inEntry.Id(), facts);
-                if (facts.Count == 0) {
-                    m_InfoPage.HasFacts.SetActive(false);
-                    m_InfoPage.NoFacts.SetActive(true);
-                } else {
-                    m_InfoPage.NoFacts.SetActive(false);
-                    m_InfoPage.HasFacts.SetActive(true);
+                bool hasNoFacts = m_InfoPage.NoFacts;
+                if (hasNoFacts) {
+                    m_InfoPage.NoFacts.SetActive(facts.Count == 0);
+                }
+                if (m_InfoPage.HasFacts) {
+                    m_InfoPage.HasFacts.SetActive(facts.Count > 0 || !hasNoFacts);
+                }
 
+                if (facts.Count > 0 || !hasNoFacts) {
                     facts.Sort(BFType.SortByVisualOrder);
-
                     Handler.PopulateFacts(m_InfoPage, inEntry, facts, FinalizeFactButton);
                 }
             }

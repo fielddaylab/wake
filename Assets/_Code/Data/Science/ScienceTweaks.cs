@@ -17,6 +17,9 @@ namespace Aqua {
         [SerializeField, StreamingImagePath] private string m_HiResLevelIconPath = null;
         [SerializeField, StreamingImagePath] private string m_HiResLevelUpPath = null;
 
+        [Header("Decrypt")]
+        [SerializeField] private uint m_MaxDecryptLevel = 8;
+
         [Header("Experience")]
         [SerializeField] private uint m_BaseExperiencePerLevel = 20;
         [SerializeField] private uint m_AdditionalExperiencePerLevel = 5;
@@ -26,6 +29,7 @@ namespace Aqua {
 
         [Header("Bestiary Ordering")]
         [SerializeField] private TaggedBestiaryDesc[] m_CanonicalOrganismOrdering = null;
+        [SerializeField] private BestiaryDesc[] m_CanonicalSpecterOrdering = null;
 
         #endregion // Inspector
 
@@ -33,13 +37,16 @@ namespace Aqua {
         public StreamedImageSet LevelIconSet() { return new StreamedImageSet(m_LevelIcon, m_HiResLevelIconPath); }
         public StreamedImageSet LevelUpSet() { return new StreamedImageSet(m_LevelIcon, m_HiResLevelUpPath); }
         public int CashPerLevel() { return m_CashPerLevel; }
+        public uint MaxDecryptLevel() { return m_MaxDecryptLevel; }
 
         public ListSlice<TaggedBestiaryDesc> CanonicalOrganismOrdering() { return m_CanonicalOrganismOrdering; }
+        public ListSlice<BestiaryDesc> CanonicalSpecterOrdering() { return m_CanonicalSpecterOrdering; }
 
         protected override void Apply() {
             base.Apply();
 
             ScienceUtils.UpdateLevelingCalculation(m_BaseExperiencePerLevel, m_AdditionalExperiencePerLevel);
+            ScienceUtils.UpdateMaxDecryptLevel(m_MaxDecryptLevel);
         }
 
         #if UNITY_EDITOR
@@ -83,7 +90,11 @@ namespace Aqua {
                 }
                 switch(desc.Category()) {
                     case BestiaryDescCategory.Critter: {
-                        AddToDictionary(desc.StationId(), desc);
+                        if (!desc.HasFlags(BestiaryDescFlags.IsSpecter)) {
+                            AddToDictionary(desc.StationId(), desc);
+                        } else {
+                            AddToDictionary("specter", desc);
+                        }
                         break;
                     }
 
@@ -108,6 +119,13 @@ namespace Aqua {
             AppendToFinalList(MapIds.FinalStation);
 
             m_CanonicalOrganismOrdering = finalList.ToArray();
+
+            if (perStation.TryGetValue("specter", out var specterList)) {
+                m_CanonicalSpecterOrdering = specterList.ToArray();
+            } else {
+                m_CanonicalSpecterOrdering = null;
+            }
+
             return true;
         }
 
@@ -117,10 +135,23 @@ namespace Aqua {
     static public class ScienceUtils {
         static private uint s_BaseExperiencePerLevel;
         static private uint s_AdditionalExperiencePerLevel;
+        static private uint s_MaxDecryptLevel;
+
+        static internal void UpdateMaxDecryptLevel(uint maxDecryptLevel) {
+            s_MaxDecryptLevel = maxDecryptLevel;
+        }
 
         static internal void UpdateLevelingCalculation(uint baseExp, uint additionalExpPerLevel) {
             s_BaseExperiencePerLevel = baseExp;
             s_AdditionalExperiencePerLevel = additionalExpPerLevel;
+        }
+
+        static public uint MaxDecryptLevel() {
+            return s_MaxDecryptLevel;
+        }
+
+        static public float DecryptProgress(uint currentLevel) {
+            return (float) Math.Min(currentLevel, s_MaxDecryptLevel) / currentLevel;
         }
 
         static public uint ExpForLevel(uint level) {

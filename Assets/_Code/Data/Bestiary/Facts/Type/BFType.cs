@@ -100,7 +100,7 @@ namespace Aqua {
         }
 
         static public BFDiscoveredFlags DefaultDiscoveredFlags(BFBase inFact) {
-            if (inFact.Parent.HasFlags(BestiaryDescFlags.Human))
+            if (inFact.Parent.HasFlags(BestiaryDescFlags.Human | BestiaryDescFlags.IsSpecter))
                 return BFDiscoveredFlags.All;
             return s_DefaultDiscoveredFlags[(int)inFact.Type];
         }
@@ -275,7 +275,10 @@ namespace Aqua {
             BFBehavior behavior = inFact as BFBehavior;
             if (behavior != null && behavior.AutoGive)
                 return BFMode.Always;
-            return s_ModeDelegates[(int)inFact.Type]?.Invoke(inFact) ?? BFMode.Player;
+            BFMode mode = s_ModeDelegates[(int)inFact.Type]?.Invoke(inFact) ?? BFMode.Player;
+            if (mode == BFMode.Player && inFact.Parent.HasFlags(BestiaryDescFlags.IsSpecter))
+                mode = BFMode.Always;
+            return mode;
         }
 
         static internal Type ResolveSystemType(BFTypeId inType) {

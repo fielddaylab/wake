@@ -205,7 +205,7 @@ namespace Aqua.Title
                 if (maxCharacters == 0) {
                     LocText loc = card.Text.GetComponent<LocText>();
                     if (loc != null) {
-                        maxCharacters = loc.CurrentText.VisibleText.Length;
+                        maxCharacters = loc.Metrics.VisibleCharCount;
                     } else {
                         maxCharacters = card.Text.text.Length;
                     }
@@ -224,7 +224,7 @@ namespace Aqua.Title
                 if (maxCharacters == 0) {
                     LocText loc = card.Text2.GetComponent<LocText>();
                     if (loc != null) {
-                        maxCharacters = loc.CurrentText.VisibleText.Length;
+                        maxCharacters = loc.Metrics.VisibleCharCount;
                     } else {
                         maxCharacters = card.Text2.text.Length;
                     }

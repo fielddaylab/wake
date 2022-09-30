@@ -16,6 +16,9 @@ namespace Aqua.Profile
         private HashSet<StringHash32> m_CompletedArgues = new HashSet<StringHash32>();
         private uint m_CurrentLevel = 0;
 
+        // specter/decryption stuff
+        private uint m_DecryptLevel = 0;
+
         private bool m_HasChanges;
 
         #region Sites
@@ -126,6 +129,26 @@ namespace Aqua.Profile
             return false;
         }
 
+        public uint DecryptLevel() { return m_DecryptLevel; }
+        public bool SetDecryptLevel(uint inDecryptLevel)
+        {
+            if (m_DecryptLevel != inDecryptLevel)
+            {
+                DebugService.Log(LogMask.DataService, "[ScienceData] Player decrypt level changed to {1}", inDecryptLevel);
+
+                Services.Events.Queue(GameEvents.DecryptLevelUpdated, inDecryptLevel);
+                m_DecryptLevel = inDecryptLevel;
+                m_HasChanges = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool FullyDecrypted() {
+            return m_DecryptLevel >= ScienceUtils.MaxDecryptLevel();
+        }
+
         #endregion // Leveling
 
         #region IProfileChunk
@@ -135,7 +158,8 @@ namespace Aqua.Profile
         // v3: remove experiment data
         // v4: add claim data
         // v5: added level
-        ushort ISerializedVersion.Version { get { return 5; } }
+        // v6: added decrypt level
+        ushort ISerializedVersion.Version { get { return 6; } }
 
         public bool HasChanges()
         {
@@ -176,6 +200,11 @@ namespace Aqua.Profile
             if (ioSerializer.ObjectVersion >= 5)
             {
                 ioSerializer.Serialize("level", ref m_CurrentLevel);
+            }
+
+            if (ioSerializer.ObjectVersion >= 6)
+            {
+                ioSerializer.Serialize("decrypt", ref m_DecryptLevel);
             }
         }
 

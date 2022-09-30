@@ -27,6 +27,7 @@ namespace Aqua
         [SerializeField] private TextId m_CommonNameId = default;
         [SerializeField] private TextId m_PluralCommonNameId = default;
         [SerializeField] private TextId m_DescriptionId = default;
+        [SerializeField] private TextId m_EncodedMessageId = default;
         
         [SerializeField] internal BFBase[] m_Facts = Array.Empty<BFBase>();
 
@@ -64,6 +65,7 @@ namespace Aqua
         [LeafLookup("Name")] public TextId CommonName() { return m_CommonNameId; }
         [LeafLookup("PluralName")] public TextId PluralCommonName() { return m_PluralCommonNameId.IsEmpty ? m_CommonNameId : m_PluralCommonNameId; }
         public TextId Description() { return m_DescriptionId; }
+        public TextId EncodedMessage() { Assert.True((m_Flags & BestiaryDescFlags.IsSpecter) != 0); return m_EncodedMessageId; }
 
         public ListSlice<BFBase> Facts { get { return m_AllFacts; } }
         public ListSlice<BFBase> PlayerFacts { get { return new ListSlice<BFBase>(m_AllFacts, 0, m_PlayerFactCount); } }
@@ -216,7 +218,8 @@ namespace Aqua
         TreatAsPlant = 0x80,
         DoNotUseInStressTank = 0x100,
         IsNotLiving = 0x200,
-        HideInBestiary = 0x400
+        HideInBestiary = 0x400,
+        IsSpecter = 0x800
     }
 
     public enum BestiaryDescSize

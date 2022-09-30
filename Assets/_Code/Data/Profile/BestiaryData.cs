@@ -260,6 +260,8 @@ namespace Aqua.Profile
                 flags |= m_FactMetas[metaIdx].Flags;
             if (!pair.IsEmpty && (m_ObservedFacts.Contains(pair) || Services.Assets.Bestiary.IsAutoFact(pair)))
                 flags |= BFDiscoveredFlags.HasPair;
+            if (fact.Parent.HasFlags(BestiaryDescFlags.IsSpecter) && !Save.Science.FullyDecrypted())
+                flags |= BFDiscoveredFlags.IsEncrypted;
             return flags;
         }
 

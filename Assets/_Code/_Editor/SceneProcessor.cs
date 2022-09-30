@@ -94,7 +94,7 @@ namespace Aqua.Editor
         {
             using(Profiling.Time("baking objects"))
             {
-                Bake.Scene(scene, BakeFlags.Verbose);
+                Bake.Scene(scene);
             }
         }
 

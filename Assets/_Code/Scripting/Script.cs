@@ -111,6 +111,16 @@ namespace Aqua {
             BFDetails details = BFType.GenerateDetails(fact, flags, reference);
             bool showFact = (BFType.Flags(fact) & BFFlags.HideFactInDetails) == 0;
 
+            if ((flags & BFDiscoveredFlags.IsEncrypted) != 0) {
+                details.Header = Loc.Format("fact.encrypted.header", Formatting.Scramble(details.Header));
+                details.Description = Loc.Format("fact.encrypted.description", Formatting.Scramble(details.Description));
+                details.Image = default;
+
+                return Services.UI.Popup.Present(
+                    details.Header, details.Description, details.Image, PopupFlags.ShowCloseButton | PopupFlags.TallImage, options
+                );
+            }
+
             if (showFact) {
                 return Services.UI.Popup.PresentFactDetails(
                     details, fact, flags, PopupFlags.ShowCloseButton | PopupFlags.TallImage, options

@@ -95,7 +95,7 @@ namespace Aqua
 
                 case BFShapeId.State: {
                     StateFactDisplay display = m_StateFacts.Alloc(inParent);
-                    display.Populate((BFState) inFact);
+                    display.Populate((BFState) inFact, inFlags);
                     m_PoolSources.Add(display, BFShapeId.State);
                     return display;
                 }
@@ -266,7 +266,7 @@ namespace Aqua
                 }
 
                 case BFShapeId.State: {
-                    ((StateFactDisplay) inBehavior).Populate((BFState) inFact);
+                    ((StateFactDisplay) inBehavior).Populate((BFState) inFact, inFlags);
                     break;
                 }
 
