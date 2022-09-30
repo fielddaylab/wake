@@ -121,7 +121,7 @@ namespace Aqua
             m_Debug = true;
             #endif // DEVELOPMENT
 
-            m_Log.SetDebug(true);
+            m_Log.SetDebug(m_Debug);
         }
 
         private void SetUserCode(string userCode)

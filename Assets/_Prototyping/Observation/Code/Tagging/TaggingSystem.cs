@@ -66,7 +66,14 @@ namespace ProtoAqua.Observation {
             if (Script.IsPausedOrLoading)
                 return;
 
-            m_Listener.ProcessOccupants();
+            if (Frame.Interval(4)) {
+                m_Listener.ProcessOccupants();
+            }
+
+            // only update this every 8 frames
+            if (!Frame.Interval(8)) {
+                return;
+            }
 
             Vector3 gameplayPlanePos;
             Vector2 gameplayPlaneDist;

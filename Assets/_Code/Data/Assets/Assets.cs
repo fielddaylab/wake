@@ -75,7 +75,7 @@ namespace Aqua {
                 return null;
 
             ScriptableObject obj;
-            Assert.True(s_GlobalLookup.ContainsKey(inId), "No asset with id '{0}'", inId);
+            Assert.True(s_GlobalLookup.ContainsKey(inId), "No asset with id '{0}'", inId.ToDebugString());
             s_GlobalLookup.TryGetValue(inId, out obj);
             return obj;
         }

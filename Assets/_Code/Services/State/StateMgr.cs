@@ -46,6 +46,7 @@ namespace Aqua
         [NonSerialized] private bool m_SceneLock;
         [NonSerialized] private PlayerBody m_Body;
         [NonSerialized] private bool m_InitFrame;
+        [NonSerialized] private StringHash32 m_SceneName;
 
         private VariantTable m_TempSceneTable;
         private Func<IEnumerator> m_OnSceneReadyFunc;
@@ -56,6 +57,7 @@ namespace Aqua
         private RingBuffer<PrioritizedCallback> m_OnLoadQueue = new RingBuffer<PrioritizedCallback>(64, RingBufferMode.Expand);
 
         public StringHash32 LastEntranceId { get { return m_EntranceId; } }
+        public StringHash32 SceneName { get { return m_SceneName; } }
 
         #region Scene Loading
 
@@ -624,6 +626,7 @@ namespace Aqua
             Services.UI.BindCamera(Services.Camera.Current);
 
             m_Body = FindObjectOfType<PlayerBody>();
+            m_SceneName = inScene.Name;
         }
 
         #endregion // Scripting

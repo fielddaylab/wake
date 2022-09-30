@@ -25,6 +25,7 @@ namespace Aqua.Entity {
         
         [NonSerialized] public Vector3 LastKnownPosition;
         [NonSerialized] public float LastKnownScale;
+        [NonSerialized] public int OffscreenTickDelay;
 
         [NonSerialized] private Transform m_CachedTransform;
 
@@ -66,7 +67,7 @@ namespace Aqua.Entity {
         public void CalculatePosition(ushort frameIndex, in CameraService.PlanePositionHelper positionHelper) {
             if (frameIndex != LastUpdatedFrame) {
                 LastUpdatedFrame = frameIndex;
-                LastKnownPosition = positionHelper.CastToPlane(Source, out LastKnownScale);
+                LastKnownPosition = CameraService.CastToPlane(positionHelper, Source, out LastKnownScale);
             }
         }
 
@@ -111,7 +112,7 @@ namespace Aqua.Entity {
             }
 
             if (Ref.Replace(ref Collider, GetComponent<Collider2D>())) {
-                Radius = PhysicsUtils.GetRadius(Collider);
+                Radius = Collider != null ? PhysicsUtils.GetRadius(Collider) : 0;
                 return true;
             }
 
