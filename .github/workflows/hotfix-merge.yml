@@ -5,16 +5,10 @@ on:
   workflow_dispatch:
 jobs:
   merge:
-    if: github.ref == 'ref/heads/hotfix'
-    name: Merge hotfix to production
+    name: Merge hotfix to staging
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        with:
-          lfs: true
-
       - name: Merge hotfix into staging
         uses: devmasx/merge-branch@master
         with:
