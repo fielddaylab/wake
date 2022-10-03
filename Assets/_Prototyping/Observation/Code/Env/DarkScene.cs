@@ -13,7 +13,7 @@ namespace ProtoAqua.Observation {
 
         public int Order { get { return FlattenHierarchy.Order - 1; } }
 
-        public bool Bake(BakeFlags flags) {
+        public bool Bake(BakeFlags flags, BakeContext context) {
             SceneHelper.ActiveScene().Scene.ForEachComponent<ScannableRegion>(true, (scn, scan) => {
                 if (scan.gameObject.name == "MicroscopeHint") {
                     return;

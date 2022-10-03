@@ -78,7 +78,7 @@ namespace ProtoAqua.ExperimentV2
 
         int IBaked.Order { get { return 20; } }
 
-        bool IBaked.Bake(BakeFlags flags)
+        bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
             LoadDefinitions();
 

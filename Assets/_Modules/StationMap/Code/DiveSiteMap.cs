@@ -30,7 +30,7 @@ namespace Aqua.StationMap
 
         int IBaked.Order { get { return 0; } }
 
-        bool IBaked.Bake(BakeFlags flags)
+        bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
             List<DiveSite> diveSites = new List<DiveSite>(8);
             SceneHelper.ActiveScene().Scene.GetAllComponents<DiveSite>(true, diveSites);

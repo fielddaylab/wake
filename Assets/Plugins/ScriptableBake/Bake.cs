@@ -77,7 +77,14 @@ namespace ScriptableBake {
                 bakeComponents.AddRange(rootLocal);
             }
 
-            return Process(bakeComponents, "scene: " + scene.name, flags, null);
+            BakeContext context = new BakeContext();
+            context.MainCamera = GameObject.FindObjectOfType<Camera>();
+            context.HasFog = RenderSettings.fog;
+            if (context.HasFog) {
+                context.FogStartDistance = RenderSettings.fogStartDistance;
+                context.FogEndDistance = RenderSettings.fogEndDistance;
+            }
+            return Process(bakeComponents, "scene: " + scene.name, flags, context, null);
         }
 
         #endregion // Scene
@@ -136,7 +143,7 @@ namespace ScriptableBake {
                 }
             }
 
-            return Process(bakeAssets, "ScriptableObjects", flags, null);
+            return Process(bakeAssets, "ScriptableObjects", flags, default(BakeContext), null);
         }
 
         #endregion // Assets
@@ -166,7 +173,7 @@ namespace ScriptableBake {
                 }
             }
 
-            return Process(bakeAssets, "Objects", flags, null);
+            return Process(bakeAssets, "Objects", flags, default(BakeContext), null);
         }
 
         #endregion // Manual Selection
@@ -382,10 +389,18 @@ namespace ScriptableBake {
             }
         }
 
-        static private IEnumerator Process(List<IBaked> baked, string source, BakeFlags flags, Action<UnityEngine.Object> onModify) {
+        static private IEnumerator Process(List<IBaked> baked, string source, BakeFlags flags, BakeContext context, Action<UnityEngine.Object> onModify) {
             bool bVerbose = (flags & BakeFlags.Verbose) != 0;
             bool bProgress = (flags & BakeFlags.ShowProgressBar) != 0;
             bool bError = false;
+
+            if (Application.isPlaying) {
+                flags |= BakeFlags.IsRuntime;
+            }
+
+            if (context == null) {
+                context = new BakeContext();
+            }
 
             baked.Sort((a, b) => a.Order.CompareTo(b.Order));
 
@@ -422,7 +437,7 @@ namespace ScriptableBake {
                         try {
                             if (!object.ReferenceEquals(unityObj, null) && unityObj == null) {
                                 Debug.LogFormat("[Bake] Object was destroyed");
-                            } else if (bakedObj.Bake(flags)) {
+                            } else if (bakedObj.Bake(flags, context)) {
                                 if (unityObj) {
                                     EditorUtility.SetDirty(unityObj);
                                     onModify?.Invoke(unityObj);
@@ -490,7 +505,7 @@ namespace ScriptableBake {
     public interface IBaked {
         #if UNITY_EDITOR
         int Order { get; }
-        bool Bake(BakeFlags flags);
+        bool Bake(BakeFlags flags, BakeContext context);
         #endif // UNITY_EDITOR
     }
 
@@ -512,6 +527,64 @@ namespace ScriptableBake {
         Verbose = 0x08,
 
         // This will display a progress bar
-        ShowProgressBar = 0x10
+        ShowProgressBar = 0x10,
+
+        // Baking is occurring at runtime
+        IsRuntime = 0x20,
+    }
+
+    /// <summary>
+    /// Bake context.
+    /// </summary>
+    public class BakeContext {
+        /// <summary>
+        /// Scene main camera.
+        /// </summary>
+        public Camera MainCamera;
+
+        /// <summary>
+        /// If fog is enabled.
+        /// </summary>
+        public bool HasFog;
+
+        /// <summary>
+        /// Fog start distance.
+        /// </summary>
+        public float FogStartDistance;
+
+        /// <summary>
+        /// Fog end distance.
+        /// </summary>
+        public float FogEndDistance;
+
+        private Dictionary<string, object> m_ValueCache;
+
+        /// <summary>
+        /// Returns if a value with the given id is cached.
+        /// </summary>
+        public bool IsCached(string id) {
+            return m_ValueCache != null && m_ValueCache.ContainsKey(id);
+        }
+
+        /// <summary>
+        /// Caches the given value.
+        /// </summary>
+        public void Cache(string id, object value) {
+            if (m_ValueCache == null) {
+                m_ValueCache = new Dictionary<string, object>(StringComparer.Ordinal);
+            }
+            m_ValueCache[id] = value;
+        }
+
+        /// <summary>
+        /// Retrieves a value from the cache.
+        /// </summary>
+        public T FromCache<T>(string id) {
+            object val;
+            if (m_ValueCache == null || !m_ValueCache.TryGetValue(id, out val)) {
+                throw new KeyNotFoundException("no key with id " + id);
+            }
+            return (T) val;
+        }
     }
 }

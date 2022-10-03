@@ -106,7 +106,7 @@ namespace Aqua.Entity {
 
         int IBaked.Order { get { return -15; } }
 
-        bool IBaked.Bake(BakeFlags flags) {
+        bool IBaked.Bake(BakeFlags flags, BakeContext context) {
             if (Collider != null) {
                 return Ref.Replace(ref Radius, PhysicsUtils.GetRadius(Collider));
             }

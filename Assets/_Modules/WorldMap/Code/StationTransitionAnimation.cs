@@ -77,7 +77,7 @@ namespace Aqua.WorldMap
 
         int IBaked.Order { get { return 0; } }
 
-        bool IBaked.Bake(BakeFlags flags) {
+        bool IBaked.Bake(BakeFlags flags, BakeContext context) {
             ShipParticles = ShipTransform.GetComponentsInChildren<ParticleSystem>();
             ShipTrails = ShipTransform.GetComponentsInChildren<TrailRenderer>();
             return true;

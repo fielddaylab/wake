@@ -147,7 +147,7 @@ namespace ProtoAqua.Observation {
 
         int IBaked.Order { get { return 15; }}
 
-        bool IBaked.Bake(BakeFlags flags) {
+        bool IBaked.Bake(BakeFlags flags, BakeContext context) {
             List<GameObject> microscopeViewGO = new List<GameObject>();
             List<Behaviour> microscopeViewComp = new List<Behaviour>();
 

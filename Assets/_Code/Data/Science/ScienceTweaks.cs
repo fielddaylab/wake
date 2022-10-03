@@ -53,7 +53,7 @@ namespace Aqua {
 
         int IBaked.Order { get { return 100; } }
 
-        bool IBaked.Bake(BakeFlags flags) {
+        bool IBaked.Bake(BakeFlags flags, BakeContext context) {
             Dictionary<StringHash32, List<BestiaryDesc>> perStation = new Dictionary<StringHash32, List<BestiaryDesc>>();
             List<TaggedBestiaryDesc> finalList = new List<TaggedBestiaryDesc>(60);
 

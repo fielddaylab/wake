@@ -229,7 +229,7 @@ namespace ProtoAqua.ExperimentV2 {
 
         int IBaked.Order { get { return 0; } }
 
-        bool IBaked.Bake(BakeFlags flags)
+        bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
             m_Tanks = FindObjectsOfType<SelectableTank>();
             foreach(var tank in m_Tanks)

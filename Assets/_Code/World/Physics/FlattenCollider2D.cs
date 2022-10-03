@@ -19,7 +19,7 @@ namespace ScriptableBake {
             get { return Order; }
         }
 
-        bool IBaked.Bake(BakeFlags flags) {
+        bool IBaked.Bake(BakeFlags flags, BakeContext context) {
             PhysicsUtils.EnsureUniformScale(transform, true);
             Bake.Destroy(this);
             return true;

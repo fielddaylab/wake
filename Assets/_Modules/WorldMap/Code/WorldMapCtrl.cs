@@ -156,7 +156,7 @@ namespace Aqua.WorldMap
 
         int IBaked.Order { get { return 0; } }
 
-        bool IBaked.Bake(BakeFlags flags)
+        bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
             List<StationButton> stations = new List<StationButton>();
             SceneHelper.ActiveScene().Scene.GetAllComponents<StationButton>(stations);

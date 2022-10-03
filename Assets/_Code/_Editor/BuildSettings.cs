@@ -36,7 +36,6 @@ namespace Aqua.Editor {
             string branch = BuildUtils.GetSourceControlBranchName();
             bool bDesiredDevBuild = false;
             bool bDesiredPreviewBuild = false;
-            bool bDesiredProdBuild = false;
 
             if (branch != null) {
                 if (branch.StartsWith("feature/") || branch.StartsWith("fix/") || branch.StartsWith("improvement/") || branch.StartsWith("experimental/")
@@ -44,9 +43,7 @@ namespace Aqua.Editor {
                     bDesiredDevBuild = true;
                 } else if (branch.StartsWith("milestone") || branch.Contains("preview")) {
                     bDesiredPreviewBuild = true;
-                } else if (branch.StartsWith("production")) {
-                    bDesiredProdBuild = true;
-                } else {
+                } else if (!branch.StartsWith("production") && !branch.StartsWith("staging") && !branch.StartsWith("hotfix")) {
                     bDesiredDevBuild = true;
                 }
             }
@@ -63,7 +60,7 @@ namespace Aqua.Editor {
             } else if (bDesiredPreviewBuild) {
                 BuildUtils.WriteDefines("PREVIEW,ENABLE_LOGGING_ERRORS_BEAUUTIL,ENABLE_LOGGING_WARNINGS_BEAUUTIL,PRESERVE_DEBUG_SYMBOLS");
             } else {
-                BuildUtils.WriteDefines("PRODUCTION");
+                BuildUtils.WriteDefines("PRODUCTION,IGNORE_UNITY_EDITOR");
             }
 
             PlayerSettings.SetManagedStrippingLevel(EditorUserBuildSettings.selectedBuildTargetGroup, bDesiredDevBuild ? ManagedStrippingLevel.Medium : ManagedStrippingLevel.High);
