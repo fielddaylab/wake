@@ -47,7 +47,7 @@ namespace ProtoAqua.Observation {
 
         int IBaked.Order { get { return 0; } }
 
-        bool IBaked.Bake(BakeFlags flags)
+        bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
             m_AllMeters = GetComponentsInChildren<TaggingMeter>(true);
             return true;

@@ -18,7 +18,7 @@ namespace Aqua
 
         public int Order { get { return -100; } }
 
-        public bool Bake(BakeFlags flags) {
+        public bool Bake(BakeFlags flags, BakeContext context) {
             bool isGameplayScene = IsGameplayScene(SceneHelper.ActiveScene());
             if (!isGameplayScene) {
                 ScriptableBake.Bake.Destroy(gameObject);

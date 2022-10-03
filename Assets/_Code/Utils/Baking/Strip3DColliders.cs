@@ -13,7 +13,7 @@ namespace Aqua
 
         public int Order { get { return ScriptableBake.FlattenHierarchy.Order - 1; } }
 
-        public bool Bake(BakeFlags flags) {
+        public bool Bake(BakeFlags flags, BakeContext context) {
             Collider[] colliders = GetComponentsInChildren<Collider>(true);
             foreach(var collider in colliders) {
                 ScriptableBake.Bake.Destroy(collider);

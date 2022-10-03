@@ -18,7 +18,7 @@ namespace Aqua
 
         int IBaked.Order { get { return (int) m_Type; } }
 
-        bool IBaked.Bake(BakeFlags flags)
+        bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
             FindAllFacts();
 

@@ -136,7 +136,7 @@ namespace Aqua.Shop
 
         int IBaked.Order => 0;
 
-        bool IBaked.Bake(BakeFlags flags) {
+        bool IBaked.Bake(BakeFlags flags, BakeContext context) {
             m_SubRotateJoint = GameObject.Find("GrabberEnd_end")?.transform;
             m_ExplorationItems = FindObjectsOfType<ShopPreviewShipItem>();
             return true;

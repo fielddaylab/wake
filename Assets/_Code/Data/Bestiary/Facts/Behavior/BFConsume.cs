@@ -104,7 +104,7 @@ namespace Aqua
             return consume != null && consume.Property == Property;
         }
 
-        public override bool Bake(BakeFlags flags)
+        public override bool Bake(BakeFlags flags, BakeContext context)
         {
             bool bChanged = false;
             if (OnlyWhenStressed)

@@ -34,7 +34,7 @@ namespace Aqua
 
         int IBaked.Order { get { return 16; }}
 
-        bool IBaked.Bake(BakeFlags flags)
+        bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
             if (m_Tasks.Length > MaxTasks)
             {

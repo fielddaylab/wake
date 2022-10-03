@@ -404,7 +404,7 @@ namespace ProtoAqua.Observation {
             return defaultProportion;
         }
 
-        bool IBaked.Bake(ScriptableBake.BakeFlags flags) {
+        bool IBaked.Bake(ScriptableBake.BakeFlags flags, BakeContext context) {
             StringHash32 mapId = MapDB.LookupCurrentMap();
             if (!m_EnvironmentOverride.IsEmpty) {
                 mapId = m_EnvironmentOverride;

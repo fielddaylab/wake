@@ -33,7 +33,7 @@ namespace Aqua.Ship
 
         int IBaked.Order { get { return 0; } }
 
-        bool IBaked.Bake(BakeFlags flags) {
+        bool IBaked.Bake(BakeFlags flags, BakeContext context) {
             if (KelpStation)
                 KelpStation.SetActive(false);
             if (CoralStation)
