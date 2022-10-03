@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using BeauUtil;
 using Leaf;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Aqua
 {
@@ -21,6 +23,8 @@ namespace Aqua
         #endregion // Inspector
 
         private readonly Dictionary<string, StringHash32> m_SceneMapping = new Dictionary<string, StringHash32>();
+        private StringHash32[] m_BuildIndexMapping;
+        private string[] m_SceneNames;
         private readonly HashSet<MapDesc> m_Stations = new HashSet<MapDesc>();
         private readonly HashSet<MapDesc> m_DiveSites = new HashSet<MapDesc>();
 
@@ -31,11 +35,40 @@ namespace Aqua
         public IReadOnlyCollection<MapDesc> Stations() { return m_Stations; }
         public IReadOnlyCollection<MapDesc> DiveSites() { return m_DiveSites; }
 
+        protected override void ConstructLookups() {
+            base.ConstructLookups();
+
+            m_SceneNames = null;
+        }
+
+        protected override void PreLookupConstruct()
+        {
+            base.PreLookupConstruct();
+            m_BuildIndexMapping = new StringHash32[SceneManager.sceneCountInBuildSettings];
+            m_SceneNames = new string[m_BuildIndexMapping.Length];
+            for(int i = 0; i < m_SceneNames.Length; i++)
+            {
+                string path = SceneUtility.GetScenePathByBuildIndex(i);
+                m_SceneNames[i] = Path.GetFileNameWithoutExtension(path);
+            }
+        }
+
         protected override void ConstructLookupForItem(MapDesc inItem, int inIndex)
         {
             base.ConstructLookupForItem(inItem, inIndex);
             
-            m_SceneMapping.Add(inItem.SceneName(), inItem.Id());
+            string sceneName = inItem.SceneName();
+            if (!string.IsNullOrEmpty(sceneName))
+            {
+                m_SceneMapping.Add(sceneName, inItem.Id());
+                int buildIndex = Array.IndexOf(m_SceneNames, sceneName);
+                if (buildIndex >= 0)
+                {
+                    m_BuildIndexMapping[buildIndex] = inItem.Id();
+                }
+            }
+
+            inItem.InitializePreloadGroup();
 
             switch(inItem.Category())
             {
@@ -68,7 +101,7 @@ namespace Aqua
             return Assets.Map(inMapId)?.SceneName();
         }
 
-        static public StringHash32 LookupMap(SceneBinding inScene)
+        static public StringHash32 LookupMap(Scene inScene)
         {
             StringHash32 mapId;
             #if UNITY_EDITOR
@@ -79,17 +112,26 @@ namespace Aqua
                         s_EditorSceneMap.Add(map.SceneName(), map.Id());
                     }
                 }
-                s_EditorSceneMap.TryGetValue(inScene.Name, out mapId);
+                s_EditorSceneMap.TryGetValue(inScene.name, out mapId);
                 return mapId;
             }
             #endif // UNITY_EDITOR
-            Services.Assets.Map.m_SceneMapping.TryGetValue(inScene.Name, out mapId);
+            int buildIdx = inScene.buildIndex;
+            if (buildIdx >= 0)
+            {
+                mapId = Services.Assets.Map.m_BuildIndexMapping[buildIdx];
+            }
+            else
+            {
+                Services.Assets.Map.m_SceneMapping.TryGetValue(inScene.name, out mapId);
+            }
             return mapId;
         }
 
         static public StringHash32 LookupCurrentMap()
         {
-            return LookupMap(SceneHelper.ActiveScene());
+            var currentScene = SceneManager.GetActiveScene();
+            return LookupMap(currentScene);
         }
     }
 }

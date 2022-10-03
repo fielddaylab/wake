@@ -26,9 +26,11 @@ namespace Aqua.Editor {
 
         private class Data : ISerializedObject {
             public List<JobData> Jobs = new List<JobData>(64);
+            public JobsSummary Summary = new JobsSummary();
 
             public void Serialize(Serializer ioSerializer) {
                 ioSerializer.ObjectArray("jobs", ref Jobs);
+                ioSerializer.Object("jobsSummary", ref Summary);
             }
         }
 
@@ -51,6 +53,18 @@ namespace Aqua.Editor {
                 ioSerializer.ObjectArray("requiredUpgrades", ref RequiredUpgrades);
                 ioSerializer.Object("difficulties", ref Difficulties);
                 ioSerializer.ObjectArray("tasks", ref Tasks);
+            }
+        }
+
+        private class JobsSummary : ISerializedObject {
+            public List<int> ExperimentationSummary;
+            public List<int> ModelingSummary;
+            public List<int> ArgumentationSummary;
+
+            public void Serialize(Serializer ioSerializer) {
+                ioSerializer.Array("experimentSummary", ref ExperimentationSummary);
+                ioSerializer.Array("modelingSummary", ref ModelingSummary);
+                ioSerializer.Array("argumentationSummary", ref ArgumentationSummary);
             }
         }
 
@@ -90,6 +104,18 @@ namespace Aqua.Editor {
             }
 
             long nowTS = DateTime.UtcNow.ToFileTimeUtc();
+
+            // init summary table
+            db.Summary = new JobsSummary();
+            db.Summary.ExperimentationSummary = new List<int>();
+            db.Summary.ModelingSummary = new List<int>();
+            db.Summary.ArgumentationSummary = new List<int>();
+            int numCols = 6; // ratings from 0 to 5
+            for (int c = 0; c < numCols; c++){
+                db.Summary.ExperimentationSummary.Add(0);
+                db.Summary.ModelingSummary.Add(0);
+                db.Summary.ArgumentationSummary.Add(0);            
+            }
 
             foreach (var job in AssetDBUtils.FindAssets<JobDesc>()) {
                 string jobName = job.name;
@@ -153,6 +179,22 @@ namespace Aqua.Editor {
                 jobData.Difficulties.ExperimentationDifficulty = job.Difficulty(ScienceActivityType.Experimentation);
                 jobData.Difficulties.ModelingDifficulty = job.Difficulty(ScienceActivityType.Modeling);
                 jobData.Difficulties.ArgumentationDifficulty = job.Difficulty(ScienceActivityType.Argumentation);
+
+                // Unimplemented jobs should be left out. They have an argumentation rating of 0
+                if (job.Difficulty(ScienceActivityType.Argumentation) != 0) {
+                    // add to summary table
+                    int oldVal = db.Summary.ExperimentationSummary[job.Difficulty(ScienceActivityType.Experimentation)];
+                    int newVal = oldVal + 1;
+                    db.Summary.ExperimentationSummary[job.Difficulty(ScienceActivityType.Experimentation)] = newVal;
+
+                    oldVal = db.Summary.ModelingSummary[job.Difficulty(ScienceActivityType.Modeling)];
+                    newVal = oldVal + 1;
+                    db.Summary.ModelingSummary[job.Difficulty(ScienceActivityType.Modeling)] = newVal;
+
+                    oldVal = db.Summary.ArgumentationSummary[job.Difficulty(ScienceActivityType.Argumentation)];
+                    newVal = oldVal + 1;
+                    db.Summary.ArgumentationSummary[job.Difficulty(ScienceActivityType.Argumentation)] = newVal;
+                }            
             }
 
             // Deprecate stuff

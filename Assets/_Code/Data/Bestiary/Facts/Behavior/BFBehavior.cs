@@ -40,7 +40,7 @@ namespace Aqua
 
         int IBaked.Order { get { return 15; } }
 
-        public abstract bool Bake(BakeFlags flags);
+        public abstract bool Bake(BakeFlags flags, BakeContext context);
 
         protected T FindPairedFact<T>() where T : BFBehavior
         {

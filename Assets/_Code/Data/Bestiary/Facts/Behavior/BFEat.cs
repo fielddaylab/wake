@@ -140,7 +140,7 @@ namespace Aqua {
             return eat != null && eat.Critter == Critter;
         }
 
-        public override bool Bake(BakeFlags flags)
+        public override bool Bake(BakeFlags flags, BakeContext context)
         {
             bool bChanged = false;
             if (OnlyWhenStressed)

@@ -112,8 +112,7 @@ namespace Aqua
 
             if (m_DescriptionLabel)
             {
-                TextId desc = category == JobProgressCategory.Completed ? inJob.DescCompletedId() : inJob.DescId();
-                m_DescriptionLabel.SetText(desc);
+                m_DescriptionLabel.SetText(inJob.DescId());
             }
 
             if (m_ShortDescriptionLabel)

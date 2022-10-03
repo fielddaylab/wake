@@ -24,13 +24,6 @@
 {@player} Hmm. I haven't seen many shrimp around here.  
 {@player} No wonder the guy's grumpy. 
 
-:: makeAModel
-@trigger    SceneStart
-@when       JobTaskActive(makeModel), scene:name == "Ship"
-@once
-@cutscene
-{@guide} 
-
 // CATCH-ALL GUIDE TEXT
 
 :: catchVisitSiteO
@@ -56,19 +49,6 @@
 {@player}   Okay, {nameof @guide}. What next? 
 {@guide}    You need to count all of the species at {h}Site O{/h}.
 
-:: catchMakeModel
-@trigger    RequestPartnerHelp
-@when       JobTaskActive(makeModel)
-@boostScore -5
-@cutscene
-$if IsPlayerOnShip()
-    {@player}  Hey {nameof @guide}... what's our next task again? 
-    {@guide}    You need to head to the {map-name}Modeling Lab{/map-name} to construct a {nameof VisualModel}.
-$else
-    {@player} Can I have a little help, {nameof @guide}?
-    {@guide}    Certainly, O. You need to head to the surface and board your ship. 
-$endif
-
 :: catchReportback
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
@@ -80,72 +60,165 @@ $endif
 // ARGUMENTATION
 ::argue.intro
 @trigger    TryArgumentation
-@when   !ArgueIsComplete(siteOAnalysis2)
+@when   !ArgueIsComplete(siteOAnalysis4Summary)
 @cutscene
-
-$if ArgueIsComplete(siteOAnalysis)
-    $goto .argue.nextStep
+$if ArgueIsComplete(siteOAnalysis3Invasive)
+    // go to pt 4
+    $branch .argue.loadArgue4
+$elseif ArgueIsComplete(siteOAnalysis2Relier)
+    // go to pt 3
+    $branch .argue.loadArgue3
+$elseif ArgueIsComplete(siteOAnalysis1Native)
+    // go to pt 2
+    $branch .argue.loadArgue2
+$else
+    // go to pt 1
+    $branch .argue.loadArgue1
 $endif
 
-$call ArgueLoad(siteOAnalysis)
-$if ArgueSetClaim(Claim, jobs.bayou-displaced-reef.argue.claimLabel)
+// pt 1
+
+:: argue.loadArgue1
+$call ArgueLoad(siteOAnalysis1Native)
+$if ArgueSetClaim(Claim, jobs.bayou-displaced-reef.argue.claimLabel1)
     $call ArgueFactSlot(O_OilRig.Population.LoggerheadTurtle)
-    $call ArgueFactSlot(O_OilRig.Population.SeaPearl)
-    $call ArgueFactSlot(O_OilRig.Population.ElkhornCoral)
-$endif
-
-{@profBayou} Okay Ollie, let's analyze the data you uncovered for the species at {nameof O_OilRig}.
-             First what are the populatrions for the {pluralnameof LoggerheadTurtle}, {pluralnameof SeaPearl}, and {pluralnameof ElkhornCoral}?
-$branch .argue.showClaim
-
-:: argue.showClaim
-$call ArgueDisplayClaim()
-$choice #argueFactSet; Present facts from AQOS
-    $answer correct, .argue.nextStep
-    $answer incorrect, .argue.incorrectPopulation
-$choice .argue.giveUp; Let me get back to you.
-$choose branch
-
-:: argue.incorrectPopulation
-$call ArgueRejectIncorrect()
-{@profBayou} That's not the answer I'm looking for, Ms. Ramirez.  
-             What are the populatrions for {pluralnameof LoggerheadTurtle}, {pluralnameof SeaPearl}, and {pluralnameof ElkhornCoral}?
-$goto .argue.showClaim
-$call ArgueCancelClaim()
-
-:: argue.nextStep
-$call ArgueComplete()
-$goto .argue.part2
-
-:: argue.part2
-$call ArgueLoad(siteOAnalysis2)
-$if ArgueSetClaim(Claim, jobs.bayou-displaced-reef.argue.claimLabel)
-    $call ArgueFactSlot(O_OilRig.Population.AngelFish)
     $call ArgueFactSlot(O_OilRig.Population.RedGrouper)
 $endif
 
-{@profBayou} How about the populatrions for {pluralnameof RedGrouper} and {pluralnameof AngelFish}?
-$goto .argue.showClaim2
+{@profBayou}    Okay Ollie, let's analyze the data you uncovered for the species at {nameof O_OilRig}.
+{@profBayou}    First, what are the populations for the native species: {pluralnameof LoggerheadTurtle} and {pluralnameof RedGrouper}? (They should be in the {h}Sites{/h} tab of {h}AQOS{/h}.)
+$branch .argue.showClaim1
+
+:: argue.showClaim1
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.analysis1Complete
+    $answer incorrect, .argue.incorrect1
+$choice .argue.giveUpArgument; Let me get back to you.
+$choose branch
+
+:: argue.incorrect1
+$call ArgueRejectIncorrect()
+{@profBayou} That's not the answer I'm looking for, Ms. Ramirez.  
+             What are the populations for {pluralnameof LoggerheadTurtle} and {pluralnameof RedGrouper}?
+$branch .argue.showClaim1
+
+:: argue.analysis1Complete
+$call ArgueComplete()
+$branch .argue.loadArgue2
+
+// pt 2
+
+:: argue.loadArgue2
+$call ArgueLoad(siteOAnalysis2Relier)
+$if ArgueSetClaim(Claim, jobs.bayou-displaced-reef.argue.claimLabel2)
+    $call ArgueFactSlot(O_OilRig.Population.ElkhornCoral)
+    $call ArgueFactSlot(O_OilRig.Population.SeaPearl)
+$endif
+{@profBayou} How about the populations of organisms that rely on the rig structure? Those are {pluralnameof ElkhornCoral} and {pluralnameof SeaPearl}.
+$branch .argue.showClaim2
 
 :: argue.showClaim2
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.correctPopulation
-		$answer incorrect, .argue.incorrectPopulation2
+		$answer correct, .argue.analysis2Complete
+		$answer incorrect, .argue.incorrect2
+$choice .argue.giveUpArgument; Let me get back to you.
+$choose branch
+
+:: argue.incorrect2
+$call ArgueRejectIncorrect()
+{@profBayou} That's not the answer I'm looking for, Ms. Ramirez.  
+        What are the populations for {pluralnameof ElkhornCoral} and {pluralnameof SeaPearl}?
+$branch .argue.showClaim2
+
+:: argue.analysis2Complete
+$call ArgueComplete()
+$branch .argue.loadArgue3
+
+// pt 3
+
+:: argue.loadArgue3
+$call ArgueLoad(siteOAnalysis3Invasive)
+$if ArgueSetClaim(Claim, jobs.bayou-displaced-reef.argue.claimLabel3)
+    $call ArgueFactSlot(O_OilRig.Population.AngelFish)
+$endif
+{@profBayou} What other species are there? Those will be the invasive species.
+$branch .argue.showClaim3
+
+:: argue.showClaim3
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.analysis3Complete
+		$answer incorrect, .argue.incorrect3
+$choice .argue.giveUpArgument; Let me get back to you.
+$choose branch
+
+:: argue.incorrect3
+{@profBayou}    That's not the answer I'm looking for, Ms. Ramirez.
+$if ArgueIsFactSubmitted(O_OilRig.Population.Cyanobacteria)
+    // player is ahead of the curve -- most don't have a microscope yet
+    {@profBayou}    You can leave the {pluralnameof Cyanobacteria} out of this, they aren't what we are concerned about at present.
+                    They are native species anyways.
+$endif
+{@profBayou}    What other species populations have you found that we haven't covered yet?
+$call ArgueRejectIncorrect()
+$branch .argue.showClaim3
+
+:: argue.analysis3Complete
+$call ArgueComplete()
+$branch .argue.loadArgue4
+
+// pt 4
+
+:: argue.loadArgue4
+$call ArgueLoad(siteOAnalysis4)
+{@profBayou} Okay. Now, looking at the numbers in total...
+$branch .argue.showClaim4
+
+:: argue.showClaim4
+{@profBayou} Are the invasive species outnumbering the native ones?
+$choice .argue.invasivesOutnumber; Invasives outnumber native species
+$choice .argue.equal; Invasive and native species populations are roughly equal
+$choice .argue.nativesOutnumber; Native species outnumber the invasive species
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
-:: argue.incorrectPopulation2
-$call ArgueRejectIncorrect()
-{@profBayou} That's not the answer I'm looking for, Ms. Ramirez.  
-        What are the populatrions for {pluralnameof RedGrouper} and {pluralnameof AngelFish}?
-$goto .argue.showClaim2
+:: argue.invasivesOutnumber
+{@player}   It looks like invasive species outnumber the native ones.
+{@profBayou}    Well then. That doesn't bode too well for the existing ecosystem.
+$branch .argue.analysis4Complete
+
+:: argue.equal
+{@player}   It looks like there are about the same number of each.
+{@profBayou}    Are you sure? I haven't tallied them exactly, but that isn't the sense I get looking at those numbers.
+                Let's take another look.
+$branch .argue.showClaim4
+
+:: argue.nativesOutnumber
+{@player}   It looks like the native species outnumber the invasive ones.
+$if HasFact(O_OilRig.Population.Cyanobacteria)
+    {@profBayou}    I suppose if we count {pluralnameof Cyanobacteria}, that is true. There are about a million of those things.
+                    But if we leave them out of it, it seems clear to me there a significantly more invasive species than native ones.
+    $branch .argue.analysis4Complete
+$else
+    {@profBayou}    Are you sure? I haven't tallied them exactly, but that isn't the sense I get looking at those numbers.
+                    Let's take another look.
+    $branch .argue.showClaim4
+$endif
+
+
+// Ending
+
+:: argue.giveUpArgument
 $call ArgueCancelClaim()
+$call ArgueUnload()
+$goto .argue.giveUp
 
 :: argue.giveUp
 {@profBayou} Hmmm. Okay, then. Do hurry back. 
 
-:: argue.correctPopulation
+:: argue.analysis4Complete
 $call ArgueComplete()
 {@profBayou} Hmmm. Nice work, Ollie. 
 {@profBayou} I need to consider this and plan our next move. 

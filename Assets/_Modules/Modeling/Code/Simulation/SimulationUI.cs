@@ -89,10 +89,6 @@ namespace Aqua.Modeling {
             m_InterveneAddPanel.OnAdded = OnIntervenePanelAdded;
             m_InterveneAddPanel.OnRemoved = OnIntervenePanelRemoved;
 
-            m_InterveneButtonGroup.gameObject.SetActive(false);
-            m_InterveneAddToggleGroup.ForceActive(false);
-
-            m_SyncViewGroup.SetActive(false);
             m_SyncViewNormalToggle.onValueChanged.AddListener(OnSimulateViewToggled);
             m_SyncViewFillToggle.onValueChanged.AddListener(OnEvaluateViewToggled);
 
@@ -106,6 +102,15 @@ namespace Aqua.Modeling {
             m_Graph.OnDivergenceClicked = (p) => {
                 m_SyncDivergencePopup.DisplayDivergence(p.Sign);
             };
+        }
+
+        protected override void Start() {
+            base.Start();
+            
+            m_InterveneButtonGroup.gameObject.SetActive(false);
+            m_InterveneAddToggleGroup.ForceActive(false);
+
+            m_SyncViewGroup.SetActive(false);
         }
 
         private void OnDestroy() {

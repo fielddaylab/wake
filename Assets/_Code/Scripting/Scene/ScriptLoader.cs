@@ -7,7 +7,7 @@ using Leaf;
 namespace Aqua.Scripting
 {
     [AddComponentMenu("Aqualab/Scripting/Script Loader")]
-    public class ScriptLoader : MonoBehaviour, IScenePreloader, ISceneUnloadHandler
+    public class ScriptLoader : MonoBehaviour, IScenePreloader, ISceneUnloadHandler, ISceneManifestElement
     {
         #region Inspector
 
@@ -23,7 +23,6 @@ namespace Aqua.Scripting
                 Services.Script.LoadScript(file);
             }
 
-
             return null;
         }
 
@@ -35,5 +34,15 @@ namespace Aqua.Scripting
                 Services.Script.UnloadScript(file);
             }
         }
+
+        #if UNITY_EDITOR
+
+        public void BuildManifest(SceneManifestBuilder builder) {
+            foreach(var script in m_Scripts) {
+                builder.Assets.Add(script);
+            }
+        }
+
+        #endif // UNITY_EDITOR
     }
 }

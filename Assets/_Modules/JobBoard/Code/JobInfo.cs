@@ -158,7 +158,7 @@ namespace Aqua.JobBoard
 
         int IBaked.Order { get { return 0; } }
 
-        bool IBaked.Bake(BakeFlags flags)
+        bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
             m_UpgradeDisplays = m_HasRequiredUpgradesGroup.gameObject.GetComponentsInChildren<RequiredUpgradeDisplay>(true);
             return true;

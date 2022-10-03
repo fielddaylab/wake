@@ -1,5 +1,24 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &4240154042435590562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5087539393611933303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22f85277a06bdb84d9dfd98fb340ef83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LowDistance: 40
+  LowSwap:
+    Mesh: {fileID: 4300000, guid: 7a0239139578d8142b2c93a0d15d89a1, type: 2}
+    Material: {fileID: 0}
+  FogSwap:
+    Mesh: {fileID: 4300000, guid: 7a0239139578d8142b2c93a0d15d89a1, type: 2}
+    Material: {fileID: 2100000, guid: e994b2811cbe096429bf9427df7418b0, type: 2}
 --- !u!1 &5774820918032191205
 GameObject:
   m_ObjectHideFlags: 0
@@ -65,6 +84,8 @@ MonoBehaviour:
   m_Id:
     m_Source: ProbeCameraHint
     m_HashValue: 511216951
+  m_IsPersistent: 0
+  m_StartDisabled: 0
 --- !u!114 &5703693516078522687
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -95,9 +116,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63a8cc9003b5504dbb86e6318d93ea8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Mode: 0
   Target: {fileID: 0}
   Height: 10
   Zoom: 1
+  FieldOfView: 30
   Properties: 7
 --- !u!1 &5774820918325110238
 GameObject:
@@ -108,9 +131,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5774820918325110237}
-  - component: {fileID: 2568443420038237299}
   - component: {fileID: 4257229457167983756}
   - component: {fileID: 5822417030316000798}
+  - component: {fileID: 754364023504761498}
   m_Layer: 0
   m_Name: ScannableProbe
   m_TagString: Untagged
@@ -136,17 +159,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!210 &2568443420038237299
-SortingGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5774820918325110238}
-  m_Enabled: 1
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: -10
 --- !u!114 &4257229457167983756
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -301,6 +313,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Recursive: 1
+  DestroyGameObject: 0
+--- !u!114 &754364023504761498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5774820918325110238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 0
   DestroyGameObject: 0
 --- !u!1 &9177811768536949869
 GameObject:
@@ -5031,7 +5057,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -10
   m_RenderMode: 0
   m_SortMode: 0
   m_MinParticleSize: 0
@@ -5129,6 +5155,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 34c11245d52814dfa9c7e75edd068f8f, type: 3}
+--- !u!1 &5087539393611933303 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 34c11245d52814dfa9c7e75edd068f8f,
+    type: 3}
+  m_PrefabInstance: {fileID: 5358153045027232550}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5607336348621733069 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 34c11245d52814dfa9c7e75edd068f8f,

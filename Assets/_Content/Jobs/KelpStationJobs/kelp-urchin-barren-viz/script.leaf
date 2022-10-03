@@ -5,7 +5,7 @@
 @trigger    JobStarted
 @cutscene
 
-{@drKelp}   Wonderful, Olivia! Now that you've got a Probe Decoder, we can make some progress at Site B. 
+{@drKelp}   Wonderful, Olivia! Now that you've got a {nameof ProbeHacker}, we can make some progress at Site B. 
 {@player}   Site B? Isn't that where Sam and I--
 {@drKelp}   Crashed that old sub? Don't worry, Sweetie. {nameof @guide} will be right there with you.
 {@player}   I'm not worried. But... Mom, Site B looked pretty empty. 
@@ -25,7 +25,6 @@ $call UnlockSite(RS-1B)
 @triggerPriority   High
 @once
 @cutscene
-$branch common.ringPhone
 
 {@player}It's so strange down here. 
 {@guide} Yes. Something is clearly off balance in this ecosystem.
@@ -122,7 +121,6 @@ $endif
 @when       scene:name == "Helm", JobTaskTop(visualSiteB)
 @once
 @cutscene
-$branch common.ringPhone
 
 {@player} Phew. We made it back! 
           Um... not that I was worried, or anything. 

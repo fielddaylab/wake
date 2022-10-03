@@ -11,7 +11,7 @@ using UnityEngine.UI;
 
 namespace Aqua.Scripting {
     [AddComponentMenu("Aqualab/Scripting/Script Audio Track Variants")]
-    public class ScriptAudioTrackVariants : ScriptComponent {
+    public class ScriptAudioTrackVariants : ScriptComponent, ISceneManifestElement {
         #region Types
 
         private enum Mode {
@@ -233,7 +233,7 @@ namespace Aqua.Scripting {
 
         #endregion // Handlers
 
-        [LeafMember("SetAudioLayer")]
+        [LeafMember("SetAudioLayer"), Preserve]
         public void SetLayerActive(StringHash32 id, bool active) {
             Layer layer = GetLayer(id);
             if (layer != null) {
@@ -243,5 +243,16 @@ namespace Aqua.Scripting {
                 }
             }
         }
+
+        #if UNITY_EDITOR
+
+        public void BuildManifest(SceneManifestBuilder builder) {
+            AudioEvent.BuildManifestFromEventString(m_BaseEventId, builder);
+            foreach(var layer in m_Layers) {
+                AudioEvent.BuildManifestFromEventString(layer.EventId, builder);
+            }
+        }
+
+        #endif // UNITY_EDITOR
     }
 }

@@ -6,6 +6,7 @@ using Aqua;
 using System.Collections;
 using BeauRoutine;
 using Leaf.Runtime;
+using UnityEngine.Scripting;
 
 namespace ProtoAqua.Observation
 {
@@ -44,7 +45,7 @@ namespace ProtoAqua.Observation
             }
         }
 
-        [LeafMember("Suppress")]
+        [LeafMember("Suppress"), Preserve]
         public void Suppress() {
             m_GiveRoutine.Stop();
         }

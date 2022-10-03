@@ -1,21 +1,36 @@
 var NativeWebClickLib = {
 
-    $Cache: {
+    $NWCCache: {
         /**
          * @type {Function}
          */
-        nativeCallback: null,
+        nativeClickCallback: null,
 
         /**
          * Invokes the native callback.
          * @param {MouseEvent} m 
          */
         InvokeNativeCallbackFromMouse: function(m) {
-            if (m.button == 0 && Cache.nativeCallback) {
+            if (m.button == 0 && NWCCache.nativeClickCallback) {
                 var element = m.currentTarget;
                 var x = m.offsetX / element.clientWidth;
                 var y = 1 - (m.offsetY / element.clientHeight);
-                dynCall_vff(Cache.nativeCallback, x, y);
+                dynCall_vff(NWCCache.nativeClickCallback, x, y);
+            }
+        },
+
+        /**
+         * Invokes the native callback.
+         * @param {TouchEvent} m 
+         */
+         InvokeNativeCallbackFromTouch: function(m) {
+            if (NWCCache.nativeClickCallback) {
+                /** @type {HTMLCanvasElement} */
+                var element = m.currentTarget;
+                var touch = m.targetTouches[0];
+                var x = (touch.clientX - element.clientLeft) / element.clientWidth;
+                var y = 1 - ((touch.clientY - element.clientTop) / element.clientHeight);
+                dynCall_vff(NWCCache.nativeClickCallback, x, y);
             }
         }
     },
@@ -25,11 +40,12 @@ var NativeWebClickLib = {
      * @param {Function} callback 
      */
     NativeWebClick_Register: function(callback) {
-        Cache.nativeCallback = callback;
+        NWCCache.nativeClickCallback = callback;
 
         var canvasElement = document.getElementById("#canvas");
         if (canvasElement) {
-            canvasElement.addEventListener("mousedown", Cache.InvokeNativeCallbackFromMouse);
+            canvasElement.addEventListener("mousedown", NWCCache.InvokeNativeCallbackFromMouse);
+            canvasElement.addEventListener("touchstart", NWCCache.InvokeNativeCallbackFromTouch);
         }
     },
 
@@ -37,15 +53,16 @@ var NativeWebClickLib = {
      * Deregisters the native callback.
      */
     NativeWebClick_Deregister: function() {
-        Cache.nativeCallback = null;
+        NWCCache.nativeClickCallback = null;
 
         var canvasElement = document.getElementById("#canvas");
         if (canvasElement) {
-            canvasElement.removeEventListener("mousedown", Cache.InvokeNativeCallbackFromMouse);
+            canvasElement.removeEventListener("mousedown", NWCCache.InvokeNativeCallbackFromMouse);
+            canvasElement.removeEventListener("touchstart", NWCCache.InvokeNativeCallbackFromTouch);
         }
     }
 
 };
 
-autoAddDeps(NativeWebClickLib, '$Cache');
+autoAddDeps(NativeWebClickLib, '$NWCCache');
 mergeInto(LibraryManager.library, NativeWebClickLib);

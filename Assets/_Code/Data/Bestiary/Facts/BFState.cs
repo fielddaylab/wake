@@ -86,7 +86,7 @@ namespace Aqua
 
         int IBaked.Order { get { return -9; } }
 
-        bool IBaked.Bake(BakeFlags flags)
+        bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
             if (HasStressed && HasDeath)
             {

@@ -6,6 +6,7 @@ namespace Aqua
     {
         static public readonly StringHash32 RequestPartnerHelp = "RequestPartnerHelp";
         
+        static public readonly StringHash32 TravelingToStation = "TravelingToStation";
         static public readonly StringHash32 PlayerDream = "PlayerDream";
 
         static public readonly StringHash32 InteractObject = "InteractObject";

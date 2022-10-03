@@ -22,7 +22,6 @@ namespace Aqua.StationMap
 
         [Header("Components")]
         [SerializeField, Required] private Collider2D m_Collider = null;
-        [SerializeField, Required] private Collider2D m_DistantCollider = null;
 
         #endregion // Inspector
 

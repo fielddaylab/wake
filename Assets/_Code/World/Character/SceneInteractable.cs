@@ -5,6 +5,7 @@ using BeauRoutine;
 using BeauUtil;
 using Leaf.Runtime;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Aqua.Character {
     public class SceneInteractable : ScriptComponent {
@@ -200,7 +201,7 @@ namespace Aqua.Character {
             }
         }
 
-        [LeafMember("Lock")]
+        [LeafMember("Lock"), Preserve]
         public void Lock() {
             if (!m_LockOverride) {
                 m_LockOverride = true;
@@ -208,7 +209,7 @@ namespace Aqua.Character {
             }
         }
 
-        [LeafMember("Unlock")]
+        [LeafMember("Unlock"), Preserve]
         public void Unlock() {
             if (m_LockOverride) {
                 m_LockOverride = false;

@@ -306,7 +306,7 @@ namespace Aqua
 
         int IBaked.Order { get { return 0; } }
 
-        bool IBaked.Bake(BakeFlags flags)
+        bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
             if (m_CurrentDisplay) {
                 m_CurrentDisplay.Display(0);

@@ -116,11 +116,11 @@ $endif
 
 ::measurementTankSelectWater
 @trigger	ExperimentTankViewed
-@when		tankType == "Measurement", JobTaskCompleted(popProbe), JobTaskCompleted(chemHistory)
-@once 
+@when		tankType == "Measurement", JobTaskTop(sargGrowthRate)
 @cutscene
-{@guide} Start by figuring out the Sargassum reproduction rate. 
-{@guide} You need to match the conditions of Site R, so try selecting the of the Sargassum Covered Reef.
+@once 
+{@guide} We need to start by figuring out the Sargassum reproduction rate. 
+{@guide} You need to match the conditions of {m}Site R{/m}, so try selecting the water of {nameof RS-2R}.
 
 ::measurementTankSelectSpecies
 @trigger	ExperimentScreenViewed
@@ -180,7 +180,7 @@ $set    	jobs:coral-casting-shade.gotMeasurement = true
 
 :: helpNeedMeasurementsInTankRoom
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ExperimentV2", jobs:coral-casting-shade.gotMeasurement, !VisualModelStarted
+@when 		scene:name == "ExperimentV2", jobs:coral-casting-shade.gotMeasurement, !JobTaskTop(sargModel)
 @cutscene
 $if !HasFact(Sargassum.Reproduce)
 	{@guide}	Looks like you still need to try more experiments.
@@ -201,6 +201,12 @@ $else
 				{@guide}	Looks like you still need to try more experiments.
 				{@guide}	We'll need more information to build a model.
 				{@guide}	Try measuring the Staghorn Coral in a different Environment.
+			$else
+				$if !HasFact(StaghornCoral.Consume.Light)
+					{@guide}	Looks like you still need to try more experiments.
+					{@guide}	We'll need more information to build a model.
+					{@guide}	Try measuring the Staghorn Coral with the tank stabilizer turned off and auto-feeder on.
+				$endif
 			$endif
 		$endif
 	$endif
@@ -208,7 +214,7 @@ $endif
 
 :: helpNeedMeasurementsOutsideTankRoom
 @trigger    RequestPartnerHelp
-@when 		scene:name != "ExperimentV2", jobs:coral-casting-shade.gotMeasurement, !VisualModelStarted
+@when 		scene:name != "ExperimentV2", jobs:coral-casting-shade.gotMeasurement, !VisualModelStarted, !JobTaskTop(sargModel)
 @cutscene
 {@guide} You still need more information about how Sargassum and Staghorn Coral behave.
 {@guide} I suggest returning to the Experiment Lab.
@@ -226,7 +232,7 @@ $endif
 
 :: helpAllExperimentsDone
 @trigger    RequestPartnerHelp
-@when HasFact(Sargassum.Reproduce), HasFact(Sargassum.Consume.Light), HasFact(StaghornCoral.Reproduce.Stressed), HasFact(StaghornCoral.Reproduce)
+@when       JobTaskTop(sargModel)
 @cutscene
 {@guide}	Head over to the Modeling Lab.
 {@guide}	You need to build a descriptive model of how Sargassum affects Staghorn Coral.

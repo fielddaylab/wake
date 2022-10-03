@@ -66,7 +66,14 @@ namespace ProtoAqua.Observation {
             if (Script.IsPausedOrLoading)
                 return;
 
-            m_Listener.ProcessOccupants();
+            if (Frame.Interval(4)) {
+                m_Listener.ProcessOccupants();
+            }
+
+            // only update this every 8 frames
+            if (!Frame.Interval(8)) {
+                return;
+            }
 
             Vector3 gameplayPlanePos;
             Vector2 gameplayPlaneDist;
@@ -265,8 +272,6 @@ namespace ProtoAqua.Observation {
             effect.Transform.SetScale(0, Axis.XY);
             effect.Animation = Routine.Start(effect, PlayEffect(effect));
 
-            Services.Audio.PostEvent("ROV.Tagger.Tagged");
-
             int idx = IndexOf(inCritter.CritterId);
             TaggingManifest manifest = m_SceneManifest[idx];
             m_TagCounts[idx]++;
@@ -274,12 +279,14 @@ namespace ProtoAqua.Observation {
             DebugService.Log(LogMask.Observation, "[TaggingSystem] Tagged '{0}' {1}/{2}/{3}", manifest.Id, m_TagCounts[idx], manifest.Required, manifest.TotalInScene);
 
             if (m_TagCounts[idx] < manifest.Required) {
+                Services.Audio.PostEvent("ROV.Tagger.Tagged");
                 Services.UI.FindPanel<TaggingUI>().Populate(m_SceneManifest, m_TagCounts);
                 return true;
             }
 
             m_SiteData.TaggedCritters.Add(manifest.Id);
             m_SiteData.OnChanged();
+            Services.Audio.PostEvent("ROV.Tagger.Completed");
 
             Services.Events.Queue(GameEvents.SiteDataUpdated, m_SiteData.MapId);
             MarkAllAsTagged(manifest.Id);
@@ -297,14 +304,14 @@ namespace ProtoAqua.Observation {
                         Assets.Fact(population.Id),
                         Save.Bestiary.GetDiscoveredFlags(population.Id)
                     );
-                }, -5);
+                }, 5);
             } else {
                 Services.Script.QueueInvoke(() => {
                     Services.UI.Popup.DisplayWithClose(
                         "ERROR",
                         Loc.FormatFromString("Site '{0}' has no population data for critter id '{1}'", m_EnvironmentType.CommonName(), Assets.Bestiary(manifest.Id).CommonName())
                     );
-                }, -5);
+                }, 5);
             }
 
             return true;
@@ -397,7 +404,7 @@ namespace ProtoAqua.Observation {
             return defaultProportion;
         }
 
-        bool IBaked.Bake(ScriptableBake.BakeFlags flags) {
+        bool IBaked.Bake(ScriptableBake.BakeFlags flags, BakeContext context) {
             StringHash32 mapId = MapDB.LookupCurrentMap();
             if (!m_EnvironmentOverride.IsEmpty) {
                 mapId = m_EnvironmentOverride;

@@ -200,8 +200,12 @@ namespace ProtoAqua.Observation
             if (m_StunRoutine) {
                 status |= PlayerBodyStatus.Stunned;
             }
-            if (m_EngineRegionCount > 0 && (m_UpgradeMask & PassiveUpgradeMask.Engine) != 0) {
-                status |= PlayerBodyStatus.PowerEngineEngaged;
+            if (m_EngineRegionCount > 0) {
+                if ((m_UpgradeMask & PassiveUpgradeMask.Engine) != 0) {
+                    status |= PlayerBodyStatus.PowerEngineEngaged;
+                } else {
+                    status |= PlayerBodyStatus.DraggedByCurrent;
+                }
             }
             if (m_SlowRegionCount > 0) {
                 status |= PlayerBodyStatus.Slowed;

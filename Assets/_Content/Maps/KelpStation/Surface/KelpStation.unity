@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -271,6 +271,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 56217414}
+  - component: {fileID: 56217415}
   m_Layer: 0
   m_Name: TerrainColiders
   m_TagString: Untagged
@@ -303,6 +304,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &56217415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 56217413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 1
+  DestroyGameObject: 1
 --- !u!1001 &82282032
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6454,6 +6469,26 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: c8aa26dfa07884e95887db4dfdc56220, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e377540d2b28c9468224513992d108c, type: 3}
+--- !u!1 &491986615 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 2e377540d2b28c9468224513992d108c,
+    type: 3}
+  m_PrefabInstance: {fileID: 491986614}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &491986616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 491986615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 0
+  DestroyGameObject: 0
 --- !u!1 &509913988
 GameObject:
   m_ObjectHideFlags: 0
@@ -12888,6 +12923,26 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 659ac3d6a884f4fabb5851655772cd9c, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ca18221e734314272b38caca25d76a5e, type: 3}
+--- !u!1 &1316404185 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: ca18221e734314272b38caca25d76a5e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1316404184}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1316404186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1316404185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 1
+  DestroyGameObject: 1
 --- !u!1 &1381094344
 GameObject:
   m_ObjectHideFlags: 0
@@ -13046,7 +13101,6 @@ GameObject:
   - component: {fileID: 1430230155}
   - component: {fileID: 1430230158}
   - component: {fileID: 1430230157}
-  - component: {fileID: 1430230156}
   m_Layer: 0
   m_Name: 3D_Water (3)
   m_TagString: Untagged
@@ -13068,20 +13122,6 @@ Transform:
   m_Father: {fileID: 853195464}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!64 &1430230156
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1430230154}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &1430230157
 MeshRenderer:
   m_ObjectHideFlags: 0

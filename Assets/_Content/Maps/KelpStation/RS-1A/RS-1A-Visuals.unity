@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -11179,6 +11179,7 @@ Transform:
   - {fileID: 66749667}
   - {fileID: 154799818}
   - {fileID: 541191012}
+  - {fileID: 1973552022}
   - {fileID: 1043964346}
   - {fileID: 506351066}
   - {fileID: 1387224807}
@@ -11192,7 +11193,6 @@ Transform:
   - {fileID: 1462911231}
   - {fileID: 1969057660}
   - {fileID: 75988648}
-  - {fileID: 1973552022}
   - {fileID: 985515920}
   - {fileID: 1505238213}
   - {fileID: 2015134629}
@@ -23897,6 +23897,7 @@ MonoBehaviour:
   m_ColorGroup: {fileID: 0}
   m_Path: Textures/Observation/UnderwaterBG00.png
   m_Material: {fileID: 2100000, guid: c8b6641b5a3b33b458c8057d085962b8, type: 2}
+  m_Tessellation: 0
   m_Color:
     serializedVersion: 2
     rgba: 4294967295
@@ -28391,6 +28392,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1973552022}
+  - component: {fileID: 1973552023}
   m_Layer: 0
   m_Name: mussels
   m_TagString: Untagged
@@ -28409,12 +28411,26 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1095610961}
   - {fileID: 1162190131}
   - {fileID: 516761888}
+  - {fileID: 1095610961}
   m_Father: {fileID: 762288667}
-  m_RootOrder: 105
+  m_RootOrder: 92
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1973552023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1973552021}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 0
+  DestroyGameObject: 1
 --- !u!1 &1976868663
 GameObject:
   m_ObjectHideFlags: 0

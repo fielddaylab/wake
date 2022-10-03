@@ -37,19 +37,19 @@ namespace Aqua {
             get { return StateUtil.IsLoading || Services.Pause.IsPaused(); }
         }
 
-        [LeafMember("ScriptBlocking")]
+        [LeafMember("ScriptBlocking"), Preserve]
         static public bool ShouldBlock() {
             return !Services.Valid || Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.UI.IsLetterboxed() || StateUtil.IsLoading;
         }
 
-        [LeafMember("ScriptBlockingIgnoreLetterbox")]
+        [LeafMember("ScriptBlockingIgnoreLetterbox"), Preserve]
         static public bool ShouldBlockIgnoreLetterbox() {
             return Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || StateUtil.IsLoading;
         }
 
         [MethodImpl(256)]
-        static public void OnSceneLoad(Action action) {
-            Services.State.OnLoad(action);
+        static public void OnSceneLoad(Action action, int priority = 0) {
+            Services.State.OnLoad(action, priority);
         }
 
         static public PlayerBody CurrentPlayer {
@@ -294,8 +294,9 @@ namespace Aqua {
         [LeafMember, Preserve]
         static public bool IsPlayerOnShip() {
             StringHash32 currentMapId = MapDB.LookupCurrentMap();
-            return ((currentMapId == MapIds.Helm) || (currentMapId == MapIds.Modeling) || (currentMapId == MapIds.Experimentation) ||
-            (currentMapId == MapIds.JobBoard) || (currentMapId == MapIds.WorldMap)) || (currentMapId == MapIds.ModelingFoyer);
+            return ((currentMapId == MapIds.Helm) || (currentMapId == MapIds.Modeling) || (currentMapId == MapIds.Experimentation)
+            || (currentMapId == MapIds.WorldMap)) || (currentMapId == MapIds.ModelingFoyer)
+            || (currentMapId == MapIds.Cabin);
         }
 
         [LeafMember, Preserve]

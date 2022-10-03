@@ -131,21 +131,31 @@ $endif
 :: argue.intro
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(energyArgue)
+@boostScore 100
+@cutscene
+@once
+
+$call ArgueLoad(energyArgue)
+$branch .argue.hello
+
+:: argue.intro2
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(energyArgue)
 @cutscene
 
 $call ArgueLoad(energyArgue)
-	$branch .argue.hello
+$branch .argue.chooseEnergy
 
 :: argue.hello
 {@player}  How's Osa doing, Mom?
 {@drKelp}  Oh, don't worry, Sweetie. I'm sure she'll be okay.
 {@player}  That didn't answer my question, Mom--
 {@drKelp}  Let me worry about all that. I want to hear about your job! 
-{@drKelp}   According to your Food Web, what is the source of energy in the Forested Lagoon?
-{@drKelp}   What is the thing that is consumed, but doesn't consume anything else?
 $goto .argue.chooseEnergy
 
 :: argue.chooseEnergy
+{@drKelp}   According to your Food Web, what is the source of energy in the Forested Lagoon?
+{@drKelp}   What is the thing that is consumed, but doesn't consume anything else?
 $if ArgueAllFactsCorrect()
     $goto .argue.done
 $else

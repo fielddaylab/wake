@@ -33,7 +33,7 @@ $call       CoralMechanic->TeleportTo(mechanic-intro-pos)
 
 :: intro.prof
 @trigger    Talk
-@who        profCoral
+@who        *
 @boostScore 100000
 @once
 @cutscene
@@ -59,7 +59,9 @@ $call UnlockSite(RS-2S)
                 Let me know if you'd like to view the job board! 
 
 $set    world:coral.metScientist = true
-$call InteriorOpenJobBoard()
+$set    world:coral.metMechanic = true
+
+$branch .warpMechanicToDefault
 
 :: intro.mechanic
 @trigger    Talk
@@ -76,7 +78,7 @@ $if world:coral.mechanic.leftBeforeTalking
                         But, you know. They're the actual worst. 
                         So, I think I know the answer, but who's the owner of that {slow}magnificent{/slow} sub?
 $else    
-    {@coralMechanic}    Hey, O! Nice to see you again. 
+    {@coralMechanic}    Hey, O! Nice to see you again.
                         I usually forget people's names the first time... luckily, you're very memorable. 
                         So, I think I know the answer, but who's the owner of that {slow}magnificent{/slow} sub?
 $endif
@@ -105,28 +107,15 @@ $else
 $endif
 
 :: warpMechanicToDefault
+@entrypoint
 {hide-dialog} {fade-out black, 0.3, wait}
 $call CoralMechanic->TeleportTo("mechanic-default-pos")
 {wait 0.3}
 {fade-in 0.3, wait}
 
-:: intro.mechanic.bigshot
-{@player}   Haha, something like that?
-$if AnyJobsCompleted() >= 8
-    I've been going from place to place to help out.  Really {slow}immersing{/slow} myself in the science.
-    {@coralMechanic}    I knew it I knew it I knew it!
-    {@player}           Aw come on, it's not |that| impressive...
-    {@coralMechanic}    Nope! No being humble on my watch, O!
-$else
-    Just getting my start honestly.
-    {@coralMechanic}    Well. Color me impressed regardless!
-                        I expect big things from you, O!
-    $set    world:coral.mechanic.bigShotHighExpectations = true
-$endif
-$set    world:coral.mechanic.toldBigShot = true
-
-:: intro.mechanic.notbigshot
-{@player}   Ha, |not exactly...
-{@coralMechanic}    I'll be shocked if you don't make it there someday, O.
-                    That sub just screams potential.
-$set    world:coral.mechanic.toldBigShot = false
+:: warpMechanicToResearcher
+@entrypoint
+{hide-dialog} {fade-out black, 0.3, wait}
+$call CoralMechanic->TeleportTo("tio-intro-pose")
+{wait 0.3}
+{fade-in 0.3, wait}

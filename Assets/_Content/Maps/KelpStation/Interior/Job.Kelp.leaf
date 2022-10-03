@@ -37,11 +37,23 @@ $if !JobInProgress(kelp-shop-welcome)
     $choice .action.openJobBoard; I'd like to {random see|look at} the {h}Job Board{/h}.
     $choice .action.cancel.currentJob; Never mind. Thanks, Mom.
 $else
-    {@drKelp}  One more thing, Mija! I'm having {nameof @guide} update your ship's map.  
-               You can access your map from the Helm of your ship.  
-    // $choice .action.openJobBoard; I'd like to {random see|look at} the {h}Job Board{/h}.
-    // $choice .action.cancel.currentJob; Never mind. Thanks, Mom.
+    $choice .action.openJobBoard; I'd like to {random see|look at} the {h}Job Board{/h}.
+    $choice .action.cancel.currentJob; Never mind. Thanks, Mom.
 $endif
+
+:: JobHandlerShopStart
+@trigger    Talk 
+@who        $JobGiverId 
+@when       JobIsAtCurrentStation(), JobInProgress(kelp-shop-welcome)
+@cutscene
+@once
+$branch interior.kelpStation.warpMechanicToResearcher
+{@drKelp}  One more thing, Mija! I'm having {nameof @guide} update your ship's map.  
+            You can access your map from the Helm of your ship.  
+{@player}   Thanks mom!
+{@kelpMechanic} Before you go Mijita, we should get your sub upgraded.
+{@drKelp}   Thanks for reminding me Enrique. | Why don't you stop by before you go sweetie?
+$branch interior.kelpStation.warpMechanicToDefault
 
 :: action.cancel
 @cutscene

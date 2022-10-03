@@ -135,6 +135,10 @@ MonoBehaviour:
       FactId:
         m_HashValue: 1119966444
     - TargetId:
+        m_HashValue: 856578931
+      FactId:
+        m_HashValue: 1247206016
+    - TargetId:
         m_HashValue: 304378836
       FactId:
         m_HashValue: 1674262179
@@ -152,6 +156,10 @@ MonoBehaviour:
       FactId:
         m_HashValue: 1119966444
     - TargetId:
+        m_HashValue: 856578931
+      FactId:
+        m_HashValue: 1247206016
+    - TargetId:
         m_HashValue: 304378836
       FactId:
         m_HashValue: 1674262179
@@ -162,8 +170,8 @@ MonoBehaviour:
     ParasiteTargets: []
     SpawnCount: 10
     SpawnMax: 30
-    AliveReproduceRate: 0
-    StressedReproduceRate: 0
+    AliveReproduceRate: 0.75
+    StressedReproduceRate: 0.36
     IsPlant: 0
     IsLivingOrganism: 1
     IsDistributed: 0
@@ -458,8 +466,8 @@ MonoBehaviour:
     ParasiteTargets: []
     SpawnCount: 10
     SpawnMax: 30
-    AliveReproduceRate: 0.74
-    StressedReproduceRate: 0.6
+    AliveReproduceRate: 1
+    StressedReproduceRate: 0.5
     IsPlant: 0
     IsLivingOrganism: 1
     IsDistributed: 0
@@ -1714,8 +1722,8 @@ MonoBehaviour:
     ParasiteTargets: []
     SpawnCount: 10
     SpawnMax: 30
-    AliveReproduceRate: 1
-    StressedReproduceRate: 0.5
+    AliveReproduceRate: 0.71
+    StressedReproduceRate: 0.35
     IsPlant: 0
     IsLivingOrganism: 1
     IsDistributed: 0
@@ -2449,6 +2457,70 @@ MonoBehaviour:
       y: -1.9635882
       width: 1.522625
       height: 3.5367131
+  - Id:
+      m_HashValue: 11869649
+    Type: {fileID: 11400000, guid: 7fc35fead45c9784ab2be7585d97a727, type: 2}
+    PrefabName: OceanDandelion
+    SpawnAmountOverride: -1
+    Spawning:
+      SpawnLocation: 0
+      SpawnAnimation: 0
+      AvoidTankSidesRadius: 0.2
+      AvoidTankTopBottomRadius: 0
+    Movement:
+      MoveType: 1
+      MovementIdleDistance: 1
+      MovementSpeed: 1
+      MovementCurve: 1
+      MovementInterval: 1.5
+      MovementIntervalRandom: 1
+    Eating:
+      EatType: 0
+      MovementMultiplier: 1
+    Stress:
+      MovementSpeedMultiplier: 0.8
+      MovementIntervalMultiplier: 0.9
+      AmbientAnimationSpeedMultiplier: 1
+    StateEvaluator:
+      Temperature:
+        AliveMin: 10
+        AliveMax: 40
+        StressedMin: -5
+        StressedMax: 55
+      Light:
+        AliveMin: 0
+        AliveMax: 25
+        StressedMin: -Infinity
+        StressedMax: Infinity
+      PH:
+        AliveMin: 3.5
+        AliveMax: 8.3
+        StressedMin: 2
+        StressedMax: 8.8
+    AliveEatTargets: []
+    StressedEatTargets: []
+    ParasiteTargets: []
+    SpawnCount: 10
+    SpawnMax: 30
+    AliveReproduceRate: 0
+    StressedReproduceRate: 0
+    IsPlant: 0
+    IsLivingOrganism: 1
+    IsDistributed: 0
+    TargetLimit: 1
+    FreeOnEaten: 1
+    EatOffsetRange:
+      serializedVersion: 2
+      x: -0.33601487
+      y: -0.63680196
+      width: 0.83879995
+      height: 1.1736
+    LocalBoundsRect:
+      serializedVersion: 2
+      x: -0.38261488
+      y: -0.702002
+      width: 0.9319999
+      height: 1.304
   - Id:
       m_HashValue: 1161043395
     Type: {fileID: 11400000, guid: 1c311155169539e4e953923e74855abb, type: 2}
@@ -3550,8 +3622,8 @@ MonoBehaviour:
     ParasiteTargets: []
     SpawnCount: 3
     SpawnMax: 9
-    AliveReproduceRate: 1
-    StressedReproduceRate: 0.5
+    AliveReproduceRate: 0.6
+    StressedReproduceRate: 0.15
     IsPlant: 1
     IsLivingOrganism: 1
     IsDistributed: 0
@@ -3686,8 +3758,8 @@ MonoBehaviour:
     ParasiteTargets: []
     SpawnCount: 20
     SpawnMax: 20
-    AliveReproduceRate: 1
-    StressedReproduceRate: 0.5
+    AliveReproduceRate: 0.75
+    StressedReproduceRate: 0.4
     IsPlant: 0
     IsLivingOrganism: 1
     IsDistributed: 0

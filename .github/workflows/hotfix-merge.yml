@@ -1,0 +1,18 @@
+name: Merge hotfix branch
+on:
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+jobs:
+  merge:
+    name: Merge hotfix to staging
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Merge hotfix into staging
+        uses: devmasx/merge-branch@master
+        with:
+          type: now
+          from_branch: hotfix
+          target_branch: staging
+          github_token: ${{ github.token }}

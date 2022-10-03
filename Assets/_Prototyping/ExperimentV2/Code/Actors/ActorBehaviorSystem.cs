@@ -777,7 +777,7 @@ namespace ProtoAqua.ExperimentV2 {
 
         int IBaked.Order { get { return 0; } }
 
-        bool IBaked.Bake(BakeFlags flags) {
+        bool IBaked.Bake(BakeFlags flags, BakeContext context) {
             m_Tank = GetComponentInParent<SelectableTank>();
             m_Allocator = FindObjectOfType<ActorAllocator>();
             return true;

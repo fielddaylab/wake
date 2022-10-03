@@ -50,12 +50,12 @@ namespace Aqua.Scripting
             }
         }
 
-        [LeafMember("IsDestroyed")]
+        [LeafMember("IsDestroyed"), Preserve]
         public bool IsDestroyed() {
             return m_CachedDestroyed;
         }
 
-        [LeafMember("Destroy")]
+        [LeafMember("Destroy"), Preserve]
         public void TriggerDestroy() {
             if (m_CachedDestroyed) {
                 return;
@@ -96,7 +96,7 @@ namespace Aqua.Scripting
 
         int IBaked.Order { get { return 0; } }
 
-        bool IBaked.Bake(BakeFlags flags) {
+        bool IBaked.Bake(BakeFlags flags, BakeContext context) {
             m_GroupId = GetComponent<ScriptGroupId>();
             if (m_Persistent) {
                 return Ref.Replace(ref m_VarId, ScriptObject.MapPersistenceId(GetComponent<ScriptObject>(), "destroyed"));

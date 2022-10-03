@@ -1,0 +1,190 @@
+# basePath job.arctic-endangered-seals
+
+// INTRO
+:: start
+@trigger    JobStarted
+@cutscene
+{@arcticSci}  I did a bit of digging and found these experimental results. They should help with your model.
+$call GiveFact(Clione.Reproduce)
+$call GiveFact(Clione.Reproduce.Stressed)
+$call GiveFact(GlacialAmphipod.Reproduce)
+$call GiveFact(GlacialAmphipod.Reproduce.Stressed)
+$call GiveFact(IceAlgae.Reproduce)
+$call GiveFact(IceAlgae.Reproduce.Stressed)
+$call GiveFact(ArcticCopepod.Reproduce)
+$call GiveFact(ArcticCopepod.Reproduce.Stressed)
+{@arcticSci}    In addition, we deployed a population history probe after you discovered {fullnameof RS-4Y}.
+                The data is limited because it's only been out a short while, but every bit counts.
+
+:: afterModelSync
+@trigger    JobTaskCompleted
+@when       taskId == "modelSync"
+@cutscene
+{@guide}     Now that we've established a baseline of what has happened. Now let's project our findings into the future with a Predict Model.
+
+:: afterModelPredict
+@trigger    JobTaskCompleted
+@when       taskId == "modelPredict"
+@cutscene
+{@guide}    All right, back to {nameof arcticSci}!
+
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchScanProbe
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanProbe)
+@boostScore -5
+@cutscene
+{@guide}    There's a probe at {fullnameof RS-4Y}. We need to scan it.
+
+:: catchModelSync
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(modelSync)
+@boostScore -5
+@cutscene
+{@guide}    Create a Describe Model of the {nameof RS-4Y} in the Modeling Lab.
+
+:: catchModelPredict
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(modelPredict)
+@boostScore -5
+@cutscene
+{@guide}    Create a Predict Model of the {nameof RS-4Y} in the Modeling Lab.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@guide}    Head back to the station to let {nameof arcticSci} what you discovered!
+
+
+// ARGUMENTATION
+
+:: argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(sealArgue)
+@cutscene
+$call ArgueLoad(sealArgue)
+$branch .argue.initialClaim
+
+:: argue.initialClaim
+{@arcticSci}    How are the {nameof RibbonSeal} futures looking?
+$choice .argue.danger; Seals are in danger
+$choice .argue.fine; Seals will be fine
+$choice .argue.giveUp; Let me get back to you.
+
+// Choosing Claim
+
+:: argue.danger
+{@arcticSci}    How do you know that?
+$if ArgueSetClaim(Claim, jobs.arctic-endangered-seals.argue.claimLabelDanger) 
+		$call ArgueFactSlot(Y_IceCrevice.Model.EndangeredSealsPredict)
+$endif
+$branch .argue.showClaimDanger
+
+:: argue.fine
+{@arcticSci}    How do you know the seal populations will be fine?
+$choice .argue.increase; Their populations will go up.
+$choice .argue.stable; Their populations will be stable.
+$choice .argue.giveUp; On second thought, I need a little more time.
+
+:: argue.increase
+{@arcticSci}    Does your model show that the populations will increase?
+$if ArgueSetClaim(Claim, jobs.arctic-endangered-seals.argue.claimLabelIncrease) 
+		$call ArgueFactSlot(Y_IceCrevice.Model.EndangeredSealsPredict)
+$endif
+$branch .argue.showClaimIncrease
+
+:: argue.stable
+{@arcticSci}    Does your model show that the populations will remain stable?
+$if ArgueSetClaim(Claim, jobs.arctic-endangered-seals.argue.claimLabelStable) 
+		$call ArgueFactSlot(Y_IceCrevice.Model.EndangeredSealsPredict)
+$endif
+$branch .argue.showClaimStable
+
+// Danger
+
+:: argue.showClaimDanger
+$call ArgueDisplayClaim()
+$choice #argueFact; Present facts from AQOS
+    $answer Y_IceCrevice.Model.EndangeredSealsPredict, .argue.completeDanger
+    $answer *, .argue.unrelatedDanger
+$choice .argue.giveUpArg; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedDanger
+$call ArgueRejectIncorrect()
+{@arcticSci}    That doesn't support your data. Do you have a prediction model?
+$goto .argue.showClaimDanger
+
+:: argue.completeDanger
+{@arcticSci}   Hmm. I'm not seeing anything in this model that poses a threat to the seals.
+                Want to revisit your claim?
+$call ArgueClearFacts()
+$call ArgueCancelClaim()
+$goto .argue.initialClaim
+
+// Stable
+
+:: argue.showClaimStable
+$call ArgueDisplayClaim()
+$choice #argueFact; Present facts from AQOS
+    $answer Y_IceCrevice.Model.EndangeredSealsPredict, .argue.completeStable
+    $answer *, .argue.unrelatedStable
+$choice .argue.giveUpArg; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedStable
+$if ArgueIsFactSubmitted(Y_IceCrevice.Model.EndangeredSealsDescribe)
+    {@arcticSci}   I need to see the future model, not what's already happened.
+                    Do you have a prediction model?
+    $branch .argue.showClaimStable
+$else
+    $call ArgueRejectIncorrect()
+    {@arcticSci}   That doesn't support your data. Do you have a prediction model?
+    $branch .argue.showClaimStable
+$endif
+
+:: argue.completeStable
+{@arcticSci}   Hmm. It looks like your model isn't agreeing with you.
+$call ArgueClearFacts()
+$call ArgueCancelClaim()
+$branch .argue.initialClaim
+
+// Increase
+
+:: argue.showClaimIncrease
+$call ArgueDisplayClaim()
+$choice #argueFact; Present facts from AQOS
+    $answer Y_IceCrevice.Model.EndangeredSealsPredict, .argue.completeIncrease
+    $answer *, .argue.unrelatedIncrease
+$choice .argue.giveUpArg; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedIncrease
+$if ArgueIsFactSubmitted(Y_IceCrevice.Model.EndangeredSealsDescribe)
+    {@arcticSci}   I need to see the future model, not what's already happened.
+                    Do you have a prediction model?
+    $branch .argue.showClaimIncrease
+$else
+    $call ArgueRejectIncorrect()
+    {@arcticSci}    That doesn't support your data. Do you have a prediction model?
+    $branch .argue.showClaimIncrease
+$endif
+
+// END
+
+:: argue.giveUpArg
+$call ArgueCancelClaim()
+$branch .argue.giveUp
+
+:: argue.giveUp
+{@arcticSci}    Perfectly understandable. These things take time. 
+                Just let me know when you're ready. 
+
+:: argue.completeIncrease
+$call ArgueComplete()
+{@arcticSci}   Brilliant! They are just having a party in that ice!
+$call CompleteJob()

@@ -38,7 +38,7 @@ namespace Aqua.StationInterior {
 
         int IBaked.Order => 0;
 
-        bool IBaked.Bake(BakeFlags flags) {
+        bool IBaked.Bake(BakeFlags flags, BakeContext context) {
             IntroParticles = GameObject.Find("WaterRings")?.GetComponentsInChildren<ParticleSystem>();
             CraneAnimator = GameObject.Find("StationInterior_Crane")?.GetComponent<Animator>();
             if ((flags & BakeFlags.IsBuild) == 0) {

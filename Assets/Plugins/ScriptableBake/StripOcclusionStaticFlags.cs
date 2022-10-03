@@ -24,7 +24,7 @@ namespace ScriptableBake {
             get { return Order; }
         }
 
-        bool IBaked.Bake(BakeFlags flags) {
+        bool IBaked.Bake(BakeFlags flags, BakeContext context) {
             Bake.RemoveStaticFlags(gameObject, UnityEditor.StaticEditorFlags.OccludeeStatic | UnityEditor.StaticEditorFlags.OccluderStatic, Recursive);
             Bake.Destroy(DestroyGameObject ? (UnityEngine.Object) gameObject : this);
             return true;

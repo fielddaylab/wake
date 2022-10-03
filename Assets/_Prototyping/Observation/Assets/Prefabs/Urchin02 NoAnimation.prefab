@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3518950569487685503}
+  - component: {fileID: 6993953526253072759}
   m_Layer: 0
   m_Name: Urchin02 NoAnimation
   m_TagString: Untagged
@@ -28,10 +29,24 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1596533370258184347}
-  - {fileID: 6007113220605356698}
+  - {fileID: 982329637839962973}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!114 &6993953526253072759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 472468113551402348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 0
+  DestroyGameObject: 1
 --- !u!1 &6583981412884439773
 GameObject:
   m_ObjectHideFlags: 0
@@ -43,6 +58,7 @@ GameObject:
   - component: {fileID: 1596533370258184347}
   - component: {fileID: 1528462811649895973}
   - component: {fileID: 7674787141274423541}
+  - component: {fileID: 8331580196864165660}
   m_Layer: 0
   m_Name: Urchin Art
   m_TagString: Untagged
@@ -71,7 +87,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6583981412884439773}
-  m_Mesh: {fileID: 342070715681824705, guid: 74d571ccbdb5045f090d50c029d08c22, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 5c36e9cfe53c60e43b7736f18b83ad7c, type: 2}
 --- !u!23 &7674787141274423541
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -111,13 +127,37 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!1001 &7449229168225326908
+--- !u!114 &8331580196864165660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6583981412884439773}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22f85277a06bdb84d9dfd98fb340ef83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LowDistance: 40
+  LowSwap:
+    Mesh: {fileID: 0}
+    Material: {fileID: 0}
+  FogSwap:
+    Mesh: {fileID: 4300000, guid: d5011c490255ba141b7fde1b02184409, type: 2}
+    Material: {fileID: 2100000, guid: e994b2811cbe096429bf9427df7418b0, type: 2}
+--- !u!1001 &4151360398160477947
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 3518950569487685503}
     m_Modifications:
+    - target: {fileID: 2093335033074129574, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: m_Radius
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 3219354949484214776, guid: d43f84959769055489a36095d9d2631d,
         type: 3}
       propertyPath: CritterId.m_Hash
@@ -128,6 +168,11 @@ PrefabInstance:
       propertyPath: CritterId.m_Source
       value: Urchin
       objectReference: {fileID: 0}
+    - target: {fileID: 3219354949484214776, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: CritterId.m_HashValue
+      value: 1973276590
+      objectReference: {fileID: 0}
     - target: {fileID: 3764296600150654372, guid: d43f84959769055489a36095d9d2631d,
         type: 3}
       propertyPath: ScanId.m_Hash
@@ -137,6 +182,11 @@ PrefabInstance:
         type: 3}
       propertyPath: ScanId.m_Source
       value: bestiary.urchin
+      objectReference: {fileID: 0}
+    - target: {fileID: 3764296600150654372, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: ScanId.m_HashValue
+      value: 1681199945
       objectReference: {fileID: 0}
     - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
         type: 3}
@@ -151,12 +201,12 @@ PrefabInstance:
     - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0
+      value: 0.252
       objectReference: {fileID: 0}
     - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.242
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
         type: 3}
@@ -166,17 +216,17 @@ PrefabInstance:
     - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
         type: 3}
@@ -200,9 +250,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d43f84959769055489a36095d9d2631d, type: 3}
---- !u!4 &6007113220605356698 stripped
+--- !u!4 &982329637839962973 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
     type: 3}
-  m_PrefabInstance: {fileID: 7449229168225326908}
+  m_PrefabInstance: {fileID: 4151360398160477947}
   m_PrefabAsset: {fileID: 0}

@@ -62,12 +62,16 @@ namespace Aqua.Modeling {
             m_ExportButton.onClick.AddListener(OnExportClicked);
             m_InspectRegion.onClick.AddListener(OnInspectClicked);
 
-            m_ImportFader.SetActive(false);
-            m_ImportGroup.SetActive(false);
-
             Services.Events.Register(GameEvents.BestiaryUpdated, OnShouldRefreshButtons, this)
                 .Register(GameEvents.SiteDataUpdated, OnShouldRefreshButtons, this);
             Services.Events.Dispatch(ModelingConsts.Event_Begin_Model);
+        }
+
+        protected override void Start() {
+            base.Start();
+
+            m_ImportFader.SetActive(false);
+            m_ImportGroup.SetActive(false);
         }
 
         private void OnDestroy() {

@@ -7,7 +7,7 @@ using System.Collections;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
-using NativeWebClick;
+using NativeWebUtils;
 using UnityEngine;
 using System.Runtime.InteropServices;
 using TMPro;
@@ -44,6 +44,7 @@ namespace Aqua {
 
         private void Awake() {
             NativeClick.OnMouseDown += OnNativeMouseDown;
+            Services.Assets.PreloadGroup("Scene/Title");
         }
 
         private void OnDestroy() {
@@ -105,6 +106,10 @@ namespace Aqua {
         }
 
         private IEnumerator SceneLoadReady() {
+            while(!Services.Assets.PreloadGroupIsPrimaryLoaded("Scene/Title")) {
+                yield return 0.1f;
+            }
+
             m_ReadyPhase = ReadyPhase.AudioClick;
             Routine.Start(this, SwapToPrompt());
 
@@ -119,7 +124,7 @@ namespace Aqua {
             var fader = Services.UI.WorldFaders.AllocFader();
             Services.State.OnLoad(() => {
                 fader.Dispose();
-            });
+            }, 0);
             yield return fader.Object.Show(Color.black, 0.3f);
 
             if (BootAudio != null) {

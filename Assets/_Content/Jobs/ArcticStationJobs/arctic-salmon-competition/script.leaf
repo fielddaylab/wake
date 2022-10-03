@@ -48,13 +48,12 @@ $call GiveFact(ChinookSalmon.Reproduce.Stressed)
 
 :: catchModelFish
 @trigger	RequestPartnerHelp
-@when		JobTaskTop(modelFish), scene:name != "Modeling"
+@when		JobTaskTop(modelFish)
 @boostScore -5
 @cutscene
-
 {@player}  Okay, V. What's next? 
-$if scene:name != "ModelingFoyer"
-{@guide}    I would suggest heading to the {m}Modeling Lab{/m}.
+$if scene:name != "ModelingFoyer", scene:name != "Modeling"
+    {@guide}    I would suggest heading to the {m}Modeling Lab{/m}.
 $endif
 {@guide}    We need to construct a {h}Visual Model{/h} and a {h}Sync Model{/h}!
 
@@ -77,9 +76,12 @@ $if ArgueIsComplete(competitionArgue1)
 $else
     $call ArgueLoad(competitionArgue1)
     {@profArctic}  Okay, Ollie, hope you've got an answer for me, because this model is driving me up the wall.
-                   Did you discover an ecosystem imbalance that could've affected our model?
     $branch .argue.chooseClaim
 $endif
+
+:: argue.mainQuestion
+{@profArctic}   Did you discover anything in the ecosystem that could've affected our model?
+$branch .argue.chooseClaim
 
 :: argue.chooseClaim
 $choice .argue.noImpact; The Cod and Salmon are balanced
@@ -103,6 +105,9 @@ $choose branch
 :: argue.unrelatedCod
 {@profArctic}  Sorry, Ollie, but this isn't exactly helpful.  
 $call ArgueClearFacts()
+$call ArgueCancelClaim()
+$call ArgueHideClaim()
+$branch .argue.mainQuestion
 
 // Neither branch
 
@@ -140,7 +145,7 @@ $call ArgueCancelClaim()
 $goto .argue.modelQuery
 
 :: argue.modelQuery
-{@profArctic}  Did your information about the Cod improve our model?
+{@profArctic}  So your information about the Cod improved our model? Can I see the updated version?
 $call ArgueLoad(competitionArgue2)
 $if ArgueSetClaim(Claim2, jobs.arctic-salmon-competition.argue.claimLabelImproved)
     $call ArgueFactSlot(Z_OpenOcean.SalmonCompetition.Model.Sync)
@@ -171,4 +176,6 @@ $branch .argue.chooseFactsModel
 // Shared
 
 :: argue.notSure
+$call ArgueCancelClaim()
+$call ArgueHideClaim()
 {@profArctic}   No worries, Ollie. Let me know when you're ready.  

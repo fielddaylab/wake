@@ -102,7 +102,9 @@ namespace ProtoAqua.Observation {
             if (Script.IsPausedOrLoading)
                 return;
 
-            m_Listener.ProcessOccupants();
+            if (Frame.Interval(4)) {
+                m_Listener.ProcessOccupants();
+            }
 
             ScannableRegion region;
             for (int i = m_RegionsInRange.Count - 1; i >= 0; i--) {

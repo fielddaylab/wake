@@ -56,6 +56,7 @@ namespace Aqua.Profile {
 
         static public void InitializeIdPatcher(TextAsset asset) {
             StringSlice file = asset.text;
+            s_RenameSet.Clear();
             // TODO: handle case of rename [a -> b] and [b -> c] to only emit [a -> c]
             foreach(var line in file.EnumeratedSplit(StringUtils.DefaultNewLineChars, System.StringSplitOptions.RemoveEmptyEntries)) {
                 TagData tag = TagData.Parse(line, TagStringParser.CurlyBraceDelimiters);

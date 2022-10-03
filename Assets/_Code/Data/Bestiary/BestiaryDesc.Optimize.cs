@@ -18,7 +18,7 @@ namespace Aqua
 
         int IBaked.Order { get { return (int) m_Type; } }
 
-        bool IBaked.Bake(BakeFlags flags)
+        bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
             FindAllFacts();
 
@@ -177,6 +177,10 @@ namespace Aqua
         void IEditorOnlyData.ClearEditorOnlyData()
         {
             m_Facts = null;
+
+            ValidationUtils.StripDebugInfo(ref m_CommonNameId);
+            ValidationUtils.StripDebugInfo(ref m_PluralCommonNameId);
+            ValidationUtils.StripDebugInfo(ref m_DescriptionId);
         }
 
         #endif // UNITY_EDITOR

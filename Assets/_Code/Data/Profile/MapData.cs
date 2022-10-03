@@ -69,13 +69,13 @@ namespace Aqua.Profile
 
         public bool IsStationUnlocked(StringHash32 inStationId)
         {
-            Assert.True(Services.Assets.Map.HasId(inStationId), "Unknown station id '{0}'", inStationId);
+            Assert.True(Services.Assets.Map.HasId(inStationId), "Unknown station id '{0}'", inStationId.ToDebugString());
             return m_UnlockedStationIds.Contains(inStationId);
         }
 
         public bool UnlockStation(StringHash32 inStationId)
         {
-            Assert.True(Services.Assets.Map.HasId(inStationId), "Unknown station id '{0}'", inStationId);
+            Assert.True(Services.Assets.Map.HasId(inStationId), "Unknown station id '{0}'", inStationId.ToDebugString());
             if (m_UnlockedStationIds.Add(inStationId))
             {
                 m_HasChanges = true;
@@ -87,7 +87,7 @@ namespace Aqua.Profile
 
         public bool LockStation(StringHash32 inStationId)
         {
-            Assert.True(Services.Assets.Map.HasId(inStationId), "Unknown station id '{0}'", inStationId);
+            Assert.True(Services.Assets.Map.HasId(inStationId), "Unknown station id '{0}'", inStationId.ToDebugString());
             if (m_UnlockedStationIds.Remove(inStationId))
             {
                 m_HasChanges = true;
@@ -103,13 +103,13 @@ namespace Aqua.Profile
 
          public bool IsSiteUnlocked(StringHash32 inSiteId)
         {
-            Assert.True(Services.Assets.Map.HasId(inSiteId), "Unknown site id '{0}'", inSiteId);
+            Assert.True(Services.Assets.Map.HasId(inSiteId), "Unknown site id '{0}'", inSiteId.ToDebugString());
             return m_UnlockedSiteIds.Contains(inSiteId);
         }
 
         public bool UnlockSite(StringHash32 inSiteId)
         {
-            Assert.True(Services.Assets.Map.HasId(inSiteId), "Unknown site id '{0}'", inSiteId);
+            Assert.True(Services.Assets.Map.HasId(inSiteId), "Unknown site id '{0}'", inSiteId.ToDebugString());
             if (m_UnlockedSiteIds.Add(inSiteId))
             {
                 m_HasChanges = true;
@@ -121,7 +121,7 @@ namespace Aqua.Profile
 
         public bool LockSite(StringHash32 inSiteId)
         {
-            Assert.True(Services.Assets.Map.HasId(inSiteId), "Unknown site id '{0}'", inSiteId);
+            Assert.True(Services.Assets.Map.HasId(inSiteId), "Unknown site id '{0}'", inSiteId.ToDebugString());
             if (m_UnlockedSiteIds.Remove(inSiteId))
             {
                 m_HasChanges = true;

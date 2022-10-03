@@ -50,11 +50,11 @@ namespace Aqua {
 
             if (fact.OnlyWhenStressed)
             {
-                details.Description = Loc.Format(ProduceSentenceStressed, inFact.Parent.CommonName(), BestiaryUtils.FormatProperty(fact.Amount, fact.Property), BestiaryUtils.Property(fact.Property).LabelId());
+                details.Description = Loc.Format(ProduceSentenceStressed, inFact.Parent.CommonName(), BestiaryUtils.FormatPropertyAdjust(fact.Amount, fact.Property), BestiaryUtils.Property(fact.Property).LabelId());
             }
             else
             {
-                details.Description = Loc.Format(ProduceSentence, inFact.Parent.CommonName(), BestiaryUtils.FormatProperty(fact.Amount, fact.Property), BestiaryUtils.Property(fact.Property).LabelId());
+                details.Description = Loc.Format(ProduceSentence, inFact.Parent.CommonName(), BestiaryUtils.FormatPropertyAdjust(fact.Amount, fact.Property), BestiaryUtils.Property(fact.Property).LabelId());
             }
 
             return details;
@@ -85,7 +85,7 @@ namespace Aqua {
             return produce != null && produce.Property == Property;
         }
 
-        public override bool Bake(BakeFlags flags)
+        public override bool Bake(BakeFlags flags, BakeContext context)
         {
             bool bChanged = false;
             if (OnlyWhenStressed)
