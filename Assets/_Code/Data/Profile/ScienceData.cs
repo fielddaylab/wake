@@ -18,6 +18,8 @@ namespace Aqua.Profile
 
         // specter/decryption stuff
         private uint m_DecryptLevel = 0;
+        private int m_SpecterQueued = 0;
+        private StringHash32 m_SpecterSiteOverride = null;
 
         private bool m_HasChanges;
 
@@ -129,12 +131,16 @@ namespace Aqua.Profile
             return false;
         }
 
+        #endregion // Leveling
+
+        #region Specters
+
         public uint DecryptLevel() { return m_DecryptLevel; }
         public bool SetDecryptLevel(uint inDecryptLevel)
         {
             if (m_DecryptLevel != inDecryptLevel)
             {
-                DebugService.Log(LogMask.DataService, "[ScienceData] Player decrypt level changed to {1}", inDecryptLevel);
+                DebugService.Log(LogMask.DataService, "[ScienceData] Player decrypt level changed to {0}", inDecryptLevel);
 
                 Services.Events.Queue(GameEvents.DecryptLevelUpdated, inDecryptLevel);
                 m_DecryptLevel = inDecryptLevel;
@@ -149,7 +155,25 @@ namespace Aqua.Profile
             return m_DecryptLevel >= ScienceUtils.MaxDecryptLevel();
         }
 
-        #endregion // Leveling
+        public bool IsSpecterQueued(StringHash32 mapId) {
+            return m_SpecterQueued > 0 && (m_SpecterSiteOverride.IsEmpty || m_SpecterSiteOverride == mapId);
+        }
+
+        public void QueueSpecter(StringHash32 mapIdOverride = default(StringHash32)) {
+            m_SpecterQueued++;
+            m_SpecterSiteOverride = mapIdOverride;
+            m_HasChanges = true;
+        }
+
+        public void DequeueSpecter() {
+            if (m_SpecterQueued > 0) {
+                m_SpecterQueued--;
+                m_SpecterSiteOverride = null;
+                m_HasChanges = true;
+            }
+        }
+
+        #endregion // Specters
 
         #region IProfileChunk
 
@@ -158,7 +182,7 @@ namespace Aqua.Profile
         // v3: remove experiment data
         // v4: add claim data
         // v5: added level
-        // v6: added decrypt level
+        // v6: added specter fields
         ushort ISerializedVersion.Version { get { return 6; } }
 
         public bool HasChanges()
@@ -205,6 +229,8 @@ namespace Aqua.Profile
             if (ioSerializer.ObjectVersion >= 6)
             {
                 ioSerializer.Serialize("decrypt", ref m_DecryptLevel);
+                ioSerializer.Serialize("spectersQueued", ref m_SpecterQueued);
+                ioSerializer.UInt32Proxy("spectersQueueOverride", ref m_SpecterSiteOverride);
             }
         }
 

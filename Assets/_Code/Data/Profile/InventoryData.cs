@@ -389,6 +389,10 @@ namespace Aqua.Profile
             return false;
         }
 
+        public int UpgradeCount() {
+            return m_UpgradeIds.Count;
+        }
+
         #endregion // Upgrades
 
         #region Journals

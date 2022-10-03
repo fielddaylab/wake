@@ -50,6 +50,7 @@ namespace Aqua
 
         [NonSerialized] private Dictionary<StringHash32, BFBase> m_FactMap;
         [NonSerialized] private HashSet<StringHash32> m_AutoFacts;
+        [NonSerialized] private HashSet<StringHash32> m_SpecterIds;
 
         #region Defaults
 
@@ -171,6 +172,12 @@ namespace Aqua
             return (TFact) Fact(inFactId);
         }
 
+        public bool IsSpecter(StringHash32 inEntityId)
+        {
+            EnsureCreated();
+            return m_SpecterIds.Contains(inEntityId);
+        }
+
         public bool IsAutoFact(StringHash32 inFactId)
         {
             EnsureCreated();
@@ -198,6 +205,7 @@ namespace Aqua
             base.PreLookupConstruct();
             m_FactMap = new Dictionary<StringHash32, BFBase>(Count());
             m_AutoFacts = new HashSet<StringHash32>();
+            m_SpecterIds = new HashSet<StringHash32>();
 
             foreach(var fact in m_AllFacts)
             {
@@ -211,6 +219,14 @@ namespace Aqua
                 {
                     m_AutoFacts.Add(factId);
                 }
+            }
+        }
+
+        protected override void ConstructLookupForItem(BestiaryDesc desc, int index) {
+            base.ConstructLookupForItem(desc, index);
+
+            if (desc.HasFlags(BestiaryDescFlags.IsSpecter)) {
+                m_SpecterIds.Add(desc.Id());
             }
         }
 

@@ -72,6 +72,10 @@ namespace Aqua {
         #region Popups
 
         static public Future<StringHash32> PopupNewEntity(BestiaryDesc entity, string descriptionOverride = null, ListSlice<BFBase> extraFacts = default) {
+            if (entity.HasFlags(BestiaryDescFlags.IsSpecter)) {
+                return PopupNewSpecter(entity, descriptionOverride, extraFacts);
+            }
+
             using (PooledList<BFBase> allFacts = PooledList<BFBase>.Create(entity.AssumedFacts)) {
                 allFacts.AddRange(extraFacts);
                 allFacts.Sort(BFType.SortByVisualOrder);
@@ -89,6 +93,12 @@ namespace Aqua {
                         new PopupFacts(allFacts));
                 }
             }
+        }
+
+        static public Future<StringHash32> PopupNewSpecter(BestiaryDesc entity, string descriptionOverride = null, ListSlice<BFBase> extraFacts = default) {
+            string header = Loc.Format("ui.popup.newBestiary.specter.header", Formatting.ScrambleLoc(entity.CommonName()));
+            string text = Loc.Format("ui.popup.newBestiary.specter.description", Formatting.ScrambleLoc(entity.EncodedMessage()));
+            return Services.UI.Popup.Present(header, text, entity.ImageSet(), PopupFlags.TallImage);
         }
 
         static public Future<StringHash32> PopupNewFact(BFBase fact, BestiaryDesc entity = null, string textOverride = null) {

@@ -30,6 +30,10 @@ namespace Aqua {
             return new string(buffer, 0, (int) (write - buffer));
         }
 
+        static public unsafe string ScrambleLoc(TextId textId) {
+            return Scramble(Loc.Find(textId));
+        }
+
         static public int PseudoRandom(ref uint seed, int range, uint mod = 0) {
             seed = (uint) (((ulong) seed * 48271 * (mod + 1)) % 0x7FFFFFFF);
             return (int) (seed % range);

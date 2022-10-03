@@ -299,7 +299,11 @@ namespace Aqua
                     if (Services.UI.IsSkippingCutscene())
                         return null;
 
-                    Services.Audio.PostEvent("item.popup.new");
+                    if (Services.Assets.Bestiary.IsSpecter(inEntityId)) {
+                        Services.Audio.PostEvent("item.popup.specter");
+                    } else {
+                        Services.Audio.PostEvent("item.popup.new");
+                    }
                     return Script.PopupNewEntity(Assets.Bestiary(inEntityId)).Wait();
                 }
 
