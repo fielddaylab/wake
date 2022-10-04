@@ -3,6 +3,7 @@ using Aqua;
 using Aqua.Entity;
 using Aqua.Scripting;
 using BeauUtil;
+using BeauUtil.Debugger;
 using ScriptableBake;
 using UnityEngine;
 
@@ -33,6 +34,14 @@ namespace ProtoAqua.Observation {
 
         void IEditorOnlyData.ClearEditorOnlyData() {
             ValidationUtils.StripDebugInfo(ref CritterId);
+        }
+
+        protected override bool CustomBake() {
+            if (!Assets.Bestiary(CritterId)) {
+                Log.Error("[TaggableCritter] Critter Id not found: '{0}'", CritterId);
+            }
+
+            return false;
         }
 
         #endif // UNITY_EDITOR
