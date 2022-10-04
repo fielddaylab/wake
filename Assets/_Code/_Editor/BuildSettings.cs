@@ -60,7 +60,7 @@ namespace Aqua.Editor {
             } else if (bDesiredPreviewBuild) {
                 BuildUtils.WriteDefines("PREVIEW,ENABLE_LOGGING_ERRORS_BEAUUTIL,ENABLE_LOGGING_WARNINGS_BEAUUTIL,PRESERVE_DEBUG_SYMBOLS");
             } else {
-                BuildUtils.WriteDefines("PRODUCTION,IGNORE_UNITY_EDITOR");
+                BuildUtils.WriteDefines("PRODUCTION");
             }
 
             PlayerSettings.SetManagedStrippingLevel(EditorUserBuildSettings.selectedBuildTargetGroup, bDesiredDevBuild ? ManagedStrippingLevel.Medium : ManagedStrippingLevel.High);
