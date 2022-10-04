@@ -27,7 +27,7 @@ namespace Aqua.Character
             {
                 float desiredRotation = Mathf.Atan2(inNormalizedOffset.y, inNormalizedOffset.x) * Mathf.Rad2Deg;
                 float currentRotation = inKinematics.Transform.localEulerAngles.z;
-                float delta = MathUtil.DegreeAngleDifference(currentRotation, desiredRotation);
+                float delta = MathUtils.DegreeAngleDifference(currentRotation, desiredRotation);
                 bool inPlace = currentSpeed < InPlaceRotationSpeedThreshold && (delta < -TurnRate || delta > TurnRate);
                 float turnRate = TurnRate;
                 if (inPlace && InPlaceRotationMultiplier > 0) {

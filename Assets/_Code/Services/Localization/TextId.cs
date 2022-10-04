@@ -85,7 +85,7 @@ namespace Aqua
                 uint hash = new StringHash32(m_Source).HashValue;
                 if (m_HashValue != hash)
                 {
-                    Log.Warn("[TextId] Hash of {0} was different across multiple machines (old {1} vs new {2})", m_Source, m_HashValue, hash);
+                    Log.Warn("[TextId] Inconsistent hash for '{0}': expected {1}, had {2}", m_Source, hash, m_HashValue);
                     m_HashValue = hash;
                 }
             }
@@ -98,7 +98,7 @@ namespace Aqua
                 uint hash = new StringHash32(m_Source).HashValue;
                 if (m_HashValue != hash)
                 {
-                    Log.Warn("[TextId] Hash of {0} was different across multiple machines (old {1} vs new {2})", m_Source, m_HashValue, hash);
+                    Log.Warn("[TextId] Inconsistent hash for '{0}': expected {1}, had {2}", m_Source, hash, m_HashValue);
                     m_HashValue = hash;
                 }
             }
