@@ -39,7 +39,7 @@ namespace Aqua.Editor {
 
             if (branch != null) {
                 if (branch.StartsWith("feature/") || branch.StartsWith("fix/") || branch.StartsWith("improvement/") || branch.StartsWith("experimental/")
-                    || branch.Contains("dev") || branch.Contains("proto")) {
+                    || branch.Contains("dev") || branch.Contains("proto") || branch.Contains("debug")) {
                     bDesiredDevBuild = true;
                 } else if (branch.StartsWith("milestone") || branch.Contains("preview")) {
                     bDesiredPreviewBuild = true;
