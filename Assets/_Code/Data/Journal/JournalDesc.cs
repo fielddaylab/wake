@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Aqua.Journal {
     [CreateAssetMenu(menuName = "Aqualab Content/Journal Entry")]
-    public class JournalDesc : DBObject {
+    public class JournalDesc : DBObject, IEditorOnlyData {
         #region Inspector
 
         [SerializeField] private SerializedHash32 m_OverridePrefabId = null;
@@ -17,6 +17,14 @@ namespace Aqua.Journal {
         public StringHash32 PrefabId() { return m_OverridePrefabId.IsEmpty ? Id() : m_OverridePrefabId.Hash(); }
         public JournalCategoryMask Category() { return m_Category; }
         public bool IsDefault() { return m_IsDefault; }
+
+        #if UNITY_EDITOR
+
+        void IEditorOnlyData.ClearEditorOnlyData() {
+            ValidationUtils.StripDebugInfo(ref m_OverridePrefabId);
+        }
+
+        #endif // UNITY_EDITOR
     }
 
     public enum JournalCategoryMask : uint {

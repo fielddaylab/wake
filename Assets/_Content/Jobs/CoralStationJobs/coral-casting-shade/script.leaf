@@ -116,11 +116,11 @@ $endif
 
 ::measurementTankSelectWater
 @trigger	ExperimentTankViewed
-@when		tankType == "Measurement", JobTaskCompleted(popProbe), JobTaskCompleted(chemHistory)
-@once 
+@when		tankType == "Measurement", JobTaskTop(sargGrowthRate)
 @cutscene
-{@guide} Start by figuring out the Sargassum reproduction rate. 
-{@guide} You need to match the conditions of Site R, so try selecting the of the Sargassum Covered Reef.
+@once 
+{@guide} We need to start by figuring out the Sargassum reproduction rate. 
+{@guide} You need to match the conditions of {m}Site R{/m}, so try selecting the water of {nameof RS-2R}.
 
 ::measurementTankSelectSpecies
 @trigger	ExperimentScreenViewed
@@ -180,7 +180,7 @@ $set    	jobs:coral-casting-shade.gotMeasurement = true
 
 :: helpNeedMeasurementsInTankRoom
 @trigger    RequestPartnerHelp
-@when 		scene:name == "ExperimentV2", jobs:coral-casting-shade.gotMeasurement, !VisualModelStarted, !JobTaskTop(sargModel)
+@when 		scene:name == "ExperimentV2", jobs:coral-casting-shade.gotMeasurement, !JobTaskTop(sargModel)
 @cutscene
 $if !HasFact(Sargassum.Reproduce)
 	{@guide}	Looks like you still need to try more experiments.

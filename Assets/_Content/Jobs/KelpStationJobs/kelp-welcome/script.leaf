@@ -38,8 +38,8 @@ $call GiveUpgrade(ROVScanner, Silent)
 $call Player->SetTool(Scanner)
 {@guide}  The {item-name}Scanner{/item-name} searches for life forms automatically. 
             Click the red targets to ID a new plant or animal species. 
-{wait 0.5}
 {hide-dialog}
+{wait 0.5}
 
 {fade-out black.60, 0.5, wait}
 {@}
@@ -99,7 +99,6 @@ $endif
 @cutscene
 @once
 $set    jobs:kelp-welcome.got.scans = true
-$branch common.ringPhone
 
 {@guide}   You have scanned all of the local species. Your work is acceptable!
 {@player} Thanks, {nameof @guide}. 
@@ -108,6 +107,12 @@ $branch common.ringPhone
 {@guide}   Updating database|.|.|.|
 {@guide}   You are most welcome, O!
 {@guide}   Now head to the surface and board your new research vessel!
+$call Surface->Activate()
+
+:: navigation.goBackUp.savePatch
+@function   SceneStart
+@when       scene:name == "RS-1C", !jobs:kelp-welcome.got-scans, JobTaskActive(returnToShip)
+$set jobs:kelp-welcome.got.scans = true
 $call Surface->Activate()
 
 :: helpAtSiteCCompleted
@@ -126,7 +131,6 @@ $call Surface->Activate()
 @cutscene
 @once
 
-$branch common.ringPhone
 {@player}My own ship!! I can't believe Mom trusted me with this.
 {@guide}Yes. And it includes several built-in safety features!
 {@player}Oh. Yeah, that tracks. 
@@ -157,7 +161,6 @@ $call ship.map->ResetSorting()
 @trigger    SceneStart
 @when       scene:name == "KelpStation", JobTaskCompleted(gotoSiteC), !jobs:kelp-welcome.got.scans
 @cutscene
-$branch common.ringPhone
 
 {@player}   Is that everything, {nameof @guide}? 
 {@guide}   Hmmm. It appears you missed something. 
@@ -187,14 +190,13 @@ $call ship.map->ResetSorting()
 @boostScore 100
 @cutscene
 @once
-$branch common.ringPhone
 
 {@player} Wow. This ship... it's amazing.
 {@player} I wish Mer could see it. 
 {@guide} "Mer" does not compute.
 {@player} Oh... my big sister. She used to have a ship just like this.
 {@player}  Anyway, what now, {nameof @guide}?
-{@guide} Updating schametic... 
+{@guide} Updating schematic... 
 {hide-dialog}
 
 $call UnlockRoom("Experimentation")
@@ -205,7 +207,7 @@ $call schematic.button->ForceClick()
 {hide-dialog}{wait 1}{style default}
 // $call HelmButton->ForceOnTop()
 $call FocusHighlight->Focus(ExperimentationButton, 200, 200)
-    Click here to enter your {h}Experimentation Lab{/h}.
+    Click here to enter your {nameof Experimentation}.
 $call FocusHighlight->Clear()
 {hide-dialog}{fade-in 0.5, wait}
 $call ship.map->ResetSorting()
@@ -220,7 +222,7 @@ $call AutoSaveNow()
 @cutscene
 {@player}   Can you help me find my way, {nameof @guide}?
 {@guide}    Certainly, O. Open your schematic in the upper left.
-{@guide}  Then head to {nameof Experimentation}!
+{@guide}  Then head to your {nameof Experimentation}!
 
 :: firstCaptureCircle
 @trigger    BehaviorCaptureChance
@@ -274,7 +276,6 @@ $endif
 @cutscene
 @once
 
-$branch common.ringPhone
 {@guide}   Now return to the Helm and navigate your sub back to the {m}Research Station{/m}.
 
 // $call   UnlockRoom("office")
@@ -325,7 +326,12 @@ $endif
 @when 		JobTaskActive(returnToShip)
 @boostScore -5
 @cutscene
-{@guide}    Head to the surface and board your ship!
+
+$if !IsPlayerOnShip()
+    {@guide}    Head to the surface and board your ship!
+$else 
+    {@guide}    Head to the {m}helm{/m} when you're ready to continue.
+$endif
 
 :: catchRunExperiment
 @trigger    RequestPartnerHelp
@@ -365,7 +371,7 @@ $call ArgueLoad(welcomeArgue)
 {@drKelp}  Wow, that was quick! Are you sure you're ready?
 {@player}  Actually, I've still got a few things to do.
 // TODO: add a branch if player has not received V1ct0r help button yet
-{@drKelp}  Well, don't be afraid to ask {nameof @guide} if you need some help.
+{@drKelp}  Well, don't be afraid to ask if you need some help.
 {@drKelp}  I'll be here when you're ready. 
 	
 	

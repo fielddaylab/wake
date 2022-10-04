@@ -28,7 +28,6 @@ namespace Aqua.Editor {
         private SerializedProperty m_IconProperty;
         private SerializedProperty m_SketchPathProperty;
         private SerializedProperty m_ColorProperty;
-        private SerializedProperty m_ListenAudioEventProperty;
         private SerializedProperty m_SortingOrderProperty;
 
         [SerializeField] private bool m_CategoryExpanded = true;
@@ -64,7 +63,6 @@ namespace Aqua.Editor {
             m_IconProperty = serializedObject.FindProperty("m_Icon");
             m_SketchPathProperty = serializedObject.FindProperty("m_SketchPath");
             m_ColorProperty = serializedObject.FindProperty("m_Color");
-            m_ListenAudioEventProperty = serializedObject.FindProperty("m_ListenAudioEvent");
             m_SortingOrderProperty = serializedObject.FindProperty("m_SortingOrder");
 
             m_FactList = new ReorderableList(serializedObject, m_FactsProperty);
@@ -130,7 +128,6 @@ namespace Aqua.Editor {
                 EditorGUILayout.PropertyField(m_IconProperty);
                 EditorGUILayout.PropertyField(m_SketchPathProperty);
                 EditorGUILayout.PropertyField(m_ColorProperty);
-                EditorGUILayout.PropertyField(m_ListenAudioEventProperty);
             }
 
             RenderFacts(BestiaryDescCategory.Critter);
@@ -176,7 +173,6 @@ namespace Aqua.Editor {
                 EditorGUILayout.PropertyField(m_IconProperty);
                 EditorGUILayout.PropertyField(m_SketchPathProperty);
                 EditorGUILayout.PropertyField(m_ColorProperty);
-                EditorGUILayout.PropertyField(m_ListenAudioEventProperty);
                 EditorGUILayout.PropertyField(m_WaterColorProperty);
             }
 

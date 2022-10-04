@@ -215,7 +215,7 @@ namespace ProtoAqua.Observation
 
         private IEnumerator TypeOut()
         {
-            return Tween.Int(0, m_DescriptionText.CurrentText.VisibleText.Length, (c) => m_DescriptionText.Graphic.maxVisibleCharacters = c, 0.8f);
+            return Tween.Int(0, m_DescriptionText.Metrics.VisibleCharCount, (c) => m_DescriptionText.Graphic.maxVisibleCharacters = c, 0.8f);
         }
 
         #endregion // Animations

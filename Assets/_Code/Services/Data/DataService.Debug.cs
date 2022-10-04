@@ -33,6 +33,8 @@ namespace Aqua
             SaveData saveData = CreateNewProfile(DebugSaveId);
             DebugService.Log(LogMask.DataService, "[DataService] Created debug profile");
             DeclareProfile(saveData, false, false);
+
+            Services.Events.Dispatch(GameEvents.ProfileStarting, m_ProfileName);
         }
 
         private void LoadBookmark(string inBookmarkName)

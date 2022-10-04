@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -31324,6 +31324,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1290400159}
+  - component: {fileID: 1290400160}
   m_Layer: 0
   m_Name: Kelp
   m_TagString: Untagged
@@ -31435,6 +31436,20 @@ Transform:
   m_Father: {fileID: 762288667}
   m_RootOrder: 21
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1290400160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1290400158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 0
+  DestroyGameObject: 1
 --- !u!1001 &1291111994
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -59210,6 +59225,7 @@ GameObject:
   - component: {fileID: 2061434675}
   - component: {fileID: 2061434674}
   - component: {fileID: 2061434673}
+  - component: {fileID: 2061434676}
   m_Layer: 0
   m_Name: Terrain
   m_TagString: Untagged
@@ -59275,6 +59291,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2061434676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2061434672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b587641419b101842b62d5046fca3f18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2062307374
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -62736,6 +62764,26 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7aa5dff76f8e0d2449ce419765c2411f, type: 3}
+--- !u!1 &5408484088475270748 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5174532953705855421, guid: 7aa5dff76f8e0d2449ce419765c2411f,
+    type: 3}
+  m_PrefabInstance: {fileID: 5408484088475270747}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5408484088475270749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5408484088475270748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 0
+  DestroyGameObject: 1
 --- !u!4 &8168774760967000030 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3518950569487685503, guid: 8c745b0870cc84c7190dd3bb7ab1ce95,

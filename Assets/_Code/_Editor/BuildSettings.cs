@@ -36,7 +36,6 @@ namespace Aqua.Editor {
             string branch = BuildUtils.GetSourceControlBranchName();
             bool bDesiredDevBuild = false;
             bool bDesiredPreviewBuild = false;
-            bool bDesiredProdBuild = false;
 
             if (branch != null) {
                 if (branch.StartsWith("feature/") || branch.StartsWith("fix/") || branch.StartsWith("improvement/") || branch.StartsWith("experimental/")
@@ -44,8 +43,8 @@ namespace Aqua.Editor {
                     bDesiredDevBuild = true;
                 } else if (branch.StartsWith("milestone") || branch.Contains("preview")) {
                     bDesiredPreviewBuild = true;
-                } else if (branch.StartsWith("production")) {
-                    bDesiredProdBuild = true;
+                } else if (!branch.StartsWith("production") && !branch.StartsWith("staging") && !branch.StartsWith("hotfix")) {
+                    bDesiredDevBuild = true;
                 }
             }
 
@@ -57,7 +56,7 @@ namespace Aqua.Editor {
             }
 
             if (bDesiredDevBuild) {
-                BuildUtils.WriteDefines("DEVELOPMENT");
+                BuildUtils.WriteDefines("DEVELOPMENT,PRESERVE_DEBUG_SYMBOLS");
             } else if (bDesiredPreviewBuild) {
                 BuildUtils.WriteDefines("PREVIEW,ENABLE_LOGGING_ERRORS_BEAUUTIL,ENABLE_LOGGING_WARNINGS_BEAUUTIL,PRESERVE_DEBUG_SYMBOLS");
             } else {
@@ -85,7 +84,7 @@ namespace Aqua.Editor {
         static private void BakeAllAssets() {
             using (Profiling.Time("bake assets")) {
                 using (Log.DisableMsgStackTrace()) {
-                    Bake.Assets(BakeFlags.Verbose | BakeFlags.ShowProgressBar);
+                    Bake.Assets(BakeFlags.ShowProgressBar);
                 }
             }
             using (Profiling.Time("post-bake save assets")) {
@@ -200,7 +199,8 @@ namespace Aqua.Editor {
 
             public void OnPreprocessBuild(BuildReport report) {
                 string branch = BuildUtils.GetSourceControlBranchName();
-                bool bBatch = UnityEditorInternal.InternalEditorUtility.inBatchMode;
+                bool bBatch = UnityEditorInternal.InternalEditorUtility.inBatchMode || !UnityEditorInternal.InternalEditorUtility.isHumanControllingUs;
+                // bool bBatch = true;
                 if (bBatch) {
                     PlayerSettings.SplashScreen.show = false;
                     PlayerSettings.SplashScreen.showUnityLogo = false;
@@ -216,7 +216,11 @@ namespace Aqua.Editor {
                     if (!ValidateAllScripts()) {
                         throw new Exception("Invalid scripts present");
                     }
+                    SceneManifestUtility.BuildPreloadManifest();
                     if (bBatch) {
+                        #if !PRESERVE_DEBUG_SYMBOLS && !DEVELOPMENT
+                        CodeStringStripping.ProcessAllFiles(false);
+                        #endif // PRESERVE_DEBUG_SYMBOLS && !DEVELOPMENT
                         CodeGen.GenerateJobsConsts();
                         NoOverridesAllowed.RevertInAllScenes();
                         StripEditorInfoFromAssets();

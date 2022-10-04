@@ -96,7 +96,7 @@ namespace Aqua.Scripting
 
         int IBaked.Order { get { return 0; } }
 
-        bool IBaked.Bake(BakeFlags flags) {
+        bool IBaked.Bake(BakeFlags flags, BakeContext context) {
             m_GroupId = GetComponent<ScriptGroupId>();
             if (m_Persistent) {
                 return Ref.Replace(ref m_VarId, ScriptObject.MapPersistenceId(GetComponent<ScriptObject>(), "destroyed"));

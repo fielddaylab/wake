@@ -56,7 +56,7 @@ namespace Aqua.Editor
             if (debug)
             {
                 Debug.LogFormat("[SceneProcessor] Removing debug service from scene '{0}'...", scene.name);
-                GameObject.DestroyImmediate(debug.gameObject);
+                Bake.Destroy(debug.gameObject);
             }
         }
 
@@ -94,7 +94,7 @@ namespace Aqua.Editor
         {
             using(Profiling.Time("baking objects"))
             {
-                Bake.Scene(scene, BakeFlags.Verbose);
+                Bake.Scene(scene);
             }
         }
 
@@ -117,7 +117,7 @@ namespace Aqua.Editor
         }
     
         [MenuItem("Aqualab/DEBUG/Bake Scene")]
-        static private void DEBUGBakeScene() {
+        static public void DEBUGBakeScene() {
             if (EditorApplication.isPlaying)
                 return;
 

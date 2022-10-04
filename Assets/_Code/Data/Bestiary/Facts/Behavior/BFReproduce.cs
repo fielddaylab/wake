@@ -86,7 +86,7 @@ namespace Aqua {
 
         #if UNITY_EDITOR
 
-        public override bool Bake(BakeFlags flags)
+        public override bool Bake(BakeFlags flags, BakeContext context)
         {
             bool bChanged = false;
             if (OnlyWhenStressed)

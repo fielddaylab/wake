@@ -55,19 +55,11 @@ namespace Aqua
 
         static private int GetFramerate(OptionsPerformance.FramerateMode inFramerate)
         {
+            #if UNITY_EDITOR
+            return 60;
+            #else
             return -1;
-
-            // switch(inFramerate)
-            // {
-            //     case OptionsPerformance.FramerateMode.Stable:
-            //         return 30;
-
-            //     case OptionsPerformance.FramerateMode.High:
-            //         return 60;
-
-            //     default:
-            //         return -1;
-            // }
+            #endif // UNITY_EDITOR
         }
     }
 }

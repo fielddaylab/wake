@@ -22,7 +22,6 @@ namespace Aqua.Editor
         private SerializedProperty m_PosterIdProperty;
         private SerializedProperty m_DescIdProperty;
         private SerializedProperty m_DescShortIdProperty;
-        private SerializedProperty m_DescCompletedIdProperty;
 
         private SerializedProperty m_ExperimentDifficultyProperty;
         private SerializedProperty m_ModelingDifficultyProperty;
@@ -31,6 +30,8 @@ namespace Aqua.Editor
         private SerializedProperty m_PrerequisiteJobsProperty;
         private SerializedProperty m_PrereqConditionsProperty;
         private SerializedProperty m_PrereqUpgradesProperty;
+        private SerializedProperty m_PrereqBestiaryEntryProperty;
+        private SerializedProperty m_PrereqScanIdProperty;
         private SerializedProperty m_PrereqExpProperty;
 
         private SerializedProperty m_StationIdProperty;
@@ -93,12 +94,13 @@ namespace Aqua.Editor
             m_PosterIdProperty = serializedObject.FindProperty("m_PosterId");
             m_DescIdProperty = serializedObject.FindProperty("m_DescId");
             m_DescShortIdProperty = serializedObject.FindProperty("m_DescShortId");
-            m_DescCompletedIdProperty = serializedObject.FindProperty("m_DescCompletedId");
             m_ExperimentDifficultyProperty = serializedObject.FindProperty("m_ExperimentDifficulty");
             m_ModelingDifficultyProperty = serializedObject.FindProperty("m_ModelingDifficulty");
             m_ArgumentationDifficultyProperty = serializedObject.FindProperty("m_ArgumentationDifficulty");
             m_PrerequisiteJobsProperty = serializedObject.FindProperty("m_PrerequisiteJobs");
             m_PrereqConditionsProperty = serializedObject.FindProperty("m_PrereqConditions");
+            m_PrereqBestiaryEntryProperty = serializedObject.FindProperty("m_PrereqBestiaryEntry");
+            m_PrereqScanIdProperty = serializedObject.FindProperty("m_PrereqScanId");
             m_PrereqUpgradesProperty = serializedObject.FindProperty("m_PrereqUpgrades");
             m_PrereqExpProperty = serializedObject.FindProperty("m_PrereqExp");
             m_StationIdProperty = serializedObject.FindProperty("m_StationId");
@@ -156,7 +158,6 @@ namespace Aqua.Editor
                 EditorGUILayout.PropertyField(m_PosterIdProperty);
                 EditorGUILayout.PropertyField(m_DescIdProperty);
                 EditorGUILayout.PropertyField(m_DescShortIdProperty);
-                EditorGUILayout.PropertyField(m_DescCompletedIdProperty);
             }
 
             if (Section("Prerequisites", ref m_PrerequisitesExpanded)) {
@@ -164,6 +165,8 @@ namespace Aqua.Editor
                 m_PrereqUpgradesList.DoLayoutList();
                 EditorGUILayout.PropertyField(m_PrereqExpProperty);
                 EditorGUILayout.PropertyField(m_PrereqConditionsProperty);
+                EditorGUILayout.PropertyField(m_PrereqBestiaryEntryProperty);
+                EditorGUILayout.PropertyField(m_PrereqScanIdProperty);
             }
 
             if (Section("Locations", ref m_LocationsExpanded)) {

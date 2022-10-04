@@ -280,7 +280,7 @@ namespace Aqua.View {
 
         int IBaked.Order { get { return 2; } }
 
-        bool IBaked.Bake(BakeFlags flags) {
+        bool IBaked.Bake(BakeFlags flags, BakeContext context) {
             m_AllNodes = FindObjectsOfType<ViewNode>();
             m_AllLinks = FindObjectsOfType<ViewLink>();
             Array.Sort(m_AllLinks, (a, b) => a.GroupId.Hash().CompareTo(b.GroupId.Hash()));

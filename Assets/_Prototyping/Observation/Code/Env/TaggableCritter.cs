@@ -7,7 +7,7 @@ using ScriptableBake;
 using UnityEngine;
 
 namespace ProtoAqua.Observation {
-    public class TaggableCritter : ToolRegion {
+    public class TaggableCritter : ToolRegion, IEditorOnlyData {
 
         #region Inspector
 
@@ -28,5 +28,13 @@ namespace ProtoAqua.Observation {
             }
             ScanSystem.Find<TaggingSystem>()?.Deregister(this);
         }
+
+        #if UNITY_EDITOR
+
+        void IEditorOnlyData.ClearEditorOnlyData() {
+            ValidationUtils.StripDebugInfo(ref CritterId);
+        }
+
+        #endif // UNITY_EDITOR
     }
 }

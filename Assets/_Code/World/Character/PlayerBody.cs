@@ -64,7 +64,7 @@ namespace Aqua.Character
 
         int IBaked.Order { get; }
 
-        bool IBaked.Bake(BakeFlags flags)
+        bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
             return BakeImpl(flags);
         }

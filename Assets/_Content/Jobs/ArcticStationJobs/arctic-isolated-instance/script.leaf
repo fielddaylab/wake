@@ -139,6 +139,7 @@ $endif
 $if ExperimentHasCritter("GlassSponge"), ExperimentHasCritter("SalmonShark")
 	$set jobs:arctic-isolated-instance.checkedShark = true
 $endif
+$call CheckJobTasks()
 
 // CATCH-ALL GUIDE TEXT
 
@@ -247,17 +248,20 @@ $endif
 $branch .argue.groundwork.main-question
 
 :: argue.groundwork.main-question
-{@profArctic}	Did you figure out which theory might explain why there are no {pluralnameof GlassSponge} in the {m}Frosted Sea{/m}?
-$choice .argue.groundwork.lightClaim; The Sponges are stressed by the light levels.
-$choice .argue.groundwork.predatorClaim; There's a predator eating the Sponges.
-$choice .argue.giveUp; Let me get back to you.
-$choose branch
+{@profArctic}	What can you tell us about our two main theories regarding why there are no {pluralnameof GlassSponge} in the {m}Frosted Sea{/m}?
+	$choice .argue.groundwork.lightClaim; Theory 1: The Sponges are stressed by the light levels.
+	$choice .argue.groundwork.predatorClaim; Theory 2: A predator is eating the Sponges in the {nameof RS-4Z}.
+$if HasFact(PterasterObscurus.Eats.GlassSponge), HasFact(Y_IceCrevice.Population.PterasterObscurus)
+	$choice .argue.final.shortcut; <i>New Theory:</i> A predator is eating the sponges, but not in the {nameof RS-4Z}.
+$endif
+	$choice .argue.giveUp; Let me get back to you.
+	$choose branch
 
 	// STRESS
 
 :: argue.groundwork.lightClaim
 $if ArgueIsComplete(argueIsolatedInstanceGroundworkStress)
-	{@profArctic}   Oh... I thought we'd already covered this, Ollie. 	
+	{@profArctic}   Oh... I thought we'd already covered this, Ollie.
 			        The light levels seem fine. Something else must be going on.
 	$branch .argue.groundwork.main-question
 $else
@@ -327,10 +331,6 @@ $call ArgueLoad(argueIsolatedInstanceGroundwork)
 $call ArgueComplete()
 {@profArctic}	Hmmm. I can see you've done your research, but we still don't have an answer.
 
-$if HasFact(PterasterObscurus.Eats.GlassSponge), HasFact(Y_IceCrevice.Population.PterasterObscurus)
-	$goto .argue.final.intro
-$endif
-
 {@player}	  Ugh. I don't get it. ¡Esto es imposible! How do you stay so patient?
 {@profArctic}  Trust me, it takes practice.
 				Let's dig a little deeper. We know there are plenty of Glass Sponges at Site X, and none of them at Site Z.
@@ -338,6 +338,10 @@ $endif
 {@player} 	You mean... at Site Y? 
 {@profArctic} Exactly. A predator at Site Y may be eating all the Glass Sponges before they can go any farther.
 				That may be a good place to check out next.
+
+$if HasFact(PterasterObscurus.Eats.GlassSponge), HasFact(Y_IceCrevice.Population.PterasterObscurus)
+	$goto .argue.final.intro
+$endif
 
 // ARGUMENT 2: Final (missing) piece
 
@@ -348,8 +352,15 @@ $endif
 @cutscene
 $branch .argue.final.main-question
 
+:: argue.final.shortcut
+{@profArctic}	Oh? What have you found out?
+$branch .argue.final.load-argue
+
 :: argue.final.main-question
 {@profArctic}	Have you found any predators between {h}Site X{/h} and {h}Site Z{/h} that could be stopping the Glass Sponges from reaching the Frosted Sea? 
+$branch .argue.final.load-argue
+
+:: argue.final.load-argue
 $call ArgueLoad(argueIsolatedInstanceFinal)
 $if ArgueSetClaim(IsolatedInstanceFinalClaim, jobs.arctic-isolated-instance.argue.claimLabelFinal)
 	$call ArgueFactSlot(PterasterObscurus.Eats.GlassSponge)

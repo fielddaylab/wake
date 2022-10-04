@@ -48,8 +48,8 @@ namespace Aqua {
         }
 
         [MethodImpl(256)]
-        static public void OnSceneLoad(Action action) {
-            Services.State.OnLoad(action);
+        static public void OnSceneLoad(Action action, int priority = 0) {
+            Services.State.OnLoad(action, priority);
         }
 
         static public PlayerBody CurrentPlayer {
@@ -294,8 +294,9 @@ namespace Aqua {
         [LeafMember, Preserve]
         static public bool IsPlayerOnShip() {
             StringHash32 currentMapId = MapDB.LookupCurrentMap();
-            return ((currentMapId == MapIds.Helm) || (currentMapId == MapIds.Modeling) || (currentMapId == MapIds.Experimentation) ||
-            (currentMapId == MapIds.JobBoard) || (currentMapId == MapIds.WorldMap)) || (currentMapId == MapIds.ModelingFoyer);
+            return ((currentMapId == MapIds.Helm) || (currentMapId == MapIds.Modeling) || (currentMapId == MapIds.Experimentation)
+            || (currentMapId == MapIds.WorldMap)) || (currentMapId == MapIds.ModelingFoyer)
+            || (currentMapId == MapIds.Cabin);
         }
 
         [LeafMember, Preserve]

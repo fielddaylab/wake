@@ -37,7 +37,7 @@ namespace Aqua.View {
 
         int IBaked.Order => 3;
 
-        bool IBaked.Bake(BakeFlags flags) {
+        bool IBaked.Bake(BakeFlags flags, BakeContext context) {
             List<RoomLink> allLinks = new List<RoomLink>();
             SceneHelper.ActiveScene().Scene.GetAllComponents<RoomLink>(true, allLinks);
             m_AllLinks = allLinks.ToArray();

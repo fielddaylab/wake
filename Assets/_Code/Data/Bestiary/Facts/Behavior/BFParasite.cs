@@ -91,7 +91,7 @@ namespace Aqua {
             return false;
         }
 
-        public override bool Bake(BakeFlags flags)
+        public override bool Bake(BakeFlags flags, BakeContext context)
         {
             return false;
         }

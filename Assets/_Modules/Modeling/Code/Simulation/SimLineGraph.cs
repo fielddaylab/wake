@@ -451,8 +451,8 @@ namespace Aqua.Modeling {
         }
 
         static private void RenderIntervention(GraphTargetRegion region, Rect rect) {
-            float min = MathUtil.Remap(region.MinValue, rect.yMin, rect.yMax, 0, 1);
-            float max = MathUtil.Remap(region.MaxValue, rect.yMin, rect.yMax, 0, 1);
+            float min = MathUtils.Remap(region.MinValue, rect.yMin, rect.yMax, 0, 1);
+            float max = MathUtils.Remap(region.MaxValue, rect.yMin, rect.yMax, 0, 1);
             if (min > 1) { min = 0; }
             region.Layout.SetAnchorsY(min, max);
         }

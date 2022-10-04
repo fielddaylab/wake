@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace AquaAudio
 {
-    public class AudioTrigger : MonoBehaviour
+    public class AudioTrigger : MonoBehaviour, ISceneManifestElement
     {
         [SerializeField] private string m_EventId = null;
         [SerializeField] private float m_CrossfadeDuration = 0;
@@ -48,5 +48,13 @@ namespace AquaAudio
             m_WaitRoutine.Stop();
             m_Playback.Stop(0.1f);
         }
+
+        #if UNITY_EDITOR
+
+        public void BuildManifest(SceneManifestBuilder builder) {
+            AudioEvent.BuildManifestFromEventString(m_EventId, builder);
+        }
+
+        #endif // UNITY_EDITOR
     }
 }

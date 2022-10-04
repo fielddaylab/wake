@@ -36,7 +36,7 @@ namespace Aqua.Character
 
         int IBaked.Order { get { return 0; } }
 
-        bool IBaked.Bake(BakeFlags flags)
+        bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
             m_Player = FindObjectOfType<PlayerBody>();
             m_Spawns = GetComponent<SpawnLocationMap>();

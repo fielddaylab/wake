@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab System/Water Property Description", fileName = "NewWaterProp")]
-    public class WaterPropertyDesc : DBObject
+    public class WaterPropertyDesc : DBObject, IEditorOnlyData
     {
         #region Inspector
 
@@ -24,6 +24,8 @@ namespace Aqua
         [Header("Text")]
         [SerializeField] private string m_Format = "{0}";
         [SerializeField] private float m_DisplayScale = 1;
+        [SerializeField] private string m_AdjustFormat = "{0}";
+        [SerializeField] private float m_AdjustDisplayScale = 1;
 
         [Header("Facts")]
         [SerializeField] private TextId m_EnvironmentFactFormat = default;
@@ -58,7 +60,12 @@ namespace Aqua
         
         public string FormatValue(float inValue)
         {
-            return string.IsNullOrEmpty(m_Format) ? (inValue * m_DisplayScale).ToString() : string.Format(m_Format, inValue * m_DisplayScale);;
+            return string.IsNullOrEmpty(m_Format) ? (inValue * m_DisplayScale).ToString() : string.Format(m_Format, inValue * m_DisplayScale);
+        }
+
+        public string FormatValueAdjust(float inValue)
+        {
+            return string.IsNullOrEmpty(m_AdjustFormat) ? (inValue * m_AdjustDisplayScale).ToString() : string.Format(m_AdjustFormat, inValue * m_AdjustDisplayScale);
         }
 
         public float DisplayValue(float inValue)
@@ -85,6 +92,19 @@ namespace Aqua
         {
             return m_MinValue + (m_MaxValue - m_MinValue) * inFraction;
         }
+
+        #if UNITY_EDITOR
+
+        void IEditorOnlyData.ClearEditorOnlyData() {
+            ValidationUtils.StripDebugInfo(ref m_LabelId);
+            ValidationUtils.StripDebugInfo(ref m_EnvironmentFactFormat);
+            ValidationUtils.StripDebugInfo(ref m_EnvironmentHistoryFormat);
+            ValidationUtils.StripDebugInfo(ref m_StateChangeFormat);
+            ValidationUtils.StripDebugInfo(ref m_StateChangeStressOnlyFormat);
+            ValidationUtils.StripDebugInfo(ref m_StateChangeUnaffectedFormat);
+        }
+
+        #endif // UNITY_EDITOR
     }
 
     [Flags]

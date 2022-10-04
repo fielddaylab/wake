@@ -62,7 +62,7 @@ namespace Aqua
 
         int IBaked.Order { get { return -10; } }
 
-        bool IBaked.Bake(BakeFlags flags)
+        bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
             SortObjects((a, b) => a.Index().CompareTo(b.Index()));
             m_DisplaySortedMap = new WaterPropertyDesc[SortOrder.Length];

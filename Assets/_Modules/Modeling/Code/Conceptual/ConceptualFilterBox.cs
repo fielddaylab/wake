@@ -13,7 +13,7 @@ namespace Aqua.Modeling {
         #if UNITY_EDITOR
         int IBaked.Order { get { return 20; } }
 
-        bool IBaked.Bake(BakeFlags flags) {
+        bool IBaked.Bake(BakeFlags flags, BakeContext context) {
             Lines = GetComponentsInChildren<ConceptualFilterLine>(true);
             RepresentedMask = 0;
             foreach(var line in Lines) {

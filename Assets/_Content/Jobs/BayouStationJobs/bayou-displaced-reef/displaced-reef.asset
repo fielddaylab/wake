@@ -25,12 +25,9 @@ MonoBehaviour:
   m_DescShortId:
     m_Source: 
     m_HashValue: 0
-  m_DescCompletedId:
-    m_Source: 
-    m_HashValue: 0
   m_ExperimentDifficulty: 0
-  m_ModelingDifficulty: 0
-  m_ArgumentationDifficulty: 0
+  m_ModelingDifficulty: 2
+  m_ArgumentationDifficulty: 3
   m_PrerequisiteJobs: []
   m_PrereqConditions: 
   m_PrereqUpgrades: []
@@ -135,24 +132,6 @@ MonoBehaviour:
     - m_Source: getScans
       m_HashValue: 1025619015
   - Id:
-      m_Source: makeModel
-      m_HashValue: 248199788
-    LabelId:
-      m_Source: jobs.bayou-displaced-reef.task.makeModel
-      m_HashValue: 2569824146
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: O_OilRig.displacedReef.Model.Viz
-        m_HashValue: 1732975472
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: getScans
-      m_HashValue: 1025619015
-    - m_Source: getCounts
-      m_HashValue: 2402495047
-  - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
     LabelId:
@@ -166,8 +145,8 @@ MonoBehaviour:
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
-    - m_Source: makeModel
-      m_HashValue: 248199788
+    - m_Source: getCounts
+      m_HashValue: 2402495047
   m_OptimizedTaskList:
   - Id:
       m_Source: visitSiteO
@@ -266,26 +245,10 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 0100
   - Id:
-      m_Source: makeModel
-      m_HashValue: 248199788
-    IdString: makeModel
-    Index: 3
-    LabelId:
-      m_Source: jobs.bayou-displaced-reef.task.makeModel
-      m_HashValue: 2569824146
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: O_OilRig.displacedReef.Model.Viz
-        m_HashValue: 1732975472
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 01000200
-  - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
     IdString: reportBack
-    Index: 4
+    Index: 3
     LabelId:
       m_Source: jobs.bayou-displaced-reef.task.reportBack
       m_HashValue: 1790074046
@@ -296,12 +259,11 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0300
+    PrerequisiteTaskIndices: 0200
   m_CashReward: 100
   m_ExpReward: 5
   m_JournalId:
     m_HashValue: 2913266711
   m_Scripting: {fileID: -1942890987711236906, guid: b097077d53ecd6b498f8fb57b8dc31b3,
     type: 3}
-  m_ExtraAssets:
-  - {fileID: 11400000, guid: 8a64e2fde173b8b09b54c7ea810d9891, type: 2}
+  m_ExtraAssets: []

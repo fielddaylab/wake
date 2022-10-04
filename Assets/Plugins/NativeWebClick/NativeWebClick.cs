@@ -7,7 +7,7 @@ using AOT;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace NativeWebClick
+namespace NativeWebUtils
 {
     static public class NativeClick {
         public delegate void NativePositionCallback(float normalizedX, float normalizedY);
