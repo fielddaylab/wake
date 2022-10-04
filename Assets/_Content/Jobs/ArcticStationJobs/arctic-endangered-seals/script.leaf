@@ -16,6 +16,35 @@ $call GiveFact(ArcticCopepod.Reproduce.Stressed)
 {@arcticSci}    In addition, we deployed a population history probe after you discovered {fullnameof RS-4Y}.
                 The data is limited because it's only been out a short while, but every bit counts.
 
+:: helpModelSync
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(modelSync), scene:name == "Modeling", modeling:phase == "visual"
+@cutscene
+$if HasFact(RibbonSeal.Eats.ArcticCod), HasFact(ArcticCod.Eats.ArcticCopepod), HasFact(ArcticCod.Eats.GlacialAmphipod), HasFact(ArcticCod.Eats.IceAlgae), HasFact(ArcticCopepod.Eats.IceAlgae), HasFact(GlacialAmphipod.Eats.IceAlgae)
+    $if HasFact(Y_IceCrevice.Model.EndangeredSealsVisual)
+        {@guide}    You're done with this portion! Head to the {h}Describe{/h} tab next.
+    $else
+        {@guide}    Once you import your facts, we should be good to make our model!
+    $endif
+$else
+    {@guide}    Seems like we don't have enough information to begin our model.
+                Look for {h}question marks{/h} in the interface, those point to where we may need more data.
+    $if !HasFact(RibbonSeal.Eats.ArcticCod)
+        {@guide}    Maybe look into what {pluralnameof RibbonSeal} eat?
+    $elseif !HasFact(ArcticCod.Eats.ArcticCopepod)
+        {@guide}    Maybe look into what {nameof ArcticCod} eats?
+    $elseif !HasFact(ArcticCod.Eats.GlacialAmphipod)
+        {@guide}    Maybe look into what {nameof ArcticCod} eats?
+    $elseif !HasFact(ArcticCod.Eats.IceAlgae)
+        {@guide}    Maybe look into what {nameof ArcticCod} eats?
+    $elseif !HasFact(ArcticCopepod.Eats.IceAlgae)
+        {@guide}    Maybe look into what an {nameof ArcticCopepod} eats?
+    $elseif !HasFact(GlacialAmphipod.Eats.IceAlgae)
+        {@guide}    Maybe look into what a {nameof GlacialAmphipod} eats?
+    $endif
+$endif
+
+
 :: afterModelSync
 @trigger    JobTaskCompleted
 @when       taskId == "modelSync"
