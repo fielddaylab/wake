@@ -21,7 +21,7 @@ namespace ScriptableBake {
 
         bool IBaked.Bake(BakeFlags flags, BakeContext context) {
             PhysicsUtils.EnsureUniformScale(transform, true);
-            Bake.Destroy(this);
+            Baking.Destroy(this);
             return true;
         }
 

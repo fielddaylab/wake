@@ -45,14 +45,14 @@ namespace Aqua {
 
             if (FogSwap.Enabled && dist >= context.FogEndDistance - 0.01f) {
                 Apply(filter, renderer, skinnedRenderer, FogSwap);
-                ScriptableBake.Bake.Destroy(this);
+                Baking.Destroy(this);
                 return true;
             } else if (LowSwap.Enabled && dist >= LowDistance) {
                 Apply(filter, renderer, skinnedRenderer, LowSwap);
-                ScriptableBake.Bake.Destroy(this);
+                Baking.Destroy(this);
                 return true;
             } else {
-                ScriptableBake.Bake.Destroy(this);
+                Baking.Destroy(this);
                 return false;
             }
         }

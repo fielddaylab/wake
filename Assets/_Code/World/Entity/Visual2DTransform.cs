@@ -107,16 +107,20 @@ namespace Aqua.Entity {
         int IBaked.Order { get { return -15; } }
 
         bool IBaked.Bake(BakeFlags flags, BakeContext context) {
+            bool bChanged = false;
+            if (Source == null) {
+                Source = transform.parent;
+                bChanged = true;
+            }
             if (Collider != null) {
-                return Ref.Replace(ref Radius, PhysicsUtils.GetRadius(Collider));
+                bChanged |= Ref.Replace(ref Radius, PhysicsUtils.GetRadius(Collider));
             }
-
             if (Ref.Replace(ref Collider, GetComponent<Collider2D>())) {
+                bChanged = true;
                 Radius = Collider != null ? PhysicsUtils.GetRadius(Collider) : 0;
-                return true;
             }
 
-            return false;
+            return bChanged;
         }
 
         #endif // UNITY_EDITOR

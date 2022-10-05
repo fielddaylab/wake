@@ -41,15 +41,19 @@ namespace ProtoAqua.Observation {
         int IBaked.Order { get { return 0; } }
 
         bool IBaked.Bake(BakeFlags flags, BakeContext context) {
-            Bake.ResetStaticFlags(gameObject, true);
+            Baking.ResetStaticFlags(gameObject, true);
+
+            bool bChanged = CustomBake();
 
             if (!TrackTransform) {
                 TrackTransform = transform;
-                return true;
+                bChanged = true;
             }
 
-            return false;
+            return bChanged;
         }
+
+        protected virtual bool CustomBake() { return false; }
 
         #endif // UNITY_EDITOR
     }

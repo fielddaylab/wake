@@ -25,7 +25,7 @@ namespace Aqua.Editor {
             BuildInfoGenerator.Enabled = true;
             BuildInfoGenerator.IdLength = 8;
 
-            Bake.OnPreBake += (b) => {
+            Baking.OnPreBake += (b) => {
                 ScriptableObject scr = b as ScriptableObject;
                 if (scr) {
                     new StringHash32(scr.name);
@@ -39,7 +39,7 @@ namespace Aqua.Editor {
 
             if (branch != null) {
                 if (branch.StartsWith("feature/") || branch.StartsWith("fix/") || branch.StartsWith("improvement/") || branch.StartsWith("experimental/")
-                    || branch.Contains("dev") || branch.Contains("proto")) {
+                    || branch.Contains("dev") || branch.Contains("proto") || branch.Contains("debug")) {
                     bDesiredDevBuild = true;
                 } else if (branch.StartsWith("milestone") || branch.Contains("preview")) {
                     bDesiredPreviewBuild = true;
@@ -84,7 +84,7 @@ namespace Aqua.Editor {
         static private void BakeAllAssets() {
             using (Profiling.Time("bake assets")) {
                 using (Log.DisableMsgStackTrace()) {
-                    Bake.Assets(BakeFlags.ShowProgressBar);
+                    Baking.BakeAssets(BakeFlags.ShowProgressBar);
                 }
             }
             using (Profiling.Time("post-bake save assets")) {
@@ -210,7 +210,7 @@ namespace Aqua.Editor {
                 try {
                     using (Profiling.Time("bake assets"))
                     using (Log.DisableMsgStackTrace()) {
-                        Bake.Assets(bBatch ? 0 : BakeFlags.Verbose);
+                        Baking.BakeAssets(bBatch ? 0 : BakeFlags.Verbose);
                     }
                     AssetDatabase.SaveAssets();
                     if (!ValidateAllScripts()) {
