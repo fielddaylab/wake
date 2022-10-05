@@ -25,8 +25,8 @@ namespace ScriptableBake {
         }
 
         bool IBaked.Bake(BakeFlags flags, BakeContext context) {
-            Bake.FlattenHierarchy(transform, Recursive);
-            Bake.Destroy(DestroyGameObject ? (UnityEngine.Object) gameObject : this);
+            Baking.FlattenHierarchy(transform, Recursive);
+            Baking.Destroy(DestroyGameObject ? (UnityEngine.Object) gameObject : this);
             return true;
         }
 

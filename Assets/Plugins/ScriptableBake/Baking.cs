@@ -13,7 +13,7 @@ namespace ScriptableBake {
     /// <summary>
     /// Object baking utility.
     /// </summary>
-    static public class Bake {
+    static public class Baking {
 
         public delegate void BakeDelegate(IBaked baked);
 
@@ -34,15 +34,15 @@ namespace ScriptableBake {
         /// <summary>
         /// Bakes the current scene.
         /// </summary>
-        static public void CurrentScene(BakeFlags flags = 0) {
-            Scene(SceneManager.GetActiveScene(), flags);
+        static public void BakeCurrentScene(BakeFlags flags = 0) {
+            BakeScene(SceneManager.GetActiveScene(), flags);
         }
 
         /// <summary>
         /// Bakes scene components.
         /// </summary>
-        static public void Scene(Scene scene, BakeFlags flags = 0) {
-            IEnumerator iter = SceneAsync(scene, flags);
+        static public void BakeScene(Scene scene, BakeFlags flags = 0) {
+            IEnumerator iter = BakeSceneAsync(scene, flags);
             using (iter as IDisposable) {
                 while (iter.MoveNext()) ;
             }
@@ -52,15 +52,15 @@ namespace ScriptableBake {
         /// Bakes the current scene asynchronously.
         /// Use this in a coroutine.
         /// </summary>
-        static public IEnumerator CurrentSceneAsync(BakeFlags flags = 0) {
-            return SceneAsync(SceneManager.GetActiveScene(), flags);
+        static public IEnumerator BakeCurrentSceneAsync(BakeFlags flags = 0) {
+            return BakeSceneAsync(SceneManager.GetActiveScene(), flags);
         }
 
         /// <summary>
         /// Bakes scene asynchronously.
         /// Use this in a coroutine.
         /// </summary>
-        static public IEnumerator SceneAsync(Scene scene, BakeFlags flags = 0) {
+        static public IEnumerator BakeSceneAsync(Scene scene, BakeFlags flags = 0) {
             bool bIgnoreDisabled = (flags & BakeFlags.IgnoreDisabledObjects) != 0;
 
             List<IBaked> rootLocal = new List<IBaked>(16);
@@ -94,8 +94,8 @@ namespace ScriptableBake {
         /// <summary>
         /// Bakes custom assets.
         /// </summary>
-        static public void Assets(BakeFlags flags = 0) {
-            IEnumerator iter = AssetsAsync(flags);
+        static public void BakeAssets(BakeFlags flags = 0) {
+            IEnumerator iter = BakeAssetsAsync(flags);
             using (iter as IDisposable) {
                 while (iter.MoveNext()) ;
             }
@@ -104,8 +104,8 @@ namespace ScriptableBake {
         /// <summary>
         /// Bakes custom assets within the given directories.
         /// </summary>
-        static public void Assets(string[] directories, BakeFlags flags = 0) {
-            IEnumerator iter = AssetsAsync(directories, flags);
+        static public void BakeAssets(string[] directories, BakeFlags flags = 0) {
+            IEnumerator iter = BakeAssetsAsync(directories, flags);
             using (iter as IDisposable) {
                 while (iter.MoveNext()) ;
             }
@@ -115,15 +115,15 @@ namespace ScriptableBake {
         /// Bakes custom assets asynchronously.
         /// Use this in a coroutine.
         /// </summary>
-        static public IEnumerator AssetsAsync(BakeFlags flags = 0) {
-            return AssetsAsync(null, flags);
+        static public IEnumerator BakeAssetsAsync(BakeFlags flags = 0) {
+            return BakeAssetsAsync(null, flags);
         }
 
         /// <summary>
         /// Bakes custom assets within the given directories asynchronously.
         /// Use this in a coroutine.
         /// </summary>
-        static public IEnumerator AssetsAsync(string[] directories, BakeFlags flags = 0) {
+        static public IEnumerator BakeAssetsAsync(string[] directories, BakeFlags flags = 0) {
             string[] guids;
             if (directories != null && directories.Length > 0) {
                 guids = AssetDatabase.FindAssets("t:ScriptableObject", directories);
@@ -153,8 +153,8 @@ namespace ScriptableBake {
         /// <summary>
         /// Bakes a list of objects.
         /// </summary>
-        static public void Objects(IReadOnlyList<UnityEngine.Object> objects, BakeFlags flags = 0) {
-            IEnumerator iter = ObjectsAsync(objects, flags);
+        static public void BakeObjects(IReadOnlyList<UnityEngine.Object> objects, BakeFlags flags = 0) {
+            IEnumerator iter = BakeObjectsAsync(objects, flags);
             using (iter as IDisposable) {
                 while (iter.MoveNext()) ;
             }
@@ -164,7 +164,7 @@ namespace ScriptableBake {
         /// Bakes a list of objects asynchronously.
         /// Use this in a coroutine.
         /// </summary>
-        static public IEnumerator ObjectsAsync(IReadOnlyList<UnityEngine.Object> objects, BakeFlags flags = 0) {
+        static public IEnumerator BakeObjectsAsync(IReadOnlyList<UnityEngine.Object> objects, BakeFlags flags = 0) {
             List<IBaked> bakeAssets = new List<IBaked>(objects.Count);
             for (int i = 0; i < objects.Count; i++) {
                 IBaked baked = objects[i] as IBaked;
@@ -436,7 +436,9 @@ namespace ScriptableBake {
 
                         try {
                             if (!object.ReferenceEquals(unityObj, null) && unityObj == null) {
-                                Debug.LogFormat("[Bake] Object was destroyed");
+                                if (bVerbose) {
+                                    Debug.LogFormat("[Bake] Object was destroyed");
+                                }
                             } else if (bakedObj.Bake(flags, context)) {
                                 if (unityObj) {
                                     EditorUtility.SetDirty(unityObj);

@@ -37,7 +37,7 @@ namespace ProtoAqua.Observation {
         }
 
         protected override bool CustomBake() {
-            if (!Assets.Bestiary(CritterId)) {
+            if (!Assets.Has(CritterId)) {
                 Log.Error("[TaggableCritter] Critter Id not found: '{0}'", CritterId);
             }
 

@@ -529,7 +529,7 @@ namespace Aqua
             }
 
             yield return LoadConditionalSubscenes(inBinding, inContext);
-            yield return Routine.Amortize(Bake.SceneAsync(inBinding, 0), 5);
+            yield return Routine.Amortize(Baking.BakeSceneAsync(inBinding, 0), 5);
         }
 
         #endif // UNITY_EDITOR
