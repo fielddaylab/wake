@@ -7,7 +7,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-namespace NativeWebUtils {
+namespace NativeUtils {
     static public class NativePreload {
         #if USE_JSLIB
 
