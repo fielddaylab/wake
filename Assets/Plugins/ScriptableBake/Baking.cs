@@ -389,6 +389,12 @@ namespace ScriptableBake {
             }
         }
 
+        static public void SetDirty(UnityEngine.Object obj) {
+            #if UNITY_EDITOR
+            EditorUtility.SetDirty(obj);
+            #endif // UNITY_EDITOR
+        }
+
         static private IEnumerator Process(List<IBaked> baked, string source, BakeFlags flags, BakeContext context, Action<UnityEngine.Object> onModify) {
             bool bVerbose = (flags & BakeFlags.Verbose) != 0;
             bool bProgress = (flags & BakeFlags.ShowProgressBar) != 0;

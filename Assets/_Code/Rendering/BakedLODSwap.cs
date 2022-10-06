@@ -7,7 +7,7 @@ namespace Aqua {
     public class BakedLODSwap : MonoBehaviour, IBaked {
         
         [Serializable]
-        public struct Swap {
+        public struct SwapSettings {
             public Mesh Mesh;
             public Material Material;
 
@@ -16,45 +16,104 @@ namespace Aqua {
             }
         }
 
+        [Serializable]
+        public struct UnskinSettings {
+            public bool Reparent;
+            public Transform NewParent;
+
+            public Transform DeleteRoot;
+        }
+
         [Header("Low Swap")]
         public float LowDistance = 40;
-        public Swap LowSwap = default;
+        public SwapSettings LowSwap = default;
 
         [Header("Fog Swap")]
-        public Swap FogSwap = default;
+        public SwapSettings FogSwap = default;
+
+        [Header("Unskinning")]
+        public float UnskinDistance = 0;
+        public UnskinSettings Unskin;
 
         #if UNITY_EDITOR
+
+        private struct RendererComponents {
+            public MeshFilter Filter;
+            public MeshRenderer Renderer;
+            public SkinnedMeshRenderer Skinned;
+            public Bounds Bounds;
+
+            static internal RendererComponents FromGameObject(GameObject go) {
+                RendererComponents components;
+                components.Filter = go.GetComponent<MeshFilter>();
+                components.Renderer = go.GetComponent<MeshRenderer>();
+                components.Skinned = go.GetComponent<SkinnedMeshRenderer>();
+                if (components.Skinned) {
+                    components.Bounds = components.Skinned.bounds;
+                } else if (components.Renderer) {
+                    components.Bounds = components.Renderer.bounds;
+                } else {
+                    components.Bounds = default;
+                }
+                return components;
+            }
+        }
+
+        private struct RendererSettings {
+            public Mesh Mesh;
+            public Material Material;
+
+            static internal RendererSettings FromComponents(RendererComponents components) {
+                RendererSettings settings;
+                if (components.Filter) {
+                    settings.Mesh = components.Filter.sharedMesh;
+                } else if (components.Skinned) {
+                    settings.Mesh = components.Skinned.sharedMesh;
+                } else {
+                    settings.Mesh = null;
+                }
+
+                if (components.Renderer) {
+                    settings.Material = components.Renderer.sharedMaterial;
+                } else if (components.Skinned) {
+                    settings.Material = components.Skinned.sharedMaterial;
+                } else {
+                    settings.Material = null;
+                }
+
+                return settings;
+            }
+        }
 
         public int Order { get { return 100; } }
 
         public bool Bake(BakeFlags flags, BakeContext context) {
-            MeshFilter filter = GetComponent<MeshFilter>();
-            MeshRenderer renderer = GetComponent<MeshRenderer>();
-            SkinnedMeshRenderer skinnedRenderer = GetComponent<SkinnedMeshRenderer>();
+            RendererComponents components = RendererComponents.FromGameObject(gameObject);
+            RendererSettings settings = RendererSettings.FromComponents(components);
 
-            Bounds rendererBounds;
-            if (skinnedRenderer) {
-                rendererBounds = skinnedRenderer.bounds;
-            } else {
-                rendererBounds = renderer.bounds;
-            }
-
-            float minZ = rendererBounds.min.z;
+            float minZ = components.Bounds.min.z;
             float cameraZ = context.MainCamera.transform.position.z;
             float dist = Math.Abs(minZ - cameraZ);
 
-            if (FogSwap.Enabled && dist >= context.FogEndDistance - 0.01f) {
-                Apply(filter, renderer, skinnedRenderer, FogSwap);
-                Baking.Destroy(this);
-                return true;
-            } else if (LowSwap.Enabled && dist >= LowDistance) {
-                Apply(filter, renderer, skinnedRenderer, LowSwap);
-                Baking.Destroy(this);
-                return true;
-            } else {
-                Baking.Destroy(this);
-                return false;
+            bool bChanged = false;
+
+            if (UnskinDistance > 0 && dist >= UnskinDistance) {
+                UnskinMesh(gameObject, ref components, Unskin);
+                bChanged = true;
             }
+
+            if (FogSwap.Enabled && dist >= context.FogEndDistance - 0.01f) {
+                Override(ref settings, FogSwap);
+                ApplySettings(ref components, settings);
+                bChanged = true;
+            } else if (LowSwap.Enabled && dist >= LowDistance) {
+                Override(ref settings, LowSwap);
+                ApplySettings(ref components, settings);
+                bChanged = true;
+            }
+
+            Baking.Destroy(this);
+            return bChanged;
         }
 
         private void Reset() {
@@ -95,23 +154,54 @@ namespace Aqua {
             }
         }
 
-        static private void Apply(MeshFilter filter, MeshRenderer renderer, SkinnedMeshRenderer skinnedRenderer, Swap swap) {
+        static private void Override(ref RendererSettings settings, SwapSettings swap) {
             if (swap.Mesh != null) {
-                if (skinnedRenderer != null) {
-                    skinnedRenderer.sharedMesh = swap.Mesh;
-                    UnityEditor.EditorUtility.SetDirty(skinnedRenderer);
-                } else if (filter) {
-                    filter.sharedMesh = swap.Mesh;
-                    UnityEditor.EditorUtility.SetDirty(filter);
+                settings.Mesh = swap.Mesh;
+            }
+
+            if (swap.Material != null) {
+                settings.Material = swap.Material;
+            }
+        }
+
+        static private void UnskinMesh(GameObject go, ref RendererComponents components, UnskinSettings unskin) {
+            RendererSettings renderSettings = RendererSettings.FromComponents(components);
+
+            if (unskin.Reparent) {
+                go.transform.SetParent(unskin.NewParent, true);
+            }
+
+            Baking.Destroy(components.Skinned.rootBone.gameObject);
+            Baking.Destroy(components.Skinned);
+
+            if (unskin.DeleteRoot) {
+                Baking.Destroy(unskin.DeleteRoot.gameObject);
+            }
+
+            components.Skinned = null;
+
+            components.Filter = go.AddComponent<MeshFilter>();
+            components.Renderer = go.AddComponent<MeshRenderer>();
+
+            components.Bounds = components.Renderer.bounds;
+            ApplySettings(ref components, renderSettings);
+
+        }
+
+        static private void ApplySettings(ref RendererComponents components, RendererSettings settings) {
+            if (settings.Mesh != null) {
+                if (components.Filter != null) {
+                    components.Filter.sharedMesh = settings.Mesh;
+                } else if (components.Skinned != null) {
+                    components.Skinned.sharedMesh = settings.Mesh;
                 }
             }
-            if (swap.Material != null) {
-                if (skinnedRenderer) {
-                    skinnedRenderer.sharedMaterial = swap.Material;
-                    UnityEditor.EditorUtility.SetDirty(skinnedRenderer);
-                } else if (renderer) {
-                    renderer.sharedMaterial = swap.Material;
-                    UnityEditor.EditorUtility.SetDirty(renderer);
+
+            if (settings.Material != null) {
+                if (components.Renderer != null) {
+                    components.Renderer.sharedMaterial = settings.Material;
+                } else if (components.Skinned != null) {
+                    components.Skinned.sharedMaterial = settings.Material;
                 }
             }
         }
