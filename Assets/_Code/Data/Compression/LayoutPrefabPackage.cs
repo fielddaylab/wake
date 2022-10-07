@@ -55,7 +55,14 @@ namespace Aqua.Compression {
 
         [ContextMenu("Compress")]
         private void Bake() {
-            GameObject[] allPrefabs = ValidationUtils.FindAllAssets<GameObject>(PrefabPredicate, Path.GetDirectoryName(AssetDatabase.GetAssetPath(this)));
+            GameObject[] prefabsInDirectory = ValidationUtils.FindAllAssets<GameObject>(PrefabPredicate, Path.GetDirectoryName(AssetDatabase.GetAssetPath(this)));
+            List<GameObject> prefabsToBuild = new List<GameObject>(prefabsInDirectory.Length);
+            foreach(var prefab in prefabsInDirectory) {
+                if (prefab.name.Contains("Template")) {
+                    continue;
+                }
+                prefabsToBuild.Add(prefab);
+            }
             PackageBuilder compressor = new PackageBuilder();
             List<PrefabEntry> toc = new List<PrefabEntry>();
             List<byte> allData = new List<byte>(4096);
@@ -65,8 +72,8 @@ namespace Aqua.Compression {
             try {
                 using(Profiling.Time("compressing prefabs")) {
                     int idx = 0;
-                    foreach(var prefab in allPrefabs) {
-                        EditorUtility.DisplayProgressBar("Compressing Prefabs...", string.Format("Compressing '{0}' ({1}/{2})", prefab.name, idx + 1, allPrefabs.Length), (idx + 1) / (float) allPrefabs.Length);
+                    foreach(var prefab in prefabsToBuild) {
+                        EditorUtility.DisplayProgressBar("Compressing Prefabs...", string.Format("Compressing '{0}' ({1}/{2})", prefab.name, idx + 1, prefabsToBuild.Count), (idx + 1) / (float) prefabsToBuild.Count);
                         idx++;
                         GameObject instantiated = GameObject.Instantiate(prefab, root.transform, false);
                         instantiated.name = prefab.name;
