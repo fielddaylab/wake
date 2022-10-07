@@ -676,10 +676,8 @@ namespace ProtoAqua.ExperimentV2 {
 
                 critterPosition = critter.CachedTransform.localPosition;
                 critterDistance = Vector3.Distance(instancePosition, critterPosition);
-                priority = (critter.Definition.TargetLimit - critter.IncomingTargetCount) * (5 - critterDistance);
-                if (critter.Definition.IsDistributed) {
-                    priority *= RNG.Instance.NextFloat(1, 3);
-                }
+                priority = (critter.Definition.TargetLimit - critter.IncomingTargetCount) * Math.Max(5 - critterDistance, 0.1f);
+                priority *= RNG.Instance.NextFloat(1, 3);
                 buffer.PushBack(new PriorityValue<ActorInstance>(critter, priority));
             }
 

@@ -29,6 +29,7 @@ namespace ProtoAqua.ExperimentV2
 
         public TankType Type = TankType.Observation;
         [Required] public CameraPose CameraPose = null;
+        [Required] public CameraPose ZoomPose = null;
         [Required] public BoxCollider BoundsCollider;
         [HideInInspector] public Bounds Bounds;
         [Required] public MonoBehaviour Controller;
