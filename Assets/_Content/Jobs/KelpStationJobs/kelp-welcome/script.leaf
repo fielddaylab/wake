@@ -184,6 +184,11 @@ $call ship.map->ResetSorting()
 
 // BACK AT SHIP
 
+:: atHelmNotFinishedWithExperiment
+@function   SceneStart
+@when       scene:name == "Helm", !JobTaskCompleted(runExperiment)
+$call WheelPrompt->Deactivate()
+
 :: atShip
 @trigger    SceneStart
 @when       scene:name == "Helm", JobTaskActive(runExperiment)

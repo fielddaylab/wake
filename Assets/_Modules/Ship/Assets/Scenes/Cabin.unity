@@ -201,6 +201,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
 --- !u!4 &128313769
@@ -266,6 +267,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
 --- !u!1 &183637168
@@ -10213,6 +10215,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
 --- !u!1 &572740488
@@ -10402,7 +10405,7 @@ MonoBehaviour:
   m_MeshRenderer: {fileID: 619090836}
   m_ColorGroup: {fileID: 0}
   m_Path: Textures/Ship/OceanView_TEMP.png
-  m_Material: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_Material: {fileID: 2100000, guid: 3f88a0b8998f0394b87e9e578d404b00, type: 2}
   m_Tessellation: 0
   m_Color:
     serializedVersion: 2
@@ -10437,7 +10440,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 3f88a0b8998f0394b87e9e578d404b00, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -15697,7 +15700,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e11849e344bd4f459ed4868c88fdf50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Scripts: []
+  m_Scripts:
+  - {fileID: -1942890987711236906, guid: 4a25c7f852a633646aff7706b7a59f29, type: 3}
 --- !u!114 &1146493867
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16826,6 +16830,11 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: a816f5eb691a34042811d00ae3f4f531, type: 2}
     - target: {fileID: 3818863539107850200, guid: 13f92f83256f2ff4c9ada2e09f1e47da,
         type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3818863539107850200, guid: 13f92f83256f2ff4c9ada2e09f1e47da,
+        type: 3}
       propertyPath: m_StaticEditorFlags
       value: 1
       objectReference: {fileID: 0}
@@ -16994,6 +17003,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 1
   Recursive: 0
   DestroyGameObject: 0
 --- !u!1 &2081603708

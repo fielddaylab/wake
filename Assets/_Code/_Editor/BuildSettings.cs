@@ -119,6 +119,13 @@ namespace Aqua.Editor {
             }
         }
 
+        [MenuItem("Aqualab/DEBUG/Delete All Bookmarks")]
+        static private void DeleteAllBookmarks() {
+            foreach(var file in Directory.EnumerateFiles("Assets/Resources/Bookmarks")) {
+                File.Delete(file);
+            }
+        }
+
         [MenuItem("Aqualab/Leaf/Validate All Scripts")]
         static private void DEBUGValidateAllScripts() {
             ValidateAllScripts();
@@ -224,7 +231,11 @@ namespace Aqua.Editor {
                         CodeGen.GenerateJobsConsts();
                         NoOverridesAllowed.RevertInAllScenes();
                         StripEditorInfoFromAssets();
+                        #if !PRESERVE_DEBUG_SYMBOLS && !DEVELOPMENT
+                        DeleteAllBookmarks();
+                        #else
                         CompressBookmarks();
+                        #endif // !PRESERVE_DEBUG_SYMBOLS && !DEVELOPMENT
                     }
                 } catch (Exception e) {
                     throw new BuildFailedException(e);

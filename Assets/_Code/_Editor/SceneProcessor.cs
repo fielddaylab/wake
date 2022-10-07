@@ -109,7 +109,7 @@ namespace Aqua.Editor
                 {
                     foreach(var strippable in allStrippable)
                     {
-                        Debug.LogFormat("[SceneProcessor] ...stripping editor data from {0}", strippable.ToString());
+                        // Debug.LogFormat("[SceneProcessor] ...stripping editor data from {0}", strippable.ToString());
                         strippable.ClearEditorOnlyData();
                     }
                 }

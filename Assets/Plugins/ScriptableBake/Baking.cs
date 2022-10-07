@@ -198,10 +198,10 @@ namespace ScriptableBake {
         /// <summary>
         /// Flattens the hierarchy at this transform. Children will become siblings.
         /// </summary>
-        static public void FlattenHierarchy(Transform transform, bool recursive = false) {
+        static public void FlattenHierarchy(Transform transform, bool destroyInactive, bool recursive = false) {
             if (recursive) {
                 int placeIdx = transform.GetSiblingIndex() + 1;
-                FlattenHierarchyRecursive(transform, transform.parent, ref placeIdx);
+                FlattenHierarchyRecursive(transform, transform.parent, destroyInactive, ref placeIdx);
                 return;
             }
 
@@ -217,12 +217,16 @@ namespace ScriptableBake {
             int siblingIdx = transform.GetSiblingIndex() + 1;
             while (childCount-- > 0) {
                 child = transform.GetChild(0);
-                child.SetParent(parent, true);
-                child.SetSiblingIndex(siblingIdx++);
+                if (destroyInactive && !child.gameObject.activeSelf) {
+                    GameObject.DestroyImmediate(child.gameObject);
+                } else {
+                    child.SetParent(parent, true);
+                    child.SetSiblingIndex(siblingIdx++);
+                }
             }
         }
 
-        static private void FlattenHierarchyRecursive(Transform transform, Transform parent, ref int siblingIndex) {
+        static private void FlattenHierarchyRecursive(Transform transform, Transform parent, bool destroyInactive, ref int siblingIndex) {
             if (!Application.isPlaying) {
                 GameObject root = PrefabUtility.GetOutermostPrefabInstanceRoot(transform);
                 if (root != null)
@@ -233,9 +237,13 @@ namespace ScriptableBake {
             int childCount = transform.childCount;
             while (childCount-- > 0) {
                 child = transform.GetChild(0);
-                child.SetParent(parent, true);
-                child.SetSiblingIndex(siblingIndex++);
-                FlattenHierarchyRecursive(child, parent, ref siblingIndex);
+                if (destroyInactive && !child.gameObject.activeSelf) {
+                    GameObject.DestroyImmediate(child.gameObject);
+                } else {
+                    child.SetParent(parent, true);
+                    child.SetSiblingIndex(siblingIndex++);
+                    FlattenHierarchyRecursive(child, parent, destroyInactive, ref siblingIndex);
+                }
             }
         }
 
