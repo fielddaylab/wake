@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Aqua;
 using Aqua.Cameras;
+using Aqua.Character;
 using AquaAudio;
 using BeauRoutine;
 using BeauUtil;
@@ -40,7 +41,8 @@ namespace ProtoAqua.ExperimentV2
         [HideInInspector] public bool[] NavArrowStates;
 
         [Header("Guide Target")]
-        [Required] public GameObject GuideTarget = null;
+        [Required] public Transform GuideTarget = null;
+        public Transform GuideTargetZoomed = null;
 
         [Header("Canvas")]
         [Required] public Canvas Interface = null;
@@ -78,6 +80,8 @@ namespace ProtoAqua.ExperimentV2
 
         [NonSerialized] private StringHash32 m_Id;
         [NonSerialized] public TankState CurrentState;
+
+        [NonSerialized] public GuideBody Guide;
         
         [NonSerialized] public Color DefaultWaterColor;
         [NonSerialized] public TankWaterSystem WaterSystem;

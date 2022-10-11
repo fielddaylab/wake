@@ -227,6 +227,7 @@ GameObject:
   - component: {fileID: 575132708}
   - component: {fileID: 575132709}
   - component: {fileID: 575132710}
+  - component: {fileID: 575132711}
   m_Layer: 0
   m_Name: World
   m_TagString: Untagged
@@ -263,6 +264,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
 --- !u!114 &575132710
@@ -280,6 +282,19 @@ MonoBehaviour:
   m_SceneExitButtonGroup: {fileID: 3202569842521821383}
   m_ShipOutPopup: {fileID: 152938082}
   m_AllStations: []
+--- !u!114 &575132711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 575132707}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d527cbae564d45547b4a948ae6e39f98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Always: 1
 --- !u!1 &647550648
 GameObject:
   m_ObjectHideFlags: 0
@@ -981,6 +996,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
 --- !u!1001 &1093257953
@@ -1177,6 +1193,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1238589533}
   - component: {fileID: 1238589532}
+  - component: {fileID: 1238589528}
   m_Layer: 0
   m_Name: WorldBG
   m_TagString: Untagged
@@ -1184,6 +1201,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1238589528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1238589527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d527cbae564d45547b4a948ae6e39f98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Always: 1
 --- !u!223 &1238589532
 Canvas:
   m_ObjectHideFlags: 0
@@ -2859,3 +2889,22 @@ CanvasGroup:
     type: 3}
   m_PrefabInstance: {fileID: 3202569842521821382}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &3202569842521821384 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3202569842176652371, guid: 779514bc0a84d5a4f8075f5ba5c07cac,
+    type: 3}
+  m_PrefabInstance: {fileID: 3202569842521821382}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3202569842521821385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3202569842521821384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d527cbae564d45547b4a948ae6e39f98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Always: 1

@@ -3,7 +3,6 @@ using ScriptableBake;
 using System;
 
 namespace Aqua {
-    [RequireComponent(typeof(Renderer))]
     public class BakedLODSwap : MonoBehaviour, IBaked {
         
         [Serializable]

@@ -5,7 +5,7 @@ namespace ScriptableBake {
     /// <summary>
     /// Resets the static flags for a GameObject.
     /// </summary>
-    [AddComponentMenu("ScriptableBake/Reset Static Flags")]
+    [AddComponentMenu("ScriptableBake/Reset Static Flags"), DisallowMultipleComponent]
     public sealed class ResetStaticFlags : MonoBehaviour, IBaked {
 
         public const int Order = FlattenHierarchy.Order - 10;

@@ -5,7 +5,7 @@ namespace ScriptableBake {
     /// <summary>
     /// Flattens a transform hierarchy.
     /// </summary>
-    [AddComponentMenu("ScriptableBake/Flatten Hierarchy")]
+    [AddComponentMenu("ScriptableBake/Flatten Hierarchy"), DisallowMultipleComponent]
     public sealed class FlattenHierarchy : MonoBehaviour, IBaked {
 
         public const int Order = -1000000;

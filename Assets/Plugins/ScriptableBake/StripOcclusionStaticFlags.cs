@@ -5,7 +5,7 @@ namespace ScriptableBake {
     /// <summary>
     /// Strips occlusion-related static flags for a GameObject.
     /// </summary>
-    [AddComponentMenu("ScriptableBake/Strip Occlusion Static Flags")]
+    [AddComponentMenu("ScriptableBake/Strip Occlusion Static Flags"), DisallowMultipleComponent]
     public sealed class StripOcclusionStaticFlags : MonoBehaviour, IBaked {
 
         public const int Order = -1000001;
