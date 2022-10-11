@@ -66,14 +66,12 @@ namespace ProtoAqua.Observation {
             if (Script.IsPausedOrLoading)
                 return;
 
-            if (Frame.Interval(4)) {
-                m_Listener.ProcessOccupants();
-            }
-
             // only update this every 8 frames
             if (!Frame.Interval(8)) {
                 return;
             }
+
+            m_Listener.ProcessOccupants();
 
             Vector3 gameplayPlanePos;
             Vector2 gameplayPlaneDist;
@@ -428,7 +426,7 @@ namespace ProtoAqua.Observation {
         }
 
         int IBaked.Order {
-            get { return 0; }
+            get { return 500; }
         }
 
         #endif // UNITY_EDITOR

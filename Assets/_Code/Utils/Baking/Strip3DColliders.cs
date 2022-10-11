@@ -16,9 +16,9 @@ namespace Aqua
         public bool Bake(BakeFlags flags, BakeContext context) {
             Collider[] colliders = GetComponentsInChildren<Collider>(true);
             foreach(var collider in colliders) {
-                ScriptableBake.Bake.Destroy(collider);
+                Baking.Destroy(collider);
             }
-            ScriptableBake.Bake.Destroy(this);
+            Baking.Destroy(this);
             return true;
         }
 

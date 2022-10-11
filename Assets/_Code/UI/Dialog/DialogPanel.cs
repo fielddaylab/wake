@@ -319,7 +319,12 @@ namespace Aqua
             
             Sprite portraitSprite = m_CurrentState.TargetDef.Portrait(inPortraitId);
             m_CurrentState.PortraitId = inPortraitId;
-            UpdatePortrait?.Invoke(m_CurrentState.TargetId, m_CurrentState.PortraitId);
+            
+            if (m_CurrentThread.IsRunning()) {
+                m_CurrentThread.TapCharacter(m_CurrentState.TargetId);
+                UpdatePortrait?.Invoke(m_CurrentState.TargetId, m_CurrentState.PortraitId);
+            }
+
             if (portraitSprite)
             {
                 if (m_SpeakerPortraitGroup)

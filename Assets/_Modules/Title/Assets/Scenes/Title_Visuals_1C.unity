@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -1403,6 +1403,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 94758566}
+  - component: {fileID: 94758567}
   m_Layer: 0
   m_Name: IntroPoses
   m_TagString: Untagged
@@ -1429,6 +1430,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &94758567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 94758565}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
+  Recursive: 0
+  DestroyGameObject: 1
 --- !u!4 &95874362 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6417196570755996735, guid: 51465912568164fb69790614e1c5ef62,
@@ -7660,6 +7676,7 @@ GameObject:
   m_Component:
   - component: {fileID: 599548569}
   - component: {fileID: 599548570}
+  - component: {fileID: 599548571}
   m_Layer: 0
   m_Name: foreground
   m_TagString: Untagged
@@ -7694,8 +7711,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+--- !u!114 &599548571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 599548568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d527cbae564d45547b4a948ae6e39f98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Always: 1
 --- !u!4 &600186765 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8256579402164060393, guid: 42dc1d3632e08454eabce1fbe1d3303c,
@@ -8725,6 +8756,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
 --- !u!4 &713593814 stripped
@@ -9460,6 +9492,7 @@ GameObject:
   m_Component:
   - component: {fileID: 762288667}
   - component: {fileID: 762288668}
+  - component: {fileID: 762288669}
   m_Layer: 0
   m_Name: midground
   m_TagString: Untagged
@@ -9496,8 +9529,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+--- !u!114 &762288669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 762288666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d527cbae564d45547b4a948ae6e39f98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Always: 1
 --- !u!4 &772014897 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8256579402164060393, guid: 42dc1d3632e08454eabce1fbe1d3303c,
@@ -11062,6 +11109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
 --- !u!1001 &965223763
@@ -12838,6 +12886,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
 --- !u!1001 &1176256586
@@ -15023,6 +15072,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
 --- !u!4 &1292514452 stripped
@@ -16026,6 +16076,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1381467552}
   - component: {fileID: 1381467553}
+  - component: {fileID: 1381467554}
   m_Layer: 0
   m_Name: background
   m_TagString: Untagged
@@ -16062,8 +16113,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+--- !u!114 &1381467554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1381467551}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d527cbae564d45547b4a948ae6e39f98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Always: 1
 --- !u!1001 &1386317160
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19412,6 +19477,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
 --- !u!4 &1751114903 stripped
@@ -22114,6 +22180,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
 --- !u!1001 &1977614587
@@ -22433,6 +22500,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
 --- !u!1001 &2011080909

@@ -7,7 +7,7 @@ using System.Collections;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
-using NativeWebUtils;
+using NativeUtils;
 using UnityEngine;
 using System.Runtime.InteropServices;
 using TMPro;
@@ -43,12 +43,12 @@ namespace Aqua {
         [NonSerialized] private ReadyPhase m_ReadyPhase = 0;
 
         private void Awake() {
-            NativeClick.OnMouseDown += OnNativeMouseDown;
+            NativeInput.OnMouseDown += OnNativeMouseDown;
             Services.Assets.PreloadGroup("Scene/Title");
         }
 
         private void OnDestroy() {
-            NativeClick.OnMouseDown -= OnNativeMouseDown;
+            NativeInput.OnMouseDown -= OnNativeMouseDown;
         }
         
         private IEnumerator SwapToPrompt() {

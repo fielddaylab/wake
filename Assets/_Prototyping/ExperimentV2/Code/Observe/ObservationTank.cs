@@ -217,7 +217,7 @@ namespace ProtoAqua.ExperimentV2 {
 
                 Services.Audio.PostEvent("capture_new");
 
-                Services.UI.Popup.PresentFact("'experiment.observation.newBehavior.header", null, null, factDef, BFType.DefaultDiscoveredFlags(factDef))
+                Services.UI.Popup.PresentFact(Loc.Find("experiment.observation.newBehavior.header"), null, null, factDef, BFType.DefaultDiscoveredFlags(factDef))
                     .OnComplete((r) => {
                         m_RunningScreen.CustomButton.interactable = true;
                         using (var table = TempVarTable.Alloc()) {
@@ -293,6 +293,9 @@ namespace ProtoAqua.ExperimentV2 {
         private IEnumerator StartExperiment() {
             m_ParentTank.ActorBehavior.Begin();
             yield return null;
+
+            Services.Camera.MoveToPose(m_ParentTank.ZoomPose, 0.4f);
+            m_ParentTank.Guide.MoveTo(m_ParentTank.GuideTargetZoomed);
             
             m_PotentialNewFacts.Clear();
             int potentialNewObservationsCount;
@@ -435,6 +438,8 @@ namespace ProtoAqua.ExperimentV2 {
             TankWaterSystem.SetWaterHeight(m_ParentTank, 0);
 
             SelectableTank.Reset(m_ParentTank, true);
+            Services.Camera.SnapToPose(m_ParentTank.CameraPose);
+            m_ParentTank.Guide.SnapTo(m_ParentTank.GuideTarget);
 
             m_BehaviorCircles.Reset();
             m_ParentTank.CurrentState &= ~TankState.Running;

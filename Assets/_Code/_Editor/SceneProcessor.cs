@@ -56,7 +56,7 @@ namespace Aqua.Editor
             if (debug)
             {
                 Debug.LogFormat("[SceneProcessor] Removing debug service from scene '{0}'...", scene.name);
-                Bake.Destroy(debug.gameObject);
+                Baking.Destroy(debug.gameObject);
             }
         }
 
@@ -94,7 +94,7 @@ namespace Aqua.Editor
         {
             using(Profiling.Time("baking objects"))
             {
-                Bake.Scene(scene);
+                Baking.BakeScene(scene);
             }
         }
 
@@ -109,7 +109,7 @@ namespace Aqua.Editor
                 {
                     foreach(var strippable in allStrippable)
                     {
-                        Debug.LogFormat("[SceneProcessor] ...stripping editor data from {0}", strippable.ToString());
+                        // Debug.LogFormat("[SceneProcessor] ...stripping editor data from {0}", strippable.ToString());
                         strippable.ClearEditorOnlyData();
                     }
                 }
