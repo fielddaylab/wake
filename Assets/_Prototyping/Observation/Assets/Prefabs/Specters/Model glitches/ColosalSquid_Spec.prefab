@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2834961434469844471}
   - component: {fileID: 2834961434469844470}
   m_Layer: 0
-  m_Name: BloodJellyGlitch
+  m_Name: ColosalSquid_Spec
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24,15 +24,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2834961434469844468}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.02512626, y: 0.027879715, z: 0}
+  m_LocalRotation: {x: -0.11809341, y: -0.1229974, z: 0.20480964, w: 0.9638354}
+  m_LocalPosition: {x: -25.696068, y: -46.610935, z: -42.810677}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2834961436327927677}
   - {fileID: 9123801677769021114}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -10.21, y: -16.862001, z: 25.510002}
 --- !u!114 &2834961434469844470
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65,7 +65,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2834961436327927677
 Transform:
   m_ObjectHideFlags: 0
@@ -74,7 +74,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2834961436327927650}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 77.07, y: -104.52, z: 12.71}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2834961434469844471}
@@ -341,7 +341,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.013
+      scalar: 0.02
       minScalar: 0.01
       maxCurve:
         serializedVersion: 2
@@ -657,7 +657,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 1000
+    maxNumParticles: 3000
     size3D: 0
     rotation3D: 0
     gravityModifier:
@@ -922,7 +922,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 200
+      scalar: 1000
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -2840,7 +2840,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     separateAxes: 0
-    frequency: 2
+    frequency: 5
     damping: 1
     octaves: 2
     octaveMultiplier: 1
@@ -4790,7 +4790,7 @@ ParticleSystemRenderer:
   m_RenderMode: 0
   m_SortMode: 0
   m_MinParticleSize: 0
-  m_MaxParticleSize: 0.3
+  m_MaxParticleSize: 0.5
   m_CameraVelocityScale: 0
   m_VelocityScale: 0
   m_LengthScale: 2
@@ -14405,7 +14405,7 @@ GameObject:
   - component: {fileID: 5274166910232434975}
   - component: {fileID: 7986410003489025493}
   m_Layer: 0
-  m_Name: bloodJelly
+  m_Name: Squid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14418,14 +14418,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8490853088133467136}
-  m_LocalRotation: {x: -0, y: -0, z: 0.27217013, w: 0.96224916}
-  m_LocalPosition: {x: 77.08707, y: -104.36412, z: 12.96529}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 77.0877, y: -104.364395, z: 12.96529}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5594945756664235388}
   m_Father: {fileID: 2834961434469844471}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 31.587002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5274166910232434975
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -14433,7 +14433,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8490853088133467136}
-  m_Mesh: {fileID: 7848083907971464931, guid: 47effbed77bc5c949b8197e235e7358d, type: 3}
+  m_Mesh: {fileID: 3255653887204182057, guid: 5f5ad69f540f0ec4faf03d2695961413, type: 3}
 --- !u!23 &7986410003489025493
 MeshRenderer:
   m_ObjectHideFlags: 0
