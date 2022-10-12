@@ -67,6 +67,7 @@ namespace Aqua
                 .Register<StringHash32>(GameEvents.JobTaskCompleted, LogCompleteTask, this)
                 .Register<string>(GameEvents.ViewChanged, LogRoomChanged, this)
                 .Register<string>(GameEvents.ScriptFired, LogScriptFired, this)
+                .Register<DialogPanel.TextDisplayArgs>(GameEvents.TextLineDisplayed, LogScriptLine, this)
                 .Register<TankType>(ExperimentEvents.ExperimentBegin, LogBeginExperiment, this)
                 .Register<string>(GameEvents.BeginDive, LogBeginDive, this)
                 .Register(ModelingConsts.Event_Simulation_Begin, LogBeginSimulation, this)
@@ -363,11 +364,13 @@ namespace Aqua
         {
             if (inParams.Type == BestiaryUpdateParams.UpdateType.Fact)
             {
-                string parsedFactId = Assets.Fact(inParams.Id).name;
-
+                BFBase fact = Assets.Fact(inParams.Id);
+                
                 using(var e = m_Log.NewEvent("receive_fact")) {
                     e.Param("job_name", m_CurrentJobName);
-                    e.Param("fact_id", parsedFactId);
+                    e.Param("fact_id", fact.name);
+
+                    // TODO: Add more detail here?
                 }
             }
             else if (inParams.Type == BestiaryUpdateParams.UpdateType.Entity)
@@ -570,6 +573,15 @@ namespace Aqua
             using(var e = m_Log.NewEvent("script_fired")) {
                 e.Param("job_name", m_CurrentJobName);
                 e.Param("node_id", nodeId);
+            }
+        }
+
+        private void LogScriptLine(DialogPanel.TextDisplayArgs args)
+        {
+            using(var e = m_Log.NewEvent("script_line_displayed")) {
+                e.Param("job_name", m_CurrentJobName);
+                e.Param("text_string", args.VisibleText);
+                e.Param("node_id", args.NodeId);
             }
         }
 

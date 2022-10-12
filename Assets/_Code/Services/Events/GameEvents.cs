@@ -38,6 +38,7 @@ namespace Aqua
         static public readonly StringHash32 ScriptNodeSeen = "script:node-seen"; // StringHash32 nodeId
         static public readonly StringHash32 ScriptChoicePresented = "script:choice-presented"; // DialogRecord lastLine
         static public readonly StringHash32 ScriptFired = "script:fired"; // string nodeId
+        static public readonly StringHash32 TextLineDisplayed = "script:lineDisplayed"; // string text
 
         static public readonly StringHash32 GuideChatterStart = "guide:chatter-start"; // no args
         static public readonly StringHash32 GuideChatterEnd = "guide:chatter-end"; // no args

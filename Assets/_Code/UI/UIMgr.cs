@@ -152,7 +152,7 @@ namespace Aqua
             if (m_SkippingCutscene)
             {
                 m_SkipFader.Object?.Hide(0.2f);
-                m_SkipFader = null;
+                m_SkipFader = default;
                 m_SkippingCutscene = false;
             }
         }

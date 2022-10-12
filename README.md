@@ -250,6 +250,21 @@ Player triggers a given script node through dialogue or interactions.
 | job_name | String name of the current job |
 | node_id | ID of a given script node |
 
+#### script_line_displayed
+
+Player sees a line of dialog.
+
+| Parameter | Description |
+| --- | --- |
+| event_sequence_index | Sequence index of the current event |
+| user_code | The player's unique save code |
+| app_version | Current game build version |
+| app_flavor | Git branch origin for current build |
+| log_version | Current logging version |
+| job_name | String name of the current job |
+| node_id | ID of a given script node |
+| text_string | String displayed to the player |
+
 <a name="PortableDeviceInteractions"/>
 
 ### Portable Device Interactions
