@@ -25,7 +25,7 @@ namespace Aqua.Editor {
             BuildInfoGenerator.Enabled = true;
             BuildInfoGenerator.IdLength = 8;
 
-            Bake.OnPreBake += (b) => {
+            Baking.OnPreBake += (b) => {
                 ScriptableObject scr = b as ScriptableObject;
                 if (scr) {
                     new StringHash32(scr.name);
@@ -39,7 +39,7 @@ namespace Aqua.Editor {
 
             if (branch != null) {
                 if (branch.StartsWith("feature/") || branch.StartsWith("fix/") || branch.StartsWith("improvement/") || branch.StartsWith("experimental/")
-                    || branch.Contains("dev") || branch.Contains("proto")) {
+                    || branch.Contains("dev") || branch.Contains("proto") || branch.Contains("debug")) {
                     bDesiredDevBuild = true;
                 } else if (branch.StartsWith("milestone") || branch.Contains("preview")) {
                     bDesiredPreviewBuild = true;
@@ -60,7 +60,7 @@ namespace Aqua.Editor {
             } else if (bDesiredPreviewBuild) {
                 BuildUtils.WriteDefines("PREVIEW,ENABLE_LOGGING_ERRORS_BEAUUTIL,ENABLE_LOGGING_WARNINGS_BEAUUTIL,PRESERVE_DEBUG_SYMBOLS");
             } else {
-                BuildUtils.WriteDefines("PRODUCTION,IGNORE_UNITY_EDITOR");
+                BuildUtils.WriteDefines("PRODUCTION");
             }
 
             PlayerSettings.SetManagedStrippingLevel(EditorUserBuildSettings.selectedBuildTargetGroup, bDesiredDevBuild ? ManagedStrippingLevel.Medium : ManagedStrippingLevel.High);
@@ -84,7 +84,7 @@ namespace Aqua.Editor {
         static private void BakeAllAssets() {
             using (Profiling.Time("bake assets")) {
                 using (Log.DisableMsgStackTrace()) {
-                    Bake.Assets(BakeFlags.ShowProgressBar);
+                    Baking.BakeAssets(BakeFlags.ShowProgressBar);
                 }
             }
             using (Profiling.Time("post-bake save assets")) {
@@ -116,6 +116,13 @@ namespace Aqua.Editor {
         static private void CompressBookmarks() {
             foreach (TextAsset asset in AssetDBUtils.FindAssets<TextAsset>(null, new string[] { "Assets/Resources/Bookmarks" })) {
                 PrefabTools.ConvertToBeauDataBinary<SaveData>(asset, true);
+            }
+        }
+
+        [MenuItem("Aqualab/DEBUG/Delete All Bookmarks")]
+        static private void DeleteAllBookmarks() {
+            foreach(var file in Directory.EnumerateFiles("Assets/Resources/Bookmarks")) {
+                File.Delete(file);
             }
         }
 
@@ -210,7 +217,7 @@ namespace Aqua.Editor {
                 try {
                     using (Profiling.Time("bake assets"))
                     using (Log.DisableMsgStackTrace()) {
-                        Bake.Assets(bBatch ? 0 : BakeFlags.Verbose);
+                        Baking.BakeAssets(bBatch ? 0 : BakeFlags.Verbose);
                     }
                     AssetDatabase.SaveAssets();
                     if (!ValidateAllScripts()) {
@@ -224,7 +231,11 @@ namespace Aqua.Editor {
                         CodeGen.GenerateJobsConsts();
                         NoOverridesAllowed.RevertInAllScenes();
                         StripEditorInfoFromAssets();
+                        #if !PRESERVE_DEBUG_SYMBOLS && !DEVELOPMENT
+                        DeleteAllBookmarks();
+                        #else
                         CompressBookmarks();
+                        #endif // !PRESERVE_DEBUG_SYMBOLS && !DEVELOPMENT
                     }
                 } catch (Exception e) {
                     throw new BuildFailedException(e);

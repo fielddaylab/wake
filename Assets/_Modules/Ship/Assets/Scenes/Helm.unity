@@ -19970,6 +19970,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -3280194476346306290, guid: ddf511c533119d44ca5ff99a2f1b4046,
         type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3280194476346306290, guid: ddf511c533119d44ca5ff99a2f1b4046,
+        type: 3}
       propertyPath: m_StaticEditorFlags
       value: 1
       objectReference: {fileID: 0}
@@ -20048,6 +20053,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 1
   Recursive: 0
   DestroyGameObject: 0
 --- !u!1 &932883386
@@ -20252,6 +20258,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 1
   DestroyGameObject: 1
 --- !u!20 &1358266470 stripped
@@ -25222,7 +25229,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e11849e344bd4f459ed4868c88fdf50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Scripts: []
+  m_Scripts:
+  - {fileID: -1942890987711236906, guid: b325c3c867ceba84cad8e7ee27ced69d, type: 3}
 --- !u!114 &1590131764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34961,6 +34969,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
 --- !u!1 &1976434584
@@ -34973,7 +34982,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1976434587}
   - component: {fileID: 1976434586}
-  - component: {fileID: 1976434585}
   m_Layer: 28
   m_Name: HelmPostVolume
   m_TagString: Untagged
@@ -34981,19 +34989,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &1976434585
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1976434584}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 80, y: 30, z: 80}
-  m_Center: {x: 0, y: -0.00000018075662, z: 24.260742}
 --- !u!114 &1976434586
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35006,7 +35001,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isGlobal: 0
+  isGlobal: 1
   priority: 0
   blendDistance: 0
   weight: 1
@@ -44750,6 +44745,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
 --- !u!114 &1446896835383900072

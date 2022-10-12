@@ -30,7 +30,7 @@ namespace ProtoAqua.Observation {
                 region.AutoConfigure();
             });
 
-            ScriptableBake.Bake.Destroy(this);
+            Baking.Destroy(this);
             return true;
         }
 

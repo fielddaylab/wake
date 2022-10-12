@@ -140,7 +140,7 @@ namespace Aqua.Editor
             {
                 using(Log.DisableMsgStackTrace())
                 {
-                    Bake.Objects(Selection.objects, BakeFlags.Verbose | BakeFlags.ShowProgressBar);
+                    Baking.BakeObjects(Selection.objects, BakeFlags.Verbose | BakeFlags.ShowProgressBar);
                 }
             }
             using(Profiling.Time("post-bake save assets"))

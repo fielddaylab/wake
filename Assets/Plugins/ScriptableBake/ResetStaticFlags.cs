@@ -25,8 +25,8 @@ namespace ScriptableBake {
         }
 
         bool IBaked.Bake(BakeFlags flags, BakeContext context) {
-            Bake.ResetStaticFlags(gameObject, Recursive);
-            Bake.Destroy(DestroyGameObject ? (UnityEngine.Object) gameObject : this);
+            Baking.ResetStaticFlags(gameObject, Recursive);
+            Baking.Destroy(DestroyGameObject ? (UnityEngine.Object) gameObject : this);
             return true;
         }
 

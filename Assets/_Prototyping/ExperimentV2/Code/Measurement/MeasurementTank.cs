@@ -259,6 +259,8 @@ namespace ProtoAqua.ExperimentV2
             }
             yield return null;
 
+            Services.Camera.MoveToPose(m_ParentTank.ZoomPose, 0.4f);
+
             m_ParentTank.ActorBehavior.Begin();
             yield return null;
 
@@ -459,6 +461,7 @@ namespace ProtoAqua.ExperimentV2
             TankWaterSystem.SetWaterHeight(m_ParentTank, 0);
 
             SelectableTank.Reset(m_ParentTank, true);
+            Services.Camera.SnapToPose(m_ParentTank.CameraPose);
 
             m_AutoFeederParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             m_ParentTank.CurrentState &= ~TankState.Running;

@@ -45,7 +45,7 @@ namespace Aqua.Character
             Vector2 rawOffset = outOutput.Target.GetValueOrDefault(currentPos) - currentPos;
 
             float magnitude = rawOffset.magnitude;
-            float normalizedMagnitude = DistanceCurve.Evaluate(Mathf.Clamp01(MathUtil.Remap(magnitude, MinDistance, MaxDistance, 0, 1)));
+            float normalizedMagnitude = DistanceCurve.Evaluate(Mathf.Clamp01(MathUtils.Remap(magnitude, MinDistance, MaxDistance, 0, 1)));
             outOutput.RawOffset = rawOffset;
 
             Vector2 clamped = outOutput.RawOffset;

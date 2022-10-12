@@ -7,7 +7,7 @@ using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
 using EasyAssetStreaming;
-using NativeWebUtils;
+using NativeUtils;
 using TMPro;
 using UnityEngine;
 

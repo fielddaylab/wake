@@ -14,7 +14,7 @@ namespace Aqua
         public int Order { get { return ScriptableBake.FlattenHierarchy.Order - 2; } }
 
         public bool Bake(BakeFlags flags, BakeContext context) {
-            ScriptableBake.Bake.Destroy(gameObject);
+            Baking.Destroy(gameObject);
             return true;
         }
 

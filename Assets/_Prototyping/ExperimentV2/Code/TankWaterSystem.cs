@@ -26,9 +26,7 @@ namespace ProtoAqua.ExperimentV2 {
 
         [SerializeField, Required] private ParticleSystem m_FillParticles = null;
         [SerializeField, Required] private ParticleSystem m_FillImpactParticles = null;
-        [SerializeField, Required] private ParticleSystem m_SplashSurfaceParticles = null;
         [SerializeField, Required] private ParticleSystem m_SplashDownParticles = null;
-        [SerializeField, Required] private ParticleSystem m_RippleParticles = null;
         [SerializeField, Required] private ParticleSystem m_UnderwaterParticles = null;
 
         #endregion // Inspector
@@ -89,13 +87,8 @@ namespace ProtoAqua.ExperimentV2 {
             splashPosition.y = inTank.Bounds.max.y;
             splashPosition.z = critterPosition.z;
 
-            ParticleSystem.ShapeModule surfaceShape = m_SplashSurfaceParticles.shape;
-            Vector3 surfaceSize = surfaceShape.scale;
-            surfaceSize.x = critterLocalBounds.width;
-            surfaceShape.scale = surfaceSize;
-
             ParticleSystem.ShapeModule downShape = m_SplashDownParticles.shape;
-            Vector3 downSize = surfaceShape.scale;
+            Vector3 downSize = downShape.scale;
             downSize.x = critterLocalBounds.width;
             downShape.scale = downSize;
 
@@ -105,13 +98,7 @@ namespace ProtoAqua.ExperimentV2 {
 
             m_SplashDownParticles.Emit(emit, 64);
 
-            Routine.StartDelay(this, SurfaceSplashDelayed, emit, 0.1f);
-
             Services.Audio.PostEvent("tank_water_splash");
-        }
-
-        private void SurfaceSplashDelayed(ParticleSystem.EmitParams inParams) {
-            m_SplashSurfaceParticles.Emit(inParams, 48);
         }
 
         private void UnderwaterPulse(SelectableTank inTank, ActorInstance inActor, Collider2D inCollider) {
@@ -162,8 +149,6 @@ namespace ProtoAqua.ExperimentV2 {
             inTank.CurrentState &= ~TankState.Filling;
 
             pourAudio.Stop(0.1f);
-
-            inTank.WaterRippleRenderer.enabled = true;
 
             while (m_FillParticles.particleCount > 0) {
                 yield return null;
@@ -275,8 +260,6 @@ namespace ProtoAqua.ExperimentV2 {
             try {
                 inTank.CurrentState |= TankState.Draining;
                 inTank.WaterDrainParticles.Play();
-                m_RippleParticles.Clear();
-                inTank.WaterRippleRenderer.enabled = false;
                 m_UnderwaterParticles.gameObject.SetActive(false);
                 yield return Tween.Float(inTank.WaterFillProportion, 0, (f) => SetWaterHeightImpl(inTank, f, false), inDuration * inTank.WaterFillProportion)
                     .OnUpdate((f) => audio.SetPitch(Mathf.Lerp(MaxWaterPitch, 1, WaterPitchCurve.Evaluate(f))));

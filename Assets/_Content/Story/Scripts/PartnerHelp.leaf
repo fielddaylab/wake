@@ -40,30 +40,13 @@ $set    guide:knowsJobs = true
 {@player}   So.... What should we do now?
 {@guide}    We need to head to a research station and take a job!
 
-:: noJob.atHelm
-@trigger    RequestPartnerHelp
-@when       !player:currentJob, AnyJobsAvailable($player:currentStation), scene:name == "Helm", global:nav.shipRoom == "helm"
-@repeat     1
-@cutscene
-{@player}   Hey V1ctor... any thoughts on what we should do next? 
-{@guide}    We should check out the {map-name}Job Board{/map-name}.
-
-:: noJob.atJobBoard.someAvailable
-@trigger    RequestPartnerHelp
-@when       !player:currentJob, scene:name == "JobBoard", AnyJobsAvailable()
-@repeat     1
-@cutscene
-{@player}   {random Um|Uh}... what was I supposed to do?  
-{@guide}    Select the job on the left, then accept it on the right!
-
-:: noJob.atJobBoard.someInProgress
-@trigger    RequestPartnerHelp
-@when       !player:currentJob, scene:name == "JobBoard", AnyJobsInProgress()
-@repeat     1
-@cutscene
-{@player}   I'm stuck. Anything I'm missing?
-{@guide}    It looks like there are some jobs you already started.
-            Let's pick one of those back up!
+// :: noJob.atHelm
+// @trigger    RequestPartnerHelp
+// @when       !player:currentJob, AnyJobsAvailable($player:currentStation), scene:name == "Helm", global:nav.shipRoom == "helm"
+// @repeat     1
+// @cutscene
+// {@player}   Hey V1ctor... any thoughts on what we should do next? 
+// {@guide}    We should check out the {map-name}Job Board{/map-name}.
 
 :: noJob.default.1
 @trigger    RequestPartnerHelp
@@ -91,4 +74,3 @@ $set    guide:knowsJobs = true
         {#} But I'd look back at what the job-giver had to tell us.
         And maybe check your {item-name}AQOS Tablet{/item-name} too?
 {@}     (The help system is not yet finished.)
-
