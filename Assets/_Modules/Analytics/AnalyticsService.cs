@@ -25,6 +25,8 @@ namespace Aqua
     {
         private const string NoActiveJobId = "no-active-job";
 
+        static private readonly string[] FactTypeStringTable = Enum.GetNames(typeof(BFTypeId));
+
         #region Inspector
 
         [SerializeField, Required] private string m_AppId = "AQUALAB";
@@ -362,15 +364,33 @@ namespace Aqua
 
         private void HandleBestiaryUpdated(BestiaryUpdateParams inParams)
         {
+            void AddFactDetails(EventScope e, BFBase fact) {
+                e.Param("fact_id", fact.name);
+                e.Param("fact_entity", fact.Parent.name);
+                e.Param("fact_type", FactTypeStringTable[(int) fact.Type]);
+                e.Param("fact_stressed", BFType.OnlyWhenStressed(fact));
+
+                bool hasRate = (BFType.Flags(fact) & BFFlags.HasRate) != 0;
+                e.Param("fact_rate", hasRate);
+                e.Param("has_rate", hasRate && (Save.Bestiary.GetDiscoveredFlags(fact) & BFDiscoveredFlags.Rate) != 0);
+            };
+
             if (inParams.Type == BestiaryUpdateParams.UpdateType.Fact)
             {
                 BFBase fact = Assets.Fact(inParams.Id);
                 
                 using(var e = m_Log.NewEvent("receive_fact")) {
                     e.Param("job_name", m_CurrentJobName);
-                    e.Param("fact_id", fact.name);
-
-                    // TODO: Add more detail here?
+                    AddFactDetails(e, fact);
+                }
+            }
+            else if (inParams.Type == BestiaryUpdateParams.UpdateType.UpgradeFact)
+            {
+                BFBase fact = Assets.Fact(inParams.Id);
+                
+                using(var e = m_Log.NewEvent("upgrade_fact")) {
+                    e.Param("job_name", m_CurrentJobName);
+                    AddFactDetails(e, fact);
                 }
             }
             else if (inParams.Type == BestiaryUpdateParams.UpdateType.Entity)
