@@ -186,7 +186,6 @@ namespace Aqua
                 return;
             
             m_CurrentState.ResetFull();
-            m_CurrentThread = default;
 
             ResetSpeaker();
 
@@ -414,7 +413,7 @@ namespace Aqua
                     RebuildLayout();
 
                     s_TextDisplayArgs.VisibleText = inLine.VisibleText;
-                    s_TextDisplayArgs.NodeId = m_CurrentThread.GetThread().PeekNode().FullName();
+                    s_TextDisplayArgs.NodeId = m_CurrentThread.GetThread()?.PeekNode().FullName();
                     Services.Events.Dispatch(GameEvents.TextLineDisplayed, s_TextDisplayArgs);
                 }
 
