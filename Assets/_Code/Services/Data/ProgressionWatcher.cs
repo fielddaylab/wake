@@ -112,9 +112,10 @@ namespace Aqua
                 }
 
                 if (!job.JournalId().IsEmpty) {
+                    Services.UI.PreloadJournal();
                     Services.Script.QueueInvoke(() => {
                         if (Save.Inventory.AddJournalEntry(job.JournalId())) {
-                            Services.UI.FindPanel<JournalCanvas>().ShowNewEntry();
+                            Routine.Start(this, Services.UI.OpenJournalNewEntry()).Tick();
                         }
                     }, -5);
                 }
