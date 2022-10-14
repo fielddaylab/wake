@@ -25,6 +25,8 @@ namespace Aqua
     {
         private const string NoActiveJobId = "no-active-job";
 
+        static private readonly string[] FactTypeStringTable = Enum.GetNames(typeof(BFTypeId));
+
         #region Inspector
 
         [SerializeField, Required] private string m_AppId = "AQUALAB";
@@ -67,6 +69,7 @@ namespace Aqua
                 .Register<StringHash32>(GameEvents.JobTaskCompleted, LogCompleteTask, this)
                 .Register<string>(GameEvents.ViewChanged, LogRoomChanged, this)
                 .Register<string>(GameEvents.ScriptFired, LogScriptFired, this)
+                .Register<DialogPanel.TextDisplayArgs>(GameEvents.TextLineDisplayed, LogScriptLine, this)
                 .Register<TankType>(ExperimentEvents.ExperimentBegin, LogBeginExperiment, this)
                 .Register<string>(GameEvents.BeginDive, LogBeginDive, this)
                 .Register(ModelingConsts.Event_Simulation_Begin, LogBeginSimulation, this)
@@ -361,13 +364,33 @@ namespace Aqua
 
         private void HandleBestiaryUpdated(BestiaryUpdateParams inParams)
         {
+            void AddFactDetails(EventScope e, BFBase fact) {
+                e.Param("fact_id", fact.name);
+                e.Param("fact_entity", fact.Parent.name);
+                e.Param("fact_type", FactTypeStringTable[(int) fact.Type]);
+                e.Param("fact_stressed", BFType.OnlyWhenStressed(fact));
+
+                bool hasRate = (BFType.Flags(fact) & BFFlags.HasRate) != 0;
+                e.Param("fact_rate", hasRate);
+                e.Param("has_rate", hasRate && (Save.Bestiary.GetDiscoveredFlags(fact) & BFDiscoveredFlags.Rate) != 0);
+            };
+
             if (inParams.Type == BestiaryUpdateParams.UpdateType.Fact)
             {
-                string parsedFactId = Assets.Fact(inParams.Id).name;
-
+                BFBase fact = Assets.Fact(inParams.Id);
+                
                 using(var e = m_Log.NewEvent("receive_fact")) {
                     e.Param("job_name", m_CurrentJobName);
-                    e.Param("fact_id", parsedFactId);
+                    AddFactDetails(e, fact);
+                }
+            }
+            else if (inParams.Type == BestiaryUpdateParams.UpdateType.UpgradeFact)
+            {
+                BFBase fact = Assets.Fact(inParams.Id);
+                
+                using(var e = m_Log.NewEvent("upgrade_fact")) {
+                    e.Param("job_name", m_CurrentJobName);
+                    AddFactDetails(e, fact);
                 }
             }
             else if (inParams.Type == BestiaryUpdateParams.UpdateType.Entity)
@@ -570,6 +593,15 @@ namespace Aqua
             using(var e = m_Log.NewEvent("script_fired")) {
                 e.Param("job_name", m_CurrentJobName);
                 e.Param("node_id", nodeId);
+            }
+        }
+
+        private void LogScriptLine(DialogPanel.TextDisplayArgs args)
+        {
+            using(var e = m_Log.NewEvent("script_line_displayed")) {
+                e.Param("job_name", m_CurrentJobName);
+                e.Param("text_string", args.VisibleText);
+                e.Param("node_id", args.NodeId);
             }
         }
 

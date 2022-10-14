@@ -623,7 +623,7 @@ namespace Aqua
                     if (Services.UI.IsSkippingCutscene())
                         return null;
 
-                    return Services.UI.FindPanel<JournalCanvas>().ShowNewEntry();
+                    return Services.UI.OpenJournalNewEntry();
                 }
                 return null;
             }

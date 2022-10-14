@@ -34,7 +34,7 @@ namespace Aqua {
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.Eat, BFShapeId.Behavior, BFFlags.IsBehavior | BFFlags.IsGraphable, BFDiscoveredFlags.Base, Compare);
+            BFType.DefineAttributes(BFTypeId.Eat, BFShapeId.Behavior, BFFlags.IsBehavior | BFFlags.IsGraphable | BFFlags.HasRate, BFDiscoveredFlags.Base, Compare);
             BFType.DefineMethods(BFTypeId.Eat, CollectReferences, GenerateDetails, GenerateFragments, (f) => ((BFEat)f).Critter, null);
             BFType.DefineEditor(BFTypeId.Eat, null, BFMode.Player);
         }

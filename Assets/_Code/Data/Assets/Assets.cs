@@ -223,6 +223,7 @@ namespace Aqua {
                 UnsafeExt.Decompress(inCompressed, inCompressedSize, alloc, allocSize, outDecompressedSize);
             } else {
                 allocSize = inCompressedSize;
+                *outDecompressedSize = allocSize;
                 alloc = (byte*) Unsafe.Alloc(s_DecompressionArena, allocSize);
                 Unsafe.Copy(inCompressed, inCompressedSize, alloc, allocSize);
             }

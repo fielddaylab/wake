@@ -344,6 +344,7 @@ namespace Aqua.Scripting
 
             if (m_CurrentDialog != null)
             {
+                m_CurrentDialog.ClearThread(GetHandle());
                 m_CurrentDialog.CompleteSequence();
                 m_CurrentDialog = null;
             }

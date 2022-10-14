@@ -263,6 +263,21 @@ namespace Aqua.Profile
             return flags;
         }
 
+        public BFDiscoveredFlags GetDiscoveredFlags(BFBase inFact)
+        {
+            if (!HasFact(inFact.Id))
+                return BFDiscoveredFlags.None;
+
+            BFDiscoveredFlags flags = BFType.DefaultDiscoveredFlags(inFact);
+            StringHash32 pair = BFType.PairId(inFact);
+            int metaIdx = m_FactMetas.BinarySearch(inFact.Id);
+            if (metaIdx >= 0)
+                flags |= m_FactMetas[metaIdx].Flags;
+            if (!pair.IsEmpty && (m_ObservedFacts.Contains(pair) || Services.Assets.Bestiary.IsAutoFact(pair)))
+                flags |= BFDiscoveredFlags.HasPair;
+            return flags;
+        }
+
         public bool AddDiscoveredFlags(StringHash32 inFactId, BFDiscoveredFlags inFlags)
         {
             inFlags &= ~TempDiscoveredMask;

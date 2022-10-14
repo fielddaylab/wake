@@ -216,9 +216,13 @@ namespace Aqua.Compression {
             unsafe {
                 int decompressedSize = 0;
                 byte* decompressed = Assets.Decompress(buffer, offset, length, &decompressedSize);
-                GameObject go = Decompress(decompressed, decompressedSize, bank, decompressor);
-                Assets.FreeDecompress(decompressed);
-                return go;
+                try {
+                    GameObject go = Decompress(decompressed, decompressedSize, bank, decompressor);
+                    return go;
+                }
+                finally {
+                    Assets.FreeDecompress(decompressed);
+                }
             }
         }
 

@@ -37,7 +37,7 @@ namespace ScriptableBake {
                     return false;
                 }
             }
-            if ((flags & BakeFlags.IsRuntime | BakeFlags.InEditor) != 0) {
+            if ((flags & (BakeFlags.IsRuntime | BakeFlags.InEditor)) != 0) {
                 StripNamesRuntime(cachedTransform);
             } else {
                 StripNamesFull(cachedTransform);
