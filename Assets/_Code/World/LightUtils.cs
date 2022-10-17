@@ -3,6 +3,12 @@ using BeauUtil;
 using UnityEngine.Events;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
+using BeauUtil.Debugger;
+
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditor.SceneManagement;
+#endif // UNITY_EDITOR
 
 namespace Aqua
 {
@@ -19,6 +25,9 @@ namespace Aqua
             public AmbientMode ambientMode;
             public float ambientIntensity;
             public Color ambientLight;
+            public LightmapData[] lightmaps;
+            public LightmapsMode lightmapsMode;
+            public LightProbes lightProbes;
 
             public void Read()
             {
@@ -31,6 +40,9 @@ namespace Aqua
                 ambientMode = RenderSettings.ambientMode;
                 ambientIntensity = RenderSettings.ambientIntensity;
                 ambientLight = RenderSettings.ambientLight;
+                lightmaps = ArrayUtils.CreateFrom(LightmapSettings.lightmaps);
+                lightmapsMode = LightmapSettings.lightmapsMode;
+                lightProbes = LightmapSettings.lightProbes;
             }
 
             public void Write()
@@ -44,6 +56,9 @@ namespace Aqua
                 RenderSettings.ambientMode = ambientMode;
                 RenderSettings.ambientIntensity = ambientIntensity;
                 RenderSettings.ambientLight = ambientLight;
+                LightmapSettings.lightmaps = lightmaps;
+                LightmapSettings.lightmapsMode = lightmapsMode;
+                LightmapSettings.lightProbes = lightProbes;
             }
         }
 
@@ -57,5 +72,31 @@ namespace Aqua
             settings.Write();
             SceneManager.SetActiveScene(currentActive);
         }
+
+        #if UNITY_EDITOR
+
+        static private SceneSettings? s_CopyBuffer;
+
+        [MenuItem("Aqualab/Lighting/Copy Current Settings")]
+        static private void CopyCurrentSettings() {
+            SceneSettings settings = default(SceneSettings);
+            settings.Read();
+            s_CopyBuffer = settings;
+            Log.Msg("[LightUtils] Copied lighting settings from current scene '{0}'", EditorSceneManager.GetActiveScene().path);
+        }
+
+        [MenuItem("Aqualab/Lighting/Paste Current Settings", false)]
+        static private void PasteCurrentSettings() {
+            s_CopyBuffer.Value.Write();
+            Log.Msg("[LightUtils] Pasted lighting settings into current scene '{0}'", EditorSceneManager.GetActiveScene().path);
+            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+        }
+
+        [MenuItem("Aqualab/Lighting/Paste Current Settings", true)]
+        static private bool PasteCurrentSettings_Validate() {
+            return s_CopyBuffer.HasValue;
+        }
+
+        #endif // UNITY_EDITOR
     }
 }

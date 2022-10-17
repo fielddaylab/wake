@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Aqua.Journal;
 using Aqua.Profile;
 using BeauUtil;
 using BeauUtil.Debugger;
@@ -20,7 +21,6 @@ namespace Aqua
         [SerializeField, ScriptCharacterId] private StringHash32 m_PosterId = default;
         [SerializeField] private TextId m_DescId = default;
         [SerializeField] private TextId m_DescShortId = default;
-        [SerializeField] private TextId m_DescCompletedId = default;
 
         [SerializeField, Range(0, 5)] private int m_ExperimentDifficulty = 0;
         [SerializeField, Range(0, 5)] private int m_ModelingDifficulty = 0;
@@ -28,6 +28,8 @@ namespace Aqua
 
         [SerializeField] private JobDesc[] m_PrerequisiteJobs = Array.Empty<JobDesc>();
         [SerializeField] private string m_PrereqConditions = null;
+        [SerializeField, FilterBestiaryId] private StringHash32 m_PrereqBestiaryEntry = null;
+        [SerializeField] private SerializedHash32 m_PrereqScanId = null;
         [SerializeField, ItemId(InvItemCategory.Upgrade)] private StringHash32[] m_PrereqUpgrades = Array.Empty<StringHash32>();
         [SerializeField] private int m_PrereqExp = 0;
 
@@ -39,6 +41,7 @@ namespace Aqua
 
         [SerializeField] private int m_CashReward = 0;
         [SerializeField] private int m_ExpReward = 5;
+        [SerializeField, JournalId] private StringHash32 m_JournalId = null;
 
         [SerializeField] internal LeafAsset m_Scripting = null;
         [SerializeField] internal ScriptableObject[] m_ExtraAssets = null;
@@ -55,7 +58,6 @@ namespace Aqua
         [LeafLookup("PosterId")] public StringHash32 PosterId() { return m_PosterId; }
         public TextId DescId() { return m_DescId; }
         public TextId DescShortId() { return m_DescShortId.IsEmpty ? m_DescId : m_DescShortId; }
-        public TextId DescCompletedId() { return m_DescCompletedId.IsEmpty ? m_DescId : m_DescCompletedId; }
 
         public int Difficulty(ScienceActivityType inType)
         {
@@ -79,6 +81,8 @@ namespace Aqua
         public ListSlice<StringHash32> RequiredUpgrades() { return m_PrereqUpgrades; }
         public StringSlice RequiredConditions() { return m_PrereqConditions; }
         public int RequiredExp() { return m_PrereqExp; }
+        public StringHash32 RequiredBestiaryEntry() { return m_PrereqBestiaryEntry; }
+        public StringHash32 RequiredScanId() { return m_PrereqScanId; }
 
         public ListSlice<JobTask> Tasks() { return m_OptimizedTaskList; }
         
@@ -96,8 +100,20 @@ namespace Aqua
 
         [LeafLookup("ExpReward")] public int ExpReward() { return m_ExpReward; }
         [LeafLookup("CashReward")] public int CashReward() { return m_CashReward; }
+        [LeafLookup("JournalId")] public StringHash32 JournalId() { return m_JournalId; }
 
-        public LeafAsset Scripting() { return m_Scripting; }
+        public LeafAsset Scripting()
+        {
+            #if UNITY_EDITOR
+            if (m_ScriptingRef == null)
+            {
+                m_ScriptingRef = new ReloadableAssetRef<LeafAsset>(m_Scripting);
+            }
+            return m_ScriptingRef;
+            #else
+            return m_Scripting;
+            #endif // UNITY_EDITOR
+        }
 
         public IEnumerable<T> FindAssets<T>() where T : ScriptableObject
         {
@@ -132,6 +148,17 @@ namespace Aqua
 
             return null;
         }
+
+        #if UNITY_EDITOR
+
+        [NonSerialized] private ReloadableAssetRef<LeafAsset> m_ScriptingRef;
+
+        internal void EditorInit()
+        {
+            m_ScriptingRef = new ReloadableAssetRef<LeafAsset>(m_Scripting);
+        }
+
+        #endif // UNITY_EDITOR
     }
 
     public enum JobCategory

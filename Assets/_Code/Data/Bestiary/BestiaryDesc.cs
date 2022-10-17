@@ -35,7 +35,6 @@ namespace Aqua
         [SerializeField] internal Sprite m_Icon = null;
         [SerializeField, StreamingPath("png,jpg,jpeg,webm,mp4")] private string m_SketchPath = null;
         [SerializeField] private Color m_Color = ColorBank.White;
-        [SerializeField] private SerializedHash32 m_ListenAudioEvent = null;
 
         [SerializeField] private ushort m_SortingOrder = 0;
 
@@ -102,8 +101,6 @@ namespace Aqua
         public string SketchPath() { return m_SketchPath; }
         public Color Color() { return m_Color; }
         public StreamedImageSet ImageSet() { return new StreamedImageSet(m_SketchPath, m_Icon); }
-
-        public StringHash32 ListenAudio() { return m_ListenAudioEvent; }
 
         #region Facts
 

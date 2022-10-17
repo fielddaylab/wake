@@ -1,8 +1,28 @@
-:: basePath job.kelp-shop-welcome
+# basePath job.kelp-shop-welcome
+
+:: stopLeaveStation
+@trigger InteractObject
+@when objectId == "ExitStation"
+@cutscene
+$if JobTaskCompleted(getVisualModel), JobTaskCompleted(getTagger)
+    //have both, do nothing
+$elseif JobTaskCompleted(getVisualModel)
+    // have 1 upgrade, show text and cancel interact
+    {@guide} Seems like we're still missing the {nameof ROVTagger}, let's pick that up before heading out.
+    $call CancelInteract()
+$elseif JobTaskCompleted(getTagger)
+    // have 1 upgrade, show text and cancel interact
+    {@guide} Seems like we're still missing the {nameof VisualModel}, let's pick that up before heading out.
+    $call CancelInteract()
+$else
+    // have neither, show text and cancel interact
+    {@guide} Seems like we're still missing some upgrades, let's grab those before heading out.
+    $call CancelInteract()
+$endif
 
 :: helpGoShop
 @trigger    RequestPartnerHelp
-@when 		scene:name != "Shop"
+@when 		scene:name != "Shop", JobTaskTop(gotoShop)
 @cutscene
 {@player} 	Where should we be going again?
 {@guide}    Before we head out, we might wanna upgrade our ship with some of our earnings.
@@ -23,24 +43,53 @@
 @cutscene
 {@player} 	What are we doing here?
 {@guide}    We're looking to upgrade our ship with some of our earnings.
-            Why don't you check out some of the instruments {nameof @merchant} has for sale.
+            Why don't you check out some of the instruments {nameof @kelpMechanic} has for sale.
 
 :: gotBothModels
 @trigger    JobTaskCompleted
 @when       JobTaskCompleted(getVisualModel), JobTaskCompleted(getTagger)
-@once
 @cutscene
 {@player}   Okay, got both of them!
 {@guide}    Nice! Let's head back to the Ship then.
+
+// CATCH-ALL GUIDE TEXT
+
+:: helpGetTagger
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(getTagger)
+@cutscene
+{@player}   So... where do we head now?
+{@guide}    Talk to your uncle. He'll have some items for you!
+
+:: helpGetVisualModel
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(getVisualModel)
+@cutscene
+{@player}   So... where do we head now?
+{@guide}    Talk to your uncle. He'll have some items for you! 
+
+:: helpReturnShip
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(returnShip)
+@cutscene
+{@player}   So... where do we head now?
+{@guide}    We need to return to the Helm on the ship.
 
 // END
 :: end
 @trigger    SceneStart
 @when       scene:name == "Helm"
+@triggerPriority    High
 @cutscene
 $if JobTaskCompleted(getVisualModel), JobTaskCompleted(getTagger)
-    {@drKelp}   Hey guys! Just got back from my colleagues and they're excited to meet you guys.
-                Feel free to pay my colleagues a visit!
+    {@player}  I can't believe Mom's letting me leave the Forested Lagoon... by myself!!
+                What are the odds?? 
+     {@guide}   Processing... processing...
+                Your odds of surviving a journey to another research station are 97.2%!
+     {@player}  Um.| Okay, cool.| That was a rhetorical question, but I like the optimism. 
+     {@player}  So, what now, {nameof @guide}?
+     {@guide}   Your map has nearly finished updating! Any second now... 
+
 
     $branch common.download
     $call UnlockStation(CoralStation)
@@ -51,11 +100,21 @@ $if JobTaskCompleted(getVisualModel), JobTaskCompleted(getTagger)
     $call ShowPopup(map.unlock.shipRoom.header, map.unlock.worldMap.desc)
     $call ShowPopup(map.unlock.stations.header, map.unlock.stations.desc)
 
-    {@player}   Thanks, Kel!
-    {@drKelp}   No problem!
-                If you'd like to stay here, head back to the {map-name}Job Board{/map-name} where I have some new jobs for you!
+    {@guide} Your map is ready!
+    {@guide}  Use the map to view available jobs and travel to different ecosystems. 
     $call CompleteJob()
     $set    jobs:common-dive.seen.tagger-intro = false
     $set    jobs:common-dive.seen.probe-intro = false
     $set    jobs:common-dive.seen.micro-intro = false
 $endif
+
+:: ReallyTheEnd
+@function   JobStarted
+$set    world:shop.unlocked = true
+
+:: UnlockModeling
+@trigger    JobTasksUpdated
+@when   JobTaskCompleted(getVisualModel)
+@triggerPriority High
+$call UnlockRoom("ModelingFoyer")
+$call UnlockRoom("Modeling")

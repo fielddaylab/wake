@@ -8,13 +8,14 @@ using UnityEngine.Scripting;
 
 namespace Aqua.Scripting
 {
+    [AddComponentMenu("Aqualab/Scripting/Script UI Element")]
     public class ScriptUIElement : ScriptComponent
     {
         #region Inspector
 
         [SerializeField] private CanvasGroup m_Group = null;
         [SerializeField] private Canvas m_Canvas = null;
-
+        
         #endregion // Inspector
 
         [NonSerialized] private int m_OriginalCanvasLayer;

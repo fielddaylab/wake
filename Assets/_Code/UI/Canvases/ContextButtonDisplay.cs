@@ -10,10 +10,23 @@ using BeauUtil.Debugger;
 namespace Aqua {
     public class ContextButtonDisplay : SharedPanel {
 
+        public enum LabelMode {
+            MapLabel,
+            ShortLabel,
+            ProperLabel,
+            ShortAndProper,
+        }
+
+        public enum BadgeMode {
+            None,
+            Station
+        }
+
         #region Inspector
 
         [Header("Label")]
         [SerializeField] private LocText m_Label = null;
+        [SerializeField] private GameObject m_StationBadge = null;
 
         [Header("Button")]
         [SerializeField] private Button m_ActionButton = null;
@@ -32,6 +45,7 @@ namespace Aqua {
 
         [Header("Defaults")]
         [SerializeField] private TextId m_MapLabel = null;
+        [SerializeField] private TextId m_ShortAndProperMapLabel = null;
         [SerializeField] private TextId m_MapActionLabel = null;
         [SerializeField] private TextId m_MapActionLockedLabel = null;
         [SerializeField] private TextId m_InspectLabel = null;
@@ -62,7 +76,34 @@ namespace Aqua {
             switch(inObject.Mode()) {
                 case SceneInteractable.InteractionMode.GoToMap: {
                     Assert.True(!inObject.TargetMapId().IsEmpty, "Interaction {0} has no assigned map", inObject);
-                    label = Loc.Format(inObject.Label(m_MapLabel), Assets.Map(inObject.TargetMapId()).ShortLabelId());
+                    MapDesc mapInfo = Assets.Map(inObject.TargetMapId());
+                    
+                    switch(inObject.LabelMode())
+                    {
+                        case LabelMode.MapLabel:
+                        {
+                            label = Loc.Format(inObject.Label(m_MapLabel), mapInfo.LabelId());
+                            break;
+                        }
+
+                        case LabelMode.ShortLabel:
+                        {
+                            label = Loc.Format(inObject.Label(m_MapLabel), mapInfo.ShortLabelId());
+                            break;
+                        }
+
+                        case LabelMode.ProperLabel:
+                        {
+                            label = Loc.Format(inObject.Label(m_MapLabel), mapInfo.ProperNameId());
+                            break;
+                        }
+
+                        case LabelMode.ShortAndProper:
+                        {
+                            label = Loc.Format(inObject.Label(m_ShortAndProperMapLabel), mapInfo.ShortLabelId(), mapInfo.ProperNameId());
+                            break;
+                        }
+                    }
                     actionLabel = locked ? inObject.LockedActionLabel(m_MapActionLockedLabel) : inObject.ActionLabel(m_MapActionLabel);
                     break;
                 }
@@ -79,6 +120,8 @@ namespace Aqua {
                     break;
                 }
             }
+
+            m_StationBadge.SetActive(inObject.BadgeMode() != 0);
 
             if (locked) {
                 m_ActionButtonColor.Color = m_LockedButtonPalette.Background;
@@ -122,6 +165,10 @@ namespace Aqua {
 
         protected override void OnHide(bool inbInstant) {
             base.OnHide(inbInstant);
+
+            if (WasShowing()) {
+                Services.Events?.Dispatch(GameEvents.ContextHide);
+            }
         }
 
         protected override void OnHideComplete(bool inbInstant) {
@@ -136,6 +183,10 @@ namespace Aqua {
 
         protected override void OnShow(bool inbInstant) {
             base.OnShow(inbInstant);
+
+            if (!WasShowing()) {
+                Services.Events.Dispatch(GameEvents.ContextDisplay);
+            }
         }
 
         protected override IEnumerator TransitionToShow() {
@@ -164,6 +215,10 @@ namespace Aqua {
 
         static public void Clear(SceneInteractable inObject) {
             Services.UI?.FindPanel<ContextButtonDisplay>()?.ClearInteract(inObject);
+        }
+
+        static public bool IsDisplaying() {
+            return Services.UI?.FindPanel<ContextButtonDisplay>().IsShowing() ?? false;
         }
     }
 }

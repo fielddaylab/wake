@@ -38,9 +38,6 @@ namespace ProtoAqua.Observation
         [NonSerialized] private Color m_DefaultTextColor;
         [NonSerialized] private Vector4 m_DefaultTextMargins;
 
-        [NonSerialized] private RectTransform m_RectTransform;
-        [NonSerialized] private float m_AnchorOffsetX;
-
         protected override void Awake()
         {
             base.Awake();
@@ -49,8 +46,6 @@ namespace ProtoAqua.Observation
             m_DefaultHeaderColor = m_HeaderText.Graphic.color;
             m_DefaultTextColor = m_DescriptionText.Graphic.color;
             m_DefaultTextMargins = m_DescriptionText.Graphic.margin;
-            m_RectTransform = (RectTransform) transform;
-            m_AnchorOffsetX = m_RectTransform.anchoredPosition.x;
         }
 
         #region Scanning
@@ -220,7 +215,7 @@ namespace ProtoAqua.Observation
 
         private IEnumerator TypeOut()
         {
-            return Tween.Int(0, m_DescriptionText.CurrentText.VisibleText.Length, (c) => m_DescriptionText.Graphic.maxVisibleCharacters = c, 0.8f);
+            return Tween.Int(0, m_DescriptionText.Metrics.VisibleCharCount, (c) => m_DescriptionText.Graphic.maxVisibleCharacters = c, 0.8f);
         }
 
         #endregion // Animations

@@ -16,6 +16,10 @@ namespace Aqua
 
         static public readonly StringHash32 ProfileAutosaveHint = "profile:autosave-hint"; // AutoSave.Mode mode
         static public readonly StringHash32 ProfileAutosaveSuppress = "profile:autosave-suppress"; // no args
+        static public readonly StringHash32 ProfileSpawnLocationUpdate = "profile:spawn-location-update"; // StringHash32 location
+
+        static public readonly StringHash32 HotbarHide = "hotbar:hide";
+        static public readonly StringHash32 HotbarShow = "hotbar:show";
 
         static public readonly StringHash32 OptionsUpdated = "profile:options-updated"; // OptionsData options
 
@@ -24,6 +28,8 @@ namespace Aqua
         static public readonly StringHash32 SceneLoaded = "scene:loaded"; // no args
 
         static public readonly StringHash32 ViewChanged = "view:changed"; // string viewName
+        static public readonly StringHash32 ViewLeaving = "view:leaving"; // StringHash32 viewName
+        static public readonly StringHash32 ViewArrived = "view:arrived"; // StringHash32 viewName
         static public readonly StringHash32 ViewLockChanged = "view:lockChanged"; // no args
 
         static public readonly StringHash32 CutsceneStart = "cutscene:start"; // no args
@@ -32,6 +38,7 @@ namespace Aqua
         static public readonly StringHash32 ScriptNodeSeen = "script:node-seen"; // StringHash32 nodeId
         static public readonly StringHash32 ScriptChoicePresented = "script:choice-presented"; // DialogRecord lastLine
         static public readonly StringHash32 ScriptFired = "script:fired"; // string nodeId
+        static public readonly StringHash32 TextLineDisplayed = "script:lineDisplayed"; // string text
 
         static public readonly StringHash32 GuideChatterStart = "guide:chatter-start"; // no args
         static public readonly StringHash32 GuideChatterEnd = "guide:chatter-end"; // no args
@@ -56,6 +63,9 @@ namespace Aqua
 
         static public readonly StringHash32 PopupOpened = "popup:opened"; // no args
         static public readonly StringHash32 PopupClosed = "popup:closed"; // no args
+
+        static public readonly StringHash32 ContextDisplay = "context:displayed"; // no args
+        static public readonly StringHash32 ContextHide = "context:hide"; // no args
 
         static public readonly StringHash32 JobUnload = "job:unload"; // StringHash32 jobId
         static public readonly StringHash32 JobPreload = "job:preload"; // StringHash32 jobId

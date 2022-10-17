@@ -1,3 +1,7 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#define DEVELOPMENT
+#endif // UNITY_EDITOR || DEVELOPMENT_BUILD
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -8,11 +12,11 @@ using UnityEngine;
 
 namespace Aqua
 {
-    public class PhysicsService : ServiceBehaviour, IPauseable
+    public class PhysicsService : ServiceBehaviour, IPauseable, IDebuggable
     {
         public const float DefaultContactOffset = (1f / 128f);
         private const float OverlapThreshold = DefaultContactOffset;
-        private const int TickIterations = 2;
+        private const int TickIterations = 1;
 
         #region Inspector
 
@@ -85,7 +89,7 @@ namespace Aqua
 
             BeginTick();
             Physics.Simulate(deltaTime);
-            contactCount += Tick(deltaTime, TickIterations, m_KinematicObjects, m_Contacts, contactCount, m_TickCount);
+            contactCount += Tick(deltaTime, m_KinematicObjects, m_Contacts, contactCount, m_TickCount);
             EndTick();
 
             // Pass contacts off
@@ -159,7 +163,7 @@ namespace Aqua
             Physics2D.autoSyncTransforms = true;
         }
 
-        static private unsafe int Tick(float inDeltaTime, int inIterations, BufferedCollection<KinematicObject2D> inObjects, PhysicsContact[] outContacts, int inContactStartIdx, ulong inTickIdx)
+        static private unsafe int Tick(float inDeltaTime, BufferedCollection<KinematicObject2D> inObjects, PhysicsContact[] outContacts, int inContactStartIdx, ulong inTickIdx)
         {
             int outContactIdx = inContactStartIdx;
             int maxOutputContacts = outContacts.Length;
@@ -186,22 +190,22 @@ namespace Aqua
             int objIdx = 0;
             foreach(var obj in objectCollection)
             {
-                obj.State.Velocity += obj.AccumulatedForce;
+                obj.State.Velocity += obj.AccumulatedForce * obj.AccumulatedForceMultiplier;
                 obj.AccumulatedForce = default;
 
                 states[objIdx] = obj.State;
                 configs[objIdx] = obj.Config;
                 positions[objIdx] = obj.Body.position;
-                configs[objIdx].Drag += obj.AdditionalDrag;
+                configs[objIdx].Drag += obj.AdditionalDrag * obj.AdditionalDragMultiplier;
                 obj.Body.useFullKinematicContacts = true;
                 obj.Contacts.Clear();
                 objIdx++;
             }
 
-            float incrementDeltaTime = inDeltaTime / inIterations;
+            float incrementDeltaTime = inDeltaTime / TickIterations;
             float invDeltaTime = 1f / incrementDeltaTime;
 
-            for(int iterationIdx = 0; iterationIdx < inIterations; ++iterationIdx)
+            for(int iterationIdx = 0; iterationIdx < TickIterations; iterationIdx++)
             {
                 // integrate state
                 for(objIdx = 0; objIdx < objectCount; objIdx++)
@@ -423,5 +427,25 @@ namespace Aqua
         private const float CollisionCheckTick = 1f / 65536f;
 
         #endregion // Utils
+
+        #region IDebuggable
+
+        #if DEVELOPMENT
+
+        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
+        {
+            DMInfo physicsMenu = new DMInfo("Physics", 8);
+            physicsMenu.AddToggle("Noclip (Free Player Movement)", () => {
+                return Services.State.Player != null && Services.State.Player.Kinematics.SolidMask == 0;
+            }, (b) => {
+                Services.State.Player.Kinematics.SolidMask = b ? 0 : GameLayers.Solid_Mask;
+            }, () => Services.State.Player != null);
+
+            yield return physicsMenu;
+        }
+
+        #endif // DEVELOPMENT
+
+        #endregion // IDebuggable
     }
 }

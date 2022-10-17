@@ -12,7 +12,7 @@
             We can combine those facts into {h}Visual Model{/h}. That can help us see how they fit together.
             Make sure to select the ecosystem that matches the current job and click on the {h}Visualize{/h} tab to get started. 
 // comment out if we want visual-model intro to repeat until the player successfully saves the model
-$set jobs:visual-model.saved = true
+// $set jobs:visual-model.saved = true
 
 :: generic.visual-model.saved
 @trigger	VisualModelExported
@@ -20,7 +20,7 @@ $set jobs:visual-model.saved = true
 @when		scene:name == "Modeling"
 @cutscene
 // uncomment if we want visual-model intro to repeat until the player successfully saves the model
-//$set jobs:visual-model.saved = true
+$set jobs:visual-model.saved = true
 
 :: generic.sync-model.intro
 @trigger	SimulationModelStarted
@@ -28,7 +28,7 @@ $set jobs:visual-model.saved = true
 @when		scene:name == "Modeling", HasUpgrade(SyncModel), !jobs:sync-model.saved
 @cutscene
 @once
-{@guide}	So this is the {h}Sync Model{/h}! This is where all your facts get turned into a big simulation.
+{@guide}	So this is the {h}Descriptive Model{/h}! This is where all your facts get turned into a big simulation.
 			What that practically means is we have a bunch of virtual organisms interacting with each other.
             And their interactions are driven by the facts you have.
             So if you've got a fact that says "{pluralnameof Urchin} eat {pluralnameof GiantKelp}", then these virtual Urchins will eat the virtual Giant Kelp.
@@ -50,7 +50,7 @@ $set jobs:sync-model.saved = true
 @when		scene:name == "Modeling", HasUpgrade(PredictionModel), !jobs:predict-model.saved
 @once
 @cutscene
-{@guide}	Once we have a complete Sync Model, we can click the button that says {h}Run Prediction{/h}.
+{@guide}	Once we have a complete Describe Model, we can click the button that says {h}Run Prediction{/h}.
 {@guide}	This will provide us with a model forecasting what the site will look like in the future!
 {@guide}	If you see dotted lines, those mean that you have observed relationships between organisms but you don't have the exact rates.
 {@guide}	Make sure to measure missing rates by using the {h}Measurement Tank{/h}.

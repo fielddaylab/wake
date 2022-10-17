@@ -9,11 +9,13 @@ namespace Aqua.Cameras
     {
         #region Inspector
 
+        public Transform TransformOverride;
         public float Lerp = 5;
         [Range(0.01f, 25)] public float Zoom = 1;
         [AutoEnum] public CameraModifierFlags Flags = CameraModifierFlags.All;
         public Vector3 Offset = default;
-        public Vector3 Look = Vector3.forward;
+        public bool LookFromOffset;
+        [HideIfField("LookFromOffset")] public Vector3 Look = Vector3.forward;
 
         #endregion // Inspector
         
@@ -46,11 +48,13 @@ namespace Aqua.Cameras
             if (m_TargetHandle != 0)
             {
                 ref CameraTargetData data = ref Services.Camera.FindTarget(m_TargetHandle);
+                data.Anchor = TransformOverride ? TransformOverride : transform;
                 data.Zoom = Zoom;
                 data.Lerp = Lerp;
                 data.Flags = Flags;
                 data.Offset = Offset;
                 data.Look = Look;
+                data.LookFromOffset = LookFromOffset;
             }
         }
 

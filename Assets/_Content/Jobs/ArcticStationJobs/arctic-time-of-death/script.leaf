@@ -1,4 +1,4 @@
-:: basePath job.arctic-time-of-death
+# basePath job.arctic-time-of-death
 
 // INTRO
 
@@ -6,20 +6,19 @@
 @trigger    JobStarted
 @cutscene
 
-{@profWhalen}   We've had whales die in this area before.  It's called a "whalefall".
-                All kinds of creatures use the whale detritus for food.
-                We made a descriptive model of a previous whalefall. Take a look.
+{@arcticSci} Thank you, Ollie. I'll be glad to finally determine Linda's time of death.
+{@player}   Claro que sí. I'm happy to help. 
+            But Professor... how is it possible to solve this? 
+            All we have to look at are detritus and old bones. 
+{@arcticSci} Those are all the clues we'll need. 
+             Scientists have studied other whalefalls and determined what they look like in different stages.
+             My team has created a descriptive model. Here, take a look: 
 $call GiveFact(W_WhaleFall.Model.Stages)
-{@guide}    Check the models under {h}site W{/h} in your {h}AQOS{/h} tablet to view your whalefall model.
-            If we collect population data for all the species in {h}site W{/h} we should be able to match something up with our model.
-            Then we'll be able to roughly determine how long ago Linda met her end.
-
-:: helpMe
-@trigger RequestPartnerHelp
-@cutscene
-{@guide}    Check the models under {h}site W{/h} in your {h}AQOS{/h} tablet to view your whalefall model.
-            If we collect population data for all the species in {h}site W{/h} we should be able to match something up with our model.
-            Then we'll be able to roughly determine how long ago Linda met her end.
+{@arcticSci}  You can view the model under {h}Site W{/h} in that fancy tablet of yours.   
+          You'll need to collect population data for all the species at {h}site W{/h}.
+          And then see where the numbers fit within the model.
+{@player} Oh, that makes sense! 
+          Don't worry, Professor. I'll figure this out--you won't have to wait long. 
 
 // CATCH-ALL GUIDE TEXT
 
@@ -28,14 +27,23 @@ $call GiveFact(W_WhaleFall.Model.Stages)
 @when		JobTaskTop(getPops)
 @boostScore -5
 @cutscene
-{@guide}    Scan the population Probe at Site W and count the current organism populations at the site.
+{@player} Hey {nameof @guide}, what should we be doing now?
+{@guide}  You'll need to collect all the population data for the species at {h}Site W{/h}.
+          Then compare the data with {nameof @arcticSci}'s model, which you can find under {h}Site W{/h} in your AQOS!
 
 :: catchReportBack
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(reportBack)
 @boostScore -5
 @cutscene
-{@guide}	Talk to Professor Whalen in the Office.
+{@player}   What now, {nameof @guide}?
+
+$if scene:name != "RS-4Z-StationInterior"
+{@guide}	You will need to return to the station and talk to {nameof @arcticSci}.
+$else
+{@guide}    You will need to compare the data with {nameof @arcticSci}'s model, which you can find under {h}Site W{/h} in your AQOS!
+            Then, you will need to report back to {nameof @arcticSci}
+$endif
 
 // ARGUMENTATION
 
@@ -44,11 +52,12 @@ $call GiveFact(W_WhaleFall.Model.Stages)
 @when   !ArgueIsComplete(deathTime)
 @cutscene
 $call ArgueLoad(deathTime)
-{@profWhalen} How long has she been down there?
+{@arcticSci}   Okay, Ollie, let's see if we can work out an estimate of Linda's time of death.
+                At what stage of decomposition would you place the whalefall? 
     $choice .argue.stage1; Stage 1
     $choice .argue.stage2; Stage 2
     $choice .argue.stage3; Stage 3
-    $choice .argue.giveUp; Let me check my notes and get back to you.  
+    $choice .argue.giveUp; I'll get back to you  
 $choose branch
 
 :: argue.stage1
@@ -56,7 +65,8 @@ $if ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel1)
 		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm)
         $call ArgueFactSlot(W_WhaleFall.Model.Stages)
 $endif
-{@profWhalen}   What did you observe? Include both the stage model and anything you found.
+{@arcticSci}  Hmmm. What did you observe to indicate Stage 1?
+               Include the whalefall stagesmodel and any relevant data you found. 
 $goto .argue.showZombieWormsWrong
 
 :: argue.stage2
@@ -64,7 +74,8 @@ $if ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel2)
 		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm)
         $call ArgueFactSlot(W_WhaleFall.Model.Stages)
 $endif
-{@profWhalen}   What did you observe to specify stage 2? Include both the stage model and anything you found.
+{@arcticSci}   Hmmm. What did you observe to indicate Stage 2?
+                Include the whalefall stages model and any relevant data you found. 
 $goto .argue.showZombieWorms
 
 :: argue.stage3
@@ -72,7 +83,8 @@ $if ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel3)
 		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm)
         $call ArgueFactSlot(W_WhaleFall.Model.Stages)
 $endif
-{@profWhalen}   What did you observe that shows you that? Include both the stage model and anything you found.
+{@arcticSci}   Hmmm. What did you observe to indicate Stage 3?
+                Include the whalefall stages model and any relevant data you found. 
 $goto .argue.showZombieWormsWrong
 
 :: argue.showZombieWormsWrong
@@ -89,12 +101,12 @@ $if ArgueIsFactSubmitted(W_WhaleFall.Population.Detritus)
 $else
     $if ArgueIsFactSubmitted(W_WhaleFall.Population.ZombieWorm)
         $call ArgueRejectIncorrect()
-        {@profWhalen}   This seems possible, but could you connect this evidence with the stage model?
+        {@arcticSci}   Well, this data looks accurate... but where does it fit within the model? 
         $branch .argue.showZombieWormsWrong
     $else
         $call ArgueRejectIncorrect()
-        {@profWhalen}   Have you seen any zombie worms there?
-                        It looks like the worms might be a good marker of the whale fall stage.
+        {@arcticSci}   Did you happen to see any zombie worms at the whalefall?
+                        The worms seem to be a good indication of the whalefall's stage of decay.
         $goto .argue.showZombieWormsWrong
     $endif
 $endif
@@ -102,14 +114,15 @@ $endif
 
 :: argue.unrelatedDetritus
 $call ArgueRejectIncorrect()
-{@profWhalen}   Yes, the whale creates a lot of detritus, but we might be able to determine the stage from the other species.
+{@arcticSci}   Yes, the whalefall does create a lot of detritius... but I'm not sure how much that will help us.
+                You might have better luck by looking at other species.
                 How do the species' populations compare with the model I gave you? 
 $goto .argue.showZombieWormsWrong
 
 :: argue.zombieWormsEarly
 $call ArgueRejectIncorrect()
-{@profWhalen}   Interesting, it seems like the zombie worms could have occurred earlier.
-                Can you check the species populations against the model I gave you and adjust your claim? 
+{@arcticSci}   This is fascinating data, Ollie. But it seems like the zombie worms might have occurred earlier. 
+                Can you check the species populations against the model I gave you? 
 $call ArgueCancelClaim()
 $call ArgueUnload()
 
@@ -122,22 +135,22 @@ $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.giveUp
-{@profWhalen} OK. Get back to me when you're ready.
+{@arcticSci} Very well, Ollie. Let me know when you're ready. 
 $call ArgueCancelClaim()
 $call ArgueUnload()
 
 :: argue.unrelated2
 $if ArgueIsFactSubmitted(W_WhaleFall.Population.ZombieWorm)
     $call ArgueRejectIncorrect()
-    {@profWhalen}   This seems plausible, but could you connect this evidence with the stage model?
+    {@arcticSci}   This data seems plausible... but can you connect your evidence with the model I gave you? 
     $branch .argue.showZombieWorms
 $else
     $if ArgueIsFactSubmitted(W_WhaleFall.Population.Detritus)
         $branch .argue.unrelatedDetritus2
     $else
         $call ArgueRejectIncorrect()
-        {@profWhalen}   Have you seen any zombie worms there?
-                        It looks like the worms might be a good marker of the whale fall stage.
+        {@arcticSci}   Did you notice any zombie worms at the whalefall site? 
+                        The worms seem to be a good indication of the whalefall's stage of decay.
         $goto .argue.showZombieWorms
     $endif
 $endif
@@ -145,8 +158,9 @@ $endif
 
 :: argue.unrelatedDetritus2
 $call ArgueRejectIncorrect()
-{@profWhalen}   Yes, the whale creates a lot of detritus, but we might be able to determine the stage from the other species.
-                how do the species' populations compare with the model I gave you?
+{@arcticSci}   Yes, the whalefall does create a lot of detritius... but I'm not sure how much that will help us.
+                You might have better luck by looking at other species.
+                How do the species' populations compare with the model I gave you? 
 $goto .argue.showZombieWorms
 
 
@@ -154,7 +168,13 @@ $goto .argue.showZombieWorms
 
 :: argue.complete
 $call ArgueComplete()
-{@profWhalen}   Ahhh, yes! These can only live on the whale detritus once the bones are exposed.
-                Excellent work {nameof @player}!
+{@arcticSci}   Ah, yes! Zombie worms can only live on the whale detritis after its bones are exposed. 
+                Thank you, Ollie. 
+{@player}       Of course. I'm glad you'll finally be able to move on.
+{@arcticSci}   Move on?? Oh dear, no. Not with this beautiful new ecosystem right below us!
+{@player}       But... Linda is gone.
+{@arcticSci}   Well, yes. After a fashion. But there's still so much to learn from her. 
+                In fact, I'd better get back to work.
+                Thank you again for your help! 
 
 $call CompleteJob()

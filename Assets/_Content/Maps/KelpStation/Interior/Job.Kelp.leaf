@@ -1,0 +1,64 @@
+# basePath interior.job.kelp
+
+#include "Headers/Common.leaf"
+
+#const JobGiverId = drKelp
+#const JobGiverCameraPose = ""
+
+#include "Headers/CommonJob.leaf"
+
+// Generic
+
+#NoJobHandler(a)
+{@$JobGiverId}  Would you like to see the {h}Job Board{/h}, Mija?
+$choice .action.openJobBoard; Sure!
+$choice .action.cancel; No thanks.
+
+#WrongStationJobHandler(a)
+{@$JobGiverId}  Looks like you've got a job at another station. 
+                If you have questions, you should probably head back there. 
+                Though if you want to stay and help me with the Kelp Refuge, I wouldn't say no...
+    $choice .action.openJobBoard; Sure. Let me see the {h}Job Board{/h}.
+    $choice .action.cancel; Never mind, Mom. I'll check back later. 
+
+#WrongStationJobHandler(b)
+{@$JobGiverId}  Looks like you took a job at another station. 
+                You'll have to talk to them for the details.
+                Could always take a job here, though...
+                Still want to see the {h}Job Board{/h}?
+    $choice .action.openJobBoard; Sure. Thanks, Mom!
+    $choice .action.cancel; Nah. I'll check back later. 
+
+#JobHandler(a)
+{@$JobGiverId}  {random Olivia! Do you need help with something?|Welcome back, Sweetie! ¿Qué pasa?|Do you need something, Mija?} 
+
+$if !JobInProgress(kelp-shop-welcome)
+    $choice .action.report; I'm ready to report back on my job!
+    $choice .action.openJobBoard; I'd like to {random see|look at} the {h}Job Board{/h}.
+    $choice .action.cancel.currentJob; Never mind. Thanks, Mom.
+$else
+    $choice .action.openJobBoard; I'd like to {random see|look at} the {h}Job Board{/h}.
+    $choice .action.cancel.currentJob; Never mind. Thanks, Mom.
+$endif
+
+:: JobHandlerShopStart
+@trigger    Talk 
+@who        $JobGiverId 
+@when       JobIsAtCurrentStation(), JobInProgress(kelp-shop-welcome)
+@cutscene
+@once
+$branch interior.kelpStation.warpMechanicToResearcher
+{@drKelp}  One more thing, Mija! I'm having {nameof @guide} update your ship's map.  
+            You can access your map from the Helm of your ship.  
+{@player}   Thanks mom!
+{@kelpMechanic} Before you go Mijita, we should get your sub upgraded.
+{@drKelp}   Thanks for reminding me Enrique. | Why don't you stop by before you go sweetie?
+$branch interior.kelpStation.warpMechanicToDefault
+
+:: action.cancel
+@cutscene
+{@$JobGiverId}  {random Okay, Sweetie. I'm here if you need me. | Okay. Come back whenever you're ready.} 
+
+:: action.cancel.currentJob
+@cutscene
+{@$JobGiverId}  {random Okay. We'll have work for you here when you're ready.| Okay, Mija. Let me know when you're ready for another job.} 

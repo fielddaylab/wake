@@ -1,4 +1,4 @@
-:: basePath job.arctic-disappearing-act
+# basePath job.arctic-disappearing-act
 
 // INTRO
 :: start
@@ -7,14 +7,14 @@
 $if HasEntity(ArcticCod), HasEntity(BristleWorm), HasEntity(ChinookSalmon), HasEntity(Diatoms), HasEntity(IceAlgae), HasEntity(Hagfish), HasEntity(IceAlgae), HasEntity(NorthAtlanticOctopus), HasEntity(SalmonShark), HasEntity(SnowCrab), HasEntity(ZombieWorm), HasEntity(Detritus)    
 // Blah
 $else
-{@guide}    If we're going to investigate properly, we'll need to know all the species at {h}site W{/h}.
-$endif
-$if !HasUpgrade(VisualModel)
-	{@profWhalen}	I've unlocked a new room on your Helm, {map-name}the Modeling Lab{/map-name}.
-	{@profWhalen}	Head there when you are ready to make a Visual Model of how {h}site W{/h} species interact with each other.
-	$call UnlockRoom("modelingRoom")
-	$call UnlockRoom("Modeling")
-	$call GiveUpgrade(VisualModel)
+{@arcticSci}  Oh, this is so exciting. Whalefalls are exceedingly rare finds! 
+{@player}     Huh. I thought you'd be sadder about this, Professor. 
+              I mean, Linda's body is dead and decaying and being... you know. Slowly devoured.
+{@arcticSci}  I know! Wonderful, isn't it? 
+              This is our chance to learn more about how it all works!
+{@player}     Okay, then. Where do we start?
+{@arcticSci}   If we're going to investigate properly, you'll need to learn more about all the species at {h}Site W{/h}.
+              Let me know what you find out!
 $endif
 
 ::gotAllInfo
@@ -22,29 +22,35 @@ $endif
 @when JobTaskCompleted(scanCritters)
 @once
 @cutscene
-{@guide}    I'd say we know enough to start making a {h}visual model{/h} now.
+{@player}  Wow. {nameof arcticSci} was right about this place, {nameof @guide}. 
+           I mean, snow crabs? Zombie worms??
+           I never even dreamed these things existed! 
+{@guide}   Yes. So much delicious new data, all in one place!
+{@player}  We better head back to the Meredith and keep working. I want to know how all this works! 
 
 :: helpScan
 @trigger    RequestPartnerHelp
 @when   JobTaskTop(scanCritters)
 @cutscene
-{@player}   What should I do next?
-{@guide}    Remember, you can use your {h}AQOS tablet{/h} to check your next task.     
+{@player}   What now, {nameof @guide}?
+{@guide}    It appears you have more organisms to scan!
+               
 
 :: helpObserve
 @trigger    RequestPartnerHelp
 @when   JobTaskTop(modelInteractions)
 @cutscene
-{@player}   What should I do next? 
-{@guide}    In order to make a {h}visual model{/h}, we'll need to first understand the interactions of the species at {h}site W{/h}.
-            These can be discovered using your {h}Observation Tank{/h}. 
-            Once you have discovered all the species interactions, head to the {nameof Modeling} to construct the appropriate model.
+{@player}   Can I have a little help, {nameof @guide}?
+{@guide}    Certainly, O!
+            First you'll need to use your {h}Observation Tank{/h} to understand how the different organisms from {h}Site W{/h} interact.
+            Then head to your {nameof Modeling} and use what you found out to create a visual model!
 
 ::reportBack
 @trigger    RequestPartnerHelp
 @when JobTaskTop(reportBack)
 @cutscene
-{@guide}    Let's report back to {nameof profWhalen} with our model.
+{@player} What now, {nameof @guide}?
+{@guide}  You've created your model. It's time to report back to {nameof @arcticSci}!
 
 // CATCH-ALL GUIDE TEXT
 
@@ -53,21 +59,24 @@ $endif
 @when 		JobTaskActive(scanCritters)
 @boostScore -5
 @cutscene
-{@guide}    Scan everything at Site W.
+{@player} What should I do now? 
+{@guide}  Your current task is to scan all of the spcies at Site W!
 
 :: catchModelInteractions
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(modelInteractions)
 @boostScore -5
 @cutscene
-{@guide}    Observe Site W species interactions and make a Visual Model from them.
+{@player} Okay, {nameof @guide}. What now? 
+{@guide}  You need to observe the species' interactions, and then create a Visual Model!
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Report back to Professor Whalen.
+{@player}   What do we need to do now? 
+{@guide}    It's time to report back to {nameof @arcticSci}.
 
 // ARGUMENTATION
 ::argue.intro
@@ -78,7 +87,8 @@ $call ArgueLoad(whaleModel)
 $if ArgueSetClaim(Claim, jobs.arctic-disappearing-act.argue.claimLabel) 
 		$call ArgueFactSlot(W_WhaleFall.Model.WhaleFallVisual)
 $endif
-{@profWhalen} Where you able to create that visual model of site W?
+{@arcticSci} Excellent! Let's see what you discovered.
+              May I have a look at your visual model of Site W? 
 $goto .argue.showClaim
             
 :: argue.showClaim
@@ -91,17 +101,21 @@ $choose branch
 
 :: argue.unrelated
 $call ArgueRejectIncorrect()
-{@profWhalen} Ok, that's interesting, but it's not answering my question.
+{@arcticSci} Ah. Forgive me, Ollie but I don't think that's what you were looking for. 
 $goto .argue.showClaim
 
 :: argue.giveUp
-{@profWhalen} OK. Get back to me when you're ready.
+{@arcticSci} Perfectly understandable. These things take time. 
+              Just let me know when you're ready. 
 
 // END
 :: argue.complete
 $call ArgueComplete()
-{@profWhalen}   It looks like quite a few organisms came to feast on her. 
-                I wonder how long she has been down there...
-                Anyways, thanks for your help!
+{@arcticSci}  Ollie, this is fascinating! What a beautiful, intricate web of organisms.
+               And all of them thriving where there was no life, no ecosystem... until now. 
+{@player}      But Linda's body already looks so decayed. How much longer do you think the ecosystem will last?
+{@arcticSci}   Well, that depends on when she died, and what state of decomposition she's in...
+               But I've already rambled on for too long!
+               Thank you again, Ollie. Until next time!
 
 $call CompleteJob()

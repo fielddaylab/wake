@@ -41,6 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 876562311837883335}
   - component: {fileID: 5473615783779999550}
+  - component: {fileID: 938140537874488819}
   m_Layer: 29
   m_Name: Collider
   m_TagString: Untagged
@@ -92,6 +93,18 @@ PolygonCollider2D:
       - {x: -20.185312, y: -14.112143}
       - {x: -8.990844, y: -14.006602}
       - {x: -11.145663, y: -8.873919}
+--- !u!114 &938140537874488819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4361310823973557237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cec70eb26bb1e374a82d4a8fe0ce4794, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7866074421270197670
 GameObject:
   m_ObjectHideFlags: 0
@@ -199,7 +212,7 @@ ParticleSystem:
       m_RotationOrder: 4
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
-  scalingMode: 1
+  scalingMode: 2
   randomSeed: 0
   InitialModule:
     serializedVersion: 3
@@ -4854,6 +4867,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2292547797202832708}
+  - component: {fileID: 5766372574164987305}
   m_Layer: 0
   m_Name: StationExt_Blue
   m_TagString: Untagged
@@ -4880,6 +4894,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!114 &5766372574164987305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9089062609933266154}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 1
+  DestroyGameObject: 1
 --- !u!1001 &2625165872996364036
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -57,9 +57,21 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
+        static public void StripDebugInfo(ref SerializedHash32 hash) {
+            #if !PRESERVE_DEBUG_SYMBOLS && !DEVELOPMENT
+            hash = new SerializedHash32(hash.Hash());
+            #endif // !PRESERVE_DEBUG_SYMBOLS && !DEVELOPMENT
+        }
+
+        static public void StripDebugInfo(ref TextId id) {
+            #if !PRESERVE_DEBUG_SYMBOLS && !DEVELOPMENT
+            id = id.Hash();
+            #endif // !PRESERVE_DEBUG_SYMBOLS && !DEVELOPMENT
+        }
+
         static public T FindAsset<T>() where T : UnityEngine.Object
         {
-            string[] assetGuids = AssetDatabase.FindAssets("t:" + typeof(T).FullName);
+            string[] assetGuids = AssetDatabase.FindAssets(NameFilter(typeof(T)));
             if (assetGuids == null)
                 return null;
             
@@ -79,7 +91,7 @@ namespace Aqua
 
         static public T FindAsset<T>(string inName) where T : UnityEngine.Object
         {
-            string[] assetGuids = AssetDatabase.FindAssets(inName + " t:" + typeof(T).FullName);
+            string[] assetGuids = AssetDatabase.FindAssets(inName + " " + NameFilter(typeof(T)));
             if (assetGuids == null)
                 return null;
             
@@ -99,7 +111,7 @@ namespace Aqua
 
         static public T FindAsset<T>(StringHash32 inId) where T : UnityEngine.Object
         {
-            string[] assetGuids = AssetDatabase.FindAssets("t:" + typeof(T).FullName);
+            string[] assetGuids = AssetDatabase.FindAssets(NameFilter(typeof(T)));
             if (assetGuids == null)
                 return null;
             
@@ -180,7 +192,7 @@ namespace Aqua
             if (inDirectories.Length == 0)
                 inDirectories = null;
             
-            string[] assetGuids = AssetDatabase.FindAssets("t:" + typeof(T).FullName, inDirectories);
+            string[] assetGuids = AssetDatabase.FindAssets(NameFilter(typeof(T)), inDirectories);
             if (assetGuids == null)
                 return null;
             
@@ -206,7 +218,7 @@ namespace Aqua
             if (inDirectories.Length == 0)
                 inDirectories = null;
             
-            string[] assetGuids = AssetDatabase.FindAssets("t:" + typeof(T).FullName, inDirectories);
+            string[] assetGuids = AssetDatabase.FindAssets(NameFilter(typeof(T)), inDirectories);
             if (assetGuids == null)
                 return null;
             
@@ -248,6 +260,15 @@ namespace Aqua
             foreach(var path in movedAssets) {
                 new StringHash32(Path.GetFileNameWithoutExtension(path));
             }
+        }
+
+        static private string NameFilter(Type type) {
+            string fullname = type.FullName;
+            if (fullname.StartsWith("UnityEngine.") || fullname.StartsWith("UnityEditor."))
+            {
+                fullname = fullname.Substring(12);
+            }
+            return "t:" + fullname;
         }
 
         #endif // UNITY_EDITOR

@@ -3,37 +3,48 @@
 :: start
 @trigger    JobStarted
 @cutscene
-$branch common.ringPhone
 
 $set jobs:coral-clear-sarg.siteRScans = 0
-{@profCempaka}	This time I need you to analyze the relations between Sargassum and everything else you've found so far.
-{@profCempaka}	Hopefully we can find something that can deal with that Sargassum!
-{@profCempaka}	It's a bit of a grind, but you will need to run experiments until you've figured out a solution. 
+{@player} I'm ready, Professor. We need to save that coral!
+		  Did you figure out what to do about the Sargassum? Should we get out there and start scrubbing? 
+{@profCoral} Slow down, Ollie. 
+		    Sometimes, the best way to get rid of something is to add something else.
+{@player}  I... don't get it.
+{@profCoral} We need to add a new species to Site R. Something that eats Sargassum.
+		     I need you to analyze the interactions between Sargassum and everything else you've found so far.
+{@player}	<i>Everything</i> else?? But Professor, what if the Coral don't survive that long?
+			 What if I can't find the right species??
+{@profCoral} Slow and steady, Ollie. I have faith in you.
+		     Go run some experiments, and report back when you're done. 
 
 :: helpBackAtShip
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Helm", !HasFact(Urchin.Eats.Sargassum.Stressed)
 @cutscene
-{@player} 	Where should I be going again?
-{@guide}	Let's head over to the {nameof Experimentation} and try to find something that can deal with the Sargassum. 
+{@player} 	What should we do now, {nameof @guide}?
+{@guide}	You need to head to {nameof Experimentation} and try to find a species that will help get rid of the Sargassum. 
 
 :: startExperiment
 @trigger    SceneStart
 @when       scene:name == "ExperimentV2", !HasFact(Urchin.Eats.Sargassum.Stressed)
 @once
 @cutscene
-{@player}   How should we set up the experiment this time?
-{@guide}  	We want to find out if there's anything that can help us clear the Sargassum.
-{@guide} 	Maybe try observing a tank with Sargassum and another organism until you find something interesting?
+{@player} Ugh. Are we doing the right thing, {nameof @guide}?
+		 I mean, the coral is dying, and we're hiding in here, running experiments. 
+{@guide}  According to {nameof @profCoral}'s notes, this is the best way to help the coral.
+{@player} Right. Okay. Focus, O.
+		  We need to find something that eats Sargassum.
+{@guide} Affirmative. You will need to add Sargassum and another organism to your Observation tank.
+		 Repeat the experiment until you find something useful.
 
 ::helpAtExperiment
 @trigger    RequestPartnerHelp
 @when 		scene:name == "ExperimentV2", !HasFact(Urchin.Eats.Sargassum.Stressed)
 @cutscene
-{@player} 	How should I do this again?
-{@guide}	We want to figure out if there's anything that eats the Sargassum.
-{@guide}	Try putting different organisms in a tank with Sargassum and see if there's anything that eats it!
-{@guide}	Maybe start with organisms that weren't at Site R?
+{@player} 	Can you remind me what to do, {nameof @guide}?
+{@guide}	Certainly, O.
+		    Try putting different organisms in the tank with Sargassum, and see if anything eats it!
+			Perhaps start with organisms that were not present at Site R. 
 
 
 :: experimentEnd
@@ -41,33 +52,33 @@ $set jobs:coral-clear-sarg.siteRScans = 0
 @when 		HasFact(Urchin.Eats.Sargassum.Stressed)
 @once
 @cutscene
-{@guide}	Looks like we found our solution! Let's report this back to Professor Cempaka.
+{@player} Yes!! We did it, {nameof @guide}!
+		  Hopefully we'll be in time to save the Coral.
+{@guide}  Yes. I suggest a hasty return to the Serenity Meadows station! 
 
 :: guideTowardUnstressed
 @trigger    NewBehaviorObserved
 @when 		!HasFact(Urchin.Eats.Sargassum.Stressed), factId == "Urchin.Eats.Sargassum"
 @once
 @cutscene
-{@guide}	Look at that, the Urchins are eating the Sargassum!
-			Let's do that one more time, only this time in the {h}Sargassum Covered Reef{/h}.
+{@guide} Ah. The Urchins are eating the Sargassum!
+{@player} Does that mean we got what we need??
+{@guide} Not quite. Try the same thing again, only this time in water from the {nameof RS-2R}.
 
 ::helpAtExperimentUnstressed
 @trigger    RequestPartnerHelp
 @when 		scene:name == "ExperimentV2", !HasFact("Urchin.Eats.Sargassum.Stressed"), HasFact("Urchin.Eats.Sargassum")
 @cutscene
-{@player} 	What do we still need to do here?
-{@guide}	We are so close!
-			This time put the Urchins in with the Sargassum in water from the {h}Sargassum Covered Reef{/h}.
+{@player} 	What do I need to do here, {nameof @guide}?
+{@guide} 	You are almost finished, O!
+			This time, put the Urchins and Sargassum in the tank with water from the {nameof RS-2R}.
 
 :: helpReportBack
 @trigger    RequestPartnerHelp
 @when 		HasFact(Urchin.Eats.Sargassum.Stressed)
 @cutscene
-{@player} 	What should we be doing now?
-{@guide}	Now that we've finished the experiment, let's report back to the {map-name}Office{/map-name}.
-$if global:nav.shipRoom == "office"
-	{@guide}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
-$endif
+{@player} 	What now, {nameof @guide}?
+{@guide}	You need to return to Serenity Meadows and report your findings to {nameof @profCoral}!
 
 // CATCH-ALL GUIDE TEXT
 
@@ -76,6 +87,7 @@ $endif
 @when 		JobTaskActive(urchinSarg)
 @boostScore -5
 @cutscene
+{@player} What should I do now, {nameof @guide}?
 {@guide}    Use the Observation Tank to find an organism that eats {nameof Sargassum}.
 
 :: catchUrchinSargArgue
@@ -83,7 +95,8 @@ $endif
 @when 		JobTaskActive(urchinSargArgue)
 @boostScore -5
 @cutscene
-{@guide}    Head back to the Office to talk to Professor Cempaka.
+{@player} Okay, {nameof @guide}. Are we done here? 
+{@guide}  Affirmative, O! Head back to the research station to talk to {nameof @profCoral}!
 
 // ARGUMENTATION
 
@@ -95,7 +108,8 @@ $call ArgueLoad(coralClearSargArgue)
 $branch .argue.intro
 
 :: argue.intro
-{@profCempaka} Is there an organism that can clear the Sargassum?
+{@profCoral} Let's see what you discovered, Ollie.
+	         Is there an organism that can clear the Sargassum?
 	$choice .argue.doesntEatSargasssum; Blue Tang
 	$choice .argue.doesntEatSargasssum; Bluehead Wrasse
 	$choice .argue.eatsSargassum; Urchin
@@ -103,15 +117,14 @@ $branch .argue.intro
 $choose branch
 
 :: argue.doesntEatSargasssum
-{@profCempaka} Hmm. That doesn't eat Sargassum, does it?
+{@profCoral} Hmmm. Are you sure, Ollie? That doesn't seem right. 
 $goto .argue.intro
 
 :: argue.nothingEatsSargassum
-{@profCempaka}	Hmm. That seems unlikely.
-				Perhaps running more experiments will reveal something?
+{@profCoral}	That seems unlikely. If you didn't find anything, you might need to run more experiments. 
 
 :: argue.eatsSargassum
-{@profCempaka} Urchins?! No way! Did you see this happen?!
+{@profCoral} Well. That sounds promising! Did you observe the Urchins eating Sargassum? 
 $goto .argue.evidence
 
 :: argue.evidence
@@ -125,19 +138,25 @@ $choice #argueFact; Present facts from AQOS
 $choice .argue.giveUp; Let me get back to you
 
 ::argue.giveUp
-{@profCempaka}    OK. Get back to me when you're ready.
+{@profCoral}   Of course. Take your time, Ollie. 
 
 :: argue.urchin
 $call ArgueComplete()
-{@profCempaka} Perfect! I wonder if they can actually live here... I've heard they destroy the Kelp Forests...
+{@profCoral} Ah. Wonderful job, Ollie.
+		     If we simply removed the Sargassum ourselves, more would be swept in.
+			 The Urchins could be the long-term solution we're looking for. 
+{@player} Yes!! Now we just need to get some Urchins in there, and adios, Sargassum!
+{@profCoral} Hmmm. Though I wonder how Urchins might affect the rest of the ecosystem. 
+			 I've heard they can destroy Kelp Forests...
+			 Well, at least we've got a place to start. Thank you for your help, Ollie. 
 $call CompleteJob()
 
 :: argue.unrelated
 $if ArgueIsFactSubmitted(Urchin.Eats.Sargassum)
 	$branch .argue.urchin
 $else
-	{@profCempaka} How does that help the Sargassum situation?
-	{@profCempaka} Are you sure you saw Urchins eat Sargassum?
+	{@profCoral} That isn't helpful here, Ollie. 
+	{@profCoral} We need evidence that Urchins eat Sargasum. 
 	$call ArgueRejectIncorrect()
 	$goto .argue.evidence
 $endif

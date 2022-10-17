@@ -79,6 +79,18 @@ namespace Aqua.Profile
             }
         }
 
+        public int GetEntityCount(BestiaryDescCategory inCategory)
+        {
+            int count = 0;
+            foreach(var entityId in m_ObservedEntities)
+            {
+                BestiaryDesc desc = Assets.Bestiary(entityId);
+                if (desc.HasCategory(inCategory))
+                    count++;
+            }
+            return count;
+        }
+
         public int GetEntities(BestiaryDescCategory inCategory, ICollection<BestiaryDesc> outFacts)
         {
             int count = 0;
@@ -94,7 +106,7 @@ namespace Aqua.Profile
             return count;
         }
 
-        public int GetEntities(BestiaryDescCategory inCategory, ICollection<TaggedBestiaryDesc> outFacts)
+        public int GetEntities(BestiaryDescCategory inCategory, ICollection<TaggedBestiaryDesc> outEntities)
         {
             int count = 0;
             foreach(var entityId in m_ObservedEntities)
@@ -102,7 +114,7 @@ namespace Aqua.Profile
                 BestiaryDesc desc = Assets.Bestiary(entityId);
                 if (desc.HasCategory(inCategory))
                 {
-                    outFacts.Add(new TaggedBestiaryDesc(desc));
+                    outEntities.Add(new TaggedBestiaryDesc(desc));
                     count++;
                 }
             }
@@ -244,6 +256,21 @@ namespace Aqua.Profile
             BFDiscoveredFlags flags = BFType.DefaultDiscoveredFlags(fact);
             StringHash32 pair = BFType.PairId(fact);
             int metaIdx = m_FactMetas.BinarySearch(inFactId);
+            if (metaIdx >= 0)
+                flags |= m_FactMetas[metaIdx].Flags;
+            if (!pair.IsEmpty && (m_ObservedFacts.Contains(pair) || Services.Assets.Bestiary.IsAutoFact(pair)))
+                flags |= BFDiscoveredFlags.HasPair;
+            return flags;
+        }
+
+        public BFDiscoveredFlags GetDiscoveredFlags(BFBase inFact)
+        {
+            if (!HasFact(inFact.Id))
+                return BFDiscoveredFlags.None;
+
+            BFDiscoveredFlags flags = BFType.DefaultDiscoveredFlags(inFact);
+            StringHash32 pair = BFType.PairId(inFact);
+            int metaIdx = m_FactMetas.BinarySearch(inFact.Id);
             if (metaIdx >= 0)
                 flags |= m_FactMetas[metaIdx].Flags;
             if (!pair.IsEmpty && (m_ObservedFacts.Contains(pair) || Services.Assets.Bestiary.IsAutoFact(pair)))

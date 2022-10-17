@@ -311,7 +311,7 @@ namespace Aqua.Modeling {
         private void OnRequestConceptualExport() {
             if (m_ProgressInfo.Scope != null && !m_ProgressInfo.Scope.ConceptualModelId.IsEmpty && Save.Bestiary.RegisterFact(m_ProgressInfo.Scope.ConceptualModelId)) {
                 BFBase fact = Assets.Fact(m_ProgressInfo.Scope.ConceptualModelId);
-                Services.UI.Popup.PresentFact("'modeling.newConceptualModel.header", null, null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
+                Services.UI.Popup.PresentFact(Loc.Find("modeling.newConceptualModel.header"), null, null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
                     Services.Script.TriggerResponse(ModelingConsts.Trigger_ConceptExported);
                     Services.Events.Dispatch(ModelingConsts.Event_Concept_Exported);
                 });
@@ -335,7 +335,7 @@ namespace Aqua.Modeling {
         private void OnSyncAchieved() {
             if (m_ProgressInfo.Scope != null && !m_ProgressInfo.Scope.SyncModelId.IsEmpty && Save.Bestiary.RegisterFact(m_ProgressInfo.Scope.SyncModelId)) {
                 BFBase fact = Assets.Fact(m_ProgressInfo.Scope.SyncModelId);
-                Services.UI.Popup.PresentFact("'modeling.newSyncModel.header", null, null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
+                Services.UI.Popup.PresentFact(Loc.Find("modeling.newSyncModel.header"), null, null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
                     Services.Script.TriggerResponse(ModelingConsts.Trigger_SyncCompleted);
                 });
                 RefreshPhaseHeader();
@@ -346,7 +346,7 @@ namespace Aqua.Modeling {
         private void OnPredictCompleted() {
             if (m_ProgressInfo.Scope != null && !m_ProgressInfo.Scope.PredictModelId.IsEmpty && Save.Bestiary.RegisterFact(m_ProgressInfo.Scope.PredictModelId)) {
                 BFBase fact = Assets.Fact(m_ProgressInfo.Scope.PredictModelId);
-                Services.UI.Popup.PresentFact("'modeling.newPredictModel.header", null, null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
+                Services.UI.Popup.PresentFact(Loc.Find("modeling.newPredictModel.header"), null, null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
                     Services.Script.TriggerResponse(ModelingConsts.Trigger_PredictCompleted);
                     Services.Events.Dispatch(ModelingConsts.Event_Predict_Complete);
                 });
@@ -360,8 +360,13 @@ namespace Aqua.Modeling {
         }
 
         private void OnInterventionUnsuccessful() {
-            Services.Script.TriggerResponse(ModelingConsts.Trigger_InterveneError);
             Services.Events.Dispatch(ModelingConsts.Event_Intervene_Error);
+            Services.UI.Popup.Display(
+                // TODO: modify description depending on whether the player is above or below the target
+                Loc.Find("modeling.noIntervenePopup.header"), Loc.Find("modeling.noIntervenePopup.description")
+            ).OnComplete((_) => {
+                Services.Script.TriggerResponse(ModelingConsts.Trigger_InterveneError);
+            });
             Services.Audio.PostEvent("syncDenied");
         }
 
@@ -378,7 +383,7 @@ namespace Aqua.Modeling {
         private void OnInterventionCompleted() {
             if (m_ProgressInfo.Scope != null && !m_ProgressInfo.Scope.InterveneModelId.IsEmpty && Save.Bestiary.RegisterFact(m_ProgressInfo.Scope.InterveneModelId)) {
                 BFBase fact = Assets.Fact(m_ProgressInfo.Scope.InterveneModelId);
-                Services.UI.Popup.PresentFact("'modeling.newInterveneModel.header", null, null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
+                Services.UI.Popup.PresentFact(Loc.Find("modeling.newInterveneModel.header"), null, null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
                     Services.Script.TriggerResponse(ModelingConsts.Trigger_InterveneCompleted);
                     Services.Events.Dispatch(ModelingConsts.Event_Intervene_Complete);
                 });;

@@ -13,8 +13,8 @@ namespace Aqua.Entity {
 
         private struct UpdateArgs {
             public ushort FrameIndex;
-            public CameraService.PlanePositionHelper PositionCast;
             public Vector2 CenterPos;
+            public float RadiusSq;
         }
 
         #endregion // Types
@@ -25,8 +25,8 @@ namespace Aqua.Entity {
 
         #endregion // Inspector
 
-        [NonSerialized] private float m_RadiusSq;
         [NonSerialized] private int m_UpdateMask;
+        [NonSerialized] private CameraService.PlanePositionHelper m_PositionCast;
 
         private readonly EntityActivationSet<Visual2DTransform, UpdateArgs> m_UpdateSet;
 
@@ -37,22 +37,33 @@ namespace Aqua.Entity {
             m_UpdateSet.UpdateActive = UpdateActive;
         }
 
-        private bool UpdateTransform(Visual2DTransform transform, UpdateArgs updateArgs) {
+        private UpdateAwakeResult UpdateTransform(Visual2DTransform transform, in UpdateArgs updateArgs) {
+            if (transform.OffscreenTickDelay > 0) {
+                transform.OffscreenTickDelay--;
+                return UpdateAwakeResult.Skip;
+            }
+
             Vector3 position;
             float scale;
             if (transform.CustomPosition != null) {
-                position = transform.CustomPosition(transform, transform.LastKnownPosition, updateArgs.PositionCast, out scale);
+                position = transform.CustomPosition(transform, transform.LastKnownPosition, m_PositionCast, out scale);
             } else {
-                position = updateArgs.PositionCast.CastToPlane(transform.Source, out scale);
+                position = CameraService.CastToPlane(m_PositionCast, transform.Source, out scale);
             }
             
             transform.WritePosition(updateArgs.FrameIndex, position, scale);
 
-            Vector2 dist = (Vector2) position - updateArgs.CenterPos;
-            return dist.sqrMagnitude < (m_RadiusSq + (transform.Radius * transform.Radius));
+            float dist = Vector2.SqrMagnitude((Vector2) position - updateArgs.CenterPos);
+            float distOffset = dist - (updateArgs.RadiusSq + (transform.Radius * transform.Radius));
+            if (distOffset <= 0) {
+                return UpdateAwakeResult.Active;
+            } else {
+                transform.OffscreenTickDelay = Math.Min((int) distOffset / 30, 60);
+                return UpdateAwakeResult.Inactive;
+            }
         }
 
-        static private void UpdateActive(Visual2DTransform transform, UpdateArgs updateArgs) {
+        static private void UpdateActive(Visual2DTransform transform, in UpdateArgs updateArgs) {
             transform.Apply();
         }
 
@@ -81,12 +92,11 @@ namespace Aqua.Entity {
                 return;
             }
 
-            m_RadiusSq = m_CameraRadius * m_CameraRadius;
-
+            m_PositionCast = Services.Camera.GetPositionHelper();
             m_UpdateSet.Update(m_UpdateMask, new UpdateArgs() {
                 FrameIndex = Frame.Index,
-                PositionCast = Services.Camera.GetPositionHelper(),
-                CenterPos = Services.State.Player?.transform.position ?? Services.Camera.Position
+                CenterPos = Services.State.Player?.transform.position ?? Services.Camera.Position,
+                RadiusSq = m_CameraRadius * m_CameraRadius
             });
         }
 

@@ -25,6 +25,16 @@ namespace Aqua
     [ServiceDependency(typeof(UIMgr)), DefaultExecutionOrder(999999)]
     public partial class StateMgr : ServiceBehaviour, IDebuggable
     {
+        private struct PrioritizedCallback {
+            public readonly int Priority;
+            public readonly Action Callback;
+
+            public PrioritizedCallback(Action callback, int priority) {
+                Priority = priority;
+                Callback = callback;
+            }
+        }
+
         #region Inspector
 
         [SerializeField, Required] private GameObject m_InitialPreloadRoot = null;
@@ -35,15 +45,19 @@ namespace Aqua
         [NonSerialized] private StringHash32 m_EntranceId;
         [NonSerialized] private bool m_SceneLock;
         [NonSerialized] private PlayerBody m_Body;
+        [NonSerialized] private bool m_InitFrame;
+        [NonSerialized] private StringHash32 m_SceneName;
 
         private VariantTable m_TempSceneTable;
+        private Func<IEnumerator> m_OnSceneReadyFunc;
 
         private RingBuffer<SceneBinding> m_SceneHistory = new RingBuffer<SceneBinding>(8, RingBufferMode.Overwrite);
         private Dictionary<Type, SharedManager> m_SharedManagers;
 
-        private RingBuffer<Action> m_OnLoadQueue = new RingBuffer<Action>(64, RingBufferMode.Expand);
+        private RingBuffer<PrioritizedCallback> m_OnLoadQueue = new RingBuffer<PrioritizedCallback>(64, RingBufferMode.Expand);
 
         public StringHash32 LastEntranceId { get { return m_EntranceId; } }
+        public StringHash32 SceneName { get { return m_SceneName; } }
 
         #region Scene Loading
 
@@ -221,7 +235,7 @@ namespace Aqua
             m_SceneHistory.PushBack(active);
 
             // if we started from another scene than the boot or title scene
-            if (active.BuildIndex >= GameConsts.GameSceneIndexStart)
+            if (active.BuildIndex < 0 || active.BuildIndex >= GameConsts.GameSceneIndexStart)
             {
                 #if DEVELOPMENT
                 Services.Data.UseDebugProfile();
@@ -249,6 +263,7 @@ namespace Aqua
 
             DebugService.Log(LogMask.Loading, "[StateMgr] Initial load of '{0}' finished", active.Path);
 
+            m_InitFrame = true;
             ProcessCallbackQueue();
             active.BroadcastLoaded();
             Services.Input.ResumeAll();
@@ -256,12 +271,15 @@ namespace Aqua
 
             Services.Events.Dispatch(GameEvents.SceneLoaded);
             Services.Script.TriggerResponse(GameTriggers.SceneStart);
+            m_InitFrame = false;
         }
 
         private IEnumerator SceneSwap(SceneBinding inNextScene, StringHash32 inEntrance, object inContext, SceneLoadFlags inFlags)
         {
             Services.Input.PauseAll();
-            Services.Script.KillLowPriorityThreads();
+
+            Services.Script.TryCallFunctions(GameTriggers.SceneLeave);
+            Services.Script.KillLowPriorityThreads(TriggerPriority.Cutscene, true);
             Services.Physics.Enabled = false;
             BootParams.ClearStartFlag();
 
@@ -285,7 +303,7 @@ namespace Aqua
                 Services.Events.Dispatch(GameEvents.SceneWillUnload);
 
             // if we started from another scene than the boot or title scene
-            if (inNextScene.BuildIndex >= GameConsts.GameSceneIndexStart)
+            if (inNextScene.BuildIndex < 0 || inNextScene.BuildIndex >= GameConsts.GameSceneIndexStart)
             {
                 #if DEVELOPMENT
                 if (!Services.Data.IsProfileLoaded())
@@ -315,6 +333,14 @@ namespace Aqua
 
             while(loadOp.progress < 0.9f)
                 yield return null;
+
+            DebugService.Log(LogMask.Loading, "[StateMgr] Scene ready to activate");
+
+            if (m_OnSceneReadyFunc != null) {
+                IEnumerator readyFunc = m_OnSceneReadyFunc();
+                m_OnSceneReadyFunc = null;
+                yield return readyFunc;
+            }
 
             loadOp.allowSceneActivation = true;
 
@@ -349,17 +375,25 @@ namespace Aqua
             }
 
             DebugService.Log(LogMask.Loading, "[StateMgr] Finished loading scene '{0}'", inNextScene.Path);
+
+            m_InitFrame = true;
             ProcessCallbackQueue();
             inNextScene.BroadcastLoaded(inContext);
             if (!m_SceneLock)
             {
                 Services.Input.ResumeAll();
                 Services.Physics.Enabled = true;
-                m_SceneLock = false;
 
                 Services.Events.Dispatch(GameEvents.SceneLoaded);
-                Services.Script.TriggerResponse(GameTriggers.SceneStart);
+
+                // if we're suppressing triggers, then only call functions
+                if ((inFlags & SceneLoadFlags.SuppressTriggers) != 0) {
+                    Services.Script.TryCallFunctions(GameTriggers.SceneStart);
+                } else {
+                    Services.Script.TriggerResponse(GameTriggers.SceneStart);
+                }
             }
+            m_InitFrame = false;
         }
 
         private IEnumerator WaitForServiceLoading()
@@ -443,17 +477,17 @@ namespace Aqua
         private IEnumerator LoadConditionalSubscenes(SceneBinding inBinding, object inContext)
         {
             using(PooledList<ISceneSubsceneSelector> selectors = PooledList<ISceneSubsceneSelector>.Create())
-            using(PooledList<string> subScenes = PooledList<string>.Create())
+            using(PooledList<SceneImportSettings> subScenes = PooledList<SceneImportSettings>.Create())
             {
                 inBinding.Scene.GetAllComponents<ISceneSubsceneSelector>(false, selectors);
                 if (selectors.Count > 0)
                 {
                     foreach(var selector in selectors)
                     {
-                        foreach(var scenePath in selector.GetAdditionalScenesNames(inBinding, inContext))
+                        foreach(var importSettings in selector.GetAdditionalScenesNames(inBinding, inContext))
                         {
-                            if (!string.IsNullOrEmpty(scenePath))
-                                subScenes.Add(scenePath);
+                            if (!string.IsNullOrEmpty(importSettings.ScenePath))
+                                subScenes.Add(importSettings);
                         }
                     }
                 }
@@ -463,9 +497,9 @@ namespace Aqua
                     DebugService.Log(LogMask.Loading, "[StateMgr] Loading {0} conditional subscenes...", subScenes.Count);
                     using(Profiling.Time("load conditional subscenes"))
                     {
-                        foreach(var subscenePath in subScenes)
+                        foreach(var subscene in subScenes)
                         {
-                            yield return LoadSubSceneFromName(subscenePath, inBinding);
+                            yield return ImportScene(subscene, inBinding);
                         }
                     }
                 }
@@ -486,57 +520,31 @@ namespace Aqua
                     {
                         foreach(var subscene in subScenes)
                         {
-                            yield return LoadSubScene(subscene, inBinding);
+                            SceneImportSettings importSettings = subscene;
+                            Destroy(subscene.gameObject);
+                            yield return ImportScene(importSettings, inBinding);
                         }
                     }
                 }
             }
 
             yield return LoadConditionalSubscenes(inBinding, inContext);
-            yield return Routine.Amortize(Bake.SceneAsync(inBinding, 0), 5);
+            yield return Routine.Amortize(Baking.BakeSceneAsync(inBinding, 0), 5);
         }
 
-        static private IEnumerator LoadSubScene(SubScene inSubScene, SceneBinding inActiveScene)
-        {
-            string path = inSubScene.Scene.Path;
-            Destroy(inSubScene.gameObject);
+        #endif // UNITY_EDITOR
 
+        static private IEnumerator ImportScene(SceneImportSettings inImportSettings, SceneBinding inActiveScene)
+        {
             #if UNITY_EDITOR
+            string path = inImportSettings.ScenePath;
             var editorScene = UnityEditor.SceneManagement.EditorSceneManager.GetSceneByPath(path);
             if (!editorScene.isLoaded)
             {
                 yield return UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(path, new LoadSceneParameters(LoadSceneMode.Additive));
             }
             #else
-            yield return SceneManager.LoadSceneAsync(path, LoadSceneMode.Additive);
-            #endif // UNITY_EDITOR
-            
-            SceneBinding unityScene = SceneHelper.FindSceneByPath(path, SceneCategories.Loaded);
-            GameObject[] roots = unityScene.Scene.GetRootGameObjects();
-            foreach(var root in roots)
-            {
-                SceneManager.MoveGameObjectToScene(root, inActiveScene);
-            }
-            // if (inSubScene.ImportLighting)
-            // {
-            //     LightUtils.CopySettings(unityScene, inActiveScene);
-            // }
-            yield return SceneManager.UnloadSceneAsync(unityScene);
-        }
-
-        #endif // UNITY_EDITOR
-
-        static private IEnumerator LoadSubSceneFromName(string inSceneName, SceneBinding inActiveScene)
-        {
-            #if UNITY_EDITOR
-            var editorScene = SceneHelper.FindSceneByName(inSceneName, SceneCategories.Build);
-            string path = editorScene.Path;
-            if (!editorScene.IsLoaded())
-            {
-                yield return UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(path, new LoadSceneParameters(LoadSceneMode.Additive));
-            }
-            #else
-            string path = SceneHelper.FindSceneByName(inSceneName, SceneCategories.Build).Path;
+            string path = inImportSettings.ScenePath;
             yield return SceneManager.LoadSceneAsync(path, LoadSceneMode.Additive);
             #endif // UNITY_EDITOR
 
@@ -545,13 +553,18 @@ namespace Aqua
             foreach(var root in roots)
             {
                 SceneManager.MoveGameObjectToScene(root, inActiveScene);
+                SceneImportSettings.TransformRoot(root, inImportSettings);
+            }
+            if (inImportSettings.ImportLighting)
+            {
+                LightUtils.CopySettings(unityScene, inActiveScene);
             }
             yield return SceneManager.UnloadSceneAsync(unityScene);
         }
 
         private void RecordCurrentMapAsSeen(SceneBinding inBinding)
         {
-            if (inBinding.BuildIndex < GameConsts.GameSceneIndexStart)
+            if (inBinding.BuildIndex >= 0 && inBinding.BuildIndex < GameConsts.GameSceneIndexStart)
                 return;
 
             StringHash32 map = MapDB.LookupMap(inBinding);
@@ -559,19 +572,24 @@ namespace Aqua
                 Save.Map.RecordVisitedLocation(map);
         }
 
-        public void OnLoad(Action inAction)
+        public void OnLoad(Action inAction, int priority)
         {
             if (m_SceneLock) {
-                m_OnLoadQueue.PushBack(inAction);
+                m_OnLoadQueue.PushBack(new PrioritizedCallback(inAction, priority));
             } else {
                 inAction();
             }
         }
 
         private void ProcessCallbackQueue() {
-            while(m_OnLoadQueue.TryPopFront(out Action action)) {
-                action();
+            m_OnLoadQueue.Sort((a, b) => b.Priority - a.Priority);
+            while(m_OnLoadQueue.TryPopFront(out var action)) {
+                action.Callback();
             }
+        }
+
+        public void OnSceneLoadReady(Func<IEnumerator> inFunc) {
+            m_OnSceneReadyFunc = inFunc;
         }
 
         #endregion // Scene Loading
@@ -608,6 +626,7 @@ namespace Aqua
             Services.UI.BindCamera(Services.Camera.Current);
 
             m_Body = FindObjectOfType<PlayerBody>();
+            m_SceneName = inScene.Name;
         }
 
         #endregion // Scripting
@@ -849,6 +868,7 @@ namespace Aqua
         DoNotDispatchPreUnload = 0x08,
         DoNotOverrideEntrance = 0x10,
         StopMusic = 0x20,
-        SuppressAutoSave = 0x40
+        SuppressAutoSave = 0x40,
+        SuppressTriggers = 0x80
     }
 }

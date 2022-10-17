@@ -80,6 +80,8 @@ namespace ProtoAqua.ExperimentV2 {
             m_RunningScreen.CustomButton.onClick.AddListener(OnFinishClick);
 
             m_UnobservedStateLabel.gameObject.SetActive(false);
+
+            SelectableTank.InitNavArrows(m_ParentTank);
         }
 
         #region Tank
@@ -215,7 +217,7 @@ namespace ProtoAqua.ExperimentV2 {
 
                 Services.Audio.PostEvent("capture_new");
 
-                Services.UI.Popup.PresentFact("'experiment.observation.newBehavior.header", null, null, factDef, BFType.DefaultDiscoveredFlags(factDef))
+                Services.UI.Popup.PresentFact(Loc.Find("experiment.observation.newBehavior.header"), null, null, factDef, BFType.DefaultDiscoveredFlags(factDef))
                     .OnComplete((r) => {
                         m_RunningScreen.CustomButton.interactable = true;
                         using (var table = TempVarTable.Alloc()) {
@@ -268,6 +270,7 @@ namespace ProtoAqua.ExperimentV2 {
                         break;
                     }
                 case SetupPhase.Run: {
+                        SelectableTank.SetNavArrowsActive(m_ParentTank, false);
                         m_ParentTank.CurrentState |= TankState.Running;
                         ExperimentScreen.Transition(null, m_World, SelectableTank.SpawnSequence(m_ParentTank, m_OrganismScreen.Panel), () => {
                             Routine.Start(this, StartExperiment()).Tick();
@@ -290,6 +293,9 @@ namespace ProtoAqua.ExperimentV2 {
         private IEnumerator StartExperiment() {
             m_ParentTank.ActorBehavior.Begin();
             yield return null;
+
+            Services.Camera.MoveToPose(m_ParentTank.ZoomPose, 0.4f);
+            m_ParentTank.Guide.MoveTo(m_ParentTank.GuideTargetZoomed);
             
             m_PotentialNewFacts.Clear();
             int potentialNewObservationsCount;
@@ -432,6 +438,8 @@ namespace ProtoAqua.ExperimentV2 {
             TankWaterSystem.SetWaterHeight(m_ParentTank, 0);
 
             SelectableTank.Reset(m_ParentTank, true);
+            Services.Camera.SnapToPose(m_ParentTank.CameraPose);
+            m_ParentTank.Guide.SnapTo(m_ParentTank.GuideTarget);
 
             m_BehaviorCircles.Reset();
             m_ParentTank.CurrentState &= ~TankState.Running;
@@ -440,6 +448,8 @@ namespace ProtoAqua.ExperimentV2 {
             m_UnobservedStateLabel.gameObject.SetActive(false);
             m_PotentialNewFacts.Clear();
             m_MissedFactCount = 0;
+
+            SelectableTank.SetNavArrowsActive(m_ParentTank, true);
         }
 
         #endregion // Sequence
@@ -448,6 +458,7 @@ namespace ProtoAqua.ExperimentV2 {
 
         void IScriptComponent.OnRegister(ScriptObject inObject) { }
         void IScriptComponent.OnDeregister(ScriptObject inObject) { }
+        void IScriptComponent.PostRegister() { }
 
         #endregion // IScriptComponent
     }

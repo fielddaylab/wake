@@ -19,7 +19,7 @@ namespace Aqua {
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.Death, BFShapeId.Behavior, BFFlags.IsBehavior, BFDiscoveredFlags.All, null);
+            BFType.DefineAttributes(BFTypeId.Death, BFShapeId.Behavior, BFFlags.IsBehavior | BFFlags.HasRate, BFDiscoveredFlags.All, null);
             BFType.DefineMethods(BFTypeId.Death, null, null, null, null, null);
             BFType.DefineEditor(BFTypeId.Death, null, BFMode.Internal);
         }
@@ -28,7 +28,7 @@ namespace Aqua {
 
         #if UNITY_EDITOR
 
-        public override bool Bake(BakeFlags flags)
+        public override bool Bake(BakeFlags flags, BakeContext context)
         {
             return false;
         }

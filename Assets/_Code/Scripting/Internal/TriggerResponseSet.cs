@@ -68,7 +68,7 @@ namespace Aqua.Scripting {
                 node = m_TriggerNodes[nodeIdx];
                 triggerData = node.TriggerData;
 
-                DebugService.Log(LogMask.Scripting, "Evaluating trigger node '{0}'...", node.Id());
+                DebugService.Log(LogMask.Scripting, "Evaluating trigger node '{0}'...", node.Id().ToDebugString());
 
                 if (!node.Package().IsActive())
                 {
@@ -84,9 +84,9 @@ namespace Aqua.Scripting {
                 }
 
                 // not the right target
-                if (!inTarget.IsEmpty && inTarget != node.TargetId())
+                if ((node.Flags() & ScriptNodeFlags.AnyTarget) == 0 && !inTarget.IsEmpty && inTarget != node.TargetId())
                 {
-                    DebugService.Log(LogMask.Scripting, "...node has mismatched target (desired '{0}', node '{1}')", inTarget, node.TargetId());
+                    DebugService.Log(LogMask.Scripting, "...node has mismatched target (desired '{0}', node '{1}')", inTarget.ToDebugString(), node.TargetId().ToDebugString());
                     continue;
                 }
 
@@ -115,18 +115,27 @@ namespace Aqua.Scripting {
                 if (node.TargetId() != StringHash32.Null)
                 {
                     ScriptThread currentThread;
-                    if (inTargetStates.TryGetValue(node.TargetId(), out currentThread) && currentThread.Priority() > triggerData.TriggerPriority)
+                    if (inTargetStates.TryGetValue(node.TargetId(), out currentThread))
                     {
-                        DebugService.Log(LogMask.Scripting, "...higher-priority node ({0}) is executing for target '{1}'", currentThread.InitialNodeName(), node.TargetId());
-                        continue;
+                        bool higherPriority;
+                        if ((node.Flags() & ScriptNodeFlags.Interrupt) != 0)
+                            higherPriority = currentThread.Priority() > triggerData.TriggerPriority;
+                        else
+                            higherPriority = currentThread.Priority() >= triggerData.TriggerPriority;
+                            
+                        if (higherPriority)
+                        {
+                            DebugService.Log(LogMask.Scripting, "...higher-priority node ({0}) is executing for target '{1}'", currentThread.InitialNodeName(), node.TargetId().ToDebugString());
+                            continue;
+                        }
                     }
                 }
 
                 // cannot play due to conditions
-                if (triggerData.Conditions.Count > 0)
+                if (node.TriggerOrFunctionConditions().Count > 0)
                 {
                     LeafExpression failure;
-                    Variant result = triggerData.Conditions.Evaluate(inContext, out failure);
+                    Variant result = node.TriggerOrFunctionConditions().Evaluate(inContext, out failure);
                     if (!result.AsBool())
                     {
                         if (DebugService.IsLogging(LogMask.Scripting))

@@ -51,8 +51,14 @@ namespace ProtoAqua.Observation {
             return false;
         }
 
-        public void UpdateActive() {
+        public void UpdateActive(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
         }
+
+        public PlayerROVAnimationFlags AnimFlags() {
+            return 0;
+        }
+
+        public float MoveSpeedMultiplier() { return 1; }
 
         #endregion // ITool
 

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5406655914938272281}
   - component: {fileID: 5082741783834968404}
   - component: {fileID: 532167340832557143}
+  - component: {fileID: 1292219738141401676}
   m_Layer: 16
   m_Name: Click
   m_TagString: Scannable
@@ -88,6 +89,18 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   Radius: 0
+--- !u!114 &1292219738141401676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3663283631963647253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cec70eb26bb1e374a82d4a8fe0ce4794, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5470274428244772039
 GameObject:
   m_ObjectHideFlags: 0
@@ -99,6 +112,8 @@ GameObject:
   - component: {fileID: 5470274428244772038}
   - component: {fileID: 7042827648863885316}
   - component: {fileID: 5470274428244772036}
+  - component: {fileID: 7416540549332941139}
+  - component: {fileID: 8165673931000088414}
   m_Layer: 0
   m_Name: Scannable
   m_TagString: Scannable
@@ -137,6 +152,8 @@ MonoBehaviour:
   m_Id:
     m_Source: 
     m_HashValue: 0
+  m_IsPersistent: 0
+  m_StartDisabled: 0
 --- !u!114 &5470274428244772036
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157,6 +174,32 @@ MonoBehaviour:
     m_HashValue: 0
   Click: {fileID: 532167340832557143}
   IconRootOverride: {fileID: 0}
+  IconZAdjust: 0
+--- !u!114 &7416540549332941139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5470274428244772039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3006a0f0205d2f47815ea577c1b6645, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8165673931000088414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5470274428244772039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d527cbae564d45547b4a948ae6e39f98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Always: 0
 --- !u!1 &5470274429010608830
 GameObject:
   m_ObjectHideFlags: 0
@@ -169,6 +212,7 @@ GameObject:
   - component: {fileID: 5470274429010608828}
   - component: {fileID: 7573919373689052904}
   - component: {fileID: 3718407667503786083}
+  - component: {fileID: 281647702499743140}
   m_Layer: 10
   m_Name: Collider
   m_TagString: Scannable
@@ -245,3 +289,15 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   Radius: 0
+--- !u!114 &281647702499743140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5470274429010608830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cec70eb26bb1e374a82d4a8fe0ce4794, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

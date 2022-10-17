@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab System/Water Property Description", fileName = "NewWaterProp")]
-    public class WaterPropertyDesc : DBObject
+    public class WaterPropertyDesc : DBObject, IEditorOnlyData
     {
         #region Inspector
 
@@ -17,6 +17,7 @@ namespace Aqua
         
         [Header("Display")]
         [SerializeField] private TextId m_LabelId = default;
+        [SerializeField] private TextId m_ShortLabelId = default;
         [SerializeField] private Sprite m_Icon = null;
         [SerializeField, StreamingImagePath] private string m_HiResIconPath = null;
         [SerializeField] private ColorPalette4 m_Palette = new ColorPalette4(ColorBank.White, ColorBank.Gray);
@@ -24,6 +25,8 @@ namespace Aqua
         [Header("Text")]
         [SerializeField] private string m_Format = "{0}";
         [SerializeField] private float m_DisplayScale = 1;
+        [SerializeField] private string m_AdjustFormat = "{0}";
+        [SerializeField] private float m_AdjustDisplayScale = 1;
 
         [Header("Facts")]
         [SerializeField] private TextId m_EnvironmentFactFormat = default;
@@ -45,6 +48,7 @@ namespace Aqua
         public bool HasAllFlags(WaterPropertyFlags inFlags) { return (m_Flags & inFlags) == inFlags; }
 
         public TextId LabelId() { return m_LabelId; }
+        public TextId ShortLabelId() { return m_ShortLabelId.IsEmpty ? m_LabelId : m_ShortLabelId; }
         public Sprite Icon() { return m_Icon; }
         public StreamedImageSet ImageSet() { return new StreamedImageSet(m_HiResIconPath, m_Icon); }
         public Color Color() { return m_Palette.Background; }
@@ -58,7 +62,12 @@ namespace Aqua
         
         public string FormatValue(float inValue)
         {
-            return string.IsNullOrEmpty(m_Format) ? (inValue * m_DisplayScale).ToString() : string.Format(m_Format, inValue * m_DisplayScale);;
+            return string.IsNullOrEmpty(m_Format) ? (inValue * m_DisplayScale).ToString() : string.Format(m_Format, inValue * m_DisplayScale);
+        }
+
+        public string FormatValueAdjust(float inValue)
+        {
+            return string.IsNullOrEmpty(m_AdjustFormat) ? (inValue * m_AdjustDisplayScale).ToString() : string.Format(m_AdjustFormat, inValue * m_AdjustDisplayScale);
         }
 
         public float DisplayValue(float inValue)
@@ -85,6 +94,19 @@ namespace Aqua
         {
             return m_MinValue + (m_MaxValue - m_MinValue) * inFraction;
         }
+
+        #if UNITY_EDITOR
+
+        void IEditorOnlyData.ClearEditorOnlyData() {
+            ValidationUtils.StripDebugInfo(ref m_LabelId);
+            ValidationUtils.StripDebugInfo(ref m_EnvironmentFactFormat);
+            ValidationUtils.StripDebugInfo(ref m_EnvironmentHistoryFormat);
+            ValidationUtils.StripDebugInfo(ref m_StateChangeFormat);
+            ValidationUtils.StripDebugInfo(ref m_StateChangeStressOnlyFormat);
+            ValidationUtils.StripDebugInfo(ref m_StateChangeUnaffectedFormat);
+        }
+
+        #endif // UNITY_EDITOR
     }
 
     [Flags]

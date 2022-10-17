@@ -44,13 +44,7 @@ namespace Aqua
 
         public StringHash32 Hash()
         {
-            // #if UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
-            // if (!string.IsNullOrEmpty(m_Source))
-            //     return new StringHash32(m_Source);
-            // return new StringHash32(m_HashValue);
-            // #else
             return new StringHash32(m_HashValue);
-            // #endif // UNITY_EDITOR || DEVELOPMENT_BUILD || DEVELOPMENT
         }
 
         public string ToDebugString()
@@ -86,21 +80,27 @@ namespace Aqua
 
         public void OnBeforeSerialize()
 		{
-            uint hash = new StringHash32(m_Source).HashValue;
-            if (m_HashValue != hash)
+            if (!string.IsNullOrEmpty(m_Source))
             {
-                Log.Warn("[TextId] Hash of {0} was different across multiple machines (old {1} vs new {2})", m_Source, m_HashValue, hash);
-                m_HashValue = hash;
+                uint hash = new StringHash32(m_Source).HashValue;
+                if (m_HashValue != hash)
+                {
+                    Log.Warn("[TextId] Inconsistent hash for '{0}': expected {1}, had {2}", m_Source, hash, m_HashValue);
+                    m_HashValue = hash;
+                }
             }
 		}
 
         public void OnAfterDeserialize()
         {
-            uint hash = new StringHash32(m_Source).HashValue;
-            if (m_HashValue != hash)
+            if (!string.IsNullOrEmpty(m_Source))
             {
-                Log.Warn("[TextId] Hash of {0} was different across multiple machines (old {1} vs new {2})", m_Source, m_HashValue, hash);
-                m_HashValue = hash;
+                uint hash = new StringHash32(m_Source).HashValue;
+                if (m_HashValue != hash)
+                {
+                    Log.Warn("[TextId] Inconsistent hash for '{0}': expected {1}, had {2}", m_Source, hash, m_HashValue);
+                    m_HashValue = hash;
+                }
             }
         }
 

@@ -1,0 +1,113 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
+  m_Name: bayou-shrimp-tastrophe
+  m_EditorClassIdentifier: 
+  m_Category: 0
+  m_Flags: 0
+  m_NameId:
+    m_Source: jobs.bayou-shrimp-tastrophe.name
+    m_HashValue: 1754888247
+  m_PosterId:
+    m_HashValue: 3347434154
+  m_DescId:
+    m_Source: jobs.bayou-shrimp-tastrophe.desc
+    m_HashValue: 2151916189
+  m_DescShortId:
+    m_Source: 
+    m_HashValue: 0
+  m_ExperimentDifficulty: 0
+  m_ModelingDifficulty: 0
+  m_ArgumentationDifficulty: 0
+  m_PrerequisiteJobs:
+  - {fileID: 11400000, guid: 96b1b9c071225af41b1253f8bdf64df9, type: 2}
+  m_PrereqConditions: 
+  m_PrereqBestiaryEntry:
+    m_HashValue: 0
+  m_PrereqScanId:
+    m_Source: 
+    m_HashValue: 0
+  m_PrereqUpgrades: []
+  m_PrereqExp: 0
+  m_StationId:
+    m_HashValue: 2992071853
+  m_DiveSiteIds:
+  - m_HashValue: 3168968926
+  m_Tasks:
+  - Id:
+      m_Source: measureOxygen
+      m_HashValue: 790372975
+    LabelId:
+      m_Source: jobs.bayou-shrimp-tastrophe.task.measureOxygen
+      m_HashValue: 1293816719
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: WhiteShrimp.Consume.Oxygen
+        m_HashValue: 1860796753
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    LabelId:
+      m_Source: jobs.bayou-shrimp-tastrophe.task.reportBack
+      m_HashValue: 2059161252
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: measureOxygen
+      m_HashValue: 790372975
+    IdString: measureOxygen
+    Index: 0
+    LabelId:
+      m_Source: jobs.bayou-shrimp-tastrophe.task.measureOxygen
+      m_HashValue: 1293816719
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: WhiteShrimp.Consume.Oxygen
+        m_HashValue: 1860796753
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    IdString: reportBack
+    Index: 1
+    LabelId:
+      m_Source: jobs.bayou-shrimp-tastrophe.task.reportBack
+      m_HashValue: 2059161252
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  m_CashReward: 100
+  m_ExpReward: 5
+  m_JournalId:
+    m_HashValue: 0
+  m_Scripting: {fileID: -1942890987711236906, guid: f87db79ec3246fa4bbb3f425430793bd,
+    type: 3}
+  m_ExtraAssets: []

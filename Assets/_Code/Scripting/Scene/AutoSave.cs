@@ -9,6 +9,7 @@ using UnityEngine.Scripting;
 
 namespace Aqua.Scripting
 {
+    [AddComponentMenu("Aqualab/Scripting/Auto Save")]
     [RequireComponent(typeof(ScriptObject))]
     public class AutoSave : ScriptComponent
     {
@@ -18,14 +19,14 @@ namespace Aqua.Scripting
             Now
         }
 
-        private const float AutosaveDelay = 5f;
+        private const float AutosaveDelay = 15f;
 
         private void Awake()
         {
             Services.Events.Register(GameEvents.SceneLoaded, OnSceneLoaded, this)
-                .Register(GameEvents.SceneWillUnload, OnAutosaveEvent, this)
                 .Register<Mode>(GameEvents.ProfileAutosaveHint, OnHint, this)
                 .Register(GameEvents.ProfileAutosaveSuppress, OnSuppress, this)
+                .Register<StringHash32>(GameEvents.ProfileSpawnLocationUpdate, OnSpawnLocationUpdate, this)
                 .Register(GameEvents.BestiaryUpdated, OnAutosaveDelayedEvent, this)
                 .Register(GameEvents.InventoryUpdated, OnAutosaveDelayedEvent, this)
                 .Register(GameEvents.SiteDataUpdated, OnAutosaveDelayedEvent, this)
@@ -44,8 +45,10 @@ namespace Aqua.Scripting
 
         private Routine m_InstantAutosave;
         private Routine m_DelayedAutosave;
+        [NonSerialized] private bool m_SceneStarted;
         [NonSerialized] private float m_DelayTimestamp;
         [NonSerialized] private bool m_Suppressed;
+        [NonSerialized] private StringHash32 m_SaveLocation;
 
         #region Handlers
 
@@ -59,13 +62,18 @@ namespace Aqua.Scripting
         {
             if (!Services.Valid || !Services.Data.IsProfileLoaded())
                 return;
+            
+            m_SceneStarted = true;
+            if (m_SaveLocation.IsEmpty) {
+                m_SaveLocation = Services.State.LastEntranceId;
+            }
 
             Save.Map.FullSync();
             m_InstantAutosave.Stop();
             m_DelayedAutosave.Stop();
             if (CanSave())
             {
-                Services.Data.SaveProfile(Services.State.LastEntranceId, true);
+                Services.Data.SaveProfile(m_SaveLocation, true);
             }
         }
 
@@ -89,6 +97,16 @@ namespace Aqua.Scripting
             m_DelayedAutosave.Stop();
         }
 
+        private void OnSpawnLocationUpdate(StringHash32 locationId)
+        {
+            if (m_SaveLocation != locationId) {
+                m_SaveLocation = locationId;
+                if (m_SceneStarted) {
+                    OnAutosaveEvent();
+                }
+            }
+        }
+
         private void OnAutosaveEvent()
         {
             if (!CanSave())
@@ -98,7 +116,7 @@ namespace Aqua.Scripting
             if (!m_InstantAutosave)
             {
                 DebugService.Log(LogMask.DataService, "[AutoSave] Queueing instant save");
-                m_InstantAutosave = Routine.Start(this, NearInstantSave(Services.State.LastEntranceId));
+                m_InstantAutosave = Routine.Start(this, NearInstantSave(m_SaveLocation));
             }
         }
 
@@ -111,7 +129,7 @@ namespace Aqua.Scripting
             if (!m_InstantAutosave)
             {
                 DebugService.Log(LogMask.DataService, "[AutoSave] Queueing instant save");
-                m_InstantAutosave = Routine.Start(this, NearInstantSave(Services.State.LastEntranceId));
+                m_InstantAutosave = Routine.Start(this, NearInstantSave(m_SaveLocation));
             }
         }
 
@@ -125,7 +143,7 @@ namespace Aqua.Scripting
             if (!m_DelayedAutosave)
             {
                 DebugService.Log(LogMask.DataService, "[AutoSave] Queueing delayed save");
-                m_DelayedAutosave = Routine.Start(this, DelayedSave(null));
+                m_DelayedAutosave = Routine.Start(this, DelayedSave(m_SaveLocation));
             }
             else
             {
@@ -150,7 +168,7 @@ namespace Aqua.Scripting
 
         private IEnumerator DelayedSave(StringHash32 inLocation)
         {
-            while(Services.Script.IsCutscene() || Time.unscaledTime < m_DelayTimestamp + AutosaveDelay)
+            while(Script.ShouldBlock() || Time.unscaledTime < m_DelayTimestamp + AutosaveDelay)
             {
                 if (Services.Data.IsSaving())
                     yield break;
@@ -179,6 +197,12 @@ namespace Aqua.Scripting
         static public void Suppress()
         {
             Services.Events.Dispatch(GameEvents.ProfileAutosaveSuppress);
+        }
+
+        [LeafMember("AutoSaveSetSpawn"), Preserve]
+        static public void SetSpawnLocation(StringHash32 spawnLocation)
+        {
+            Services.Events.Dispatch(GameEvents.ProfileSpawnLocationUpdate, spawnLocation);
         }
     }
 }

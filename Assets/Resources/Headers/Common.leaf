@@ -1,0 +1,20 @@
+// common leaf macros and functions
+
+#macro Invoke(callback) \
+    $branch $$callback, $callback
+
+#macro InvokeWithFallback(callback, fallback) \
+    $if $callback \
+        $branch $$callback \
+    $elseif $fallback \
+        $branch $$fallback \
+    $endif
+
+#macro CutsceneDelayed(wait, node) \
+    {release-dialog} \
+    $call Wait($wait) \
+    $while ScriptBlocking() \
+        $call Wait(1) \
+    $endwhile \
+    $fork $node \
+    $join

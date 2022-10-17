@@ -6,11 +6,14 @@ Talk
 :: partner.help.tooltip
 Ask for Help
 
+:: talkTo.tooltip
+Talk to {0}
+
 :: portable.tooltip
 AQOS Menu
 
 :: option.tooltip
-Options
+Settings
 
 :: back.ship.tooltip
 Return To Ship
@@ -37,7 +40,7 @@ Saved!
 Loading
 
 :: options.title
-Options
+Settings
 
 :: argue.claimHeader
 Claim
@@ -49,19 +52,19 @@ Evidence
 Posted By:
 
 :: worldMap.availableJobsHeader
-Available
+Available Jobs:
 
 :: worldMap.inProgressJobsHeader
 In Progress
 
 :: worldMap.completedJobsHeader
-Completed
+Completed Jobs:
 
 :: worldMap.jobs
 Jobs
 
 :: interact.map
-Go To {0}
+{0}
 
 :: interact.examine
 Examine
@@ -79,10 +82,10 @@ Return to Site
 Zoom Out
 
 :: station.view.shop
-Upgrade
+Workshop
 
 :: station.view.job
-Job Giver
+Jobs
 
 :: interact.map.button
 Go
@@ -92,6 +95,34 @@ Dive
 
 :: interact.blocked
 Blocked
+
+:: worldMap.hasInProgress
+Your currently assigned Job is at this Station.
+
+:: worldMap.shipOut
+Ship Out
+
+:: boot.prompt
+Click Or Tap The Screen
+To Continue
+
+:: boot.ready
+Wake
+
+:: map.station
+Station
+
+:: interact.map.shortAndProper
+<i>{0}</i>: {1}
+
+:: station.leave
+Leave Station
+
+:: station.warp
+Travel to Ship
+
+:: loadingStation
+Traveling to {map-name}{0}{/map-name}
 
 # basePath ui.popup
 
@@ -173,13 +204,13 @@ New Game
 Continue Game
 
 :: start
-Start
+Start Game
 
 :: back
 Back
 
 :: usercode
-Enter your Player Code
+Player Code
 
 :: idGenerationError.header
 Server Error
@@ -226,6 +257,34 @@ Your save may have been created with an incompatible version of the game.
 
 This shouldn't occur under normal circumstances, so please report your save name to the developers so we can investigate.
 
+:: nsf
+With Support From
+
+:: fieldDay
+Presents
+
+:: minimalTitle
+Wake
+
+:: createdBy
+Created By:
+
+:: subtitle
+Tales from the Aqualab
+
+:: workingLabel
+working title
+
+:: emptyPlayerCode
+Enter your
+Player Code
+
+:: subtitleA
+Tales From The
+
+:: subtitleB
+AQUALAB
+
 # basePath ui.ship
 
 :: helm.exit.tooltip
@@ -244,9 +303,6 @@ Map
 :: exterior.helm.tooltip
 Helm
 
-:: exterior.office.tooltip
-Office
-
 :: exterior.modeling.tooltip
 Modeling Lab
 
@@ -254,14 +310,10 @@ Modeling Lab
 Experiment Lab
 
 :: exterior.sub.tooltip
-Explore with Sub
+Move Ship
 
 :: exterior.quarters.tooltip
 Quarters
-
-:: office.argue.tooltip
-Communications
-(Argumentation)
 
 :: office.jobBoard.tooltip
 Job Board
@@ -306,13 +358,19 @@ Cabin
 Talk to V1ct0r
 
 :: map.header
-The Monstrum
+The Meredith
 
 :: map.subheader
 Research Vessel
 
 :: exterior.toShip.tooltip
 To Helm
+
+:: exterior.quicktravel.tooltip
+Quick Travel to Station
+
+:: cabin.toDesk
+View Journal
 
 # basePath ui.jobBoard
 
@@ -464,4 +522,63 @@ Descend
 
 :: descend.label
 Descend to {0}
+
+:: breaker.label
+Shatter
+
+:: breaker.tooltip
+Switch to Ice Breaker Mode
+
+:: breaker.button
+Charge
+
+:: breaker.button.charging
+Charging...
+
+:: breaker.button.discharging
+Discharging
+
+:: breaker.button.recharging
+Recharging
+
+:: station.label.coral
+Coral Station
+
+:: station.label.kelp
+Kelp Station
+
+:: station.label.bayou
+Bayou Station
+
+:: station.label.arctic
+Arctic Station
+
+# basePath ui.journal
+
+:: nextPage
+Next Page
+
+:: prevPage
+Previous Page
+
+:: personalTag
+Personal
+
+:: sort
+All
+
+:: depthsTag
+Lower Depths
+
+:: arcticTag
+Arctic
+
+:: bayouTag
+Bayou
+
+:: kelpTag
+Kelp Forest
+
+:: coralTag
+Coral Reef
 

@@ -66,8 +66,8 @@ namespace Aqua
             {
                 ref Vector2 rawPoint = ref m_RawPoints[i];
                 m_RelativePoints[i] = new Vector2(
-                    MathUtil.Remap(rawPoint.x, xMin, xMax, 0, 1),
-                    MathUtil.Remap(rawPoint.y, yMin, yMax, 0, 1)
+                    MathUtils.Remap(rawPoint.x, xMin, xMax, 0, 1),
+                    MathUtils.Remap(rawPoint.y, yMin, yMax, 0, 1)
                 );
             }
 

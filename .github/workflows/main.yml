@@ -42,10 +42,6 @@ jobs:
       with:
         args:  |
           git config --global --add safe.directory "/github/workspace"
-          git config --global --add safe.directory /github/workspace/Submodules/BeauUtil
-          git config --global --add safe.directory /github/workspace/Submodules/Leaf
-          git config --global --add safe.directory /github/workspace/Submodules/Leaf/Submodules/BeauUtil
-          git config --global --add safe.directory /github/workspace/Submodules/opengamedata-unity
           git config --global --add safe.directory /github/workspace/Submodules/unity-aesprite-importer
           git submodule update --init --recursive
 
@@ -87,6 +83,16 @@ jobs:
       with:
         name: aqualab-webgl_${{ env.VERSION }}
         path: build/WebGL/WebGL
+
+    # If this succeeded, and we're on the staging branch, then we can merge staging into production
+    - name: Merge into production
+      if: github.ref == 'ref/heads/staging'
+      uses: devmasx/merge-branch@master
+      with:
+        type: now
+        from_branch: hotfix
+        target_branch: staging
+        github_token: ${{ github.token }}
     
     - name: Upload to web server via rsync
       uses: burnett01/rsync-deployments@5.2
@@ -98,3 +104,12 @@ jobs:
         remote_user: ${{ secrets.DEPLOY_USER }}
         remote_key: ${{ secrets.DEPLOY_KEY }}
     
+    - name: Upload to alternate web server via rsync
+      uses: burnett01/rsync-deployments@5.2
+      with:
+        switches: -avzr --delete
+        path: build/WebGL/WebGL/*
+        remote_path: ${{ secrets.DEPLOY_DIR_ALTERNATE }}/${{ env.BRANCH }}
+        remote_host: ${{ secrets.DEPLOY_HOST }}
+        remote_user: ${{ secrets.DEPLOY_USER }}
+        remote_key: ${{ secrets.DEPLOY_KEY }}

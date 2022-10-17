@@ -1,0 +1,30 @@
+# basePath interior.arcticStation
+
+#include "Headers/Common.leaf"
+
+:: intro
+@trigger    Talk
+@who        *
+@when       objectGroupId == "Job"
+@boostScore 100
+@once
+@cutscene
+
+{@arcticSci}    Oh my. You must be.... ah.
+{@profArctic}   Don't scare the kid away, Jacques.  
+{@profArctic}   Welcome to the Arctic Station! I'm the lead scientist here. You can call me Juno. 
+                You're Ollie, right?
+{@player}       Um... yes. How did you know?
+{@profArctic}   Professor Whalen here used to work with your sister.
+                He still talks about her work all the time. Meredith is a legend around here. 
+{@player}       Wait... for real? You taught my sister?
+{@arcticSci}   Taught her? No. Mer was a prodigy. I could barely keep up.
+                You look so much like her. It's uncanny.
+{@player}       Wow. I would love to hear more stories about her! 
+                Have you lived out here all this time, Professor? 
+{@arcticSci}    No. I'm only here for one task... seeking out a Bowhead Whale that I've lost track of. 
+                I would love your help. I sure have been worried about her.   
+    $call GiveEntity(BowheadWhale)
+$call UnlockSite(RS-4X)
+$call UnlockSite(RS-4Y)
+$call InteriorOpenJobBoard()

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Aqua.Scripting;
 using BeauPools;
+using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Services;
 using Leaf;
@@ -17,6 +18,7 @@ namespace Aqua
         [NonSerialized] private int m_LoadedActId = -1;
         [NonSerialized] private StringHash32 m_LoadedJobId;
         [NonSerialized] private bool m_JobLoading;
+        [NonSerialized] private bool m_ProfileLoading;
 
         protected override void Initialize()
         {
@@ -27,12 +29,14 @@ namespace Aqua
                 .Register<StringHash32>(GameEvents.JobSwitched, OnJobSwitched, this)
                 .Register<StringHash32>(GameEvents.JobCompleted, OnJobCompleted, this)
                 .Register<StringHash32>(GameEvents.JobTaskCompleted, OnJobTaskCompleted, this)
-                .Register(GameEvents.JobTasksUpdated, OnJobTasksUpdated, this)
+                .Register<JobTaskService.TaskStatusMask>(GameEvents.JobTasksUpdated, OnJobTasksUpdated, this)
                 .Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, OnBestiaryUpdated, this)
                 .Register<uint>(GameEvents.ActChanged, OnActChanged, this)
                 .Register(GameEvents.ProfileLoaded, InitScripts, this)
                 .Register<StringHash32>(GameEvents.InventoryUpdated, OnItemUpdated, this)
-                .Register<ScienceLevelUp>(GameEvents.ScienceLevelUpdated, OnScienceLevelUpdated, this);
+                .Register<ScienceLevelUp>(GameEvents.ScienceLevelUpdated, OnScienceLevelUpdated, this)
+                .Register(GameEvents.ProfileLoaded, () => m_ProfileLoading = true, this)
+                .Register(GameEvents.ProfileStarted, () => m_ProfileLoading = false, this);
         }
 
         protected override void Shutdown()
@@ -53,11 +57,11 @@ namespace Aqua
 
         private void ClearState()
         {
-            if (m_JobScript)
+            if (!m_JobScript.IsReferenceNull())
                 Services.Script?.UnloadScript(m_JobScript);
             m_JobScript = null;
 
-            if (m_ActScript)
+            if (!m_ActScript.IsReferenceNull())
                 Services.Script?.UnloadScript(m_ActScript);
             m_ActScript = null;
 
@@ -81,7 +85,10 @@ namespace Aqua
         {
             var table = TempVarTable.Alloc();
             table.Set("jobId", inJobId);
-            Services.Script.QueueTriggerResponse(GameTriggers.JobStarted, 600, table);
+            Services.Script.QueueTriggerResponse(GameTriggers.JobStarted, 600, table, null, out Future<ScriptThreadHandle> thread);
+            thread.OnComplete((c) => {
+                Services.Script.CancelQueuedTriggerResponse(GameTriggers.JobSwitched);
+            });
         }
 
         private void OnJobSwitched(StringHash32 inJobId)
@@ -102,6 +109,15 @@ namespace Aqua
                 if (!response.IsRunning())
                 {
                     JobCompletedPopup(job);
+                }
+
+                if (!job.JournalId().IsEmpty) {
+                    Services.UI.PreloadJournal();
+                    Services.Script.QueueInvoke(() => {
+                        if (Save.Inventory.AddJournalEntry(job.JournalId())) {
+                            Routine.Start(this, Services.UI.OpenJournalNewEntry()).Tick();
+                        }
+                    }, -5);
                 }
             }
         }
@@ -141,21 +157,23 @@ namespace Aqua
 
         private void OnJobTaskCompleted(StringHash32 inTaskId)
         {
-            using(var table = TempVarTable.Alloc())
-            {
-                table.Set("jobId", m_LoadedJobId);
-                table.Set("taskId", inTaskId);
-                Services.Script.TriggerResponse(GameTriggers.JobTaskCompleted, table);
-            }
+            if (m_ProfileLoading)
+                return;
+            
+            var table = TempVarTable.Alloc();
+            table.Set("jobId", m_LoadedJobId);
+            table.Set("taskId", inTaskId);
+            Services.Script.QueueTriggerResponse(GameTriggers.JobTaskCompleted, 0, table);
         }
 
-        private void OnJobTasksUpdated()
+        private void OnJobTasksUpdated(JobTaskService.TaskStatusMask statusMask)
         {
-            using(var table = TempVarTable.Alloc())
-            {
-                table.Set("jobId", m_LoadedJobId);
-                Services.Script.TriggerResponse(GameTriggers.JobTasksUpdated, table);
-            }
+            if (m_ProfileLoading || !Bits.Contains(statusMask, JobTaskService.TaskStatusMask.Completed))
+                return;
+
+            var table = TempVarTable.Alloc();
+            table.Set("jobId", m_LoadedJobId);
+            Services.Script.QueueTriggerResponse(GameTriggers.JobTasksUpdated, 0, table);
         }
 
         private void OnBestiaryUpdated(BestiaryUpdateParams inUpdateParams)
@@ -188,7 +206,7 @@ namespace Aqua
                 using(var table = TempVarTable.Alloc())
                 {
                     table.Set("upgradeId", inItemId);
-                    Services.Script.TryCallFunctions(GameTriggers.UpgradeAdded, null, null, table);
+                    Services.Script.TriggerResponse(GameTriggers.UpgradeAdded, table);
                 }
             }
 
@@ -219,7 +237,7 @@ namespace Aqua
                 ).OnComplete((_) => {
                     Services.Script.TriggerResponse(GameTriggers.PlayerLevelUp);
                 });
-            });
+            }, -1);
         }
 
         #endregion // Handlers
@@ -233,12 +251,12 @@ namespace Aqua
             
             m_LoadedActId = (int) inAct;
             
-            if (m_ActScript)
+            if (!m_ActScript.IsReferenceNull())
                 Services.Script.UnloadScript(m_ActScript);
             
             m_ActScript = Assets.Act(inAct)?.Scripting();
             
-            if (m_ActScript)
+            if (!m_ActScript.IsReferenceNull())
                 Services.Script.LoadScriptNow(m_ActScript);
         }
 
@@ -249,14 +267,14 @@ namespace Aqua
             
             m_LoadedJobId = inJob;
 
-            if (m_JobScript)
+            if (!m_JobScript.IsReferenceNull())
                 Services.Script.UnloadScript(m_JobScript);
 
             JobDesc job = Assets.Job(inJob);
 
             m_JobScript = job?.Scripting();
             
-            if (m_JobScript)
+            if (!m_JobScript.IsReferenceNull())
                 Services.Script.LoadScriptNow(m_JobScript);
         }
 

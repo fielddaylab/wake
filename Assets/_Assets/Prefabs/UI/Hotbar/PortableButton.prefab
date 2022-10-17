@@ -167,6 +167,8 @@ GameObject:
   - component: {fileID: 5361701961134140574}
   - component: {fileID: 4049407748598589288}
   - component: {fileID: 9034251026987707658}
+  - component: {fileID: 586766652715517486}
+  - component: {fileID: 8885506548786375969}
   m_Layer: 5
   m_Name: PortableButton
   m_TagString: Untagged
@@ -191,8 +193,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -132.57, y: -51.13}
-  m_SizeDelta: {x: 69.847046, y: 76.574524}
+  m_AnchoredPosition: {x: -46, y: -52}
+  m_SizeDelta: {x: 72, y: 84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &5361701961134140574
 MonoBehaviour:
@@ -213,6 +215,10 @@ MonoBehaviour:
   m_HideOnStart: 0
   m_AnimationRoot: {fileID: 5335657004587001665}
   m_Toggle: {fileID: 5041492741704914932}
+  m_OffscreenX: 96
+  m_ShowHideAnim:
+    Time: 0.25
+    Curve: 1
 --- !u!114 &4049407748598589288
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -228,6 +234,7 @@ MonoBehaviour:
   m_Id:
     m_Source: hotbar.portable
     m_HashValue: 3181158930
+  m_IsPersistent: 1
 --- !u!114 &9034251026987707658
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -242,6 +249,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Group: {fileID: 4118003178592897792}
   m_Canvas: {fileID: 0}
+--- !u!114 &586766652715517486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 960505126676052898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a63828d2b9925d4e974cdfbab6f1a5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Menu: {fileID: 5361701961134140574}
+--- !u!114 &8885506548786375969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 960505126676052898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5202f2ddf6794a742999bcaa5ec5faa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Panel: {fileID: 5361701961134140574}
+  m_Group:
+    GameObjects: []
+    Behaviours: []
 --- !u!1 &4456385359509406499
 GameObject:
   m_ObjectHideFlags: 0

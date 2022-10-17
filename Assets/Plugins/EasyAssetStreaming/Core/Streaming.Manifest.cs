@@ -27,15 +27,14 @@ namespace EasyAssetStreaming {
         #region Types
 
         internal class ManifestData {
-            public Dictionary<StreamingAssetId, ManifestEntry> Map = new Dictionary<StreamingAssetId, ManifestEntry>();
+            public Dictionary<uint, ManifestEntry> Map = new Dictionary<uint, ManifestEntry>();
 
             public Textures.DefaultSettings TextureDefaults = Textures.DefaultSettings.Default;
         }
 
         internal struct ManifestEntry {
             public string Path;
-            public AssetType Type;
-            [NonSerialized] public StreamingAssetId Id;
+            public StreamingAssetType Type;
 
             public Textures.TextureSettings Texture;
         }
@@ -131,29 +130,32 @@ namespace EasyAssetStreaming {
                     }
 
                     ManifestEntry entry;
-                    StreamingAssetId id = new StreamingAssetId(relativePath, default(AssetType));
-                    Current.Map.TryGetValue(id, out entry);
+                    uint hash = AddressKey(relativePath);
+                    Current.Map.TryGetValue(hash, out entry);
 
                     JSON entryJSON = assetsJSON[relativePath] = JSON.CreateObject();
 
                     entry.Path = relativePath;
-                    entry.Type = IdentifyAssetType(ext);
+                    entry.Type = IdentifyAssetTypeFromExt(ext);
 
-                    WriteEnum(entryJSON, "Type", entry.Type);
+                    WriteEnum(entryJSON, "Type", entry.Type.Id);
+                    WriteEnum(entryJSON, "SubType", entry.Type.Sub, StreamingAssetSubTypeId.Default);
 
-                    if (entry.Type == AssetType.Texture) {
-                        Texture2D texture = null;
-                        try {
-                            texture = new Texture2D(1, 1);
-                            texture.LoadImage(File.ReadAllBytes(fullPath), false);
-                            entryJSON["Texture"] = Textures.SerializeTextureSettings(entry.Texture, texture);
-                        }
-                        finally {
-                            StreamingHelper.DestroyResource(texture);
+                    if (entry.Type.Id == StreamingAssetTypeId.Texture) {
+                        if (entry.Type.Sub == StreamingAssetSubTypeId.Default) {
+                            Texture2D texture = null;
+                            try {
+                                texture = new Texture2D(1, 1);
+                                texture.LoadImage(File.ReadAllBytes(fullPath), false);
+                                entryJSON["Texture"] = Textures.SerializeTextureSettings(entry.Texture, texture);
+                            }
+                            finally {
+                                StreamingHelper.DestroyResource(texture);
+                            }
                         }
                     }
 
-                    Current.Map[id] = entry;
+                    Current.Map[hash] = entry;
                 }
 
                 var textureDefaults = manifestJSON["TextureDefaults"] = JSON.CreateObject();
@@ -200,8 +202,8 @@ namespace EasyAssetStreaming {
                 }
 
                 UnityEngine.Debug.LogFormat("[Streaming] Loading manifest...", Current.Map.Count);
-                var request = s_Loader = UnityWebRequest.Get(ResolvePathToURL(ManifestPath));
-                EnsureTick();
+                var request = s_Loader = UnityWebRequest.Get(ResolveAddressToURL(ManifestPath));
+                EnsureInitialized();
                 var op = s_Loader.SendWebRequest();
                 op.completed += (_) => {
                     HandleLoaded(request);
@@ -246,13 +248,15 @@ namespace EasyAssetStreaming {
                     ManifestEntry entry = new ManifestEntry();
                     entry.Path = entryKV.Key;
                     JSON entryJSON = entryKV.Value;
+                    StreamingAssetTypeId assetType = ParseEnum(entryJSON["Type"], StreamingAssetTypeId.Unknown);
+                    StreamingAssetSubTypeId subType = ParseEnum(entryJSON["SubType"], StreamingAssetSubTypeId.Default);
+                    entry.Type = new StreamingAssetType(assetType, subType);
                     if (entryJSON["Texture"] != null) {
-                        entry.Type = AssetType.Texture;
                         entry.Texture = Textures.ParseTextureSettings(entryJSON["Texture"]);
                     }
 
-                    entry.Id = new StreamingAssetId(entry.Path, entry.Type);
-                    data.Map.Add(entry.Id, entry);
+                    uint hash = AddressKey(entry.Path);
+                    data.Map.Add(hash, entry);
                 }
 
                 var texSettings = json["TextureDefaults"];
@@ -265,13 +269,12 @@ namespace EasyAssetStreaming {
 
             #region Access
 
-            static public ManifestEntry Entry(StreamingAssetId id, AssetType type) {
+            static public ManifestEntry Entry(uint id, string address, StreamingAssetType type) {
                 EnsureLoaded();
 
                 ManifestEntry entry = default;
                 if (!Current.Map.TryGetValue(id, out entry)) {
-                    entry.Id = id;
-                    entry.Path = id.ToString();
+                    entry.Path = address;
                     entry.Type = type;
                     Current.Map.Add(id, entry);
                 }
@@ -296,21 +299,23 @@ namespace EasyAssetStreaming {
             return (T) Enum.Parse(typeof(T), data.AsString);
         }
 
-        #if UNITY_EDITOR
+        static private StreamingAssetType IdentifyAssetTypeFromPath(string filePath) {
+            return IdentifyAssetTypeFromExt(Path.GetExtension(filePath));
+        }
 
-        static private AssetType IdentifyAssetType(string extension) {
+        static private StreamingAssetType IdentifyAssetTypeFromExt(string extension) {
             switch(extension) {
                 case ".png":
                 case ".jpg":
                 case ".jpeg":
                 {
-                    return AssetType.Texture;
+                    return StreamingAssetTypeId.Texture;
                 }
 
                 case ".webm":
                 case ".mp4":
                 {
-                    return AssetType.Video;
+                    return new StreamingAssetType(StreamingAssetTypeId.Texture, StreamingAssetSubTypeId.VideoTexture);
                 }
 
                 case ".mp3":
@@ -318,15 +323,17 @@ namespace EasyAssetStreaming {
                 case ".wav":
                 case ".aac":
                 {
-                    return AssetType.Audio;
+                    return StreamingAssetTypeId.Audio;
                 }
 
                 default:
                 {
-                    return AssetType.Unknown;
+                    return StreamingAssetTypeId.Unknown;
                 }
             }
         }
+
+        #if UNITY_EDITOR
 
         static private void WriteEnum<T>(JSON data, string id, T value) {
             data[id].AsString = value.ToString();

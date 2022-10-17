@@ -10,6 +10,7 @@ using Leaf.Runtime;
 using BeauUtil.Debugger;
 using BeauUtil.Tags;
 using BeauUtil.Streaming;
+using UnityEngine.Scripting;
 
 namespace Aqua.Scripting
 {
@@ -19,7 +20,7 @@ namespace Aqua.Scripting
         private IHotReloadable m_HotReload;
         private int m_UseCount;
         private bool m_Active;
-        [BlockMeta("defaultWho")] private StringHash32 m_DefaultWho;
+        [BlockMeta("defaultWho"), Preserve] private StringHash32 m_DefaultWho;
 
         public ScriptNodePackage(string inName)
             : base(inName)
@@ -160,8 +161,19 @@ namespace Aqua.Scripting
 
             if (inOperation == HotReloadOperation.Modified)
             {
+                #if UNITY_EDITOR
+                if (object.ReferenceEquals(inAsset, m_Source))
+                {
+                    string sourcePath = UnityEditor.AssetDatabase.GetAssetPath(m_Source);
+                    UnityEditor.AssetDatabase.ImportAsset(sourcePath);
+                    m_Source = UnityEditor.AssetDatabase.LoadAssetAtPath<LeafAsset>(sourcePath);
+                }
+                #else
+                m_Source = inAsset;
+                #endif // UNITY_EDITOR
+                
                 var self = this;
-                BlockParser.Parse(ref self, CharStreamParams.FromBytes(inAsset.Bytes(), m_Name), Parsing.Block, Generator.Instance);
+                BlockParser.Parse(ref self, CharStreamParams.FromBytes(m_Source.Bytes(), m_Name), Parsing.Block, Generator.Instance);
 
                 if (mgr != null)
                 {
@@ -186,11 +198,33 @@ namespace Aqua.Scripting
 
         #endregion // Reload
 
+        public string DebugName()
+        {
+            #if UNITY_EDITOR
+            if (m_Source != null)
+            {
+                return UnityEditor.AssetDatabase.GetAssetPath(m_Source);
+            }
+            #endif
+
+            return Name();
+        }
+
         #region Generator
 
         public class Generator : LeafParser<ScriptNode, ScriptNodePackage>
         {
             static public readonly Generator Instance = new Generator();
+
+            #if UNITY_EDITOR
+            private LeafCompilerFlags? m_FlagsOverride;
+            #endif // UNITY_EDITOR
+
+            #if UNITY_EDITOR
+            public Generator(LeafCompilerFlags? overrideFlags = null) {
+                m_FlagsOverride = overrideFlags;
+            }
+            #endif // UNITY_EDITOR
 
             public override bool IsVerbose
             {
@@ -201,6 +235,20 @@ namespace Aqua.Scripting
                     #else
                     return false;
                     #endif // UNITY_EDITOR
+                }
+            }
+
+            public override LeafCompilerFlags CompilerFlags {
+                get {
+                    #if UNITY_EDITOR
+                    if (m_FlagsOverride.HasValue)
+                        return m_FlagsOverride.Value;
+                    #endif // UNITY_EDITOR 
+                    #if PRODUCTION
+                    return LeafCompilerFlags.Debug | LeafCompilerFlags.Validate_MethodInvocation;
+                    #else
+                    return base.CompilerFlags;
+                    #endif 
                 }
             }
 
@@ -218,6 +266,14 @@ namespace Aqua.Scripting
             {
                 base.CompleteBlock(inUtil, inPackage, inBlock, inbError);
                 inBlock.ApplyDefaults(inPackage.m_DefaultWho);
+            }
+
+            public override void OnEnd(IBlockParserUtil inUtil, ScriptNodePackage inPackage, bool inbError) {
+                base.OnEnd(inUtil, inPackage, inbError);
+
+                if (inbError) {
+                    UnityEngine.Debug.LogErrorFormat("[ScriptNodePackage] Package '{0}' failed to compile", inPackage.Name());
+                }
             }
         }
 

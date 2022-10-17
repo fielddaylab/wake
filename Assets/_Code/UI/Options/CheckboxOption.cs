@@ -41,7 +41,6 @@ namespace Aqua.Option
             OnChanged?.Invoke(inbSetting);
 
             OptionsData options = Save.Options;
-            options.SetDirty();
             m_Checkbox.targetGraphic.color = inbSetting ? AQColors.ContentBlue : AQColors.Teal;
             
             Services.Events.Queue(GameEvents.OptionsUpdated, options);

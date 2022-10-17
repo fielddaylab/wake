@@ -23,6 +23,7 @@ var UWTStreamLibraryImpl = {
             this.resource.autoplay = false;
             this.resource.controls = false;
             this.resource.disableRemotePlayback = true;
+            this.resource.crossOrigin = "anonymous";
         
             this.resource.onplay = this.resource.onplaying = function() {
                 self.playing = true;
@@ -172,7 +173,6 @@ var UWTStreamLibraryImpl = {
             return false;
 
         element.resource.pause();
-        element.resource.src = null;
         element.active = false;
         return true;
     },

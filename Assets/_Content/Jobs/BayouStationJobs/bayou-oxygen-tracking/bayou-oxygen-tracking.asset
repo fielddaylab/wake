@@ -18,22 +18,24 @@ MonoBehaviour:
     m_Source: jobs.bayou-oxygen-tracking.name
     m_HashValue: 1510934913
   m_PosterId:
-    m_HashValue: 6948676
+    m_HashValue: 3347434154
   m_DescId:
     m_Source: jobs.bayou-oxygen-tracking.desc
     m_HashValue: 3246368443
   m_DescShortId:
     m_Source: 
     m_HashValue: 0
-  m_DescCompletedId:
-    m_Source: 
-    m_HashValue: 0
-  m_ExperimentDifficulty: 2
-  m_ModelingDifficulty: 2
-  m_ArgumentationDifficulty: 1
+  m_ExperimentDifficulty: 0
+  m_ModelingDifficulty: 0
+  m_ArgumentationDifficulty: 0
   m_PrerequisiteJobs:
   - {fileID: 11400000, guid: 68221138cd24f1445a559f35cac0fb30, type: 2}
   m_PrereqConditions: 
+  m_PrereqBestiaryEntry:
+    m_HashValue: 0
+  m_PrereqScanId:
+    m_Source: 
+    m_HashValue: 0
   m_PrereqUpgrades: []
   m_PrereqExp: 0
   m_StationId:
@@ -98,13 +100,13 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: P_DeadZone.Model.Oxygen
-        m_HashValue: 863063499
+        m_Source: P_DeadZone.Model.Oxygen.Visual
+        m_HashValue: 3399622755
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
-    - m_Source: getScans
-      m_HashValue: 1025619015
+    - m_Source: measureOxygenUsage
+      m_HashValue: 2992898558
   - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
@@ -119,8 +121,8 @@ MonoBehaviour:
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
-    - m_Source: getScans
-      m_HashValue: 1025619015
+    - m_Source: createModel
+      m_HashValue: 2425868018
   m_OptimizedTaskList:
   - Id:
       m_Source: getScans
@@ -183,11 +185,11 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: P_DeadZone.Model.Oxygen
-        m_HashValue: 863063499
+        m_Source: P_DeadZone.Model.Oxygen.Visual
+        m_HashValue: 3399622755
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0000
+    PrerequisiteTaskIndices: 0100
   - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
@@ -203,9 +205,11 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0000
+    PrerequisiteTaskIndices: 0200
   m_CashReward: 100
   m_ExpReward: 5
+  m_JournalId:
+    m_HashValue: 0
   m_Scripting: {fileID: -1942890987711236906, guid: 6c7535da1a8d06b4abebfd3f1f81acaa,
     type: 3}
   m_ExtraAssets: []

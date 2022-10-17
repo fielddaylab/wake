@@ -19,7 +19,9 @@ namespace ProtoAqua.ExperimentV2
     public class ActorDefinitions : ScriptableObject, IBaked
     {
         public ActorDefinition[] CritterDefinitions;
+        public Material[] CritterMaterials;
 
+        [NonSerialized] private bool m_MaterialOverridesConfigured = false;
         [NonSerialized] private Dictionary<StringHash32, ActorDefinition> m_DefinitionMap;
 
         public ActorDefinition FindDefinition(StringHash32 inCritterId)
@@ -42,13 +44,41 @@ namespace ProtoAqua.ExperimentV2
             return def;
         }
 
+        public void ConfigureMaterials()
+        {
+            if (m_MaterialOverridesConfigured) {
+                return;
+            }
+
+            foreach(var material in CritterMaterials)
+            {
+                material.EnableKeyword("ADDITIONAL_LIGHTS_ON");
+            }
+
+            m_MaterialOverridesConfigured = true;
+        }
+
+        public void RevertMaterials()
+        {
+            if (!m_MaterialOverridesConfigured) {
+                return;
+            }
+
+            foreach(var material in CritterMaterials)
+            {
+                material.DisableKeyword("ADDITIONAL_LIGHTS_ON");
+            }
+
+            m_MaterialOverridesConfigured = false;
+        }
+
         #if UNITY_EDITOR
 
         #region IBaked
 
         int IBaked.Order { get { return 20; } }
 
-        bool IBaked.Bake(BakeFlags flags)
+        bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
             LoadDefinitions();
 
@@ -58,6 +88,8 @@ namespace ProtoAqua.ExperimentV2
                     ValidationUtils.FindPrefab<ActorInstance>(definition.Type.name, "Assets/_Content/Experiments/Resources/ExpCritters")
                 );
             }
+
+            LoadMaterials();
 
             return true;
         }
@@ -194,10 +226,38 @@ namespace ProtoAqua.ExperimentV2
                 if (obj.HasFlags(BestiaryDescFlags.DoNotUseInExperimentation))
                     continue;
 
-                definitions.Add(FindOrCreateDefinition(obj));
+                ActorDefinition def = FindOrCreateDefinition(obj);
+                definitions.Add(def);
             }
 
             CritterDefinitions = definitions.ToArray();
+        }
+
+        private void LoadMaterials()
+        {
+            HashSet<Material> materials = new HashSet<Material>();
+
+            foreach(var def in CritterDefinitions)
+            {
+                if (def.Prefab != null)
+                {
+                    ActorInstance prefabInstance = GameObject.Instantiate(def.Prefab);
+                    foreach(var meshRenderer in prefabInstance.GetComponentsInChildren<MeshRenderer>(true))
+                    {
+                        foreach(var material in meshRenderer.sharedMaterials)
+                        {
+                            if (!material.IsKeywordEnabled("ADDITIONAL_LIGHTS_ON"))
+                            {
+                                materials.Add(material);
+                            }
+                        }
+                    }
+                    DestroyImmediate(prefabInstance.gameObject);
+                }
+            }
+
+            CritterMaterials = new Material[materials.Count];
+            materials.CopyTo(CritterMaterials);
         }
 
         #endif // UNITY_EDITOR

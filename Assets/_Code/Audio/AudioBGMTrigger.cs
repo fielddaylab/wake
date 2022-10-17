@@ -6,11 +6,12 @@ using UnityEngine;
 
 namespace AquaAudio
 {
-    public class AudioBGMTrigger : MonoBehaviour
+    public class AudioBGMTrigger : MonoBehaviour, ISceneManifestElement
     {
         [SerializeField] private string m_EventId = null;
         [SerializeField] private float m_Crossfade = 0.5f;
         [SerializeField] private bool m_StopOnDisable = true;
+        [SerializeField] private bool m_PlayOnLoad = true;
 
         private Routine m_WaitRoutine;
         private AudioHandle m_BGM;
@@ -25,7 +26,10 @@ namespace AquaAudio
             if (Script.IsLoading)
             {
                 m_BGM = Services.Audio.PostEvent(m_EventId, AudioPlaybackFlags.PreloadOnly);
-                m_WaitRoutine = Routine.Start(this, WaitToPlay());
+                if (m_PlayOnLoad)
+                {
+                    m_WaitRoutine = Routine.Start(this, WaitToPlay());
+                }
             }
             else
             {
@@ -41,6 +45,25 @@ namespace AquaAudio
             }
 
             Services.Audio.SetMusic(m_BGM, m_Crossfade);
+        }
+
+        public void Play()
+        {
+            if (Script.IsLoading)
+            {
+                m_WaitRoutine.Replace(this, WaitToPlay());
+            }
+            else
+            {
+                if (m_BGM.Exists())
+                {
+                    Services.Audio.SetMusic(m_BGM, m_Crossfade);
+                }
+                else
+                {
+                    m_BGM = Services.Audio.SetMusic(m_EventId, m_Crossfade);
+                }
+            }
         }
 
         private void OnDisable()
@@ -59,5 +82,13 @@ namespace AquaAudio
                 }
             }
         }
+
+        #if UNITY_EDITOR
+
+        public void BuildManifest(SceneManifestBuilder builder) {
+            AudioEvent.BuildManifestFromEventString(m_EventId, builder);
+        }
+
+        #endif // UNITY_EDITOR
     }
 }

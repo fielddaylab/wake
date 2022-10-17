@@ -27,6 +27,7 @@ namespace ProtoAqua.Observation {
         [Space]
         [SerializeField] private Fraction16 m_DefaultTagProportion = new Fraction16(0.8f);
         [SerializeField] private CritterProportion[] m_CritterProportionOverrides = null;
+        [SerializeField, MapId(MapCategory.DiveSite)] private StringHash32 m_EnvironmentOverride = default;
 
         [SerializeField, HideInInspector] private TaggingManifest[] m_SceneManifest;
         [SerializeField, HideInInspector] private BestiaryDesc m_EnvironmentType;
@@ -64,6 +65,11 @@ namespace ProtoAqua.Observation {
         private void LateUpdate() {
             if (Script.IsPausedOrLoading)
                 return;
+
+            // only update this every 8 frames
+            if (!Frame.Interval(8)) {
+                return;
+            }
 
             m_Listener.ProcessOccupants();
 
@@ -119,11 +125,17 @@ namespace ProtoAqua.Observation {
         }
 
         private void OnBestiaryUpdate(BestiaryUpdateParams updateParams) {
-            if (updateParams.Type != BestiaryUpdateParams.UpdateType.Entity) {
-                return;
-            }
+            switch(updateParams.Type) {
+                case BestiaryUpdateParams.UpdateType.Entity: {
+                    MarkAllAsAvailable(updateParams.Id);
+                    break;
+                }
 
-            MarkAllAsAvailable(updateParams.Id);
+                case BestiaryUpdateParams.UpdateType.Unknown: {
+                    TryMarkAllAsAvailable();
+                    break;
+                }
+            }
         }
 
         #endregion // Events
@@ -169,6 +181,16 @@ namespace ProtoAqua.Observation {
             for (int i = m_RemainingCritters.Count - 1; i >= 0; i--) {
                 critter = m_RemainingCritters[i];
                 if (critter.CritterId == inCritterId && !critter.WasTagged) {
+                    critter.ColliderPosition.enabled = true;
+                }
+            }
+        }
+
+        private void TryMarkAllAsAvailable() {
+            TaggableCritter critter;
+            for (int i = m_RemainingCritters.Count - 1; i >= 0; i--) {
+                critter = m_RemainingCritters[i];
+                if (!critter.WasTagged && IsReady(critter.CritterId)) {
                     critter.ColliderPosition.enabled = true;
                 }
             }
@@ -248,8 +270,6 @@ namespace ProtoAqua.Observation {
             effect.Transform.SetScale(0, Axis.XY);
             effect.Animation = Routine.Start(effect, PlayEffect(effect));
 
-            Services.Audio.PostEvent("dive.critterTagged");
-
             int idx = IndexOf(inCritter.CritterId);
             TaggingManifest manifest = m_SceneManifest[idx];
             m_TagCounts[idx]++;
@@ -257,12 +277,14 @@ namespace ProtoAqua.Observation {
             DebugService.Log(LogMask.Observation, "[TaggingSystem] Tagged '{0}' {1}/{2}/{3}", manifest.Id, m_TagCounts[idx], manifest.Required, manifest.TotalInScene);
 
             if (m_TagCounts[idx] < manifest.Required) {
+                Services.Audio.PostEvent("ROV.Tagger.Tagged");
                 Services.UI.FindPanel<TaggingUI>().Populate(m_SceneManifest, m_TagCounts);
                 return true;
             }
 
             m_SiteData.TaggedCritters.Add(manifest.Id);
             m_SiteData.OnChanged();
+            Services.Audio.PostEvent("ROV.Tagger.Completed");
 
             Services.Events.Queue(GameEvents.SiteDataUpdated, m_SiteData.MapId);
             MarkAllAsTagged(manifest.Id);
@@ -280,14 +302,14 @@ namespace ProtoAqua.Observation {
                         Assets.Fact(population.Id),
                         Save.Bestiary.GetDiscoveredFlags(population.Id)
                     );
-                }, -5);
+                }, 5);
             } else {
                 Services.Script.QueueInvoke(() => {
                     Services.UI.Popup.DisplayWithClose(
                         "ERROR",
                         Loc.FormatFromString("Site '{0}' has no population data for critter id '{1}'", m_EnvironmentType.CommonName(), Assets.Bestiary(manifest.Id).CommonName())
                     );
-                }, -5);
+                }, 5);
             }
 
             return true;
@@ -380,11 +402,15 @@ namespace ProtoAqua.Observation {
             return defaultProportion;
         }
 
-        bool IBaked.Bake(ScriptableBake.BakeFlags flags) {
+        bool IBaked.Bake(ScriptableBake.BakeFlags flags, BakeContext context) {
             StringHash32 mapId = MapDB.LookupCurrentMap();
+            if (!m_EnvironmentOverride.IsEmpty) {
+                mapId = m_EnvironmentOverride;
+            }
             Assert.False(mapId.IsEmpty, "Tagging enabled in scene {0} which has no corresponding map", SceneHelper.ActiveScene().Name);
 
             m_MapId = mapId;
+
             m_EnvironmentType = Assets.Bestiary(Assets.Map(mapId).EnvironmentId());
 
             RingBuffer<TaggingManifest> entries = new RingBuffer<TaggingManifest>();
@@ -400,7 +426,7 @@ namespace ProtoAqua.Observation {
         }
 
         int IBaked.Order {
-            get { return 0; }
+            get { return 500; }
         }
 
         #endif // UNITY_EDITOR

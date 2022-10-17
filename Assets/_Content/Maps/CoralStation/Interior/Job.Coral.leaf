@@ -1,0 +1,36 @@
+# basePath interior.job.coral
+
+#include "Headers/Common.leaf"
+
+#const JobGiverId = profCoral
+#const JobGiverCameraPose = ""
+
+#include "Headers/CommonJob.leaf"
+
+// Generic
+
+#NoJobHandler(a)
+{@$JobGiverId}  Hello {random once again|again}, O! Would you like to see the {h}Job Board{/h}?
+$choice .action.openJobBoard; Sure!
+$choice .action.cancel; No thanks.
+
+#WrongStationJobHandler(a)
+{@$JobGiverId}  Oh, you have a job with someone else right now.
+                You might want to finish that one up first.
+                That said... do you want to see {h}Job Board{/h}?
+    $choice .action.openJobBoard; Yes.
+    $choice .action.cancel; Nah.
+
+#JobHandler(a)
+{@$JobGiverId}  {random Hello!|Greetings, O!} Do you have anything to report for your current job?
+    $choice .action.report; Yep!
+    $choice .action.openJobBoard; Let me {random see|look at} the {h}Job Board{/h}.
+    $choice .action.cancel.currentJob; Nope.
+
+:: action.cancel
+@cutscene
+{@$JobGiverId}  No worries. It will be here when you return.
+
+:: action.cancel.currentJob
+@cutscene
+{@$JobGiverId}  Alright. No need to rush things.

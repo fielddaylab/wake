@@ -28,6 +28,7 @@ namespace Aqua
     {
         public delegate void ScriptThreadHandler(ScriptThreadHandle inHandle);
         public delegate void ScriptTargetHandler(StringHash32 inTarget);
+        public delegate void ScriptTapHandler(ScriptThreadHandle inHandle, StringHash32 inTarget);
         public delegate Future<StringHash32> ChoiceSelectorHandler();
 
         private struct QueuedEvent {
@@ -232,24 +233,25 @@ namespace Aqua
             {
                 using(PooledList<ScriptNode> nodes = PooledList<ScriptNode>.Create())
                 {
-                    int responseCount = functionSet.GetNodes(inTarget, nodes);
+                    LeafEvalContext context = LeafEvalContext.FromResolver(this, resolver, inContext);
+                    int responseCount = functionSet.GetNodes(context, inTarget, nodes);
                     if (responseCount > 0)
                     {
                         for(int i = responseCount - 1; i >= 0; --i)
                         {
-                            DebugService.Log(LogMask.Scripting,  "[ScriptingService] Executing function {0} with function id '{1}'", nodes[i].Id(), inFunctionId);
+                            DebugService.Log(LogMask.Scripting,  "[ScriptingService] Executing function {0} with function id '{1}'", nodes[i].Id().ToDebugString(), inFunctionId.ToDebugString());
                             StartThreadInternalNode(inContext, nodes[i], inContextTable, null);
                         }
                     }
                     else
                     {
-                        DebugService.Log(LogMask.Scripting,  "[ScriptingService] No functions available with id '{0}'", inFunctionId);
+                        DebugService.Log(LogMask.Scripting,  "[ScriptingService] No functions available with id '{0}'", inFunctionId.ToDebugString());
                     }
                 }
             }
             else
             {
-                DebugService.Log(LogMask.Scripting,  "[ScriptingService] No functions with id '{0}'", inFunctionId);
+                DebugService.Log(LogMask.Scripting,  "[ScriptingService] No functions with id '{0}'", inFunctionId.ToDebugString());
             }
             ResetCustomResolver();
         }
@@ -304,13 +306,18 @@ namespace Aqua
         /// <summary>
         /// Kills all threads with a priority less than the given priority
         /// </summary>
-        public void KillLowPriorityThreads(TriggerPriority inThreshold = TriggerPriority.Cutscene)
+        public void KillLowPriorityThreads(TriggerPriority inThreshold = TriggerPriority.Cutscene, bool inbKillFunctions = false)
         {
-            DebugService.Log(LogMask.Scripting,  "[ScriptingService] Killing all with priority less than {0}", inThreshold);
+            if (DebugService.IsLogging(LogMask.Scripting))
+            {
+                DebugService.Log(LogMask.Scripting,  "[ScriptingService] Killing all with priority less than {0}", inThreshold);
+            }
 
             for(int i = m_ThreadList.Count - 1; i >= 0; --i)
             {
                 var thread = m_ThreadList[i];
+                if (!inbKillFunctions && thread.IsFunction())
+                    continue;
                 if (thread.Priority() < inThreshold)
                     thread.Kill();
             }
@@ -382,29 +389,85 @@ namespace Aqua
         /// <summary>
         /// Queues up a trigger response.
         /// </summary>
-        public void QueueTriggerResponse(StringHash32 inTriggerId, int inPriority = 0, TempVarTable inContextTable = default, Action inOnCompleted = null)
+        public uint QueueTriggerResponse(StringHash32 inTriggerId, int inPriority = 0, TempVarTable inContextTable = default, Action inOnCompleted = null)
         {
+            uint id = QueuedEvent.NextId();
             m_QueuedTriggers.PushBack(new QueuedEvent()
             {
-                Id = QueuedEvent.NextId(),
+                Id = id,
                 TriggerId = inTriggerId,
                 Priority = inPriority,
                 Vars = inContextTable,
                 OnComplete = inOnCompleted
             });
+            return id;
+        }
+
+        /// <summary>
+        /// Queues up a trigger response.
+        /// </summary>
+        public uint QueueTriggerResponse(StringHash32 inTriggerId, int inPriority, TempVarTable inContextTable, Action inOnCompleted, out Future<ScriptThreadHandle> outReturn)
+        {
+            uint id = QueuedEvent.NextId();
+            m_QueuedTriggers.PushBack(new QueuedEvent()
+            {
+                Id = id,
+                TriggerId = inTriggerId,
+                Priority = inPriority,
+                Vars = inContextTable,
+                OnComplete = inOnCompleted,
+                Return = outReturn = new Future<ScriptThreadHandle>()
+            });
+            return id;
         }
 
         /// <summary>
         /// Queues up an invocation.
         /// </summary>
-        public void QueueInvoke(Action inInvoke, int inPriority = 0)
+        public uint QueueInvoke(Action inInvoke, int inPriority = 0)
         {
+            uint id = QueuedEvent.NextId();
             m_QueuedTriggers.PushBack(new QueuedEvent()
             {
-                Id = QueuedEvent.NextId(),
+                Id = id,
                 OnStart = inInvoke,
                 Priority = inPriority,
             });
+            return id;
+        }
+
+        /// <summary>
+        /// Cancels a queued response or invoke.
+        /// </summary>
+        public bool CancelQueued(uint inId)
+        {
+            for(int i = 0; i < m_QueuedTriggers.Count; i++)
+            {
+                if (m_QueuedTriggers[i].Id == inId)
+                {
+                    m_QueuedTriggers.FastRemoveAt(i);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Cancels a queued response or invoke.
+        /// </summary>
+        public bool CancelQueuedTriggerResponse(StringHash32 inTriggerId)
+        {
+            for(int i = 0; i < m_QueuedTriggers.Count; i++)
+            {
+                if (m_QueuedTriggers[i].TriggerId == inTriggerId)
+                {
+                    m_QueuedTriggers.FastRemoveAt(i);
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void ProcessQueuedTriggers()
@@ -426,6 +489,7 @@ namespace Aqua
             while(m_QueuedTriggers.TryPopFront(out trigger))
             {
                 int expectedSize = m_QueuedTriggers.Count;
+
                 trigger.OnStart?.Invoke();
 
                 if (!trigger.TriggerId.IsEmpty)
@@ -502,16 +566,6 @@ namespace Aqua
         /// <summary>
         /// Parses a string into a TagString.
         /// </summary>
-        public TagString ParseToTag(StringSlice inLine, object inContext = null)
-        {
-            TagString str = new TagString();
-            ParseToTag(ref str, inLine, inContext);
-            return str;
-        }
-
-        /// <summary>
-        /// Parses a string into a TagString.
-        /// </summary>
         public void ParseToTag(ref TagString ioTag, StringSlice inLine, object inContext = null)
         {
             TagStringParser parser = m_ParserPool.Alloc();
@@ -524,6 +578,13 @@ namespace Aqua
         #region Internal
 
         internal IMethodCache LeafInvoker { get { return m_LeafCache; } }
+
+        internal void TapCharacter(StringHash32 inTargetId, ScriptThreadHandle inHandle)
+        {
+            if (OnTargetTap != null) {
+                OnTargetTap(inHandle, inTargetId);
+            }
+        }
 
         internal void UntrackThread(ScriptThread inThread)
         {
@@ -547,6 +608,8 @@ namespace Aqua
                 return default(ScriptThreadHandle);
             }
 
+            ScriptThread thread = m_ThreadPool.Alloc();
+
             if (inNode.IsCutscene())
             {
                 m_CutsceneThread?.Kill();
@@ -560,7 +623,6 @@ namespace Aqua
                 tempVars.Object.Base = inVars.Base;
             }
 
-            ScriptThread thread = m_ThreadPool.Alloc();
             ScriptThreadHandle handle = thread.Prep(inContext, tempVars);
             thread.SyncPriority(inNode);
             Routine routine = Routine.Start(this, ProcessNodeInstructions(thread, inNode)).SetPhase(RoutinePhase.Manual);
@@ -600,7 +662,10 @@ namespace Aqua
             ScriptThread thread;
             if (m_ThreadTargetMap.TryGetValue(target, out thread))
             {
-                if (thread.Priority() >= inNode.Priority())
+                bool higherPriority = (inNode.Flags() & ScriptNodeFlags.Interrupt) != 0
+                    ? thread.Priority() > inNode.Priority()
+                    : thread.Priority() >= inNode.Priority();
+                if (higherPriority)
                 {
                     DebugService.Log(LogMask.Scripting,  "[ScriptingService] Could not trigger node '{0}' on target '{1}' - higher priority thread already running for given target",
                         inNode.Id(), target);
@@ -682,6 +747,11 @@ namespace Aqua
         /// </summary>
         public event ScriptTargetHandler OnTargetedThreadKilled;
 
+        /// <summary>
+        /// Dispatched when a target is tapped to join a script.
+        /// </summary>
+        public event ScriptTapHandler OnTargetTap;
+
         #endregion // Events
 
         #region IService
@@ -720,6 +790,8 @@ namespace Aqua
             m_TablePool.Prewarm();
 
             m_ThreadPool = new DynamicPool<ScriptThread>(16, (p) => new ScriptThread(this));
+            m_ThreadPool.Prewarm(4);
+            
             m_QueuedTriggers = new RingBuffer<QueuedEvent>(16, RingBufferMode.Expand);
         }
 

@@ -548,7 +548,7 @@ namespace ProtoAqua.ExperimentV2 {
 
             if (inPrefab != null) {
                 ProcessPrefab(inDef, inBestiary, inPrefab);
-            } else if (string.IsNullOrEmpty(inDef.PrefabName)) {
+            } else {
                 Log.Warn("[ActorDefinition] Experiment-able organism '{0}' lacks a prefab", inDef.Id);
             }
         }

@@ -4,19 +4,26 @@
 @trigger    JobStarted
 @cutscene
 
-{@guide}	Professor Cempaka sounds like they've got a real issue with the Lionfish. Let's help them out with this puzzle.
+$set jobs:coral-lionfish-conspiracy.checkedCoral = false
+{@profCoral} Okay, Ollie. As you know, Lionfish have moved into the Restoration Reef.
+{@player}	Yeah, uh, Sofia might've mentioned that.
+		     But I thought you said you didn't have the resources for this job.
+{@profCoral} Well, Sofia has been concerned about the lionfish for a while, so I figured it was time to investigate.
+		     Plus, I really need her help repairing my sub's engine... no idea what's wrong with it.
+			 Can you find out if the lionfish are predators, and what they eat? 
+{@player}    Sure, Professor. Happy to help.
 $if HasEntity(Lionfish), HasEntity(BlueheadWrasse), HasEntity(BlueTang), HasEntity(StaghornCoral)
 	$if HasFact(Lionfish.Eats.BlueTang), HasFact(Lionfish.Eats.BlueheadWrasse)
-		{@guide}	Looks like you already have everything needed, so we can go right to the {h}Office{/h}.
+		{@profCoral}	Hmmm. On second thought, it looks like you already have all the facts you need.
+					    Why don't you look over your notes and then let me know what you've found? 
 	$else
-		{@guide}	First we need to make sure we have all the pieces.
-		{@guide}	Looks like you have all the species scanned, so we can go right to the {h}Observation Tank{/h}.
+		{@profCoral}	It appears you've already scanned all the relevant species. 
+		{@profCoral}	You'll be able to head straight to your {h}Observation Tank{/h} to find out what the Lionfish eat.
 	$endif
 $else
-	{@guide}	First we need to make sure we have all the pieces.
-	{@guide}	Go down to Site S and scan everything you can find, especially the Lionfish.
+	{@profCoral}	First we need to make sure we have all the pieces.
+	{@profCoral}	Go down to Site S and scan everything you can find, especially the Lionfish.
 $endif
-
 
 // SCANNING
 
@@ -24,8 +31,9 @@ $endif
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(scanNew)
 @cutscene
+{@player} What now, {nameof @guide}?
 $if scene:name == "RS-2S"
-	{@guide}	There are some key species you haven't found yet. Keep searching.
+	{@guide}	It looks like you're missing a few key species. Keep searching.
 $else
 	{@guide}	Go to Site S and scan as many species there as you can.
 $endif
@@ -34,21 +42,43 @@ $endif
 @trigger    SceneStart
 @when       scene:name == "RS-2S", JobTaskTop(scanNew)
 @cutscene
-{@guide}	No one is sure how the Lionfish interact with other species here, so you'd better scan everything you can find.
+{@player} Eek. This place is gonna give me nightmares.
+		  Let's get this over with. 
+{@guide}  Agreed, O.
+		  No one is sure how the Lionfish interact with other species here, so you'd better scan everything you can find.
 
 :: scansComplete
 @trigger    JobTasksUpdated
 @when       scene:name = "RS-2S", JobTaskTop(observeInteractions)
 @cutscene
-{@guide}	Okay, that should be enough to get an idea of how the Lionfish fits into the ecosystem. 
-			Let's try to observe some interactions in the observation tank.
+{@guide}	Adequate work, O! 
+		    That should be enough to get an idea of how the Lionfish fits into the ecosystem. 
+			Now you will need to use the Observation Tank to determine what the Lionfish eat. 
 
 :: helpReturnExperiment
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(observeInteractions), scene:name != "ExperimentV2"
 @cutscene
-{@guide}	Get to the {map-name}Experiment Room{/map-name} and see how the {nameof Lionfish} interacts with other species you've found.
+{@guide}	Head to the {map-name}Experiment Room{/map-name} and see how the {nameof Lionfish} interact with other species you've found.
 
+
+// EXPERIMENT CORAL
+
+:: helpBeginExperimentCoral
+@trigger	RequestPartnerHelp
+@when		JobTaskTop(observeCoral), scene:name == "ExperimentV2"
+@cutscene
+{@player}	What now, {nameof @guide}?
+{@guide}	Place {nameof StaghornCoral} and {nameof Lionfish} in the Observation Tank and see if there are any direct interactions.
+
+:: checkStaghorn
+@trigger	ExperimentStarted
+@when		tankType == "Observation"
+@cutscene
+$if ExperimentHasCritter("StaghornCoral"), ExperimentHasCritter("Lionfish")
+	$set jobs:coral-lionfish-conspiracy.checkedCoral = true
+	$call CheckJobTasks()
+$endif
 
 // EXPERIMENTATION
 
@@ -56,28 +86,34 @@ $endif
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(observeInteractions), scene:name == "ExperimentV2"
 @cutscene
-{@guide}	Use the Observation Tank to see how the Lionfish interacts with other species you found.
+{@player} What now, {nameof @guide}?
+{@guide}	Use the Observation Tank to see how the Lionfish interact with other species you found.
+
 
 :: beginExperiment
 @trigger	SceneStart
 @when		scene:name == "ExperimentV2", JobTaskTop(observeInteractions)
 @once
 @cutscene
-{@guide}	As I said, no one knows how the Lionfish fits into the ecosystem of the reef, so you'd better observe the Lionfish with as many other species as you can.
+{@guide}	Remember, no one seems quite sure how the Lionfish fit into this ecosystem.
+		    You will need to observe the Lionfish with as many other species as possible. 
 			// Especially with the coral.
-			
+
 :: experimentComplete
 @trigger JobTasksUpdated
 @when	JobTaskTop(arguePredator)
 @cutscene
-{@guide}	It doesn't seem like the Lionfish interact directly with the coral at all.
-			We know enough to discuss this with {nameof profCempaka}, now. I'm sure they'll be relieved to get some answers.
+{@player}	Wow. Sofia was so sure that the {pluralnameof Lionfish} were the problem... but we haven't seen anything that points to {pluralnameof Lionfish} directly affecting the coral.
+			The {pluralnameof Lionfish} just eat a bunch of the other fish.
+{@guide}  Yes. You have found the data that {nameof @profCoral} requested.
+		  Perhaps Sofia will be glad to know that the {pluralnameof Lionfish} aren't harming the coral!
+{@player} Yeah... somehow I doubt that, V. 
 
 :: helpReportBack
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(arguePredator)
 @cutscene
-{@guide}	Report back to Professor Cempaka.
+{@guide}	Report back to {nameof @profCoral}.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -86,21 +122,28 @@ $endif
 @when 		JobTaskActive(scanNew)
 @boostScore -5
 @cutscene
-{@guide}    Head to Site S and scan any new species.
+{@guide}    Head to Site S and scan any new species you can find.
+
+:: catchObserveCoral
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(observeCoral)
+@boostScore -5
+@cutscene
+{@guide}    Place {nameof StaghornCoral} and {nameof Lionfish} in the Observation Tank and see if there are any direct interactions.
 
 :: catchObserveInteractions
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(observeInteractions)
 @boostScore -5
 @cutscene
-{@guide}    Throw some Lionfish in the Observation Tank with other Site S organisms and see what happens.
+{@guide}    Put some Lionfish in the Observation Tank with other Site S organisms and see what happens.
 
 :: catchArguePredator
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(arguePredator)
 @boostScore -5
 @cutscene
-{@guide}    Report back to {nameof profCempaka}.
+{@guide}    Report back to {nameof profCoral}.
 
 // ARGUMENTATION
 
@@ -109,7 +152,7 @@ $endif
 @when   !ArgueIsComplete(lionfishConspiracyArgue)
 @cutscene
 $call ArgueLoad(lionfishConspiracyArgue)
-{@profCempaka} I know these things are vicious predators. What do they eat?!
+{@profCoral} Excellent. So what did you discover? What do the Lionfish eat? 
 $if ArgueSetClaim(lionfish-conspiracyClaim, jobs.coral-lionfish-conspiracy.argue.claimEvidence)
 		$call ArgueFactSlot(Lionfish.Eats.BlueheadWrasse)
 		$call ArgueFactSlot(Lionfish.Eats.BlueTang)
@@ -121,16 +164,22 @@ $choice #argueFactSet; Present facts from AQOS
 $choice .argue.giveUp; Let me get back to you
 
 :: argue.giveUp
-{@profCempaka}	OK. Get back to me when you're ready.
+{@profCoral}	Okay, Ollie. Get back to me when you're ready.
 
 :: argue.incorrectFood
-{@profCempaka}	No, no, this doesn't tell me everything Lionfish eat.
+{@profCoral}	No, no, this doesn't tell me everything Lionfish eat.
 $call ArgueRejectIncorrect()
 $call ArgueClearFacts()
 $goto .argue.intro
 
 :: argue.correctFood
-{@profCempaka}	I knew it. That doesn't explain what's happening with the coral though.
-				But maybe it's connected.
+{@profCoral}  Hmmm. The Lionfish don't directly interact with the Coral at all.
+{@player}	Yeah. 
+			Um.. please don't tell Sofia I told you this. I kind of want her to like me.
+{@profCoral} Slow down, Ollie. The Lionfish might not eat coral, but they are vicious predators.
+			 Everything in the ecosystem is connected. 
+{@player}    You mean... the Lionfish could still be harming the Coral?
+{@profCoral} It's possible.
+	         Come back when you're ready for big job. I think there's a way we can know for sure. 
 $call ArgueComplete()
 $call CompleteJob()

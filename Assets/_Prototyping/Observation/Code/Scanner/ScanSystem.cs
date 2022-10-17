@@ -102,7 +102,9 @@ namespace ProtoAqua.Observation {
             if (Script.IsPausedOrLoading)
                 return;
 
-            m_Listener.ProcessOccupants();
+            if (Frame.Interval(4)) {
+                m_Listener.ProcessOccupants();
+            }
 
             ScannableRegion region;
             for (int i = m_RegionsInRange.Count - 1; i >= 0; i--) {
@@ -111,7 +113,9 @@ namespace ProtoAqua.Observation {
                     Transform iconRoot = region.IconRootOverride;
                     if (!iconRoot)
                         iconRoot = region.TrackTransform;
-                    region.CurrentIcon.transform.position = iconRoot.position;
+                    Vector3 position = iconRoot.position;
+                    position.z += region.IconZAdjust;
+                    region.CurrentIcon.transform.position = position;
                 }
             }
         }

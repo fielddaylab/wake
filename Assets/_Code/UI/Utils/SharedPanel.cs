@@ -40,6 +40,11 @@ namespace Aqua
         {
         }
 
+        public virtual void PostRegister()
+        {
+            
+        }
+
         #endregion // IScriptComponent
 
         protected override void Awake()

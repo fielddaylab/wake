@@ -5,18 +5,29 @@ using BeauUtil.Services;
 using BeauUtil.Debugger;
 using System.Runtime.InteropServices;
 using BeauRoutine;
+using Leaf.Runtime;
+using UnityEngine.Scripting;
 
 namespace Aqua
 {
     [ServiceDependency(typeof(DataService), typeof(EventService))]
     internal partial class JobTaskService : ServiceBehaviour
     {
+        static private readonly StringHash32 Event_ForceReprocess = "job:force-tasks-update";
+
         [StructLayout(LayoutKind.Sequential, Pack = 4)]
         private struct TaskState
         {
             public JobTaskStatus Status;
             public TempList8<ushort> Prerequisites;
             public JobTask Task;
+        }
+
+        public enum TaskStatusMask
+        {
+            Active = 0x01,
+            Completed = 0x02,
+            Inactive = 0x04
         }
 
         private enum TaskEventMask : uint
@@ -48,7 +59,8 @@ namespace Aqua
                 .Register<StringHash32>(GameEvents.JobPreComplete, OnJobPreComplete, this)
                 .Register(GameEvents.CutsceneEnd, OnCutsceneEnd, this)
                 .Register(GameEvents.ProfileLoaded, OnProfileLoaded, this)
-                .Register(GameEvents.PopupClosed, OnCutsceneEnd, this);
+                .Register(GameEvents.PopupClosed, OnCutsceneEnd, this)
+                .Register(Event_ForceReprocess, OnForceReprocess, this);
 
             RegisterDelayedTaskEvent(events, GameEvents.SceneLoaded, TaskEventMask.SceneLoad);
             RegisterTaskEvent(events, GameEvents.BestiaryUpdated, TaskEventMask.BestiaryUpdate);
@@ -142,6 +154,11 @@ namespace Aqua
             {
                 ProcessUpdateQueue(Save.Jobs);
             }
+        }
+
+        private void OnForceReprocess()
+        {
+            ProcessUpdates(0);
         }
 
         #endregion // Handlers
@@ -274,6 +291,7 @@ namespace Aqua
             }
 
             ulong taskMask;
+            TaskStatusMask statusMask = 0;
             
             for(int taskIdx = 0, taskCount = m_TaskGraph.Count; taskIdx < taskCount; taskIdx++)
             {
@@ -286,19 +304,22 @@ namespace Aqua
                 {
                     case JobTaskStatus.Active:
                         Services.Events.Dispatch(GameEvents.JobTaskAdded, state.Task.Id.Hash());
+                        statusMask |= TaskStatusMask.Active;
                         break;
 
                     case JobTaskStatus.Complete:
                         Services.Events.Dispatch(GameEvents.JobTaskCompleted, state.Task.Id.Hash());
+                        statusMask |= TaskStatusMask.Completed;
                         break;
 
                     case JobTaskStatus.Inactive:
                         Services.Events.Dispatch(GameEvents.JobTaskRemoved, state.Task.Id.Hash());
+                        statusMask |= TaskStatusMask.Inactive;
                         break;
                 }
             }
 
-            Services.Events.Dispatch(GameEvents.JobTasksUpdated);
+            Services.Events.Dispatch(GameEvents.JobTasksUpdated, statusMask);
 
             m_TaskUpdateMask = 0;
         }
@@ -415,5 +436,10 @@ namespace Aqua
         }
 
         #endregion // Evaluation
+
+        [LeafMember("CheckJobTasks"), Preserve]
+        static private void ForceReevaluateTasks() {
+            Services.Events.Dispatch(Event_ForceReprocess);
+        }
     }
 }

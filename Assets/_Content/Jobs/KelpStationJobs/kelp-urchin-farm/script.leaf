@@ -4,22 +4,30 @@
 @trigger    JobStarted
 @cutscene
 
-{@guide}	You'll need to use the {nameof MeasurementTank} to figure out how much Urchins eat.
-			It's in the Experiment Room.
+{@drKelp}	Thank you, Olivia. I have exciting news!
+			I'm exploring an idea for a new side hustle... 
+			Urchin farming!
+{@player}   Wait... You want to farm urchins? On purpose??
+{@drKelp}   Don't act so surprised, Mija. There's a high demand for urchins at the local market!
+{@drKelp}   We're having kelp noodles with sea urchin crema for dinner, by the way. You'll love it! 
+            But for now, head to your {nameof MeasurementTank}.
+			I need to know how quickly the urchins eat the different species of kelp, so I know the most efficient food to give them. 
 
 :: measurementTankSelect
 @trigger	ExperimentTankViewed
 @when		tankType == "Measurement"
 @once 
 @cutscene
-{@guide}	We know the Urchins behave normally in the Kelp Forest.
+{@player}   Where should we start, {nameof @guide}?
+{@guide}   It's time to set up your tank!
+		   Your mother needs to know which type of Kelp the urchins eat more quickly. 
 			
 :: measurementChooseKelp
 @trigger	ExperimentScreenViewed
 @when		screenId == "measurement.organisms"
 @once 
 @cutscene
-{@guide}	Pick {nameof Urchin} and something we know the {nameof Urchin} eats.
+{@guide}	Select {nameof Urchin} and something the {nameof Urchin} eats.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -28,21 +36,23 @@
 @when 		JobTaskActive(urchinEatBull)
 @boostScore -5
 @cutscene
-{@guide}    Using the Measurement Tank, measure how quickly Urchins eat Bull Kelp.
+{@guide}    Use the Measurement Tank to measure how quickly Urchins eat Bull Kelp.
 
 :: catchUrchinEatKelp
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(urchinEatKelp)
 @boostScore -5
 @cutscene
-{@guide}    Using the Measurement Tank, measure how quickly Urchins eat Giant Kelp.
+{@guide}    Use the Measurement Tank to measure how quickly Urchins eat Giant Kelp.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Talk to {nameof drKelp} in the Office.
+{@guide}   Adequate work, O!
+		   Looks like you've got the data your mother needed.
+		   Time to report back to the {m}research station{/m}!
 
 // ARGUMENTATION
 :: argue.intro
@@ -50,11 +60,12 @@
 @when   !ArgueIsComplete(urchinFarmArgue)
 @cutscene
 $call ArgueLoad(urchinFarmArgue)
-{@drKelp}	I see you've gotten the hang of using the measurement tank to compare eating rates. How do these rates compare?
+{@drKelp}	Nice work using the Measurement Tank, Olivia! You're really getting the hang of this. 
+			So, how do the eating rates compare?
 $goto .argue.presentFacts
 
 : argue.giveUp
-{@drKelp} OK. Get back to me when you're ready.
+{@drKelp} Okay, Mija. Let me know when you're ready.
 
 :: argue.presentFacts
 $if ArgueSetClaim(urchinFarmClaim, jobs.kelp-urchin-farm.argue.claimEitherWorkLabel)
@@ -79,7 +90,8 @@ $endif
 $if ArgueIsFactSubmitted(Urchin.Eats.GiantKelp)
 	$goto .argue.finalClaim
 $else
-	{@drKelp}	Ah, so the {pluralnameof Urchin} consume 2g of {pluralnameof BullKelp}. How about the Giant Kelp? 
+	{@drKelp}	Hmm. The {pluralnameof Urchin} consume 2g of {pluralnameof BullKelp}.  
+	            How does the Giant Kelp compare? 
 	$goto .argue.chooseFacts
 $endif
 
@@ -87,38 +99,51 @@ $endif
 $if ArgueIsFactSubmitted(Urchin.Eats.BullKelp)
 	$goto .argue.finalClaim
 $else
-	{@drKelp}	Ah, so the {pluralnameof Urchin} consume 2g of {pluralnameof GiantKelp}. How about the Bull Kelp? 
+	{@drKelp}	Hmm. The {pluralnameof Urchin} consume 2g of {pluralnameof GiantKelp}. 
+	How does the Bull Kelp compare? 
 	$goto .argue.chooseFacts
 $endif
 
 :: argue.unrelated
-{@drKelp}	Hmmm... I don't think this fact is relevant.
+{@drKelp}	Hmmm... I don't think this fact is relevant, Mija.
 $call ArgueRejectIncorrect()
 $goto .argue.chooseFacts
 
 :: argue.giveUp
-{@drKelp}	Ok, get back to me when you're ready.
+{@drKelp}	Okay, Sweetie. Get back to me when you're ready.
 
 :: argue.finalClaim
-{@drKelp} Which type of kelp will the Urchins eat less of?
+{@drKelp} So, which type of kelp will the Urchins eat less of?
 	$choice .argue.giantOrBull; Giant Kelp
 	$choice .argue.giantOrBull; Bull Kelp
-	$choice .argue.done; They are the same
+	$choice .argue.done; The rates are equal 
     $choice .argue.giveUp; Let me get back to you
 $choose branch
 
 :: argue.giantOrBull
-{@drKelp} Hmmm. Are you sure? I don't think your data supports that conculsion...
+{@drKelp} Are you sure, Olivia? I don't think your data supports that conclusion. 
 $goto .argue.finalClaim
 
 //DONE
 :: argue.done
 $call ArgueComplete()
-{@drKelp}	Huh, it actually looks like it doesn't matter. It seems like the rates are the same.
+{@drKelp}	Oh, interesting! Looks like the urchins eat both types of kelp at the same rate.
+            I can use either type at the urchin farm, and it won't make a difference! 
 $call CompleteJob()
 
 ::end
 @trigger	JobCompleted
 @cutscene
-{@drKelp}	Thanks for all your help! 
-{@guide}	$10. Excellent. One better than $9. Please choose another job for further remuneration.
+{@drKelp}	Thank you for your help, Olivia. 
+			Want to make dinner together, since you're here?
+$if LocationVisited("RS-4Z-StationInterior")
+    {@player}   Oh... um, I'm so sorry, Mom. I promised I'd stop by a potluck at the Arctic Station tonight. 
+$elseif LocationVisited("RS-3O-StationInterior")
+    {@player}   Oh... um, sorry Mom. I promised I'd stop by a potluck at the Bayou Station tonight. 
+$elseif LocationVisited("RS-2V-StationInterior")
+    {@player}   Oh... um, sorry Mom. I promised I'd stop by a potluck at the Coral Station tonight. 
+$else
+    {@player}   Oh... um, sorry Mom. I wanna try to get back out to one of the other stations tonight.
+$endif
+{@drKelp}   Aww, Sweetie. I love that you're getting out there. Mer would be proud. 
+			Travel safe. I'll save you the leftovers!  

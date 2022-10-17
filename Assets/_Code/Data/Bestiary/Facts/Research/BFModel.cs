@@ -3,7 +3,7 @@ using EasyAssetStreaming;
 
 namespace Aqua {
     [CreateAssetMenu(menuName = "Aqualab Content/Fact/Model")]
-    public class BFModel : BFBase // yes i know models aren't strictly facts in a scientific sense but this fits into our data model
+    public class BFModel : BFBase, IEditorOnlyData // yes i know models aren't strictly facts in a scientific sense but this fits into our data model
     {
         static private readonly TextId[] DefaultHeaders = new TextId[] {
             "fact.visualModel.header", "fact.descriptiveModel.header", "fact.predictionModel.header", "fact.interveneModel.header", ""
@@ -66,6 +66,16 @@ namespace Aqua {
         }
 
         #endregion // Behavior
+
+        #if UNITY_EDITOR
+
+        void IEditorOnlyData.ClearEditorOnlyData() {
+            ValidationUtils.StripDebugInfo(ref HeaderId);
+            ValidationUtils.StripDebugInfo(ref DescriptionId);
+            ValidationUtils.StripDebugInfo(ref SentenceId);
+        }
+
+        #endif // UNITY_EDITOR
     }
 
     public enum BFModelType : byte

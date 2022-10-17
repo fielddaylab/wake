@@ -18,22 +18,24 @@ MonoBehaviour:
     m_Source: jobs.arctic-isolated-instance.name
     m_HashValue: 3694663786
   m_PosterId:
-    m_HashValue: 2307648171
+    m_HashValue: 2312328002
   m_DescId:
     m_Source: jobs.arctic-isolated-instance.desc
     m_HashValue: 2169727516
   m_DescShortId:
     m_Source: 
     m_HashValue: 0
-  m_DescCompletedId:
-    m_Source: 
-    m_HashValue: 0
   m_ExperimentDifficulty: 3
-  m_ModelingDifficulty: 2
-  m_ArgumentationDifficulty: 1
+  m_ModelingDifficulty: 0
+  m_ArgumentationDifficulty: 5
   m_PrerequisiteJobs:
   - {fileID: 11400000, guid: 1139799787ac7b24b8828528fd942c6a, type: 2}
   m_PrereqConditions: 
+  m_PrereqBestiaryEntry:
+    m_HashValue: 0
+  m_PrereqScanId:
+    m_Source: 
+    m_HashValue: 0
   m_PrereqUpgrades:
   - m_HashValue: 3844482921
   - m_HashValue: 3515152947
@@ -119,8 +121,8 @@ MonoBehaviour:
     - m_Source: scanSponge
       m_HashValue: 3773120186
   - Id:
-      m_Source: checkCrab
-      m_HashValue: 3916079481
+      m_Source: checkPredator
+      m_HashValue: 752639504
     LabelId:
       m_Source: jobs.arctic-isolated-instance.task.checkCrab
       m_HashValue: 3396322836
@@ -131,37 +133,17 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: jobs:arctic-isolated-instance.checkedCrab
       Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: scanAll
-      m_HashValue: 1784740587
-  - Id:
-      m_Source: checkSeal
-      m_HashValue: 1850893958
-    LabelId:
-      m_Source: jobs.arctic-isolated-instance.task.checkSeal
-      m_HashValue: 1124964359
-    Steps:
-    - Type: 6
-      Target:
-        m_Source: 
-        m_HashValue: 0
-      ConditionString: jobs:arctic-isolated-instance.checkedSeal
-      Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: scanAll
-      m_HashValue: 1784740587
-  - Id:
-      m_Source: checkShark
-      m_HashValue: 2530837164
-    LabelId:
-      m_Source: jobs.arctic-isolated-instance.task.checkShark
-      m_HashValue: 3441970655
-    Steps:
     - Type: 6
       Target:
         m_Source: 
         m_HashValue: 0
       ConditionString: jobs:arctic-isolated-instance.checkedShark
+      Amount: 0
+    - Type: 6
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: jobs:arctic-isolated-instance.checkedSeal
       Amount: 0
     PrerequisiteTaskIds:
     - m_Source: scanAll
@@ -180,12 +162,8 @@ MonoBehaviour:
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
-    - m_Source: checkCrab
-      m_HashValue: 3916079481
-    - m_Source: checkSeal
-      m_HashValue: 1850893958
-    - m_Source: checkShark
-      m_HashValue: 2530837164
+    - m_Source: checkPredator
+      m_HashValue: 752639504
     - m_Source: determineStress
       m_HashValue: 2715794674
   - Id:
@@ -358,9 +336,9 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 0000
   - Id:
-      m_Source: checkCrab
-      m_HashValue: 3916079481
-    IdString: checkCrab
+      m_Source: checkPredator
+      m_HashValue: 752639504
+    IdString: checkPredator
     Index: 2
     LabelId:
       m_Source: jobs.arctic-isolated-instance.task.checkCrab
@@ -372,16 +350,12 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: jobs:arctic-isolated-instance.checkedCrab
       Amount: 0
-    PrerequisiteTaskIndices: 0100
-  - Id:
-      m_Source: checkSeal
-      m_HashValue: 1850893958
-    IdString: checkSeal
-    Index: 3
-    LabelId:
-      m_Source: jobs.arctic-isolated-instance.task.checkSeal
-      m_HashValue: 1124964359
-    Steps:
+    - Type: 6
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: jobs:arctic-isolated-instance.checkedShark
+      Amount: 0
     - Type: 6
       Target:
         m_Source: 
@@ -390,26 +364,10 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 0100
   - Id:
-      m_Source: checkShark
-      m_HashValue: 2530837164
-    IdString: checkShark
-    Index: 4
-    LabelId:
-      m_Source: jobs.arctic-isolated-instance.task.checkShark
-      m_HashValue: 3441970655
-    Steps:
-    - Type: 6
-      Target:
-        m_Source: 
-        m_HashValue: 0
-      ConditionString: jobs:arctic-isolated-instance.checkedShark
-      Amount: 0
-    PrerequisiteTaskIndices: 0100
-  - Id:
       m_Source: determineStress
       m_HashValue: 2715794674
     IdString: determineStress
-    Index: 5
+    Index: 3
     LabelId:
       m_Source: jobs.arctic-isolated-instance.task.determineStress
       m_HashValue: 4061817563
@@ -437,7 +395,7 @@ MonoBehaviour:
       m_Source: discussFindings
       m_HashValue: 1442478067
     IdString: discussFindings
-    Index: 6
+    Index: 4
     LabelId:
       m_Source: jobs.arctic-isolated-instance.task.discussFindings
       m_HashValue: 1161848886
@@ -448,12 +406,12 @@ MonoBehaviour:
         m_HashValue: 1631352399
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0200030004000500
+    PrerequisiteTaskIndices: 02000300
   - Id:
       m_Source: findPredator
       m_HashValue: 427489029
     IdString: findPredator
-    Index: 7
+    Index: 5
     LabelId:
       m_Source: jobs.arctic-isolated-instance.task.findPredator
       m_HashValue: 3034372890
@@ -464,12 +422,12 @@ MonoBehaviour:
         m_HashValue: 1470134365
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0600
+    PrerequisiteTaskIndices: 0400
   - Id:
       m_Source: experimentPredatorAll
       m_HashValue: 4140043772
     IdString: experimentPredatorAll
-    Index: 8
+    Index: 6
     LabelId:
       m_Source: jobs.arctic-isolated-instance.task.experimentPredatorAll
       m_HashValue: 3110267969
@@ -480,12 +438,12 @@ MonoBehaviour:
         m_HashValue: 497967974
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0700
+    PrerequisiteTaskIndices: 0500
   - Id:
       m_Source: countPopulations
       m_HashValue: 1973731072
     IdString: countPopulations
-    Index: 9
+    Index: 7
     LabelId:
       m_Source: jobs.arctic-isolated-instance.task.countPopulations
       m_HashValue: 3286445159
@@ -496,12 +454,12 @@ MonoBehaviour:
         m_HashValue: 3870369418
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0800
+    PrerequisiteTaskIndices: 0600
   - Id:
       m_Source: reportFinal
       m_HashValue: 3284742193
     IdString: reportFinal
-    Index: 10
+    Index: 8
     LabelId:
       m_Source: jobs.arctic-isolated-instance.task.reportFinal
       m_HashValue: 1351555032
@@ -512,9 +470,11 @@ MonoBehaviour:
         m_HashValue: 2507527403
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 09000500
+    PrerequisiteTaskIndices: 07000300
   m_CashReward: 100
   m_ExpReward: 10
+  m_JournalId:
+    m_HashValue: 465027518
   m_Scripting: {fileID: -1942890987711236906, guid: 124b6ee976f99274fa100ab046bbab73,
     type: 3}
   m_ExtraAssets: []

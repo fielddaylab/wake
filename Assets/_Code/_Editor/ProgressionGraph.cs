@@ -130,6 +130,11 @@ namespace Aqua.Editor {
                     AddRequirement(jobJSON, obj.StationId());
                 }
 
+                if (obj.Id() == "kelp-shop-welcome") {
+                    AddRequirement(jobJSON, "VisualModel");
+                    AddRequirement(jobJSON, "ROVTagger");
+                }
+
                 foreach(var prereq in obj.RequiredJobs()) {
                     AddRequirement(jobJSON, prereq.name);
                 }

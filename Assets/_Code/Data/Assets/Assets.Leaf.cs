@@ -21,7 +21,7 @@ namespace Aqua {
                 if (!Variant.TryConvertFrom(o, out Variant v)) {
                     Log.Error("[Assets.Leaf] Unable to convert return value of '{0}' on type '{1}' to Variant", propertyId, asset.GetType().Name);
                 }
-                Log.Msg("looked up {0}.{1}, got {2}", assetId, propertyId, v);
+                // Log.Msg("looked up {0}.{1}, got {2}", assetId, propertyId, v);
                 return v;
             }
 

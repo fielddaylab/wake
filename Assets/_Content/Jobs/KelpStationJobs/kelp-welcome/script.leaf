@@ -2,6 +2,23 @@
 
 // INTRO
 
+:: start
+@trigger    JobStarted
+@cutscene
+{fade-out black.60, 0.5, wait}
+{@}
+{style center}
+
+$call hotbar.portable->Unlock()
+$call hotbar.portable->Show()
+$call hotbar.portable->ForceOnTop()
+$call FocusHighlight->Focus(hotbar.portable)
+    Check your {item-name}AQOS Tablet{/item-name} to see all the info about your active job!
+    This tool also holds all the data you collect.
+$call FocusHighlight->Clear()
+
+{hide-dialog}{fade-in 0.5, wait}
+
 :: diveSite
 @trigger    SceneStart
 @when       scene:name == "RS-1C"
@@ -10,55 +27,40 @@
 @cutscene
 $branch common.ringPhone
 
-{@drKelp}  Before you head up to the surface, use your {item-name}Scanner{/item-name} to ID all the species down here.
+{@guide}Greetings, Olivia Ramirez! 
+{@player}Yikes! Who's there?
+{@guide}   I am {nameof @guide}, your onboard A.I.
+{@guide}   Did your job-giver not inform you that I would be uploaded to your sub?
+{@player}  Nah. Mom's been pretty distracted lately.  
+{@player}  Okay, {nameof @guide}. What do we do first? 
+{@guide}  Use your {item-name}Scanner{/item-name} to ID all the species here at the Forested Lagoon. 
 $call GiveUpgrade(ROVScanner, Silent)
 $call Player->SetTool(Scanner)
-{@drKelp}  The {item-name}Scanner{/item-name} searches for life forms automatically. 
-            Click the red targets to ID a new plant or animal species! 
-{@player}   I know Mom...
-{@drKelp}   If you need help, you can always ask {nameof @guide} for a reminder or a hint.
+{@guide}  The {item-name}Scanner{/item-name} searches for life forms automatically. 
+            Click the red targets to ID a new plant or animal species. 
+{hide-dialog}
 {wait 0.5}
 
 {fade-out black.60, 0.5, wait}
 {@}
 {style center}
 
+$call hotbar.guide->Unlock()
 $call hotbar.guide->Show()
 $call hotbar.guide->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.guide)
-    Talk to {nameof @guide} by clicking the {h}button with the jellyfish{/h} up here.
-    They can help if you get stuck!
-$call hotbar.guide->ResetSorting()
+    Talk to {nameof @guide} by clicking the {h}button with the eyes{/h} here.
+    He can help if you get stuck!
 $call FocusHighlight->Clear()
 
-$call hotbar.portable->Show()
-$call hotbar.portable->ForceOnTop()
-$call FocusHighlight->Focus(hotbar.portable)
-    One more tip! You can check your {item-name}AQOS Tablet{/item-name} to see all the info about your active job!
-$call hotbar.portable->ResetSorting()
-$call FocusHighlight->Clear()
 {hide-dialog}{fade-in 0.5, wait}
+$call hotbar.portable->ResetSorting()
+$call hotbar.guide->ResetSorting()
+
 $call GiveEntity(WarmKelpForest)
 $call UnlockSite("RS-1C")
 $call UnlockRoom("nav")
 $call UnlockRoom("exterior")
-
-// :: start
-// @trigger    SceneStart
-// @when       scene:name == "Helm"
-// @once
-// @cutscene
-
-// $branch common.ringPhone
-
-// $set    player:seen.drJules = true
-// {@drKelp}	Lovely! Thanks for the help.
-//             Drive your sub over to {h}site C{/h} to get started. 
-// {@player}	Ok, great! The sub, which is located...um... 
-// {@kevin}	Right outside the door. 
-// {@player}	Oh, yeah. I knew that. 
-//             (Thanks, Kevin.)
-
 
 :: helpGoOutsideToSubShip
 @trigger    RequestPartnerHelp
@@ -74,18 +76,6 @@ $endif
 
 // AT STATION
 
-:: navigation
-@trigger    SceneStart
-@when       scene:name == "KelpStation"
-@once
-@cutscene
-$branch common.ringPhone
-
-{@drKelp}	Head over to {h}site C{/h} and get to work!
-			
-
-// player does not have anything from site C yet, tell them to go there
-
 :: helpGoToSiteC 
 @trigger    RequestPartnerHelp
 @when 		scene:name == "KelpStation", !HasEntity(WarmKelpForest), !HasEntity(Urchin), !HasEntity(GiantKelp), !HasEntity(SeaOtter)
@@ -99,86 +89,135 @@ $branch common.ringPhone
 @when       scene:name == "RS-1C", !jobs:kelp-welcome.got.scans
 @cutscene
 {@player}   What now?  
-{@guide}    She said to document all the species down here.
-            I think we're missing some. Better keep looking. 
+{@guide}    According to your task list, you must scan all the species here at Site C.
+            You appear to be missing some. Better keep looking. 
 
 :: navigation.goBackUp
 @trigger    JobTasksUpdated
 @when       JobTaskActive(returnToShip)
-@once
+@boostScore 100
 @cutscene
+@once
 $set    jobs:kelp-welcome.got.scans = true
-$branch common.ringPhone
 
-{@drKelp}  Excellent work! Looks like you found everything you need for now.
-            Head up to the surface, to continue this job at the ship.
+{@guide}   You have scanned all of the local species. Your work is acceptable!
+{@player} Thanks, {nameof @guide}. 
+{@guide} You are most welcome, Olivia!
+{@player}  Hey {nameof @guide}... would you mind calling me O?
+{@guide}   Updating database|.|.|.|
+{@guide}   You are most welcome, O!
+{@guide}   Now head to the surface and board your new research vessel!
+$call Surface->Activate()
+
+:: navigation.goBackUp.savePatch
+@function   SceneStart
+@when       scene:name == "RS-1C", !jobs:kelp-welcome.got-scans, JobTaskActive(returnToShip)
+$set jobs:kelp-welcome.got.scans = true
+$call Surface->Activate()
 
 :: helpAtSiteCCompleted
 @trigger    RequestPartnerHelp
-@when 		scene:name == "RS-1C", jobs:kelp-welcome.got.scans
+@when 		scene:name == "RS-1C", JobTaskTop(returnToShip)
 @cutscene
-{@player} 	Um... V1ctor? Now what? 
-{@guide}    We're done here. Head back to the surface! 
+{@player}   Can you remind me what to do now, {nameof @guide}?  
+{@guide}    Certainly, O. Head to the surface and board your ship! 
 
 // BACK AT STATION
 
 :: navigation.return
 @trigger    SceneStart
 @when       scene:name == "KelpStation", jobs:kelp-welcome.got.scans
-@once
+@boostScore 100
 @cutscene
+@once
 
-$branch common.ringPhone
-{@drKelp}  Head back to the ship for your next task!
+{@player}My own ship!! I can't believe Mom trusted me with this.
+{@guide}Yes. And it includes several built-in safety features!
+{@player}Oh. Yeah, that tracks. 
+{@guide}Board your ship for your next task!
+{fade-out black.60, 0.5, wait}
+{@}
+{hide-dialog}
 
-$call hotbar.guide->Show()
-$call hotbar.guide->ForceOnTop()
-$call FocusHighlight->Focus(hotbar.guide)
-    Talk to {nameof @guide} by clicking the {h}button with the jellyfish{/h} up here.
-    They can help if you get stuck!
-$call hotbar.guide->ResetSorting()
+$call ship.map->ForceOnTop()
+$call schematic.button->ForceOnTop()
+$call FocusHighlight->Focus(schematic.button, 250, 250)
+    This is your ship's {h}schematic{/h}. 
 $call FocusHighlight->Clear()
+
+$call schematic.button->ForceClick()
+{hide-dialog}{wait 1}{style default}
+// $call HelmButton->ForceOnTop()
+$call FocusHighlight->Focus(HelmButton, 200, 200)
+    Click here to enter your {h}helm{/h}
+$call FocusHighlight->Clear()
+{hide-dialog}{fade-in 0.5, wait}
+$call schematic.button->ResetSorting()
+$call ship.map->ResetSorting()
+// $call HelmButton->ResetSorting()
+
 
 :: navigation.return.incomplete
 @trigger    SceneStart
 @when       scene:name == "KelpStation", JobTaskCompleted(gotoSiteC), !jobs:kelp-welcome.got.scans
 @cutscene
-$branch common.ringPhone
 
-{@player}   Is that it? 
-{@drKelp}  Oh dear. I'm afraid you missed something. 
-            Why don't you head back to {h}site C{/h} and try again?
+{@player}   Is that everything, {nameof @guide}? 
+{@guide}   Hmmm. It appears you missed something. 
+{@guide}    Head back to {h}site C{/h} and try again!
+
 
 :: helpReturnToShip
 @trigger    RequestPartnerHelp
 @when 		scene:name == "KelpStation", JobTaskActive(returnToShip)
+@boostScore 100
 @cutscene
 {@player} 	What now?
-{@guide}	We need to head back to the ship. 
+{@guide}	We need to head into the {h}helm{/h}. 
+$call ship.map->ForceOnTop()
+$call schematic.button->ForceOnTop()
+$call FocusHighlight->Focus(schematic.button, 250, 250)
+    Use the {h}schematic{/h} to navigate inside your ship.
+$call FocusHighlight->Clear()
+$call schematic.button->ResetSorting()
+$call ship.map->ResetSorting()
 
 // BACK AT SHIP
+
+:: atHelmNotFinishedWithExperiment
+@function   SceneStart
+@when       scene:name == "Helm", !JobTaskCompleted(runExperiment)
+$call WheelPrompt->Deactivate()
 
 :: atShip
 @trigger    SceneStart
 @when       scene:name == "Helm", JobTaskActive(runExperiment)
-@once
+@boostScore 100
 @cutscene
-$branch common.ringPhone
+@once
 
-{@drKelp}  Great! You scanned some life forms! 
-            Now I need you to find out how they interact.
-{@player}   Interact? What's that mean?
-{@guide}    It's a nice way of saying we need to find out which ones eat each other.
-{@player}   Yikes. Ok. How do we do that? 
-{@drKelp}  Your ship has a built-in {nameof Experimentation}!
+{@player} Wow. This ship... it's amazing.
+{@player} I wish Mer could see it. 
+{@guide} "Mer" does not compute.
+{@player} Oh... my big sister. She used to have a ship just like this.
+{@player}  Anyway, what now, {nameof @guide}?
+{@guide} Updating schematic... 
 {hide-dialog}
 
 $call UnlockRoom("Experimentation")
 $call GiveUpgrade(ObservationTank)
-$call FocusHighlight->Focus("exterior.experimentation", 200, 200)
-{wait 1}
+{wait 0.75}
+$call ship.map->ForceOnTop()
+$call schematic.button->ForceClick()
+{hide-dialog}{wait 1}{style default}
+// $call HelmButton->ForceOnTop()
+$call FocusHighlight->Focus(ExperimentationButton, 200, 200)
+    Click here to enter your {nameof Experimentation}.
+$call FocusHighlight->Clear()
+{hide-dialog}{fade-in 0.5, wait}
+$call ship.map->ResetSorting()
 
-{@drKelp}  Head over there to start your next task! 
+{@guide} Head to your {nameof Experimentation} to start your next task!
 $call FocusHighlight->Clear()
 $call AutoSaveNow()
 
@@ -186,28 +225,19 @@ $call AutoSaveNow()
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(runExperiment), scene:name != "ExperimentV2"
 @cutscene
-{@player} 	Now what?
-{@guide}	Let's head to the {nameof Experimentation}.
+{@player}   Can you help me find my way, {nameof @guide}?
+{@guide}    Certainly, O. Open your schematic in the upper left.
+{@guide}  Then head to your {nameof Experimentation}!
 
-:: firstExperiment
-@trigger    SceneStart
-@when       scene:name == "ExperimentV2", JobTaskActive(runExperiment)
-@once
-@cutscene
-$branch common.ringPhone
-
-{@drKelp}  What a lovely old tank! This ship really is ancient, isn't it.
-            Go ahead, take a closer look!
-            
 :: firstCaptureCircle
 @trigger    BehaviorCaptureChance
 @chatter
 @once
 
 $if local:factId == "Urchin.Eats.GiantKelp"
-    {@guide}    Whoa!| That urchin's eating something!
+    {@guide}    That urchin's eating something!
 $else
-    {@guide}    Whoa!| That sea otter's eating something!
+    {@guide}    That sea otter's eating something!
 $endif
 
 :: firstCaptureSuccess
@@ -217,8 +247,8 @@ $endif
 @boostScore 1000
 
 $if local:factId == "Urchin.Eats.GiantKelp"
-    {@guide}    Nice one! Looks like {pluralnameof Urchin} eat {pluralnameof GiantKelp}. 
-    {$guide}    Nice one! Looks like {pluralnameof SeaOtter} eat {pluralnameof Urchin}. 
+    {@guide}    You captured a new behavior! Looks like {pluralnameof Urchin} eat {pluralnameof GiantKelp}. 
+    {$guide}    You captured a new behavior! Looks like {pluralnameof SeaOtter} eat {pluralnameof Urchin}. 
 $endif
 {@guide}    That should be recorded in our {item-name}Bestiary{/item-name} now.
 
@@ -234,13 +264,11 @@ $endif
 :: helpFirstExperiment
 @trigger    RequestPartnerHelp
 @when 		scene:name == "ExperimentV2", !JobTaskCompleted(runExperiment)
-@boostScore -500
 @cutscene
 {@player}   Ok, now what? 
 $if ExperimentIsRunning()
-    {@guide}	Humans. So impatient. 
-                Watch the tank and click to record new behaviors.  
-                We need to find out how these species interact.
+    {@guide}	Watch the tank and click to record new behaviors.  
+                You need to find out how these species interact.
 $else
     {@guide}    You need to set up the tank. 
                 You'll need some {nameof SeaOtter}, some {nameof Urchin}, and some {nameof GiantKelp}.
@@ -253,13 +281,9 @@ $endif
 @cutscene
 @once
 
-$branch common.ringPhone
-{@drKelp}  Excellent work, {player-name}! 
-            Report back to the {m}research station{/m} at once, so we can discuss your findings.
-            // Head to your {map-name}Office{/map-name} and use your {h}Computer{/h} to send me your findings.
-            // There we'll discuss your findings using argumentation with the facts you've collected.
+{@guide}   Now return to the Helm and navigate your sub back to the {m}Research Station{/m}.
 
-$call   UnlockRoom("office")
+// $call   UnlockRoom("office")
 
 // REPORT BACK
 
@@ -267,71 +291,66 @@ $call   UnlockRoom("office")
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @cutscene
-{@player} 	What now?
-{@guide}	Let's report back to {nameof @drKelp}.
-$if global:nav.shipRoom != "office"
-	{@kevin}	We should head back to your Sub to return to the {map-name}research station{/map-name} where we got this job.
-$else
-	{@guide}	Report your findings with the {h}Computer{/h} in front of you.
+{@player} 	What now, {nameof @guide}?
+{@guide}	You need to report your findings. 
+$if !IsPlayerOnStation()
+	{@guide}	Use your sub to navigate to the Site C Research Station. 
+                Your mother will be waiting for you there!
 $endif
 
 :: helpReportBackInArgumentation
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack), scene:name == "Argumentation"
 @cutscene
-{@player} 	What now?
-{@guide}	Let's tell {nameof @drKelp} what we found out.
-
-// CATCH-ALL GUIDE TEXT
-
-:: catchGoToSiteC
-@trigger    RequestPartnerHelp
-@when 		JobTaskActive(gotoSiteC)
-@boostScore -5
-@cutscene
-{@guide}    Head to {h}site C{/h}.
+{@player} 	What now, {nameof @guide}? 
+{@guide}	Tell your mother what you found out!
 
 :: catchScanGiantKelp
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(scanGiantKelp)
 @boostScore -5
 @cutscene
-{@guide}    Make sure to scan all the organisms here. Have you looked at the Kelp yet?
+{@guide}    Make sure to scan all the organisms here. Have you looked at the kelp yet?
 
 :: catchScanUrchin
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(scanUrchin)
 @boostScore -5
 @cutscene
-{@guide}    Make sure to scan all the organisms here. Have you looked at the Urchins yet?
+{@guide}    Make sure to scan all the organisms here. Have you looked at the urchins yet?
 
 :: catchScanOtter
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(scanOtter)
 @boostScore -5
 @cutscene
-{@guide}    Make sure to scan all the organisms here. Have you looked at the Otters yet?
+{@guide}    Make sure to scan all the organisms here. Have you looked at the otters yet?
 
 :: catchReturnToShip
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(returnToShip)
 @boostScore -5
 @cutscene
-{@guide}    Time to head back to the ship!
+
+$if !IsPlayerOnShip()
+    {@guide}    Head to the surface and board your ship!
+$else 
+    {@guide}    Head to the {m}helm{/m} when you're ready to continue.
+$endif
 
 :: catchRunExperiment
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(runExperiment)
 @boostScore -5
 @cutscene
-{@guide}    Head to the Observation Tank to find what eats what.
+{@guide}    Head to the Observation Tank and run your experiment! 
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Talk to {nameof drKelp} in the Office.
+{@guide}    Report back to your mother and let her know what you learned!
 
 //ARGUMENTATION
 
@@ -346,10 +365,28 @@ $call ArgueLoad(welcomeArgue)
 			$call ArgueFactSlot(Urchin.Eats.GiantKelp)
 	$endif
 
-	$branch .argue.hello
+    $if JobTaskTop(reportBack)
+        $branch .argue.hello
+    $else
+        $branch .argue.later
+    $endif
+
+
+::argue.later
+{@drKelp}  Wow, that was quick! Are you sure you're ready?
+{@player}  Actually, I've still got a few things to do.
+// TODO: add a branch if player has not received V1ct0r help button yet
+{@drKelp}  Well, don't be afraid to ask if you need some help.
+{@drKelp}  I'll be here when you're ready. 
+	
 	
 ::argue.hello
-{@drKelp}    Thanks for your help out there, {player-name}! What did you find out?
+{@drKelp}  This is so exciting! Your first job! 
+           How are you feeling? Tired? Hungry?
+           I've got a recipe for cinnamon kelp rolls that I've been dying to try...
+{@player}  Maybe later, Mom.
+{@drKelp}  Ok, Mija. Let's see what behaviors you discovered about the species here at Site C! 
+         
 $goto .argue.chooseFacts
 
 ::argue.chooseFacts
@@ -369,7 +406,7 @@ $endif
 $if ArgueIsFactSubmitted(Urchin.Eats.GiantKelp)
 	$goto .argue.done
 $else
-	{@drKelp}    Got it. The {pluralnameof SeaOtter} eat {pluralnameof Urchin}. Did you learn anything about what the {pluralnameof Urchin} eat?
+	{@drKelp}    Looks good! The {pluralnameof SeaOtter} eat {pluralnameof Urchin}. Did you learn anything about what the {pluralnameof Urchin} eat?
 	$goto .argue.chooseFacts
 $endif
 
@@ -377,7 +414,7 @@ $endif
 $if ArgueIsFactSubmitted(SeaOtter.Eats.Urchin)
 	$goto .argue.done
 $else
-	{@drKelp}    So {pluralnameof Urchin} live on {pluralnameof GiantKelp}. Interesting! Did you learn anything about the {pluralnameof SeaOtter}?
+	{@drKelp}    Perfect! The {pluralnameof Urchin} eat {pluralnameof GiantKelp}. Did you learn anything about the {pluralnameof SeaOtter}?
 	$goto .argue.chooseFacts
 $endif
 
@@ -387,11 +424,11 @@ $call ArgueRejectIncorrect()
 $goto .argue.chooseFacts
 
 ::argue.giveUp
-{@drKelp}    OK get back to me when you're ready.
+{@drKelp}    Okay, Sweetie. Get back to me when you're ready.
 
 ::argue.done
 $call ArgueComplete()
-{@drKelp}    Really nice work! You just explained the basis of the kelp forest food web.
+{@drKelp}    Excellent work. You just explained the basis of the Forested Lagoon Food Web!
 $call CompleteJob()
 
 // DONE
@@ -399,10 +436,24 @@ $call CompleteJob()
 :: end
 @trigger    JobCompleted
 @cutscene
-{@drKelp}	Wonderful! Thank you for your help, {player-name}! 
-{@player}   Easy peasy. I was glad to help. 
-{@guide}    Ahem.
-{@player}   Oh. Uh, V1ctor helped too. A little. 
-{@drKelp}  Don't suppose you'd like another job?
-            I've got work available at other research sites.
-            You can find them on the {map-name}Job Board{/map-name}!
+@once
+
+{@drKelp}	I'm so thrilled, Mija. 
+{@drKelp}   With your help, we might actually be able to get the Kelp Refuge up and running!
+{@drKelp}   I can't think of a better way to honor your sister. 
+{@player}   Thanks, Mom.
+{@player}   What about the other science stations? Do they need help, too?
+{@drKelp}   Hmm. You mean in other ecosystems?
+{@drKelp}    I'm sure they would love your help, Mija.
+{@drKelp}    But for now, I want you closer to home. Just in case. 
+{@player}    In case of what? 
+{@drKelp}    Never mind, Sweetie. Let's get you set up with your next job! 
+             Talk to me to view your {map-name}Job Board{/map-name} whenever you're ready.
+
+$call hotbar.guide->Show()
+$call hotbar.portable->Show()
+$call UnlockSite("RS-1C")
+$call UnlockRoom("nav")
+$call UnlockRoom("exterior")
+$call UnlockRoom("Experimentation")
+$set jobs:kelp-welcome.got.scans = true // in case job was completed via debugging

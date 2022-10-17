@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2575028653241245363}
+  - component: {fileID: 1005881611059246822}
   m_Layer: 0
   m_Name: WhiteShrimp00
   m_TagString: Untagged
@@ -32,6 +33,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1005881611059246822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5186842557389709772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 0
+  DestroyGameObject: 0
 --- !u!1001 &2213431433236821796
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -47,17 +62,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 7f99b8d6d859649f390cdb723ad1ec92,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.32
+      value: 0.608032
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7f99b8d6d859649f390cdb723ad1ec92,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.32
+      value: 0.608032
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7f99b8d6d859649f390cdb723ad1ec92,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.32
+      value: 0.608032
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7f99b8d6d859649f390cdb723ad1ec92,
         type: 3}
@@ -155,6 +170,11 @@ PrefabInstance:
       propertyPath: CritterId.m_Source
       value: WhiteShrimp
       objectReference: {fileID: 0}
+    - target: {fileID: 3219354949484214776, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: CritterId.m_HashValue
+      value: 3187223953
+      objectReference: {fileID: 0}
     - target: {fileID: 3764296598843751388, guid: d43f84959769055489a36095d9d2631d,
         type: 3}
       propertyPath: m_Radius
@@ -169,6 +189,11 @@ PrefabInstance:
         type: 3}
       propertyPath: ScanId.m_Source
       value: bestiary.whiteShrimp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3764296600150654372, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: ScanId.m_HashValue
+      value: 3840552004
       objectReference: {fileID: 0}
     - target: {fileID: 3764296600150654374, guid: d43f84959769055489a36095d9d2631d,
         type: 3}

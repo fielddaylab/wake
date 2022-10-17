@@ -8,7 +8,7 @@
       "url": "https://package.openupm.com"
     },
     "com.beauprime.beaupools": {
-      "version": "0.2.1",
+      "version": "0.2.2",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -36,33 +36,84 @@
       "url": "https://package.openupm.com"
     },
     "com.beauprime.beauutil": {
-      "version": "0.7.5",
+      "version": "0.7.14",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://package.openupm.com"
     },
     "com.beauprime.leaf": {
-      "version": "0.3.3",
+      "version": "0.3.8",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.beauprime.beauutil": "0.7.4",
+        "com.beauprime.beauutil": "0.7.12",
         "com.beauprime.beauroutine": "0.11.1"
       },
       "url": "https://package.openupm.com"
     },
     "com.fieldday.opengamedata-unity": {
-      "version": "file:../Submodules/opengamedata-unity/Assets/FieldDay",
+      "version": "0.1.5",
       "depth": 0,
-      "source": "local",
-      "dependencies": {}
+      "source": "registry",
+      "dependencies": {
+        "com.beauprime.beaudata": "0.3.1"
+      },
+      "url": "https://package.openupm.com"
+    },
+    "com.unity.2d.animation": {
+      "version": "3.2.14",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.2d.common": "2.1.0",
+        "com.unity.mathematics": "1.1.0",
+        "com.unity.2d.sprite": "1.0.0",
+        "com.unity.modules.animation": "1.0.0",
+        "com.unity.modules.uielements": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.2d.common": {
+      "version": "2.1.0",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.2d.sprite": "1.0.0",
+        "com.unity.modules.uielements": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.2d.psdimporter": {
+      "version": "2.1.10",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.2d.common": "2.1.0",
+        "com.unity.2d.animation": "3.2.14",
+        "com.unity.2d.sprite": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
       "source": "builtin",
       "dependencies": {}
+    },
+    "com.unity.assetbundlebrowser": {
+      "version": "1.7.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.build-report-inspector": {
+      "version": "0.2.2-preview",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
     },
     "com.unity.editorcoroutines": {
       "version": "1.0.0",
@@ -81,6 +132,13 @@
     "com.unity.ide.vscode": {
       "version": "1.2.5",
       "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.mathematics": {
+      "version": "1.1.0",
+      "depth": 2,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
@@ -165,6 +223,13 @@
       "source": "registry",
       "dependencies": {},
       "url": "https://registry.npmjs.org"
+    },
+    "com.whinarn.unitymeshsimplifier": {
+      "version": "3.1.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://package.openupm.com"
     },
     "io.tinu.asepriteimporter": {
       "version": "file:../Submodules/unity-aesprite-importer",
@@ -254,6 +319,15 @@
       "depth": 0,
       "source": "builtin",
       "dependencies": {}
+    },
+    "com.unity.modules.uielements": {
+      "version": "1.0.0",
+      "depth": 2,
+      "source": "builtin",
+      "dependencies": {
+        "com.unity.modules.imgui": "1.0.0",
+        "com.unity.modules.jsonserialize": "1.0.0"
+      }
     },
     "com.unity.modules.umbra": {
       "version": "1.0.0",

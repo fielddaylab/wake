@@ -1,7 +1,10 @@
 using System;
 using Aqua.Scripting;
 using BeauUtil;
+using BeauUtil.Debugger;
+using Leaf.Runtime;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Aqua.Character
 {
@@ -37,6 +40,18 @@ namespace Aqua.Character
         public virtual void TeleportTo(Vector3 inPosition, FacingId inFacing = FacingId.Invalid)
         {
             m_Transform.position = inPosition;
+        }
+
+        [LeafMember("TeleportTo"), Preserve]
+        private void LeafTeleportTo(StringHash32 inObjectId)
+        {
+            Services.Script.TryGetScriptObjectById(inObjectId, out ScriptObject obj);
+            var location = obj.GetComponent<SpawnLocation>();
+            if (location != null) {
+                TeleportTo(location);
+            } else {
+                TeleportTo(obj.transform);
+            }
         }
     }
 }

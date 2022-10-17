@@ -1,23 +1,25 @@
-:: basePath job.alt-energy
+# basePath job.alt-energy
 
 // INTRO
 
 :: start
 @trigger    JobStarted
 @cutscene
-{@guide} We'll need to make a visual model will show us how energy flows through the ecosystem. 
-$if HasEntity(RedGorgonian), HasEntity(Detritus), HasEntity(Siphonophore), HasEntity(VentStar), HasEntity(Methanogen), HasEntity(Methane)
+{@profBayou} We need to learn more about the ecosystem down at {h}Site N{/h}.
+            No sunlight reaches there. Something else must be keeping the organisms alive. 
+            Ollie, I'd like you to create a visual model to show how energy flows through the ecosystem. 
+$if HasEntity(Detritus), HasEntity(VentStar), HasEntity(Methanogen), HasEntity(Methane)
     //Has all entities from Site N
-    $if HasFact(RedGorgonian.Eats.Detritus), HasFact(Siphonophore.Eats.Detritus), HasFact(VentStar.Eats.Detritus), HasFact(Methanogen.Eats.Methane)
+    $if HasFact(VentStar.Eats.Detritus), HasFact(Methanogen.Eats.H_Gas)
         //Has all eat rules
-        {@guide}    We should be able to head right over to the {h}Modeling Lab{/h}.
+        {@profBayou}  Using the data you've already gathered data from Site N, so you can head straight to your {h}Modeling Lab{/h}.
     $else
         //Missing some eat rules
-        {@guide}    But first, we'll need to do some experiments to see how these organisms relate to one another.
+        {@guide}    First, you'll need to do some experiments to see how these organisms relate to one another.
     $endif  
 $else
     //Missing some entities from Site N
-    {@guide}    But first, we'll need to finish scanning all the critters at {h}Site N{/h}.
+    {@guide}    You'll need to finish scanning all the critters at {h}Site N{/h} to create a comprehensive model.
 $endif
 
 
@@ -26,7 +28,11 @@ $endif
 @when    JobTaskActive(reportBack)
 @once
 @cutscene
-{@guide} Hmm. It seems as though this ecosystem might be powered by more than one source of energy. Talk to {nameof profHarper} and maybe you can figure it out.
+{@player} Wow. This is amazing, {nameof @guide}!
+{@player} It looks like this ecosystem has more than one source of power.
+{@guide}  Yes. And so much wonderful data!
+{@player} I never would've guessed there could be so much energy in all that darkness.
+          Can't wait to tell {nameof @profBayou}!
 
 // CATCH-ALL GUIDE TEXT
 
@@ -36,32 +42,53 @@ $endif
 @boostScore -5
 @cutscene
 $if scene:name == "RS-3N"
-    {@guide} Seems like we're still missing some critters here. Make sure you're using that {item}Flashlight{/item}!
+    {@player} What now, {nameof @guide}?
+    {@guide} You are still missing some organisms. Make sure you're using your {item}Flashlight{/item}!
 $else
-    {@guide} We still need to scan some of the critters at {h}Site N{/h}.
-             Let's head back down there through {h}Site O{/h}.
+    {@player} What now, {nameof @guide}?
+    {@guide} You still need to scan some organisms at {h}Site N{/h}. 
+             You'll need to head down there, from the deepest part of {h}Site O{/h}. 
 $endif
 
 :: catchGoObservation
 @trigger    RequestPartnerHelp
-@when 		JobTaskActive(wormEat)
-@boostScore -5
+@when 		JobTaskActive(wormEat), scene:name != "ExperimentV2"
 @cutscene
-{@guide}     Use the {h}observation tank{/h} to determine the relationships between organisms from Site N.
+{@player}   What should I do next, {nameof @guide}?
+{@guide}    Use your {h}Observation Tank{/h} to determine the relationships between the organisms from Site N.
+
+:: helpwExp
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(wormEat), scene:name == "ExperimentV2"
+{@player}   Hmmm, any advice {nameof @guide}?
+{@guide}    Our objective is to find the {h}producers{/h} for this ecosystem.
+            That means we want to discover what what organisms are {h}eaten by nothing else{/h}
 
 :: catchAtSiteNScan
 @trigger    RequestPartnerHelp
-@when 		JobTaskActive(getModel)
-@boostScore -5
+@when 		JobTaskActive(getModel), scene:name != "Modeling"
 @cutscene
-{@guide}    I think it's time to lay out all these facts as a visual model.
+{@player} What should I do now? 
+{@guide}  You need to use the facts you've gathered to create a {h}visual model{/h}!
+
+:: helpwMod
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(getModel), scene:name == "Modeling", modeling:phase == "visual"
+@cutscene
+{@player}   {nameof @guide},| I think I'm stuck.
+{@guide}    If you've already imported your data, we may need to return to the {m}Experiment Lab{/m} in order to collect more data for {!}missing behaviors{/!}
+            If you are {!}missing organisms{/!} we may need to return to the {h}dive site{/h} in order to find all missing organisms for our model
+
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		
 @boostScore -10
 @cutscene
-{@guide}    Go explain to {nameof profHarper} what the sources of energy are for this ecosystem.
+
+{@player} What now, {nameof @guide}?
+{@guide}  You have uncovered the energy sources for the Site N ecosystem.
+          Return to the station and share your findings with {nameof profBayou}! 
 
 
 // ARGUMENTATION
@@ -69,27 +96,33 @@ $endif
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(bayouAltEnergy)
 @cutscene
-$goto .argue.firstQuestion
 
-::  argue.firstQuestion
-{@profHarper} Where is energy in {h}Site N{/h} even coming from?
+{@profBayou} {nameof @player}! Are you here to solve the mystery for us? 
+{@bayouSci} I gotta admit, I'm dyin' to hear this one, too.
+            Where is all that energy at {h}Site N{/h} even coming from?
+$goto .argue.selectClaim
+
+:: argue.selectClaim
+@cutscene
+
 $if !ArgueIsComplete(bayouAltEnergy_Branch3)
-    $choice .argue.1_Methane; It's the methane from the vents
-    $choice .argue.2_Detritus; It's the falling detritus
-    $choice .argue.3_Heat; It's the heat from the vents
-    $choice .argue.giveUp; Let me get back to you.
+    $choice .argue.1_Methane; It's the methane from the vents.
+    $choice .argue.2_Detritus; It's the falling detritus.
+    $choice .argue.4_Both; It's the methane AND detritus: it depends on the species.
+    $choice .argue.3_Heat; It's the heat from the vents.
     $choose branch
 $else
-    $choice .argue.1_Methane; It's the methane from the vents
-    $choice .argue.2_Detritus; It's the falling detritus
-    $choice .argue.giveUp; Let me get back to you.
+    $choice .argue.1_Methane; It's the methane from the vents.
+    $choice .argue.2_Detritus; It's the falling detritus.
+    $choice .argue.4_Both; Both: it depends on the species.
     $choose branch
 $endif
 
 //Branch 1
 :: argue.1_Methane
 $call ArgueLoad(bayouAltEnergy_Branch1)
-{@profHarper} Can you show me your Visual Model? I'd like to see what consumes Methane.
+{@profBayou} Wow... that's amazing! Can you show me your Visual Model, Ollie? 
+             I'd like to see what species at Site N consume Methane.
 $goto .argue.1_Methane_ChooseFacts
 
 :: argue.1_Methane_ChooseFacts
@@ -104,19 +137,20 @@ $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.1_Methane_Unrelated
-{@profHarper}   That doesn't look like the right model.
+{@profBayou}   That's not the right model, Ms. Ramirez. 
 $call ArgueRejectIncorrect()
 $goto .argue.1_Methane_ChooseFacts
 
 :: argue.1_Methane_BranchEnd
-{@profHarper} Oh, interesting! Based on this model, it looks like it's not just Methane.
+{@profBayou} Hmmm. Based on this model, it looks Methane isn't the only energy source. 
 $call ArgueComplete()
 $goto .argue.done
 
 //Branch 2
 :: argue.2_Detritus
 $call ArgueLoad(bayouAltEnergy_Branch2)
-{@profHarper} Can you show me your Visual Model? I'd like to see what eats Detritus.
+{@profBayou} Wow... that's fascinating, Ollie!
+            Can you show me your Visual Model? I'd like to see what eats the Detritus.
 $goto .argue.2_Detritus_ChooseFacts
 
 :: argue.2_Detritus_ChooseFacts
@@ -131,18 +165,18 @@ $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.2_Detritus_Unrelated
-{@profHarper}   That doesn't look like the right model.
+{@profBayou}   That's not the right model, Ollie. 
 $call ArgueRejectIncorrect()
 $goto .argue.2_Detritus_ChooseFacts
 
 :: argue.2_Detritus_BranchEnd
-{@profHarper} Oh, interesting! Based on this model, it looks like it's not just Detritus.
+{@profBayou} Hmmm. Based on this model, it looks like Detritus isn't the only energy source.
 $call ArgueComplete()
 $goto .argue.done
 
 //Branch 3
 :: argue.3_Heat
-{@profHarper} What makes you think that?
+{@profBayou} Hmm. What evidence did you use to reach that conclusion? 
 $call ArgueLoad(bayouAltEnergy_Branch3)
 $goto .argue.3_Heat_ChooseFacts
 
@@ -158,19 +192,48 @@ $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
 :: argue.3_Heat_Unrelated
-{@profHarper}   That doesn't tell me how much heat is at {h}Site N{/h}.
+{@profBayou}   That doesn't tell me how much heat is at {h}Site N{/h}.
 $call ArgueRejectIncorrect()
 $goto .argue.3_Heat_ChooseFacts
 
 :: argue.3_Heat_BranchEnd
-{@profHarper} It does seem hotter than normal here, but heat doesn't directly support life in a food web.
-              Though it may help the organisms stay alive and unstressed.
+{@profBayou} Site N does seem to be hotter than expected... and heat does help organisms stay alive and unstressed. 
+             But heat doesn't directly support life.
+             Do you have another hypothesis, Ollie? 
 $call ArgueComplete()
-$goto .argue.firstQuestion
+$goto .argue.selectClaim
+
+//Branch 4
+:: argue.4_Both
+$call ArgueLoad(bayouAltEnergy_Branch4)
+{@profBayou} Wow... that's amazing! Can you show me your Visual Model, Ollie? 
+             I'd like to see what species at Site N consume Methane and Detritus.
+$goto .argue.4_Both_ChooseFacts
+
+:: argue.4_Both_ChooseFacts
+$if ArgueSetClaim(Claim, jobs.bayou-alt-energy.argue.claimLabel_4) 
+    $call ArgueFactSlot(N_ThermalVent.Model.Visual) 
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFact; Present facts from AQOS
+    $answer N_ThermalVent.Model.Visual, .argue.4_Both_BranchEnd
+    $answer *, .argue.4_Both_Unrelated
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.4_Both_Unrelated
+{@profBayou}   That's not the right model, Ms. Ramirez. 
+$call ArgueRejectIncorrect()
+$goto .argue.4_Both_ChooseFacts
+
+:: argue.4_Both_BranchEnd
+{@profBayou} You appear to be spot-on.
+$call ArgueComplete()
+$goto .argue.done
 
 //GiveUp
 :: argue.giveUp
-{@profHarper} OK. Get back to me when you're ready.
+{@profBayou} Okay, Ollie. Please report back when you're ready. 
 $call ArgueCancelClaim()
 $call ArgueUnload()
 
@@ -178,5 +241,10 @@ $call ArgueUnload()
 :: argue.done
 $call ArgueLoad(bayouAltEnergy)
 $call ArgueComplete()
-{@profHarper}   So both Methane and Detritus are primary sources of energy. Great work!
+{@profBayou}  Oh, this is fascinating! Both {h}Methane{/h} and {h}Detritus{/h} are primary sources of energy!
+{@bayouSci}   I gotta admit, that's a pretty cool finding, kid. Maybe even groundbreaking. 
+              I'll keep lookin' into it after the professor moves on outta here. You can help me, if you like. 
+{@player}     That would be amazing! Thanks, Silias. 
+{@profBayou}  Actually... I might end up sticking around the Bayou, too. This new ecosystem merits further study. 
+{@bayouSci}   Ah.... that's, um... that's somethin', Professor. Can't wait to keep workin' with you. 
 $call CompleteJob()

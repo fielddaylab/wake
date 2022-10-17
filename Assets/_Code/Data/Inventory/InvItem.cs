@@ -11,7 +11,7 @@ using UnityEditor;
 
 namespace Aqua {
     [CreateAssetMenu(menuName = "Aqualab Content/Inventory Item", fileName = "NewInvItem")]
-    public class InvItem : DBObject {
+    public class InvItem : DBObject, IEditorOnlyData {
         #region Inspector
 
         [SerializeField, AutoEnum] private InvItemCategory m_Category = InvItemCategory.Currency;
@@ -102,6 +102,12 @@ namespace Aqua {
 
                 serializedObject.ApplyModifiedProperties();
             }
+        }
+
+        void IEditorOnlyData.ClearEditorOnlyData() {
+            ValidationUtils.StripDebugInfo(ref m_NameTextId);
+            ValidationUtils.StripDebugInfo(ref m_PluralNameTextId);
+            ValidationUtils.StripDebugInfo(ref m_DescriptionTextId);
         }
 
         #endif // UNITY_EDITOR

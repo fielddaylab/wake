@@ -13,27 +13,29 @@ MonoBehaviour:
   m_Name: coral-hunting-lions
   m_EditorClassIdentifier: 
   m_Category: 0
-  m_Flags: 1
+  m_Flags: 0
   m_NameId:
     m_Source: jobs.coral-hunting-lions.name
     m_HashValue: 3813691779
   m_PosterId:
-    m_HashValue: 2064399686
+    m_HashValue: 2754821319
   m_DescId:
     m_Source: jobs.coral-hunting-lions.desc
     m_HashValue: 1678258417
   m_DescShortId:
     m_Source: 
     m_HashValue: 0
-  m_DescCompletedId:
-    m_Source: 
-    m_HashValue: 0
   m_ExperimentDifficulty: 5
   m_ModelingDifficulty: 5
-  m_ArgumentationDifficulty: 4
+  m_ArgumentationDifficulty: 5
   m_PrerequisiteJobs:
   - {fileID: 11400000, guid: a93bac5aba8ab424ab21ba4069eac2ea, type: 2}
-  m_PrereqConditions: HasScanned("RS-2S.spearedLionfish")
+  m_PrereqConditions: 
+  m_PrereqBestiaryEntry:
+    m_HashValue: 0
+  m_PrereqScanId:
+    m_Source: RS-2S.spearedLionfish
+    m_HashValue: 1639079616
   m_PrereqUpgrades:
   - m_HashValue: 1109988049
   - m_HashValue: 2866492762
@@ -42,6 +44,7 @@ MonoBehaviour:
   - m_HashValue: 3082617054
   - m_HashValue: 3544853027
   - m_HashValue: 313138705
+  - m_HashValue: 3844482921
   m_PrereqExp: 0
   m_StationId:
     m_HashValue: 707943182
@@ -201,8 +204,8 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: BlueTang.Eats.TurfAlgae.Stressed
-        m_HashValue: 3290904200
+        m_Source: BlueTang.Eats.TurfAlgae
+        m_HashValue: 115798069
       ConditionString: 
       Amount: 0
     - Type: 1
@@ -377,8 +380,8 @@ MonoBehaviour:
       Amount: 0
     - Type: 2
       Target:
-        m_Source: BlueTang.Eats.TurfAlgae.Stressed
-        m_HashValue: 3290904200
+        m_Source: BlueTang.Eats.TurfAlgae
+        m_HashValue: 115798069
       ConditionString: 
       Amount: 0
     - Type: 2
@@ -411,8 +414,8 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: StaghornCoral.Reproduce.Stressed
-        m_HashValue: 2550962424
+        m_Source: StaghornCoral.Reproduce
+        m_HashValue: 3964275685
       ConditionString: 
       Amount: 0
     - Type: 1
@@ -423,8 +426,8 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: BlueTang.Reproduce.Stressed
-        m_HashValue: 1892619327
+        m_Source: BlueTang.Reproduce
+        m_HashValue: 427368968
       ConditionString: 
       Amount: 0
     - Type: 1
@@ -696,8 +699,8 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: BlueTang.Eats.TurfAlgae.Stressed
-        m_HashValue: 3290904200
+        m_Source: BlueTang.Eats.TurfAlgae
+        m_HashValue: 115798069
       ConditionString: 
       Amount: 0
     - Type: 1
@@ -872,8 +875,8 @@ MonoBehaviour:
       Amount: 0
     - Type: 2
       Target:
-        m_Source: BlueTang.Eats.TurfAlgae.Stressed
-        m_HashValue: 3290904200
+        m_Source: BlueTang.Eats.TurfAlgae
+        m_HashValue: 115798069
       ConditionString: 
       Amount: 0
     - Type: 2
@@ -906,8 +909,8 @@ MonoBehaviour:
     Steps:
     - Type: 1
       Target:
-        m_Source: StaghornCoral.Reproduce.Stressed
-        m_HashValue: 2550962424
+        m_Source: StaghornCoral.Reproduce
+        m_HashValue: 3964275685
       ConditionString: 
       Amount: 0
     - Type: 1
@@ -918,8 +921,8 @@ MonoBehaviour:
       Amount: 0
     - Type: 1
       Target:
-        m_Source: BlueTang.Reproduce.Stressed
-        m_HashValue: 1892619327
+        m_Source: BlueTang.Reproduce
+        m_HashValue: 427368968
       ConditionString: 
       Amount: 0
     - Type: 1
@@ -1200,8 +1203,9 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 0700
   m_CashReward: 100
-  m_ExpReward: 30
+  m_ExpReward: 10
+  m_JournalId:
+    m_HashValue: 645849635
   m_Scripting: {fileID: -1942890987711236906, guid: 5fb1824027eae134d8b1ae839078a7f0,
     type: 3}
-  m_ExtraAssets:
-  - {fileID: 11400000, guid: 769491fee5ab1134d80262d82895ebe6, type: 2}
+  m_ExtraAssets: []

@@ -15,6 +15,8 @@ using UnityEngine.Scripting;
 
 namespace Aqua {
     static public class Script {
+        static public readonly StringHash32 WorldTableId = "world";
+
         static public ILeafPlugin Plugin {
             [MethodImpl(256)]
             get { return Services.Script; }
@@ -35,17 +37,19 @@ namespace Aqua {
             get { return StateUtil.IsLoading || Services.Pause.IsPaused(); }
         }
 
+        [LeafMember("ScriptBlocking"), Preserve]
         static public bool ShouldBlock() {
             return !Services.Valid || Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.UI.IsLetterboxed() || StateUtil.IsLoading;
         }
 
+        [LeafMember("ScriptBlockingIgnoreLetterbox"), Preserve]
         static public bool ShouldBlockIgnoreLetterbox() {
             return Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || StateUtil.IsLoading;
         }
 
         [MethodImpl(256)]
-        static public void OnSceneLoad(Action action) {
-            Services.State.OnLoad(action);
+        static public void OnSceneLoad(Action action, int priority = 0) {
+            Services.State.OnLoad(action, priority);
         }
 
         static public PlayerBody CurrentPlayer {
@@ -165,6 +169,26 @@ namespace Aqua {
             Services.Data?.SetVariable(id, value, null);
         }
 
+        [MethodImpl(256)]
+        static public Variant ReadWorldVariable(StringHash32 id, Variant defaultVal = default) {
+            return Services.Data.GetVariable(new TableKeyPair(WorldTableId, id), null, defaultVal);
+        }
+
+        [MethodImpl(256)]
+        static public Variant ReadWorldVariable(StringSlice id, Variant defaultVal = default) {
+            return Services.Data.GetVariable(new TableKeyPair(WorldTableId, id), null, defaultVal);
+        }
+
+        [MethodImpl(256)]
+        static public void WriteWorldVariable(StringHash32 id, Variant value) {
+            Services.Data?.SetVariable(new TableKeyPair(WorldTableId, id), value, null);
+        }
+
+        [MethodImpl(256)]
+        static public void WriteWorldVariable(StringSlice id, Variant value) {
+            Services.Data?.SetVariable(new TableKeyPair(WorldTableId, id), value, null);
+        }
+
         #endregion // Variables
 
         #region Inspection
@@ -217,6 +241,12 @@ namespace Aqua {
                         break;
                     }
 
+                case ScriptInteractAction.Talk: {
+                        thread = ScriptObject.Talk(inParams.Source.Object.Parent, inParams.Config.TargetId);
+                        yield return thread.Wait();
+                        break;
+                    }
+
                 case ScriptInteractAction.GoToPreviousScene: {
                         StateUtil.LoadPreviousSceneWithWipe(inParams.Config.TargetEntranceId, null, inParams.Config.LoadFlags);
                         break;
@@ -261,11 +291,19 @@ namespace Aqua {
         }
 
         // Added by Xander 06/03/22
-        [LeafMember]
+        [LeafMember, Preserve]
         static public bool IsPlayerOnShip() {
             StringHash32 currentMapId = MapDB.LookupCurrentMap();
-            return ((currentMapId == MapIds.Helm) || (currentMapId == MapIds.Modeling) || (currentMapId == MapIds.Experimentation) ||
-            (currentMapId == MapIds.JobBoard) || (currentMapId == MapIds.WorldMap));
+            return ((currentMapId == MapIds.Helm) || (currentMapId == MapIds.Modeling) || (currentMapId == MapIds.Experimentation)
+            || (currentMapId == MapIds.WorldMap)) || (currentMapId == MapIds.ModelingFoyer)
+            || (currentMapId == MapIds.Cabin);
+        }
+
+        [LeafMember, Preserve]
+        static public bool IsPlayerOnStation() {
+            StringHash32 currentMapId = MapDB.LookupCurrentMap();
+            return ((currentMapId == MapIds.RS_Kelp) || (currentMapId == MapIds.RS_Coral) ||
+             (currentMapId == MapIds.RS_Bayou) || (currentMapId == MapIds.RS_Arctic));
         }
     }
 }

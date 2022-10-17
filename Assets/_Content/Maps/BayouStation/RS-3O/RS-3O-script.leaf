@@ -7,13 +7,13 @@
 @boostScore 5
 @cutscene
 {@guide}    {!}Warning: High-pressure area detected.{/!}
-            You will be destroyed at those pressures. | Not me however. | I have several redundant backups of myself on the monstrum.
+            You will be destroyed at those pressures. | Not me however. | I have several redundant backups of myself on the meredith.
             If we could {h}upgrade our hull{/h}, it would allow us to dive deeper,| thus keeping you alive.
 
 :: CantDiveSubsequent1
 @trigger    InteractObject
 @when       objectId == "To3NDive", locked
-@repeat
+//@repeat
 @chatter
 {@guide}    {!}Warning: High-pressure area detected{/!}
 

@@ -37,7 +37,7 @@ namespace Aqua.Character
 
         int IBaked.Order { get { return 0; } }
 
-        bool IBaked.Bake(BakeFlags flags)
+        bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
             List<SpawnLocation> locations = new List<SpawnLocation>(8);
             SceneHelper.ActiveScene().Scene.GetAllComponents<SpawnLocation>(true, locations);

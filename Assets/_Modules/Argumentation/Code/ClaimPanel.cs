@@ -83,10 +83,11 @@ namespace Aqua.Argumentation {
             ColorPalette4 textPalette = m_DefaultTextPalette;
 
             if (!record.CharacterId.IsEmpty) {
-                characterPalette = Assets.Character(record.CharacterId).NamePaletteOverride() ?? characterPalette;
-                textPalette = Assets.Character(record.CharacterId).TextPaletteOverride() ?? textPalette;
+                var character = Assets.Character(record.CharacterId);
+                characterPalette = character.NamePaletteOverride() ?? characterPalette;
+                textPalette = character.TextPaletteOverride() ?? textPalette;
                 
-                m_SpeakerLabel.text = record.Name;
+                m_SpeakerLabel.text = Loc.Find(character.ShortNameId());
                 m_SpeakerContainer.gameObject.SetActive(true);
             } else {
                 m_SpeakerContainer.gameObject.SetActive(false);

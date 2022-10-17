@@ -151,9 +151,12 @@ namespace Aqua.Editor {
             instance.ReloadPackages();
 
             using(var writer = new BinaryWriter(File.Open(EditorDatabaseExportPath, FileMode.Create))) {
-                foreach (var text in instance.m_TextMap) {
-                    writer.Write(text.Key.HashValue);
-                    writer.Write(text.Value.Content ?? string.Empty);
+                List<TextRecord> records = new List<TextRecord>(instance.m_TextMap.Count);
+                records.AddRange(instance.m_TextMap.Values);
+                records.Sort((x, y) => x.Id.CompareTo(y.Id));
+                foreach (var text in records) {
+                    writer.Write(new StringHash32(text.Id).HashValue);
+                    writer.Write(text.Content ?? string.Empty);
                 }
             }
         }
@@ -381,7 +384,7 @@ namespace Aqua.Editor {
                     int bestMatchLength = 0;
                     for (int i = 0, totalPathCount = package.AllBasePaths.Count; i < totalPathCount; i++) {
                         basePath = package.AllBasePaths[i];
-                        if (basePath.Path.Length > bestMatchLength & inKey.StartsWith(basePath.Path, StringComparison.InvariantCulture)) {
+                        if (basePath.Path.Length > bestMatchLength && inKey.StartsWith(basePath.Path, StringComparison.InvariantCulture)) {
                             bestMatchLength = basePath.Path.Length;
                             bestMatchIdx = i;
                         }

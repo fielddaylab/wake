@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Aqua;
+using Aqua.Cameras;
 using BeauData;
 using BeauPools;
 using BeauRoutine;
@@ -41,6 +42,10 @@ namespace Aqua.JobBoard {
         [SerializeField] private float m_OffscreenPos = 0;
         [SerializeField] private float m_OnscreenPos = 0;
 
+        [Header("Camera")]
+        [SerializeField, InstanceOnly] private CameraPose m_DefaultPose = null;
+        [SerializeField, InstanceOnly] private CameraPose m_ZoomedPose = null;
+
         #endregion
 
         [NonSerialized] private JobButton m_SelectedJobButton = null;
@@ -48,6 +53,7 @@ namespace Aqua.JobBoard {
         [NonSerialized] private Dictionary<StringHash32, JobButton> m_JobButtonMap = new Dictionary<StringHash32, JobButton>(32);
         [NonSerialized] private bool m_HasLockedJobs = false;
         [NonSerialized] private bool m_HasAvailableJobs = false;
+        [NonSerialized] private CameraPose m_OverrideZoomPose = null;
 
         #region Unity Events
 
@@ -66,11 +72,20 @@ namespace Aqua.JobBoard {
 
         #endregion // Unity Events
 
+        public void OverrideZoomPose(ScriptObject obj) {
+            if (obj != null) {
+                m_OverrideZoomPose = obj.GetComponent<CameraPose>();
+            } else {
+                m_OverrideZoomPose = null;
+            }
+        }
+
         #region Handlers
 
         private void OnButtonSelected(JobButton inJobButton) {
             m_SelectedJobButton = inJobButton;
             m_Info.Populate(inJobButton.Job, inJobButton.Status);
+            m_JobToggle.allowSwitchOff = false;
         }
 
         private void OnJobAction() {
@@ -263,11 +278,25 @@ namespace Aqua.JobBoard {
 
         #endregion // Job Buttons
 
+        #region Camera
+
+        private void MoveCameraToZoom() {
+            CameraPose pose = m_OverrideZoomPose != null ? m_OverrideZoomPose : m_ZoomedPose;
+            Services.Camera.MoveToPose(pose, 0.5f, Curve.Smooth, Cameras.CameraPoseProperties.All);
+        }
+
+        private void MoveCameraToDefault() {
+            Services.Camera.MoveToPose(m_DefaultPose, 0.5f, Curve.Smooth, Cameras.CameraPoseProperties.All);
+        }
+
+        #endregion // Camera
+
         #region BasePanel
 
         protected override void OnShow(bool inbInstant) {
             base.OnShow(inbInstant);
 
+            m_JobToggle.allowSwitchOff = true;
             AllocateButtons();
             UpdateButtonStatuses();
             OrderButtons();
@@ -276,8 +305,8 @@ namespace Aqua.JobBoard {
             m_Info.Clear();
         }
 
-        protected override void OnHideComplete(bool _) {
-            base.OnHideComplete(_);
+        protected override void OnHideComplete(bool instant) {
+            base.OnHideComplete(instant);
 
             m_ButtonPool.Reset();
             m_HeaderPool.Reset();
@@ -297,13 +326,17 @@ namespace Aqua.JobBoard {
         }
 
         protected override IEnumerator TransitionToHide() {
-            yield return Root.AnchorPosTo(m_OffscreenPos, m_TweenOffAnim, Axis.Y);
+            yield return Routine.Combine(
+                Root.AnchorPosTo(m_OffscreenPos, m_TweenOffAnim, Axis.Y),
+                Routine.Delay(MoveCameraToDefault, m_TweenOffAnim.Time * 0.8f)
+            );
             CanvasGroup.Hide();
         }
 
         protected override IEnumerator TransitionToShow() {
             CanvasGroup.Show();
-            yield return Root.AnchorPosTo(m_OnscreenPos, m_TweenOnAnim, Axis.Y);
+            MoveCameraToZoom();
+            yield return Root.AnchorPosTo(m_OnscreenPos, m_TweenOnAnim, Axis.Y).DelayBy(0.2f);
         }
 
         #endregion // BasePanel

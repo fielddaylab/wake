@@ -34,7 +34,7 @@ namespace Aqua
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.Consume, BFShapeId.Behavior, BFFlags.IsBehavior, BFDiscoveredFlags.All, Compare);
+            BFType.DefineAttributes(BFTypeId.Consume, BFShapeId.Behavior, BFFlags.IsBehavior | BFFlags.HasRate, BFDiscoveredFlags.All, Compare);
             BFType.DefineMethods(BFTypeId.Consume, null, GenerateDetails, GenerateFragments, null, (f) => ((BFConsume) f).Property);
             BFType.DefineEditor(BFTypeId.Consume, DefaultIcon, BFMode.Player);
         }
@@ -48,12 +48,12 @@ namespace Aqua
             yield return BFFragment.CreateLocVerb(bIsLight ? ReduceVerb : ConsumeVerb);
             if (!bIsLight)
             {
-                yield return BFFragment.CreateAmount(BestiaryUtils.FormatProperty(fact.Amount, fact.Property));
+                yield return BFFragment.CreateAmount(BestiaryUtils.FormatPropertyAdjust(fact.Amount, fact.Property));
             }
-            yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).LabelId());
+            yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).ShortLabelId());
             if (bIsLight)
             {
-                yield return BFFragment.CreateAmount(BestiaryUtils.FormatProperty(fact.Amount, fact.Property));
+                yield return BFFragment.CreateAmount(BestiaryUtils.FormatPropertyAdjust(fact.Amount, fact.Property));
             }
         }
 
@@ -69,11 +69,11 @@ namespace Aqua
 
             if (fact.OnlyWhenStressed)
             {
-                details.Description = Loc.Format(bIsLight ? ReduceSentenceStressed : ConsumeSentenceStressed, inFact.Parent.CommonName(), BestiaryUtils.FormatProperty(fact.Amount, fact.Property), property.LabelId());
+                details.Description = Loc.Format(bIsLight ? ReduceSentenceStressed : ConsumeSentenceStressed, inFact.Parent.CommonName(), BestiaryUtils.FormatPropertyAdjust(fact.Amount, fact.Property), property.LabelId());
             }
             else
             {
-                details.Description = Loc.Format(bIsLight ? ReduceSentence : ConsumeSentence, inFact.Parent.CommonName(), BestiaryUtils.FormatProperty(fact.Amount, fact.Property), property.LabelId());
+                details.Description = Loc.Format(bIsLight ? ReduceSentence : ConsumeSentence, inFact.Parent.CommonName(), BestiaryUtils.FormatPropertyAdjust(fact.Amount, fact.Property), property.LabelId());
             }
 
             return details;
@@ -104,7 +104,7 @@ namespace Aqua
             return consume != null && consume.Property == Property;
         }
 
-        public override bool Bake(BakeFlags flags)
+        public override bool Bake(BakeFlags flags, BakeContext context)
         {
             bool bChanged = false;
             if (OnlyWhenStressed)

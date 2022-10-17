@@ -8,6 +8,7 @@ namespace EasyAssetStreaming.Editor {
 
         private SerializedProperty m_PathProperty;
         private SerializedProperty m_MaterialProperty;
+        private SerializedProperty m_TessellationProperty;
         private SerializedProperty m_ColorProperty;
         private SerializedProperty m_VisibleProperty;
 
@@ -37,6 +38,7 @@ namespace EasyAssetStreaming.Editor {
         private void OnEnable() {
             m_PathProperty = serializedObject.FindProperty("m_Path");
             m_MaterialProperty = serializedObject.FindProperty("m_Material");
+            m_TessellationProperty = serializedObject.FindProperty("m_Tessellation");
             m_ColorProperty = serializedObject.FindProperty("m_Color");
             m_VisibleProperty = serializedObject.FindProperty("m_Visible");
 
@@ -56,6 +58,7 @@ namespace EasyAssetStreaming.Editor {
 
             EditorGUILayout.PropertyField(m_PathProperty);
             EditorGUILayout.PropertyField(m_MaterialProperty);
+            EditorGUILayout.PropertyField(m_TessellationProperty);
             EditorGUILayout.PropertyField(m_ColorProperty);
             EditorGUILayout.PropertyField(m_VisibleProperty);
 

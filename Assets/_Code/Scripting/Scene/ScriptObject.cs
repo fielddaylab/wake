@@ -10,17 +10,20 @@ using UnityEngine.Scripting;
 
 namespace Aqua
 {
+    [AddComponentMenu("Aqualab/Scripting/Script Object")]
     public sealed class ScriptObject : MonoBehaviour, IPoolAllocHandler, IPoolConstructHandler, IKeyValuePair<StringHash32, ScriptObject>, ILeafActor
     {
         #region Inspector
 
         [SerializeField] private SerializedHash32 m_Id = "";
+        [SerializeField] private bool m_IsPersistent = false;
+        [SerializeField] private bool m_StartDisabled = false;
 
         #endregion // Inspector
 
         [NonSerialized] private IScriptComponent[] m_ScriptComponents;
         [NonSerialized] private VariantTable m_Locals;
-        // [NonSerialized] private bool m_Pooled;
+        [NonSerialized] private bool m_Pooled;
 
         #region KeyValue
 
@@ -67,6 +70,12 @@ namespace Aqua
             RegisterScriptObject();
         }
 
+        private void Start()
+        {
+            if (m_StartDisabled)
+                gameObject.SetActive(false);
+        }
+
         private void OnDestroy()
         {
             DeregisterScriptObject();
@@ -85,6 +94,10 @@ namespace Aqua
 
                 for(int i = m_ScriptComponents.Length - 1; i >= 0; i--)
                     m_ScriptComponents[i].OnRegister(this);
+
+                for(int i = m_ScriptComponents.Length - 1; i >= 0; i--) {
+                    m_ScriptComponents[i].PostRegister();
+                }
             }
         }
 
@@ -114,7 +127,7 @@ namespace Aqua
 
         void IPoolConstructHandler.OnConstruct()
         {
-            // m_Pooled = true;
+            m_Pooled = true;
         }
 
         void IPoolConstructHandler.OnDestruct()
@@ -131,7 +144,50 @@ namespace Aqua
             }
         }
 
+        [ContextMenu("New Id")]
+        private void ResetId() {
+            m_Id = Guid.NewGuid().ToString();
+        }
+
         #endif // UNITY_EDITOR
+
+        /// <summary>
+        /// Returns the id to use for persisting a value for a ScriptObject.
+        /// </summary>
+        static public StringHash32 MapPersistenceId(ScriptObject inObject, string inKey = null)
+        {
+            var currentMap = Assets.Map(MapDB.LookupCurrentMap());
+            using(PooledStringBuilder psb = PooledStringBuilder.Create())
+            {
+                psb.Builder.Append(currentMap.name).Append('.').Append(inObject.m_Id.Source());
+                if (!string.IsNullOrEmpty(inKey))
+                {
+                    psb.Builder.Append('.').Append(inKey);
+                }
+                return new StringBuilderSlice(psb.Builder).Hash32();
+            }
+        }
+
+        /// <summary>
+        /// Returns the id to use for persisting a value for a ScriptObject.
+        /// </summary>
+        static public StringHash32 PersistenceId(ScriptObject inObject, string inKey = null)
+        {
+            if (!inObject.m_IsPersistent)
+            {
+                return MapPersistenceId(inObject, inKey);
+            }
+            
+            using(PooledStringBuilder psb = PooledStringBuilder.Create())
+            {
+                psb.Builder.Append(inObject.m_Id.Source());
+                if (!string.IsNullOrEmpty(inKey))
+                {
+                    psb.Builder.Append('.').Append(inKey);
+                }
+                return new StringBuilderSlice(psb.Builder).Hash32();
+            }
+        }
 
         static public ScriptThreadHandle Inspect(ScriptObject inObject)
         {
@@ -139,7 +195,19 @@ namespace Aqua
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("objectId", inObject.m_Id.Hash());
+                table.Set("objectGroupId", ScriptGroupId.GetGroup(inObject));
                 return Services.Script.TriggerResponse(GameTriggers.InspectObject, null, inObject, table);
+            }
+        }
+
+        static public ScriptThreadHandle Talk(ScriptObject inObject, StringHash32 inCharacterId)
+        {
+            Assert.NotNull(inObject);
+            using(var table = TempVarTable.Alloc())
+            {
+                table.Set("objectId", inObject.m_Id.Hash());
+                table.Set("objectGroupId", ScriptGroupId.GetGroup(inObject));
+                return Services.Script.TriggerResponse(GameTriggers.Talk, inCharacterId, inObject, table);
             }
         }
 
@@ -149,6 +217,7 @@ namespace Aqua
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("objectId", inObject.m_Id.Hash());
+                table.Set("objectGroupId", ScriptGroupId.GetGroup(inObject));
                 table.Set("locked", inbLocked);
                 table.Set("target", inTarget);
                 return Services.Script.TriggerResponse(GameTriggers.InteractObject, null, inObject, table);

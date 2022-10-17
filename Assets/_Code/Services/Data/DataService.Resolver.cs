@@ -7,6 +7,7 @@ using BeauUtil.Debugger;
 using Leaf.Runtime;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Aqua
 {
@@ -251,7 +252,7 @@ namespace Aqua
 
         static private Variant GetSceneName()
         {
-            return SceneHelper.ActiveScene().Name;
+            return Services.State.SceneName;
         }
 
         private Variant GetJobId()
@@ -314,6 +315,18 @@ namespace Aqua
                 }
 
                 return null;
+            }
+
+            [LeafMember("OrganismEntityCount"), UnityEngine.Scripting.Preserve]
+            static private int EntityOrganismCount()
+            {
+                return Save.Bestiary.GetEntityCount(BestiaryDescCategory.Critter);
+            }
+
+            [LeafMember("EcosystemEntityCount"), UnityEngine.Scripting.Preserve]
+            static private int EntityEcosystemCount()
+            {
+                return Save.Bestiary.GetEntityCount(BestiaryDescCategory.Environment);
             }
 
             [LeafMember("HasFact"), UnityEngine.Scripting.Preserve]
@@ -594,6 +607,27 @@ namespace Aqua
                 return Save.Inventory.WasScanned(inNodeId);
             }
 
+            [LeafMember("HasJournalEntry"), UnityEngine.Scripting.Preserve]
+            static private bool HasJournalEntry(StringHash32 inEntryId)
+            {
+                return Save.Inventory.HasJournalEntry(inEntryId);
+            }
+
+            [LeafMember("GiveJournalEntry"), UnityEngine.Scripting.Preserve]
+            static private IEnumerator GiveJournalEntry([BindThread] ScriptThread inThread, StringHash32 inEntryId, PopupMode inMode = PopupMode.Popup)
+            {
+                if (Save.Inventory.AddJournalEntry(inEntryId) && inMode != PopupMode.Silent)
+                {
+                    inThread.Dialog = null;
+
+                    if (Services.UI.IsSkippingCutscene())
+                        return null;
+
+                    return Services.UI.OpenJournalNewEntry();
+                }
+                return null;
+            }
+
             #endregion // Bestiary/Inventory
 
             #region Shop
@@ -711,6 +745,22 @@ namespace Aqua
                 }
                 
                 return Save.Jobs.MarkComplete(inJobId);
+            }
+
+            [LeafMember("JobIsAtCurrentStation"), UnityEngine.Scripting.Preserve]
+            static private bool JobIsAtCurrentStation(StringHash32 inJobId = default(StringHash32))
+            {
+                if (inJobId.IsEmpty)
+                {
+                    inJobId = Save.CurrentJobId;
+                    if (inJobId.IsEmpty)
+                    {
+                        return false;
+                    }
+                }
+
+                StringHash32 jobStation = Assets.Job(inJobId).StationId();
+                return jobStation.IsEmpty || jobStation == Save.Map.CurrentStationId();
             }
 
             #endregion // Jobs

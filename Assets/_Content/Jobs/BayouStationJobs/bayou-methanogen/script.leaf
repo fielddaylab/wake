@@ -1,0 +1,149 @@
+# basePath job.bayou-methanogen
+
+// INTRO
+
+:: start
+@trigger    JobStarted
+@cutscene
+
+// write an intro to your job
+{@profBayou}  Ollie, these {pluralnameof Methanogen} you discovered at Site N are incredible!  
+{@bayouSci}   Welp, that's an understatement if I ever heard one.
+              She's been gabbing on about them all day. Our dear professor is ob-sessed.
+{@profBayou}  I prefer the word "focused." Or possibly "engrossed."
+              Ollie, can you help me figure out how they're able to survive in such a hostile environment? 
+{@player}     Yes! I'd love to, Professor. 
+{@profBayou}  Excellent. I need you to determine their rates of consumption, reproduction, and water chemistry interaction.
+              I'd also like to know what stresses them, if anything.
+{@player}     I'm on it, Professor. I'll report back soon. 
+
+// HELP
+:: gotoExperiment
+@trigger RequestPartnerHelp
+@when !JobTaskTop(Report), scene:name != "ExperimentV2"
+@cutscene
+{@player} What should we do first, {nameof @guide}?
+{@guide}  Head to the {m}Experiment Lab{/m} to get started!
+
+:: MethanogenChatWithVictor
+@trigger JobTasksUpdated
+@when !JobTaskTop(Report), scene:name = "ExperimentV2"
+@cutscene
+@once 
+
+{@player}  Ahh! This is so exciting, {nameof @guide}!
+           My sister and I used to dream of learning about new species like this.
+{@guide}   Yes. And we'll get to collect so much fascinating data!!
+
+:: helpExperiment
+@trigger RequestPartnerHelp
+@when !JobTaskTop(Report)
+@cutscene
+{@player} So what's our next step, {nameof @guide}?
+{@guide}  You'll need to use all of our Tanks to obtain the facts listed in your {item}AQOS{/item}!
+
+:: helpReport
+@trigger RequestPartnerHelp
+@when JobTaskTop(Report)
+@cutscene
+{@player} Okay, {nameof @guide}. Do we have everything?
+{@guide}  Affirmative, O. It's time to report your findings to {nameof @profBayou}!
+
+// ARGUMENTATION
+:: argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(MethanoArg)
+@cutscene
+{@profBayou}  Well then, let's dive in.
+              How are the {pluralnameof Methanogen} able to thrive in such a hostile environment?
+$if ArgueIsComplete(MethanoTemp), !ArgueIsComplete(MethanoMeta)
+    $choice .argue.metabolize;  They metabolize methane.
+    $choose branch
+$elseif ArgueIsComplete(MethanoMeta), !ArgueIsComplete(MethanoTemp)
+    $choice .argue.immune;  They're immune to heat.
+    $choose branch
+$else
+    $choice .argue.immune;  They're immune to heat.
+    $choice .argue.metabolize;  They metabolize methane.
+    $choose branch
+$endif
+
+:: argue.immune
+$call ArgueLoad(MethanoTemp)
+{@profBayou}   Hmmm. Interesting. Can you show me their temperature tolerance ranges?
+$if ArgueSetClaim(Claim, jobs.bayou-methanogen.argue.claimLabel1) 
+    $call ArgueFactSlot(Methanogen.Temperature.Stressed) 
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.completeTemp 
+    $answer *, .argue.unrelatedImmune
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.metabolize
+$call ArgueLoad(MethanoMeta)
+{@profBayou}   Hmmm. It's true that they consume hydrogen...
+               But can they really metabolize enough of it to survive and reproduce?
+$if ArgueSetClaim(Claim, jobs.bayou-methanogen.argue.claimLabel2) 
+    $call ArgueFactSlot(Methanogen.Eats.H_Gas) 
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.completeMeta 
+    $answer *, .argue.unrelatedMetabolize
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.completeTemp
+$call ArgueComplete()
+$call ArgueUnload()
+$call ArgueClearFacts()
+$goto .aruge.swap
+
+:: argue.completeMeta
+$call ArgueComplete()
+$call ArgueUnload()
+$call ArgueClearFacts()
+$goto .aruge.swap
+
+:: aruge.swap
+$call ArgueUnload()
+$if !ArgueIsComplete(MethanoTemp)
+    $goto .argue.immune
+$elseif !ArgueIsComplete(MethanoMeta)
+    $goto .argue.metabolize
+$endif
+$goto .argue.complete
+
+:: argue.unrelatedImmune
+$if ArgueIsFactSubmitted(Methanogen.Light.Stressed) 
+    {@profBayou} This is their Light tolerance, Ms. Ramirez.  
+                I need to see their {h}Temperature{/h} tolerance.
+$elseif
+    {@profBayou}   This is their pH tolerance, Ms. Ramirez. 
+                We're looking for their {h}Temperature{/h} tolerance.
+$else
+    {@profBayou} That's admittedly fascinating, Ollie, but it's not useful here. 
+$endif
+$call ArgueRejectIncorrect()
+$goto .argue.immune
+
+:: argue.unrelatedMetabolize
+    {@profBayou} That's interesting, Ollie, but it doesn't answer my question.
+$call ArgueRejectIncorrect()
+$goto .argue.metabolize
+
+:: argue.giveUp
+{@profBayou} Okay, Ollie. Please get back to me when you're ready. 
+$call ArgueCancelClaim()
+$call ArgueUnload()
+
+// END
+:: argue.complete
+$call ArgueComplete(MethanoArg)
+{@profBayou} This is all so fascinating. Thank you for your help, O.
+             You really are a natural at this. 
+{@player}    Thanks, {nameof @profBayou}. I was happy to help! 
+
+$call CompleteJob()

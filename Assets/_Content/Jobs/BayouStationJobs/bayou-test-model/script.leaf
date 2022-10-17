@@ -1,4 +1,4 @@
-:: basePath job.test-model
+# basePath job.test-model
 
 // INTRO
 
@@ -7,7 +7,7 @@
 @cutscene
 
 // write an intro to your job
-{@profHarper}   You're testing the model.
+{@profBayou}   You're testing the model.
 
 // ARGUMENTATION
 
@@ -16,7 +16,7 @@
 // @when   !ArgueIsComplete(siteOIntervene)
 // @cutscene
 // $call ArgueLoad(siteOIntervene) 
-// {@profHarper} What should we do about the Oil rig in the reef?
+// {@profBayou} What should we do about the ERC Industries Rig in the reef?
 // $choice .argue.removeRig; We should remove the rig
 // $choice .argue.leaveRig; We should leave the rig
 // $choose branch
@@ -25,14 +25,14 @@
 // $if ArgueSetClaim(Claim, jobs.bayou-reef-decision.argue.claimLabel1)
 //     $call ArgueFactSlot(O_OilRig.turtleDangerNoReef.Model.Intervene) 
 // $endif
-// {@profHarper} What makes you say that?
+// {@profBayou} What makes you say that?
 // $branch argue.showClaim
 
 // :: argue.leaveRig
 // $if ArgueSetClaim(Claim, jobs.bayou-reef-decision.argue.claimLabel2) 
 //     $call ArgueFactSlot(O_OilRig.turtleDangerNoReef.Model.Intervene) 
 // $endif
-// {@profHarper} What makes you say that?
+// {@profBayou} What makes you say that?
 // $branch argue.showClaim
 
 // :: argue.showClaim
@@ -45,12 +45,12 @@
 
 // :: argue.unrelated
 // $call ArgueRejectIncorrect()
-// {@profHarper} Ok, that's interesting, but it's not answering my question.
+// {@profBayou} Ok, that's interesting, but it's not answering my question.
 // $call ArgueClearFacts()
 // $branch .argue.showClaim
 
 // :: argue.giveUp
-// {@profHarper} OK. Get back to me when you're ready.
+// {@profBayou} OK. Get back to me when you're ready.
 // $call ArgueClearFacts()
 // $call ArgueCancelClaim()
 
@@ -58,7 +58,7 @@
 
 // :: argue.complete
 // $call ArgueComplete()
-// {@profHarper}   Even without the reef, it seems like the populations would be similar. 
+// {@profBayou}   Even without the reef, it seems like the populations would be similar. 
 //                 It really shouldn't matter either way.
 
 // $call CompleteJob()

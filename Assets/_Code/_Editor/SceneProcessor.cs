@@ -28,15 +28,12 @@ namespace Aqua.Editor
             RemoveBootstrap(scene);
             RemoveDebug(scene);
             BakeScene(scene);
-            if (UnityEditorInternal.InternalEditorUtility.inBatchMode)
-            {
-                StripEditorInfo(scene);
-            }
+            StripEditorInfo(scene);
         }
 
         static private void RemoveBootstrap(Scene scene)
         {
-            if (scene.buildIndex > 0)
+            if (scene.buildIndex != 0)
             {
                 BootParams[] bootstraps = GameObject.FindObjectsOfType<BootParams>();
                 if (bootstraps.Length > 0)
@@ -59,7 +56,7 @@ namespace Aqua.Editor
             if (debug)
             {
                 Debug.LogFormat("[SceneProcessor] Removing debug service from scene '{0}'...", scene.name);
-                GameObject.DestroyImmediate(debug.gameObject);
+                Baking.Destroy(debug.gameObject);
             }
         }
 
@@ -74,18 +71,19 @@ namespace Aqua.Editor
                 {
                     foreach(var subscene in allSubscenes)
                     {
-                        string path = subscene.Scene.Path;
+                        SceneImportSettings importSettings = subscene;
                         GameObject.DestroyImmediate(subscene.gameObject);
-                        EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
-                        Scene unitySubScene = EditorSceneManager.GetSceneByPath(path);
+                        EditorSceneManager.OpenScene(importSettings.ScenePath, OpenSceneMode.Additive);
+                        Scene unitySubScene = EditorSceneManager.GetSceneByPath(importSettings.ScenePath);
                         foreach(var root in unitySubScene.GetRootGameObjects())
                         {
                             EditorSceneManager.MoveGameObjectToScene(root, scene);
+                            SceneImportSettings.TransformRoot(root, importSettings);
                         }
-                        // if (subscene.ImportLighting)
-                        // {
-                        //     LightUtils.CopySettings(unitySubScene, scene);
-                        // }
+                        if (importSettings.ImportLighting)
+                        {
+                            LightUtils.CopySettings(unitySubScene, scene);
+                        }
                         EditorSceneManager.CloseScene(unitySubScene, true);
                     }
                 }
@@ -96,7 +94,7 @@ namespace Aqua.Editor
         {
             using(Profiling.Time("baking objects"))
             {
-                Bake.Scene(scene, BakeFlags.Verbose);
+                Baking.BakeScene(scene);
             }
         }
 
@@ -111,11 +109,25 @@ namespace Aqua.Editor
                 {
                     foreach(var strippable in allStrippable)
                     {
-                        Debug.LogFormat("[SceneProcessor] ...stripping editor data from {0}", strippable.ToString());
+                        // Debug.LogFormat("[SceneProcessor] ...stripping editor data from {0}", strippable.ToString());
                         strippable.ClearEditorOnlyData();
                     }
                 }
             }
+        }
+    
+        [MenuItem("Aqualab/DEBUG/Bake Scene")]
+        static public void DEBUGBakeScene() {
+            if (EditorApplication.isPlaying)
+                return;
+
+            Scene scene = EditorSceneManager.GetActiveScene();
+            
+            LoadSubscenes(scene);
+            RemoveBootstrap(scene);
+            RemoveDebug(scene);
+            BakeScene(scene);
+            StripEditorInfo(scene);
         }
     }
 }

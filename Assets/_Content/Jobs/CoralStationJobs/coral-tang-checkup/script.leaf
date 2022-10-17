@@ -3,10 +3,43 @@
 :: start
 @trigger    JobStarted
 @cutscene
+
+{@profCoral} I've been worrying about those {nameof BlueTang}.
+			 They must be stressed. They're eating much less than your model would suggest.
+			 I wondered if you could collect data to improve the model's accuracy.
+{@player}	Sure, Professor. I'd love to help. 
+$set jobs:coral-tang-checkup.grantedData = false
+$if JobTaskCompleted(observeIck)
+	{@profCoral} I noticed that you already measured the stress ranges of the Blue Tang.
+				 I used your data to measure their eating and reproduction rates under stress. I'll send you the data. 
+	$branch .grantStressedData
+$elseif JobTaskTop(findStress)
+	{@profCoral} First, you'll need to obtain the stress ranges for the {nameof BlueTang}.
+                 I'd suggest heading to your {h}Stress Tank{/h}.
+$endif
+{@profCoral} Thank you, Ollie! Let me know what you find out. 
+
+:: switchToJob
+@trigger    JobSwitched
+@when		JobTaskCompleted(countIck), !jobs:coral-tang-checkup.grantedData
+@cutscene
 $branch common.ringPhone
-{@profCempaka}  According to the data collected by our reasearch probe, the {nameof BlueTang} seem to be more {!}stressed{/!} than in the model you submitted. We need collect more data to improve our model's accuracy.
-{@guide}        Well, the first thing we can do is see what stress ranges the {nameof BlueTang} can tolerate.
-                For that, we'll need to conduct some {map-name}Experiments{/map-name} with the {h}Stress Tank{/h}.
+{@profCoral}	Welcome back to the job! 
+			    I noticed that you submitted the stress ranges of the Blue Tang...
+				So I went ahead and measured their eating and reproduction rates when stressed. 
+				I'll send you the data now.
+$branch .grantStressedData
+
+:: grantStressedData
+$call UpgradeFact(Ick.Stresses.BlueTang)
+$call UpgradeFact(BlueTang.Eats.TurfAlgae.Stressed)
+$call UpgradeFact(BlueTang.Reproduce.Stressed)
+$call GiveFact(BlueTang.Eats.TurfAlgae.Stressed)
+$call GiveFact(BlueTang.Reproduce.Stressed)
+$call GiveFact(StaghornCoral.Reproduce)
+$call GiveFact(Ick.Reproduce)
+$set jobs:coral-tang-checkup.grantedData = true
+{@player} Awesome! 
 
 :: microHint
 @trigger	JobTasksUpdated
@@ -15,42 +48,40 @@ $branch common.ringPhone
 @cutscene
 $branch common.ringPhone
 
-{@profCempaka}	Forgive the intrusion, but your {nameof @guide} tells me that according to the stress ranges you've measured,
-				the environmental conditions at {h}Site S{/h} should be well within the Blue Tang's comfortable range. 
-{@guide}        So something else is stressing the tang?
-{@profCempaka}	There is something else which could be stressing the Blue Tang: {h}Microorganisms{/h}! 
-				I'm going to need you to go back to {h}Site S{/h} and scan for microorganisms.
+{@profCoral}	Forgive the intrusion, Ollie.
+			    I received some of your data from {nameof @guide}'s latest upload. 
+				According to the stress ranges you've measured, the environmental conditions at {h}Site S{/h} are well within the Blue Tang's comfortable range. 
+{@player}       So... something else is stressing the tang?
+				I wonder what it could be...
+{@profCoral}	I have an idea: {h}Microorganisms{/h}. 
+				I'd suggest returning to Site S and scanning for any microorganisms you might have missed. 
 
 :: scanIck
 @trigger	JobTaskCompleted
 @when		HasEntity(Ick)
 @once
 @cutscene
-{@guide}	This must be what's stressing the Tang!  We'd better get a population count.
+{@player}	This must be what's stressing the Tang!  
+			Hm... better get a population count. 
 
 :: countIck
 @trigger	JobTaskCompleted
 @when		JobTaskTop(observeIck)
 @once
 @cutscene
-{@guide}	This place is just crawling with {nameof Ick}. We've got to get back to the {item}Observation tank{/item} and see how this is affecting the Tang.
+{@player}	Ugh. This place is just crawling with {nameof Ick}. 
+{@guide} 	Yes. I'd suggest using your {item}Observation tank{/item} to see how the {nameof Ick} is affecting the Tang.
 
 :: measureIck
 @trigger	JobTaskCompleted
 @when		JobTaskTop(reviseModels)
 @once
 @cutscene
-{@guide}	Now that we know {nameof Ick} stresses {nameof BlueTang}, we can measure the reproduction and eating rates of the stressed Tang to improve our model.
-$branch common.ringPhone
-{@profCempaka} Sorry to intrude, after you measured the stress ranges of the Tang we measured their eating and reproduction rates when stressed. I'll send the data over now.
-$call UpgradeFact(Ick.Stresses.BlueTang)
-$call UpgradeFact(BlueTang.Eats.TurfAlgae.Stressed)
-$call UpgradeFact(BlueTang.Reproduce.Stressed)
-$call GiveFact(BlueTang.Eats.TurfAlgae.Stressed)
-$call GiveFact(BlueTang.Reproduce.Stressed)
-$call GiveFact(StaghornCoral.Reproduce)
-$call GiveFact(Ick.Reproduce)
-{@player} Well that's convenient!
+{@guide}	Adequate work, O!
+		    Now you know that {nameof Ick} stresses {nameof BlueTang}.
+			You can use the reproduction and eating rates of the stressed Tang to improve your model.
+			{nameof @profCoral} has sent us the relevant data!
+$branch .grantStressedData
 
 :: helpMeasure1
 @trigger    RequestPartnerHelp
@@ -91,7 +122,8 @@ $call GiveFact(Ick.Reproduce)
 @when		JobTaskTop(report)
 @once
 @cutscene
-{@guide}	This model seems much more aligned to the Professor's observations. Let's go report back with our new model.
+{@guide}	This model seems much more aligned with what we observed at Site S! 
+			Time to report back to {nameof @profCoral}.
 
 
 // CATCH-ALL GUIDE TEXT
@@ -101,20 +133,23 @@ $call GiveFact(Ick.Reproduce)
 @when 		JobTaskActive(findStress)
 @boostScore -5
 @cutscene
-{@guide}    We need to do some experiments on the {nameof BlueTang}.
+{@player} What now, {nameof @guide}?
+{@guide}   You need to do some experiments on the {nameof BlueTang}.
 
 :: catchFindMicro
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(findMicro)
 @boostScore -5
 @cutscene
-{@guide}    Go to {h}Site S{/h} and try to scan for microorganisms.
+{@player} What should I do now, {nameof @guide}?
+{@guide}    Go to {h}Site S{/h} and scan for microorganisms.
 
 :: catchCountIck
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(countIck)
 @boostScore -5
 @cutscene
+{@player} What's our next move, {nameof @guide}?
 {@guide}    Get a population count of the {nameof Ick} microorganism you just found.
 
 :: catchObserveIck
@@ -122,7 +157,8 @@ $call GiveFact(Ick.Reproduce)
 @when 		JobTaskActive(observeIck)
 @boostScore -5
 @cutscene
-{@guide}    Let's {map-name}Observe{/map-name} the interactions between {nameof BlueTang} and {nameof Ick}.
+{@player} What now, {nameof @guide}?
+{@guide}   You need to {map-name}Observe{/map-name} the interactions between {nameof BlueTang} and {nameof Ick}.
 
 // :: catchMeasureIck
 // @trigger    RequestPartnerHelp
@@ -130,14 +166,19 @@ $call GiveFact(Ick.Reproduce)
 // @boostScore -5
 // @cutscene
 // {@guide}    You'll need to measure {nameof BlueTang} and {nameof TurfAlgae} in {h}water that stresses{/h} the {nameof BlueTang}.
-// 			Place the {nameof BlueTang} in water that stresses it. We could try the {h}Warm Kelp Forest{/h}...
+// 			Place the {nameof BlueTang} in water that stresses it. We could try the {h}Forested Lagoon{/h}...
 
 :: catchReviseVisual
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reviseModels)
 @boostScore -5
 @cutscene
-{@guide}    Remake your visual model based on your new {nameof Ick} data.
+{@player} What should I do next, {nameof @guide}?
+$if HasFact(LionfishInvasion.Model.IckStressVisual)
+    {@guide}    Let's see if we can make a {item}more descriptive model{/item} based on our newly acquired data.
+$else
+    {@guide}    Remake your visual model based on your new {nameof Ick} data.
+$endif
 
 // :: catchImproveDescribe
 // @trigger    RequestPartnerHelp
@@ -151,7 +192,8 @@ $call GiveFact(Ick.Reproduce)
 @when 		JobTaskActive(report)
 @boostScore -5
 @cutscene
-{@guide}    Present your new model to {@profCempaka} in the Comms room.
+{@player} Okay, {nameof @guide}. What should I do next? 
+{@guide}    Present your new model to {nameof @profCoral} back at the {nameof RS-Coral}!
 
 // ARGUMENTATION
 
@@ -160,14 +202,16 @@ $call GiveFact(Ick.Reproduce)
 @when		!ArgueIsComplete(checkUpArgue)
 @cutscene
 $call ArgueLoad(checkUpArgue)
-{@profCempaka}	What's going on with the {nameof BlueTang}?
+{@profCoral}  Let's work through this, step by step.
+			  What's going on with the {nameof BlueTang}?
 $if JobTaskTop(report)
 	$choice .argue.transition; The Ick are making them stressed!
 $endif
 $choice .argue.giveUp; I'm still not sure...
 
 :: argue.transition
-{@profCempaka}	The Ick? Did adding Ick fix the model?
+{@profCoral}	I was afraid that might be the case.
+				Did adding {nameof Ick} fix your model?
 $if ArgueSetClaim(checkUpClaim, jobs.coral-check-up.argue.claimLabel)
 		$call ArgueFactSlot(LionfishInvasion.Model.IckStressDescribe)
 $endif
@@ -176,22 +220,40 @@ $branch .argue.presentFacts
 
 :: argue.presentFacts
 $choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.correctModel
-		$answer incorrect, .argue.incorrectModel
-$choice .argue.giveUp; Let me get back to you
+    $answer correct, .argue.correctModel
+    $answer incorrect, .argue.incorrectModel
+$choice .argue.giveUp; Let me get back to you.
 
 :: argue.correctModel
-{@profCempaka}	Well done! Now we understand more about the effects of Ick on Blue Tang.
+{@profCoral} Well done, Ollie.
+			 Now we understand more about the effects of Ick on Blue Tang.
+{@player}	 So... what's the solution?
+{@player}	How are we going to get rid of the Ick and save the Tang?
+{@profCoral} It's not that simple, Ollie. The problems at Site S are... to put it mildly... complex.
+		     But don't worry. I have a feeling the data you gathered will come in handy sooner than you think. 
 $branch .end
 
 :: argue.incorrectModel
-{@profCempaka}	Hmm. I don't see how this pertains to the issue at hand.
+$if ArgueIsFactSubmitted(LionfishInvasion.Model.IckStressVisual)
+{@profCoral}	Ah, I see you revised your {item}Visual{/item} model!
+                Where you able to build a more {h}Descriptive model{/h}?
+$elseif ArgueIsFactSubmitted(LionfishInvasion.Model.MuchAlgaeDescriptive)
+    Oh wait, isn't this your old model?
+	Did adding {nameof Ick} allow you to make a new model?   
+$elseif ArgueIsFactSubmitted(LionfishInvasion.Model.MuchAlgaeVisual)
+    Oh wait, isn't this your old model?
+	Did adding {nameof Ick} allow you to make a new model?   
+$else
+    Hmmmm | I'm not sure I see the connection to your model of the Ick and Algae...
+    Do you want to try something else?
+	Did your data on the {nameof Ick} allow you to make a new model?   
+$endif
 $call ArgueRejectIncorrect()
-{@profCempaka}	Why do you say the Ick are stressing the Tang?
+{@profCoral}	Why do you say the Ick are stressing the Tang?
 $branch .argue.presentFacts
 
 :: argue.giveUp
-{@profCempaka}	OK. Get back to me when you're ready.
+{@profCoral}	Okay, Ollie. Get back to me when you're ready.
 
 // END
 

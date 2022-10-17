@@ -5,6 +5,7 @@ using BeauRoutine;
 using BeauUtil;
 using Leaf.Runtime;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Aqua.Character {
     public class SceneInteractable : ScriptComponent {
@@ -14,7 +15,8 @@ namespace Aqua.Character {
         public enum InteractionMode {
             Inspect,
             GoToMap,
-            GoToPreviousScene
+            GoToPreviousScene,
+            Talk = ScriptInteractAction.Talk
         }
 
         #region Inspector
@@ -28,14 +30,17 @@ namespace Aqua.Character {
         [SerializeField] private InteractionMode m_Mode = InteractionMode.GoToMap;
         [SerializeField, MapId] private StringHash32 m_TargetMap = null;
         [SerializeField] private SerializedHash32 m_TargetEntrance = null;
+        [SerializeField, ScriptCharacterId] private StringHash32 m_TargetCharacter = null;
         [SerializeField] private SceneLoadFlags m_MapLoadFlags = SceneLoadFlags.Cutscene;
         [SerializeField, ShowIfField("ShowStopMusic")] private bool m_StopMusic = true;
         [SerializeField] private bool m_AutoExecute = false;
 
         [Header("Display")]
         [SerializeField] private TextId m_LabelOverride = null;
+        [SerializeField] private ContextButtonDisplay.LabelMode m_LabelMode = ContextButtonDisplay.LabelMode.MapLabel;
         [SerializeField] private TextId m_ActionLabelOverride = null;
         [SerializeField] private TextId m_LockMessageOverride = null;
+        [SerializeField] private ContextButtonDisplay.BadgeMode m_BadgeMode = ContextButtonDisplay.BadgeMode.None;
 
         [Header("Pin")]
         [SerializeField] private Transform m_PinLocationOverride = null;
@@ -73,6 +78,10 @@ namespace Aqua.Character {
             m_AutoExecute = newAuto;
         }
 
+        public ContextButtonDisplay.LabelMode LabelMode() {
+            return m_LabelMode;
+        }
+
         public TextId Label(TextId defaultLabel) {
             return !m_LabelOverride.IsEmpty ? m_LabelOverride : defaultLabel;
         }
@@ -83,6 +92,10 @@ namespace Aqua.Character {
 
         public TextId LockedActionLabel(TextId defaultLabel) {
             return !m_LockMessageOverride.IsEmpty ? m_LockMessageOverride : defaultLabel;
+        }
+
+        public ContextButtonDisplay.BadgeMode BadgeMode() {
+            return m_BadgeMode;
         }
 
         #region Unity Events
@@ -156,8 +169,13 @@ namespace Aqua.Character {
             if (m_StopMusic) {
                 m_InspectConfig.LoadFlags |= SceneLoadFlags.StopMusic;
             }
-            m_InspectConfig.TargetId = TargetMapId();
-            m_InspectConfig.TargetEntranceId = TargetMapEntrance();
+            if (m_Mode == InteractionMode.Talk) {
+                m_InspectConfig.TargetId = m_TargetCharacter;
+                m_InspectConfig.TargetEntranceId = default;
+            } else {
+                m_InspectConfig.TargetId = TargetMapId();
+                m_InspectConfig.TargetEntranceId = TargetMapEntrance();
+            }
             interact.Config = m_InspectConfig;
             interact.Available = !Locked();
             interact.Source = this;
@@ -183,7 +201,7 @@ namespace Aqua.Character {
             }
         }
 
-        [LeafMember("Lock")]
+        [LeafMember("Lock"), Preserve]
         public void Lock() {
             if (!m_LockOverride) {
                 m_LockOverride = true;
@@ -191,7 +209,7 @@ namespace Aqua.Character {
             }
         }
 
-        [LeafMember("Unlock")]
+        [LeafMember("Unlock"), Preserve]
         public void Unlock() {
             if (m_LockOverride) {
                 m_LockOverride = false;

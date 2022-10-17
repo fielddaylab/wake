@@ -33937,6 +33937,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
 --- !u!1 &5658402726392110045
@@ -34132,21 +34133,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Type: 0
   CameraPose: {fileID: 5658402726783145457}
+  ZoomPose: {fileID: 0}
   BoundsCollider: {fileID: 7626588180608523572}
   Bounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
   Controller: {fileID: 0}
-  Clickable: {fileID: 5658402725423626008}
-  InteractionHint: {fileID: 5658402725423626009}
   NavArrows: []
   NavArrowParent: {fileID: 0}
+  NavArrowStates: 
+  GuideTarget: {fileID: 0}
+  GuideTargetZoomed: {fileID: 0}
   Interface: {fileID: 9198764345568192979}
   InterfaceRaycaster: {fileID: 705921169044781103}
   InterfaceFader: {fileID: 2797407506090755108}
   WaterRenderer: {fileID: 384671160764177101}
   WaterAmbientParticles: {fileID: 8640626115712035651}
-  WaterRippleRenderer: {fileID: 0}
   WaterTrigger: {fileID: 2452461872479003827}
   WaterCollider3D: {fileID: 470982999345405320}
   WaterTransform3D: {fileID: 7587579143278337337}
@@ -34159,6 +34161,9 @@ MonoBehaviour:
     y: 0
     width: 0
     height: 0
+  InteriorCaustics: {fileID: 0}
+  FloorCaustics: {fileID: 0}
+  Lights: []
   EmojiEmitters:
   - {fileID: 3298672753179789021}
   - {fileID: 5949373445484212468}
@@ -34319,9 +34324,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63a8cc9003b5504dbb86e6318d93ea8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Mode: 0
   Target: {fileID: 5658402726592250909}
   Height: 6
   Zoom: 1
+  FieldOfView: 30
   Properties: 7
 --- !u!1 &6017476410661379776
 GameObject:

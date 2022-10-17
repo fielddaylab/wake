@@ -1,16 +1,15 @@
-using UnityEngine;
+using System;
 using BeauUtil;
 using BeauUtil.UI;
-using System;
 using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
-namespace Aqua.Shop
-{
-    public class ShopItemButton : MonoBehaviour
-    {
+namespace Aqua.Shop {
+    public class ShopItemButton : MonoBehaviour {
         public Button Button;
         public ColorGroup Outline;
+        public PointerListener Listener;
 
         [Header("Info")]
         public LocText Title;
@@ -18,6 +17,7 @@ namespace Aqua.Shop
         public CursorInteractionHint Cursor;
 
         [Header("Cost")]
+        public GameObject LevelRequirementIcon;
         public LocText LevelRequirementObject;
         public LocText CashCost;
         public GameObject CashIcon;

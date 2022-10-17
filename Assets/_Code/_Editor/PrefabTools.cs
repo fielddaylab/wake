@@ -19,6 +19,7 @@ using BeauUtil.Debugger;
 using BeauData;
 using Aqua.Profile;
 using ScriptableBake;
+using Aqua.Journal;
 
 namespace Aqua.Editor
 {
@@ -122,6 +123,7 @@ namespace Aqua.Editor
         [MenuItem("Optimize/Rebuild Databases", false, 50)]
         static public void RefreshAllDBs()
         {
+            DBObject.RefreshCollection<JournalDesc, JournalDB>();
             DBObject.RefreshCollection<MapDesc, MapDB>();
             DBObject.RefreshCollection<BestiaryDesc, BestiaryDB>();
             DBObject.RefreshCollection<JobDesc, JobDB>();
@@ -138,7 +140,7 @@ namespace Aqua.Editor
             {
                 using(Log.DisableMsgStackTrace())
                 {
-                    Bake.Objects(Selection.objects, BakeFlags.Verbose | BakeFlags.ShowProgressBar);
+                    Baking.BakeObjects(Selection.objects, BakeFlags.Verbose | BakeFlags.ShowProgressBar);
                 }
             }
             using(Profiling.Time("post-bake save assets"))
@@ -162,6 +164,63 @@ namespace Aqua.Editor
             Serializer.WriteFile(data, outputPath, OutputOptions.None, Serializer.Format.Binary);
             AssetDatabase.ImportAsset(outputPath);
             Log.Msg("[PrefabTools] Compressed file '{0}' to '{1}'", path, outputPath);
+        }
+        
+        [MenuItem("Aqualab/Test Compress Selection")]
+        static public void AttemptCompress()
+        {
+            foreach(var file in Selection.objects) {
+                LZCompress(file);
+            }
+        }
+
+        static public void LZCompress(UnityEngine.Object asset) {
+            string path = AssetDatabase.GetAssetPath(asset);
+            string outputPath = Path.ChangeExtension(path, ".lzb");
+            byte[] read = File.ReadAllBytes(path);
+            byte[] compressed;
+            using(Profiling.Time("compressing file")) {
+                compressed = UnsafeExt.Compress(read);
+            }
+            File.WriteAllBytes(outputPath, compressed);
+            Log.Msg("[PrefabTools] Compressed file '{0}' with ratio {1}", path, (float) read.Length / compressed.Length);
+            EditorUtility.RevealInFinder(outputPath);
+        }
+
+        [MenuItem("Aqualab/Align to Surface")]
+        static public void AlignToSurface() {
+            foreach(var obj in Selection.gameObjects) {
+                Transform t = obj.transform;
+                Ray r = new Ray(t.position + t.forward * 0.01f, t.forward);
+                Debug.DrawRay(r.origin, r.direction * 10, Color.red, 1);
+                bool hit = Physics.Raycast(r, out RaycastHit hitInfo);
+                if (hit) {
+                    Undo.RecordObject(t, "Aligning with surface");
+                    t.position = hitInfo.point;
+                    t.forward = -hitInfo.normal;
+                    Debug.DrawRay(hitInfo.point, hitInfo.normal, Color.blue, 2);
+                }
+            }
+        }
+
+        [MenuItem("Aqualab/Align GameObject with Collider Offset")]
+        static public void AlignObjectWithColliderOffset() {
+            foreach(var obj in Selection.gameObjects) {
+                Transform t = obj.transform;
+                Collider2D c = obj.GetComponent<Collider2D>();
+                if (!c) {
+                    continue;
+                }
+
+                Undo.RecordObject(t, "Adjusting collider offset");
+                Undo.RecordObject(c, "Adjusting collider offset");
+
+                t.localPosition += (Vector3) c.offset;
+                c.offset = default(Vector2);
+
+                EditorUtility.SetDirty(t);
+                EditorUtility.SetDirty(c);
+            }
         }
     }
 }

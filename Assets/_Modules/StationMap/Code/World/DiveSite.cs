@@ -18,10 +18,10 @@ namespace Aqua.StationMap
 
         [SerializeField, MapId(MapCategory.DiveSite)] private SerializedHash32 m_MapId = null;
         [SerializeField] private bool m_HideIfLocked = false;
+        [SerializeField, Required] private DiveSiteMarker m_Marker = null;
 
         [Header("Components")]
         [SerializeField, Required] private Collider2D m_Collider = null;
-        [SerializeField, Required] private Collider2D m_DistantCollider = null;
 
         #endregion // Inspector
 
@@ -49,6 +49,11 @@ namespace Aqua.StationMap
                     // m_RenderGroup.Visible = false;
                 }
 
+                if (m_Marker != null)
+                {
+                    m_Marker.gameObject.SetActive(false);
+                }
+
                 return;
             }
 
@@ -63,7 +68,13 @@ namespace Aqua.StationMap
                 // m_RenderGroup.SetAlpha(0.25f);
             }
 
-            WorldUtils.ListenForPlayer(m_Collider, OnPlayerEnter, null);
+            WorldUtils.ListenForPlayer(m_Collider, OnPlayerEnter, OnPlayerExit);
+
+            if (m_Marker != null)
+            {
+                m_Marker.gameObject.SetActive(true);
+                m_Marker.Pin(transform, m_MapId);
+            }
         }
 
         private void OnPlayerEnter(Collider2D other)
@@ -73,6 +84,19 @@ namespace Aqua.StationMap
                 tempTable.Set("siteId", m_MapId);
                 tempTable.Set("siteHighlighted", m_Highlighted);
                 Services.Script.TriggerResponse(Trigger_Found, tempTable);
+            }
+
+            if (m_Marker)
+            {
+                m_Marker.FadeOut();
+            }
+        }
+
+        private void OnPlayerExit(Collider2D other)
+        {
+            if (m_Marker)
+            {
+                m_Marker.FadeIn();
             }
         }
 

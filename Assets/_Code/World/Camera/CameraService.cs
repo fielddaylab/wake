@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections;
+using System.Runtime.CompilerServices;
 using Aqua.Debugging;
 using BeauRoutine;
 using BeauRoutine.Splines;
@@ -31,19 +32,21 @@ namespace Aqua.Cameras
             public float Weight;
         }
 
-        private struct CameraState
+        public struct CameraState
         {
             public Vector3 Position;
             public Quaternion Rotation;
             public float Height;
             public float Zoom;
+            public float FieldOfView;
 
-            public CameraState(Vector3 inPosition, Quaternion inRotation, float inHeight, float inZoom)
+            public CameraState(Vector3 inPosition, Quaternion inRotation, float inHeight, float inZoom, float inFieldOfView)
             {
                 Position = inPosition;
                 Rotation = inRotation;
                 Height = inHeight;
                 Zoom = inZoom;
+                FieldOfView = inFieldOfView;
             }
 
             static public void Lerp(in CameraState inA, in CameraState inB, ref CameraState outState, float inLerp)
@@ -52,6 +55,7 @@ namespace Aqua.Cameras
                 outState.Rotation = Quaternion.SlerpUnclamped(inA.Rotation, inB.Rotation, inLerp);
                 outState.Height = Mathf.LerpUnclamped(inA.Height, inB.Height, inLerp);
                 outState.Zoom = Mathf.LerpUnclamped(inA.Zoom, inB.Zoom, inLerp);
+                outState.FieldOfView = Mathf.LerpUnclamped(inA.FieldOfView, inB.FieldOfView, inLerp);
             }
 
             static public void Lerp<T>(in CameraState inA, in CameraState inB, ref CameraState outState, float inLerp, T inPositionSpline)
@@ -61,59 +65,15 @@ namespace Aqua.Cameras
                 outState.Rotation = Quaternion.SlerpUnclamped(inA.Rotation, inB.Rotation, inLerp);
                 outState.Height = Mathf.LerpUnclamped(inA.Height, inB.Height, inLerp);
                 outState.Zoom = Mathf.LerpUnclamped(inA.Zoom, inB.Zoom, inLerp);
+                outState.FieldOfView = Mathf.LerpUnclamped(inA.FieldOfView, inB.FieldOfView, inLerp);
             }
         }
 
         public struct PlanePositionHelper
         {
-            public Camera Camera;
-            public Ray CenterRay;
-            public Plane GameplayPlane;
-            public Matrix4x4 ViewportToWorld;
+            public Matrix4x4 WorldToCamera;
+            public Matrix4x4 CameraToWorld;
             public float GameplayDistance;
-
-            public Vector3 CastToPlane(Transform inTransform)
-            {
-                Vector3 transformPos = inTransform.position;
-                Vector3 from = Camera.WorldToViewportPoint(transformPos, Camera.MonoOrStereoscopicEye.Mono);
-
-                from.z = 0;
-                Vector3 near = ViewportToWorld.MultiplyPoint(from);
-                
-                from.z = 1;
-                Vector3 far = ViewportToWorld.MultiplyPoint(from);
-
-                Ray ray = new Ray(near, far - near);
-                Vector3 planeNormal = GameplayPlane.normal;
-
-                float gameplayDist = (-Vector3.Dot(ray.origin, planeNormal) - GameplayPlane.distance) / Vector3.Dot(ray.direction, planeNormal);
-                return near + (ray.direction * gameplayDist);
-            }
-
-            public Vector3 CastToPlane(Transform inTransform, out float outDistanceRatio)
-            {
-                Vector3 transformPos = inTransform.position;
-                Vector3 from = Camera.WorldToViewportPoint(transformPos, Camera.MonoOrStereoscopicEye.Mono);
-
-                Plane transformPlane = new Plane(GameplayPlane.normal, transformPos);
-                
-                from.z = 0;
-                Vector3 near = ViewportToWorld.MultiplyPoint(from);
-                
-                from.z = 1;
-                Vector3 far = ViewportToWorld.MultiplyPoint(from);
-
-                Ray ray = new Ray(near, far - near);
-                Vector3 planeNormal = GameplayPlane.normal;
-
-                float gameplayDist = (-Vector3.Dot(ray.origin, planeNormal) - GameplayPlane.distance) / Vector3.Dot(ray.direction, planeNormal);
-                float planeDist = (-Vector3.Dot(CenterRay.origin, planeNormal) - GameplayPlane.distance) / Vector3.Dot(CenterRay.direction, planeNormal);
-
-                // Debug.DrawRay(ray.origin, ray.direction * transformDist, Color.yellow, 0.2f);
-
-                outDistanceRatio = planeDist / GameplayDistance;
-                return near + (ray.direction * gameplayDist);
-            }
         }
 
         #endregion // Types
@@ -128,6 +88,7 @@ namespace Aqua.Cameras
         [NonSerialized] private Camera m_Camera;
         [NonSerialized] private CameraRig m_Rig;
         [NonSerialized] private CameraFOVPlane m_FOVPlane;
+        [NonSerialized] private CameraRenderScale m_RenderScale;
         [NonSerialized] private float m_LastCameraDistance;
         [NonSerialized] private Transform m_PositionRoot;
         [NonSerialized] private Axis m_Axis = Axis.XY;
@@ -138,12 +99,10 @@ namespace Aqua.Cameras
         [NonSerialized] private bool m_Paused;
         [NonSerialized] private bool m_CacheDirty;
 
-        [NonSerialized] private Plane m_LastGameplayPlane;
         [NonSerialized] private Vector3 m_LastGameplayPlaneCenter;
         [NonSerialized] private float m_LastGameplayPlaneDistance;
-        [NonSerialized] private Ray m_LastCenterRay;
-        [NonSerialized] private Matrix4x4 m_LastVPMatrix;
-        [NonSerialized] private Matrix4x4 m_LastVPMatrixInv;
+        [NonSerialized] private Matrix4x4 m_LastCameraMatrix;
+        [NonSerialized] private Matrix4x4 m_LastCameraMatrixInv;
         [NonSerialized] private Rect m_LastScreenAspectClip;
 
         #if DEVELOPMENT
@@ -157,6 +116,7 @@ namespace Aqua.Cameras
         private RingBuffer<CameraShakeData> m_Shakes = new RingBuffer<CameraShakeData>();
 
         private Routine m_ScriptedAnimation;
+        [NonSerialized] private CameraFOVMode m_FOVMode;
 
         public Camera Current { get { return m_Camera; } }
         public CameraRig Rig { get { return m_Rig; } }
@@ -216,7 +176,7 @@ namespace Aqua.Cameras
                     
                     flags = UpdateHintedCamera(ref state, deltaTime, CameraModifierFlags.All);
 
-                    ApplyCameraState(state, m_PositionRoot, m_Camera, m_FOVPlane, CameraPoseProperties.All, m_Axis);
+                    ApplyCameraState(state, m_PositionRoot, m_Camera, m_FOVPlane, m_FOVMode, CameraPoseProperties.All, m_Axis);
                     break;
                 }
             }
@@ -230,6 +190,9 @@ namespace Aqua.Cameras
                 m_Rig.EffectsTransform.SetPosition(offset, Axis.XY, Space.Self);
             } else {
                 m_Shakes.Clear();
+                if (!m_Rig.IsReferenceNull()) {
+                    m_Rig.EffectsTransform.SetPosition(default(Vector2), Axis.XY, Space.Self);
+                }
             }
 
             UpdateCachedPlanes();
@@ -316,7 +279,7 @@ namespace Aqua.Cameras
 
         private void UpdateHintedCaches(Vector3 inTargetPosition)
         {
-            int frameCount = Time.frameCount % (int) (m_CacheFrameSkip + 1);
+            int frameCount = Frame.Index % (int) (m_CacheFrameSkip + 1);
 
             // update points and bounds on alternating frames if specified
             if (m_CacheFrameSkip == 0 || m_CacheDirty)
@@ -349,7 +312,7 @@ namespace Aqua.Cameras
             ApplyHardConstraints(ref pos, size, m_Bounds);
             current.Position.x = pos.x;
             current.Position.y = pos.y;
-            ApplyCameraState(current, m_PositionRoot, m_Camera, m_FOVPlane, CameraPoseProperties.Position, m_Axis);
+            ApplyCameraState(current, m_PositionRoot, m_Camera, m_FOVPlane, m_FOVMode, CameraPoseProperties.Position, m_Axis);
         }
 
         private static readonly Matrix4x4 View2NDC = Matrix4x4.Translate(-Vector3.one) * Matrix4x4.Scale(Vector3.one * 2);
@@ -358,26 +321,24 @@ namespace Aqua.Cameras
         private void UpdateCachedPlanes()
         {
             Vector3 cameraForwardVector = m_PositionRoot.forward;
+            Plane p;
 
             if (m_FOVPlane)
             {
-                m_LastGameplayPlane = new Plane(-cameraForwardVector, m_FOVPlane.Target.position);
+                p = new Plane(-cameraForwardVector, m_FOVPlane.Target.position);
             }
             else
             {
-                m_LastGameplayPlane = new Plane(-cameraForwardVector, Vector3.zero);
+                p = new Plane(-cameraForwardVector, Vector3.zero);
             }
 
             Ray r = new Ray(m_PositionRoot.position, cameraForwardVector);
-            m_LastGameplayPlane.Raycast(r, out float planeCastDist);
+            p.Raycast(r, out float planeCastDist);
             m_LastGameplayPlaneCenter = r.GetPoint(planeCastDist);
             m_LastGameplayPlaneDistance = planeCastDist;
 
-            m_LastCenterRay = r;
-
-            Matrix4x4 projWorld = m_Camera.projectionMatrix * m_Camera.worldToCameraMatrix;
-            m_LastVPMatrix = projWorld;
-            m_LastVPMatrixInv = Matrix4x4.Inverse(projWorld) * View2NDC;
+            m_LastCameraMatrix = m_Camera.transform.worldToLocalMatrix;
+            m_LastCameraMatrixInv = m_Camera.transform.localToWorldMatrix;
         }
 
         #endregion // Update
@@ -419,8 +380,13 @@ namespace Aqua.Cameras
 
             Mask(ref cachedPosition, inMask);
 
+            if (ioTarget.LookFromOffset) {
+                ioTarget.m_CachedLook = -ioTarget.Offset;
+            } else {
+                ioTarget.m_CachedLook = ioTarget.Look;
+            }
+
             ioTarget.m_CachedPosition = cachedPosition;
-            ioTarget.m_CachedLook = ioTarget.Look;
         }
 
         static private void CacheBounds(RingBuffer<CameraBoundsData> inBounds)
@@ -597,10 +563,11 @@ namespace Aqua.Cameras
                 state.Height = inCamera.orthographicSize * 2;
                 state.Zoom = 1;
             }
+            state.FieldOfView = inCamera.fieldOfView;
             return state;
         }
 
-        static private void ApplyCameraState(in CameraState inState, Transform inRoot, Camera inCamera, CameraFOVPlane inPlane, CameraPoseProperties inProperties, Axis inAxis)
+        static private void ApplyCameraState(in CameraState inState, Transform inRoot, Camera inCamera, CameraFOVPlane inPlane, CameraFOVMode inFOVMode, CameraPoseProperties inProperties, Axis inAxis)
         {
             if ((inProperties & CameraPoseProperties.Position) != 0)
             {
@@ -612,12 +579,19 @@ namespace Aqua.Cameras
                 inRoot.localRotation = inState.Rotation;
             }
 
+            if ((inProperties & CameraPoseProperties.FieldOfView) != 0)
+            {
+                inCamera.fieldOfView = inState.FieldOfView;
+            }
+
             if (!inPlane.IsReferenceNull())
             {
                 if ((inProperties & CameraPoseProperties.Height) != 0)
                     inPlane.Height = inState.Height;
                 if ((inProperties & CameraPoseProperties.Zoom) != 0)
                     inPlane.Zoom = inState.Zoom;
+
+                inPlane.enabled = inFOVMode == CameraFOVMode.Plane;
             }
             else
             {
@@ -636,6 +610,7 @@ namespace Aqua.Cameras
         {
             ResetHinted();
             ResetScripted();
+            m_FOVMode = CameraFOVMode.Plane;
         }
 
         private void OnSceneLoaded(SceneBinding inScene, object inContext)
@@ -684,6 +659,8 @@ namespace Aqua.Cameras
 
             Assert.NotNull(m_Camera, "No main camera located for scene");
 
+            m_RenderScale = m_Camera.EnsureComponent<CameraRenderScale>();
+
             m_Camera.transparencySortMode = TransparencySortMode.Orthographic;
             m_LastScreenAspectClip = default(Rect);
         }
@@ -727,8 +704,8 @@ namespace Aqua.Cameras
 
             CameraTargetData target = UpdateCameraTargetPosition();
             CameraState current = GetCameraState(m_PositionRoot, m_Camera, m_FOVPlane);
-            CameraState state = new CameraState(target.m_CachedPosition, Quaternion.LookRotation(target.m_CachedLook), current.Height, target.Zoom);
-            ApplyCameraState(state, m_PositionRoot, m_Camera, m_FOVPlane, inProperties, m_Axis);
+            CameraState state = new CameraState(target.m_CachedPosition, Quaternion.LookRotation(target.m_CachedLook), current.Height, target.Zoom, current.FieldOfView);
+            ApplyCameraState(state, m_PositionRoot, m_Camera, m_FOVPlane, m_FOVMode, inProperties, m_Axis);
             m_ScriptedAnimation.Stop();
         }
 
@@ -786,9 +763,10 @@ namespace Aqua.Cameras
         {
             Assert.NotNull(inTarget);
 
-            ref CameraTargetData targetData = ref PushTarget(inTarget.transform, inTarget.Lerp, inTarget.Zoom, inTarget.Flags);
+            ref CameraTargetData targetData = ref PushTarget(inTarget.TransformOverride ? inTarget.TransformOverride : inTarget.transform, inTarget.Lerp, inTarget.Zoom, inTarget.Flags);
             targetData.Offset = inTarget.Offset;
             targetData.Look = inTarget.Look;
+            targetData.LookFromOffset = inTarget.LookFromOffset;
             inTarget.m_TargetHandle = targetData.Id;
             return ref targetData;
         }
@@ -1069,6 +1047,14 @@ namespace Aqua.Cameras
         /// <summary>
         /// Adds a new camera shake.
         /// </summary>
+        public void AddShake(float inDistance, float inPeriod, float inDuration)
+        {
+            AddShake(new Vector2(RNG.Instance.NextFloat(0.9f, 1.1f) * inDistance, inDistance), new Vector2(inPeriod, RNG.Instance.NextFloat(0.9f, 1.1f) * inPeriod), inDuration);
+        }
+
+        /// <summary>
+        /// Adds a new camera shake.
+        /// </summary>
         public void AddShake(Vector2 inDistance, Vector2 inPeriod, float inDuration)
         {
             if (Accessibility.ReduceCameraMovement) {
@@ -1140,9 +1126,9 @@ namespace Aqua.Cameras
             SetAsScripted();
 
             CameraState currentState = GetCameraState(m_PositionRoot, m_Camera, m_FOVPlane);
-            CameraState newState = new CameraState(inPosition, inRotation.GetValueOrDefault(currentState.Rotation), currentState.Height, inZoom.GetValueOrDefault(currentState.Zoom));
+            CameraState newState = new CameraState(inPosition, inRotation.GetValueOrDefault(currentState.Rotation), currentState.Height, inZoom.GetValueOrDefault(currentState.Zoom), currentState.FieldOfView);
             RecordLatestState(newState);
-            ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, CameraPoseProperties.PosAndZoom | CameraPoseProperties.Rotation, m_Axis);
+            ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, m_FOVMode, CameraPoseProperties.PosAndZoom | CameraPoseProperties.Rotation, m_Axis);
             m_ScriptedAnimation.Stop();
         }
 
@@ -1164,13 +1150,14 @@ namespace Aqua.Cameras
 
             Assert.NotNull(inPose);
 
-            CameraState newState = new CameraState(inPose.transform.position, inPose.transform.rotation, inPose.Height, inPose.Zoom);
+            CameraState newState = new CameraState(inPose.transform.position, inPose.transform.rotation, inPose.Height, inPose.Zoom, m_Camera.fieldOfView);
             if (!m_FOVPlane.IsReferenceNull() && inPose.Target != null)
                 m_FOVPlane.Target = inPose.Target;
 
             RecordLatestState(newState);
+            SetFOVMode(inPose.Mode);
             
-            ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, inProperties, m_Axis);
+            ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, m_FOVMode, inProperties, m_Axis);
             m_ScriptedAnimation.Stop();
         }
 
@@ -1188,13 +1175,13 @@ namespace Aqua.Cameras
                 properties |= CameraPoseProperties.Rotation;
             
             CameraState currentState = GetCameraState(m_PositionRoot, m_Camera, m_FOVPlane);
-            CameraState newState = new CameraState(inPosition, inRotation.GetValueOrDefault(currentState.Rotation), currentState.Height, inZoom.GetValueOrDefault(currentState.Zoom));
+            CameraState newState = new CameraState(inPosition, inRotation.GetValueOrDefault(currentState.Rotation), currentState.Height, inZoom.GetValueOrDefault(currentState.Zoom), currentState.FieldOfView);
 
             RecordLatestState(newState);
 
             if (inDuration <= 0)
             {
-                ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, properties, inAxis & m_Axis);
+                ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, m_FOVMode, properties, inAxis & m_Axis);
                 m_ScriptedAnimation.Stop();
                 return null;
             }
@@ -1212,17 +1199,19 @@ namespace Aqua.Cameras
 
             SetAsScripted();
 
-            if (!m_FOVPlane.IsReferenceNull() && inPose.Target != null)
+            if (!m_FOVPlane.IsReferenceNull() && inPose.Target != null) {
                 m_FOVPlane.SetTargetPreserveFOV(inPose.Target);
+            }
 
             CameraState currentState = GetCameraState(m_PositionRoot, m_Camera, m_FOVPlane);
-            CameraState newState = new CameraState(inPose.transform.position, inPose.transform.rotation, inPose.Height, inPose.Zoom);
+            CameraState newState = new CameraState(inPose.transform.position, inPose.transform.rotation, inPose.Height, inPose.Zoom, inPose.FieldOfView);
 
             RecordLatestState(newState);
+            SetFOVMode(inPose.Mode);
 
             if (inDuration <= 0)
             {
-                ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, inPose.Properties & inPropertiesMask, inAxis);
+                ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, m_FOVMode, inPose.Properties & inPropertiesMask, inAxis);
                 m_ScriptedAnimation.Stop();
                 return null;
             }
@@ -1244,13 +1233,14 @@ namespace Aqua.Cameras
                 m_FOVPlane.SetTargetPreserveFOV(inPose.Target);
 
             CameraState currentState = GetCameraState(m_PositionRoot, m_Camera, m_FOVPlane);
-            CameraState newState = new CameraState(inPose.transform.position, inPose.transform.rotation, inPose.Height, inPose.Zoom);
+            CameraState newState = new CameraState(inPose.transform.position, inPose.transform.rotation, inPose.Height, inPose.Zoom, currentState.FieldOfView);
 
             RecordLatestState(newState);
+            SetFOVMode(inPose.Mode);
 
             if (inDuration <= 0)
             {
-                ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, inPose.Properties & inPropertiesMask, inAxis);
+                ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, m_FOVMode, inPose.Properties & inPropertiesMask, inAxis);
                 m_ScriptedAnimation.Stop();
                 return null;
             }
@@ -1259,12 +1249,25 @@ namespace Aqua.Cameras
             return m_ScriptedAnimation.Wait();
         }
 
+        /// <summary>
+        /// Moves the camera along a specific spline.
+        /// </summary>
+        public IEnumerator MoveAlongSpline(CameraSpline inSpline, float inDuration, CameraPoseProperties inPropertiesMask, Axis inAxis = Axis.XYZ, Action inOnComplete = null)
+        {
+            Assert.NotNull(inSpline);
+
+            SetAsScripted();
+
+            m_ScriptedAnimation.Replace(this, MoveCameraSplineTween(inSpline, inSpline.Properties & inPropertiesMask, inDuration, inAxis, inOnComplete));
+            return m_ScriptedAnimation.Wait();
+        }
+
         private IEnumerator MoveCameraTween(CameraState inInitialState, CameraState inTarget, CameraPoseProperties inProperties, float inDuration, Curve inCurve, Axis inAxis, Action inOnComplete = null)
         {
             return Tween.ZeroToOne((f) => {
                 CameraState newState = default;
                 CameraState.Lerp(inInitialState, inTarget, ref newState, f);
-                ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, inProperties, inAxis & m_Axis);
+                ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, m_FOVMode, inProperties, inAxis & m_Axis);
             }, inDuration).Ease(inCurve).OnComplete(inOnComplete);
         }
 
@@ -1274,8 +1277,17 @@ namespace Aqua.Cameras
             return Tween.ZeroToOne((f) => {
                 CameraState newState = default;
                 CameraState.Lerp(inInitialState, inTarget, ref newState, f, spline);
-                ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, inProperties, inAxis & m_Axis);
+                ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, m_FOVMode, inProperties, inAxis & m_Axis);
             }, inDuration).Ease(inCurve).OnComplete(inOnComplete);
+        }
+
+        private IEnumerator MoveCameraSplineTween(CameraSpline inSpline, CameraPoseProperties inProperties, float inDuration, Axis inAxis, Action inOnComplete)
+        {
+            return Tween.ZeroToOne((f) => {
+                CameraState newState = default;
+                inSpline.Interpolate(f, ref newState);
+                ApplyCameraState(newState, m_PositionRoot, m_Camera, m_FOVPlane, m_FOVMode, inProperties, inAxis & m_Axis);
+            }, inDuration).OnComplete(inOnComplete);
         }
 
         #endregion // Scripted
@@ -1373,15 +1385,29 @@ namespace Aqua.Cameras
         {
             return new PlanePositionHelper()
             {
-                Camera = m_Camera,
-                CenterRay = m_LastCenterRay,
-                GameplayPlane = m_LastGameplayPlane,
-                ViewportToWorld = m_LastVPMatrixInv,
+                WorldToCamera = m_LastCameraMatrix,
+                CameraToWorld = m_LastCameraMatrixInv,
                 GameplayDistance = m_LastGameplayPlaneDistance
             };
         }
 
         #endregion // Positions
+
+        #region FieldOfView
+
+        /// <summary>
+        /// Locks the field of view plane.
+        /// </summary>
+        public void SetFOVMode(CameraFOVMode inMode) {
+            if (m_FOVMode != inMode) {
+                m_FOVMode = inMode;
+                if (m_FOVPlane != null) {
+                    m_FOVPlane.enabled = inMode == CameraFOVMode.Plane;
+                }
+            }
+        }
+
+        #endregion // FieldOfView
 
         #region Render Regions
 
@@ -1524,6 +1550,26 @@ namespace Aqua.Cameras
             return size;
         }
 
+        [MethodImpl(256)]
+        static public Vector3 CastToPlane(in PlanePositionHelper inHelper, Transform inTransform, out float outDistanceRatio)
+        {
+            return CastToPlane(inHelper, inTransform.position, out outDistanceRatio);
+        }
+
+        static public Vector3 CastToPlane(in PlanePositionHelper inHelper, Vector3 inPosition, out float outDistanceRatio)
+        {
+            UnityEngine.Profiling.Profiler.BeginSample("CameraPositionCast");
+            Vector3 cameraSpace = inHelper.WorldToCamera.MultiplyPoint3x4(inPosition);
+            float scale = inHelper.GameplayDistance / Math.Abs(cameraSpace.z);
+            outDistanceRatio = 1 / scale;
+            cameraSpace.x *= scale;
+            cameraSpace.y *= scale;
+            cameraSpace.z = inHelper.GameplayDistance;
+            Vector3 worldSpace = inHelper.CameraToWorld.MultiplyPoint3x4(cameraSpace);
+            UnityEngine.Profiling.Profiler.EndSample();
+            return worldSpace;
+        }
+
         #endregion // Utils
 
         #region Leaf
@@ -1625,7 +1671,7 @@ namespace Aqua.Cameras
             switch(m_Mode)
             {
                 case CameraMode.Scripted:
-                    ApplyCameraState(m_LastAssignedState, m_PositionRoot, m_Camera, m_FOVPlane, CameraPoseProperties.All, m_Axis);
+                    ApplyCameraState(m_LastAssignedState, m_PositionRoot, m_Camera, m_FOVPlane, m_FOVMode, CameraPoseProperties.All, m_Axis);
                     break;
 
                 case CameraMode.Hinted:

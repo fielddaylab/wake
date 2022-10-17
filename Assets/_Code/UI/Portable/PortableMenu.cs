@@ -124,7 +124,7 @@ namespace Aqua.Portable {
         #region BasePanel
 
         protected override void OnShow(bool inbInstant) {
-            Services.Data.SetVariable("portable:open", true);
+            Script.WriteVariable("portable:open", true);
 
             AdjustInputForRequest();
 
@@ -134,6 +134,7 @@ namespace Aqua.Portable {
 
             base.OnShow(inbInstant);
 
+            Services.Audio.PostEvent("portable.open");
             Services.Script.TriggerResponse(GameTriggers.PortableOpened);
         }
 
@@ -155,7 +156,9 @@ namespace Aqua.Portable {
                 button.App.ClearRequest();
             }
 
-            Services.Events?.Dispatch(GameEvents.PortableClosed);
+            if (WasShowing()) {
+                Services.Events?.Dispatch(GameEvents.PortableClosed);
+            }
 
             base.OnHide(inbInstant);
         }
@@ -164,7 +167,7 @@ namespace Aqua.Portable {
             m_Canvas.enabled = false;
             m_Input.Override = false;
 
-            Streaming.UnloadUnusedAsync();
+            Streaming.UnloadUnusedAsync(15);
 
             base.OnHideComplete(inbInstant);
         }

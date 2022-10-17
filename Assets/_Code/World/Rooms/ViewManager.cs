@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Aqua.Cameras;
 using Aqua.Profile;
 using Aqua.Scripting;
 using BeauRoutine;
@@ -14,6 +15,7 @@ namespace Aqua.View {
         #region Inspector
 
         [SerializeField, Required] public ViewNode DefaultNode = null;
+        [SerializeField] public CameraDrift Drift;
         [SerializeField, HideInInspector] private ViewNode[] m_AllNodes = null;
         [SerializeField, HideInInspector] private ViewLink[] m_AllLinks = null;
         [SerializeField] private TweenSettings m_DefaultTransition = new TweenSettings(0.3f, Curve.Smooth);
@@ -63,6 +65,7 @@ namespace Aqua.View {
             }
 
             if (m_Current) {
+                Services.Events.Dispatch(GameEvents.ViewLeaving, m_Current.Id.Hash());
                 DeactivateNode(m_Current, false, true);
             }
 
@@ -73,7 +76,12 @@ namespace Aqua.View {
             ActivateLinks(m_AllLinks, m_Current.GroupIds, false);
 
             Services.Camera.SnapToPose(m_Current.Camera);
+            if (Drift != null) {
+                Drift.Scale = node.CameraDriftScale;
+                Drift.PushChanges();
+            }
             Services.Events.Dispatch(GameEvents.ViewChanged, m_Current.Id.Source());
+            Services.Events.Dispatch(GameEvents.ViewArrived, m_Current.Id.Hash());
             Save.Map.RecordVisitedLocation(m_Current.Id);
 
             using(var table = TempVarTable.Alloc()) {
@@ -114,21 +122,45 @@ namespace Aqua.View {
                     cameraTransition = Services.Camera.MoveToPose(node.Camera, settings.Time, settings.Curve, Cameras.CameraPoseProperties.All, Axis.XYZ);
                 }
 
+                IEnumerator driftTransition;
+                if (Drift && Drift.Scale != node.CameraDriftScale) {
+                    driftTransition = Tween.Float(Drift.Scale, node.CameraDriftScale, (f) => {
+                        Drift.Scale = f;
+                        Drift.PushChanges();
+                    }, settings.Time);
+                } else {
+                    driftTransition = null;
+                }
+
                 DeactivateLinks(m_AllLinks, false);
 
                 ViewNode old = m_Current;
                 m_Current = node;
 
+                Services.Events.Dispatch(GameEvents.ViewLeaving, old.Id.Hash());
+
+                if (old.AudioLayers) {
+                    old.AudioLayers.SetLayerActive(old.AudioLayerId, false);
+                }
                 old.OnExit?.Invoke();
                 m_Current = node;
                 node.OnLoad?.Invoke();
 
-                yield return cameraTransition;
+                if (node.AudioLayers) {
+                    node.AudioLayers.SetLayerActive(node.AudioLayerId, true);
+                }
+
+                Services.Events.Dispatch(GameEvents.ViewChanged, m_Current.Id.Source());
+
+                yield return Routine.Combine(
+                    cameraTransition, driftTransition);
 
                 DeactivateNode(old, false, false);
                 ActivateNode(m_Current, false, true);
 
                 ActivateLinks(m_AllLinks, m_Current.GroupIds, false);
+
+                Services.Events.Dispatch(GameEvents.ViewArrived, m_Current.Id.Hash());
 
                 using(var table = TempVarTable.Alloc()) {
                     table.Set("viewId", m_Current.Id);
@@ -153,17 +185,29 @@ namespace Aqua.View {
             if (invoke) {
                 node.OnExit?.Invoke();
             }
+            if (node.AudioLayers) {
+                node.AudioLayers.SetLayerActive(node.AudioLayerId, false);
+            }
             if (node.UI) {
                 node.UI.enabled = false;
             }
             node.Group.SetActive(false, force);
+            if (node.InteractionGroup) {
+                node.InteractionGroup.Lock();
+            }
         }
 
         static private void ActivateNode(ViewNode node, bool force, bool invoke) {
             if (node.UI) {
                 node.UI.enabled = true;
             }
+            if (node.AudioLayers) {
+                node.AudioLayers.SetLayerActive(node.AudioLayerId, true);
+            }
             node.Group.SetActive(true, force);
+            if (node.InteractionGroup) {
+                node.InteractionGroup.Unlock();
+            }
             if (invoke) {
                 node.OnEnter?.Invoke();
             }
@@ -236,7 +280,7 @@ namespace Aqua.View {
 
         int IBaked.Order { get { return 2; } }
 
-        bool IBaked.Bake(BakeFlags flags) {
+        bool IBaked.Bake(BakeFlags flags, BakeContext context) {
             m_AllNodes = FindObjectsOfType<ViewNode>();
             m_AllLinks = FindObjectsOfType<ViewLink>();
             Array.Sort(m_AllLinks, (a, b) => a.GroupId.Hash().CompareTo(b.GroupId.Hash()));

@@ -103,7 +103,7 @@ namespace Aqua.Portable {
         }
 
         private void OnFactClicked(BFBase inFact) {
-            Services.Data.SetVariable("portable:lastSelectedFactId", inFact.Id);
+            Script.WriteVariable("portable:lastSelectedFactId", inFact.Id);
             NamedOption[] options;
             if (m_Request.Type == PortableRequestType.SelectFact || m_Request.Type == PortableRequestType.SelectFactSet) {
                 options = PresentFactOptions;
@@ -193,7 +193,7 @@ namespace Aqua.Portable {
                 return;
             }
 
-            Services.Data.SetVariable("portable:bestiary.currentEntry", m_CurrentEntry.Id());
+            Script.WriteVariable("portable:bestiary.currentEntry", m_CurrentEntry.Id());
 
             m_NoSelectionGroup.SetActive(false);
             m_InfoPage.gameObject.SetActive(true);

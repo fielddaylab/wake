@@ -8,6 +8,7 @@ using BeauUtil.Variants;
 using UnityEngine;
 using Leaf;
 using BeauUtil.Debugger;
+using Leaf.Runtime;
 
 namespace Aqua.Scripting
 {
@@ -22,6 +23,7 @@ namespace Aqua.Scripting
         private StringHash32 m_ScriptPackageRoot = null;
         private TriggerNodeData m_TriggerData = null;
         private StringHash32 m_TriggerOrFunctionId = null;
+        private LeafExpressionGroup m_TriggerOrFunctionConditions;
         private StringHash32 m_Target = null;
 
         #endregion // Serialized
@@ -46,6 +48,7 @@ namespace Aqua.Scripting
 
         public TriggerNodeData TriggerData { get { return m_TriggerData; } }
         public StringHash32 TriggerOrFunctionId() { return m_TriggerOrFunctionId; }
+        public LeafExpressionGroup TriggerOrFunctionConditions() { return m_TriggerOrFunctionConditions; }
 
         public PersistenceLevel TrackingLevel()
         {
@@ -82,6 +85,9 @@ namespace Aqua.Scripting
         {
             if (m_Target.IsEmpty)
                 m_Target = inTarget;
+            if (Bits.ContainsAny(m_Flags, ScriptNodeFlags.Cutscene) && m_TriggerData != null) {
+                m_TriggerData.TriggerPriority = TriggerPriority.Cutscene;
+            }
         }
 
         #region Parser
@@ -90,6 +96,18 @@ namespace Aqua.Scripting
         private void SetCutscene()
         {
             m_Flags |= ScriptNodeFlags.Cutscene;
+        }
+
+        [BlockMeta("interrupt"), Preserve]
+        private void SetInterrupt()
+        {
+            m_Flags |= ScriptNodeFlags.Interrupt;
+        }
+
+        [BlockMeta("noDelay"), Preserve]
+        private void SetNoDelay()
+        {
+            m_Flags |= ScriptNodeFlags.NoDelay;
         }
 
         [BlockMeta("ignoreDuringCutscene"), Preserve]
@@ -147,6 +165,9 @@ namespace Aqua.Scripting
         private void SetTriggerTarget(StringHash32 inTargetId)
         {
             m_Target = inTargetId;
+            if (inTargetId == "*") {
+                m_Flags |= ScriptNodeFlags.AnyTarget;
+            }
         }
 
         [BlockMeta("triggerPriority"), Preserve]
@@ -161,10 +182,10 @@ namespace Aqua.Scripting
         [BlockMeta("when"), Preserve]
         private void SetTriggerConditions(StringSlice inConditionsList)
         {
+            m_TriggerOrFunctionConditions = LeafUtils.CompileExpressionGroup(this, inConditionsList);
             if (m_TriggerData != null)
             {
-                m_TriggerData.Conditions = LeafUtils.CompileExpressionGroup(this, inConditionsList);
-                m_TriggerData.Score += m_TriggerData.Conditions.Count;
+                m_TriggerData.Score += m_TriggerOrFunctionConditions.Count;
             }
         }
 
@@ -221,6 +242,9 @@ namespace Aqua.Scripting
         CornerChatter = 0x10,
         SuppressDuringCutscene = 0x20,
         Function = 0x40,
-        Autosave = 0x80
+        Autosave = 0x80,
+        Interrupt = 0x100,
+        NoDelay = 0x200,
+        AnyTarget = 0x400
     }
 }

@@ -4,40 +4,52 @@
 @trigger    JobStarted
 @cutscene
 
-$branch common.ringPhone
-
-{@drKelp}	Hello again, {player-name}!
-{@drKelp}	We need to figure out what conditions would make a good site for both Bull Kelp and Giant Kelp.
-			Your new {nameof StressTank} should be able to tell us what environments the different types of kelp can handle. 
+{@drKelp}	I'm so happy you're here, Olivia!
+			Mer would be so thrilled to see us working on this project together. 
+{@player}   Wait a minute. You mean...?
+{@drKelp}   Sí. I finally have the funding to start Mer's Refuge.
+{@player}   Mom!! ¡Qué chido! We should be celebrating! 
+{@drKelp}   Well, let's not get ahead of ourselves. 
+			We still need to figure out what conditions would make a good home for both Bull Kelp and Giant Kelp.
+			Your {nameof StressTank} should be able to tell you what environments each type of kelp can handle. 
+{@player}   Okay. I'm on it.
 
 :: helpToExperiment
 @trigger    RequestPartnerHelp
 @when 		scene:name != "ExperimentV2", !jobs:kelp-start-refuge.seen.bottom
 @cutscene
-{@player}   Where should I go from here?
-{@guide}	Remember, you can use the {nameof StressTank} in the experiment room to figure out what conditions stress a species.
+{@player}   What should we do next, {nameof @guide}?
+{@guide}	You'll need to use the {nameof StressTank} in the Experiment Room. 
 
 :: helpAtExperiment
 @trigger    RequestPartnerHelp
 @when 		scene:name == "ExperimentV2"
 @cutscene
-{@player} 	Any idea what we should try?
-{@guide}	Let's check out how kelp do in the stress tank.
+{@player} 	Can you help me out, {nameof @guide}?
+{@guide}	Certainly, O. 
+{@guide}    You'll need to see how Bull Kelp and Giant Kelp respond in the {nameof StressTank}.
 
 :: experimentContinue
 @trigger    JobTasksUpdated
 @when 		!JobTaskTop(argueSite)
 @once
 @cutscene
-{@guide}	Nice!
-{@guide}	There's still one other species of kelp we need to test in the stress tank.
+{@guide}  	Suitable work, O!
+{@guide}	Now you'll need to test the other species of kelp in the stress tank.
+{@player}   Thanks, {nameof @guide}. One down, one to go!
 
 :: experimentEnd
 @trigger    JobTasksUpdated
 @when 		JobTaskTop(argueSite)
 @once
 @cutscene
-{@guide}	Fantastic! Head to the communications room, where you can advise {nameof drKelp} about a suitable environment for a kelp refuge.
+{@guide}   You have obtained the data your mother requested!
+{@player}   This is so cool. I can't believe the Refuge is actually happening. 
+{@guide}   Yes! According to my calculations, a conservation site like Mer's Refuge has a 23.2% chance of success!
+{@player}  Wait, what? Only 23.2%?? 
+{@player}  Mom's super smart, and she's got science on her side! You must be glitching, {nameof @guide}.
+{@player}  But don't worry, you're still the best A.I. around. 
+		   Vámonos. Time to report back!
 
 // CATCH-ALL GUIDE TEXT
 
@@ -46,21 +58,23 @@ $branch common.ringPhone
 @when 		JobTaskActive(getBullKelpStress)
 @boostScore -5
 @cutscene
-{@guide}   	Drop some {nameof BullKelp} into the Stress Tank and fiddle with the dials.
+{@player}   What now, {nameof @guide}?
+{@guide}   	Drop some {nameof BullKelp} into the Stress Tank and adjust the dials. 
 
 :: catchGetGiantKelpStress
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(getGiantKelpStress)
 @boostScore -5
 @cutscene
-{@guide}	Drop some {nameof GiantKelp} into the Stress Tank and fiddle with the dials.
+{@player}   What now, {nameof @guide}?
+{@guide}	Drop some {nameof GiantKelp} into the Stress Tank and adjust the dials.
 
 :: catchArgueSite
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(argueSite)
 @boostScore -5
 @cutscene
-{@guide}    Make a decision about which site to use as a refuge and tell {@drKelp}.
+{@guide}    Use your data to tell {@drKelp} which site would make a suitable refuge!
 
 // ARGUMENTATION
 
@@ -69,23 +83,30 @@ $branch common.ringPhone
 @when   !ArgueIsComplete(startRefugeArgue)
 @cutscene
 $call ArgueLoad(startRefugeArgue)
-{@drKelp}	We've already narrowed it down to a few candidates.
-			Which bay is ideal for establishing the refuge?
+{@drKelp}	Okay, Olivia, let's choose our site!
+			I've already narrowed it down to three possible sites. 
+			Which bay is ideal for establishing Mer's Refuge?
 	$choice .argue.site1; Potential Site 1 (Temp 2°C; Light 60%)
 	$choice .argue.site2; Potential Site 2 (Temp 20°C; Light 100%)
 	$choice .argue.site3; Potential Site 3 (Temp 13°C; Light 100%)
-	$choice .argue.giveUp; Let me get back to you
+	$choice .argue.giveUp; Let me get back to you 
 $choose branch
 
 
 ::argue.site1
-{@drKelp}	Hmmmm... This is way too cold for Giant Kelp, even if there is enough light.
+{@drKelp}	Hmmmm... 
+			I don't think this site will work out.  
+			According to your data, this is way too cold for the Giant Kelp.
 
 ::argue.site2
-{@drKelp}	The bull kelp will boil here! Although... There is plenty of light.
+{@drKelp}	I'm not sure about this site, Olivia.
+			There's plenty of light, but the water temperature is too high.
+			The Bull Kelp would boil here!
 
 ::argue.site3
-{@drKelp}	Wow, this looks promising! What are the relevant stress ranges for the Bull Kelp and Giant Kelp?
+{@drKelp}	Hmmm. Not too hot or too cold, plenty of light...
+			This site could work! 
+			What are the relevant stress ranges for the Bull Kelp and Giant Kelp?
 $if ArgueSetClaim(startRefugeArgueClaim, jobs.kelp-start-refuge.argue.claimLabel)
 			$call ArgueFactSlot(GiantKelp.Light.Stressed)
 			$call ArgueFactSlot(GiantKelp.Temperature.Stressed)
@@ -107,18 +128,24 @@ $endif
 
 :: argue.correctFacts
 $call ArgueComplete()
-{@drKelp}	That does it! Site 3 should work well for both types of Kelp.
+{@drKelp} ¡Qué fantástico!
+		  According to your data, Site 3 will make a wonderful home for both types of kelp!
+{@player}  Yes!!
+		   Now can we celebrate?
+{@drKelp}  I suppose so. This data looks incredibly promising.  
+		   And I do have a recipe for spicy kelp rolls I've wanting to try...
+		   
 $call CompleteJob()
 // Unlock Mixed Kelp Refuge Site
 $call UnlockSite(RS-1D)
 
 :: argue.incorrectFacts
-{@drKelp} That doesn't work. We need to be sure that the light and temperature work for both Giant Kelp and Bull Kelp.
+{@drKelp} That doesn't look right. We need to be sure that the light and temperature work for both Giant Kelp and Bull Kelp.
 $call ArgueRejectIncorrect()
 $goto .argue.defendClaim
 
 :: argue.giveUp
-{@drKelp} OK. Get back to me when you're ready.
+{@drKelp} Okay, Sweetie. Get back to me when you're ready.
 
 // END
 

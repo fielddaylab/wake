@@ -27,8 +27,8 @@ MonoBehaviour:
     m_Source: 
     m_HashValue: 0
   m_DescriptionId:
-    m_Source: 
-    m_HashValue: 0
+    m_Source: critters.methanogen.description
+    m_HashValue: 3617311565
   m_Facts:
   - {fileID: 11400000, guid: 5d676b34bf9b8e8448f84a795094a676, type: 2}
   - {fileID: 11400000, guid: 5090f43a342ffc0029f5cd0cf0249f50, type: 2}
@@ -41,12 +41,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ec11fd18a2adbe0479447a3b294e142d, type: 2}
   - {fileID: 11400000, guid: 6ed4c2da242dbe34bbeca6fba199eca3, type: 2}
   m_WaterColor: {r: 0, g: 0, b: 1, a: 1}
-  m_Icon: {fileID: 21300000, guid: 15772f475446a2340827288ab1c5b030, type: 3}
+  m_Icon: {fileID: 21300000, guid: 17568d2453ea5cd4bbf9904d5f9007db, type: 3}
   m_SketchPath: 
   m_Color: {r: 0, g: 0, b: 0, a: 1}
-  m_ListenAudioEvent:
-    m_Source: 
-    m_HashValue: 0
   m_SortingOrder: 0
   m_AllFacts:
   - {fileID: 11400000, guid: cbf0afe6eefca4e408235f434826d229, type: 2}
@@ -79,16 +76,16 @@ MonoBehaviour:
   m_StateTransitions:
     Temperature:
       AliveMin: 30
-      AliveMax: 75
-      StressedMin: 0
-      StressedMax: 95
+      AliveMax: 49
+      StressedMin: 15
+      StressedMax: 64
     Light:
       AliveMin: 0
       AliveMax: 100
       StressedMin: -Infinity
       StressedMax: Infinity
     PH:
-      AliveMin: 3
+      AliveMin: 7.1
       AliveMax: 8.2
-      StressedMin: 2
-      StressedMax: 9
+      StressedMin: 6.6
+      StressedMax: 8.7

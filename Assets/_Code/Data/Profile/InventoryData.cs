@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Aqua.Journal;
 using BeauData;
 using BeauUtil;
 using BeauUtil.Debugger;
@@ -12,90 +13,93 @@ namespace Aqua.Profile
         private RingBuffer<PlayerInv> m_Items = new RingBuffer<PlayerInv>();
         private HashSet<StringHash32> m_ScannerIds = new HashSet<StringHash32>();
         private HashSet<StringHash32> m_UpgradeIds = new HashSet<StringHash32>();
+        private List<StringHash32> m_JournalIds = new List<StringHash32>();
+
+        private uint m_Cash;
+        private uint m_Exp;
 
         [NonSerialized] private bool m_ItemListDirty = true;
         [NonSerialized] private bool m_HasChanges;
 
         #region Items
 
-        public ListSlice<PlayerInv> Items()
+        public uint Cash()
         {
-            CleanItemList();
-            return m_Items;
+            return m_Cash;
         }
 
-        public IEnumerable<PlayerInv> GetItems(InvItemCategory inCategory)
+        public uint Exp()
         {
-            if (inCategory == InvItemCategory.Upgrade)
-            {
-                foreach(var upgrade in m_UpgradeIds)
-                {
-                    yield return new PlayerInv(upgrade, 1, Assets.Item(upgrade));
-                }
-            }
-            else
-            {
-                var db = Services.Assets.Inventory;
-                CleanItemList();
-                foreach(var item in m_Items)
-                {
-                    InvItem desc = Assets.Item(item.ItemId);
-                    if ((item.Count > 0 || db.IsAlwaysVisible(item.ItemId)) && desc.Category() == inCategory)
-                        yield return item;
-                }
-            }
-        }
-
-        public int GetItems(InvItemCategory inCategory, ICollection<PlayerInv> outItems)
-        {
-            if (inCategory == InvItemCategory.Upgrade)
-            {
-                foreach(var upgrade in m_UpgradeIds)
-                {
-                    outItems.Add(new PlayerInv(upgrade, 1, Assets.Item(upgrade)));
-                }
-                return m_UpgradeIds.Count;
-            }
-            else
-            {
-                var db = Services.Assets.Inventory;
-                int count = 0;
-                foreach(var item in m_Items)
-                {
-                    InvItem desc = db.Get(item.ItemId);
-                    if ((item.Count > 0 || db.IsAlwaysVisible(item.ItemId)) && desc.Category() == inCategory)
-                    {
-                        outItems.Add(item);
-                        count++;
-                    }
-                }
-                return count;
-            }
+            return m_Exp;
         }
 
         public bool HasItem(StringHash32 inId)
         {
-            PlayerInv item;
-            return TryFindInv(inId, out item) && item.Count > 0;
+            if (inId == ItemIds.Cash)
+            {
+                return m_Cash > 0;
+            }
+            else if (inId == ItemIds.Exp)
+            {
+                return m_Exp > 0;
+            }
+            else
+            {
+                PlayerInv item;
+                return TryFindInv(inId, out item) && item.Count > 0;
+            }
         }
 
         public uint ItemCount(StringHash32 inId)
         {
-            InvItem itemDesc = Assets.Item(inId);
-            if (itemDesc.Category() == InvItemCategory.Upgrade)
+            if (inId == ItemIds.Cash)
             {
-                return m_UpgradeIds.Contains(inId) ? 1u : 0u;
+                return m_Cash;
             }
+            else if (inId == ItemIds.Exp)
+            {
+                return m_Exp;
+            }
+            else
+            {
+                InvItem itemDesc = Assets.Item(inId);
+                if (itemDesc.Category() == InvItemCategory.Upgrade)
+                {
+                    return m_UpgradeIds.Contains(inId) ? 1u : 0u;
+                }
 
-            PlayerInv item;
-            TryFindInv(inId, out item);
-            return item.Count;
+                PlayerInv item;
+                TryFindInv(inId, out item);
+                return item.Count;
+            }
         }
         
         public bool AdjustItem(StringHash32 inId, int inAmount)
         {
             if (inAmount == 0)
                 return true;
+
+            if (inId == ItemIds.Cash)
+            {
+                if (TryAdjust(inId, ref m_Cash, inAmount, false))
+                {
+                    m_HasChanges = true;
+                    return true;
+                }
+
+                return false;
+            }
+
+            if (inId == ItemIds.Exp)
+            {
+                if (TryAdjust(inId, ref m_Exp, inAmount, false))
+                {
+                    m_HasChanges = true;
+                    return true;
+                }
+
+                return false;
+            }
 
             ref PlayerInv item = ref RequireInv(inId);
             if (TryAdjust(ref item, inAmount, false))
@@ -112,6 +116,28 @@ namespace Aqua.Profile
             if (inAmount == 0)
                 return true;
 
+            if (inId == ItemIds.Cash)
+            {
+                if (TryAdjust(inId, ref m_Cash, inAmount, true))
+                {
+                    m_HasChanges = true;
+                    return true;
+                }
+
+                return false;
+            }
+
+            if (inId == ItemIds.Exp)
+            {
+                if (TryAdjust(inId, ref m_Exp, inAmount, true))
+                {
+                    m_HasChanges = true;
+                    return true;
+                }
+
+                return false;
+            }
+
             ref PlayerInv item = ref RequireInv(inId);
             if (TryAdjust(ref item, inAmount, true))
             {
@@ -124,6 +150,28 @@ namespace Aqua.Profile
 
         public bool SetItem(StringHash32 inId, uint inAmount)
         {
+            if (inId == ItemIds.Cash)
+            {
+                if (TrySet(inId, ref m_Cash, inAmount, false))
+                {
+                    m_HasChanges = true;
+                    return true;
+                }
+
+                return false;
+            }
+
+            if (inId == ItemIds.Exp)
+            {
+                if (TrySet(inId, ref m_Exp, inAmount, false))
+                {
+                    m_HasChanges = true;
+                    return true;
+                }
+
+                return false;
+            }
+
             ref PlayerInv item = ref RequireInv(inId);
             if (TrySet(ref item, inAmount, false))
             {
@@ -136,6 +184,28 @@ namespace Aqua.Profile
 
         public bool SetItemWithoutNotify(StringHash32 inId, uint inAmount)
         {
+            if (inId == ItemIds.Cash)
+            {
+                if (TrySet(inId, ref m_Cash, inAmount, true))
+                {
+                    m_HasChanges = true;
+                    return true;
+                }
+
+                return false;
+            }
+
+            if (inId == ItemIds.Exp)
+            {
+                if (TrySet(inId, ref m_Exp, inAmount, true))
+                {
+                    m_HasChanges = true;
+                    return true;
+                }
+
+                return false;
+            }
+
             ref PlayerInv item = ref RequireInv(inId);
             if (TrySet(ref item, inAmount, true))
             {
@@ -148,6 +218,15 @@ namespace Aqua.Profile
 
         public PlayerInv GetItem(StringHash32 inId)
         {
+            if (inId == ItemIds.Cash)
+            {
+                return new PlayerInv(inId, m_Cash, Assets.Item(inId));
+            }
+            else if (inId == ItemIds.Exp)
+            {
+                return new PlayerInv(inId, m_Exp, Assets.Item(inId));
+            }
+
             PlayerInv inv;
             TryFindInv(inId, out inv);
             return inv;
@@ -210,6 +289,19 @@ namespace Aqua.Profile
             return true;
         }
 
+        private bool TryAdjust(StringHash32 inItemId, ref uint ioItem, int inValue, bool inbSuppressEvent)
+        {
+            if (inValue == 0 || (ioItem + inValue) < 0)
+                return false;
+
+            ioItem = (uint) (ioItem + inValue);
+            if (!inbSuppressEvent)
+            {
+                Services.Events.Queue(GameEvents.InventoryUpdated, inItemId);
+            }
+            return true;
+        }
+
         private bool TrySet(ref PlayerInv ioItem, uint inValue, bool inbSuppressEvent)
         {
             if (ioItem.Count != inValue)
@@ -218,6 +310,21 @@ namespace Aqua.Profile
                 if (!inbSuppressEvent)
                 {
                     Services.Events.Queue(GameEvents.InventoryUpdated, ioItem.ItemId);
+                }
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool TrySet(StringHash32 inItemId, ref uint ioItem, uint inValue, bool inbSuppressEvent)
+        {
+            if (ioItem != inValue)
+            {
+                ioItem = (uint) inValue;
+                if (!inbSuppressEvent)
+                {
+                    Services.Events.Queue(GameEvents.InventoryUpdated, inItemId);
                 }
                 return true;
             }
@@ -284,6 +391,37 @@ namespace Aqua.Profile
 
         #endregion // Upgrades
 
+        #region Journals
+
+        public bool HasJournalEntry(StringHash32 inJournalId)
+        {
+            Assert.True(Services.Assets.Journal.HasId(inJournalId), "Could not find JournalDesc with id '{0}'", inJournalId);
+            return m_JournalIds.Contains(inJournalId);
+        }
+
+        public bool AddJournalEntry(StringHash32 inJournalId)
+        {
+            Assert.True(Services.Assets.Journal.HasId(inJournalId), "Could not find JournalDesc with id '{0}'", inJournalId);
+            if (m_JournalIds.Contains(inJournalId))
+                return false;
+
+            m_JournalIds.Add(inJournalId);
+            return true;
+        }
+
+        public bool RemoveJournalEntry(StringHash32 inJournalId)
+        {
+            Assert.True(Services.Assets.Journal.HasId(inJournalId), "Could not find JournalDesc with id '{0}'", inJournalId);
+            return m_JournalIds.Remove(inJournalId);
+        }
+
+        public ListSlice<StringHash32> AllJournalEntryIds()
+        {
+            return m_JournalIds;
+        }
+
+        #endregion // Journals
+
         #region IProfileChunk
 
         public void SetDefaults()
@@ -298,15 +436,33 @@ namespace Aqua.Profile
                     }
                     else
                     {
-                        ref PlayerInv playerInv = ref RequireInv(item.Id());
-                        playerInv.Count = item.DefaultAmount();
+                        if (item.Id() == ItemIds.Cash)
+                        {
+                            m_Cash = item.DefaultAmount();
+                        }
+                        else if (item.Id() == ItemIds.Exp)
+                        {
+                            m_Exp = item.DefaultAmount();
+                        }
+                        else
+                        {
+                            ref PlayerInv playerInv = ref RequireInv(item.Id());
+                            playerInv.Count = item.DefaultAmount();
+                        }
                     }
+                }
+            }
+
+            foreach(var journal in Services.Assets.Journal.Objects) {
+                if (journal.IsDefault()) {
+                    AddJournalEntry(journal.Id());
                 }
             }
         }
 
         // v3: removed water property
-        ushort ISerializedVersion.Version { get { return 3; } }
+        // v5: fast path for cash/exp
+        ushort ISerializedVersion.Version { get { return 5; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
@@ -320,6 +476,15 @@ namespace Aqua.Profile
                 if (waterChem != 0) {
                     m_UpgradeIds.Add(ItemIds.WaterModeling);
                 }
+            }
+
+            if (ioSerializer.ObjectVersion >= 4) {
+                ioSerializer.UInt32ProxyArray("journalIds", ref m_JournalIds);
+            }
+
+            if (ioSerializer.ObjectVersion >= 5) {
+                ioSerializer.Serialize("cash", ref m_Cash);
+                ioSerializer.Serialize("exp", ref m_Exp);
             }
         }
 
@@ -350,6 +515,19 @@ namespace Aqua.Profile
                 } else {
                     inv.Item = Assets.Item(inv.ItemId);
                 }
+
+                if (inv.ItemId == ItemIds.Cash) {
+                    m_Cash = inv.Count;
+                    m_Items.FastRemoveAt(i);
+                } else if (inv.ItemId == ItemIds.Exp) {
+                    m_Exp = inv.Count;
+                    m_Items.FastRemoveAt(i);
+                }
+            }
+
+            for(int i = m_JournalIds.Count - 1; i >= 0; i--)
+            {
+                SavePatcher.PatchIds(m_JournalIds);
             }
 
             m_UpgradeIds.RemoveWhere((itemId) => {
@@ -378,6 +556,8 @@ namespace Aqua.Profile
             foreach(var item in m_Items) {
                 writer.KeyValue(Assets.NameOf(item.ItemId), item.Count);
             }
+            writer.KeyValue("Cash", m_Cash);
+            writer.KeyValue("Exp", m_Exp);
             writer.Header("Upgrade Ids");
             foreach(var itemId in m_UpgradeIds) {
                 writer.Text(Assets.NameOf(itemId));
@@ -385,6 +565,10 @@ namespace Aqua.Profile
             writer.Header("Scanner Ids");
             foreach(var scannerId in m_ScannerIds) {
                 writer.Text(scannerId.ToDebugString());
+            }
+            writer.Header("Journal Ids");
+            foreach(var journalId in m_JournalIds) {
+                writer.Text(journalId.ToDebugString());
             }
         }
 

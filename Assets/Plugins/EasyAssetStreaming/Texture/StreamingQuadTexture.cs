@@ -46,6 +46,7 @@ namespace EasyAssetStreaming {
 
         [SerializeField, StreamingImagePath, FormerlySerializedAs("m_Url")] private string m_Path = null;
         [SerializeField] private Material m_Material;
+        [SerializeField] private uint m_Tessellation = 0;
         [SerializeField] private Color32 m_Color = Color.white;
         [SerializeField] private bool m_Visible = true;
         
@@ -59,19 +60,29 @@ namespace EasyAssetStreaming {
 
         #endregion // Inspector
 
-        [NonSerialized] private Texture2D m_LoadedTexture;
+        [NonSerialized] private StreamingAssetHandle m_AssetHandle;
+        [NonSerialized] private Texture m_LoadedTexture;
         [NonSerialized] private Mesh m_MeshInstance;
         [NonSerialized] private Shader m_LastKnownShader = null;
         [NonSerialized] private int m_MainTexturePropertyId = 0;
         [NonSerialized] private int m_MainColorPropertyId = 0;
         [NonSerialized] private Rect m_ClippedUVs;
+        [NonSerialized] private ulong m_MeshInstanceHash;
  
         private readonly Streaming.AssetCallback OnAssetUpdated;
 
         private StreamingQuadTexture() {
-            OnAssetUpdated = (StreamingAssetId id, Streaming.AssetStatus status, object asset) => {
+            OnAssetUpdated = (StreamingAssetHandle id, Streaming.AssetStatus status, object asset) => {
                 if (status == Streaming.AssetStatus.Loaded) {
+                    m_LoadedTexture = (Texture) asset;
+                    if (m_MainTexturePropertyId != 0) {
+                        ApplyTextureAndColor();
+                    }
+                    ApplyVisible();
                     Resize(m_AutoSize);
+                } else {
+                    m_LoadedTexture = null;
+                    ApplyVisible();
                 }
                 OnUpdated?.Invoke(this, status);
             };
@@ -103,20 +114,20 @@ namespace EasyAssetStreaming {
         /// Returns if the texture is fully loaded.
         /// </summary>
         public bool IsLoaded() {
-            return Streaming.IsLoaded(m_LoadedTexture);
+            return Streaming.IsLoaded(m_AssetHandle);
         }
 
         /// <summary>
         /// Returns if the texture is currently loading.
         /// </summary>
         public bool IsLoading() {
-            return (Streaming.Status(m_LoadedTexture) & Streaming.AssetStatus.PendingLoad) != 0;;
+            return (Streaming.Status(m_AssetHandle) & Streaming.AssetStatus.PendingLoad) != 0;;
         }
 
         /// <summary>
         /// Loaded texture.
         /// </summary>
-        public Texture2D Texture {
+        public Texture Texture {
             get { return m_LoadedTexture; }
         }
 
@@ -376,8 +387,9 @@ namespace EasyAssetStreaming {
         }
 
         private void LoadTexture() {
-            if (!Streaming.Texture(m_Path, ref m_LoadedTexture, OnAssetUpdated)) {
-                if (!m_LoadedTexture) {
+            if (!Streaming.Texture(m_Path, ref m_AssetHandle, OnAssetUpdated)) {
+                if (!m_AssetHandle) {
+                    m_LoadedTexture = null;
                     m_MeshRenderer.enabled = false;
                     #if USING_BEAUUTIL
                     if (m_ColorGroup) {
@@ -401,7 +413,7 @@ namespace EasyAssetStreaming {
                 ApplyTextureAndColor();
             }
 
-            Streaming.AssetStatus status = Streaming.Status(m_LoadedTexture);
+            Streaming.AssetStatus status = Streaming.Status(m_AssetHandle);
             if ((status & Streaming.AssetStatus.Loaded) != 0) {
                 Resize(m_AutoSize);
             } else {
@@ -439,7 +451,7 @@ namespace EasyAssetStreaming {
                 vertColor = Color.white;
             }
 
-            m_MeshInstance = MeshGeneration.CreateQuad(m_Size, m_Pivot, vertColor, m_ClippedUVs, m_MeshInstance);
+            m_MeshInstance = MeshGeneration.CreateQuad(m_Size, m_Pivot, vertColor, m_ClippedUVs, m_Tessellation, m_MeshInstance, ref m_MeshInstanceHash);
             m_MeshInstance.hideFlags = HideFlags.DontSave;
             m_MeshFilter.sharedMesh = m_MeshInstance;
         }
@@ -466,13 +478,16 @@ namespace EasyAssetStreaming {
             }
             #endif // USING_BEAUUTIL
 
-            if (Streaming.Unload(ref m_LoadedTexture, OnAssetUpdated)) {
+            if (Streaming.Unload(ref m_AssetHandle, OnAssetUpdated)) {
+                m_LoadedTexture = null;
                 if (m_MainTexturePropertyId != 0) {
                     ApplyTextureAndColor();
                 }
                 OnUpdated?.Invoke(this, Streaming.AssetStatus.Unloaded);
             }
             StreamingHelper.DestroyResource(ref m_MeshInstance);
+            m_MeshFilter.sharedMesh = null;
+            m_MeshInstanceHash = 0;
         }
 
         #endregion // Resources

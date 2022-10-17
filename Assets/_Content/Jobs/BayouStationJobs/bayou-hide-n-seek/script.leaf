@@ -1,15 +1,19 @@
-:: basePath job.hide-n-seek
+# basePath job.hide-n-seek
 
 // INTRO
 
 :: start
 @trigger    JobStarted
 @cutscene
-{@profHarper}   We are working on generating a model to predict the future health of turtles at {h}Site O{/h}.
-                However, the models based on our current information are not accurate enough.
-{@player}       What is wrong with our model?
-{@profHarper}   It could be that we missed some organism when we {item}scanned{/item} the life at the {m}Oil Rig{/m}.
-                For this job, we need you to gather more organism data from the {h}Site O{/h} to build a higher accuracy model.
+{@profBayou}   Okay, Ollie. Let's jump right in.   
+               I need a new model that will allow me to predict the future health of the turtles here at {h}Site O{/h}.
+{@player}      Wait... what about the model I already built?
+{@profBayou}   As per our last conversation, it wasn't accurate enough. 
+                You must've missed an organism.
+{@bayouSci}     Aw, don't look so down, Ollie. You wouldn't believe how many times I've missed stuff!
+{@bayouSci}     I need you to search {h}Site O{/h} for any missing organisms.
+               Then build a higher-accuracy model and report back here. 
+{@player}      I'm on it. 
 
 // CATCH-ALL GUIDE TEXT
 :: catchJellyScan
@@ -17,20 +21,36 @@
 @when 		JobTaskActive(jellyScan)
 @boostScore -5
 @cutscene
-{@guide}    Revisit {h}Site O{/h}, this time keeping an eye out for any critters we might have missed.
+{@player} What do I need to do, {nameof @guide}?
+{@guide}  Return to the ERC Industries Reef, and scan whatever organism you missed last time.
+
+:: FoundTheMissingJelly
+@trigger    JobTasksUpdated
+@when   JobTaskTop(jellyObservation)
+@once
+@cutscene 
+
+{@player} Yes! We found it, {nameof @guide}!
+          The missing species was the {pluralnameof MoonJelly}!!
+          Wow... they're cute, aren't they? And sort of eerie.
+{@guide}  Actually, O, {pluralnameof MoonJelly} have no ears, eyes, mouth, heart, or brain.
+{@player} I... oh, never mind. Good point, V. 
 
 :: catchJellyObservation
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(jellyObservation)
 @boostScore -5
 @cutscene
-{@guide}    We need to {item}observe{/item} how the {pluralnameof MoonJelly} interact with their enviornment.
+
+{@player} What should I do now, {nameof @guide}?
+{@guide}   You need to {item}observe{/item} how the {pluralnameof MoonJelly} interact with their enviornment.
 
 :: catchJellyRates
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(jellyRates)
 @boostScore -5
 @cutscene
+{@player} What now, {nameof @guide}?
 {@guide}    Use the {item}Measurement Tank{/item} to find how quickly turtles eat the jellyfish.
 
 :: catchJellyPrediction
@@ -38,20 +58,23 @@
 @when 		JobTaskActive(jellyPrediction)
 @boostScore -5
 @cutscene
-{@guide}    Create a {item}Prediction Model{/item} using your information about {pluralnameof MoonJelly}.
+{@player} Can you help me out, {nameof @guide}?
+{@guide}  Certainly, O. 
+          You must create a {item}Prediction Model{/item} using your data about {pluralnameof MoonJelly}.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Report back to {nameof profHarper}.
+{@player}   Okay. What's next?
+{@guide}    You must report back to {nameof profBayou} with your findings!
 
 :: catchVisualize
 @trigger    RequestPartnerHelp
 @when       scene:name == "Modeling",modeling:phase == "visual"   
 @cutscene
-{@player}   Got any idea what I might be missing, V1ctor?
+{@player}   Do you have any idea what I'm missing, {nameof @guide}?
 $if HasEntity(AngelFish),HasEntity(Cyanobacteria),HasEntity(ElkhornCoral),HasEntity(MoonJelly),HasEntity(SeaPearl),HasEntity(RedGrouper),HasEntity(LoggerheadTurtle)
     //Player has all required critters
     $if HasFact(MoonJelly.Reproduce),HasFact(LoggerheadTurtle.Reproduce),HasFact(Cyanobacteria.Reproduce),HasFact(AngelFish.Reproduce.Stressed),HasFact(ElkhornCoral.Reproduce),HasFact(RedGrouper.Reproduce)
@@ -59,38 +82,39 @@ $if HasEntity(AngelFish),HasEntity(Cyanobacteria),HasEntity(ElkhornCoral),HasEnt
 
         $if HasFact(LoggerheadTurtle.Eats.MoonJelly),HasFact(LoggerheadTurtle.Eats.Cyanobacteria),HasFact(RedGrouper.Eats.Cyanobacteria)
             //Has all eat facts
-            {@guide}    That should be all the rules we need, make sure you have all the rates and let's go!
+            {@guide}    You have all of the rules you need. Now make sure you have gathered all the rates. 
         $else
-            {@guide}    Seems like we still are missing some consumption rules. Maybe take another look at the Observation Tank?
+            {@guide}    Hmm... you seem to be missing some consumption rules. I suggests returning to your Observation Tank. 
         $endif
     $else
         //Missing at least 1 reproduction fact
-        {@guide}    It seems like we're missing some of the reproduction rates, how about you take a trip over to the Measurement Tank?
-        {@guide}    Make sure you get both the stressed and unstressed rates!
+        {@guide}  You seem to be missing at least one reproduction rate. 
+                  You'll need to gather more data with your Measurement Tank. 
+                  Make sure to obtain both the stressed and unstressed rates!
     $endif
 $else
     //Player is missing at least 1 critter
-    {@guide}    Looks like we're still missing some critters.
+    {@guide}    You are still missing some organisms, O. 
     $if !HasEntity(AngelFish)
-        {@guide}    Have you tried scanning the Angelfish yet?
+        {@guide}    Have you scanned any of the Angelfish?
     $else
         $if !HasEntity(Cyanobacteria)
-            {@guide}    Have you tried scanning some Cyanobacteria yet?
+            {@guide}    Have you scanned the Cyanobacteria?
         $else
             $if !HasEntity(ElkhornCoral)
-                {@guide}    Have you tried scanning some Elkhorn Coral yet?
+                {@guide}    Have you scanned the Elkhorn Coral?
             $else
                 $if !HasEntity(SeaPearl)
-                    {@guide}    Have you tried scanning any Sea Pearls yet?
+                    {@guide}    Have you scanned any Sea Pearls yet?
                 $else
                     $if !HasEntity(LoggerheadTurtle)
-                        {@guide}    Have you tried scanning some Loggerhead Turtles yet?
+                        {@guide}    Have you scanned the Loggerhead Turtles?
                     $else
                         $if !HasEntity(RedGrouper)
-                            {@guide}    Have you tried scanning some Red Grouper yet?
+                            {@guide}    Have you scanned any Red Grouper?
                         $else                 
                             $if !HasEntity(MoonJelly)
-                                {@guide}    Have you tried scanning some Moon Jellies yet?
+                                {@guide}    Have you scanned the Moon Jellies?
                             $endif
                         $endif
                     $endif
@@ -104,16 +128,16 @@ $endif
 @trigger    RequestPartnerHelp
 @when       scene:name == "Modeling",modeling:phase == "sync"   
 @cutscene
-{@player}   Hey V1ctor, could you help me out here?
-{@guide}    Sure thing, let me take a look...
+{@player}   Hmm. {nameof @guide}, can I have some help?
+{@guide}    Certainly, O. Processing...
 $if HasFact(AngelFish.PH.Stressed),HasFact(Cyanobacteria.PH.Stressed),HasFact(ElkhornCoral.PH.Stressed),HasFact(SeaPearl.PH.Stressed),HasFact(LoggerheadTurtle.PH.Stressed)
     //player most likely has all stress ranges 
-    {@guide}    Have you measured the rate of all the interactions on the graph?
-    {@guide}    If you see any dotted lines, that means you haven't measured that fact yet. 
-    {@guide}    Head back to the measurement tank if that's the case!
+    {@guide}    You need to measure the rate of all the interactions on the graph.
+    {@guide}    Dotted lines mean you haven't measured that fact yet. 
+    {@guide}    If you see any dotted lines, I suggest returning to your Measurement Tank.     
 $else
-    {@guide}    Did you make sure to get all the stress ranges for the critters in the graph?
-    {@guide}    Without those, your model won't be able to match the historical data as accurately.
+    {@guide}    Did you obtain all of the stress ranges for the organisms in the graph?
+    {@guide}    Without those ranges, your model won't match the historical data with the accuracy that {nameof @profBayou} needs.
 $endif
 
 // ARGUMENTATION
@@ -124,14 +148,15 @@ $endif
 @cutscene
 $if !ArgueIsComplete(predictJelly)
     $call ArgueLoad(predictJelly)
-    {@profHarper} What will happen to turtle populations in the future?
-    $choice .argue.stableTurtle; Turtle populations remain stable
-    $choice .argue.increaseTurtle; Turtle populations will increase
-    $choice .argue.decreaseTurtle; Turtle populations will decrease
+    {@profBayou}  Okay, Ollie. Let's not waste any time. 
+                  What will happen to turtle populations in the future?
+    $choice .argue.stableTurtle; Turtle populations will remain stable.
+    $choice .argue.increaseTurtle; Turtle populations will increase.
+    $choice .argue.decreaseTurtle; Turtle populations will decrease.
     $choose branch
 $else
     $call ArgueLoad(jellyTurtle)
-    {@profHarper}   We've already established that the turtle populations will remain stable.
+    {@profBayou}   You've already established that the turtle populations will remain stable.
     $if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1) 
         $call ArgueFactSlot(LoggerheadTurtle.Eats.MoonJelly)
     $endif
@@ -143,22 +168,22 @@ $endif
 $if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1)
     $call ArgueFactSlot(O_OilRig.turtleDangerJellies.Model.Predict)
 $endif
-{@profHarper} Have you increased the accuracy of your model from last time?
-$branch argue.showClaim
+{@profBayou} Have you increased the accuracy of your model from last time?
+$branch .argue.showClaim
 
 :: argue.increaseTurtle
 $if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel2)
     $call ArgueFactSlot(O_OilRig.turtleDangerJellies.Model.Predict)
 $endif
-{@profHarper} Can I see your model?
-$branch argue.chooseFactsDummy
+{@profBayou} Can I see your model?
+$branch .argue.chooseFactsDummy
 
 :: argue.decreaseTurtle
 $if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel3)
     $call ArgueFactSlot(O_OilRig.turtleDangerJellies.Model.Predict)
 $endif
-{@profHarper} Can I see your model?
-$branch argue.chooseFactsDummy
+{@profBayou} Can I see your model?
+$branch .argue.chooseFactsDummy
 
 :: argue.showClaim
 $call ArgueDisplayClaim()
@@ -171,14 +196,14 @@ $choose branch
 :: argue.whatMissing
 $call ArgueComplete()
 $call ArgueLoad(jellyTurtle)
-{@profHarper}   I see. Nicely done!
+{@profBayou}   Ah, yes. Good work, Ollie. 
 $if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1) 
     $call ArgueFactSlot(LoggerheadTurtle.Eats.MoonJelly)
 $endif
 $branch .argue.chooseFacts
 
 :: argue.chooseFacts
-How did you increase the accuracy of your model? What was missing?
+{@profBayou}   How did you increase the accuracy of your model? What was missing?
 $call ArgueDisplayClaim()
 $choice #argueFact; Present facts from AQOS
     $answer O_OilRig.PopulationHistory.MoonJelly, .argue.jellyPop
@@ -191,7 +216,7 @@ $choose branch
 $if ArgueIsFactSubmitted(LoggerheadTurtle.Eats.MoonJelly)
 	$branch .argue.complete
 $else
-	{@profHarper}	I see. How is this fact related to the Turtles?
+	{@profBayou}	I see. How is this fact related to the Turtles?
     $call ArgueClearFacts()
 	$branch .argue.chooseFacts
 $endif
@@ -200,7 +225,7 @@ $endif
 $if ArgueIsFactSubmitted(ReefEdge.Population.LoggerheadTurtle)
 	$branch .argue.complete
 $else
-	{@profHarper}	I see. What is the population of the Jellyfish here?
+	{@profBayou}	I see. What is the Jellyfish population here?
 	$branch .argue.chooseFacts
 $endif
 
@@ -214,31 +239,33 @@ $choose branch
 
 :: argue.unrelated
 $call ArgueClearFacts()
-{@profHarper} Ok, that's interesting, but it's not answering my question.
+{@profBayou} That's not relevant, Ms. Ramirez. 
 $branch .argue.showClaim
 
 :: argue.unrelated2
 $call ArgueClearFacts()
-{@profHarper} Ok, that's interesting, but it's not answering my question.
+{@profBayou} I'm afraid that doesn't answer my question. 
 $branch .argue.chooseFactsDummy
 
 :: argue.unrelated3
 $call ArgueClearFacts()
-{@profHarper} Ok, that's interesting, but it's not answering my question.
+{@profBayou} That's not helpful, Ms. Ramirez. 
 $branch .argue.chooseFacts
 
 :: argue.clarifyClaim
 $call ArgueComplete()
 $call ArgueLoad(jellyTurtle) 
-{@profHarper}   In your model, the turtle population stays within a normal range. They are not in jeopardy.
-                I do see that you increased your accuracy. What did you add to the model?
+{@profBayou}   Hmmm... according to your model, the turtle populations will stay within a normal range. 
+{@player}      So the reef probably isn't hurting the turtles, right, Professor? 
+{@profBayou}   It appears so. 
+                I see that you've increased your accuracy. What did you add to the model?
 $if ArgueSetClaim(Claim, jobs.bayou-hide-n-seek.argue.claimLabel1) 
     $call ArgueFactSlot(LoggerheadTurtle.Eats.MoonJelly)
 $endif
 $branch .argue.chooseFacts
 
 :: argue.giveUp
-{@profHarper} OK. Get back to me when you're ready.
+{@profBayou} Very well, Ms. Ramirez. Let me know when you're ready. 
 $call ArgueClearFacts()
 $call ArgueCancelClaim()
 $call ArgueUnload()
@@ -246,7 +273,10 @@ $call ArgueUnload()
 // END
 :: argue.complete
 $call ArgueComplete()
-{@profHarper}   Nicely done! Nothing like a little Hide n' Seek to spice you our science.
-                Keep at it! We're almost done here!
-
+{@profBayou}   Thank you, Ollie.
+               Now that you've made a more accurate model, we'll be better equipped to make a responsible decision about that Rig.
+{@player}      That's great!
+{@player}      So... what HAVE you decided, Professor?
+{@profBayou}   We'll discuss that next time.
+               I think we're almost done here... just one more job to go.
 $call CompleteJob()

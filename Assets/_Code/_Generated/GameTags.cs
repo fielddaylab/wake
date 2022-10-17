@@ -47,4 +47,7 @@ static public class GameTags
 
 	// Tag ThickVegetation
 	public const string ThickVegetation = "ThickVegetation";
+
+	// Tag DoNotTransform
+	public const string DoNotTransform = "DoNotTransform";
 }

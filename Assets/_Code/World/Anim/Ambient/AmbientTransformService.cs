@@ -48,6 +48,13 @@ namespace Aqua.Animation
                 inTransform.Transform.localScale, m_LastTimestamp, m_Random);
         }
 
+        public void SyncTransform(AmbientTransform inTransform, float inTime = 0)
+        {
+            AmbientUtils.ResetVec3Wave(ref inTransform.TransformState.PositionState, ref inTransform.PositionAnimation, m_LastTimestamp - inTime);
+            AmbientUtils.ResetVec3Wave(ref inTransform.TransformState.RotationState, ref inTransform.RotationAnimation, m_LastTimestamp - inTime);
+            AmbientUtils.ResetVec3Wave(ref inTransform.TransformState.ScaleState, ref inTransform.ScaleAnimation, m_LastTimestamp - inTime);
+        }
+
         private void ResetTransform(AmbientTransform inTransform)
         {
             if (!inTransform.Transform)

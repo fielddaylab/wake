@@ -2,8 +2,10 @@ using Aqua.Debugging;
 using BeauData;
 using BeauUtil;
 using BeauUtil.Debugger;
+using NativeUtils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -14,6 +16,7 @@ namespace Aqua
     public class InputService : ServiceBehaviour
     {
         public const int DefaultPriority = int.MinValue;
+        public const float DefaultDoubleClickBuffer = 0.8f;
 
         #region Types
 
@@ -55,6 +58,7 @@ namespace Aqua
         [NonSerialized] private InputLayerFlags m_CurrentFlags = InputLayerFlags.Default;
         [NonSerialized] private int m_PauseAllCounter = 0;
         [NonSerialized] private int m_ForceClick = 0;
+        [NonSerialized] private RingBuffer<long> m_LastClickTimes = new RingBuffer<long>(2, RingBufferMode.Overwrite);
 
         [NonSerialized] private readonly List<PriorityRecord> m_PriorityStack = new List<PriorityRecord>(8);
         [NonSerialized] private readonly List<FlagsRecord> m_FlagsStack = new List<FlagsRecord>(8);
@@ -230,6 +234,17 @@ namespace Aqua
             return m_ForceClick > 0;
         }
 
+        public bool DoubleClick(float buffer = DefaultDoubleClickBuffer)
+        {
+            if (m_LastClickTimes.Count < 2) {
+                return false;
+            }
+
+            long timeSince = m_LastClickTimes[0] - m_LastClickTimes[1];
+            long bufferTicks = (long) (buffer * TimeSpan.TicksPerSecond);
+            return Input.GetMouseButtonDown(0) && timeSince <= bufferTicks;
+        }
+
         private void OnInputModeChanged(PointerInputMode inMode)
         {
             m_PointerMode = inMode;
@@ -272,11 +287,27 @@ namespace Aqua
 
         private void LateUpdate()
         {
+            if (Input.GetMouseButtonDown(0)) {
+                m_LastClickTimes.PushFront(Stopwatch.GetTimestamp());
+            }
+
             m_AllInputLayers.ForEach(UpdateDevice);
             DeviceInput.ClearBlock();
         }
 
         static private readonly Action<IInputLayer> UpdateDevice = (l) => l.Device.Update();
+
+        private void OnNativeMouseDown(float x, float y)
+        {
+            PointerEventData pointerData = m_InputModule.GetPointerEventData();
+            if (pointerData.pointerEnter != null) {
+                ExecuteEvents.Execute(pointerData.pointerEnter, pointerData, NativeMouseDownHandler);
+            }
+        }
+
+        static private readonly ExecuteEvents.EventFunction<INativePointerDownHandler> NativeMouseDownHandler = (INativePointerDownHandler handler, BaseEventData evtData) => {
+            handler.OnNativePointerDown(ExecuteEvents.ValidateEventData<PointerEventData>(evtData));
+        };
 
         #endregion // Unity Events
 
@@ -288,11 +319,17 @@ namespace Aqua
 
             Input.multiTouchEnabled = false;
             m_InputModule.OnModeChanged += OnInputModeChanged;
+
+            NativeInput.Initialize();
+            NativeInput.OnMouseDown += OnNativeMouseDown;
         }
 
         protected override void OnDestroy()
         {
             m_InputModule.OnModeChanged -= OnInputModeChanged;
+
+            NativeInput.OnMouseDown -= OnNativeMouseDown;
+            NativeInput.Shutdown();
 
             base.OnDestroy();
         }

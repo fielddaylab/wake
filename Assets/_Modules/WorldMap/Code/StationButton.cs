@@ -1,3 +1,6 @@
+using System;
+using System.Collections;
+using BeauRoutine;
 using BeauUtil;
 using BeauUtil.UI;
 using UnityEngine;
@@ -9,16 +12,27 @@ namespace Aqua.WorldMap
     {
         #region Inspector
 
-        [SerializeField] private PointerListener m_Input = null;
-        [SerializeField] private SpriteRenderer m_Icon = null;
-        [SerializeField] private CursorInteractionHint m_CursorHint = null;
-        [SerializeField] private Sprite m_CurrentSprite = null;
-        [SerializeField] private Sprite m_OpenSprite = null;
-        [Space]
+        [SerializeField, PrefabModeOnly] private PointerListener m_Input = null;
+        [SerializeField, PrefabModeOnly] private CursorInteractionHint m_CursorHint = null;
+        
+        [Header("Display")]
+        [SerializeField, PrefabModeOnly] private GameObject m_Underline = null;
+        [SerializeField, PrefabModeOnly] private GameObject m_CurrentJobIcon = null;
+        [SerializeField, PrefabModeOnly] private SpriteRenderer m_CurrentJobPulse = null;
+        [SerializeField, PrefabModeOnly] private GameObject m_NotVisitedIcon = null;
+        [SerializeField, PrefabModeOnly] private SpriteRenderer m_NotVisitedPulse = null;
+        [SerializeField, PrefabModeOnly] private LocText m_Label = null;
+        [SerializeField, PrefabModeOnly] private PolygonCollider2DRenderer m_Region = null;
+        [SerializeField, PrefabModeOnly] private ColorGroup m_RegionColor = null;
+        
+        [Header("Data")]
         [SerializeField, MapId(MapCategory.Station)] private SerializedHash32 m_StationId = null;
-        [SerializeField] private StationLabel m_Label = null;
 
         #endregion // Inspector
+
+        [NonSerialized] private bool m_Selected;
+        private Routine m_HighlightColorRoutine;
+        private Routine m_PulseRoutine;
 
         #region IKeyValue
 
@@ -33,22 +47,92 @@ namespace Aqua.WorldMap
         public void Hide()
         {
             gameObject.SetActive(false);
-            m_Label.Hide();
         }
 
-        public void Show(MapDesc inMap, bool inbCurrent, bool inbSeen, JobProgressSummary inSummary)
+        public void Show(MapDesc inMap, bool inbCurrent, bool inbSeen, bool inbHasCurrentJob)
         {
-            m_Label.Show(inMap, inbCurrent, inbSeen, inSummary);
-            
+            m_Label.SetText(inMap.ShortLabelId());
             m_CursorHint.TooltipId = inMap.LabelId();
-            m_Icon.sprite = inbCurrent ? m_CurrentSprite : m_OpenSprite;
-
             m_Input.onClick.AddListener(OnClick);
+
+            m_Input.onPointerEnter.AddListener(OnPointerEnter);
+            m_Input.onPointerExit.AddListener(OnPointerExit);
+
+            m_Input.enabled = !inbCurrent;
+            m_Region.Collider.enabled = !inbCurrent;
+
+            m_Underline.SetActive(inbCurrent);
+
+            m_RegionColor.SetAlpha(0);
+
+            m_CurrentJobIcon.SetActive(inbHasCurrentJob);
+            m_NotVisitedIcon.SetActive(!inbSeen);
+
+            if (inbHasCurrentJob) {
+                m_PulseRoutine.Replace(this, Pulse(m_CurrentJobPulse, 2, 1, 1));
+            } else if (!inbSeen) {
+                m_PulseRoutine.Replace(this, Pulse(m_NotVisitedPulse, 2, 1, 1));
+            }
         }
 
         private void OnClick(PointerEventData unused)
         {
-            Services.Events.Dispatch(WorldMapCtrl.Event_RequestChangeStation, m_StationId.Hash());
+            if (m_Selected) {
+                return;
+            }
+
+            m_Selected = true;
+            m_HighlightColorRoutine.Replace(this, ColorGroupTween(m_RegionColor, AQColors.HighlightYellow.WithAlpha(0.3f), 0.2f));
+            Services.Events.Dispatch(WorldMapCtrl.Event_RequestChangeStation, this);
+        }
+
+        private void OnPointerEnter(PointerEventData _) {
+            if (m_Selected) {
+                return;
+            }
+
+            m_HighlightColorRoutine.Replace(this, ColorGroupTween(m_RegionColor, AQColors.BrightBlue.WithAlpha(0.15f), 0.2f));
+            Services.Audio.PostEvent("ui_hover");
+        }
+
+        private void OnPointerExit(PointerEventData _) {
+            if (m_Selected) {
+                return;
+            }
+
+            m_HighlightColorRoutine.Replace(this, ColorGroupTween(m_RegionColor, AQColors.BrightBlue.WithAlpha(0), 0.2f));
+        }
+
+        public void CancelSelected() {
+            if (!m_Selected) {
+                return;
+            }
+
+            m_Selected = false;
+            m_HighlightColorRoutine.Replace(this, ColorGroupTween(m_RegionColor, AQColors.HighlightYellow.WithAlpha(0), 0.2f));
+        }
+
+        static private Tween ColorGroupTween(ColorGroup group, Color color, float duration) {
+            if (group.GetAlpha() == 0) {
+                group.Color = color.WithAlpha(0);
+            }
+            return Tween.Color(group.Color, color, group.SetColor, duration);
+        }
+
+        static private IEnumerator Pulse(SpriteRenderer renderer, float maxScale, float duration, float delay) {
+            Transform trans = renderer.transform;
+            renderer.enabled = false;
+            while(true) {
+                yield return delay;
+                renderer.enabled = true;
+                trans.SetScale(1);
+                renderer.SetAlpha(1);
+                yield return Routine.Combine(
+                    trans.ScaleTo(maxScale, duration).Ease(Curve.QuadOut),
+                    renderer.FadeTo(0, duration)
+                );
+                renderer.enabled = false;
+            }
         }
     }
 }

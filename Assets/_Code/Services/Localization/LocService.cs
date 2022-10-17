@@ -9,6 +9,8 @@ using BeauUtil;
 using BeauUtil.Blocks;
 using BeauUtil.Debugger;
 using BeauUtil.Tags;
+using EasyAssetStreaming;
+using ScriptableBake;
 using UnityEngine;
 
 namespace Aqua
@@ -17,7 +19,7 @@ namespace Aqua
     {
         #region Inspector
 
-        [SerializeField, Required] private LocPackage[] m_EnglishStrings = null;
+        [SerializeField, Required] private LocManifest m_EnglishManifest;
 
         #endregion // Inspector
 
@@ -33,26 +35,28 @@ namespace Aqua
 
         private IEnumerator InitialLoad()
         {
-            m_Loading = true;
-            yield return LoadLanguage(true);
-            m_Loading = false;
-            DispatchTextRefresh();
+            yield return LoadLanguage(m_EnglishManifest);
         }
 
-        private IEnumerator LoadLanguage(bool inbForce)
+        private IEnumerator LoadLanguage(LocManifest manifest)
         {
-            if (m_LanguagePackage != null)
-                yield break;
+            m_Loading = true;
+            
+            if (m_LanguagePackage == null) {
+                m_LanguagePackage = ScriptableObject.CreateInstance<LocPackage>();
+                m_LanguagePackage.name = "LanguageStrings";
+            }
 
-            m_LanguagePackage = ScriptableObject.CreateInstance<LocPackage>();
-            m_LanguagePackage.name = "LanguageStrings";
-            foreach(var file in m_EnglishStrings)
-            {
+            m_LanguagePackage.Clear();
+            foreach(var file in manifest.Packages) {
                 var parser = BlockParser.ParseAsync(ref m_LanguagePackage, file, Parsing.Block, LocPackage.Generator.Instance);
                 yield return Async.Schedule(parser); 
             }
 
-            DebugService.Log(LogMask.Loading | LogMask.Localization, "[LocService] Loaded {0} keys (english)", m_LanguagePackage.Count);
+            DebugService.Log(LogMask.Loading | LogMask.Localization, "[LocService] Loaded {0} keys ({1})", m_LanguagePackage.Count, manifest.LanguageId.ToString());
+
+            m_Loading = false;
+            DispatchTextRefresh();
         }
 
         #endregion // Loading
@@ -113,13 +117,6 @@ namespace Aqua
         #endregion // Localization
 
         #region Tagged
-
-        public TagString LocalizeTagged(TextId inKey, object inContext = null)
-        {
-            TagString tagString = new TagString();
-            LocalizeTagged(ref tagString, inKey, inContext);
-            return tagString;
-        }
 
         public bool LocalizeTagged(ref TagString ioTagString, TextId inKey, object inContext = null)
         {

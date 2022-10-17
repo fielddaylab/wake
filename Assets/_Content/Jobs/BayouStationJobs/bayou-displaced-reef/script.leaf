@@ -1,39 +1,28 @@
-:: basePath job.bayou-displaced-reef
+# basePath job.bayou-displaced-reef
 
 :: start
 @trigger    JobStarted
 @cutscene
 
-$branch common.ringPhone
+{@profBayou}  Thank you, Ollie,  
+              We need to assess whether the oil rig reef can stay without harming the ecosystem, or if it needs to be removed.
+             Can you take your sub out and get an estimated count of all the local species? 
+{@player}    Sure, Professor. Happy to help. 
 
-{@profHarper}   Have you explored the {h}Bayou Station{/h} yet? There appears to be a new reef growing in the middle of {h}Site O{/h}. 
-                Would you be able to go pop over and help us report back on what exactly is growing over there?
-{@player}   You can count on me!
-
-:: giveROVTagger
+:: diveSite
 @trigger    SceneStart
-@when       scene:name == "BayouStation"
+@when       scene:name == "RS-3O"
 @once
 @cutscene
-$if !HasUpgrade(ROVTagger)
-	$branch common.ringPhone
-	{@profHarper} When you took this job I had the tech install a population counter tool on your sub.
-	$call GiveUpgrade(ROVTagger)
-	{@profHarper} You should see the {nameof ROVTagger} at the top of your view.  
-	{@profHarper} If you switch it on and move close to a scanned species, the {nameof ROVTagger} will {h}count{/h} it.
-	{@profHarper} Count enough of them and your {nameof ROVTagger} will do the rest and give you a population estimate.
-	{@profHarper} Go ahead and give it a try!
-	$set    jobs:common-dive.seen.tagger-intro = true
-$endif
 
-:: makeAModel
-@trigger    SceneStart
-@when       JobTaskActive(makeModel), scene:name == "Ship"
-@once
-@cutscene
-{@guide}    Let's head to our ship's modeling room to compile our data into a report for {nameof @profHarper}.
-$call UnlockRoom("modelingRoom")
-$call UnlockRoom("Modeling")
+{@player} This is so wild. A whole new ecosystem growing on an old oil rig!
+{@player} That Silias guy doesn't seem happy about it, though. 
+{@guide} Processing "Silias"..... 
+{@guide} Records found. Esteemed marine scientist. The youngest in a long line of shrimpers. 
+{@player} Shrimpers?
+{@guide} Humans who make a living fishing for shrimp. 
+{@player} Hmm. I haven't seen many shrimp around here.  
+{@player} No wonder the guy's grumpy. 
 
 // CATCH-ALL GUIDE TEXT
 
@@ -42,74 +31,202 @@ $call UnlockRoom("Modeling")
 @when 		JobTaskActive(visitSiteO)
 @boostScore -5
 @cutscene
-{@guide}    Head to {h}site O{/h}, it's just South of us!
+{@guide}    Head to {h}site O{/h}. It's right outside!
 
 :: catchGetScans
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(getScans)
 @boostScore -5
 @cutscene
-{@guide}    Scan and count the species at {h}site O{/h}.
+{@player}  What should I do now, {nameof @guide}?
+{@guide}   You must scan and count all of the species at {h}Site O{/h}.
 
 :: catchGetCounts
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(getCounts)
 @boostScore -5
 @cutscene
-{@guide}    Count the species at {h}site O{/h}.
-
-:: catchMakeModel
-@trigger    RequestPartnerHelp
-@when       JobTaskActive(makeModel)
-@boostScore -5
-@cutscene
-$if IsPlayerOnShip()
-    {@guide}    We need to head to the {map-name}Modeling Lab{/map-name} to construct a {nameof VisualModel}.
-$else
-    {@guide}    Let's head back to our ship!
-$endif
+{@player}   Okay, {nameof @guide}. What next? 
+{@guide}    You need to count all of the species at {h}Site O{/h}.
 
 :: catchReportback
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Report back to {nameof profHarper}.
+{@player} So... what now, {nameof @guide}?
+{@guide}  You've completed your task, O. It's time to report back to {nameof @profBayou}!
 
 // ARGUMENTATION
 ::argue.intro
 @trigger    TryArgumentation
-@when   !ArgueIsComplete(siteOAnalysis)
+@when   !ArgueIsComplete(siteOAnalysis4Summary)
 @cutscene
-$call ArgueLoad(siteOAnalysis)
-$if ArgueSetClaim(Claim, jobs.bayou-displaced-reef.argue.claimLabel)
-    $call ArgueFactSlot(O_OilRig.displacedReef.Model.Viz)
+$if ArgueIsComplete(siteOAnalysis3Invasive)
+    // go to pt 4
+    $branch .argue.loadArgue4
+$elseif ArgueIsComplete(siteOAnalysis2Relier)
+    // go to pt 3
+    $branch .argue.loadArgue3
+$elseif ArgueIsComplete(siteOAnalysis1Native)
+    // go to pt 2
+    $branch .argue.loadArgue2
+$else
+    // go to pt 1
+    $branch .argue.loadArgue1
 $endif
 
-{@profHarper} Have you constructed a {h}visual model{/h} for the critters at {nameof O_OilRig}?
-$branch .argue.showClaim
+// pt 1
 
-:: argue.showClaim
+:: argue.loadArgue1
+$call ArgueLoad(siteOAnalysis1Native)
+$if ArgueSetClaim(Claim, jobs.bayou-displaced-reef.argue.claimLabel1)
+    $call ArgueFactSlot(O_OilRig.Population.LoggerheadTurtle)
+    $call ArgueFactSlot(O_OilRig.Population.RedGrouper)
+$endif
+
+{@profBayou}    Okay Ollie, let's analyze the data you uncovered for the species at {nameof O_OilRig}.
+{@profBayou}    First, what are the populations for the native species: {pluralnameof LoggerheadTurtle} and {pluralnameof RedGrouper}? (They should be in the {h}Sites{/h} tab of {h}AQOS{/h}.)
+$branch .argue.showClaim1
+
+:: argue.showClaim1
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.correctPopulation
-		$answer incorrect, .argue.incorrectPopulation
+    $answer correct, .argue.analysis1Complete
+    $answer incorrect, .argue.incorrect1
+$choice .argue.giveUpArgument; Let me get back to you.
+$choose branch
+
+:: argue.incorrect1
+$call ArgueRejectIncorrect()
+{@profBayou} That's not the answer I'm looking for, Ms. Ramirez.  
+             What are the populations for {pluralnameof LoggerheadTurtle} and {pluralnameof RedGrouper}?
+$branch .argue.showClaim1
+
+:: argue.analysis1Complete
+$call ArgueComplete()
+$branch .argue.loadArgue2
+
+// pt 2
+
+:: argue.loadArgue2
+$call ArgueLoad(siteOAnalysis2Relier)
+$if ArgueSetClaim(Claim, jobs.bayou-displaced-reef.argue.claimLabel2)
+    $call ArgueFactSlot(O_OilRig.Population.ElkhornCoral)
+    $call ArgueFactSlot(O_OilRig.Population.SeaPearl)
+$endif
+{@profBayou} How about the populations of organisms that rely on the rig structure? Those are {pluralnameof ElkhornCoral} and {pluralnameof SeaPearl}.
+$branch .argue.showClaim2
+
+:: argue.showClaim2
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.analysis2Complete
+		$answer incorrect, .argue.incorrect2
+$choice .argue.giveUpArgument; Let me get back to you.
+$choose branch
+
+:: argue.incorrect2
+$call ArgueRejectIncorrect()
+{@profBayou} That's not the answer I'm looking for, Ms. Ramirez.  
+        What are the populations for {pluralnameof ElkhornCoral} and {pluralnameof SeaPearl}?
+$branch .argue.showClaim2
+
+:: argue.analysis2Complete
+$call ArgueComplete()
+$branch .argue.loadArgue3
+
+// pt 3
+
+:: argue.loadArgue3
+$call ArgueLoad(siteOAnalysis3Invasive)
+$if ArgueSetClaim(Claim, jobs.bayou-displaced-reef.argue.claimLabel3)
+    $call ArgueFactSlot(O_OilRig.Population.AngelFish)
+$endif
+{@profBayou} What other species are there? Those will be the invasive species.
+$branch .argue.showClaim3
+
+:: argue.showClaim3
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.analysis3Complete
+		$answer incorrect, .argue.incorrect3
+$choice .argue.giveUpArgument; Let me get back to you.
+$choose branch
+
+:: argue.incorrect3
+{@profBayou}    That's not the answer I'm looking for, Ms. Ramirez.
+$if ArgueIsFactSubmitted(O_OilRig.Population.Cyanobacteria)
+    // player is ahead of the curve -- most don't have a microscope yet
+    {@profBayou}    You can leave the {pluralnameof Cyanobacteria} out of this, they aren't what we are concerned about at present.
+                    They are native species anyways.
+$endif
+{@profBayou}    What other species populations have you found that we haven't covered yet?
+$call ArgueRejectIncorrect()
+$branch .argue.showClaim3
+
+:: argue.analysis3Complete
+$call ArgueComplete()
+$branch .argue.loadArgue4
+
+// pt 4
+
+:: argue.loadArgue4
+$call ArgueLoad(siteOAnalysis4)
+{@profBayou} Okay. Now, looking at the numbers in total...
+$branch .argue.showClaim4
+
+:: argue.showClaim4
+{@profBayou} Are the invasive species outnumbering the native ones?
+$choice .argue.invasivesOutnumber; Invasives outnumber native species
+$choice .argue.equal; Invasive and native species populations are roughly equal
+$choice .argue.nativesOutnumber; Native species outnumber the invasive species
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
-:: argue.incorrectPopulation
-$call ArgueRejectIncorrect()
-{@profHarper} Ok, that's interesting, but it's not answering my question.
-$goto .argue.showClaim
+:: argue.invasivesOutnumber
+{@player}   It looks like invasive species outnumber the native ones.
+{@profBayou}    Well then. That doesn't bode too well for the existing ecosystem.
+$branch .argue.analysis4Complete
+
+:: argue.equal
+{@player}   It looks like there are about the same number of each.
+{@profBayou}    Are you sure? I haven't tallied them exactly, but that isn't the sense I get looking at those numbers.
+                Let's take another look.
+$branch .argue.showClaim4
+
+:: argue.nativesOutnumber
+{@player}   It looks like the native species outnumber the invasive ones.
+$if HasFact(O_OilRig.Population.Cyanobacteria)
+    {@profBayou}    I suppose if we count {pluralnameof Cyanobacteria}, that is true. There are about a million of those things.
+                    But if we leave them out of it, it seems clear to me there a significantly more invasive species than native ones.
+    $branch .argue.analysis4Complete
+$else
+    {@profBayou}    Are you sure? I haven't tallied them exactly, but that isn't the sense I get looking at those numbers.
+                    Let's take another look.
+    $branch .argue.showClaim4
+$endif
+
+
+// Ending
+
+:: argue.giveUpArgument
 $call ArgueCancelClaim()
+$call ArgueUnload()
+$goto .argue.giveUp
 
 :: argue.giveUp
-{@profHarper} OK. Get back to me when you're ready.
+{@profBayou} Hmmm. Okay, then. Do hurry back. 
 
-::end
-
-:: argue.correctPopulation
+:: argue.analysis4Complete
 $call ArgueComplete()
-{@profHarper} That looks great. 
-{@profHarper} It looks like you are getting good at estimating populations with your sub.
+{@profBayou} Hmmm. Nice work, Ollie. 
+{@profBayou} I need to consider this and plan our next move. 
+{@bayouSci} Aw, you gotta be kiddin' me, Harper. 
+            The turtles were here first. Then these new critters moved in and started takin' over.
+            If you ask me, we need that reef outta here yesterday! Right, kid?
+{@player}   Oh... um...
+            I'm not really used to making these kind of decisions...
+{@profBayou} It's too early to decide anything, Silias. We need more data. 
+{@profBayou} Ollie, let me know if you'd like to help out again. I'm sure I'll have more work for you soon. 
 $call CompleteJob()

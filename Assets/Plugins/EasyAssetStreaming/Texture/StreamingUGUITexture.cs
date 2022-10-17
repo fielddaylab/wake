@@ -48,7 +48,8 @@ namespace EasyAssetStreaming {
 
         #endregion // Inspector
 
-        [NonSerialized] private Texture2D m_LoadedTexture;
+        [NonSerialized] private StreamingAssetHandle m_AssetHandle;
+        [NonSerialized] private Texture m_LoadedTexture;
         [NonSerialized] private Rect m_ClippedUVs;
         [NonSerialized] private Vector2 m_AppliedPivot;
         [NonSerialized] private bool m_ResizeGuard;
@@ -56,9 +57,16 @@ namespace EasyAssetStreaming {
         private DrivenRectTransformTracker m_Tracker;
 
         private StreamingUGUITexture() {
-            m_OnUpdatedEvent = (StreamingAssetId id, Streaming.AssetStatus status, object asset) => {
+            m_OnUpdatedEvent = (StreamingAssetHandle id, Streaming.AssetStatus status, object asset) => {
                 if (status == Streaming.AssetStatus.Loaded) {
+                    m_LoadedTexture = (Texture) asset;
+                    m_RawImage.texture = m_LoadedTexture;
+                    ApplyVisible();
                     Resize(m_AutoSize);
+                } else {
+                    m_LoadedTexture = null;
+                    m_RawImage.texture = null;
+                    ApplyVisible();
                 }
                 OnUpdated?.Invoke(this, status);
             };
@@ -90,20 +98,20 @@ namespace EasyAssetStreaming {
         /// Returns if the texture is fully loaded.
         /// </summary>
         public bool IsLoaded() {
-            return Streaming.IsLoaded(m_LoadedTexture);
+            return Streaming.IsLoaded(m_AssetHandle);
         }
 
         /// <summary>
         /// Returns if the texture is currently loading.
         /// </summary>
         public bool IsLoading() {
-            return (Streaming.Status(m_LoadedTexture) & Streaming.AssetStatus.PendingLoad) != 0;;
+            return (Streaming.Status(m_AssetHandle) & Streaming.AssetStatus.PendingLoad) != 0;;
         }
 
         /// <summary>
         /// Loaded texture.
         /// </summary>
-        public Texture2D Texture {
+        public Texture Texture {
             get { return m_LoadedTexture; }
         }
 
@@ -368,14 +376,15 @@ namespace EasyAssetStreaming {
         }
 
         private void LoadTexture() {
-            if (!Streaming.Texture(m_Path, ref m_LoadedTexture, m_OnUpdatedEvent)) {
-                if (!m_LoadedTexture) {
+            if (!Streaming.Texture(m_Path, ref m_AssetHandle, m_OnUpdatedEvent)) {
+                if (!m_AssetHandle) {
                     m_RawImage.enabled = false;
                     #if USING_BEAUUTIL
                     if (m_ColorGroup) {
                         m_ColorGroup.Visible = false;
                     }
                     #endif // USING_BEAUUTIL
+                    m_LoadedTexture = null;
                 }
                 return;
             }
@@ -392,7 +401,7 @@ namespace EasyAssetStreaming {
             }
             #endif // USING_BEAUUTIL
 
-            Streaming.AssetStatus status = Streaming.Status(m_LoadedTexture);
+            Streaming.AssetStatus status = Streaming.Status(m_AssetHandle);
             if ((status & Streaming.AssetStatus.Loaded) != 0) {
                 Resize(m_AutoSize);
             } else {
@@ -435,7 +444,8 @@ namespace EasyAssetStreaming {
             }
             #endif // USING_BEAUUTIL
 
-            if (Streaming.Unload(ref m_LoadedTexture, m_OnUpdatedEvent)) {
+            if (Streaming.Unload(ref m_AssetHandle, m_OnUpdatedEvent)) {
+                m_LoadedTexture = null;
                 OnUpdated?.Invoke(this, Streaming.AssetStatus.Unloaded);
             }
         }

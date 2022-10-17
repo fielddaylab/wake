@@ -1,262 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1264615091495270855
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1264615091495270854}
-  - component: {fileID: 1264615091495270852}
-  - component: {fileID: 1264615091495270853}
-  - component: {fileID: 1264615091495270851}
-  m_Layer: 0
-  m_Name: Renderer
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1264615091495270854
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1264615091495270855}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1264615091982000664}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &1264615091495270852
-SpriteRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1264615091495270855}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 5d7c423ca164b7541807c250e0715054, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
---- !u!114 &1264615091495270853
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1264615091495270855}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9fdcd5fe145e0e946adb817017857a02, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Renderer: {fileID: 1264615091495270852}
-  m_Graphic: {fileID: 0}
-  m_Visible: 1
-  m_Colors:
-    Main: {r: 1, g: 1, b: 1, a: 1}
-    Emissive: {r: 1, g: 1, b: 1, a: 1}
-    CustomA: {r: 1, g: 1, b: 1, a: 1}
-    CustomB: {r: 1, g: 1, b: 1, a: 1}
-    CustomC: {r: 1, g: 1, b: 1, a: 1}
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
-  m_UseMainAlphaForVisibility: 1
-  m_MaterialConfig:
-    MainProperty:
-      Name: _Color
-      Source: 0
-      Multiplier: {r: 1, g: 1, b: 1, a: 1}
-      Enabled: 0
-    AdditionalProperties: []
-  m_EnableRaycastLayer: 0
-  m_DisableRaycastLayer: 2
---- !u!114 &1264615091495270851
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1264615091495270855}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c3173d042930de4d91f44f667465238, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Transform: {fileID: 1264615091495270854}
-  TransformSpace: 1
-  AnimationScale: 1
-  PositionAnimation:
-    Initial: {x: 0, y: 0, z: 0}
-    WaveXYZ:
-      Frequency: 0
-      Method: 0
-      Delay: 0
-      DelayRandom:
-        m_Value: 0
-      Duration: 0
-      DurationRandom:
-        m_Value: 0
-    DistanceXYZ: {x: 0, y: 0, z: 0}
-    WaveX:
-      Frequency: 0
-      Method: 0
-      Delay: 0
-      DelayRandom:
-        m_Value: 0
-      Duration: 0
-      DurationRandom:
-        m_Value: 0
-    DistanceX: 0
-    WaveY:
-      Frequency: 1
-      Method: 0
-      Delay: 0.2
-      DelayRandom:
-        m_Value: 31
-      Duration: 4.3
-      DurationRandom:
-        m_Value: 20
-    DistanceY: 0.1
-    WaveZ:
-      Frequency: 0
-      Method: 0
-      Delay: 0
-      DelayRandom:
-        m_Value: 0
-      Duration: 0
-      DurationRandom:
-        m_Value: 0
-    DistanceZ: 0
-  ScaleAnimation:
-    Initial: {x: 0, y: 0, z: 0}
-    WaveXYZ:
-      Frequency: 0
-      Method: 0
-      Delay: 0
-      DelayRandom:
-        m_Value: 0
-      Duration: 0
-      DurationRandom:
-        m_Value: 0
-    DistanceXYZ: {x: 0, y: 0, z: 0}
-    WaveX:
-      Frequency: 0
-      Method: 0
-      Delay: 0
-      DelayRandom:
-        m_Value: 0
-      Duration: 0
-      DurationRandom:
-        m_Value: 0
-    DistanceX: 0
-    WaveY:
-      Frequency: 0
-      Method: 0
-      Delay: 0
-      DelayRandom:
-        m_Value: 0
-      Duration: 0
-      DurationRandom:
-        m_Value: 0
-    DistanceY: 0
-    WaveZ:
-      Frequency: 0
-      Method: 0
-      Delay: 0
-      DelayRandom:
-        m_Value: 0
-      Duration: 0
-      DurationRandom:
-        m_Value: 0
-    DistanceZ: 0
-  RotationAnimation:
-    Initial: {x: 0, y: 0, z: 0}
-    WaveXYZ:
-      Frequency: 0
-      Method: 0
-      Delay: 0
-      DelayRandom:
-        m_Value: 0
-      Duration: 0
-      DurationRandom:
-        m_Value: 0
-    DistanceXYZ: {x: 0, y: 0, z: 0}
-    WaveX:
-      Frequency: 0
-      Method: 0
-      Delay: 0
-      DelayRandom:
-        m_Value: 0
-      Duration: 0
-      DurationRandom:
-        m_Value: 0
-    DistanceX: 0
-    WaveY:
-      Frequency: 0
-      Method: 0
-      Delay: 0
-      DelayRandom:
-        m_Value: 0
-      Duration: 0
-      DurationRandom:
-        m_Value: 0
-    DistanceY: 0
-    WaveZ:
-      Frequency: 0
-      Method: 0
-      Delay: 0
-      DelayRandom:
-        m_Value: 21
-      Duration: 0
-      DurationRandom:
-        m_Value: 12
-    DistanceZ: 0
 --- !u!1 &1264615091982000665
 GameObject:
   m_ObjectHideFlags: 0
@@ -287,9 +30,9 @@ Transform:
   m_GameObject: {fileID: 1264615091982000665}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.9, y: 0.9, z: 0.9}
   m_Children:
-  - {fileID: 1264615091495270854}
+  - {fileID: 7348807352055821302}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -309,7 +52,7 @@ MonoBehaviour:
   CachedCollider: {fileID: 1442867278564410577}
   ColorAdjust: {fileID: 1264615091982000646}
   EatCollider: {fileID: 1442867278564410577}
-  IdleAnimation: {fileID: 1264615091495270851}
+  IdleAnimation: {fileID: 0}
   AnimationTransform: {fileID: 0}
   Mouth: {fileID: 0}
   DistributedParticles: {fileID: 0}
@@ -360,7 +103,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.0007762909, y: -0.016195089}
+  m_Offset: {x: 0.031943828, y: -0.010124892}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -371,7 +114,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.89805245, y: 0.2501487}
+  m_Size: {x: 1.3936636, y: 0.44897544}
   m_EdgeRadius: 0
 --- !u!50 &7578751227682142739
 Rigidbody2D:
@@ -402,6 +145,85 @@ SortingGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1264615091982000665}
   m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!1 &8892567124169630078
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7348807352055821302}
+  - component: {fileID: 1242142655573347036}
+  - component: {fileID: 8399961208791953647}
+  m_Layer: 12
+  m_Name: WrasseArt
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7348807352055821302
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8892567124169630078}
+  m_LocalRotation: {x: 0.000001809995, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.034, y: -0.009, z: -0.004}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1264615091982000664}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &1242142655573347036
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8892567124169630078}
+  m_Mesh: {fileID: 3690997930401233583, guid: fe40e98bd823947839b0beecebf93370, type: 3}
+--- !u!23 &8399961208791953647
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8892567124169630078}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 31b5d05eccbcc8d4e978612844a49299, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0

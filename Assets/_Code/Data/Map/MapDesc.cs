@@ -11,7 +11,7 @@ using UnityEditor;
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab Content/Map Description", fileName = "NewMapDesc")]
-    public class MapDesc : DBObject
+    public class MapDesc : DBObject, IEditorOnlyData
     {
         #region Inspector
 
@@ -22,9 +22,14 @@ namespace Aqua
         [SerializeField] private string m_SceneName = null;
         [SerializeField] private TextId m_LabelId = default;
         [SerializeField] private TextId m_ShortLabelId = default;
+        [SerializeField] private TextId m_ProperNameId = default;
+        [SerializeField] private TextId m_MarkerLabelId = default;
         [SerializeField] private TextId m_StationHeaderId = default;
+        [SerializeField] private TextId m_StationDescId = default;
         [SerializeField] private Sprite m_Icon = null;
+        [SerializeField, StreamingPath("png,jpg,jpeg,webm,mp4")] private string m_HeaderImagePath = null;
         [SerializeField] private MapDesc m_Parent = null;
+        [SerializeField] private MapDesc m_QuickTravel = null;
         [SerializeField, FilterBestiaryId(BestiaryDescCategory.Environment)] private StringHash32 m_EnvironmentId = null;
         [SerializeField] private int m_StationSortingOrder = 0;
 
@@ -32,6 +37,8 @@ namespace Aqua
         [SerializeField] private PropertyBlock m_AdditionalProperties = null;
 
         #endregion // Inspector
+
+        [NonSerialized] private StringHash32 m_PreloadGroup;
 
         public MapCategory Category() { return m_Category; }
         public MapFlags Flags() { return m_Flags; }
@@ -42,9 +49,15 @@ namespace Aqua
         public string SceneName() { return m_SceneName; }
         [LeafLookup("Name")] public TextId LabelId() { return m_LabelId; }
         [LeafLookup("ShortName")] public TextId ShortLabelId() { return m_ShortLabelId.IsEmpty ? m_LabelId : m_ShortLabelId; }
+        [LeafLookup("ProperName")] public TextId ProperNameId() { return m_ProperNameId.IsEmpty ? m_LabelId : m_ProperNameId; }
+        public TextId MarkerLabelId() { Assert.True(m_Category == MapCategory.DiveSite, "MapDesc {0} is not a dive site", Id()); return m_MarkerLabelId; }
         public TextId StationHeaderId() { Assert.True(m_Category == MapCategory.Station, "MapDesc {0} is not a station", Id()); return m_StationHeaderId ;}
+        public TextId StationDescId() { Assert.True(m_Category == MapCategory.Station, "MapDesc {0} is not a station", Id()); return m_StationDescId ;}
         public Sprite Icon() { return m_Icon; }
+        public string HeaderImagePath() { return m_HeaderImagePath; }
         public MapDesc Parent() { return m_Parent; }
+        public MapDesc QuickTravel() { return m_QuickTravel; }
+        public StringHash32 PreloadGroup() { return m_PreloadGroup; }
 
         [LeafLookup("Environment")] public StringHash32 EnvironmentId() { return m_EnvironmentId; }
         public int SortingOrder() { Assert.True(m_Category == MapCategory.Station, "MapDesc {0} is not a station", Id()); return m_StationSortingOrder; }
@@ -53,7 +66,21 @@ namespace Aqua
         public T GetProperty<T>(string inName) { return m_AdditionalProperties.Get<T>(inName); }
         public T GetProperty<T>(string inName, T inDefault) { return m_AdditionalProperties.Get<T>(inName, inDefault); }
 
+        internal void InitializePreloadGroup() {
+            m_PreloadGroup = "Scene/" + m_SceneName;
+        }
+
         #if UNITY_EDITOR
+
+        void IEditorOnlyData.ClearEditorOnlyData()
+        {
+            ValidationUtils.StripDebugInfo(ref m_LabelId);
+            ValidationUtils.StripDebugInfo(ref m_ShortLabelId);
+            ValidationUtils.StripDebugInfo(ref m_ProperNameId);
+            ValidationUtils.StripDebugInfo(ref m_MarkerLabelId);
+            ValidationUtils.StripDebugInfo(ref m_StationHeaderId);
+            ValidationUtils.StripDebugInfo(ref m_StationDescId);
+        }
 
         [CustomEditor(typeof(MapDesc)), CanEditMultipleObjects]
         private class Inspector : Editor {
@@ -62,9 +89,14 @@ namespace Aqua
             private SerializedProperty m_SceneNameProperty;
             private SerializedProperty m_LabelIdProperty;
             private SerializedProperty m_ShortLabelIdProperty;
+            private SerializedProperty m_ProperNameIdProperty;
+            private SerializedProperty m_MarkerLabelIdProperty;
             private SerializedProperty m_StationHeaderIdProperty;
+            private SerializedProperty m_StationDescIdProperty;
             private SerializedProperty m_IconProperty;
+            private SerializedProperty m_HeaderImagePathProperty;
             private SerializedProperty m_ParentProperty;
+            private SerializedProperty m_QuickTravelProperty;
             private SerializedProperty m_EnvironmentIdProperty;
             private SerializedProperty m_StationSortingOrderProperty;
             private SerializedProperty m_AdditionalPropertiesProperty;
@@ -77,9 +109,14 @@ namespace Aqua
                 m_SceneNameProperty = serializedObject.FindProperty("m_SceneName");
                 m_LabelIdProperty = serializedObject.FindProperty("m_LabelId");
                 m_ShortLabelIdProperty = serializedObject.FindProperty("m_ShortLabelId");
+                m_MarkerLabelIdProperty = serializedObject.FindProperty("m_MarkerLabelId");
+                m_ProperNameIdProperty = serializedObject.FindProperty("m_ProperNameId");
                 m_StationHeaderIdProperty = serializedObject.FindProperty("m_StationHeaderId");
+                m_StationDescIdProperty = serializedObject.FindProperty("m_StationDescId");
                 m_IconProperty = serializedObject.FindProperty("m_Icon");
+                m_HeaderImagePathProperty = serializedObject.FindProperty("m_HeaderImagePath");
                 m_ParentProperty = serializedObject.FindProperty("m_Parent");
+                m_QuickTravelProperty = serializedObject.FindProperty("m_QuickTravel");
                 m_EnvironmentIdProperty = serializedObject.FindProperty("m_EnvironmentId");
                 m_StationSortingOrderProperty = serializedObject.FindProperty("m_StationSortingOrder");
                 m_AdditionalPropertiesProperty = serializedObject.FindProperty("m_AdditionalProperties");
@@ -100,6 +137,7 @@ namespace Aqua
                 EditorGUILayout.PropertyField(m_SceneNameProperty);
                 EditorGUILayout.PropertyField(m_LabelIdProperty);
                 EditorGUILayout.PropertyField(m_ShortLabelIdProperty);
+                EditorGUILayout.PropertyField(m_ProperNameIdProperty);
                 EditorGUILayout.PropertyField(m_IconProperty);
 
                 if (!m_CategoryProperty.hasMultipleDifferentValues) {
@@ -108,13 +146,19 @@ namespace Aqua
                             EditorGUILayout.Space();
                             EditorGUILayout.PropertyField(m_EnvironmentIdProperty);
                             EditorGUILayout.PropertyField(m_ParentProperty);
+                            EditorGUILayout.PropertyField(m_HeaderImagePathProperty);
+                            EditorGUILayout.Space();
+                            EditorGUILayout.PropertyField(m_MarkerLabelIdProperty);
                             break;
                         }
 
                         case MapCategory.Station: {
                             EditorGUILayout.Space();
                             EditorGUILayout.PropertyField(m_StationHeaderIdProperty);
+                            EditorGUILayout.PropertyField(m_StationDescIdProperty);
                             EditorGUILayout.PropertyField(m_StationSortingOrderProperty);
+                            EditorGUILayout.PropertyField(m_QuickTravelProperty);
+                            EditorGUILayout.PropertyField(m_HeaderImagePathProperty);
                             break;
                         }
 
@@ -148,7 +192,8 @@ namespace Aqua
     public enum MapFlags
     {
         UnlockedByDefault = 0x01,
-        HasRooms = 0x02
+        HasRooms = 0x02,
+        IsStationInterior = 0x04
     }
 
     public class MapIdAttribute : DBObjectIdAttribute {

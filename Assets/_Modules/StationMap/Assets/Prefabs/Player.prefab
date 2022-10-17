@@ -56,13 +56,14 @@ MonoBehaviour:
   m_Input: {fileID: 2635531021390785891}
   m_Animator: {fileID: 1950210926}
   m_MoveParams:
-    MaxSpeed: 20
+    MaxSpeed: 50
     SpeedCurve: 0
-    Acceleration: 15
-    TurnRate: 30
+    Acceleration: 36
+    TurnRate: 45
     InPlaceRotationSpeedThreshold: 5
+    InPlaceRotationMultiplier: 1.5
   m_DragEngineOn: 2
-  m_DragEngineOff: 3
+  m_DragEngineOff: 4.5
 --- !u!50 &2635531021390785892
 Rigidbody2D:
   serializedVersion: 4
@@ -151,7 +152,7 @@ MonoBehaviour:
     Gravity: {x: 0, y: 0}
     Drag: 2
     Friction: {x: 0.1, y: 0.1}
-    MaxSpeed: 35
+    MaxSpeed: 100
   Body: {fileID: 2635531021390785892}
   Collider: {fileID: 1145269169524055499}
   SolidMask:
@@ -172,6 +173,8 @@ MonoBehaviour:
   m_Id:
     m_Source: PlayerSub
     m_HashValue: 873304418
+  m_IsPersistent: 0
+  m_StartDisabled: 0
 --- !u!114 &2053204097849824396
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,11 +187,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aba82fdc1fdd1014aa91039649946da6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TransformOverride: {fileID: 2635531022056122132}
   Lerp: 3
   Zoom: 1
   Flags: 7
-  Offset: {x: 0, y: -80, z: -45}
-  Look: {x: -0, y: 1.5, z: 0.6507914}
+  Offset: {x: 0, y: -130, z: -80}
+  LookFromOffset: 0
+  Look: {x: -0, y: 1.6, z: 0.65}
 --- !u!1 &2635531022056122133
 GameObject:
   m_ObjectHideFlags: 0
@@ -214,7 +219,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2635531022056122133}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 9.429998, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2635531021390785816}
@@ -382,7 +387,7 @@ PrefabInstance:
     - target: {fileID: 8189635062052561709, guid: ad8324d6bfe8c4201be5a526baa0068a,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.15279078
+      value: 9.19
       objectReference: {fileID: 0}
     - target: {fileID: 8189635062052561709, guid: ad8324d6bfe8c4201be5a526baa0068a,
         type: 3}
@@ -392,7 +397,7 @@ PrefabInstance:
     - target: {fileID: 8189635062052561709, guid: ad8324d6bfe8c4201be5a526baa0068a,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8189635062052561709, guid: ad8324d6bfe8c4201be5a526baa0068a,
         type: 3}

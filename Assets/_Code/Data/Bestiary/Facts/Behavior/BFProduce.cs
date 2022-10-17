@@ -25,7 +25,7 @@ namespace Aqua {
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.Produce, BFShapeId.Behavior, BFFlags.IsBehavior, BFDiscoveredFlags.All, Compare);
+            BFType.DefineAttributes(BFTypeId.Produce, BFShapeId.Behavior, BFFlags.IsBehavior | BFFlags.HasRate, BFDiscoveredFlags.All, Compare);
             BFType.DefineMethods(BFTypeId.Produce, null, GenerateDetails, GenerateFragments, null, (f) => ((BFProduce) f).Property);
             BFType.DefineEditor(BFTypeId.Produce, DefaultIcon, BFMode.Player);
         }
@@ -36,7 +36,8 @@ namespace Aqua {
 
             yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
             yield return BFFragment.CreateLocVerb(ProduceVerb);
-            yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).LabelId());
+            yield return BFFragment.CreateAmount(BestiaryUtils.FormatPropertyAdjust(fact.Amount, fact.Property));
+            yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).ShortLabelId());
         }
 
         static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags, BestiaryDesc inReference)
@@ -50,11 +51,11 @@ namespace Aqua {
 
             if (fact.OnlyWhenStressed)
             {
-                details.Description = Loc.Format(ProduceSentenceStressed, inFact.Parent.CommonName(), BestiaryUtils.FormatProperty(fact.Amount, fact.Property), BestiaryUtils.Property(fact.Property).LabelId());
+                details.Description = Loc.Format(ProduceSentenceStressed, inFact.Parent.CommonName(), BestiaryUtils.FormatPropertyAdjust(fact.Amount, fact.Property), BestiaryUtils.Property(fact.Property).LabelId());
             }
             else
             {
-                details.Description = Loc.Format(ProduceSentence, inFact.Parent.CommonName(), BestiaryUtils.FormatProperty(fact.Amount, fact.Property), BestiaryUtils.Property(fact.Property).LabelId());
+                details.Description = Loc.Format(ProduceSentence, inFact.Parent.CommonName(), BestiaryUtils.FormatPropertyAdjust(fact.Amount, fact.Property), BestiaryUtils.Property(fact.Property).LabelId());
             }
 
             return details;
@@ -85,7 +86,7 @@ namespace Aqua {
             return produce != null && produce.Property == Property;
         }
 
-        public override bool Bake(BakeFlags flags)
+        public override bool Bake(BakeFlags flags, BakeContext context)
         {
             bool bChanged = false;
             if (OnlyWhenStressed)

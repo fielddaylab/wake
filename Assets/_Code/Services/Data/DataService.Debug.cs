@@ -33,6 +33,8 @@ namespace Aqua
             SaveData saveData = CreateNewProfile(DebugSaveId);
             DebugService.Log(LogMask.DataService, "[DataService] Created debug profile");
             DeclareProfile(saveData, false, false);
+
+            Services.Events.Dispatch(GameEvents.ProfileStarting, m_ProfileName);
         }
 
         private void LoadBookmark(string inBookmarkName)
@@ -254,6 +256,20 @@ namespace Aqua
 
             yield return invMenu;
 
+            // journal menu
+
+            DMInfo journalMenu = new DMInfo("Journal");
+
+            journalMenu.AddButton("Unlock All Entries", () => UnlockAllJournals());
+            journalMenu.AddDivider();
+
+            foreach(var journal in Services.Assets.Journal.Objects)
+            {
+                RegisterJournalToggle(journalMenu, journal.Id());
+            }
+
+            yield return journalMenu;
+
             // save data menu
 
             DMInfo saveMenu = new DMInfo("Player Profile");
@@ -315,6 +331,18 @@ namespace Aqua
                 UnlockAllStations();
                 UnlockAllUpgrades();
                 UnlockAllBestiaryEntries(false);
+            });
+
+            defaultsMenu.AddDivider();
+
+            defaultsMenu.AddButton("Complete Intro Job", () => {
+                Save.Jobs.ForgetJob(JobIds.Kelp_welcome);
+                Save.Jobs.SetCurrentJob(JobIds.Kelp_welcome);
+                Save.Jobs.MarkComplete(JobIds.Kelp_welcome);
+            });
+
+            defaultsMenu.AddButton("Unlock Shop", () => {
+                Services.Data.SetVariable("world:shop.unlocked", true);
             });
 
             yield return defaultsMenu;
@@ -465,6 +493,27 @@ namespace Aqua
             }
         }
 
+        static private void RegisterJournalToggle(DMInfo inMenu, StringHash32 inEntry)
+        {
+            inMenu.AddToggle(inEntry.ToDebugString(),
+                () => { return Save.Inventory.HasJournalEntry(inEntry); },
+                (b) =>
+                {
+                    if (b)
+                        Save.Inventory.AddJournalEntry(inEntry);
+                    else
+                        Save.Inventory.AddJournalEntry(inEntry);
+                });
+        }
+
+        static private void UnlockAllJournals()
+        {
+            foreach(var entry in Services.Assets.Journal.Objects)
+            {
+                Save.Inventory.AddJournalEntry(entry.Id());
+            }
+        }
+
         static private void RegisterStationToggle(DMInfo inMenu, StringHash32 inStationId)
         {
             inMenu.AddToggle(inStationId.ToDebugString(),
@@ -526,6 +575,8 @@ namespace Aqua
             {
                 Save.Map.UnlockRoom(roomId);
             }
+
+            Services.Data.SetVariable("world:shop.unlocked", true);
         }
 
         static private void UnlockAllStations()
@@ -557,6 +608,11 @@ namespace Aqua
             UnlockAllStations();
             UnlockAllUpgrades();
             UnlockAllBestiaryEntries(allFacts);
+
+            if (allFacts && !Save.Jobs.IsComplete(JobIds.Kelp_welcome)) {
+                Save.Jobs.SetCurrentJob(JobIds.Kelp_welcome);
+                Save.Jobs.MarkComplete(JobIds.Kelp_welcome);
+            }
 
             foreach(var map in Services.Assets.Map.Stations()) {
                 Save.Map.RecordVisitedLocation(map.Id());

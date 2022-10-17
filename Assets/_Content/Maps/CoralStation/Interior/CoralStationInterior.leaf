@@ -1,0 +1,121 @@
+# basePath interior.coralStation
+
+#include "Headers/Common.leaf"
+
+:: arrival
+@trigger    SceneStart
+@boostScore 10000
+@once
+@cutscene
+@noDelay
+
+{wait 1}
+{@coralMechanic}    Oh my gosh, a new arrival!
+{@coralMechanic}    And they've got a {slow}sweet{/slow} sub.
+{@profCoral}        Welcome to our station. Come and check in with us over here!
+
+:: on-leave
+@function   SceneLeave
+$set    world:coral.leftStation = true
+
+$if !world:coral.metMechanic
+    $set world:coral.mechanic.leftBeforeTalking + 1
+$endif
+
+$if !world:coral.metScientist
+    $set world:coral.scientist.leftBeforeTalking + 1
+$endif
+
+:: on-arrive-intro
+@function   SceneStart
+@when       !world:coral.leftStation
+$call       CoralMechanic->TeleportTo(mechanic-intro-pos)
+
+:: intro.prof
+@trigger    Talk
+@who        *
+@boostScore 100000
+@once
+@cutscene
+
+{@profCoral} Hello, there. Welcome to--
+{@coralMechanic} Yeah, yeah. Serenity Meadows, the happiest ecosystem on Earth...
+                 Except for the killer Lionfish who are literally out there ruining everything.
+{@player}   Oh, um... is this a bad time?
+{@profCoral} Of course not. We were just about to get back to work.
+{@profCoral} You must be O. I'm {nameof @profCoral}, and this is--
+{@coralMechanic} Sofia. Mechanic extraordinaire.  
+                 I hope you like turtles, O. He's obsessed. 
+{@profCoral} The Loggerhead Turtles are my research interest, but you'll find several other species here, too.
+             We maintain a few different sites in the region. I'll send you the coordinates.
+$branch common.download
+
+$call UnlockSite(RS-2R)
+$call UnlockSite(RS-2S)
+
+{@player}       Thanks! 
+                Um... what was that about killer Lionfish?
+{@profCoral}    Don't worry, O. Serenity Meadows is perfectly safe. 
+                Let me know if you'd like to view the job board! 
+
+$set    world:coral.metScientist = true
+$set    world:coral.metMechanic = true
+
+$branch .warpMechanicToDefault
+
+:: intro.mechanic
+@trigger    Talk
+@who        coralMechanic
+@boostScore 100000
+@once
+@cutscene
+
+$set    world:coral.metMechanic = true
+
+$if world:coral.mechanic.leftBeforeTalking
+    {@coralMechanic}    Hey, O! Hope I didn't scare you off earlier.
+                        I get a little... passionate... about those stupid Lionfish. 
+                        But, you know. They're the actual worst. 
+                        So, I think I know the answer, but who's the owner of that {slow}magnificent{/slow} sub?
+$else    
+    {@coralMechanic}    Hey, O! Nice to see you again.
+                        I usually forget people's names the first time... luckily, you're very memorable. 
+                        So, I think I know the answer, but who's the owner of that {slow}magnificent{/slow} sub?
+$endif
+
+{@player} Oh, that's my sub! Is it a good one?
+          Really hoping I don't crash it this time...
+{@coralMechanic} Ha. Didn't peg you for the daredevil type.
+                 Don't worry, O. I can fix anything. 
+
+// $choose branch
+
+$if world:coral.metScientist
+    $if PawnAtNode(CoralMechanic, "mechanic-default-pos")
+        {@coralMechanic}    Let me show you what I can build for you! 
+        $call InteriorOpenShopBoard()
+    $else
+        {@coralMechanic}    My shop is over there. If you convince {nameof @profCoral} to get rid of the Lionfish, everything's half off!
+        $set    world:coral.mechanic.toldToReturn = true
+        $branch .warpMechanicToDefault
+    $endif
+$else
+    {@coralMechanic}    Anyways, I shouldn't keep you. Probably time to go talk to {h}Mr. Turtle{/h} over there.
+                        Come back and talk to me later, though!
+    $set    world:coral.mechanic.toldToReturn = true
+    $branch .warpMechanicToDefault
+$endif
+
+:: warpMechanicToDefault
+@entrypoint
+{hide-dialog} {fade-out black, 0.3, wait}
+$call CoralMechanic->TeleportTo("mechanic-default-pos")
+{wait 0.3}
+{fade-in 0.3, wait}
+
+:: warpMechanicToResearcher
+@entrypoint
+{hide-dialog} {fade-out black, 0.3, wait}
+$call CoralMechanic->TeleportTo("tio-intro-pose")
+{wait 0.3}
+{fade-in 0.3, wait}

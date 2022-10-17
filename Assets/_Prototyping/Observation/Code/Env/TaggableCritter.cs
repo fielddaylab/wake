@@ -3,11 +3,12 @@ using Aqua;
 using Aqua.Entity;
 using Aqua.Scripting;
 using BeauUtil;
+using BeauUtil.Debugger;
 using ScriptableBake;
 using UnityEngine;
 
 namespace ProtoAqua.Observation {
-    public class TaggableCritter : ToolRegion {
+    public class TaggableCritter : ToolRegion, IEditorOnlyData {
 
         #region Inspector
 
@@ -28,5 +29,21 @@ namespace ProtoAqua.Observation {
             }
             ScanSystem.Find<TaggingSystem>()?.Deregister(this);
         }
+
+        #if UNITY_EDITOR
+
+        void IEditorOnlyData.ClearEditorOnlyData() {
+            ValidationUtils.StripDebugInfo(ref CritterId);
+        }
+
+        protected override bool CustomBake() {
+            if (!Assets.Has(CritterId)) {
+                Log.Error("[TaggableCritter] Critter Id not found: '{0}'", CritterId);
+            }
+
+            return false;
+        }
+
+        #endif // UNITY_EDITOR
     }
 }

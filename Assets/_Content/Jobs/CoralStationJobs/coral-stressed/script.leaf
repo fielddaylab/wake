@@ -4,36 +4,35 @@
 @trigger    JobStarted
 @cutscene
 
-$branch common.ringPhone
-
-{@profCempaka}	We've been studying the coral at R for a long time because it hasn't looked right. 
-{@profCempaka} It just seems... well, stressed.  You'll need to go to Site R and see for yourself.
-{@profCempaka}	You can run some experiments to see if something about the environment is stressing it.
-{@player} 	Ok. I'm on it!
+{@profCoral}  I've been keeping an eye on the coral at Site R for a while now. It just doesn't look right. 
+			  Everything here is so connected. I'm concerned about how this will affect our turtle populations. 
+{@player}	 Do you have an idea of what might be wrong? 
+{@profCoral} Not yet. But then again, it has been hard to keep up with everything lately.
+			 I'd like you to head to Site R and scan the coral for yourself. 
+			Then use your Stress Tank to figure out if something about the environment is stressing the coral.
+{@player} 	Okay. I'm on it!
 $set	jobs:coral-stressed.struggling = false
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Helm", !jobs:coral-stressed.seen.bottom
+@when 		scene:name == "RS-2V-StationInterior", !jobs:coral-stressed.seen.bottom
 @cutscene
-{@player}   Where should I go from here?
-{@guide}	Let's exit the ship and head to the sub.
+{@player}   Okay. Looks like I need to head out and look for Site R. 
 
 
 :: navigation
 @trigger    SceneStart
-@when       scene:name == "Station2"
+@when       scene:name == "CoralStation"
 @once
 @cutscene
-{@guide}	You're gonna want to take your sub over to Dive Site R.
-            It should be just north of the ship. When you're there, dive.
+{@player} Okay. Site R... where are you?
 					
 :: helpGoToSiteR
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Station2", !jobs:coral-stressed.got.scans
+@when 		scene:name == "CoralStation", !jobs:coral-stressed.got.scans
 @cutscene
-{@player}   Where should we go next?
-{@guide}	Site R should be to the north of the ship, let's head over and dive down!
+{@player}   Where should we go next, {nameof @guide}?
+{@guide}	You will need to explore until you find Site R. Then dive down and investigate the coral! 
 
 :: diveSite
 @trigger    SceneStart
@@ -41,19 +40,22 @@ $set	jobs:coral-stressed.struggling = false
 @once
 @cutscene
 $set    	jobs:coral-stressed.seen.bottom = true
-{@guide}   Looks like we made it! Time to see what's down there.
-
+{@player}  Wow. Look at all the green stuff on the water.
+		   I know I'm new around here, but I feel like this can't be normal. 
+{@guide}	Yes. It does seem highly unusual.
+{@player}	Better dive down and check out how the coral's doing.
 
 :: helpAtSiteR
 @trigger    RequestPartnerHelp
 @when 		scene:name == "RS-2R"
 @cutscene
-{@player}   What should I be doing here?
+{@player}   What should I be doing, {nameof @guide}?
 $if HasEntity(StaghornCoral)
 	$set    jobs:coral-stressed.got.scans = true
-	{@guide}   I think we've gotten everything we need from here, head back up to the surface when you're ready to leave.
+	{@guide}   You've obtained all the necessary data, O.
+			   Time to return to the Meredith!
 $else
-	{@guide}   Make sure to scan the coral.
+	{@guide}   You still need to scan the coral, O. 
 $endif
 
 :: navigation.goBackUp
@@ -62,15 +64,16 @@ $endif
 @once
 @cutscene
 $set jobs:coral-stressed.gotScans = true
-{@guide}    I think that's all the info we need from here for now! Feel free to head back up when you're ready.
+{@guide}   You've gathered all the data you need, O!
+		   Time to return to the Meredith and use your Stress Tank.
 
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
-@when 		scene:name == "Station2", jobs:coral-stressed.got.scans
+@when 		scene:name == "CoralStation", jobs:coral-stressed.got.scans
 @cutscene
-{@player} 	Where should we go from here?
-{@guide}	Let's head south and return to the ship.
+{@player} 	What now, {nameof @guide}?
+{@guide}	You will need to return to your ship, O. 
 
 
 :: atShip
@@ -78,55 +81,52 @@ $set jobs:coral-stressed.gotScans = true
 @when       scene:name == "Helm", JobTaskCompleted(siteR), JobTaskActive(stressCoral)
 @once
 @cutscene
-{@player}   We're back. Now what?
-{@guide}   	Let's head to the {nameof Experimentation} and see what's stressing the coral.
-{@player}   On it!
+{@player}   Guess I should head over to {nameof Experimentation}.
 	
 :: helpBackAtShip
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Helm", JobTaskActive(stressCoral)
 @cutscene
-{@player} 	What should we be doing now?
-{@guide}	Let's head over to the {nameof Experimentation} and try to learn more about the coral's condition. 
-
+{@player} 	What should I do now, {nameof @guide}?
+{@guide}	You need to head to the {nameof Experimentation} and try to learn more about the coral's condition. 
 
 :: startExperiment
 @trigger    SceneStart
 @when       scene:name == "ExperimentV2", JobTaskActive(stressCoral)
 @once
 @cutscene
-{@player}   What kind of experiment should we be doing this time?
-{@guide}  	Let's put the coral in the stress tank and see if that can tell us what's happening to it.
+{@player}   Okay. Time to see what's stressing the coral. Right, {nameof @guide}?
+{@guide}   Yes, O. Add Coral to the Stress Tank, and see if it can give you a clue about what's happening to it.  
 
 :: openStressTank
 @trigger	ExperimentTankViewed
 @when		tankType == "Stress", jobs:coral-stressed.got.scans == true
 @once
 @cutscene
-{@profCempaka}	The dials on the bottom move. They will auto adjust to make sure no harm comes to our organisms.
-{@profCempaka}	Think of it like a treadmill!
+{@guide} You can move the dials on the bottom.
+		 Remember, they will auto adjust to make sure no harm comes to the species inside!
 
 :: helpAtExperiment
 @trigger    RequestPartnerHelp
 @when 		scene:name == "ExperimentV2", jobs:coral-stressed.got.scans == true
 @cutscene
-{@guide}	Select the stressor tank instead of an observation one.
-{@guide}	Next, add the coral in, and see if you can find what's causing its condition. 
-
+{@guide}	Select the Stress Tank. Then add the Coral and see if you can find what's causing its condition. 
 
 :: experimentEnd
 @trigger    ExperimentFinished //NewStressResults
 @when 		HasFact(StaghornCoral.Light.Stressed)
 @once
 @cutscene
-{@guide}	Fantastic! The {h}Stress Tank{/h} gave us some new clues.
-{@guide}	For each environment variable, the bars show values from low to high,
-{@guide}	and the grayed parts show the range where the organism is stressed.
-{@player} 	Got it. So it tells us the ranges a species is stressed?
-{@guide}	Exactly. So this experiment tells us the staghorn coral is stressed
-{@guide}	if the temperature is too hot or too cold, or if the light is too low.
-{@guide}	I wonder if either of those are true at Site R?
-{@guide}	Let's report this information back to Professor Cempaka!
+{@guide}  Adequate work, O!
+{@player} Hmm. Can you remind me what this all means, {nameof @guide}?
+{@guide} Certainly, O.
+		 For each environment variable, the bars show values from low to high.
+{@guide}  The grayed parts show the range where the organism is stressed.
+{@player} 	Got it. So basically... we're getting the ranges of conditions that stress the Coral?
+{@guide}	Exactly. 
+			It appears that the Staghorn Coral is stressed if the temperature is too hot or cold...
+			Or if the light levels are too low.
+			Time to report this information to {nameof @profCoral}!
 
 :: helpReportBack
 @trigger    RequestPartnerHelp
@@ -134,15 +134,13 @@ $set jobs:coral-stressed.gotScans = true
 @boostScore 1
 @cutscene
 $if	jobs:coral-stressed.struggling
-	{@player} 	Any tips about which facts to focus on?
-	{@guide}	Make sure to open AQOS and compare the coral stress ranges with the conditions at Site R.
+	{@player} 	Any tips about what to tell {nameof @profCoral}?
+	{@guide}    I would recommend using your AQOS to compare the coral stress ranges with the conditions at Site R. 	
+				Perhaps something will match up. 
 $else
-	{@player} 	What should we be doing now?
-	$if global:nav.shipRoom == "office"
-		{@guide}	Just like the previous jobs, you can report your findings using the {h}Computer{/h} in front of you.
-	$else
-		{@guide}	That should be everything we need for now. Let's report back to Professor Harper.
-	$endif
+	{@player} 	What now, {nameof @guide}?
+	{@guide}	You've gathered all the data you need. 
+			    Time to report back to {nameof @profCoral}!
 $endif
 
 // CATCH-ALL GUIDE TEXT
@@ -152,21 +150,24 @@ $endif
 @when 		JobTaskActive(siteR)
 @boostScore -5
 @cutscene
-{@guide}    Find the coral at Site R.
+{@player} What now, {nameof @guide}?
+{@guide}  You will need to find and scan the coral at Site R.
 
 :: catchStressCoral
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(stressCoral)
 @boostScore -5
 @cutscene
-{@guide}    Head to the Experimentation room and put the {nameof StaghornCoral} in the Stress Tank.
+{@player} What should I do next, {nameof @guide}? 
+{@guide}    Head to the Experimentation room and put the {nameof StaghornCoral} in the Stress Tank!
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Talk to Professor Cempaka in the Office.
+{@player} Okay, {nameof @guide}. What now? 
+{@guide}  Return to the station and share your findings with {nameof @profCoral}.
 
 // ARGUMENTATION
 
@@ -178,7 +179,8 @@ $call ArgueLoad(coralstressedArgue)
 $goto .argue.chooseClaim
 
 ::argue.chooseClaim
-{@profCempaka} So, what's going on with the coral?
+{@profCoral} Ah. Excellent.
+			 Did you discover what's going on with the coral?
 	$choice .argue.coralNeedsLightIntro; The coral needs more light.
 	$choice .argue.waterIsAcidicIntro; The water is too acidic.
 	$choice .argue.waterIsHotIntro; The temperature of the water is too hot for the coral.
@@ -186,7 +188,9 @@ $call ArgueCancelClaim()
 $choose branch
 
 ::argue.coralNeedsLightIntro
-{@profCempaka} Ahhh, I see! It did seem shady down there. What evidence do you have about that, and how it affected the coral?
+{@profCoral} Hmmmm.
+			 Come to think of it, there was a lot of shade down there.
+			Do you have evidence about why a lac of sunlight might have affected the coral?
 $goto .argue.coralNeedsLight
 
 ::argue.coralNeedsLight
@@ -202,21 +206,28 @@ $choice .argue.giveUp; Let me get back to you
 
 :: argue.correctLight
 $call ArgueComplete()
-{@profCempaka} I see. I see. Coral need it to be much brighter. I bet it's this pesky Sargassum that keeps floating on in. That'll be your next investigation if you stick around...
+{@profCoral} I see. It seems the Coral need much brighter conditions. 
+		     Unfortunately, the Sargassum on the surface is making that difficult.
+{@player}	 Yeah, that stuff was everywhere!
+			 Poor coral...
+{@profCoral} Hmm. I wonder if there's something we could do to shed a little more light on the situation...
+{@player}	Ha. Good one.
+{@profCoral} Pardon me, Ollie?
+{player} Oh.. uh, never mind, Professor. I'll check back soon and see if I can help! 
 $call CompleteJob()
 
 :: argue.incorrectLight
-{@profCempaka} Those don't support your claim perfectly.  What are the current light levels at Site R, and what is the light range for coral life?
+{@profCoral} Hmmm. This doesn't fully support your claim. 
+			 What are the current light levels at Site R, and what is the light range for coral life?
 $call ArgueRejectIncorrect()
 $set	jobs:coral-stressed.struggling = true
 $goto .argue.coralNeedsLight
 
 :: argue.giveUp
-{@profCempaka} OK. Get back to me when you're ready.
-
+{@profCoral} Take your time, Ollie. I'm sure we'll get to the bottom of this eventually. 
 
 :: argue.waterIsAcidicIntro
-{@profCempaka} What evidence do you have about pH at Site R, and how it affected the coral?
+{@profCoral} What evidence do you have about pH at Site R and how it might affect the coral?
 $set	jobs:coral-stressed.struggling = true
 $goto .argue.waterIsAcidic
 
@@ -232,17 +243,18 @@ $choice #argueFactSet; Present facts from AQOS
 $choice .argue.giveUp; Let me get back to you
 
 ::argue.correctAcid
-{@profCempaka} OK, these are the right facts for this claim.
-{@profCempaka} However, it looks like the pH of the water is within the comfort levels of the coral.
+{@profCoral} Hmmm. These facts are related to your claim.
+			 But it appears the water pH is within the Coral's comfort level.
+			 Is there another issue we're missing?
 $goto .argue.chooseClaim
 
 :: argue.incorrectAcid
-{@profCempaka} This evidence doesn't match this claim.
+{@profCoral} Hmmm. No, this doesn't seem helpful. 
 $call ArgueRejectIncorrect()
 $goto .argue.chooseClaim
 
 ::argue.waterIsHotIntro
-{@profCempaka} What evidence do you have about temperature at Site R, and how it affected the coral?
+{@profCoral} What evidence do you have about temperature at Site R and how it might affect the coral?
 $set	jobs:coral-stressed.struggling = true
 $goto .argue.waterIsHot
 
@@ -255,15 +267,16 @@ $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
 		$answer correct, .argue.correctHot
 		$answer incorrect, .argue.incorrectHot
-$choice .argue.giveUp; Let me get back to you
+$choice .argue.giveUp; Let me get back to you.
 
 ::argue.correctHot
-{@profCempaka} OK, these are the right facts for this claim.
-{@profCempaka} However, it looks like the temperature of the water is within the comfort levels of the coral.
+{@profCoral} Well... at least this evidence is related to your claim.
+		     But it appears the water temperature is within the Coral's comfort levels.
+			 Do you have another idea? 
 $goto .argue.chooseClaim
 
 :: argue.incorrectHot
-{@profCempaka} This evidence doesn't match this claim.
+{@profCoral} Hmmm. No, this isn't relevant. 
 $call ArgueRejectIncorrect()
 $goto .argue.chooseClaim
 

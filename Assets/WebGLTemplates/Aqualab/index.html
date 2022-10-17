@@ -1,39 +1,65 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>%UNITY_WEB_NAME%</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
     <link rel="stylesheet" href="TemplateData/style.css">
     <script src="TemplateData/UnityProgress.js"></script>
     <script src="%UNITY_WEBGL_LOADER_URL%"></script>
     <script>
-      var unityInstance = UnityLoader.instantiate("unityContainer", "%UNITY_WEBGL_BUILD_URL%", {onProgress: UnityProgress});
+        var unityInstance = UnityLoader.instantiate("unityContainer", "%UNITY_WEBGL_BUILD_URL%", { onProgress: UnityProgress });
+        window.addEventListener("DOMContentLoaded", function() {
+            // check for iframe and disable footer
+            if (window.top != window.self) {
+                document.getElementById("unityFooterControls").style.display = "none";
+            }
+        });
     </script>
-  </head>
-  <body>
-    <div class="webgl-content">
-      <div id="unityContainer" style="width: %UNITY_WIDTH%px; height: %UNITY_HEIGHT%px"></div>
-      <div class="footer">
-        <div class="fullscreen" onclick="unityInstance.SetFullscreen(1)"></div>
-        <div class="title">%UNITY_WEB_NAME%</div>
-      </div>
+    <script src="https://cdn.brainpop.com/games/assets/js/cameraProxyDOMCrossDomain.js"></script>
+    <script src="https://cdn.brainpop.com/games/assets/js/html2canvas.js"></script>
+</head>
+
+<body>
+    <div id="BrainPOPsnapArea">
+        <div class="webgl-content">
+            <div id="unityContainer" style="width: %UNITY_WIDTH%px; height: %UNITY_HEIGHT%px"></div>
+            <div class="footer" id="unityFooterControls">
+                <div class="fullscreen" onclick="unityInstance.SetFullscreen(1)"></div>
+                <div class="title">%UNITY_WEB_NAME%</div>
+            </div>
+        </div>
     </div>
-    <script src="https://www.gstatic.com/firebasejs/8.4.3/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.4.3/firebase-analytics.js"></script>
     <script>
-      var firebaseConfig = {
-        apiKey: "AIzaSyDM8z5Q3ydHPPTXu374ZF_5Uwc6rX2B7q4",
-        authDomain: "aqualab-57f88.firebaseapp.com",
-        projectId: "aqualab-57f88",
-        storageBucket: "aqualab-57f88.appspot.com",
-        messagingSenderId: "98477450602",
-        appId: "1:98477450602:web:b157d2ddea1d77ea66f113",
-        measurementId: "G-29QRJ22477"
-      };
-      firebase.initializeApp(firebaseConfig);
-      const analytics = firebase.analytics();
+        function checkGPU() {
+            var canvas = document.createElement('canvas');
+            var webGLConfig = { powerPreference: 'high-performance' };
+            var gl;
+            try {
+                gl = canvas.getContext('webgl', webGLConfig) || canvas.getContext('experimental-webgl', webGLConfig);
+            } catch (e) {
+            }
+
+            canvas.remove();
+
+            if (!gl) {
+                return false;
+            }
+
+            if (typeof WebGLRenderingContext != 'undefined') {
+                return gl instanceof WebGLRenderingContext;
+            }
+
+            return false;
+        }
+
+        if (!checkGPU()) {
+            alert("Your browser does not have hardware acceleration enabled - this game will perform poorly as a result. Please enable it in your settings and refresh the page.");
+        }
     </script>
-  </body>
+</body>
+
 </html>

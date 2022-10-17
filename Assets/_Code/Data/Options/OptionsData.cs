@@ -37,6 +37,14 @@ namespace Aqua.Option
             }
         }
 
+        public ulong Hash() {
+            ulong hash = UnsafeExt.Hash(Audio);
+            hash = UnsafeExt.Hash(Gameplay);
+            hash = UnsafeExt.Hash(Performance);
+            hash = UnsafeExt.Hash(Accessibility);
+            return hash;
+        }
+
         /// <summary>
         /// Syncs settings from one options configuration to another.
         /// </summary>

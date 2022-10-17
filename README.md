@@ -1,6 +1,9 @@
 # Aqualab
 Aqualab is an NSF Funded (DRL #1907384) science practices and life science content learning game produced by Field Day @ University of Wisconsin - Madison, Harvard University and University of Pennslvania.
 
+## Debugging Tools
+[Job Pricing / Sequence Explorer](https://beauprime.github.io/ProgressionGraph/)
+
 ## Firebase Telemetry Events
 
 Firebase automatically adds the following parameters to all events, documented [here](https://support.google.com/firebase/answer/7061705?hl=en). Event data is then dumped to BigQuery daily - the BigQuery schema can be found [here](https://support.google.com/firebase/answer/7029846?hl=en&ref_topic=7029512).
@@ -81,7 +84,7 @@ Player switches jobs by starting a different one.
 
 <a name="receive_fact"/>
 
-#### receieve_fact
+#### receive_fact
 
 A fact is added to the player's bestiary.
 
@@ -94,6 +97,30 @@ A fact is added to the player's bestiary.
 | log_version | Current logging version |
 | job_name | String name of the current job |
 | fact_id | Unique ID for the given fact |
+| fact_entity | Unique ID for the fact's owning entity |
+| fact_type | String name of the fact type |
+| fact_stressed | Boolean indicating if the fact represents a behavior that only executes when its owning organism is stressed 
+| fact_rate | Boolean indicating if the fact represents a behavior that has a rate attached |
+| has_rate | Boolean indicating if the player has the rate for the given fact |
+
+#### upgrade_fact
+
+A fact is upgraded in the player's bestiary to add a rate.
+
+| Parameter | Description |
+| --- | --- |
+| event_sequence_index | Sequence index of the current event |
+| user_code | The player's unique save code |
+| app_version | Current game build version |
+| app_flavor | Git branch origin for current build |
+| log_version | Current logging version |
+| job_name | String name of the current job |
+| fact_id | Unique ID for the given fact |
+| fact_entity | Unique ID for the fact's owning entity |
+| fact_type | String name of the fact type |
+| fact_stressed | Boolean indicating if the fact represents a behavior that only executes when its owning organism is stressed 
+| fact_rate | Boolean indicating if the fact represents a behavior that has a rate attached |
+| has_rate | Boolean indicating if the player has the rate for the given fact |
 
 <a name="receive_entity"/>
 
@@ -246,6 +273,21 @@ Player triggers a given script node through dialogue or interactions.
 | log_version | Current logging version |
 | job_name | String name of the current job |
 | node_id | ID of a given script node |
+
+#### script_line_displayed
+
+Player sees a line of dialog.
+
+| Parameter | Description |
+| --- | --- |
+| event_sequence_index | Sequence index of the current event |
+| user_code | The player's unique save code |
+| app_version | Current game build version |
+| app_flavor | Git branch origin for current build |
+| log_version | Current logging version |
+| job_name | String name of the current job |
+| node_id | ID of a given script node |
+| text_string | String displayed to the player |
 
 <a name="PortableDeviceInteractions"/>
 

@@ -11,6 +11,7 @@ using Aqua.Profile;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using BeauUtil.Debugger;
+using Leaf.Runtime;
 
 namespace Aqua.Scripting
 {
@@ -52,7 +53,7 @@ namespace Aqua.Scripting
         /// <summary>
         /// Returns the nodes for this set.
         /// </summary>
-        public int GetNodes(StringHash32 inTarget, ICollection<ScriptNode> outNodes)
+        public int GetNodes(LeafEvalContext inContext, StringHash32 inTarget, ICollection<ScriptNode> outNodes)
         {
             ScriptNode node;
             int count = 0;
@@ -64,8 +65,16 @@ namespace Aqua.Scripting
                     continue;
                 
                 // not the right target
-                if (!inTarget.IsEmpty && inTarget != node.TargetId())
+                if ((node.Flags() & ScriptNodeFlags.AnyTarget) == 0 && !inTarget.IsEmpty && inTarget != node.TargetId())
                     continue;
+
+                // cannot play due to conditions
+                if (node.TriggerOrFunctionConditions().Count > 0)
+                {
+                    Variant result = node.TriggerOrFunctionConditions().Evaluate(inContext);
+                    if (!result.AsBool())
+                        continue;
+                }
 
                 outNodes.Add(node);
                 ++count;

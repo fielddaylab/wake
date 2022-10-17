@@ -359,7 +359,9 @@ namespace Aqua
                         case TaskOperationType.Activate:
                             {
                                 task = m_LastAnimatingJob.Task(operation.TaskId);
-                                m_CurrentActiveTasks.PushBack(operation.TaskId);
+                                if (!m_CurrentActiveTasks.Contains(operation.TaskId)) {
+                                    m_CurrentActiveTasks.PushBack(operation.TaskId);
+                                }
                                 
                                 taskDisplay = FindDisplay(operation.TaskId);
                                 if (taskDisplay == null)
@@ -413,8 +415,6 @@ namespace Aqua
                                 taskDisplay = FindDisplay(operation.TaskId);
                                 if (taskDisplay != null)
                                 {
-                                    m_AllocatedTasks.FastRemove(taskDisplay);
-
                                     GenerateOrderingInfo();
 
                                     yield return Routine.Combine(

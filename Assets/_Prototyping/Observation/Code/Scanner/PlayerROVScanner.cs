@@ -151,13 +151,19 @@ namespace ProtoAqua.Observation
             }
         }
 
-        public void UpdateActive() {
+        public void UpdateActive(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
         }
 
         public bool HasTarget()
         {
             return m_TargetScannable != null;
         }
+
+        public PlayerROVAnimationFlags AnimFlags() {
+            return 0;
+        }
+
+        public float MoveSpeedMultiplier() { return 1; }
 
         public void GetTargetPosition(bool inbOnGamePlane, out Vector3? outWorld, out Vector3? outCursor) {
             outWorld = outCursor = null;
@@ -265,14 +271,14 @@ namespace ProtoAqua.Observation
                         var bestiary = Assets.Bestiary(data.BestiaryId());
                         Script.PopupNewFacts(newFacts, default, bestiary, data.Text());
                     }
-                    else if ((result & ScanResult.NewLogbook) != 0)
-                    {
-                        Services.Audio.PostEvent("scan_logbook");
-                    }
-                    else if ((result & ScanResult.NewScan) != 0)
+                    else
                     {
                         Services.Audio.PostEvent("scan_complete");
                     }
+                }
+                else
+                {
+                    Services.Audio.PostEvent("scan_complete");
                 }
             }
 
