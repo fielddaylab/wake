@@ -18,7 +18,7 @@ MonoBehaviour:
   m_Muted: 0
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
-  m_Parent: {fileID: 11400000}
+  m_Parent: {fileID: 2594752186845859785}
   m_Children: []
   m_Clips:
   - m_Version: 1
@@ -220,7 +220,7 @@ MonoBehaviour:
   m_Muted: 0
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
-  m_Parent: {fileID: 11400000}
+  m_Parent: {fileID: 68066140257978154}
   m_Children: []
   m_Clips: []
   m_Markers:
@@ -244,7 +244,7 @@ MonoBehaviour:
   m_Muted: 0
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
-  m_Parent: {fileID: 11400000}
+  m_Parent: {fileID: 68066140257978154}
   m_Children: []
   m_Clips:
   - m_Version: 1
@@ -353,7 +353,7 @@ MonoBehaviour:
   m_Muted: 0
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
-  m_Parent: {fileID: 11400000}
+  m_Parent: {fileID: 2594752186845859785}
   m_Children: []
   m_Clips: []
   m_Markers:
@@ -410,7 +410,7 @@ MonoBehaviour:
   m_Muted: 0
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
-  m_Parent: {fileID: 11400000}
+  m_Parent: {fileID: 2594752186845859785}
   m_Children: []
   m_Clips: []
   m_Markers:
@@ -507,7 +507,7 @@ MonoBehaviour:
   m_Muted: 0
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
-  m_Parent: {fileID: 11400000}
+  m_Parent: {fileID: 68066140257978154}
   m_Children: []
   m_Clips: []
   m_Markers:
@@ -759,7 +759,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15c38f6fa1940124db1ab7f6fe7268d1, type: 3}
   m_Name: Signal Emitter
   m_EditorClassIdentifier: 
-  m_Time: 1.8833333333333333
+  m_Time: 1.45
   m_Retroactive: 0
   m_EmitOnce: 0
   m_Asset: {fileID: 11400000, guid: c4b7955e055fa1c4482f31b7ae100314, type: 2}
@@ -811,19 +811,41 @@ MonoBehaviour:
   m_Tracks:
   - {fileID: -7829147024757948650}
   - {fileID: -3031357893395005544}
-  - {fileID: -8323653609044079980}
   - {fileID: 7636239486895204820}
-  - {fileID: -6831067630016488920}
-  - {fileID: -3794265769152890576}
-  - {fileID: 175155072132460072}
-  - {fileID: -7131592134053810728}
-  - {fileID: -5491976097366458895}
-  - {fileID: -5783630351392911269}
+  - {fileID: 2594752186845859785}
+  - {fileID: 68066140257978154}
   m_FixedDuration: 0
   m_EditorSettings:
     m_Framerate: 60
   m_DurationMode: 0
   m_MarkerTrack: {fileID: 1616423727389937848}
+--- !u!114 &68066140257978154
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0fc6f5187a81dc47999eefade6f0935, type: 3}
+  m_Name: Cam Shake/ Whale Call
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_AnimClip: {fileID: 0}
+  m_Locked: 0
+  m_Muted: 0
+  m_CustomPlayableFullTypename: 
+  m_Curves: {fileID: 0}
+  m_Parent: {fileID: 11400000}
+  m_Children:
+  - {fileID: -6831067630016488920}
+  - {fileID: -3794265769152890576}
+  - {fileID: 175155072132460072}
+  - {fileID: -7131592134053810728}
+  m_Clips: []
+  m_Markers:
+    m_Objects: []
 --- !u!114 &175155072132460072
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -842,7 +864,7 @@ MonoBehaviour:
   m_Muted: 0
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
-  m_Parent: {fileID: 11400000}
+  m_Parent: {fileID: 68066140257978154}
   m_Children: []
   m_Clips:
   - m_Version: 1
@@ -2006,6 +2028,32 @@ AnimationClip:
   m_HasGenericRootTransform: 1
   m_HasMotionFloatCurves: 0
   m_Events: []
+--- !u!114 &2594752186845859785
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0fc6f5187a81dc47999eefade6f0935, type: 3}
+  m_Name: Player
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_AnimClip: {fileID: 0}
+  m_Locked: 0
+  m_Muted: 0
+  m_CustomPlayableFullTypename: 
+  m_Curves: {fileID: 0}
+  m_Parent: {fileID: 11400000}
+  m_Children:
+  - {fileID: -8323653609044079980}
+  - {fileID: -5491976097366458895}
+  - {fileID: -5783630351392911269}
+  m_Clips: []
+  m_Markers:
+    m_Objects: []
 --- !u!114 &4077860200671925928
 MonoBehaviour:
   m_ObjectHideFlags: 1
