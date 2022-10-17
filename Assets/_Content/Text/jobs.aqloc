@@ -212,48 +212,6 @@ Report back with your prediction
 :: coral-fishy-bizz.argue.claimLabel
 We need to significantly reduce the number of Fishers in this area.
 
-:: bayou-save-our-shrimp.name
-SOS: Save Our Shrimp
-
-:: bayou-save-our-shrimp.desc
-Why is the shrimp catch going down?
-
-:: bayou-save-our-shrimp.task.getScans
-Gather environment data + Shrimp population
-
-:: bayou-save-our-shrimp.task.reportBack
-Report about the Shrimp populations.
-
-:: bayou-shrimp-tastrophe.name
-Shrimp-Tastrophe!
-
-:: bayou-shrimp-tastrophe.desc
-The oxygen levels seemed pretty low.  What implications might that have concerning the shrimp situation?
-
-:: bayou-shrimp-tastrophe.task.measureOxygen
-See if there's a significant relationship between shrimp and oxygen levels.
-
-:: bayou-shrimp-tastrophe.task.reportBack
-Report back about the shrimp oxygen consumption.
-
-:: bayou-oxygen-tracking.name
-Oxygen tracking
-
-:: bayou-oxygen-tracking.desc
-See if your new tools can help you figure out the lack of oxygen in the Trawling Bay!
-
-:: bayou-oxygen-tracking.task.scanNewCritters
-See if there's anything new to find in the Trawling Bay.
-
-:: bayou-oxygen-tracking.task.measureOxygenUsage
-See how these new species would each affect oxygen levels.
-
-:: bayou-oxygen-tracking.task.createModel
-Model your findings to see who might've had the biggest effect over the oxygen levels.
-
-:: bayou-oxygen-tracking.task.reportBack
-Report back with the model.
-
 :: coral-turtle-population.name
 Turtle Population
 
@@ -1344,4 +1302,91 @@ Observe whether {nameof StaghornCoral} and {nameof Lionfish} interact
 
 :: arctic-endangered-seals.task.scanProb
 Obtain historical data from the new population probe at {nameof RS-4Y}
+
+:: bayou-shrimp-yields.name
+Shrimp Yields
+
+:: bayou-shrimp-yields.desc
+Reports are coming in that the Shrimpers are catching less and less shrimp in the Bayou. Can you verify the populations there compared to historic data?
+
+:: bayou-shrimp-yields.task.countShrimp
+Scan and count the populations of White Shrimp in the {nameof RS-3P}
+
+:: bayou-shrimp-yields.task.histProbe
+Collect historic population data from the {nameof RS-3P}
+
+:: bayou-shrimp-yields.task.reportBack
+Report back
+
+:: bayou-blue-waters.name
+Blue Waters
+
+:: bayou-blue-waters.desc
+The fishermen gave reports of the water being clear blue not too long ago. Now it's green. What in Site P is causing this?
+
+:: bayou-blue-waters.task.findGreen
+Scan Site P for something that could be turning the water green
+
+:: bayou-blue-waters.task.stressCyano
+FInd {nameof Cyanobacteria} stress ranges
+
+:: bayou-blue-waters.task.measureEffect
+Measure {nameof Cynobacteria}'s effect on its environment when stressed and unstressed
+
+:: bayou-blue-waters.task.measureReproduce
+Measure the reproduce rates of {nameof Cynobacteria} when stressed and unstressed
+
+:: bayou-blue-waters.task.reportBack
+Report back
+
+:: bayou-dirty-detritus.name
+Dirty Detritus
+
+:: bayou-dirty-detritus.desc
+We've been tracking the Detritus. There's a lot of it, and we're measuring more every day. How does Detritus fit in with the ecosystem?
+
+:: bayou-dirty-detritus.task.countDetritus
+Count the amount of Detritus in the {nameof RS-3P}
+
+:: bayou-dirty-detritus.task.eatDetritus
+Determine if any organisms eat {nameof Detritus}
+
+:: bayou-dirty-detritus.task.growDetritus
+Measure the growth rate of {nameof Detritus}
+
+:: bayou-dirty-detritus.task.reportBack
+Report back
+
+:: bayou-oxygen-tracking.name
+Oxygen Tracking
+
+:: bayou-oxygen-tracking.desc
+We're recording steadily decreasing oxygen levels in the water. Where is the oxygen going?
+
+:: bayou-oxygen-tracking.task.scanAll
+Scan anything there is still to scan in the {nameof RS-3P}
+
+:: bayou-oxygen-tracking.task.measureCritters
+Measure how {nameof DecomposingBacteria}, {nameof WhiteShrimp}, and {nameof Cyanobacteria} affect their environment
+
+:: bayou-oxygen-tracking.task.makeVisual
+Make a visual model that shows how oxygen flows between organisms in the {nameof RS-3P}
+
+:: bayou-oxygen-tracking.task.makeDescribe
+Make a descriptive model that shows organism populations in relation to each other
+
+:: bayou-oxygen-tracking.task.reportBack
+Report back
+
+:: bayou-shrimp-tastrophe.name
+Shrimp-Tastrophe
+
+:: bayou-shrimp-tastrophe.desc
+The fishers are all over me for an explanation about why shrimp populations are low. We need to present them with a model that shows what happened!
+
+:: bayou-shrimp-tastrophe.task.createModel
+Create a descriptive model that explains why shrimp populations are decreasing
+
+:: bayou-shrimp-tastrophe.task.reportBack
+Present your model to {nameof profBayou} and explain what it means
 

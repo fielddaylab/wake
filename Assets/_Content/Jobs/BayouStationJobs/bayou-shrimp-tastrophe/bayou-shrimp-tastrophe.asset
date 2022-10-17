@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
-  m_Name: bayou-shrimptastrophe
+  m_Name: bayou-shrimp-tastrophe
   m_EditorClassIdentifier: 
   m_Category: 0
   m_Flags: 0
   m_NameId:
-    m_Source: 
-    m_HashValue: 0
+    m_Source: jobs.bayou-shrimp-tastrophe.name
+    m_HashValue: 1754888247
   m_PosterId:
     m_HashValue: 3347434154
   m_DescId:
-    m_Source: 
-    m_HashValue: 0
+    m_Source: jobs.bayou-shrimp-tastrophe.desc
+    m_HashValue: 2151916189
   m_DescShortId:
     m_Source: 
     m_HashValue: 0
@@ -49,7 +49,37 @@ MonoBehaviour:
     m_HashValue: 2992071853
   m_DiveSiteIds:
   - m_HashValue: 3168968926
-  m_Tasks: []
+  m_Tasks:
+  - Id:
+      m_Source: createModel
+      m_HashValue: 2425868018
+    LabelId:
+      m_Source: jobs.bayou-shrimp-tastrophe.task.createModel
+      m_HashValue: 1297064466
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: P_DeadZone.Model.OxygenTracking.Sync
+        m_HashValue: 1630571811
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    LabelId:
+      m_Source: jobs.bayou-shrimp-tastrophe.task.reportBack
+      m_HashValue: 2059161252
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: createModel
+      m_HashValue: 2425868018
   m_OptimizedTaskList: []
   m_CashReward: 0
   m_ExpReward: 5

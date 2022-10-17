@@ -10,33 +10,32 @@
 
 // CATCH-ALL GUIDE TEXT
 
-:: catchGetEnvironmentData
+:: catchCountDetritus
 @trigger    RequestPartnerHelp
-@when 		JobTaskActive(getEnvironmentData)
+@when 		JobTaskActive(countDetritus)
 @boostScore -5
 @cutscene
-{@guide}    Collect water chemistry data from a probe at Site W.
+{@guide}    
 
-:: catchGetHistPopulationData
+:: catchEatDetritus
 @trigger    RequestPartnerHelp
-@when 		JobTaskActive(getHistPopulationData)
+@when 		JobTaskActive(eatDetritus)
 @boostScore -5
 @cutscene
-{@guide}    Collect population history data from a probe at Site W.
+{@guide}    
 
-:: catchGetCurrPopulationData
+:: catchGrowDetritus
 @trigger    RequestPartnerHelp
-@when 		JobTaskActive(getCurrPopulationData)
+@when 		JobTaskActive(growDetritus)
 @boostScore -5
 @cutscene
-{@guide}    We need to collect the current populations of all organisms at the {h}whalefall site{/h}.
+{@guide}    
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@player}   What now, {nameof @guide}?
-{@guide}    You need to return to the station and talk to {nameof @arcticSci}!
+{@guide}    
 
 // ARGUMENTATION

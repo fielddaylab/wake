@@ -15,13 +15,13 @@ MonoBehaviour:
   m_Category: 0
   m_Flags: 0
   m_NameId:
-    m_Source: 
-    m_HashValue: 0
+    m_Source: jobs.bayou-dirty-detritus.name
+    m_HashValue: 184489086
   m_PosterId:
     m_HashValue: 3347434154
   m_DescId:
-    m_Source: 
-    m_HashValue: 0
+    m_Source: jobs.bayou-dirty-detritus.desc
+    m_HashValue: 1328356216
   m_DescShortId:
     m_Source: 
     m_HashValue: 0
@@ -44,7 +44,71 @@ MonoBehaviour:
     m_HashValue: 2992071853
   m_DiveSiteIds:
   - m_HashValue: 3168968926
-  m_Tasks: []
+  m_Tasks:
+  - Id:
+      m_Source: countDetritus
+      m_HashValue: 511720072
+    LabelId:
+      m_Source: jobs.bayou-dirty-detritus.task.countDetritus
+      m_HashValue: 823452073
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: P_DeadZone.Population.Detritus
+        m_HashValue: 3754834277
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: eatDetritus
+      m_HashValue: 372645617
+    LabelId:
+      m_Source: jobs.bayou-dirty-detritus.task.eatDetritus
+      m_HashValue: 3826345904
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: DecomposingBacteria.Eats.Detritus
+        m_HashValue: 3753277651
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: countDetritus
+      m_HashValue: 511720072
+  - Id:
+      m_Source: growDetritus
+      m_HashValue: 1552323166
+    LabelId:
+      m_Source: jobs.bayou-dirty-detritus.task.growDetritus
+      m_HashValue: 3391774869
+    Steps:
+    - Type: 6
+      Target:
+        m_Source: DecomposingBacteria.Eats.Detritus
+        m_HashValue: 3753277651
+      ConditionString: true
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: countDetritus
+      m_HashValue: 511720072
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    LabelId:
+      m_Source: jobs.bayou-dirty-detritus.task.reportBack
+      m_HashValue: 2766880759
+    Steps:
+    - Type: 6
+      Target:
+        m_Source: DecomposingBacteria.Eats.Detritus
+        m_HashValue: 3753277651
+      ConditionString: true
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: eatDetritus
+      m_HashValue: 372645617
+    - m_Source: growDetritus
+      m_HashValue: 1552323166
   m_OptimizedTaskList: []
   m_CashReward: 0
   m_ExpReward: 5

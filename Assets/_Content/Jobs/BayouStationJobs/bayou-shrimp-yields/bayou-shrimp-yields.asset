@@ -15,13 +15,13 @@ MonoBehaviour:
   m_Category: 0
   m_Flags: 0
   m_NameId:
-    m_Source: 
-    m_HashValue: 0
+    m_Source: jobs.bayou-shrimp-yields.name
+    m_HashValue: 2137672003
   m_PosterId:
     m_HashValue: 3347434154
   m_DescId:
-    m_Source: 
-    m_HashValue: 0
+    m_Source: jobs.bayou-shrimp-yields.desc
+    m_HashValue: 3872748465
   m_DescShortId:
     m_Source: 
     m_HashValue: 0
@@ -43,7 +43,59 @@ MonoBehaviour:
     m_HashValue: 2992071853
   m_DiveSiteIds:
   - m_HashValue: 3168968926
-  m_Tasks: []
+  m_Tasks:
+  - Id:
+      m_Source: countShrimp
+      m_HashValue: 3862329527
+    LabelId:
+      m_Source: jobs.bayou-shrimp-yields.task.countShrimp
+      m_HashValue: 3287213555
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: WhiteShrimp
+        m_HashValue: 3187223953
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: P_DeadZone.Population.WhiteShrimp
+        m_HashValue: 136046965
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: histProbe
+      m_HashValue: 1928730649
+    LabelId:
+      m_Source: jobs.bayou-shrimp-yields.task.histProbe
+      m_HashValue: 264750037
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: P_DeadZone.PopulationHistory.WhiteShrimp
+        m_HashValue: 534880463
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: countShrimp
+      m_HashValue: 3862329527
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    LabelId:
+      m_Source: jobs.bayou-shrimp-yields.task.reportBack
+      m_HashValue: 2543870728
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: histProbe
+      m_HashValue: 1928730649
   m_OptimizedTaskList: []
   m_CashReward: 0
   m_ExpReward: 5
