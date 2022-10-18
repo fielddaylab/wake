@@ -48,6 +48,10 @@ namespace Aqua.Entity {
             if (transform.CustomPosition != null) {
                 position = transform.CustomPosition(transform, transform.LastKnownPosition, m_PositionCast, out scale);
             } else {
+                if (transform.Source == null) {
+                    Log.Error("[Visual2DSystem] Visual2DTransform '{0}' (path '{1}') has no source!", transform.name, UnityHelper.FullPath(transform.gameObject));
+                    return UpdateAwakeResult.Skip;
+                }
                 position = CameraService.CastToPlane(m_PositionCast, transform.Source, out scale);
             }
             

@@ -6,6 +6,7 @@ using System;
 
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditorInternal;
 #endif // UNITY_EDITOR
 
 namespace ScriptableBake {
@@ -301,7 +302,7 @@ namespace ScriptableBake {
         static public void ModifyStaticFlags(GameObject go, ModifyStaticFlagsDelegate modifier, bool recursive = false) {
             GameObjectUtility.SetStaticEditorFlags(go, modifier(GameObjectUtility.GetStaticEditorFlags(go)));
             if (recursive) {
-                ModifyStaticFlags(go, modifier);
+                ModifyStaticFlagsRecursive(go, modifier);
             }
         }
 
@@ -389,6 +390,8 @@ namespace ScriptableBake {
                     if (prefabRoot != null) {
                         PrefabUtility.UnpackPrefabInstance(prefabRoot, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
                     }
+                } else if (obj is Component) {
+                    SetDirty(((Component) obj).gameObject);
                 }
                 #endif // UNITY_EDITOR
                 GameObject.DestroyImmediate(obj);
@@ -411,6 +414,20 @@ namespace ScriptableBake {
             if (Application.isPlaying) {
                 flags |= BakeFlags.IsRuntime;
             }
+
+            #if UNITY_EDITOR
+            if (BuildPipeline.isBuildingPlayer) {
+                flags |= BakeFlags.IsBuild;
+            } else {
+                flags |= BakeFlags.InEditor;
+            }
+            if (!InternalEditorUtility.isHumanControllingUs || InternalEditorUtility.inBatchMode) {
+                flags |= BakeFlags.IsBatchMode;
+            }
+            if (EditorUserBuildSettings.development) {
+                flags |= BakeFlags.IsDevelopment;
+            }
+            #endif // UNITY_EDITOR
 
             if (context == null) {
                 context = new BakeContext();
@@ -547,6 +564,12 @@ namespace ScriptableBake {
 
         // Baking is occurring at runtime
         IsRuntime = 0x20,
+
+        // Is this a development build
+        IsDevelopment = 0x40,
+
+        // Is this in a non-build editor environment
+        InEditor = 0x80,
     }
 
     /// <summary>

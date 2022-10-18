@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Aqua;
 using Aqua.Cameras;
+using Aqua.Character;
 using Aqua.Scripting;
 using BeauRoutine;
 using BeauUtil;
@@ -23,7 +24,7 @@ namespace ProtoAqua.ExperimentV2 {
         [SerializeField, HideInInspector] private SelectableTank[] m_Tanks = null;
         [SerializeField, Required] private SelectableTank m_StartingTank = null;
         [SerializeField, Required] private TankWaterSystem m_WaterSystem = null;
-        [SerializeField, Required] private Transform m_GuideTransform = null;
+        [SerializeField, Required] private GuideBody m_GuideBody = null;
 
         #endregion // Inspector
 
@@ -133,9 +134,12 @@ namespace ProtoAqua.ExperimentV2 {
             {
                 InitializeTank(tank);
                 m_WaterSystem.InitializeTank(tank);
+                tank.Guide = m_GuideBody;
                 foreach (var arrow in tank.NavArrows) {
-                    arrow.Button.onClick.AddListener(delegate { OnTankNavigated(arrow.DestTank); });
-                    arrow.Button.onClick.AddListener(delegate { Routine.Start( UpdateGuidePosition.MoveGuide( m_GuideTransform, arrow.DestTank.GuideTarget.transform ) ); });
+                    arrow.Button.onClick.AddListener(() => {
+                        OnTankNavigated(arrow.DestTank);
+                        m_GuideBody.MoveTo(arrow.DestTank.GuideTarget);
+                    });
                 }
             }
 
@@ -143,6 +147,7 @@ namespace ProtoAqua.ExperimentV2 {
 
             OnTankNavigated(m_StartingTank);
             Services.Camera.SnapToPose(m_StartingTank.CameraPose);
+            m_GuideBody.SnapTo(m_StartingTank.GuideTarget);
         }
 
         void ISceneUnloadHandler.OnSceneUnload(SceneBinding inScene, object inContext)

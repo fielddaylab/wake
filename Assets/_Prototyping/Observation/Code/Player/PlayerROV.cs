@@ -21,7 +21,12 @@ namespace ProtoAqua.Observation
         static public readonly StringHash32 Event_RequestToolSwitch = "PlayerROV::RequestToolSwitch"; // tool id
         static public readonly StringHash32 Event_ToolSwitched = "PlayerROV::ToolSwitched"; // tool id
 
+        static public readonly StringHash32 Trigger_ToolActivated = "ToolActivated";
+        static public readonly StringHash32 Trigger_ToolDeactivated = "ToolDeactivated";
+
         #region Types
+
+        static private readonly string[] ToolIdToString = Enum.GetNames(typeof(ToolId));
 
         public struct ToolState
         {
@@ -375,14 +380,24 @@ namespace ProtoAqua.Observation
             if (!inbForce && m_CurrentToolId == inTool)
                 return false;
 
-            if (m_CurrentTool != null && m_Input.IsInputEnabled)
+            if (m_CurrentTool != null && m_Input.IsInputEnabled) {
                 m_CurrentTool.Disable();
+                
+                var tempTable = TempVarTable.Alloc();
+                tempTable.Set("toolId", ToolIdToString[(int) m_CurrentToolId]);
+                Services.Script.QueueTriggerResponse(Trigger_ToolDeactivated, 0, tempTable);
+            }
 
             m_CurrentToolId = inTool;
             m_CurrentTool = GetTool(inTool);
 
-            if (m_CurrentTool != null && m_Input.IsInputEnabled)
+            if (m_CurrentTool != null && m_Input.IsInputEnabled) {
                 m_CurrentTool.Enable(this);
+
+                var tempTable = TempVarTable.Alloc();
+                tempTable.Set("toolId", ToolIdToString[(int) m_CurrentToolId]);
+                Services.Script.QueueTriggerResponse(Trigger_ToolActivated, 0, tempTable);
+            }
 
             Services.Events.Dispatch(Event_ToolSwitched, new ToolState(inTool, true));
             return true;
@@ -405,6 +420,15 @@ namespace ProtoAqua.Observation
             }
 
             Services.Events.Dispatch(Event_ToolSwitched, new ToolState(inTool, state));
+            
+            var tempTable = TempVarTable.Alloc();
+            tempTable.Set("toolId", ToolIdToString[(int) inTool]);
+            if (state) {
+                Services.Script.QueueTriggerResponse(Trigger_ToolActivated, -500, tempTable);
+            } else {
+                Services.Script.QueueTriggerResponse(Trigger_ToolDeactivated, -500, tempTable);
+            }
+
             return true;
         }
 
@@ -434,6 +458,9 @@ namespace ProtoAqua.Observation
         {
             UpdateUpgradeMask();
 
+            if (inItemId == ItemIds.Flashlight)
+                SetToolState(ToolId.Flashlight, true, false);
+
             if (m_CurrentToolId != ToolId.NONE)
                 return;
 
@@ -443,8 +470,6 @@ namespace ProtoAqua.Observation
                 SwitchTool(ToolId.Tagger, false);
             else if (inItemId == ItemIds.Icebreaker)
                 SwitchTool(ToolId.Breaker, false);
-            else if (inItemId == ItemIds.Flashlight)
-                SetToolState(ToolId.Flashlight, true, false);
         }
 
         private void UpdateUpgradeMask() {
@@ -493,6 +518,22 @@ namespace ProtoAqua.Observation
         private void LeafSetTool(ToolId inToolId)
         {
             SwitchTool(inToolId, false);
+        }
+
+        [LeafMember("ToggleToolOn"), UnityEngine.Scripting.Preserve]
+        private void LeafToggleToolOn(ToolId inToolId)
+        {
+            SetToolState(inToolId, true, false);
+        }
+
+        [LeafMember("IsToolActive")]
+        static private bool LeafIsToolActive(ToolId inToolId)
+        {
+            PlayerROV rov = Services.State.Player as PlayerROV;
+            if (rov == null)
+                return false;
+
+            return rov.GetTool(inToolId).IsEnabled();
         }
 
         #endregion // Leaf

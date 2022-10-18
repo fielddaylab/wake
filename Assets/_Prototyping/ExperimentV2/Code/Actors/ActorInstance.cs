@@ -93,7 +93,7 @@ namespace ProtoAqua.ExperimentV2 {
             ActionAnimation.Stop();
             BreathAnimation.Stop();
             CachedCollider.enabled = true;
-            Ref.Dispose(ref StateEffect);
+            StateEffect.Free();
             InWater = false;
             if (ColorAdjust)
                 ColorAdjust.SetColor(Color.white);
@@ -123,7 +123,7 @@ namespace ProtoAqua.ExperimentV2 {
 
             OnExitStateDelegates[(int)oldState]?.Invoke(ioInstance, inWorld);
 
-            Ref.Dispose(ref ioInstance.StateEffect);
+            ioInstance.StateEffect.Free();
             ioInstance.StateAnimation.Stop();
 
             OnEnterStateDelegates[(int)inStateId]?.Invoke(ioInstance, inWorld);

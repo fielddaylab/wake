@@ -15,6 +15,7 @@ namespace Aqua.Shop
         [ItemId(InvItemCategory.Upgrade)] public StringHash32 ItemId;
         
         [Space]
+        public bool IsFake;
         public float Rotation;
 
         [Header("Meshes")]

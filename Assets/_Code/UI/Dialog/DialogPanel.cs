@@ -73,6 +73,14 @@ namespace Aqua
             }
         }
 
+        public sealed class TextDisplayArgs
+        {
+            public string VisibleText;
+            public string NodeId;
+        }
+
+        static private readonly TextDisplayArgs s_TextDisplayArgs = new TextDisplayArgs();
+
         #endregion // Types
 
         #region Inspector
@@ -178,7 +186,6 @@ namespace Aqua
                 return;
             
             m_CurrentState.ResetFull();
-            m_CurrentThread = default;
 
             ResetSpeaker();
 
@@ -319,7 +326,12 @@ namespace Aqua
             
             Sprite portraitSprite = m_CurrentState.TargetDef.Portrait(inPortraitId);
             m_CurrentState.PortraitId = inPortraitId;
-            UpdatePortrait?.Invoke(m_CurrentState.TargetId, m_CurrentState.PortraitId);
+            
+            if (m_CurrentThread.IsRunning()) {
+                m_CurrentThread.TapCharacter(m_CurrentState.TargetId);
+                UpdatePortrait?.Invoke(m_CurrentState.TargetId, m_CurrentState.PortraitId);
+            }
+
             if (portraitSprite)
             {
                 if (m_SpeakerPortraitGroup)
@@ -398,8 +410,11 @@ namespace Aqua
                     m_TextDisplay.maxVisibleCharacters = 0;
 
                     UpdateSkipHeld();
-
                     RebuildLayout();
+
+                    s_TextDisplayArgs.VisibleText = inLine.VisibleText;
+                    s_TextDisplayArgs.NodeId = m_CurrentThread.GetThread()?.PeekNode().FullName();
+                    Services.Events.Dispatch(GameEvents.TextLineDisplayed, s_TextDisplayArgs);
                 }
 
                 TagStringEventHandler handler = GetHandler();

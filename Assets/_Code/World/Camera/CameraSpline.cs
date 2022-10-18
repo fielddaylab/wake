@@ -35,10 +35,10 @@ namespace Aqua.Cameras
             m_Spline.SetVertices(m_Positions);
             m_Spline.Process();
 
-            Script.OnSceneLoad(() => {
-                Services.Camera.SetFOVMode(CameraFOVMode.Direct);
-                Services.Camera.MoveAlongSpline(this, 5, CameraPoseProperties.All);
-            });
+            // Script.OnSceneLoad(() => {
+            //     Services.Camera.SetFOVMode(CameraFOVMode.Direct);
+            //     Services.Camera.MoveAlongSpline(this, 5, CameraPoseProperties.All);
+            // });
         }
 
         public void Interpolate(float percentage, ref CameraService.CameraState cameraState) {

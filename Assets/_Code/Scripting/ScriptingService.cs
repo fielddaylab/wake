@@ -28,6 +28,7 @@ namespace Aqua
     {
         public delegate void ScriptThreadHandler(ScriptThreadHandle inHandle);
         public delegate void ScriptTargetHandler(StringHash32 inTarget);
+        public delegate void ScriptTapHandler(ScriptThreadHandle inHandle, StringHash32 inTarget);
         public delegate Future<StringHash32> ChoiceSelectorHandler();
 
         private struct QueuedEvent {
@@ -578,6 +579,13 @@ namespace Aqua
 
         internal IMethodCache LeafInvoker { get { return m_LeafCache; } }
 
+        internal void TapCharacter(StringHash32 inTargetId, ScriptThreadHandle inHandle)
+        {
+            if (OnTargetTap != null) {
+                OnTargetTap(inHandle, inTargetId);
+            }
+        }
+
         internal void UntrackThread(ScriptThread inThread)
         {
             m_ThreadList.FastRemove(inThread);
@@ -738,6 +746,11 @@ namespace Aqua
         /// Dispatched when a thread is killed.
         /// </summary>
         public event ScriptTargetHandler OnTargetedThreadKilled;
+
+        /// <summary>
+        /// Dispatched when a target is tapped to join a script.
+        /// </summary>
+        public event ScriptTapHandler OnTargetTap;
 
         #endregion // Events
 
