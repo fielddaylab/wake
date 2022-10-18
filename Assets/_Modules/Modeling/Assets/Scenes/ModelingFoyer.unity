@@ -56,8 +56,8 @@ LightmapSettings:
   m_LightmapEditorSettings:
     serializedVersion: 12
     m_Resolution: 2
-    m_BakeResolution: 40
-    m_AtlasSize: 512
+    m_BakeResolution: 20
+    m_AtlasSize: 256
     m_AO: 1
     m_AOMaxDistance: 2
     m_CompAOExponent: 1
@@ -132,6 +132,7 @@ GameObject:
   m_Component:
   - component: {fileID: 109386352}
   - component: {fileID: 109386353}
+  - component: {fileID: 109386354}
   m_Layer: 0
   m_Name: Lights
   m_TagString: Untagged
@@ -172,8 +173,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 1
   DestroyGameObject: 1
+--- !u!114 &109386354
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 109386351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d527cbae564d45547b4a948ae6e39f98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Always: 1
 --- !u!1001 &153492826
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5190,6 +5205,7 @@ GameObject:
   m_Component:
   - component: {fileID: 603868754}
   - component: {fileID: 603868755}
+  - component: {fileID: 603868756}
   m_Layer: 0
   m_Name: ParticleFX
   m_TagString: Untagged
@@ -5228,8 +5244,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+--- !u!114 &603868756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603868753}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d527cbae564d45547b4a948ae6e39f98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Always: 1
 --- !u!1 &633127362
 GameObject:
   m_ObjectHideFlags: 0
@@ -10404,6 +10434,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
 --- !u!114 &1008225339
@@ -10534,7 +10565,7 @@ PrefabInstance:
     - target: {fileID: -5770212215128677521, guid: 56ef21d2008261040bbd5a18a2801442,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -5770212215128677521, guid: 56ef21d2008261040bbd5a18a2801442,
         type: 3}
@@ -10798,6 +10829,11 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: a816f5eb691a34042811d00ae3f4f531, type: 2}
     - target: {fileID: 8258578694676701362, guid: 56ef21d2008261040bbd5a18a2801442,
         type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8258578694676701362, guid: 56ef21d2008261040bbd5a18a2801442,
+        type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: a816f5eb691a34042811d00ae3f4f531, type: 2}
@@ -10837,8 +10873,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 1
   Recursive: 1
   DestroyGameObject: 1
+--- !u!114 &1012268657
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1012268655}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d527cbae564d45547b4a948ae6e39f98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Always: 1
 --- !u!1 &1067493712
 GameObject:
   m_ObjectHideFlags: 0

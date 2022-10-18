@@ -49,8 +49,8 @@ namespace Aqua.Modeling {
             LastRectHistorical = default;
             LastRectPlayer = default;
             LastRectPredict = default;
-            Ref.Dispose(ref Intervention);
-            Ref.Dispose(ref Divergence);
+            Intervention.Free();
+            Divergence.Free();
             if (StressPoints != null) {
                 while(StressPoints.TryPopBack(out var b)) {
                     b.Dispose();

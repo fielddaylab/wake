@@ -254,12 +254,12 @@ namespace Aqua.Modeling {
                     if (SimMath.HasDivergence(block.Historical.Points, block.Player.Points, block.Historical.PointCount) && divergenceCallback != null) {
                         divergenceCallback(blocks[i]);
                     } else {
-                        Ref.Dispose(ref block.Divergence);
+                        block.Divergence.Free();
                     }
                 }
             } else {
                 for(int i = 0; i < blocks.Length; i++) {
-                    Ref.Dispose(ref blocks[i].Divergence);
+                    blocks[i].Divergence.Free();
                 }
             }
 
@@ -380,7 +380,7 @@ namespace Aqua.Modeling {
                     changed |= block.Player.ApplyScale(bounds);
                 } else if (showPredict) {
                     Rect bounds = block.LastRectPredict;
-                    if (showIntervene && block.Intervention != null) {
+                    if (showIntervene && block.Intervention.IsAllocated) {
                         bounds.yMax = Math.Max(bounds.yMax, block.Intervention.Object.MaxValue);
                     }
                     SimMath.FinalizeBounds(ref bounds);
@@ -390,7 +390,7 @@ namespace Aqua.Modeling {
 
                     // temp setting
                     block.IconPin.SetAnchorY(0f);
-                    if (block.Intervention != null) {
+                    if (block.Intervention.IsAllocated) {
                         if (block.Predict.PointCount != 0) {
                             float newY = block.IconPin.position.y +
                                 block.Predict.Points[block.Predict.PointCount - 1].y / blocks.Length;
@@ -406,7 +406,7 @@ namespace Aqua.Modeling {
 
                 }
 
-                if (showIntervene && block.Intervention != null) {
+                if (showIntervene && block.Intervention.IsAllocated) {
                     RenderIntervention(block.Intervention, block.LastRect);
                 }
 
@@ -424,11 +424,11 @@ namespace Aqua.Modeling {
                 block.Player.enabled = showPlayer;
                 block.Predict.enabled = showPredict;
                 block.Fill.enabled = showFill;
-                if (block.Intervention != null) {
+                if (block.Intervention.IsAllocated) {
                     block.Intervention.Object.Layout.gameObject.SetActive(showIntervene);
                 }
 
-                GraphDivergencePoint divergence = block.Divergence?.Object;
+                GraphDivergencePoint divergence = block.Divergence.Object;
                 if (divergence != null) {
                     block.Fill.AnalyzeRegions();
                     if (showFill && block.Fill.Regions.Count > 0) {
@@ -451,8 +451,8 @@ namespace Aqua.Modeling {
         }
 
         static private void RenderIntervention(GraphTargetRegion region, Rect rect) {
-            float min = MathUtil.Remap(region.MinValue, rect.yMin, rect.yMax, 0, 1);
-            float max = MathUtil.Remap(region.MaxValue, rect.yMin, rect.yMax, 0, 1);
+            float min = MathUtils.Remap(region.MinValue, rect.yMin, rect.yMax, 0, 1);
+            float max = MathUtils.Remap(region.MaxValue, rect.yMin, rect.yMax, 0, 1);
             if (min > 1) { min = 0; }
             region.Layout.SetAnchorsY(min, max);
         }

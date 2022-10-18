@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Aqua;
 using Aqua.Cameras;
+using Aqua.Character;
 using AquaAudio;
 using BeauRoutine;
 using BeauUtil;
@@ -29,19 +30,19 @@ namespace ProtoAqua.ExperimentV2
 
         public TankType Type = TankType.Observation;
         [Required] public CameraPose CameraPose = null;
+        [Required] public CameraPose ZoomPose = null;
         [Required] public BoxCollider BoundsCollider;
         [HideInInspector] public Bounds Bounds;
         [Required] public MonoBehaviour Controller;
-        
-        [Header("Click")]
-        [Required(ComponentLookupDirection.Children)] public PointerListener Clickable = null;
-        [Required(ComponentLookupDirection.Children)] public CursorInteractionHint InteractionHint = null;
 
+        [Header("Navigation Arrows")]
         [Required(ComponentLookupDirection.Children)] public NavArrow[] NavArrows = null;
         [Required(ComponentLookupDirection.Children)] public GameObject NavArrowParent = null;
-        [Required(ComponentLookupDirection.Children)] public GameObject GuideTarget = null;
-
         [HideInInspector] public bool[] NavArrowStates;
+
+        [Header("Guide Target")]
+        [Required] public Transform GuideTarget = null;
+        public Transform GuideTargetZoomed = null;
 
         [Header("Canvas")]
         [Required] public Canvas Interface = null;
@@ -51,7 +52,6 @@ namespace ProtoAqua.ExperimentV2
         [Header("Water")]
         [Required] public Transform WaterRenderer;
         [Required] public ParticleSystem WaterAmbientParticles;
-        [Required] public MeshRenderer WaterRippleRenderer;
         [Required] public BoxCollider2D WaterTrigger;
         [Required] public BoxCollider WaterCollider3D;
         [Required] public Transform WaterTransform3D;
@@ -59,6 +59,13 @@ namespace ProtoAqua.ExperimentV2
         [Required] public ParticleSystem WaterDrainParticles;
         public float StartingWaterHeight = 1;
         [HideInInspector] public Rect WaterRect;
+
+        [Header("Caustics")]
+        public MeshRenderer InteriorCaustics;
+        public MeshRenderer FloorCaustics;
+
+        [Header("Lights")]
+        [Required] public Light[] Lights;
         
         [Header("Emojis")]
         [SerializeField, HideInInspector] public ParticleSystem[] EmojiEmitters = Array.Empty<ParticleSystem>();
@@ -73,6 +80,8 @@ namespace ProtoAqua.ExperimentV2
 
         [NonSerialized] private StringHash32 m_Id;
         [NonSerialized] public TankState CurrentState;
+
+        [NonSerialized] public GuideBody Guide;
         
         [NonSerialized] public Color DefaultWaterColor;
         [NonSerialized] public TankWaterSystem WaterSystem;
@@ -109,7 +118,14 @@ namespace ProtoAqua.ExperimentV2
             foreach(var emoji in tank.EmojiEmitters) {
                 emoji.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             }
+
             tank.CurrentScreen = null;
+        }
+
+        static public void SetLights(SelectableTank tank, bool active) {
+            for(int i = 0; i < tank.Lights.Length; i++) {
+                tank.Lights[i].enabled = active;
+            }
         }
 
         #region Helper Methods
@@ -188,6 +204,7 @@ namespace ProtoAqua.ExperimentV2
                 StringHash32 id = EmojiEmitters[i].name.Replace("Emoji", "").Replace("Emitter", "").Replace("Particles", "");
                 EmojiIds[i] = id;
             }
+
             return true;
         }
 

@@ -634,21 +634,7 @@ namespace Aqua
         }
 
         #endregion // Saving
-
-        #region Dialog History
-
-        public void AddToDialogHistory(in DialogRecord inRecord)
-        {
-            // m_DialogHistory.PushBack(inRecord);
-        }
-
-        public RingBuffer<DialogRecord> DialogHistory
-        {
-            get { return /* m_DialogHistory */ null; }
-        }
-
-        #endregion // Dialog History
-
+        
         #region Options
 
         private void LoadOptionsSettings() 

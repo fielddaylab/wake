@@ -163,5 +163,14 @@ namespace Aqua.Scripting
             }
             return false;
         }
+
+        public void TapCharacter(StringHash32 inId)
+        {
+            var thread = GetThread();
+            if (thread != null)
+            {
+                Services.Script.TapCharacter(inId, this);
+            }
+        }
     }
 }

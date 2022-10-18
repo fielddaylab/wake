@@ -71,6 +71,12 @@ namespace Aqua {
         }
 
         static public ScriptableObject Find(StringHash32 inId) {
+            #if UNITY_EDITOR
+            if (!UnityEditor.EditorApplication.isPlaying) {
+                return inId.IsEmpty ? null : ValidationUtils.FindAsset<ScriptableObject>(inId.ToDebugString());
+            }
+            #endif // UNITY_EDITOR
+
             if (inId.IsEmpty)
                 return null;
 
@@ -82,6 +88,11 @@ namespace Aqua {
 
         [MethodImpl(256)]
         static public bool Has(StringHash32 inId) {
+            #if UNITY_EDITOR
+            if (!UnityEditor.EditorApplication.isPlaying) {
+                return !inId.IsEmpty && ValidationUtils.FindAsset<ScriptableObject>(inId.ToDebugString()) != null;
+            }
+            #endif // UNITY_EDITOR
             return s_GlobalLookup.ContainsKey(inId);
         }
 
@@ -102,6 +113,12 @@ namespace Aqua {
 
         [MethodImpl(256)]
         static public BFBase Fact(StringHash32 inId) {
+            #if UNITY_EDITOR
+            if (!UnityEditor.EditorApplication.isPlaying) {
+                return inId.IsEmpty ? null : ValidationUtils.FindAsset<BFBase>(inId.ToDebugString());
+            }
+            #endif // UNITY_EDITOR
+
             return BestiaryDB.Fact(inId);
         }
 
@@ -206,6 +223,7 @@ namespace Aqua {
                 UnsafeExt.Decompress(inCompressed, inCompressedSize, alloc, allocSize, outDecompressedSize);
             } else {
                 allocSize = inCompressedSize;
+                *outDecompressedSize = allocSize;
                 alloc = (byte*) Unsafe.Alloc(s_DecompressionArena, allocSize);
                 Unsafe.Copy(inCompressed, inCompressedSize, alloc, allocSize);
             }

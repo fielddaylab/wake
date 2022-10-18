@@ -334,6 +334,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1491038790}
     m_Modifications:
+    - target: {fileID: 1153708548612913317, guid: ad8324d6bfe8c4201be5a526baa0068a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2756572667142643424, guid: ad8324d6bfe8c4201be5a526baa0068a,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8189635061042050301, guid: ad8324d6bfe8c4201be5a526baa0068a,
         type: 3}
       propertyPath: cullingMode
@@ -426,6 +436,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 8033464122846328511, guid: ad8324d6bfe8c4201be5a526baa0068a, type: 3}
+    - {fileID: 2756572667142643424, guid: ad8324d6bfe8c4201be5a526baa0068a, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: ad8324d6bfe8c4201be5a526baa0068a, type: 3}
 --- !u!4 &1180738503 stripped
 Transform:
@@ -433,6 +444,59 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1180738502}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1180738504 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4979228903864297367, guid: ad8324d6bfe8c4201be5a526baa0068a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1180738502}
+  m_PrefabAsset: {fileID: 0}
+--- !u!33 &1180738505
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1180738504}
+  m_Mesh: {fileID: 876880823646471686, guid: a1202a22e474c4918b2e3678712ed1f0, type: 3}
+--- !u!23 &1180738506
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1180738504}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 1164e26b869294029acba7b73f848e9d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
 --- !u!1 &1235559077
 GameObject:
   m_ObjectHideFlags: 0
@@ -1404,7 +1468,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 28.677423
+  field of view: 28.677427
   orthographic: 0
   orthographic size: 5
   m_Depth: -1

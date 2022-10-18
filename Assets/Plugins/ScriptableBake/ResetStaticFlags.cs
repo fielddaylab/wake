@@ -5,7 +5,7 @@ namespace ScriptableBake {
     /// <summary>
     /// Resets the static flags for a GameObject.
     /// </summary>
-    [AddComponentMenu("ScriptableBake/Reset Static Flags")]
+    [AddComponentMenu("ScriptableBake/Reset Static Flags"), DisallowMultipleComponent]
     public sealed class ResetStaticFlags : MonoBehaviour, IBaked {
 
         public const int Order = FlattenHierarchy.Order - 10;
@@ -25,8 +25,8 @@ namespace ScriptableBake {
         }
 
         bool IBaked.Bake(BakeFlags flags, BakeContext context) {
-            Bake.ResetStaticFlags(gameObject, Recursive);
-            Bake.Destroy(DestroyGameObject ? (UnityEngine.Object) gameObject : this);
+            Baking.ResetStaticFlags(gameObject, Recursive);
+            Baking.Destroy(DestroyGameObject ? (UnityEngine.Object) gameObject : this);
             return true;
         }
 

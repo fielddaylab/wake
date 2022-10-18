@@ -145,6 +145,7 @@ namespace ProtoAqua.Observation
         Important   = 0x10,
         ActivateTool = 0x20,
 
-        DynamicFactType = 0x40
+        DynamicFactType = 0x40,
+        DoNotShow = 0x80
     }
 }

@@ -1,24 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &4884187283945441290
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5856460699383752114}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22f85277a06bdb84d9dfd98fb340ef83, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  LowDistance: 40
-  LowSwap:
-    Mesh: {fileID: 4300000, guid: 51a86f4009916b4438460534563d2a8a, type: 2}
-    Material: {fileID: 0}
-  FogSwap:
-    Mesh: {fileID: 4300000, guid: 51a86f4009916b4438460534563d2a8a, type: 2}
-    Material: {fileID: 2100000, guid: e994b2811cbe096429bf9427df7418b0, type: 2}
 --- !u!114 &1589434580952092872
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38,6 +19,11 @@ MonoBehaviour:
   FogSwap:
     Mesh: {fileID: 4300000, guid: 6c7bd056e4232c94486614dd048b4182, type: 2}
     Material: {fileID: 2100000, guid: e994b2811cbe096429bf9427df7418b0, type: 2}
+  UnskinDistance: 0
+  Unskin:
+    Reparent: 0
+    NewParent: {fileID: 0}
+    DeleteRoot: {fileID: 0}
 --- !u!111 &3821578115241856949
 Animation:
   m_ObjectHideFlags: 0
@@ -4807,6 +4793,30 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &4884187283945441290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5856460699383752114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22f85277a06bdb84d9dfd98fb340ef83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LowDistance: 40
+  LowSwap:
+    Mesh: {fileID: 4300000, guid: 51a86f4009916b4438460534563d2a8a, type: 2}
+    Material: {fileID: 0}
+  FogSwap:
+    Mesh: {fileID: 4300000, guid: 51a86f4009916b4438460534563d2a8a, type: 2}
+    Material: {fileID: 2100000, guid: e994b2811cbe096429bf9427df7418b0, type: 2}
+  UnskinDistance: 0
+  Unskin:
+    Reparent: 0
+    NewParent: {fileID: 0}
+    DeleteRoot: {fileID: 0}
 --- !u!1 &7475199891950128548
 GameObject:
   m_ObjectHideFlags: 0
@@ -4819,6 +4829,7 @@ GameObject:
   - component: {fileID: 7475199891950128545}
   - component: {fileID: 4408435464606247706}
   - component: {fileID: 341661439969072841}
+  - component: {fileID: 2967483940401657311}
   m_Layer: 0
   m_Name: PopulationProbe
   m_TagString: Untagged
@@ -5010,8 +5021,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+--- !u!114 &2967483940401657311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7475199891950128548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d527cbae564d45547b4a948ae6e39f98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Always: 0
 --- !u!1001 &4014309725683205669
 PrefabInstance:
   m_ObjectHideFlags: 0

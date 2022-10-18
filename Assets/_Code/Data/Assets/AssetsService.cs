@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using Aqua.Journal;
 using BeauData;
+using BeauPools;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
 using EasyAssetStreaming;
-using NativeWebUtils;
+using NativeUtils;
 using TMPro;
 using UnityEngine;
 
@@ -256,6 +257,21 @@ namespace Aqua {
                 m_PreloadPathRefCountMap[id] = refCount;
                 if (refCount == 0) {
                     NativePreload.Cancel(path);
+                }
+            }
+        }
+
+        static public IEnumerator PreloadHierarchy(GameObject root) {
+            using(PooledList<IStreamingComponent> components = PooledList<IStreamingComponent>.Create()) {
+                root.GetComponentsInChildren<IStreamingComponent>(true, components);
+                for(int i = 0; i < components.Count; i++) {
+                    components[i].Preload();
+                }
+
+                for(int i = components.Count - 1; i > 0; i--) {
+                    while(components[i].IsLoading()) {
+                        yield return null;
+                    }
                 }
             }
         }

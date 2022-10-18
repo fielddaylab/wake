@@ -21,10 +21,10 @@ namespace Aqua
         public bool Bake(BakeFlags flags, BakeContext context) {
             bool isGameplayScene = IsGameplayScene(SceneHelper.ActiveScene());
             if (!isGameplayScene) {
-                ScriptableBake.Bake.Destroy(gameObject);
+                Baking.Destroy(gameObject);
                 return true;
             } else {
-                ScriptableBake.Bake.Destroy(this);
+                Baking.Destroy(this);
                 return false;
             }
         }

@@ -109,6 +109,12 @@ $set    jobs:kelp-welcome.got.scans = true
 {@guide}   Now head to the surface and board your new research vessel!
 $call Surface->Activate()
 
+:: navigation.goBackUp.savePatch
+@function   SceneStart
+@when       scene:name == "RS-1C", !jobs:kelp-welcome.got-scans, JobTaskActive(returnToShip)
+$set jobs:kelp-welcome.got.scans = true
+$call Surface->Activate()
+
 :: helpAtSiteCCompleted
 @trigger    RequestPartnerHelp
 @when 		scene:name == "RS-1C", JobTaskTop(returnToShip)
@@ -178,6 +184,11 @@ $call schematic.button->ResetSorting()
 $call ship.map->ResetSorting()
 
 // BACK AT SHIP
+
+:: atHelmNotFinishedWithExperiment
+@function   SceneStart
+@when       scene:name == "Helm", !JobTaskCompleted(runExperiment)
+$call WheelPrompt->Deactivate()
 
 :: atShip
 @trigger    SceneStart

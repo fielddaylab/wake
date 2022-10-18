@@ -75,11 +75,11 @@ namespace Aqua
             }
         }
 
-        int IBaked.Order { get { return 0; } }
+        int IBaked.Order { get { return FlattenHierarchy.Order - 100; } }
 
         bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
-            DestroyImmediate(this);
+            Baking.Destroy(this);
             return true;
         }
 

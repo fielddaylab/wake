@@ -5,7 +5,7 @@ namespace ScriptableBake {
     /// <summary>
     /// Strips occlusion-related static flags for a GameObject.
     /// </summary>
-    [AddComponentMenu("ScriptableBake/Strip Occlusion Static Flags")]
+    [AddComponentMenu("ScriptableBake/Strip Occlusion Static Flags"), DisallowMultipleComponent]
     public sealed class StripOcclusionStaticFlags : MonoBehaviour, IBaked {
 
         public const int Order = -1000001;
@@ -25,8 +25,8 @@ namespace ScriptableBake {
         }
 
         bool IBaked.Bake(BakeFlags flags, BakeContext context) {
-            Bake.RemoveStaticFlags(gameObject, UnityEditor.StaticEditorFlags.OccludeeStatic | UnityEditor.StaticEditorFlags.OccluderStatic, Recursive);
-            Bake.Destroy(DestroyGameObject ? (UnityEngine.Object) gameObject : this);
+            Baking.RemoveStaticFlags(gameObject, UnityEditor.StaticEditorFlags.OccludeeStatic | UnityEditor.StaticEditorFlags.OccluderStatic, Recursive);
+            Baking.Destroy(DestroyGameObject ? (UnityEngine.Object) gameObject : this);
             return true;
         }
 
