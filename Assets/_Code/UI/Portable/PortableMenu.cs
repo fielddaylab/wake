@@ -156,7 +156,8 @@ namespace Aqua.Portable {
                 button.App.ClearRequest();
             }
 
-            if (WasShowing()) {
+            if (WasShowing() && !inbInstant) {
+                Services.Audio.PostEvent("portable.close");
                 Services.Events?.Dispatch(GameEvents.PortableClosed);
             }
 

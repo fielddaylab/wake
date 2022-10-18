@@ -11,9 +11,9 @@ namespace Aqua
 {
     public struct PhysicsContact
     {
-        public RuntimeObjectHandle<KinematicObject2D> Object;
+        public RuntimeObjectHandle Object;
         public KinematicState2D State;
-        public RuntimeObjectHandle<Collider2D> Collider;
+        public RuntimeObjectHandle Collider;
         public Vector2 Point;
         public Vector2 Normal;
 
@@ -33,7 +33,7 @@ namespace Aqua
 
         static public implicit operator bool(PhysicsContact inContact)
         {
-            return !ReferenceEquals(inContact.Collider, null);
+            return inContact.Collider.Id != 0;
         }
     }
 }

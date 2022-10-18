@@ -18,34 +18,29 @@ namespace Aqua
         private const float OverlapThreshold = DefaultContactOffset;
         private const int TickIterations = 1;
 
-        #region Inspector
-
-        [SerializeField] private int m_MaxHandledContacts = 64;
-
-        #endregion // Inspector
-
-        private BufferedCollection<KinematicObject2D> m_KinematicObjects = new BufferedCollection<KinematicObject2D>();
-        private Dictionary<Rigidbody2D, KinematicObject2D> m_RigidbodyMap = new Dictionary<Rigidbody2D, KinematicObject2D>();
-        private PhysicsContact[] m_Contacts;
+        private RingBuffer<KinematicObject2D> m_KinematicObjects = new RingBuffer<KinematicObject2D>();
+        private Dictionary<Rigidbody2D, KinematicObject2D> m_RigidbodyMap = new Dictionary<Rigidbody2D, KinematicObject2D>(CompareUtils.DefaultComparer<Rigidbody2D>());
+        private Unsafe.ArenaHandle m_Allocator;
 
         private ulong m_TickCount;
 
         #region Register/Deregister
 
-        public void Register(KinematicObject2D inObject)
+        public unsafe void Register(KinematicObject2D inObject)
         {
             Assert.False(m_KinematicObjects.Contains(inObject), "Object '{0}' is already registered to PhysicsService", inObject);
-            m_KinematicObjects.Add(inObject);
+            m_KinematicObjects.PushBack(inObject);
             m_RigidbodyMap.Add(inObject.Body, inObject);
             SetupRigidbody(inObject.Body);
         }
 
-        public void Deregister(KinematicObject2D inObject)
+        public unsafe void Deregister(KinematicObject2D inObject)
         {
             Assert.True(m_KinematicObjects.Contains(inObject), "Object '{0}' is not registered to PhysicsService", inObject);
-            m_KinematicObjects.Remove(inObject);
+            m_KinematicObjects.FastRemove(inObject);
             m_RigidbodyMap.Remove(inObject.Body);
             inObject.Body.velocity = default;
+            inObject.Contacts = null;
         }
 
         private void SetupRigidbody(Rigidbody2D inBody)
@@ -82,14 +77,15 @@ namespace Aqua
             if (deltaTime <= 0)
                 return;
 
+            m_Allocator.Reset();
+
             int contactCount = 0;
-            Array.Resize(ref m_Contacts, m_MaxHandledContacts);
             
             // Tick forward
 
             BeginTick();
             Physics.Simulate(deltaTime);
-            contactCount += Tick(deltaTime, m_KinematicObjects, m_Contacts, contactCount, m_TickCount);
+            contactCount += Tick(deltaTime, m_KinematicObjects, m_Allocator, m_TickCount);
             EndTick();
 
             // Pass contacts off
@@ -97,17 +93,8 @@ namespace Aqua
             if (contactCount > 0)
             {
                 DebugService.Log(LogMask.Physics, "[PhysicsService] Generated {0} contacts on tick {1}", contactCount, m_TickCount);
-
-                for(int i = 0; i < contactCount; i++)
-                {
-                    ref PhysicsContact contact = ref m_Contacts[i];
-                    contact.Object.Object.Contacts.PushBack(contact);
-                }
             }
 
-            // clear contacts
-
-            Array.Clear(m_Contacts, 0, contactCount);
             m_TickCount++;
         }
 
@@ -123,6 +110,16 @@ namespace Aqua
             Physics2D.autoSimulation = false;
             Physics.autoSimulation = false;
             Physics.autoSyncTransforms = false;
+
+            Unsafe.TryDestroyArena(ref m_Allocator);
+            m_Allocator = Unsafe.CreateArena(1024 * 4, "Physics"); // 4KiB
+        }
+
+        protected override void Shutdown()
+        {
+            Unsafe.TryDestroyArena(ref m_Allocator);
+
+            base.Shutdown();
         }
 
         #endregion // Service
@@ -163,10 +160,8 @@ namespace Aqua
             Physics2D.autoSyncTransforms = true;
         }
 
-        static private unsafe int Tick(float inDeltaTime, BufferedCollection<KinematicObject2D> inObjects, PhysicsContact[] outContacts, int inContactStartIdx, ulong inTickIdx)
+        static private unsafe int Tick(float inDeltaTime, RingBuffer<KinematicObject2D> inObjects, Unsafe.ArenaHandle inAlloc, ulong inTickIdx)
         {
-            int outContactIdx = inContactStartIdx;
-            int maxOutputContacts = outContacts.Length;
             int addedContacts = 0;
 
             ContactPoint2D[] contactBuffer = s_ContactBuffer;
@@ -175,10 +170,8 @@ namespace Aqua
             Rigidbody2D objBody;
             Collider2D objCollider;
 
-            BufferedCollection<KinematicObject2D> objectCollection = inObjects;
+            RingBuffer<KinematicObject2D> objectCollection = inObjects;
             int objectCount = objectCollection.Count;
-
-            objectCollection.BeginEnumerate();
 
             // buffers
             KinematicState2D* states = stackalloc KinematicState2D[objectCount];
@@ -198,7 +191,7 @@ namespace Aqua
                 positions[objIdx] = obj.Body.position;
                 configs[objIdx].Drag += obj.AdditionalDrag * obj.AdditionalDragMultiplier;
                 obj.Body.useFullKinematicContacts = true;
-                obj.Contacts.Clear();
+                obj.Contacts = null;
                 objIdx++;
             }
 
@@ -230,6 +223,9 @@ namespace Aqua
                 objIdx = 0;
                 foreach(var obj in objectCollection)
                 {
+                    obj.Contacts = null;
+                    obj.ContactCount = 0;
+
                     if (obj.SolidMask != 0)
                     {
                         objBody = obj.Body;
@@ -250,6 +246,9 @@ namespace Aqua
                             PhysicsContact lastContact = default(PhysicsContact);
                             KinematicState2D originalState = states[objIdx];
 
+                            PhysicsContact* localBuffer = Unsafe.AllocArray<PhysicsContact>(inAlloc, contactCount);
+                            int localContactCount = 0;
+
                             for(int contactIdx = 0; contactIdx < contactCount; ++contactIdx)
                             {
                                 contact = contactBuffer[contactIdx];
@@ -265,7 +264,7 @@ namespace Aqua
                                     if (!ReferenceEquals(lastCollider, contact.collider))
                                     {
                                         lastCollider = contact.collider;
-                                        outContacts[outContactIdx++] = lastContact = new PhysicsContact(obj, originalState, contact.collider, contact.point, contact.normal);
+                                        localBuffer[localContactCount++] = lastContact = new PhysicsContact(obj, originalState, contact.collider, contact.point, contact.normal);
                                         addedContacts++;
 
                                         positions[objIdx] += separationAccum;
@@ -278,7 +277,7 @@ namespace Aqua
                                         // average out so we only generate one contact per other collider
                                         lastContact.Point = (lastContact.Point + contact.point) * 0.5f;
                                         lastContact.Normal = ((lastContact.Normal + contact.normal) * 0.5f).normalized;
-                                        outContacts[outContactIdx - 1] = lastContact;
+                                        localBuffer[localContactCount - 1] = lastContact;
 
                                         // some wonky averaging of separation?
                                         // 1. max distance to move
@@ -296,6 +295,9 @@ namespace Aqua
                                 positions[objIdx] += separationAccum;
                                 frameOffset[objIdx] += separationAccum;
                             }
+
+                            obj.Contacts = localBuffer;
+                            obj.ContactCount = localContactCount;
 
                             Array.Clear(contactBuffer, 0, contactCount);
                         }
@@ -319,8 +321,6 @@ namespace Aqua
                 obj.Body.useFullKinematicContacts = false;
                 objIdx++;
             }
-
-            objectCollection.EndEnumerate();
 
             return addedContacts;
         }
