@@ -38,6 +38,13 @@ $choice .action.cancel; Not right now!
 $choice .action.openShop; Sure do!
 $choice .action.cancel; Not right now!
 
+#ShopHandler(gotFlashlight, world:shop.boughtFlashlightFrom == "bayou", HasUpgrade("Flashlight"))
+@once
+{@$MerchantId} Hey, welcome back O! Nice work on retrieving that {nameof Flashlight}!
+    So, wanna take a look around?
+$choice .action.openShop; Sure do!
+$choice .action.cancel; Not right now.
+
 :: action.cancel
 @cutscene
 {@$MerchantId}  Alright,| well you know where to find me!
@@ -112,19 +119,32 @@ $choice .action.cancel; Not right now!
 $set    jobs:common-dive.seen.tagger-intro = true
 $EvaluateItemPurchase()
 
-#OverrideItemHandler(Flashlight, flashlight.first)
+#OverrideItemHandler(FlashlightCoordinates, flashlight.first)
 @boostScore 100
 @once
 {@$MerchantId}  The {nameof Flashlight}!
                 Every explorer should have one of these. 
                 Unless you want to end up lost in the Lower Depths with no light...
-                Been there, done that, don't recommend it. 
+                Been there, done that, don't recommend it.
+$set local:postPurchaseBranch = "interior.shop.bayou.PostFlashlight"
 $EvaluateItemPurchase()
 
-#ItemHandler(Flashlight)
+#ItemHandler(FlashlightCoordinates)
 {@$MerchantId}  That's the {nameof Flashlight}!
-                Definitely worth the money, if you've got it. 
+                Definitely worth the money, if you've got it.
+$set local:postPurchaseBranch = "interior.shop.bayou.PostFlashlight"
 $EvaluateItemPurchase()
+
+:: PostFlashlight
+$set    world:flashlightQuest = true
+$set    world:shop.boughtFlashlightFrom = "bayou"
+{@bayouMechanic}    Let me just... hang on.| Didn't {nameof @coralMechanic} have it last?
+                    Yeah I think {nameof @coralMechanic} borrowed it from your uncle. And then dropped it?
+                    It sounds like you'll have to go diving for it! I'm pretty sure she dropped it at {nameof FinalStation}.
+
+$call UnlockSite(RS-0)
+$call UnlockStation(FinalStation)
+$call ShowPopup(map.unlock.finalStation.header, map.unlock.finalStation.desc)
 
 #ItemHandler(ProbeHacker)
 {@$MerchantId}  The {nameof ProbeHacker}! 

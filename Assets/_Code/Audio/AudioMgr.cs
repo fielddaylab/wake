@@ -577,6 +577,11 @@ namespace AquaAudio
             Services.Audio.PostEvent(id);
         }
 
+        [LeafMember("AudioSetBGM"), Preserve]
+        static private void LeafSetBGM(StringHash32 id) {
+            Services.Audio.SetMusic(id);
+        }
+
         #endregion // Leaf
     }
 

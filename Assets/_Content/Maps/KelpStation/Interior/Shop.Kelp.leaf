@@ -42,7 +42,32 @@ $choice .action.cancel; No thanks, Tío. I'll come back later.
 #ShopHandler(a)
 {@$MerchantId} Welcome back, mijita. Need any upgrades for your ship? 
 $choice .action.openShop; Sure, I'll take a look. Thanks, Tío!
-$choice .action.cancel; Nah. I'm good for now. 
+$choice .action.cancel; Nah. I'm good for now.
+
+#ShopHandler(gotFlashlightAssignedHere, world:shop.boughtFlashlightFrom == "kelp", HasUpgrade("Flashlight"))
+@once
+{@$MerchantId}  Welcome back Ollie! Hey, you got back my {nameof Flashlight}!
+                Well, as I promised, it's yours now. You can make better use of it now than I can.
+                Now, need any other upgrades for your ship?
+$choice .action.openShop; Sure do!
+$choice .action.cancel; Not right now.
+
+#ShopHandler(gotFlashlight, world:shop.boughtFlashlightFrom != "kelp", HasUpgrade("Flashlight"))
+@once
+{@$MerchantId}  Welcome back Ollie! Whoa... is that my {nameof Flashlight}?
+$if world:shop.boughtFlashlightFrom == "coral"
+    {@player}   Yep! {nameof @coralMechanic} told me where to find it!
+    {@kelpMechanic} Of course! She was the last one to have it before you!
+$elseif world:shop.boughtFlashlightFrom == "bayou"
+    {@player}   Yep! {nameof @bayouMechanic} told me where to find it!
+$else
+    {@player}   Yep! {nameof @arcticMechanic} told me where to find it!
+$endif
+
+{@$MerchantId}  Well, it's {slow}your{/slow} {nameof Flashlight} now.
+                While you're here, need any other upgrades?
+$choice .action.openShop; Sure do!
+$choice .action.cancel; Not right now.
 
 :: action.cancel
 @cutscene
@@ -119,18 +144,32 @@ $choice .action.cancel; Nah. I'm good for now.
 $set    jobs:common-dive.seen.tagger-intro = true
 $EvaluateItemPurchase()
 
-#OverrideItemHandler(Flashlight, flashlight.first)
+#OverrideItemHandler(FlashlightCoordinates, flashlight.first)
 @boostScore 100
 @once
 {@$MerchantId}  The {nameof Flashlight}!
                 The ocean can be dangerous if you can't see what's coming.
                 We should |definitely| get this on your sub as soon as we can.
+$set local:postPurchaseBranch = "interior.shop.kelp.PostFlashlight"
 $EvaluateItemPurchase()
 
-#ItemHandler(Flashlight)
+#ItemHandler(FlashlightCoordinates)
 {@$MerchantId}  That's the {nameof Flashlight}!
                 I'd like to get that on your sub as soon as possible.
+$set local:postPurchaseBranch = "interior.shop.kelp.PostFlashlight"
 $EvaluateItemPurchase()
+
+:: PostFlashlight
+$set    world:flashlightQuest = true
+$set    world:shop.boughtFlashlightFrom = "kelp"
+{@kelpMechanic} ...wait.{wait 0.5} I| lent that out to {nameof @coralMechanic}.
+                And then she| dropped it| somewhere at {nameof FinalStation}.
+                ...{wait 0.5}{auto}
+                Okay. New plan, mijita. Go retrieve it and you can keep it.
+
+$call UnlockSite(RS-0)
+$call UnlockStation(FinalStation)
+$call ShowPopup(map.unlock.finalStation.header, map.unlock.finalStation.desc)
 
 #ItemHandler(ProbeHacker)
 {@$MerchantId}  The {nameof ProbeHacker}! Your sister helped me develop this one.

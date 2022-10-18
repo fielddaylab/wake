@@ -59314,9 +59314,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2061434675}
   - component: {fileID: 2061434674}
-  - component: {fileID: 2061434673}
   - component: {fileID: 2061434676}
   - component: {fileID: 2061434677}
+  - component: {fileID: 2061434673}
   m_Layer: 0
   m_Name: Terrain
   m_TagString: Untagged
@@ -59324,17 +59324,26 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
   m_IsActive: 1
---- !u!154 &2061434673
-TerrainCollider:
+--- !u!68 &2061434673
+EdgeCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2061434672}
-  m_Material: {fileID: 0}
   m_Enabled: 1
-  m_TerrainData: {fileID: 15600000, guid: 30acb246d498841f492b371d378d5e7b, type: 2}
-  m_EnableTreeColliders: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_EdgeRadius: 0
+  m_Points:
+  - {x: 0, y: 0}
+  - {x: 91.36897, y: 0}
+  - {x: 106.388535, y: 0.29664803}
+  - {x: 160, y: 0}
 --- !u!218 &2061434674
 Terrain:
   m_ObjectHideFlags: 0
@@ -59375,7 +59384,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2061434672}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -80, y: -19, z: -20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []

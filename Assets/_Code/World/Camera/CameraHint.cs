@@ -2,6 +2,7 @@ using System;
 using Aqua.Scripting;
 using BeauUtil;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Aqua.Cameras
 {
@@ -50,6 +51,18 @@ namespace Aqua.Cameras
             m_HintHandle = 0;
 
             Services.Data?.CompareExchange(GameVars.CameraRegion, Parent.Id(), StringHash32.Null);
+        }
+
+        [Preserve]
+        private void OnDidApplyAnimationProperties() {
+            if (m_HintHandle != 0 && Services.Camera) {
+                ref var hint = ref Services.Camera.FindHint(m_HintHandle);
+                hint.Offset = m_Offset;
+                hint.Look = m_Look;
+                hint.Lerp = m_Lerp;
+                hint.WeightOffset = m_Weight;
+                hint.Zoom = m_Zoom;
+            }
         }
 
         #if UNITY_EDITOR

@@ -22,7 +22,7 @@ namespace Aqua.StationMap
                 site.Initialize(mapData, job);
             }
 
-            StringHash32 currentMap = MapDB.LookupCurrentMap();
+            StringHash32 currentMap = MapDB.LookupCurrentMap(); 
             mapData.SetCurrentStationId(currentMap);
         }
 
