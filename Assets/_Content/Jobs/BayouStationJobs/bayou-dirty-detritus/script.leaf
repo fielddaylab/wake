@@ -5,8 +5,23 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@profBayou} Here is the starting text!
-{@player}    Response in kind!
+{@profBayou}    We are increasingly curious about how the ecosystem manages detritus now that the amount of it in the Dead Zone is rising.
+                Please study how this substance is increasing and what eats it (if anything).
+
+:: detritusCounted
+@trigger    JobTaskCompleted(countDetritus)
+@once
+@cutscene
+{@guide}    Time to run some experiments using {nameof Detritus}.
+
+// WHEN detritus shown not to reproduce: Player: Well, detritus doesn't grow on its own. I suppose that makes sense since it's just dead matter. So it must only come from organisms dying out.
+
+:: eatRuleObtained
+@trigger    JobTaskCompleted
+@when       taskId == "eatDetritus"
+@once
+@cutscene
+{@guide}    So the {nameof DecomposingBacteria} are enjoying this increase in detritus. I am certain {nameof @profBayou} will be interested to know about this.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -15,27 +30,27 @@
 @when 		JobTaskActive(countDetritus)
 @boostScore -5
 @cutscene
-{@guide}    
+{@guide}    Head to the {nameof RS-3P} and count the {nameof Detritus}.    
 
 :: catchEatDetritus
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(eatDetritus)
 @boostScore -5
 @cutscene
-{@guide}    
+{@guide}    Run experiments in the {nameof ObservationTank} to see if any organisms from the {nameof RS-3P} eat {nameof Detritus}.
 
 :: catchGrowDetritus
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(growDetritus)
 @boostScore -5
 @cutscene
-{@guide}    
+{@guide}    Let's place {nameof Detritus} in the {nameof MeasurementTank} and check if it reproduces somehow.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    
+{@guide}    Head back to {@profBayou} in the research station.
 
 // ARGUMENTATION
