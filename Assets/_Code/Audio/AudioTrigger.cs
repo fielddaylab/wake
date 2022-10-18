@@ -1,12 +1,13 @@
 using System;
 using System.Collections;
 using Aqua;
+using Aqua.Scripting;
 using BeauRoutine;
 using UnityEngine;
 
 namespace AquaAudio
 {
-    public class AudioTrigger : MonoBehaviour, ISceneManifestElement
+    public class AudioTrigger : ScriptComponent, ISceneManifestElement
     {
         [SerializeField] private string m_EventId = null;
         [SerializeField] private float m_CrossfadeDuration = 0;
@@ -16,6 +17,9 @@ namespace AquaAudio
 
         private void OnEnable()
         {
+            if (string.IsNullOrEmpty(m_EventId))
+                return;
+
             if (Script.IsLoading)
             {
                 m_Playback = Services.Audio.PostEvent(m_EventId, AudioPlaybackFlags.PreloadOnly);

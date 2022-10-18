@@ -627,7 +627,7 @@ namespace ProtoAqua.ExperimentV2 {
 
         static private IEnumerator ActorBeingEatenAnimation(ActorInstance inActor, ActorWorld inWorld) {
             if (!inActor.Definition.IsDistributed) {
-                yield return inActor.CachedTransform.MoveTo(inActor.CachedTransform.localPosition.x + 0.01f, 0.15f, Axis.X, Space.Self)
+                yield return inActor.CachedTransform.MoveTo(inActor.CachedTransform.localPosition.x + 0.04f, 0.15f, Axis.X, Space.Self)
                     .Wave(Wave.Function.Sin, 1).Loop().RevertOnCancel();
             }
         }

@@ -44,6 +44,7 @@ namespace Aqua
 
         [Header("Game UI")]
         [SerializeField] private string m_PersistentGameUIPath = null;
+        [SerializeField] private string m_JournalUIPath = null;
 
         [Header("Flattening")]
         [SerializeField] private Transform[] m_HierarchiesToFlatten = null;
@@ -60,7 +61,8 @@ namespace Aqua
         [NonSerialized] private List<GameObject> m_PersistentUIObjects = new List<GameObject>();
         [NonSerialized] private BufferedCollection<IUpdaterUI> m_UIUpdates = new BufferedCollection<IUpdaterUI>();
 
-        [NonSerialized] private Routine m_PersistentUILoad;
+        private Routine m_PersistentUILoad;
+        private Routine m_JournalLoad;
 
         #region Loading Screen
 
@@ -152,7 +154,7 @@ namespace Aqua
             if (m_SkippingCutscene)
             {
                 m_SkipFader.Object?.Hide(0.2f);
-                m_SkipFader = null;
+                m_SkipFader = default;
                 m_SkippingCutscene = false;
             }
         }
@@ -251,6 +253,7 @@ namespace Aqua
         {
             using(Profiling.Time("loading persistent ui"))
             {
+                Services.Assets.PreloadGroup("Prefab/Portable");
                 var request = Future.Resources.LoadAsync<GameObject>(m_PersistentGameUIPath);
                 yield return request;
                 GameObject asset = request.Get();
@@ -268,16 +271,85 @@ namespace Aqua
 
         public void UnloadPersistentUI()
         {
-            m_PersistentUILoad.Stop();
-            foreach(var obj in m_PersistentUIObjects)
+            if (m_PersistentUILoad || m_PersistentUIObjects.Count > 0)
             {
-                GameObject.Destroy(obj);
-            }
+                m_PersistentUILoad.Stop();
+                foreach(var obj in m_PersistentUIObjects)
+                {
+                    GameObject.Destroy(obj);
+                }
 
-            m_PersistentUIObjects.Clear();
+                m_PersistentUIObjects.Clear();
+                Services.Assets.CancelPreload("Prefab/Portable");
+            }
         }
 
         #endregion // Persistent UI
+
+        #region Journal
+
+        public void PreloadJournal()
+        {
+            JournalCanvas instance = FindPanel<JournalCanvas>();
+            if (instance == null && !m_JournalLoad) {
+                m_JournalLoad = Routine.Start(this, LoadJournalPrefab());
+                Services.Assets.PreloadGroup(JournalCanvas.PreloadGroup);
+            }
+        }
+
+        public bool IsJournalPreloaded()
+        {
+            return !m_JournalLoad && FindPanel<JournalCanvas>() && Services.Assets.PreloadGroupIsPrimaryLoaded(JournalCanvas.PreloadGroup);
+        }
+
+        public IEnumerator OpenJournalNewEntry()
+        {
+            JournalCanvas instance = FindPanel<JournalCanvas>();
+            if (instance != null) {
+                return instance.ShowNewEntry();
+            } else {
+                if (!m_JournalLoad) {
+                    m_JournalLoad = Routine.Start(this, LoadJournalPrefab());
+                }
+                return DelayedJournalOperation((c) => c.ShowNewEntry());
+            }
+        }
+
+        public IEnumerator OpenJournal() {
+            JournalCanvas instance = FindPanel<JournalCanvas>();
+            if (instance != null) {
+                return instance.Show();
+            } else {
+                if (!m_JournalLoad) {
+                    m_JournalLoad = Routine.Start(this, LoadJournalPrefab());
+                }
+                return DelayedJournalOperation((c) => c.Show());
+            }
+        }
+
+        private IEnumerator LoadJournalPrefab()
+        {
+            using(Profiling.Time("loading journal ui"))
+            {
+                Services.Assets.PreloadGroup(JournalCanvas.PreloadGroup);
+                var request = Future.Resources.LoadAsync<GameObject>(m_JournalUIPath);
+                yield return request;
+                GameObject asset = request.Get();
+                GameObject instantiated = Instantiate(asset);
+                JournalCanvas canvas = instantiated.GetComponentInChildren<JournalCanvas>(true);
+                canvas.InstantHide();
+                yield return AssetsService.PreloadHierarchy(instantiated);
+            }
+        }
+
+        private IEnumerator DelayedJournalOperation(Action<JournalCanvas> onFinished) {
+            using(Script.DisableInput()) {
+                yield return m_JournalLoad;
+                onFinished(FindPanel<JournalCanvas>());
+            }
+        }
+
+        #endregion // Journal
 
         public InputCursor Cursor { get { return m_Cursor; } }
         public CursorHintMgr CursorHintMgr { get { return m_CursorHintMgr; } }
@@ -335,6 +407,11 @@ namespace Aqua
             if (removedPanelCount > 0)
             {
                 Log.Warn("[UIMgr] Unregistered {0} shared panels that were not deregistered at scene unload", removedPanelCount);
+            }
+
+            if (m_JournalLoad) {
+                m_JournalLoad.Stop();
+                Services.Assets.CancelPreload(JournalCanvas.PreloadGroup);
             }
         }
 

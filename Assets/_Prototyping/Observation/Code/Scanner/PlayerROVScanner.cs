@@ -282,7 +282,7 @@ namespace ProtoAqua.Observation
                 }
             }
 
-            if ((result & PopupResultMask) == 0)
+            if ((result & PopupResultMask) == 0 && !Services.Script.IsCutscene())
             {
                 scanUI.ShowScan(data, result);
             }

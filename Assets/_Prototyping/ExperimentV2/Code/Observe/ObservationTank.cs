@@ -295,6 +295,7 @@ namespace ProtoAqua.ExperimentV2 {
             yield return null;
 
             Services.Camera.MoveToPose(m_ParentTank.ZoomPose, 0.4f);
+            m_ParentTank.Guide.MoveTo(m_ParentTank.GuideTargetZoomed);
             
             m_PotentialNewFacts.Clear();
             int potentialNewObservationsCount;
@@ -438,6 +439,7 @@ namespace ProtoAqua.ExperimentV2 {
 
             SelectableTank.Reset(m_ParentTank, true);
             Services.Camera.SnapToPose(m_ParentTank.CameraPose);
+            m_ParentTank.Guide.SnapTo(m_ParentTank.GuideTarget);
 
             m_BehaviorCircles.Reset();
             m_ParentTank.CurrentState &= ~TankState.Running;

@@ -102,15 +102,20 @@ namespace Aqua.Shop
 
         public IEnumerator AnimatePurchase() {
             if (m_CurrentSubPreview != null) {
-                foreach(var particleSystem in m_CurrentSubPreview.WeldParticles) {
-                    particleSystem.Play(true);
+                if (m_CurrentSubPreview.IsFake) {
+                    SetAsHidden(m_CurrentSubPreview);
+                    m_CurrentSubPreview = null;
+                } else {
+                    foreach(var particleSystem in m_CurrentSubPreview.WeldParticles) {
+                        particleSystem.Play(true);
+                    }
+                    Services.Audio.PostEvent("Shop.Weld");
+                    yield return 2.2f;
+                    Services.UI.WorldFaders.Flash(Color.white, 0.3f);
+                    SetAsActive(m_CurrentSubPreview);
+                    Services.Audio.PostEvent("Shop.FinishWelding");
+                    yield return 0.5;
                 }
-                Services.Audio.PostEvent("Shop.Weld");
-                yield return 2.2f;
-                Services.UI.WorldFaders.Flash(Color.white, 0.3f);
-                SetAsActive(m_CurrentSubPreview);
-                Services.Audio.PostEvent("Shop.FinishWelding");
-                yield return 0.5;
             }
         }
 
@@ -122,7 +127,7 @@ namespace Aqua.Shop
 
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext) {
             foreach(var preview in m_ExplorationItems) {
-                if (Save.Inventory.HasUpgrade(preview.ItemId)) {
+                if (!preview.IsFake && Save.Inventory.HasUpgrade(preview.ItemId)) {
                     SetAsActive(preview);
                 } else {
                     SetAsHidden(preview);

@@ -19,6 +19,11 @@ MonoBehaviour:
   FogSwap:
     Mesh: {fileID: 4300000, guid: 7a0239139578d8142b2c93a0d15d89a1, type: 2}
     Material: {fileID: 2100000, guid: e994b2811cbe096429bf9427df7418b0, type: 2}
+  UnskinDistance: 0
+  Unskin:
+    Reparent: 0
+    NewParent: {fileID: 0}
+    DeleteRoot: {fileID: 0}
 --- !u!1 &5774820918032191205
 GameObject:
   m_ObjectHideFlags: 0
@@ -133,7 +138,7 @@ GameObject:
   - component: {fileID: 5774820918325110237}
   - component: {fileID: 4257229457167983756}
   - component: {fileID: 5822417030316000798}
-  - component: {fileID: 754364023504761498}
+  - component: {fileID: 5614240699444187179}
   m_Layer: 0
   m_Name: ScannableProbe
   m_TagString: Untagged
@@ -314,7 +319,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Recursive: 1
   DestroyGameObject: 0
---- !u!114 &754364023504761498
+--- !u!114 &5614240699444187179
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -323,11 +328,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 5774820918325110238}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Script: {fileID: 11500000, guid: d527cbae564d45547b4a948ae6e39f98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Recursive: 0
-  DestroyGameObject: 0
+  Always: 0
 --- !u!1 &9177811768536949869
 GameObject:
   m_ObjectHideFlags: 0

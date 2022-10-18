@@ -34,7 +34,8 @@ namespace Aqua.Ship
                 return;
             }
 
-            if (!Save.Map.HasVisitedLocation(Assets.Map(Save.Map.CurrentStationId()).QuickTravel().Id())) {
+            MapDesc quickTravel = Assets.Map(Save.Map.CurrentStationId()).QuickTravel();
+            if (!quickTravel || !Save.Map.HasVisitedLocation(quickTravel.Id())) {
                 this.gameObject.SetActive(false);
             }
         }

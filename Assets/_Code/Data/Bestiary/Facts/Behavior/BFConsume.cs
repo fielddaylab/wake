@@ -34,7 +34,7 @@ namespace Aqua
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.Consume, BFShapeId.Behavior, BFFlags.IsBehavior, BFDiscoveredFlags.All, Compare);
+            BFType.DefineAttributes(BFTypeId.Consume, BFShapeId.Behavior, BFFlags.IsBehavior | BFFlags.HasRate, BFDiscoveredFlags.All, Compare);
             BFType.DefineMethods(BFTypeId.Consume, null, GenerateDetails, GenerateFragments, null, (f) => ((BFConsume) f).Property);
             BFType.DefineEditor(BFTypeId.Consume, DefaultIcon, BFMode.Player);
         }
@@ -50,7 +50,7 @@ namespace Aqua
             {
                 yield return BFFragment.CreateAmount(BestiaryUtils.FormatPropertyAdjust(fact.Amount, fact.Property));
             }
-            yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).LabelId());
+            yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).ShortLabelId());
             if (bIsLight)
             {
                 yield return BFFragment.CreateAmount(BestiaryUtils.FormatPropertyAdjust(fact.Amount, fact.Property));

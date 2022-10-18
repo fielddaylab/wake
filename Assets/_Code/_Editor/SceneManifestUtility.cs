@@ -84,7 +84,7 @@ namespace Aqua.Editor
                     EditorUtility.DisplayProgressBar("Building scene manifest", string.Format("{0} ({1}/{2})", scene.Name, i + 1, allScenes.Count), (float) i / allScenes.Count);
                     Log.Msg("[SceneManifestUtility] Loading '{0}'", scene.Path);
                     EditorSceneManager.OpenScene(scene.Path, OpenSceneMode.Single);
-                    SceneProcessor.DEBUGBakeScene();
+                    SceneProcessor.DEBUGBakeSceneForManifest();
                     var manifestForScene = GetManifestForCurrentScene(out var _);
                     if (manifestForScene.Paths.Count > 0) {
                         var groupForScene = new PreloadGroup();

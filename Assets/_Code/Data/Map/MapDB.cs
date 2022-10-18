@@ -22,7 +22,7 @@ namespace Aqua
 
         #endregion // Inspector
 
-        private readonly Dictionary<string, StringHash32> m_SceneMapping = new Dictionary<string, StringHash32>();
+        private readonly Dictionary<string, StringHash32> m_SceneMapping = new Dictionary<string, StringHash32>(StringComparer.Ordinal);
         private StringHash32[] m_BuildIndexMapping;
         private string[] m_SceneNames;
         private readonly HashSet<MapDesc> m_Stations = new HashSet<MapDesc>();
@@ -107,7 +107,7 @@ namespace Aqua
             #if UNITY_EDITOR
             if (!Application.isPlaying) {
                 if (s_EditorSceneMap == null) {
-                    s_EditorSceneMap = new Dictionary<string, StringHash32>();
+                    s_EditorSceneMap = new Dictionary<string, StringHash32>(StringComparer.Ordinal);
                     foreach(var map in ValidationUtils.FindAllAssets<MapDesc>()) {
                         s_EditorSceneMap.Add(map.SceneName(), map.Id());
                     }

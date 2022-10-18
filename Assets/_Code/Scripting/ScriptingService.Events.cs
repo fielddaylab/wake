@@ -95,6 +95,8 @@ namespace Aqua
             m_TagEventParser.AddEvent("sticky", ScriptEvents.Dialog.DoNotClose);
             m_TagEventParser.AddEvent("type", ScriptEvents.Dialog.SetTypeSFX).WithStringHashData();
             m_TagEventParser.AddEvent("voice", ScriptEvents.Dialog.SetVoiceType).WithStringHashData("default");
+
+            m_TagEventParser.Lock();
         }
 
         #endregion // Parser

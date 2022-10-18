@@ -21,12 +21,12 @@ namespace Aqua.Scripting
 
         public void Dispose()
         {
-            m_Table?.Dispose();
+            m_Table.Dispose();
         }
 
         static public implicit operator VariantTable(TempVarTable inTable)
         {
-            return inTable.m_Table?.Object;
+            return inTable.m_Table.Object;
         }
 
         static public TempVarTable Alloc()
