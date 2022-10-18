@@ -5,8 +5,22 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@profBayou} Here is the starting text!
-{@player}    Response in kind!
+{@profBayou}  The Shrimpers are quite upset about the lack of shrimp in the water.
+                I need you to check that the populations are in fact decreasing.
+
+:: popCounted
+@trigger    JobTasksUpdated
+@when       JobTaskCompleted(countShrimp), !HasFact(P_DeadZone.PopulationHistory.WhiteShrimp)
+@once
+@cutscene
+{@guide}    We've got the current populations now. Let's gather the historic data next.
+
+:: probeScanned
+@trigger    JobTasksUpdated
+@when       JobTaskTop(reportBack)
+@once
+@cutscene
+{@guide}    Time to tell @profBayou how the current shrimp populations compare with the past.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -15,20 +29,25 @@
 @when 		JobTaskActive(countShrimp)
 @boostScore -5
 @cutscene
-{@guide}    
+{@guide}    There's a bunch of shrimp around here.
+$if HasEntity(WhiteShrimp) 
+{@guide}    Pull out your {nameof ROVTagger} and find as many as you can!
+$else
+{@guide}    First you'll need to scan them. Then you can use your {nameof ROVTagger} to count them.
+$endif
 
 :: catchHistProbe
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(histProbe)
 @boostScore -5
 @cutscene
-{@guide}    
+{@guide}    There should be a probe around here with the historical data. We need to find it and scan it.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    
+{@guide}    Head back to {@profBayou} in the station.
 
 // ARGUMENTATION

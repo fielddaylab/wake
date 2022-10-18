@@ -5,8 +5,27 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@profBayou} Here is the starting text!
-{@player}    Response in kind!
+{@profBayou}    Have you noticed how green the Dead Zone is, Ms. Ramirez?
+{@player}   Yeah, it's pretty overwhelming. I'm glad I don't have to leave my sub to study it.
+{@profBayou}    Well, that water used to be blue.
+{@player}   Really?
+{@profBayou}    Really. Well, blue-er. I'd like you to get to the bottom of why it has shifted so drastically.
+                We might be able to reverse the effects.
+
+:: cyanoScanned
+@trigger    JobTaskCompleted
+@when       taskId == "findGreen"
+@once
+@cutscene
+{@guide}    This is a green thing! It could be the reason the water is no longer blue... somehow.
+            Let's find out everything we can about these creatures.
+
+:: experimentsCompleted
+@trigger    JobTasksUpdated
+@when       JobTaskTop(reportBack)
+@once
+@cutscene
+{@guide}    We've learned quite a bit about Cyanobacteria. Let's show {@profBayou} how they're impacting the water.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -15,34 +34,44 @@
 @when 		JobTaskActive(findGreen)
 @boostScore -5
 @cutscene
-{@guide}    
+{@guide}    We're looking for what could be making the water in {fullnameof RS-3P} look green.
+            I'm sure some combination of your tools will reveal something.
 
 :: catchStressCB
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(stressCB)
 @boostScore -5
 @cutscene
-{@guide}    
+{@guide}    Stick {nameof Cyanobacteria} in the {nameof StressTank} and record the stress ranges.
 
 :: catchMeasureEffect
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(measureEffect)
 @boostScore -5
 @cutscene
-{@guide}    
+{@guide}    The {nameof MeasurementTank} will help us understand {nameof Cyanobacteria} better.
+$if !HasFact(Cyanobacteria.Consume.Light)
+    {@guide}    I recommend measuring {nameof Cyanobacteria}'s effect on its environment with water that does not stress it. 
+$elseif !HasFact(Cyanobacteria.Consume.Light.Stressed)
+    {@guide}    Might I suggest measuring {nameof Cyanobacteria}'s effect on its environment with water that stresses it?
+$endif
 
 :: catchMeasureReproduce
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(measureReproduce)
 @boostScore -5
 @cutscene
-{@guide}    
+$if !HasFact(Cyanobacteria.Reproduce)
+    {@guide}    Might I suggest measuring {nameof Cyanobacteria}'s effect on its environment with water that does not stress it?
+$elseif !HasFact(Cyanobacteria.Reproduce.Stressed)
+    {@guide}    I recommend measuring {nameof Cyanobacteria}'s effect on its environment with water that stresses it.
+$endif
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    
+{@guide}    Report back to {@profBayou} with what you've learned about {nameof Cyanobacteria}.
 
 // ARGUMENTATION
