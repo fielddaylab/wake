@@ -96,7 +96,61 @@ MonoBehaviour:
     PrerequisiteTaskIds:
     - m_Source: histProbe
       m_HashValue: 1928730649
-  m_OptimizedTaskList: []
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: countShrimp
+      m_HashValue: 3862329527
+    IdString: countShrimp
+    Index: 0
+    LabelId:
+      m_Source: jobs.bayou-shrimp-yields.task.countShrimp
+      m_HashValue: 3287213555
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: WhiteShrimp
+        m_HashValue: 3187223953
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: P_DeadZone.Population.WhiteShrimp
+        m_HashValue: 136046965
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: histProbe
+      m_HashValue: 1928730649
+    IdString: histProbe
+    Index: 1
+    LabelId:
+      m_Source: jobs.bayou-shrimp-yields.task.histProbe
+      m_HashValue: 264750037
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: P_DeadZone.PopulationHistory.WhiteShrimp
+        m_HashValue: 534880463
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    IdString: reportBack
+    Index: 2
+    LabelId:
+      m_Source: jobs.bayou-shrimp-yields.task.reportBack
+      m_HashValue: 2543870728
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0100
   m_CashReward: 0
   m_ExpReward: 5
   m_JournalId:

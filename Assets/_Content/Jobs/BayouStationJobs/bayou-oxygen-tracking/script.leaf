@@ -5,8 +5,30 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@profBayou} Here is the starting text!
-{@player}    Response in kind!
+{@profBayou}    The oxygen levels in the Dead Zone are decreasing, but our current models cannot account for the drop.
+                We need you to make a model that lays out which organisms are producing oxygen and which organisms are consuming oxygen.
+
+:: allScanned
+@trigger    JobTaskCompleted
+@when       taskId == "scanAll"
+@once
+@cutscene
+{@guide}    That should be everything we can find here. Next let's take these to the {nameof MeasurementTank} and see how each of these affects oxygen levels.
+
+:: effectsMeasured
+@trigger    JobTaskCompleted
+@when       taskId == "measureCritters"
+@once
+@cutscene
+{@guide}    Well, that's a lot of numbers. Feeding that into the modeling tool should help you humans make sense of this.
+
+:: modelCompleted
+@trigger    JobTasksUpdated
+@when       JobTaskTop(reportBack)
+@once
+@cutscene
+{@guide}    Flow of oxygen modeled! Let's head back to the station.
+
 
 // CATCH-ALL GUIDE TEXT
 
@@ -15,35 +37,27 @@
 @when 		JobTaskActive(scanAll)
 @boostScore -5
 @cutscene
-{@guide}    
+{@guide}    Scan everything you can in the {nameof RS-3P}.
 
 :: catchMeasureCritters
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(measureCritters)
 @boostScore -5
 @cutscene
-{@guide}    
+{@guide}    Put organisms from the {nameof RS-3P} into the measurement tank and turn off the stabilizer to see how they impact their surroundings.
 
 :: catchMakeVisual
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(makeVisual)
 @boostScore -5
 @cutscene
-{@guide}    
-
-:: catchMakeDescribe
-@trigger    RequestPartnerHelp
-@when 		JobTaskActive(makeDescribe)
-@boostScore -5
-@cutscene
-{@guide}    
-
+{@guide}    Head to the Modeling Lab and make a visual model of the {nameof RS-3P}.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    
+{@guide}    Report back to {nameof @profBayou} to discuss your findings about oxygen.
 
 // ARGUMENTATION

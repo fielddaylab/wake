@@ -109,7 +109,71 @@ MonoBehaviour:
       m_HashValue: 372645617
     - m_Source: growDetritus
       m_HashValue: 1552323166
-  m_OptimizedTaskList: []
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: countDetritus
+      m_HashValue: 511720072
+    IdString: countDetritus
+    Index: 0
+    LabelId:
+      m_Source: jobs.bayou-dirty-detritus.task.countDetritus
+      m_HashValue: 823452073
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: P_DeadZone.Population.Detritus
+        m_HashValue: 3754834277
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: eatDetritus
+      m_HashValue: 372645617
+    IdString: eatDetritus
+    Index: 1
+    LabelId:
+      m_Source: jobs.bayou-dirty-detritus.task.eatDetritus
+      m_HashValue: 3826345904
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: DecomposingBacteria.Eats.Detritus
+        m_HashValue: 3753277651
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: growDetritus
+      m_HashValue: 1552323166
+    IdString: growDetritus
+    Index: 2
+    LabelId:
+      m_Source: jobs.bayou-dirty-detritus.task.growDetritus
+      m_HashValue: 3391774869
+    Steps:
+    - Type: 6
+      Target:
+        m_Source: DecomposingBacteria.Eats.Detritus
+        m_HashValue: 3753277651
+      ConditionString: true
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    IdString: reportBack
+    Index: 3
+    LabelId:
+      m_Source: jobs.bayou-dirty-detritus.task.reportBack
+      m_HashValue: 2766880759
+    Steps:
+    - Type: 6
+      Target:
+        m_Source: DecomposingBacteria.Eats.Detritus
+        m_HashValue: 3753277651
+      ConditionString: true
+      Amount: 0
+    PrerequisiteTaskIndices: 01000200
   m_CashReward: 0
   m_ExpReward: 5
   m_JournalId:
