@@ -11,6 +11,8 @@
 
 // MACROS
 
+#include "Headers/Common.leaf"
+
 // Defines a default item handler header
 #macro ItemHandler(itemId, ...conditions) \
 :: item.$itemId \
@@ -177,6 +179,8 @@ $call ShopPlayPurchaseAnimation()
 
 $call AudioOneShot(ShopPurchase)
 $call PurchaseItem($local:itemId)
+
+$Invoke(local:postPurchaseBranch)
 
 :: eval.purchase.cantAfford
 $set    shop:lastFailure = local:itemId

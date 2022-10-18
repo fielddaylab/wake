@@ -520,6 +520,9 @@ namespace Aqua
                 } else {
                     invData.AdjustItem(inItemId, 1);
                 }
+
+                if (itemDesc.HasFlags(InvItemFlags.SkipPopup))
+                    return null;
                 
                 inThread.Dialog = null;
 
@@ -576,12 +579,15 @@ namespace Aqua
             {
                 if (Save.Inventory.AddUpgrade(inUpgradeId) && inMode != PopupMode.Silent)
                 {
+                    InvItem itemDesc = Assets.Item(inUpgradeId);
+                    if (itemDesc.HasFlags(InvItemFlags.SkipPopup))
+                        return null;
+
                     inThread.Dialog = null;
 
                     if (Services.UI.IsSkippingCutscene())
                         return null;
-                    
-                    InvItem itemDesc = Assets.Item(inUpgradeId);
+
                     Services.Audio.PostEvent("item.popup.new");
                     Color itemColor = Parsing.HexColor(ScriptingService.ColorTags.ItemColorString);
                 

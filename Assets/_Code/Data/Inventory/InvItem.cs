@@ -1,10 +1,9 @@
 using System;
-using System.Collections.Generic;
 using BeauUtil;
-using Leaf;
 using UnityEngine;
 using UnityEngine.Serialization;
 using EasyAssetStreaming;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif // UNITY_EDITOR
@@ -137,7 +136,8 @@ namespace Aqua {
         Sellable = 0x02,
         AlwaysDisplay = 0x4,
         Buyable = 0x8,
-        OnlyOne = 0x10
+        OnlyOne = 0x10,
+        SkipPopup = 0x20
     }
 
     public class ItemIdAttribute : DBObjectIdAttribute {

@@ -1,11 +1,8 @@
-using UnityEngine;
 using BeauUtil;
-using System.Collections.Generic;
 using System;
 using BeauData;
 
-namespace Aqua
-{
+namespace Aqua {
     public struct PlayerInv : IKeyValuePair<StringHash32, PlayerInv>, ISerializedObject
     {
         public StringHash32 ItemId;
