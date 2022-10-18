@@ -364,7 +364,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2275686243725620069}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 20.015182, y: 18.185673, z: -1.1880741}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7376245839591668352}
@@ -1374,8 +1374,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7371879408649067997}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 20.054577, y: 14.077704, z: -0.9136884}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 247134223946784970}
@@ -1383,7 +1383,7 @@ Transform:
   - {fileID: 1318360271923332167}
   m_Father: {fileID: 7376245839591668352}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &7622192456946015464
 GameObject:
   m_ObjectHideFlags: 0
@@ -1462,6 +1462,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7376245839591668352}
+  - component: {fileID: 1396572510}
   m_Layer: 0
   m_Name: colossalSquid
   m_TagString: Untagged
@@ -1476,15 +1477,31 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7860575950547722298}
-  m_LocalRotation: {x: -0.18622406, y: 0.9824637, z: 0.0017237102, w: -0.009093791}
+  m_LocalRotation: {x: -0.18622452, y: 0.9824636, z: 0.0017242904, w: -0.009096829}
   m_LocalPosition: {x: 194.8842, y: -258.10785, z: 0.9212338}
-  m_LocalScale: {x: 0.60381, y: 0.60381, z: 0.60381}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7340581973722215568}
   - {fileID: 7511022604723292875}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 181.06099, z: -21.466002}
+--- !u!114 &1396572510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7860575950547722298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3763d25e69bcd445a85790b19313faeb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chaseSpeed: 3
+  nearDistance: 0.5
+  farDistance: 5
+  chasePlayer: 0
 --- !u!1 &8064898619548325012
 GameObject:
   m_ObjectHideFlags: 0
