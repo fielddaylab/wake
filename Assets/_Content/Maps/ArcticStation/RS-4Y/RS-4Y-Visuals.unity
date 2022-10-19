@@ -3343,7 +3343,7 @@ PrefabInstance:
     - target: {fileID: 1845411837404324212, guid: 5efa3a1a3d3caee42b57bb46d47b1062,
         type: 3}
       propertyPath: m_RootOrder
-      value: 9
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 1845411837404324212, guid: 5efa3a1a3d3caee42b57bb46d47b1062,
         type: 3}
@@ -7010,7 +7010,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1584187863}
-  - {fileID: 1850495301}
   - {fileID: 1871124606}
   - {fileID: 2007728697}
   - {fileID: 1249487301}
@@ -7247,6 +7246,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9362852c314d93843aab5e299fe900ce, type: 3}
+--- !u!1 &707583161 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 9362852c314d93843aab5e299fe900ce,
+    type: 3}
+  m_PrefabInstance: {fileID: 707583160}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &707583162
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 707583161}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 96f6882565966bc48a55c34f55c91bb0, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1001 &723981220
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8445,7 +8469,7 @@ Transform:
   - {fileID: 173753388}
   - {fileID: 157755791}
   m_Father: {fileID: 674527602}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &772003136
 PrefabInstance:
@@ -17203,7 +17227,7 @@ Transform:
   m_Children:
   - {fileID: 1629222692}
   m_Father: {fileID: 674527602}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -103.58501}
 --- !u!114 &1249487302
 MonoBehaviour:
@@ -24946,7 +24970,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 674527602}
-  m_RootOrder: 10
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!199 &1550463156
 ParticleSystemRenderer:
@@ -30595,7 +30619,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1555019232
 Transform:
   m_ObjectHideFlags: 0
@@ -30608,7 +30632,7 @@ Transform:
   m_LocalScale: {x: 60.98338, y: 18.68824, z: 11.778441}
   m_Children: []
   m_Father: {fileID: 674527602}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1555019233
 MonoBehaviour:
@@ -31337,7 +31361,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 674527602}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 71.17, y: 0, z: 0}
 --- !u!108 &1602124942
 Light:
@@ -34378,66 +34402,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1847309767}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1850495299
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1850495301}
-  - component: {fileID: 1850495300}
-  m_Layer: 0
-  m_Name: PlayableDirector02_RiverStart
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!320 &1850495300
-PlayableDirector:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1850495299}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_PlayableAsset: {fileID: 11400000, guid: c140ca6793020fe4e89197d2ca59cb7e, type: 2}
-  m_InitialState: 0
-  m_WrapMode: 0
-  m_DirectorUpdateMode: 1
-  m_InitialTime: 0
-  m_SceneBindings:
-  - key: {fileID: -4386486830018027668, guid: 9f41968cc6b6c3c4f9f54540aecc6971, type: 2}
-    value: {fileID: 0}
-  - key: {fileID: 0}
-    value: {fileID: 0}
-  - key: {fileID: 4949636842836719627, guid: c140ca6793020fe4e89197d2ca59cb7e, type: 2}
-    value: {fileID: 1602124940}
-  - key: {fileID: 0}
-    value: {fileID: 0}
-  - key: {fileID: 0}
-    value: {fileID: 0}
-  - key: {fileID: 8785308741494314970, guid: c140ca6793020fe4e89197d2ca59cb7e, type: 2}
-    value: {fileID: 0}
-  m_ExposedReferences:
-    m_References: []
---- !u!4 &1850495301
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1850495299}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -107.75284, y: -27.21687, z: 765.5921}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 674527602}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1871124605
 GameObject:
   m_ObjectHideFlags: 0
@@ -34450,7 +34414,7 @@ GameObject:
   - component: {fileID: 1871124608}
   - component: {fileID: 1871124607}
   m_Layer: 0
-  m_Name: IceRiver_Trigger
+  m_Name: IceRiver_Mat_Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -34464,11 +34428,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1871124605}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -120.6102, y: -26.727844, z: 809.9371}
-  m_LocalScale: {x: 0.51109, y: 0.07633172, z: 1}
+  m_LocalPosition: {x: -93.6, y: -28.43, z: 803.99}
+  m_LocalScale: {x: 7.71854, y: 0.1912081, z: 1}
   m_Children: []
   m_Father: {fileID: 674527602}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1871124607
 MonoBehaviour:
@@ -34479,9 +34443,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 1871124605}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c61f236e91db849aca201dbb014c08d2, type: 3}
+  m_Script: {fileID: 11500000, guid: c6e77b091cc839b408a9c08be6e479f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Animator: {fileID: 707583162}
+  Collider: {fileID: 1871124608}
+  CollisionMask:
+    serializedVersion: 2
+    m_Bits: 256
+  OnEnter:
+    m_Name: InRiver
+    m_Type: 4
+    m_IntValue: 1
+    m_FloatValue: 0
+  OnExit:
+    m_Name: InRiver
+    m_Type: 4
+    m_IntValue: 0
+    m_FloatValue: 0
 --- !u!61 &1871124608
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -41130,7 +41109,7 @@ Transform:
   m_Children:
   - {fileID: 1567556150}
   m_Father: {fileID: 674527602}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -97.733}
 --- !u!114 &2007728698
 MonoBehaviour:
@@ -42993,7 +42972,7 @@ PrefabInstance:
     - target: {fileID: 2735217097670052695, guid: 36705a1279e1ad6409ef9432f796fafd,
         type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2735217097670052695, guid: 36705a1279e1ad6409ef9432f796fafd,
         type: 3}
