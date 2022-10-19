@@ -75,3 +75,104 @@ $endif
 {@guide}    Report back to {@profBayou} with what you've learned about {nameof Cyanobacteria}.
 
 // ARGUMENTATION
+
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(blueWatersArgueCyanoExtra)
+@cutscene
+$if ArgueIsComplete(blueWatersArgueCyanoPop)
+    {@profBayou}    Previously we discussed that there are enough {nameof Cyanobacteria} to turn the water green.
+    $branch .argue.beginExtra
+$else
+    $call ArgueLoad(blueWatersArgueCyanoPop) 
+    {@profBayou}    What is turning the water green?
+    $choice .argue.stillSearching; I'm still searching!
+    $choice .argue.lightTrick; It's a trick of the light.
+    $if JobTaskTop(reportBack)
+        $choice .argue.cyanoCause; Cyanobacteria!
+    $endif
+    $choose branch
+$endif
+
+// Population
+
+:: argue.stillSearching
+{@profBayou}    Let me know when you've found something.
+$call ArgueClearFacts()
+$call ArgueCancelClaim()
+
+:: argue.lightTrick
+{@player}   Pretty sure it's a trick of the light -- nothing has changed about the ecosystem.
+{@profBayou}    As convenient as that would be Ms. Ramirez, that seems doubtful. I advise you to keep looking.
+$call ArgueClearFacts()
+$call ArgueCancelClaim()
+
+:: argue.cyanoCause
+{@profBayou}    Oh, really? But they are so small...
+{@player}       There's a lot of them.
+$if ArgueSetClaim(ClaimPop, jobs.bayou-shrimp-yields.argue.claimLabelPop)
+    $call ArgueFactSlot(P_DeadZone.Population.Cyanobacteria) 
+$endif
+{@profBayou}    They must have some truly impressive numbers if they are turning everything green.
+                Can you show me the {nameof Cyanobacteria} populations?
+$branch .argue.showClaimPop
+
+:: argue.showClaimPop
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.completePop
+    $answer incorrect, .argue.unrelatedPop
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedPop
+$call ArgueRejectIncorrect()
+{@profBayou} That's not helpful, Ms. Ramirez. 
+$call ArgueClearFacts()
+$branch .argue.showClaimPop
+
+:: argue.completePop
+$call ArgueCancelClaim()
+$call ArgueComplete()
+{@profBayou}    Hmm. Yes, I believe this would do it.
+$branch .argue.beginExtra
+
+// Extra
+
+:: argue.beginExtra
+ $call ArgueLoad(blueWatersArgueCyanoExtra) 
+$if ArgueSetClaim(ClaimExtra, jobs.bayou-shrimp-yields.argue.claimLabelExtra)
+    $call ArgueFactSlot(Cyanobacteria.Consume.Light) 
+    $call ArgueFactSlot(Cyanobacteria.Consume.Light.Stressed) 
+    $call ArgueFactSlot(Cyanobacteria.Consume.Reproduce) 
+    $call ArgueFactSlot(Cyanobacteria.Consume.Reproduce.Stressed)
+$endif
+$branch .argue.showClaimExtra
+
+:: argue.showClaimExtra
+{@profBayou}    What else did you find out about {nameof Cyanobacteria}?
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.completeExtra
+    $answer incorrect, .argue.unrelatedExtra
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedExtra
+$call ArgueRejectIncorrect()
+{@profBayou} That's not helpful, Ms. Ramirez. 
+$call ArgueClearFacts()
+$branch .argue.showClaimExtra
+
+// Shared
+
+:: argue.giveUp
+{@profBayou} Okay, then. But don't take too long. A lot of people are waiting on our decision. 
+$call ArgueClearFacts()
+$call ArgueCancelClaim()
+
+// End
+:: argue.completeExtra
+$call ArgueComplete()
+{@profBayou}    Hmm. So the {nameof Cyanobacteria} turn the water green, but they also take up a lot of light.
+$call CompleteJob()
