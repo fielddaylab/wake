@@ -61,3 +61,204 @@
 {@guide}    Report back to {nameof @profBayou} to discuss your findings about oxygen.
 
 // ARGUMENTATION
+
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(oxygenTrackingArgueFinal)
+@cutscene
+$if ArgueIsComplete(oxygenTrackingArgueModel)
+    {@profBayou}    You've already shown me the model.
+$elseif ArgueIsComplete(oxygenTrackingFinal)
+    {@profBayou}    You've already shown me that {nameof WhiteShrimp} and {nameof DecomposingBaceria} consume oxygen.
+$else
+    $call ArgueLoad(oxygenTrackingArgueModel)
+    $if ArgueSetClaim(ClaimModel, jobs.bayou-oxygen-tracking.argue.claimLabelModel)
+        $call ArgueFactSlot(P_DeadZone.Model.OxygenTracking.Visual)
+    $endif
+    {@profBayou}    Have you modeled the flow of oxygen through the {nameof RS-3P}?
+    $branch .argue.showClaimModel
+$endif
+
+// Model
+
+:: argue.showClaimModel
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.completeModel
+    $answer incorrect, .argue.unrelatedModel
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedModel
+$call ArgueRejectIncorrect()
+{@profBayou}    That's not helpful, Ms. Ramirez. 
+$call ArgueClearFacts()
+$branch .argue.showClaimModel
+
+:: argue.completeModel
+$call ArgueCancelClaim()
+$call ArgueComplete()
+$branch .argue.beginFinal
+
+
+// Final
+
+$call ArgueLoad(oxygenTrackingArgueFinal) 
+$if ArgueSetClaim(ClaimFinal, jobs.bayou-oxygen-tracking.argue.claimLabelFinal)
+    $call ArgueFactSlot(WhiteShrimp.Consumes.Oxygen) 
+    $call ArgueFactSlot(DecomposingBaceria.Consumes.Oxygen) 
+$endif
+$branch .argue.showClaimFinal
+
+:: argue.showClaimFinal
+{@profBayou}    Based on your model, which organisms consume oxygen in the {nameof RS-3P}?
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.completeFinal
+    $answer incorrect, .argue.unrelatedFinal
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedFinal
+$call ArgueRejectIncorrect()
+{@profBayou}    That's not helpful, Ms. Ramirez. 
+$call ArgueClearFacts()
+$branch .argue.showClaimFinal
+
+:: argue.completeFinal
+$call ArgueCancelClaim()
+{@profBayou}    I see. And does either of those stand out as the culprit?
+                In other words...
+$branch .argue.discussionStart
+
+// Discussion
+
+:: argue.discussionStart
+{@profBayou}    Do either {nameof WhiteShrimp} or {nameof DecomposingBacteria} consume a larger share of the oxygen?
+$choice .argue.shrimpConsumeMore; The {nameof WhiteShrimp} consume more.
+$choice .argue.decompConsumeMore; The {nameof DecomposingBaceria} consume more.
+$choice .argue.aboutSame; They consume about the same in total.
+$choice .argue.giveUpDiscuss; Let me get back to you.
+$choose branch
+
+:: argue.shrimpConsumeMore
+{@profBayou}    I suppose if you look at them individually, any one shrimp consumes more oxygen than any one bacterium.
+                But the {nameof DecomposingBacteria} far outnumber the shrimp, so overall, the {nameof DecomposingBacteria} consume more oxygen in this case.
+$branch .argue.completeDiscussion
+
+:: argue.decompConsumeMore
+$branch .argue.completeDiscussion
+
+:: argue.aboutSame
+{@profBayou}    I don't see much evidence for this. Consider revising your claim.
+$branch .argue.discussionStart
+
+:: argue.giveUpDiscuss
+{@profBayou}    Okay, then. But don't take too long. A lot of people are waiting on our decision. 
+
+// Shared
+
+:: argue.giveUp
+{@profBayou}    Okay, then. But don't take too long. A lot of people are waiting on our decision. 
+$call ArgueClearFacts()
+$call ArgueCancelClaim()
+
+// End
+:: argue.completeDiscussion
+$call ArgueComplete()
+{@profBayou}    So the {nameof DecomposingBacteria} are claiming most of the oxygen, and {nameof WhiteShrimp} are suffering.
+                But I am still wondering why there are so many {nameof DecomposingBacteria} all of the sudden...
+                Regardless, thank you for your help Ms. Ramirez.
+$call CompleteJob()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Accurate
+
+
+
+
+
+
+
+
+
+
+
+
+:: argue.showClaimAccurate
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.completeAccurate 
+    $answer incorrect, .argue.unrelatedAccurate
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedAccurate
+$call ArgueRejectIncorrect()
+{@profBayou} That's not helpful, Ms. Ramirez. 
+$call ArgueClearFacts()
+$branch .argue.showClaimAccurate
+
+// Inaccurate
+
+:: argue.reportsInaccurate
+$if ArgueSetClaim(Claim, jobs.bayou-shrimp-yields.argue.claimLabelInaccurate)
+    $call ArgueFactSlot(P_DeadZone.Population.WhiteShrimp) 
+    $call ArgueFactSlot(P_DeadZone.PopulationHistory.WhiteShrimp) 
+$endif
+{@profBayou} What evidence do you have?
+$branch .argue.showClaimInaccurate
+
+:: argue.showClaimInaccurate
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.completeInaccurate 
+    $answer incorrect, .argue.unrelatedInaccurate
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedInaccurate
+$call ArgueRejectIncorrect()
+{@profBayou} That's not helpful, Ms. Ramirez. 
+$call ArgueClearFacts()
+$branch .argue.showClaimInaccurate
+
+:: argue.completeInaccurate
+{@profBayou}    I think this means the shrimp population is in decline.
+                Want to revisit your claim?
+$call ArgueClearFacts()
+$call ArgueCancelClaim()
+$goto .argue.intro
+
+// Shared
+
+:: argue.giveUp
+{@profBayou} Okay, then. But don't take too long. A lot of people are waiting on our decision. 
+$call ArgueClearFacts()
+$call ArgueCancelClaim()
+
+// End
+:: argue.completeAccurate
+$call ArgueComplete()
+{@profBayou}    Oh, interesting. That is... unfortunate.
+                We need to get to the bottom of why the shrimp are dying out.
+                I'll have new jobs along this line posted shortly.
+$call CompleteJob()

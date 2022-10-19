@@ -110,7 +110,7 @@ $call ArgueCancelClaim()
 :: argue.cyanoCause
 {@profBayou}    Oh, really? But they are so small...
 {@player}       There's a lot of them.
-$if ArgueSetClaim(ClaimPop, jobs.bayou-shrimp-yields.argue.claimLabelPop)
+$if ArgueSetClaim(ClaimPop, jobs.bayou-blue-waters.argue.claimLabelPop)
     $call ArgueFactSlot(P_DeadZone.Population.Cyanobacteria) 
 $endif
 {@profBayou}    They must have some truly impressive numbers if they are turning everything green.
@@ -141,7 +141,7 @@ $branch .argue.beginExtra
 
 :: argue.beginExtra
  $call ArgueLoad(blueWatersArgueCyanoExtra) 
-$if ArgueSetClaim(ClaimExtra, jobs.bayou-shrimp-yields.argue.claimLabelExtra)
+$if ArgueSetClaim(ClaimExtra, jobs.bayou-blue-waters.argue.claimLabelExtra)
     $call ArgueFactSlot(Cyanobacteria.Consume.Light) 
     $call ArgueFactSlot(Cyanobacteria.Consume.Light.Stressed) 
     $call ArgueFactSlot(Cyanobacteria.Consume.Reproduce) 

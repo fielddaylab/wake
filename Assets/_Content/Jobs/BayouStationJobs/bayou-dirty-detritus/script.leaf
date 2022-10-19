@@ -54,3 +54,99 @@
 {@guide}    Head back to {@profBayou} in the research station.
 
 // ARGUMENTATION
+
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(dirtyDetritusArgueFinal)
+@cutscene
+$if ArgueIsComplete(dirtyDetritusArgueHistory)
+    {@profBayou}    Previously we discussed _______.
+    $branch .argue.beginExtra
+$else
+    $call ArgueLoad(dirtyDetritusArgueHistory) 
+    {@profBayou}    Why is there so much {nameof Detritus} in the {nameof RS-3P}?
+    $choice .argue.detritusReproduce; Detritus is reproducing on its own.
+    $choice .argue.organismsDying; Organisms are dying out.
+    $choose branch
+$endif
+
+// History
+
+:: argue.detritusReproduce
+{@profBayou}    Detritus is dead matter. It doesn't reproduce.
+$call ArgueClearFacts()
+$call ArgueCancelClaim()
+
+:: argue.organismsDying
+{@profBayou}    Can you show me the population histories for detritus and all organisms in the {nameof RS-3P}?
+$if ArgueSetClaim(ClaimHistory, jobs.bayou-dirty-detritus.argue.claimLabelHistory)
+    $call ArgueFactSlot(P_DeadZone.PopulationHistory.Cyanobacteria)
+    $call ArgueFactSlot(P_DeadZone.PopulationHistory.WhiteShrimp)
+    $call ArgueFactSlot(P_DeadZone.PopulationHistory.DecomposingBacteria)
+    $call ArgueFactSlot(P_DeadZone.PopulationHistory.Detritus)
+$endif
+$branch .argue.showClaimHistory
+
+:: argue.showClaimHistory
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.completeHistory
+    $answer incorrect, .argue.unrelatedHistory
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedHistory
+$call ArgueRejectIncorrect()
+{@profBayou} That's not helpful, Ms. Ramirez. 
+$call ArgueClearFacts()
+$branch .argue.showClaimHistory
+
+:: argue.completeHistory
+$call ArgueCancelClaim()
+$call ArgueComplete()
+{@profBayou}    Oh. Interesting. All of these have been cycling over the past 12 years.
+{@player}   What does that mean?
+{@profBayou}    It means the populations rise and fall, rise and fall, over and over again.
+                If I look at the most recent history... yes.
+                The {nameof WhiteShrimp} and {nameof Cyanobacteria} must be on the decline, while {nameof Detritus} and {nameof DecomposingBaceria} are on the rise.
+                So in your previous job regarding the green coloration to the water, we established that there is a lot of {nameof Cyanobacteria}.
+                But now we know that the {nameof Cyanobacteria} are also dying in large numbers.
+$branch .argue.beginFinal
+
+// Final
+
+:: argue.beginFinal
+ $call ArgueLoad(dirtyDetritusArgueFinal) 
+$if ArgueSetClaim(ClaimFinal, jobs.bayou-dirty-detritus.argue.claimLabelFinal)
+    $call ArgueFactSlot(DecomposingBaceria.Eats.Detritus) 
+$endif
+$branch .argue.showClaimFinal
+
+:: argue.showClaimFinal
+{@profBayou}    Did you find anything that eats {nameof Detritus}?
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.completeFinal
+    $answer incorrect, .argue.unrelatedFinal
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedFinal
+$call ArgueRejectIncorrect()
+{@profBayou} That's not helpful, Ms. Ramirez. 
+$call ArgueClearFacts()
+$branch .argue.showClaimFinal
+
+// Shared
+
+:: argue.giveUp
+{@profBayou} Okay, then. But don't take too long. A lot of people are waiting on our decision. 
+$call ArgueClearFacts()
+$call ArgueCancelClaim()
+
+// End
+:: argue.completeFinal
+$call ArgueComplete()
+{@profBayou}    Okay, interesting. The {nameof DecomposingBacteria} must be loving all this {nameof Detritus}.
+                Unfortunately we still haven't uncovered why the shrimp are dying, but I get the feeling we are closing in on an explanation.
+$call CompleteJob()
