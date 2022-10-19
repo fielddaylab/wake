@@ -5,8 +5,16 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@profBayou} Here is the starting text!
-{@player}    Response in kind!
+{@profBayou}    The Shrimpers' requests for an explanation have become more alarmed as the shrimp populations continue to drop.
+                Perhaps after all your work in Site P, we can finally give them an answer.
+
+:: modelCompleted
+@trigger    JobTasksUpdated
+@when       JobTaskTop(reportBack)
+@once
+@cutscene
+{@guide}    What a model! Looks like there are a lot of overlapping spikes and dips in organism populations and environmental conditions.
+            When you think you understand it, head back to {nameof @profBayou}.
 
 // CATCH-ALL GUIDE TEXT
 
