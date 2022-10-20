@@ -5,7 +5,7 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@profBayou}    Have you noticed how green the Dead Zone is, Ms. Ramirez?
+{@profBayou}    Have you noticed how green the {nameof RS-3P} is, Ms. Ramirez?
 {@player}   Yeah, it's pretty overwhelming. I'm glad I don't have to leave my sub to study it.
 {@profBayou}    Well, that water used to be blue.
 {@player}   Really?
@@ -25,7 +25,7 @@
 @when       JobTaskTop(reportBack)
 @once
 @cutscene
-{@guide}    We've learned quite a bit about Cyanobacteria. Let's show {@profBayou} how they're impacting the water.
+{@guide}    We've learned quite a bit about {nameof Cyanobacteria}. Let's show {nameof @profBayou} how they're impacting the water.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -54,17 +54,20 @@ $if !HasFact(Cyanobacteria.Consume.Light)
     {@guide}    I recommend measuring {nameof Cyanobacteria}'s effect on its environment with water that does not stress it. 
 $elseif !HasFact(Cyanobacteria.Consume.Light.Stressed)
     {@guide}    Might I suggest measuring {nameof Cyanobacteria}'s effect on its environment with water that stresses it?
+    // Cyanobacteria stress requires Site W or Y (or give it to player via script)
 $endif
 
 :: catchMeasureReproduce
 @trigger    RequestPartnerHelp
-@when 		JobTaskActive(measureReproduce)
+@when 		JobTaskActive(measureReproduce), !JobTaskActive(measureEffect)
 @boostScore -5
 @cutscene
+{@guide}    The {nameof MeasurementTank} will help us understand {nameof Cyanobacteria} better.
 $if !HasFact(Cyanobacteria.Reproduce)
-    {@guide}    Might I suggest measuring {nameof Cyanobacteria}'s effect on its environment with water that does not stress it?
+    {@guide}    Might I suggest measuring {nameof Cyanobacteria}'s reproduce rate in water that does not stress it?
 $elseif !HasFact(Cyanobacteria.Reproduce.Stressed)
-    {@guide}    I recommend measuring {nameof Cyanobacteria}'s effect on its environment with water that stresses it.
+    {@guide}    I recommend measuring {nameof Cyanobacteria}'s reproduce rate in water that stresses it.
+    // Cyanobacteria stress requires Site W or Y (or give it to player via script)
 $endif
 
 :: catchReportBack
@@ -72,7 +75,7 @@ $endif
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Report back to {@profBayou} with what you've learned about {nameof Cyanobacteria}.
+{@guide}    Report back to {nameof @profBayou} with what you've learned about {nameof Cyanobacteria}.
 
 // ARGUMENTATION
 
