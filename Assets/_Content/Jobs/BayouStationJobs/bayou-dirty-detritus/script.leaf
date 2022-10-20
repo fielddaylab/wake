@@ -14,6 +14,16 @@
 @cutscene
 {@guide}    Time to run some experiments using {nameof Detritus}.
 
+
+:: tryMeasureDetritusReproduce
+@trigger	ExperimentStarted
+@when		tankType == "Measurement"
+@cutscene
+$if ExperimentHasCritter("Detritus"), !ExperimentHasCritter("Cyanobacteria"), !ExperimentHasCritter("DecomposingBacteria"), !ExperimentHasCritter("WhiteShrimp")
+	$set jobs:bayou-dirty-detritus.triedMeasureDetritusReproduce = true
+$endif
+$call CheckJobTasks()
+
 // WHEN detritus shown not to reproduce: Player: Well, detritus doesn't grow on its own. I suppose that makes sense since it's just dead matter. So it must only come from organisms dying out.
 
 :: eatRuleObtained
@@ -51,7 +61,7 @@
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Head back to {@profBayou} in the research station.
+{@guide}    Head back to {nameof @profBayou} in the research station.
 
 // ARGUMENTATION
 
@@ -98,7 +108,6 @@ $choose branch
 :: argue.unrelatedHistory
 $call ArgueRejectIncorrect()
 {@profBayou} That's not helpful, Ms. Ramirez. 
-$call ArgueClearFacts()
 $branch .argue.showClaimHistory
 
 :: argue.completeHistory
@@ -134,7 +143,6 @@ $choose branch
 :: argue.unrelatedFinal
 $call ArgueRejectIncorrect()
 {@profBayou} That's not helpful, Ms. Ramirez. 
-$call ArgueClearFacts()
 $branch .argue.showClaimFinal
 
 // Shared
