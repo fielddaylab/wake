@@ -5,7 +5,7 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@profBayou}    We are increasingly curious about how the ecosystem manages detritus now that the amount of it in the Dead Zone is rising.
+{@profBayou}    We are increasingly curious about how the ecosystem manages detritus now that the amount of it in the {nameof RS-3P} is rising.
                 Please study how this substance is increasing and what eats it (if anything).
 
 :: detritusCounted
@@ -24,7 +24,15 @@ $if ExperimentHasCritter("Detritus"), !ExperimentHasCritter("Cyanobacteria"), !E
 $endif
 $call CheckJobTasks()
 
-// WHEN detritus shown not to reproduce: Player: Well, detritus doesn't grow on its own. I suppose that makes sense since it's just dead matter. So it must only come from organisms dying out.
+:: discussDetritusReproduce
+@trigger	ExperimentFinished
+@when		tankType == "Measurement", JobTaskCompleted(growDetritus)
+@once
+@cutscene
+{@player}   Well, {nameof Detritus} doesn't grow on its own. I suppose that makes sense, since it's just dead matter.
+{@guide}    Yes. It appears {nameof Detritus} only comes from organisms dying out.
+
+// WHEN detritus shown not to reproduce: 
 
 :: eatRuleObtained
 @trigger    JobTaskCompleted
@@ -35,12 +43,29 @@ $call CheckJobTasks()
 
 // CATCH-ALL GUIDE TEXT
 
+:: catchScanNew
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanNew)
+@boostScore -5
+@cutscene
+$if scene:name == "RS-3P"
+    {@guide}    Scan anything we haven't identified yet in this site.
+$else
+    {@guide}    Head to the {nameof RS-3P} and scan anything we haven't identified yet.
+$endif
+
+
 :: catchCountDetritus
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(countDetritus)
 @boostScore -5
 @cutscene
-{@guide}    Head to the {nameof RS-3P} and count the {nameof Detritus}.    
+$if scene:name == "RS-3P"
+    {@guide}    Count the {nameof Detritus} that exists here.
+$else
+    {@guide}    Head to the {nameof RS-3P} and count the {nameof Detritus}.   
+$endif
+ 
 
 :: catchEatDetritus
 @trigger    RequestPartnerHelp
@@ -70,13 +95,14 @@ $call CheckJobTasks()
 @when   !ArgueIsComplete(dirtyDetritusArgueFinal)
 @cutscene
 $if ArgueIsComplete(dirtyDetritusArgueHistory)
-    {@profBayou}    Previously we discussed _______.
-    $branch .argue.beginExtra
+    {@profBayou}    Previously we discussed the cyclical nature of the population histories in the {nameof RS-3P}.
+    $branch .argue.beginFinal
 $else
     $call ArgueLoad(dirtyDetritusArgueHistory) 
     {@profBayou}    Why is there so much {nameof Detritus} in the {nameof RS-3P}?
     $choice .argue.detritusReproduce; Detritus is reproducing on its own.
     $choice .argue.organismsDying; Organisms are dying out.
+    $choice .argue.giveUpArgueless; Let me get back to you.
     $choose branch
 $endif
 
@@ -84,11 +110,10 @@ $endif
 
 :: argue.detritusReproduce
 {@profBayou}    Detritus is dead matter. It doesn't reproduce.
-$call ArgueClearFacts()
-$call ArgueCancelClaim()
+$goto .argue.intro
 
 :: argue.organismsDying
-{@profBayou}    Can you show me the population histories for detritus and all organisms in the {nameof RS-3P}?
+{@profBayou}    Can you show me the population histories for {nameof Detritus} and all organisms in the {nameof RS-3P}?
 $if ArgueSetClaim(ClaimHistory, jobs.bayou-dirty-detritus.argue.claimLabelHistory)
     $call ArgueFactSlot(P_DeadZone.PopulationHistory.Cyanobacteria)
     $call ArgueFactSlot(P_DeadZone.PopulationHistory.WhiteShrimp)
@@ -117,8 +142,8 @@ $call ArgueComplete()
 {@player}   What does that mean?
 {@profBayou}    It means the populations rise and fall, rise and fall, over and over again.
                 If I look at the most recent history... yes.
-                The {nameof WhiteShrimp} and {nameof Cyanobacteria} must be on the decline, while {nameof Detritus} and {nameof DecomposingBaceria} are on the rise.
-                So in your previous job regarding the green coloration to the water, we established that there is a lot of {nameof Cyanobacteria}.
+                The {nameof WhiteShrimp} and {nameof Cyanobacteria} are currently declining, while {nameof Detritus} and {nameof DecomposingBacteria} are on the rise.
+                So in your previous job regarding the green-colored water, we established that there is a lot of {nameof Cyanobacteria}.
                 But now we know that the {nameof Cyanobacteria} are also dying in large numbers.
 $branch .argue.beginFinal
 
@@ -127,7 +152,7 @@ $branch .argue.beginFinal
 :: argue.beginFinal
  $call ArgueLoad(dirtyDetritusArgueFinal) 
 $if ArgueSetClaim(ClaimFinal, jobs.bayou-dirty-detritus.argue.claimLabelFinal)
-    $call ArgueFactSlot(DecomposingBaceria.Eats.Detritus) 
+    $call ArgueFactSlot(DecomposingBacteria.Eats.Detritus) 
 $endif
 $branch .argue.showClaimFinal
 
@@ -142,10 +167,13 @@ $choose branch
 
 :: argue.unrelatedFinal
 $call ArgueRejectIncorrect()
-{@profBayou} That's not helpful, Ms. Ramirez. 
+{@profBayou} That's not entirely helpful, Ms. Ramirez. 
 $branch .argue.showClaimFinal
 
 // Shared
+
+:: argue.giveUpArgueless
+{@profBayou} Okay, then. But don't take too long. A lot of people are waiting on our decision.
 
 :: argue.giveUp
 {@profBayou} Okay, then. But don't take too long. A lot of people are waiting on our decision. 
