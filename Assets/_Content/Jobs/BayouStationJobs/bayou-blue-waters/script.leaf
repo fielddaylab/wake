@@ -18,7 +18,7 @@
 @once
 @cutscene
 {@guide}    This is a green thing! It could be the reason the water is no longer blue... somehow.
-            Let's find out everything we can about these creatures.
+            Let's count these creatures, then find out everything we can about them in experiments.
 
 :: experimentsCompleted
 @trigger    JobTasksUpdated
@@ -36,6 +36,17 @@
 @cutscene
 {@guide}    We're looking for what could be making the water in {fullnameof RS-3P} look green.
             I'm sure some combination of your tools will reveal something.
+
+:: catchCountGreen
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(countGreen)
+@boostScore -5
+@cutscene
+$if scene:name == "RS-3P"
+    {@guide}    Count how many {nameof Cyanobacteria} there are here.
+$else
+    {@guide}    We still need to count how many {nameof Cyanobacteria} there are in the {nameof RS-3P}.
+$endif
 
 :: catchStressCB
 @trigger    RequestPartnerHelp
@@ -146,13 +157,14 @@ $branch .argue.beginExtra
 $if ArgueSetClaim(ClaimExtra, jobs.bayou-blue-waters.argue.claimLabelExtra)
     $call ArgueFactSlot(Cyanobacteria.Consume.Light) 
     $call ArgueFactSlot(Cyanobacteria.Consume.Light.Stressed) 
-    $call ArgueFactSlot(Cyanobacteria.Consume.Reproduce) 
-    $call ArgueFactSlot(Cyanobacteria.Consume.Reproduce.Stressed)
+    $call ArgueFactSlot(Cyanobacteria.Reproduce) 
+    $call ArgueFactSlot(Cyanobacteria.Reproduce.Stressed)
 $endif
+{@profBayou}    What else did you find out about {nameof Cyanobacteria}? I recall that it was bit dim down there last I looked.
 $branch .argue.showClaimExtra
 
 :: argue.showClaimExtra
-{@profBayou}    What else did you find out about {nameof Cyanobacteria}?
+{@profBayou}    How do {nameof Cyanobacteria} impact the light levels, and how quickly can we expect them to reproduce?
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.completeExtra
@@ -162,7 +174,7 @@ $choose branch
 
 :: argue.unrelatedExtra
 $call ArgueRejectIncorrect()
-{@profBayou} That's not helpful, Ms. Ramirez. 
+{@profBayou} That's not entirely helpful, Ms. Ramirez. 
 $branch .argue.showClaimExtra
 
 // Shared
@@ -176,4 +188,6 @@ $call ArgueCancelClaim()
 :: argue.completeExtra
 $call ArgueComplete()
 {@profBayou}    Hmm. So the {nameof Cyanobacteria} turn the water green, but they also take up a lot of light.
+                We'll need to consider how a spike in {nameof Cyanobacteria} might affect other species in the region.
+                Thank you Ms. Ramirez. That will be all for this job.
 $call CompleteJob()
