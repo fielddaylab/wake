@@ -582,6 +582,11 @@ namespace AquaAudio
             Services.Audio.SetMusic(id);
         }
 
+        [LeafMember("AudioStopAll"), Preserve]
+        static private void LeafStopAll() {
+            Services.Audio.StopAll();
+        }
+
         #endregion // Leaf
     }
 

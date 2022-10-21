@@ -421,7 +421,7 @@ namespace Aqua
                 if (allPreloaders.Count > 0)
                 {
                     DebugService.Log(LogMask.Loading, "[StateMgr] Executing preload steps for scene '{0}'", inScene.Path);
-                    yield return Routine.ForEachParallel(allPreloaders.ToArray(), (p) => p.OnPreloadScene(inScene, inContext));
+                    yield return Routine.ForEachParallelChunked(allPreloaders.ToArray(), (p) => p.OnPreloadScene(inScene, inContext), 8);
                 }
             }
 
@@ -451,7 +451,7 @@ namespace Aqua
                 if (allPreloaders.Count > 0)
                 {
                     DebugService.Log(LogMask.Loading, "[StateMgr] Executing preload steps for gameObject '{0}'", inRoot.FullPath(true));
-                    return Routine.ForEachParallel(allPreloaders.ToArray(), (p) => p.OnPreloadScene(inRoot.scene, inContext));
+                    return Routine.ForEachParallelChunked(allPreloaders.ToArray(), (p) => p.OnPreloadScene(inRoot.scene, inContext), 8);
                 }
             }
 
@@ -851,6 +851,13 @@ namespace Aqua
         {
             SceneLoadFlags flags = SceneLoadFlags.Default;
             return StateUtil.LoadSceneWithWipe(inSceneName, inEntrance, flags);
+        }
+
+        [LeafMember("LoadSceneFade"), UnityEngine.Scripting.Preserve]
+        static private IEnumerator LeafLoadSceneFade(string inSceneName, StringHash32 inEntrance = default(StringHash32), string inLoadingMode = null)
+        {
+            SceneLoadFlags flags = SceneLoadFlags.Default;
+            return StateUtil.LoadSceneWithFader(inSceneName, inEntrance, flags);
         }
 
         #endregion // Leaf

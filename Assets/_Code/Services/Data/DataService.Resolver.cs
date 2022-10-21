@@ -653,6 +653,11 @@ namespace Aqua
                 Save.Science.QueueSpecter(inMapOverride);
             }
 
+            [LeafMember("SpecterCount"), UnityEngine.Scripting.Preserve]
+            static private int SpecterCount() {
+                return (int) Save.Science.SpecterCount();
+            }
+
             #endregion // Time
 
             #region Jobs
