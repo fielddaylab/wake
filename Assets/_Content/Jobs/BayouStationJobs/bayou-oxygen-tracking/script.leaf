@@ -45,6 +45,7 @@
 @boostScore -5
 @cutscene
 {@guide}    Put organisms from the {nameof RS-3P} into the measurement tank and turn off the stabilizer to see how they impact their surroundings.
+            You will only be able to measure one at a time.
 
 :: catchMakeVisual
 @trigger    RequestPartnerHelp
@@ -68,8 +69,7 @@
 @cutscene
 $if ArgueIsComplete(oxygenTrackingArgueModel)
     {@profBayou}    You've already shown me the model.
-$elseif ArgueIsComplete(oxygenTrackingFinal)
-    {@profBayou}    You've already shown me that {nameof WhiteShrimp} and {nameof DecomposingBaceria} consume oxygen.
+    $branch .argue.beginFinal
 $else
     $call ArgueLoad(oxygenTrackingArgueModel)
     $if ArgueSetClaim(ClaimModel, jobs.bayou-oxygen-tracking.argue.claimLabelModel)
@@ -102,10 +102,11 @@ $branch .argue.beginFinal
 
 // Final
 
+:: argue.beginFinal
 $call ArgueLoad(oxygenTrackingArgueFinal) 
 $if ArgueSetClaim(ClaimFinal, jobs.bayou-oxygen-tracking.argue.claimLabelFinal)
-    $call ArgueFactSlot(WhiteShrimp.Consumes.Oxygen) 
-    $call ArgueFactSlot(DecomposingBaceria.Consumes.Oxygen) 
+    $call ArgueFactSlot(WhiteShrimp.Consume.Oxygen) 
+    $call ArgueFactSlot(DecomposingBacteria.Consume.Oxygen) 
 $endif
 $branch .argue.showClaimFinal
 
@@ -132,9 +133,9 @@ $branch .argue.discussionStart
 // Discussion
 
 :: argue.discussionStart
-{@profBayou}    Do either {nameof WhiteShrimp} or {nameof DecomposingBacteria} consume a larger share of the oxygen?
+{@profBayou}    Between {nameof WhiteShrimp} and {nameof DecomposingBacteria}, which one consumes a larger share of the oxygen?
 $choice .argue.shrimpConsumeMore; The {nameof WhiteShrimp} consume more.
-$choice .argue.decompConsumeMore; The {nameof DecomposingBaceria} consume more.
+$choice .argue.decompConsumeMore; The {nameof DecomposingBacteria} consume more.
 $choice .argue.aboutSame; They consume about the same in total.
 $choice .argue.giveUpDiscuss; Let me get back to you.
 $choose branch
