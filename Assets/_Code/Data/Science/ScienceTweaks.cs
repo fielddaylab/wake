@@ -17,8 +17,9 @@ namespace Aqua {
         [SerializeField, StreamingImagePath] private string m_HiResLevelIconPath = null;
         [SerializeField, StreamingImagePath] private string m_HiResLevelUpPath = null;
 
-        [Header("Decrypt")]
-        [SerializeField] private uint m_MaxDecryptLevel = 8;
+        [Header("Specters")]
+        [SerializeField] private float m_SpecterMinIntervalMinutes = 10;
+        [SerializeField] private string[] m_SpecterResourcePaths = null;
 
         [Header("Experience")]
         [SerializeField] private uint m_BaseExperiencePerLevel = 20;
@@ -37,7 +38,10 @@ namespace Aqua {
         public StreamedImageSet LevelIconSet() { return new StreamedImageSet(m_LevelIcon, m_HiResLevelIconPath); }
         public StreamedImageSet LevelUpSet() { return new StreamedImageSet(m_LevelIcon, m_HiResLevelUpPath); }
         public int CashPerLevel() { return m_CashPerLevel; }
-        public uint MaxDecryptLevel() { return m_MaxDecryptLevel; }
+
+        public int MaxSpecters() { return m_SpecterResourcePaths.Length; }
+        public float MinSpecterIntervalSeconds() { return m_SpecterMinIntervalMinutes * 60f; }
+        public string SpecterResourcePath(int idx) { return m_SpecterResourcePaths[Math.Min(idx, m_SpecterResourcePaths.Length - 1)]; }
 
         public ListSlice<TaggedBestiaryDesc> CanonicalOrganismOrdering() { return m_CanonicalOrganismOrdering; }
         public ListSlice<BestiaryDesc> CanonicalSpecterOrdering() { return m_CanonicalSpecterOrdering; }
@@ -46,7 +50,7 @@ namespace Aqua {
             base.Apply();
 
             ScienceUtils.UpdateLevelingCalculation(m_BaseExperiencePerLevel, m_AdditionalExperiencePerLevel);
-            ScienceUtils.UpdateMaxDecryptLevel(m_MaxDecryptLevel);
+            ScienceUtils.UpdateMaxSpecters(m_SpecterResourcePaths.Length);
         }
 
         #if UNITY_EDITOR
@@ -135,10 +139,10 @@ namespace Aqua {
     static public class ScienceUtils {
         static private uint s_BaseExperiencePerLevel;
         static private uint s_AdditionalExperiencePerLevel;
-        static private uint s_MaxDecryptLevel;
+        static private int s_MaxSpecters;
 
-        static internal void UpdateMaxDecryptLevel(uint maxDecryptLevel) {
-            s_MaxDecryptLevel = maxDecryptLevel;
+        static internal void UpdateMaxSpecters(int maxSpecters) {
+            s_MaxSpecters = maxSpecters;
         }
 
         static internal void UpdateLevelingCalculation(uint baseExp, uint additionalExpPerLevel) {
@@ -146,12 +150,16 @@ namespace Aqua {
             s_AdditionalExperiencePerLevel = additionalExpPerLevel;
         }
 
-        static public uint MaxDecryptLevel() {
-            return s_MaxDecryptLevel;
+        static public int MaxSpecters() {
+            return s_MaxSpecters;
         }
 
-        static public float DecryptProgress(uint currentLevel) {
-            return (float) Math.Min(currentLevel, s_MaxDecryptLevel) / currentLevel;
+        static public float DecryptProgress(int specterCount) {
+            if (specterCount <= 1)
+                return 0;
+            if (specterCount >= s_MaxSpecters)
+                return 1;
+            return (float) (specterCount - 1) / (s_MaxSpecters - 1);
         }
 
         static public uint ExpForLevel(uint level) {

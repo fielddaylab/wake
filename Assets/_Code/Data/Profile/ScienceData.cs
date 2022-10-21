@@ -17,7 +17,7 @@ namespace Aqua.Profile
         private uint m_CurrentLevel = 0;
 
         // specter/decryption stuff
-        private uint m_DecryptLevel = 0;
+        private uint m_SpecterCount = 0;
         private int m_SpecterQueued = 0;
         private StringHash32 m_SpecterSiteOverride = null;
 
@@ -135,15 +135,15 @@ namespace Aqua.Profile
 
         #region Specters
 
-        public uint DecryptLevel() { return m_DecryptLevel; }
-        public bool SetDecryptLevel(uint inDecryptLevel)
+        public uint SpecterCount() { return m_SpecterCount; }
+        public bool SetSpecterCount(uint inDecryptLevel)
         {
-            if (m_DecryptLevel != inDecryptLevel)
+            if (m_SpecterCount != inDecryptLevel)
             {
                 DebugService.Log(LogMask.DataService, "[ScienceData] Player decrypt level changed to {0}", inDecryptLevel);
 
                 Services.Events.Queue(GameEvents.DecryptLevelUpdated, inDecryptLevel);
-                m_DecryptLevel = inDecryptLevel;
+                m_SpecterCount = inDecryptLevel;
                 m_HasChanges = true;
                 return true;
             }
@@ -152,7 +152,7 @@ namespace Aqua.Profile
         }
 
         public bool FullyDecrypted() {
-            return m_DecryptLevel >= ScienceUtils.MaxDecryptLevel();
+            return m_SpecterCount >= ScienceUtils.MaxSpecters();
         }
 
         public bool IsSpecterQueued(StringHash32 mapId) {
@@ -228,7 +228,7 @@ namespace Aqua.Profile
 
             if (ioSerializer.ObjectVersion >= 6)
             {
-                ioSerializer.Serialize("decrypt", ref m_DecryptLevel);
+                ioSerializer.Serialize("decrypt", ref m_SpecterCount);
                 ioSerializer.Serialize("spectersQueued", ref m_SpecterQueued);
                 ioSerializer.UInt32Proxy("spectersQueueOverride", ref m_SpecterSiteOverride);
             }

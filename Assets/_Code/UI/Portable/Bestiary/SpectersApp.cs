@@ -58,7 +58,7 @@ namespace Aqua.Portable {
                 toggle.Cursor.TooltipOverride = null;
                 toggle.Text.SetText(entry.CommonName());
             } else {
-                string commonNameScrambled = Formatting.Scramble(Loc.Find(entry.CommonName()));
+                string commonNameScrambled = Formatting.ScrambleLoc(entry.CommonName());
                 toggle.Cursor.TooltipId = null;
                 toggle.Cursor.TooltipOverride = commonNameScrambled;
                 toggle.Text.SetTextNoParse(commonNameScrambled);
@@ -74,8 +74,8 @@ namespace Aqua.Portable {
                 page.Description.SetText(entry.Description());
             } else {
                 page.ScientificName.SetTextNoParse(Formatting.Scramble(entry.ScientificName()));
-                page.CommonName.SetTextNoParse(Formatting.Scramble(Loc.Find(entry.CommonName())));
-                page.Description.SetTextNoParse(Formatting.Scramble(Loc.Find(entry.Description())));
+                page.CommonName.SetTextNoParse(Formatting.ScrambleLoc(entry.CommonName()));
+                page.Description.SetTextNoParse(Formatting.ScrambleLoc(entry.Description()));
             }
             
             page.Sketch.Display(entry.ImageSet());
@@ -89,7 +89,7 @@ namespace Aqua.Portable {
             if (!encrypt) {
                 m_EncodedMessageText.SetText(entry.EncodedMessage());
             } else {
-                m_EncodedMessageText.SetTextNoParse(Formatting.Scramble(Loc.Find(entry.EncodedMessage())));
+                m_EncodedMessageText.SetTextNoParse(Formatting.ScrambleLoc(entry.EncodedMessage()));
             }
 
             m_StateFactHeader.gameObject.SetActive(false);

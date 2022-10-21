@@ -647,6 +647,12 @@ namespace Aqua
                 return (float) (Save.Current.Playtime + inSecondsOffset);
             }
 
+            [LeafMember("QueueSpecter"), UnityEngine.Scripting.Preserve]
+            static private void QueueSpecter(StringHash32 inMapOverride = default(StringHash32))
+            {
+                Save.Science.QueueSpecter(inMapOverride);
+            }
+
             #endregion // Time
 
             #region Jobs

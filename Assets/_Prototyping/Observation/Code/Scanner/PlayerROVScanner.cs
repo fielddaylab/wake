@@ -195,6 +195,12 @@ namespace ProtoAqua.Observation
                     m_AdditionalDrag = m_PowerEngineScanDragIncrease;
                     m_Body.Kinematics.AdditionalDrag += m_AdditionalDrag;
                 }
+
+                if (m_TargetScanData != null) {
+                    m_TargetScannable.OnScanStart?.Invoke(m_ScanSystem.WasScanned(m_TargetScanData.Id()));
+                } else {
+                    m_TargetScannable.OnScanStart?.Invoke(false);
+                }
             }
         }
 
@@ -252,7 +258,10 @@ namespace ProtoAqua.Observation
             using(PooledList<StringHash32> newFactIds = PooledList<StringHash32>.Create())
             using(PooledList<BFBase> newFacts = PooledList<BFBase>.Create())
             {
+                ScannableRegion region = m_TargetScannable;
                 result = m_ScanSystem.RegisterScanned(data, newFactIds);
+
+                region.OnScanComplete?.Invoke(result);
                 if (result != 0)
                 {
                     foreach(var id in newFactIds)
