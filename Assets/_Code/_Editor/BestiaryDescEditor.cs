@@ -23,6 +23,7 @@ namespace Aqua.Editor {
         private SerializedProperty m_CommonNameIdProperty;
         private SerializedProperty m_PluralCommonNameIdProperty;
         private SerializedProperty m_DescriptionIdProperty;
+        private SerializedProperty m_EncodedMessageIdProperty;
         private SerializedProperty m_FactsProperty;
         private SerializedProperty m_WaterColorProperty;
         private SerializedProperty m_IconProperty;
@@ -58,6 +59,7 @@ namespace Aqua.Editor {
             m_CommonNameIdProperty = serializedObject.FindProperty("m_CommonNameId");
             m_PluralCommonNameIdProperty = serializedObject.FindProperty("m_PluralCommonNameId");
             m_DescriptionIdProperty = serializedObject.FindProperty("m_DescriptionId");
+            m_EncodedMessageIdProperty = serializedObject.FindProperty("m_EncodedMessageId");
             m_FactsProperty = serializedObject.FindProperty("m_Facts");
             m_WaterColorProperty = serializedObject.FindProperty("m_WaterColor");
             m_IconProperty = serializedObject.FindProperty("m_Icon");
@@ -122,6 +124,10 @@ namespace Aqua.Editor {
                 EditorGUILayout.PropertyField(m_CommonNameIdProperty);
                 EditorGUILayout.PropertyField(m_PluralCommonNameIdProperty);
                 EditorGUILayout.PropertyField(m_DescriptionIdProperty);
+
+                if (!m_FlagsProperty.hasMultipleDifferentValues && (m_FlagsProperty.intValue & (int) BestiaryDescFlags.IsSpecter) != 0) {
+                    EditorGUILayout.PropertyField(m_EncodedMessageIdProperty);
+                }
             }
 
             if (Section("Assets", ref m_AssetsExpanded)) {

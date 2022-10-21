@@ -8,6 +8,9 @@ using UnityEngine;
 
 namespace ProtoAqua.Observation {
     public class ScannableRegion : ToolRegion, IEditorOnlyData {
+        public delegate void ScanStartDelegate(bool wasScanned);
+        public delegate void ScanCompleteDelegate(ScanResult result);
+
         #region Inspector
 
         [Header("Scannable")]
@@ -22,6 +25,8 @@ namespace ProtoAqua.Observation {
         [NonSerialized] public ScanIcon CurrentIcon;
         [NonSerialized] public bool CanScan;
         [NonSerialized] public bool InMicroscope;
+        public ScanStartDelegate OnScanStart;
+        public ScanCompleteDelegate OnScanComplete;
 
         #if UNITY_EDITOR
 

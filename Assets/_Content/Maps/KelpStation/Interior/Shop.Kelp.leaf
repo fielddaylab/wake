@@ -36,13 +36,67 @@ $goto act1.momMadEnd
 {@player}       Great. I think Mom's gonna let me travel to another ecosystem!
 {@$MerchantId}  Well, then, we better make sure you're prepared. 
                 Want to look at some ship upgrades?
+$set jobs:kelp-mechanic.givenJournal = false
 $choice .action.openShop; Sure, I'll take a look! 
 $choice .action.cancel; No thanks, Tío. I'll come back later.  
 
 #ShopHandler(a)
-{@$MerchantId} Welcome back, mijita. Need any upgrades for your ship? 
-$choice .action.openShop; Sure, I'll take a look. Thanks, Tío!
-$choice .action.cancel; Nah. I'm good for now. 
+$if jobs:bayou-mechanic.givenArticle, !jobs:kelp-mechanic.givenJournal
+    // STORY BEAT E
+    {@player}   Hey Tío.... did you know Mer worked on the Challenger Deep probe?
+    {@$MerchantId} Where did you hear about that, mijita?
+    {@player} On a job. Is it true? 
+    {@$MerchantId} Yes. Mer designed the probe.
+                   She even created an experimental A.I. that was capable of picking up its transmissions.
+                   {@nameof @guide}, I believe she called it.
+    {@player}   Wait... Mer created {nameof @guide}??
+                Is that why I'm getting all these glitchy messages? 
+    {@$MerchantId} It might be best to save this talk for later, Ollie.
+                    Your mother probably had a reason for not telling you. 
+                   But.... I suppose it couldn't hurt to give you this. Meredith's specs from when she created {nameof @guide}.
+                   Now. Por favor, let's stay focused on the job. 
+    // He tells you Mer created Victor. Get Mer’s journal page that shows Victor 1.0 version.
+    $set jobs:kelp-mechanic.givenJournal = true
+$elseif jobs:num-specters-seen >= 6, !jobs:specter6-comms.kelp.discussed
+    // STORY BEAT G
+    {@player}  Tío, I need to ask you something.
+               I've been getting weird communications from Sam. 
+               Not messages.... just scrambled data. Sort of like ghosts. 
+                They show up in AQOS, but the entries don’t make any sense.
+    {@$MerchantId}  Hmm. Meredith mentioned there might be glitches. 
+                    She was working on an upgrade, but I'm not sure if she ever finished it. 
+                    You could try asking one of her old colleagues. I'm sorry I can't be more help, mijita. 
+    $set jobs:specter6-comms.kelp.discussed = true
+$else
+    {@$MerchantId} Welcome back, mijita. Need any upgrades for your ship? 
+    $choice .action.openShop; Sure, I'll take a look. Thanks, Tío!
+    $choice .action.cancel; Nah. I'm good for now. 
+$endif
+
+#ShopHandler(gotFlashlightAssignedHere, world:shop.boughtFlashlightFrom == "kelp", HasUpgrade("Flashlight"))
+@once
+{@$MerchantId}  Welcome back Ollie! Hey, you got back my {nameof Flashlight}!
+                Well, as I promised, it's yours now. You can make better use of it now than I can.
+                Now, need any other upgrades for your ship?
+$choice .action.openShop; Sure do!
+$choice .action.cancel; Not right now.
+
+#ShopHandler(gotFlashlight, world:shop.boughtFlashlightFrom != "kelp", HasUpgrade("Flashlight"))
+@once
+{@$MerchantId}  Welcome back Ollie! Whoa... is that my {nameof Flashlight}?
+$if world:shop.boughtFlashlightFrom == "coral"
+    {@player}   Yep! {nameof @coralMechanic} told me where to find it!
+    {@kelpMechanic} Of course! She was the last one to have it before you!
+$elseif world:shop.boughtFlashlightFrom == "bayou"
+    {@player}   Yep! {nameof @bayouMechanic} told me where to find it!
+$else
+    {@player}   Yep! {nameof @arcticMechanic} told me where to find it!
+$endif
+
+{@$MerchantId}  Well, it's {slow}your{/slow} {nameof Flashlight} now.
+                While you're here, need any other upgrades?
+$choice .action.openShop; Sure do!
+$choice .action.cancel; Not right now.
 
 :: action.cancel
 @cutscene
@@ -119,22 +173,36 @@ $choice .action.cancel; Nah. I'm good for now.
 $set    jobs:common-dive.seen.tagger-intro = true
 $EvaluateItemPurchase()
 
-#OverrideItemHandler(Flashlight, flashlight.first)
+#OverrideItemHandler(FlashlightCoordinates, flashlight.first)
 @boostScore 100
 @once
 {@$MerchantId}  The {nameof Flashlight}!
                 The ocean can be dangerous if you can't see what's coming.
                 We should |definitely| get this on your sub as soon as we can.
+$set local:postPurchaseBranch = "interior.shop.kelp.PostFlashlight"
 $EvaluateItemPurchase()
 
-#ItemHandler(Flashlight)
+#ItemHandler(FlashlightCoordinates)
 {@$MerchantId}  That's the {nameof Flashlight}!
                 I'd like to get that on your sub as soon as possible.
+$set local:postPurchaseBranch = "interior.shop.kelp.PostFlashlight"
 $EvaluateItemPurchase()
+
+:: PostFlashlight
+$set    world:flashlightQuest = true
+$set    world:shop.boughtFlashlightFrom = "kelp"
+{@kelpMechanic} ...wait.{wait 0.5} I| lent that out to {nameof @coralMechanic}.
+                And then she| dropped it| somewhere at {nameof FinalStation}.
+                ...{wait 0.5}{auto}
+                Okay. New plan, mijita. Go retrieve it and you can keep it.
+
+$call UnlockSite(RS-0)
+$call UnlockStation(FinalStation)
+$call ShowPopup(map.unlock.finalStation.header, map.unlock.finalStation.desc)
 
 #ItemHandler(ProbeHacker)
 {@$MerchantId}  The {nameof ProbeHacker}! Your sister helped me develop this one.
-{@player}       Wow... really??
+{@player}       Wow... for real??
 {@$MerchantId}  Claro que sí. You know what a genius she was. 
                 The {nameof ProbeHacker} will allow you to read data from any {h}probes{/h} you find.
                 Even Challenger Deep... if it wasn't lost at the bottom of the ocean.

@@ -181,6 +181,7 @@ namespace Aqua
             ValidationUtils.StripDebugInfo(ref m_CommonNameId);
             ValidationUtils.StripDebugInfo(ref m_PluralCommonNameId);
             ValidationUtils.StripDebugInfo(ref m_DescriptionId);
+            ValidationUtils.StripDebugInfo(ref m_EncodedMessageId);
         }
 
         #endif // UNITY_EDITOR

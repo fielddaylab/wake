@@ -1,1 +1,27 @@
-# basePath ship.helm
+# basePath Helm
+
+// STORY BEAT I
+:: finalJobRadio
+@trigger    SceneStart
+@when       jobs:num-specters-seen >= 10 // <- total number of specters
+@once
+@cutscene
+// Prof Whalen messages you while you're in your helm, after completing the final required job.
+// He’s found the code to upgrade Victor and unscramble all the glitches. 
+{@arcticSci}    I've found the code to upgrade {nameof guide} and unscramble all the glitches!
+
+// Upgrade Victor - instantly the specters unscramble. Sam’s distress call comes through.
+
+{@sam}  O! Do you copy? 
+        Things are bad down here, O. We’re in big trouble. 
+{@player}   Sam!! Can you hear me? Are you okay?
+            Sam???
+{@guide}    It appears the communication is one-way. They cannot hear you. 
+{@sam}  Ugh. I’m probably talking to nobody right now. 
+        But in case you can hear this, O….
+        The creature is back. Won’t leave us alone. 
+        Systems are crashing. Lab’s still out of commission. We’re running out of time. 
+        I’m sending you the job. Please, O. If you get this—we need help.
+        We need some way to get rid of this thing.
+
+// Start Final Job

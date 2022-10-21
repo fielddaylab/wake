@@ -248,6 +248,24 @@ namespace ScriptableBake {
             }
         }
 
+        static private List<Component> s_CachedComponentList;
+
+        /// <summary>
+        /// Returns if the given Transform is a leaf node in its transform hierarchy,
+        /// and has no non-transform components.
+        /// </summary>
+        static public bool IsEmptyLeaf(Transform transform) {
+            if (transform.childCount > 0) {
+                return false;
+            }
+
+            List<Component> tempList = s_CachedComponentList ?? (s_CachedComponentList = new List<Component>(4));
+            transform.gameObject.GetComponents<Component>(tempList);
+            int count = tempList.Count;
+            tempList.Clear();
+            return count == 1; // transform is included, so must be more than 1
+        }
+
         #endregion // Hierarchy
 
         #region Static Flags

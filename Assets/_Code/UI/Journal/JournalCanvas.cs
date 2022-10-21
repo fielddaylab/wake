@@ -344,6 +344,10 @@ namespace Aqua {
             m_CurrentSection = -1;
             m_NewEntryRoutine.Stop();
 
+            if (Services.Script != null) {
+                Services.Script.TriggerResponse(GameTriggers.JournalHidden);
+            }
+
             if (m_DeleteQueued) {
                 Async.InvokeAsync(() => Destroy(this.Canvas.gameObject));
             }

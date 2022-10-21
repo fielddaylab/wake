@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
 --- !u!1001 &4083574965444455806
@@ -157,8 +158,13 @@ PrefabInstance:
     - target: {fileID: 3219354949484214776, guid: d43f84959769055489a36095d9d2631d,
         type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3219354949484214776, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: TrackTransform
+      value: 
+      objectReference: {fileID: 4549054223542897301}
     - target: {fileID: 3219354949484214776, guid: d43f84959769055489a36095d9d2631d,
         type: 3}
       propertyPath: CritterId.m_Source
@@ -174,6 +180,11 @@ PrefabInstance:
       propertyPath: m_Radius
       value: 0.34
       objectReference: {fileID: 0}
+    - target: {fileID: 3764296600150654372, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: TrackTransform
+      value: 
+      objectReference: {fileID: 4549054223542897301}
     - target: {fileID: 3764296600150654372, guid: d43f84959769055489a36095d9d2631d,
         type: 3}
       propertyPath: ScanId.m_Source
