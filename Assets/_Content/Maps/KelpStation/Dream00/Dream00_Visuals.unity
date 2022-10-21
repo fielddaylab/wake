@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -902,6 +902,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
 --- !u!1 &581554517
@@ -1676,6 +1677,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6228703829733439043, guid: 2fb849e6004214ace8f1bdfaef825f3d,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2fb849e6004214ace8f1bdfaef825f3d, type: 3}
 --- !u!1 &1474688225
@@ -1866,6 +1872,7 @@ GameObject:
   - component: {fileID: 1763403790}
   - component: {fileID: 1763403789}
   - component: {fileID: 1763403788}
+  - component: {fileID: 1763403791}
   m_Layer: 0
   m_Name: PlayableDirector00
   m_TagString: Untagged
@@ -1969,6 +1976,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1763403791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1763403787}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2880845e4d325d49a11039a13d4c919, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Director: {fileID: 1763403789}
+  CloseAfter: 43
 --- !u!1 &1853700958
 GameObject:
   m_ObjectHideFlags: 0
@@ -2186,6 +2207,7 @@ MonoBehaviour:
   m_ColorGroup: {fileID: 0}
   m_Path: 
   m_Material: {fileID: 2100000, guid: c8b6641b5a3b33b458c8057d085962b8, type: 2}
+  m_Tessellation: 0
   m_Color:
     serializedVersion: 2
     rgba: 4294967295

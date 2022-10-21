@@ -21,4 +21,17 @@ public class EnableOnCollision : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
+        foreach (var enableObj in objectsToEnable)
+        {
+            enableObj.SetActive(true);
+        }
+
+        foreach (var disableObj in objectsToDisable)
+        {
+            disableObj.SetActive(false);
+        }
+    }
+
 }
