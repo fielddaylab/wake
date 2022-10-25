@@ -259,9 +259,9 @@ namespace ProtoAqua.Observation
             using(PooledList<BFBase> newFacts = PooledList<BFBase>.Create())
             {
                 ScannableRegion region = m_TargetScannable;
-                result = m_ScanSystem.RegisterScanned(data, newFactIds);
-
+                result = m_ScanSystem.RegisterScanned(data, newFactIds, region);
                 region.OnScanComplete?.Invoke(result);
+                
                 if (result != 0)
                 {
                     foreach(var id in newFactIds)
@@ -291,7 +291,7 @@ namespace ProtoAqua.Observation
                 }
             }
 
-            if ((result & PopupResultMask) == 0 && !Services.Script.IsCutscene())
+            if ((data.Flags() & ScanDataFlags.DoNotShow) == 0 && (result & PopupResultMask) == 0 && !Services.Script.IsCutscene())
             {
                 scanUI.ShowScan(data, result);
             }

@@ -19,6 +19,8 @@ namespace ProtoAqua.Observation {
         static public readonly StringHash32 Trigger_NewScan = "ScannedNewObject";
         static public readonly StringHash32 Trigger_Scan = "ScannedObject";
 
+        static public readonly StringHash32 ScanId_Fake = "fake";
+
         #region Types
 
         [Serializable] private class ScanIconPool : SerializablePool<ScanIcon> { }
@@ -159,6 +161,11 @@ namespace ProtoAqua.Observation {
         #region ScanData
 
         public bool TryGetScanDataWithFallbacks(StringHash32 inId, out ScanData outData) {
+            if (inId == ScanId_Fake) {
+                outData = ScanData.Fake;
+                return true;
+            }
+
             StringHash32 id = inId;
             bool bFound = false;
             outData = null;
@@ -183,12 +190,27 @@ namespace ProtoAqua.Observation {
 
         public bool WasScanned(StringHash32 inId) { return Save.Inventory.WasScanned(inId); }
 
-        public ScanResult RegisterScanned(ScanData inData, List<StringHash32> outNewFacts) {
+        public ScanResult RegisterScanned(ScanData inData, List<StringHash32> outNewFacts, ScannableRegion region) {
             ScriptThreadHandle responseHandle = default;
             ScanResult result = ScanResult.NoChange;
 
+            if (inData.Id() == ScanId_Fake) {
+                if (region.ScannedLocal) {
+                    return ScanResult.NoChange;
+                }
+
+                region.ScannedLocal = true;
+                if (region.CurrentIcon) {
+                    var config = GetConfig(inData.Flags());
+                    region.CurrentIcon.SetColor(config.NodeConfig.ScannedLineColor, config.NodeConfig.ScannedFillColor);
+                }
+                return ScanResult.NewScan;
+            }
+
             using (var table = TempVarTable.Alloc()) {
                 table.Set("scanId", inData.Id());
+
+                region.ScannedLocal = true;
 
                 if (Save.Inventory.RegisterScanned(inData.Id())) {
                     result |= ScanResult.NewScan;
@@ -345,7 +367,7 @@ namespace ProtoAqua.Observation {
         private void RefreshIcon(ScannableRegion inRegion) {
             var config = GetConfig(inRegion.ScanData.Flags());
             inRegion.CurrentIcon.SetIcon(config.Icon);
-            if (WasScanned(inRegion.ScanData.Id())) {
+            if (inRegion.ScannedLocal || WasScanned(inRegion.ScanData.Id())) {
                 inRegion.CurrentIcon.SetColor(config.NodeConfig.ScannedLineColor, config.NodeConfig.ScannedFillColor);
             } else {
                 inRegion.CurrentIcon.SetColor(config.NodeConfig.UnscannedLineColor, config.NodeConfig.UnscannedFillColor);

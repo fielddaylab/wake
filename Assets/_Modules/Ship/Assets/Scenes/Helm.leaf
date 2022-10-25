@@ -3,7 +3,7 @@
 // STORY BEAT I
 :: finalJobRadio
 @trigger    SceneStart
-@when       jobs:num-specters-seen >= 10 // <- total number of specters
+@when       SpecterCount() >= 7 // <- total number of specters
 @once
 @cutscene
 // Prof Whalen messages you while you're in your helm, after completing the final required job.

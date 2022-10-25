@@ -5,3 +5,16 @@
 @once
 @chatter
 $set jobs:bayou-mechanic.leftBayou = true
+
+:: KelpDream1
+@trigger    PlayerDream
+@when       previousStation == "KelpStation"
+@boostScore 100
+@once
+$call   PrepareDream(Dreams00)
+
+:: KelpDream2
+@trigger    PlayerDream
+@when       previousStation == "KelpStation", LocationVisited("RS-1B")
+@once
+$call   PrepareDream(Dream04)

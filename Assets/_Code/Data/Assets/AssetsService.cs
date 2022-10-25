@@ -125,11 +125,11 @@ namespace Aqua {
     
         #region Preload
 
-        public void PreloadGroup(StringHash32 groupId) {
+        public bool PreloadGroup(StringHash32 groupId) {
             if (groupId.IsEmpty) {
-                return;
+                return false;
             }
-            TryPreloadGroup(groupId);
+            return TryPreloadGroup(groupId);
         }
 
         public bool PreloadGroupIsPrimaryLoaded(StringHash32 groupId) {
@@ -175,10 +175,10 @@ namespace Aqua {
             return true;
         }
 
-        private void TryPreloadGroup(StringHash32 id) {
+        private bool TryPreloadGroup(StringHash32 id) {
             if (!m_PreloadGroupMap.TryGetValue(id, out PreloadGroup group)) {
                 Log.Error("[AssetsService] Preload group with id '{0}' does not exist", id);
-                return;
+                return false;
             }
 
             group.RefCount++;
@@ -200,6 +200,8 @@ namespace Aqua {
                     }
                 }
             }
+
+            return true;
         }
 
         private void TryCancelPreloadGroup(StringHash32 id) {

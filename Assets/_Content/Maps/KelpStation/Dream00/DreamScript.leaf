@@ -1,0 +1,7 @@
+# basePath Dream00
+
+:: playJokeMusic
+@function TimelineStarted
+@when     timelineId == "Dream00Timeline00"
+{wait 40}{bgm-stop}{wait 0.5}
+$call AudioStopAll()

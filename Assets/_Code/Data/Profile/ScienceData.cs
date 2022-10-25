@@ -136,14 +136,14 @@ namespace Aqua.Profile
         #region Specters
 
         public uint SpecterCount() { return m_SpecterCount; }
-        public bool SetSpecterCount(uint inDecryptLevel)
+        public bool SetSpecterCount(uint inSpecterCount)
         {
-            if (m_SpecterCount != inDecryptLevel)
+            if (m_SpecterCount != inSpecterCount)
             {
-                DebugService.Log(LogMask.DataService, "[ScienceData] Player decrypt level changed to {0}", inDecryptLevel);
+                DebugService.Log(LogMask.DataService, "[ScienceData] Player decrypt level changed to {0}", inSpecterCount);
 
-                Services.Events.Queue(GameEvents.DecryptLevelUpdated, inDecryptLevel);
-                m_SpecterCount = inDecryptLevel;
+                Services.Events.Queue(GameEvents.DecryptLevelUpdated, inSpecterCount);
+                m_SpecterCount = inSpecterCount;
                 m_HasChanges = true;
                 return true;
             }

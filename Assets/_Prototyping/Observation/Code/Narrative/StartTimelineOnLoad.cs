@@ -1,10 +1,12 @@
-﻿using Aqua;
+﻿using System.Collections;
+using Aqua;
+using Aqua.Scripting;
 using BeauUtil;
 using ScriptableBake;
 using UnityEngine;
 using UnityEngine.Playables;
 
-public class StartTimelineOnLoad : MonoBehaviour, IBaked
+public class StartTimelineOnLoad : MonoBehaviour, IBaked, IScenePreloader
 {
     [Required] public PlayableDirector Director;
 
@@ -14,7 +16,17 @@ public class StartTimelineOnLoad : MonoBehaviour, IBaked
 
     private void PlayTimeline() {
         Director.Play();
+        using(var table = TempVarTable.Alloc()) {
+            table.Set("timelineId", Director.playableAsset.name);
+            table.Set("timelineDuration", (float) Director.playableAsset.duration);
+            Services.Script.TriggerResponse(GameTriggers.TimelineStarted, table);
+        }
         Destroy(this);
+    }
+
+    IEnumerator IScenePreloader.OnPreloadScene(SceneBinding inScene, object inContext) {
+        Director.RebuildGraph();
+        yield return null;
     }
 
     #if UNITY_EDITOR

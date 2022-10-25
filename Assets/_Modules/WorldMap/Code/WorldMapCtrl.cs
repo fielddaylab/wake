@@ -5,8 +5,10 @@ using Aqua.Profile;
 using Aqua.Scripting;
 using BeauRoutine;
 using BeauUtil;
+using Leaf.Runtime;
 using ScriptableBake;
 using UnityEngine;
+using UnityEngine.Scripting;
 using UnityEngine.UI;
 
 namespace Aqua.WorldMap
@@ -103,7 +105,18 @@ namespace Aqua.WorldMap
                 yield return 0.5f;
             }
 
+            s_DreamLoadFlag = false;
+
             // TODO: dream implementation
+            using(var table = TempVarTable.Alloc()) {
+                table.Set("previousStation", oldStationId);
+                table.Set("nextStation", stationId);
+
+                var dreamTrigger = Services.Script.TriggerResponse(GameTriggers.PlayerDream, table);
+                if (s_DreamLoadFlag || dreamTrigger.IsRunning()) {
+                    yield break;
+                }
+            }
 
             using(var fader = Services.UI.WorldFaders.AllocFader()) {
                 yield return fader.Object.Show(Color.black, 0.25f);
@@ -150,6 +163,36 @@ namespace Aqua.WorldMap
             }
 
             // m_ShipOutButton.gameObject.SetActive(false);
+        }
+
+        static private bool s_DreamLoadFlag;
+
+        [LeafMember("PrepareDream"), Preserve]
+        static private IEnumerator LeafPrepareDream(string mapName) {
+            s_DreamLoadFlag = true;
+
+            StringHash32 preloadGroup = "Scene/" + mapName;
+            bool preloaded = false;
+            if (Services.Assets.PreloadGroup(preloadGroup)) {
+                preloaded = true;
+                while(!Services.Assets.PreloadGroupIsPrimaryLoaded(preloadGroup)) {
+                    yield return 1f;
+                }
+            }
+            Routine.Start(LeafLoadDream(mapName, preloaded ? preloadGroup : null));
+        }
+
+        static private IEnumerator LeafLoadDream(string mapName, StringHash32 preloadName) {
+            using(var fader = Services.UI.WorldFaders.AllocFader()) {
+                yield return fader.Object.Show(Color.black, 0.25f);
+                StateUtil.LoadSceneWithFader(mapName);
+                yield return 0.3f;
+            }
+            if (!preloadName.IsEmpty) {
+                Script.OnSceneLoad(() => {
+                    Services.Assets.CancelPreload(preloadName);
+                });
+            }
         }
 
         #if UNITY_EDITOR
