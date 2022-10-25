@@ -5439,7 +5439,7 @@ PlayableDirector:
   - key: {fileID: 3161465885598070710, guid: 251efdbba89ed714fa6ae19525f80766, type: 2}
     value: {fileID: 243457740}
   - key: {fileID: 1009650285333741918, guid: 251efdbba89ed714fa6ae19525f80766, type: 2}
-    value: {fileID: 344491175}
+    value: {fileID: 1678941153}
   - key: {fileID: -1467801439266812096, guid: 251efdbba89ed714fa6ae19525f80766, type: 2}
     value: {fileID: 421962105}
   - key: {fileID: 3631937644065914384, guid: 251efdbba89ed714fa6ae19525f80766, type: 2}
@@ -5457,7 +5457,7 @@ PlayableDirector:
   - key: {fileID: -1595779556369809943, guid: 251efdbba89ed714fa6ae19525f80766, type: 2}
     value: {fileID: 1820084585}
   - key: {fileID: -7964066991326109684, guid: 251efdbba89ed714fa6ae19525f80766, type: 2}
-    value: {fileID: 344491177}
+    value: {fileID: 1678941157}
   m_ExposedReferences:
     m_References: []
 --- !u!4 &138547425
@@ -12903,6 +12903,10 @@ PlayableDirector:
     value: {fileID: 1602124940}
   - key: {fileID: 2030126252274532144, guid: 2a2f48f28ce663c489a57c263436f804, type: 2}
     value: {fileID: 869724029}
+  - key: {fileID: -3063925206994482226, guid: 2a2f48f28ce663c489a57c263436f804, type: 2}
+    value: {fileID: 1678941153}
+  - key: {fileID: 6234179773543546356, guid: 2a2f48f28ce663c489a57c263436f804, type: 2}
+    value: {fileID: 1678941157}
   m_ExposedReferences:
     m_References: []
 --- !u!4 &688805630
@@ -19583,7 +19587,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1234661686}
   - component: {fileID: 1234661685}
-  - component: {fileID: 1234661684}
   - component: {fileID: 1234661683}
   - component: {fileID: 1234661682}
   m_Layer: 0
@@ -19651,19 +19654,6 @@ MonoBehaviour:
   distance: {x: 1.5, y: 0.01}
   period: {x: 1.7, y: 1}
   duration: 2.5
---- !u!114 &1234661684
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1234661681}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c61f236e91db849aca201dbb014c08d2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playableDirector: {fileID: 0}
 --- !u!61 &1234661685
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -19800,10 +19790,6 @@ PlayableDirector:
     value: {fileID: 0}
   - key: {fileID: 0}
     value: {fileID: 0}
-  - key: {fileID: -5890362601593800333, guid: 7bbd017e88f94bd4f8c48734cb9cf1e1, type: 2}
-    value: {fileID: 344491175}
-  - key: {fileID: -2855150335006958133, guid: 7bbd017e88f94bd4f8c48734cb9cf1e1, type: 2}
-    value: {fileID: 344491177}
   - key: {fileID: 2673525677949589517, guid: 7bbd017e88f94bd4f8c48734cb9cf1e1, type: 2}
     value: {fileID: 421962104}
   - key: {fileID: -6699051092977074548, guid: 7bbd017e88f94bd4f8c48734cb9cf1e1, type: 2}
@@ -19909,7 +19895,7 @@ PrefabInstance:
     - target: {fileID: 8166205111049755876, guid: 540be5ac7e9e64aa48d344c84e046d8f,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 540be5ac7e9e64aa48d344c84e046d8f, type: 3}
@@ -20106,8 +20092,6 @@ PlayableDirector:
     value: {fileID: 1314465162}
   - key: {fileID: 7636239486895204820, guid: 1dfd3d932018f2149b6565efdf79cdbe, type: 2}
     value: {fileID: 312858158}
-  - key: {fileID: -6831067630016488920, guid: 1dfd3d932018f2149b6565efdf79cdbe, type: 2}
-    value: {fileID: 344491175}
   - key: {fileID: 175155072132460072, guid: 1dfd3d932018f2149b6565efdf79cdbe, type: 2}
     value: {fileID: 421962104}
   - key: {fileID: -7131592134053810728, guid: 1dfd3d932018f2149b6565efdf79cdbe, type: 2}
@@ -20120,8 +20104,6 @@ PlayableDirector:
     value: {fileID: 1902179157}
   - key: {fileID: -1595570991834450919, guid: 1dfd3d932018f2149b6565efdf79cdbe, type: 2}
     value: {fileID: 1677713233}
-  - key: {fileID: 4400303467102603146, guid: 1dfd3d932018f2149b6565efdf79cdbe, type: 2}
-    value: {fileID: 344491177}
   m_ExposedReferences:
     m_References: []
 --- !u!4 &1302450642
@@ -28334,6 +28316,47 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!1 &1678941153 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7411830567208571426, guid: 540be5ac7e9e64aa48d344c84e046d8f,
+    type: 3}
+  m_PrefabInstance: {fileID: 1284480351}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &1678941156 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 480792455247234181, guid: 540be5ac7e9e64aa48d344c84e046d8f,
+    type: 3}
+  m_PrefabInstance: {fileID: 1284480351}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1678941157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1678941153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e52de21a22b6dd44c9cc19f810c65059, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Events:
+    m_Signals:
+    - {fileID: 11400000, guid: a3f1a87f83440ea4f83a6c573082656f, type: 2}
+    m_Events:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1678941156}
+          m_MethodName: Play
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1681555907
 GameObject:
   m_ObjectHideFlags: 0
