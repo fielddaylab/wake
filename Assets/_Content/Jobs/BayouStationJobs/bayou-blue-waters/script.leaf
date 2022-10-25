@@ -64,8 +64,18 @@ $endif
 $if !HasFact(Cyanobacteria.Consume.Light)
     {@guide}    I recommend measuring {nameof Cyanobacteria}'s effect on its environment with water that does not stress it. 
 $elseif !HasFact(Cyanobacteria.Consume.Light.Stressed)
-    {@guide}    Might I suggest measuring {nameof Cyanobacteria}'s effect on its environment with water that stresses it?
     // Cyanobacteria stress requires Site W or Y (or give it to player via script)
+    $if HasEntity(RS-4Y)
+        {@guide}    Might I suggest measuring {nameof Cyanobacteria}'s effect on its environment with water that stresses it?
+                    One of the arctic sites could do the trick -- they have some pretty extreme conditions.
+    $elseif HasEntity(RS-4W)
+        {@guide}    Might I suggest measuring {nameof Cyanobacteria}'s effect on its environment with water that stresses it?
+                    One of the arctic sites could do the trick -- they have some pretty extreme conditions.
+    $else
+        {@guide}    We'll need to measure {nameof Cyanobacteria} in an environment with water that stresses it.
+                    ...Though scanning through AQOS, I don't believe we've identified any sites with conditions that would stress them.
+                    We may need to come back to this job once we've seen more extreme biomes.
+    $endif
 $endif
 
 :: catchMeasureReproduce
@@ -77,8 +87,18 @@ $endif
 $if !HasFact(Cyanobacteria.Reproduce)
     {@guide}    Might I suggest measuring {nameof Cyanobacteria}'s reproduce rate in water that does not stress it?
 $elseif !HasFact(Cyanobacteria.Reproduce.Stressed)
-    {@guide}    I recommend measuring {nameof Cyanobacteria}'s reproduce rate in water that stresses it.
     // Cyanobacteria stress requires Site W or Y (or give it to player via script)
+    $if HasEntity(RS-4Y)
+        {@guide}    I recommend measuring {nameof Cyanobacteria}'s reproduce rate in water that stresses it.
+                    One of the arctic sites could do the trick -- they have some pretty extreme conditions.
+    $elseif HasEntity(RS-4W)
+        {@guide}    I recommend measuring {nameof Cyanobacteria}'s reproduce rate in water that stresses it.
+                    One of the arctic sites could do the trick -- they have some pretty extreme conditions.
+    $else
+        {@guide}    We'll need to measure {nameof Cyanobacteria} in an environment with water that stresses it.
+                    ...Though scanning through AQOS, I don't believe we've identified any sites with conditions that would stress them.
+                    We may need to come back to this job once we've seen more extreme biomes.
+    $endif
 $endif
 
 :: catchReportBack
