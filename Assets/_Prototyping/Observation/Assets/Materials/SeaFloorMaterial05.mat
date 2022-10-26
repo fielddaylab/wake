@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DeepCaveJets00
-  m_Shader: {fileID: -6465566751694194690, guid: e73e88aefef60401f9ba33d8697ddea0,
+  m_Name: SeaFloorMaterial05
+  m_Shader: {fileID: -6465566751694194690, guid: 85a8d06f74b664a10a44084dfd6036be,
     type: 3}
   m_ShaderKeywords: ADDITIONAL_LIGHTS_ON _SPECULAR_ON _USESHADOW_ON
   m_LightmapFlags: 4
@@ -25,7 +25,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - Texture2D_935E6DCB:
-        m_Texture: {fileID: 2800000, guid: 429d58e0a9e664b6f862f2800993c380, type: 3}
+        m_Texture: {fileID: 2800000, guid: 1be0972b221a1447d80f2a8ef14aac24, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -69,8 +69,8 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OverlayTex:
-        m_Texture: {fileID: 2800000, guid: a46e3ca43d4214711a96c3fb0f70d9bf, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 0.25, y: 0.25}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
         m_Texture: {fileID: 0}
@@ -81,7 +81,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Ramp_Texture:
-        m_Texture: {fileID: 2800000, guid: 9771bd5fbe60f8f42a9c5f5b9caff218, type: 3}
+        m_Texture: {fileID: 2800000, guid: a1a4108227a8a8b4f9067f80f37c33ec, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _RimTexture:
@@ -118,11 +118,17 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - ADDITIONAL_LIGHTS: 1
-    - Vector1_7E7482E9: 0.01
+    - BOOLEAN_F2687B00: 0
+    - BOOLEAN_F9B33B64: 0
+    - Vector1_56244183: 3
+    - Vector1_58381F1B: 0.64
+    - Vector1_5E368682: 0.75
+    - Vector1_7E7482E9: 0.6
     - Vector1_80065FF8: 0
-    - Vector1_D19AED14: 0.67
-    - Vector1_DBDC2827: 0.66
-    - Vector1_EA5BE72B: 0.18
+    - Vector1_D19AED14: 1.42
+    - Vector1_E8F90C0E: 0.2
+    - Vector1_E9CB6AA2: 0.18
+    - Vector1_F7FAB9A: 1.2
     - _AttenuationPower: 0
     - _BumpScale: 1
     - _Cutoff: 0.5
@@ -181,11 +187,13 @@ Material:
     - _ZWrite: 1
     - __dirty: 1
     m_Colors:
-    - Color_9B385EE5: {r: 0.84313726, g: 0.3591765, b: 0.3591765, a: 1}
-    - Color_9DA79BB3: {r: 1, g: 1, b: 1, a: 1}
+    - Color_9B385EE5: {r: 0.8301887, g: 0.8301887, b: 0.8301887, a: 1}
+    - Color_9DA79BB3: {r: 0.198, g: 0.118007995, b: 0.13865112, a: 1}
+    - Color_A03C9CFB: {r: 1, g: 1, b: 1, a: 0}
+    - Vector2_3BD3AC51: {r: 0, g: 0.5, b: 0, a: 0}
     - Vector2_41448CF0: {r: 0, g: 0, b: 0, a: 0}
-    - Vector2_C6B84FD1: {r: 1, g: 1, b: 0, a: 0}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - Vector2_C6B84FD1: {r: 12, g: 5, b: 1, a: 1}
+    - _Color: {r: 0.55922925, g: 0.6698113, b: 0.6698113, a: 1}
     - _ColorA: {r: 1, g: 0, b: 0, a: 0}
     - _ColorB: {r: 0, g: 0.1264467, b: 1, a: 0}
     - _DiffuseColor: {r: 1, g: 1, b: 1, a: 1}
@@ -194,7 +202,7 @@ Material:
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _OutlineColor1: {r: 0, g: 0.9740796, b: 1, a: 0}
     - _OutlineColor2: {r: 1, g: 0.06464233, b: 0, a: 0}
-    - _OverlayColor: {r: 0.18867922, g: 0.18867922, b: 0.18867922, a: 1}
+    - _OverlayColor: {r: 0, g: 0, b: 0, a: 1}
     - _RimColor: {r: 1, g: 1, b: 1, a: 0}
     - _ShadowColor: {r: 0.7830189, g: 0.7830189, b: 0.7830189, a: 1}
     - _SpecularColor: {r: 0.071, g: 0.071, b: 0.071, a: 0}
