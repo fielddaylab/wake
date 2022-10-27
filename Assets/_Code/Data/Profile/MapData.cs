@@ -79,6 +79,7 @@ namespace Aqua.Profile
             if (m_UnlockedStationIds.Add(inStationId))
             {
                 m_HasChanges = true;
+                Services.Events.Queue(GameEvents.MapsUpdated);
                 return true;
             }
 
@@ -91,6 +92,7 @@ namespace Aqua.Profile
             if (m_UnlockedStationIds.Remove(inStationId))
             {
                 m_HasChanges = true;
+                Services.Events.Queue(GameEvents.MapsUpdated);
                 return true;
             }
 
@@ -113,6 +115,7 @@ namespace Aqua.Profile
             if (m_UnlockedSiteIds.Add(inSiteId))
             {
                 m_HasChanges = true;
+                Services.Events.Queue(GameEvents.MapsUpdated);
                 return true;
             }
 
@@ -125,6 +128,7 @@ namespace Aqua.Profile
             if (m_UnlockedSiteIds.Remove(inSiteId))
             {
                 m_HasChanges = true;
+                Services.Events.Queue(GameEvents.MapsUpdated);
                 return true;
             }
 

@@ -1,0 +1,13 @@
+# basePath Dream00
+
+:: CutOffSound
+@function TimelineStarted
+@when     timelineId == "Dream00Timeline00"
+{wait 39.5}{bgm-stop}{wait 0.5}
+$call AudioStopAll()
+
+:: PinUI
+@function   ScannedNewObject
+@when       scanId = "RS-1C.dreamScan"
+{wait 5}
+$call ScanUIPin->PlayAnimation()

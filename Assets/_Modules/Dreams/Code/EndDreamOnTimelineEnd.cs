@@ -33,7 +33,7 @@ namespace Aqua.Dreams {
 
         private void Close() {
             if (!m_Closing && Services.Valid) {
-                StateUtil.LoadSceneWithFader("Cabin", null, null, SceneLoadFlags.StopMusic | SceneLoadFlags.Cutscene);
+                StateUtil.LoadSceneWithFader("Cabin", null, null, SceneLoadFlags.StopMusic | SceneLoadFlags.Cutscene, 0.1f);
                 m_Closing = true;
                 enabled = false;
             }

@@ -19,6 +19,8 @@ namespace ProtoAqua.Observation
         // Properties
         private ScanDataFlags m_Flags = 0;
         [BlockMeta("scanDuration"), UnityEngine.Scripting.Preserve] private float m_ScanDuration = 1;
+        [BlockMeta("freezeDisplay"), UnityEngine.Scripting.Preserve] private float m_FreezeDisplay = 0;
+        [BlockMeta("typingDuration"), UnityEngine.Scripting.Preserve] private float m_TypingDuration = 1;
 
         // Text
         [BlockMeta("header"), UnityEngine.Scripting.Preserve] private string m_HeaderText = null;
@@ -46,6 +48,8 @@ namespace ProtoAqua.Observation
 
         public ScanDataFlags Flags() { return m_Flags; }
         public float ScanDuration() { return m_ScanDuration; }
+        public float FreezeDisplay() { return m_FreezeDisplay; }
+        public float TypingDuration() { return m_TypingDuration; }
 
         public string Header() { return m_HeaderText; }
         public string Text() { return m_DescText; }
@@ -59,7 +63,6 @@ namespace ProtoAqua.Observation
 
         public ListSlice<VariantComparison> Requirements() { return m_Requirements; }
         public StringHash32 FallbackId() { return m_Fallback; }
-
 
         #region Scan
 
@@ -140,7 +143,7 @@ namespace ProtoAqua.Observation
             Fake = new ScanData("fake");
             Fake.m_HeaderText = "";
             Fake.m_DescText = "";
-            Fake.m_Flags |= ScanDataFlags.DoNotShow | ScanDataFlags.Important;
+            Fake.m_Flags |= ScanDataFlags.DoNotShow;
             Fake.m_ScanDuration = 3;
         }
 
@@ -159,6 +162,6 @@ namespace ProtoAqua.Observation
         ActivateTool = 0x20,
 
         DynamicFactType = 0x40,
-        DoNotShow = 0x80
+        DoNotShow = 0x80,
     }
 }

@@ -207,6 +207,10 @@ namespace AquaAudio
             {
                 player.Stop();
             }
+            foreach(var player in m_StreamPlayers.ActiveObjects)
+            {
+                player.Stop();
+            }
         }
 
         private ushort NextId()

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Aqua.Scripting;
+using BeauRoutine;
 using BeauUtil;
 using ProtoAqua.Observation;
 using UnityEngine;
@@ -11,10 +12,18 @@ namespace Aqua.Dreams {
         [Required] public PlayableDirector playableDirector;
         [Required] public ScannableRegion Scan;
 
+        [Header("Modifications")]
+        public float Delay = 0;
+
         private void Awake() {
-            Scan.OnScanComplete = (s) => {
+            Scan.OnScanComplete += (s) => {
                 if (s != ScanResult.NoChange) {
-                    PlayTimeline();
+                    if (Delay > 0) {
+                        Scan.Click.gameObject.SetActive(false);
+                        Routine.StartDelay(this, PlayTimeline, Delay);
+                    } else {
+                        PlayTimeline();
+                    }
                 }
             };
         }

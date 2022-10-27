@@ -128,7 +128,7 @@ namespace ProtoAqua.Observation
 
                     m_DescriptionText.Graphic.maxVisibleCharacters = 0;
 
-                    m_TypeRoutine.Replace(this, TypeOut());
+                    m_TypeRoutine.Replace(this, TypeOut(inData.TypingDuration()));
                 }
 
                 BestiaryDesc bestiary = Assets.Bestiary(inData.BestiaryId());
@@ -213,9 +213,9 @@ namespace ProtoAqua.Observation
             return m_RootTransform.AnchorPosTo(-15, 0.1f, Axis.Y).Ease(Curve.BackOut).From().ForceOnCancel();
         }
 
-        private IEnumerator TypeOut()
+        private IEnumerator TypeOut(float inTypingDurationMultiplier)
         {
-            return Tween.Int(0, m_DescriptionText.Metrics.VisibleCharCount, (c) => m_DescriptionText.Graphic.maxVisibleCharacters = c, 0.8f);
+            return Tween.Int(0, m_DescriptionText.Metrics.VisibleCharCount, (c) => m_DescriptionText.Graphic.maxVisibleCharacters = c, 0.8f * inTypingDurationMultiplier);
         }
 
         #endregion // Animations

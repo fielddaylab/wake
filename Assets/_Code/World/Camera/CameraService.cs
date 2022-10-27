@@ -1334,12 +1334,12 @@ namespace Aqua.Cameras
         /// <summary>
         /// Casts from a screen position to a world position on the current camera plane.
         /// </summary>
-        public Vector3 ScreenToGameplayPosition(Vector2 inScreenPos)
+        public Vector3 ScreenToGameplayPosition(Vector2 inScreenPos, float inZOffset = 0)
         {
             Vector3 screenPos = inScreenPos;
             screenPos.z = 1;
 
-            Plane p = new Plane(-m_Camera.transform.forward, m_FOVPlane.Target.position);
+            Plane p = new Plane(-m_Camera.transform.forward, m_FOVPlane.Target.position + new Vector3(0, 0, inZOffset));
             Ray r = m_Camera.ScreenPointToRay(screenPos);
 
             float dist;

@@ -328,6 +328,18 @@ namespace Aqua
                 return Save.Bestiary.HasFact(inFactId);
             }
 
+            [LeafMember("HasAnyNumericalModel"), UnityEngine.Scripting.Preserve]
+            static private bool HasAnyNumericalModel()
+            {
+                return Save.Bestiary.HasFact((f) => {
+                    if (f.Type != BFTypeId.Model)
+                        return false;
+
+                    BFModelType modelType = ((BFModel) f).ModelType;
+                    return modelType >= BFModelType.Descriptive && modelType <= BFModelType.Intervention;
+                });
+            }
+
             [LeafMember("IsFactFullyUpgraded"), UnityEngine.Scripting.Preserve]
             static private bool IsFactFullyUpgraded(StringHash32 inFactId)
             {

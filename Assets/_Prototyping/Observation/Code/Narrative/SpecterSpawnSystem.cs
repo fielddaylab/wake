@@ -56,23 +56,26 @@ namespace ProtoAqua.Observation
                 toDisable.gameObject.SetActive(false);
             }
 
-            Save.Science.DequeueSpecter();
-            Save.Science.SetSpecterCount(Save.Science.SpecterCount() + 1);
-            Script.WriteVariable(Var_LastSpecterSeen, (float) Save.Current.Playtime);
-            Script.WriteVariable(Var_LastSpecterSeenLocation, MapDB.LookupCurrentMap());
-
             m_Cutscene.Replace(this, SpecterSequence()).Tick();
         }
 
         #region Cutscene
 
         private IEnumerator SpecterSequence() {
+            Services.UI.PreloadJournal();
+            
             using(Script.Letterbox()) {
                 ScriptThreadHandle thread;
                 using(var table = TempVarTable.Alloc()) {
-                    table.Set("specterIndex", Save.Science.SpecterCount());
+                    table.Set("specterIndex", Save.Science.SpecterCount() );
                     thread = Services.Script.TriggerResponse(GameTriggers.PlayerSpecter, table);
                 }
+
+                Save.Science.DequeueSpecter();
+                Save.Science.SetSpecterCount(Save.Science.SpecterCount() + 1);
+                Script.WriteVariable(Var_LastSpecterSeen, (float) Save.Current.Playtime);
+                Script.WriteVariable(Var_LastSpecterSeenLocation, MapDB.LookupCurrentMap());
+
                 if (!thread.IsRunning()) {
                     yield return 1;
                     SpawnSpecter();
@@ -139,6 +142,9 @@ namespace ProtoAqua.Observation
             m_Regions = FindObjectsOfType<SpecterSpawnRegion>();
             m_CurrentChance = m_Regions.Length == 0 ? 1f : 0.4f + (0.6f / m_Regions.Length);
             m_ChanceIncrement = 2.5f * (1 - (m_CurrentChance)) / m_Regions.Length;
+            if ((flags & BakeFlags.IsBuild) != 0) {
+                m_DEBUGForceSpawn = false;
+            }
             return true;
         }
 
@@ -159,13 +165,19 @@ namespace ProtoAqua.Observation
             bool isQueued = Save.Inventory.HasUpgrade(ItemIds.ROVScanner) && Save.Science.IsSpecterQueued(currentMapId) && enoughTime && Save.Science.SpecterCount() < ScienceUtils.MaxSpecters();
 
             #if UNITY_EDITOR
-            isQueued |= m_DEBUGForceSpawn;
+            if (BootParams.BootedFromCurrentScene) {
+                isQueued |= m_DEBUGForceSpawn;
+            }
             #endif // UNITY_EDITOR
             
-            if (isQueued)
-            {
-                foreach(var region in m_Regions)
-                {
+            if (isQueued) {
+                // if override set for this map, then increase initial chances
+                if (Save.Science.IsSpecterQueuedExact(currentMapId)) {
+                    m_CurrentChance += m_ChanceIncrement;
+                    m_ChanceIncrement *= 1.25f;
+                }
+
+                foreach(var region in m_Regions) {
                     WorldUtils.ListenForPlayer(region.Region, (c) => OnPlayerEnterSpecterRegion(region), null);
                 }
 
@@ -175,11 +187,8 @@ namespace ProtoAqua.Observation
                 yield return load;
                 m_LoadedReveal = (SpecterReveal) load.asset;
                 Log.Msg("[SpecterSpawnSystem] Specter loaded");
-            }
-            else
-            {
-                foreach(var region in m_Regions)
-                {
+            } else {
+                foreach(var region in m_Regions) {
                     Destroy(region.gameObject);
                 }
                 m_Regions = null;

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Aqua {
     static public class Formatting {
-        private const string ScrambleChars = "abc%defghijklmnopă©§^$&#¤ □0123456789><[]qrstuvwxyz|_-";
+        private const string ScrambleChars = "()abc%defghijklmnopă©§^$&#¤ □0123456789[]qrstuvwxyz|_-";
         static private readonly int ScrambleCharLength = ScrambleChars.Length;
 
         static public unsafe string Scramble(StringSlice text, uint initialSeed = 0) {

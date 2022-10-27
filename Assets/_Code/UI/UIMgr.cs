@@ -64,6 +64,8 @@ namespace Aqua
         private Routine m_PersistentUILoad;
         private Routine m_JournalLoad;
 
+        public Camera Camera { get { return m_UICamera; } }
+
         #region Loading Screen
 
         public bool IsTransitioning()

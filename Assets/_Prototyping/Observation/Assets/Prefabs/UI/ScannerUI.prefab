@@ -155,7 +155,10 @@ MonoBehaviour:
   m_Text: {fileID: 7706246797332257708}
   m_DefaultText:
     m_Source: 
-    m_Hash: 0
+    m_HashValue: 0
+  m_Prefix: 
+  m_Postfix: 
+  m_Effect: 0
 --- !u!1 &441619446126798692
 GameObject:
   m_ObjectHideFlags: 0
@@ -550,7 +553,10 @@ MonoBehaviour:
   m_Text: {fileID: 1847271858565215546}
   m_DefaultText:
     m_Source: 
-    m_Hash: 0
+    m_HashValue: 0
+  m_Prefix: 
+  m_Postfix: 
+  m_Effect: 0
 --- !u!114 &3799415577660861801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -656,6 +662,7 @@ GameObject:
   - component: {fileID: 4103148230744385331}
   - component: {fileID: 8556114809825932465}
   - component: {fileID: 3855541314830664735}
+  - component: {fileID: 549011689135677837}
   m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
@@ -779,6 +786,25 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &549011689135677837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3540249415682984014}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d846625481429e4bb310e7d50693c3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Text: {fileID: 3855541314830664735}
+  m_DefaultText:
+    m_Source: ui.scan.progress
+    m_HashValue: 3118005755
+  m_Prefix: 
+  m_Postfix: 
+  m_Effect: 0
 --- !u!1 &3764916503694984515
 GameObject:
   m_ObjectHideFlags: 0
@@ -1253,7 +1279,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 200, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 400, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &8652627735105847436
@@ -1547,6 +1573,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 092480500ccfbad49a42907e7eb890bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Layout: {fileID: 0}
   StreamedGroup: {fileID: 8805676338778028430}
   Streamed: {fileID: 688372595704085021}
   FallbackGroup: {fileID: 3099386727918927387}
@@ -1658,6 +1685,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_RawImage: {fileID: 5812658401774189646}
-  m_Url: 
-  m_AutoSizeMode: 1
-  m_LoadingIndicator: {fileID: 3851352862288187984}
+  m_ColorGroup: {fileID: 0}
+  m_Path: 
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  m_AutoSize: 0
+  m_Visible: 1

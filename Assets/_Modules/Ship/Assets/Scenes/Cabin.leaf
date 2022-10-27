@@ -1,1 +1,40 @@
 # basePath ship.cabin
+
+:: ClearDreamState
+@function   SceneLeave
+$set session:fromDream = null
+
+:: StartAudio.NoDream
+@function   SceneStart
+@when       !session:fromDream
+$call   CabinBGM->PlayBGM()
+
+// Dream Sequences
+
+:: StartAudio.FromDream
+@function   SceneStart
+@when       session:fromDream
+$set    player:dreamCounter + 1
+$call AudioOneShot("Cabin.WakeFromDream")
+{cutscene}{wait 3}{trigger-response DreamResponse}{/cutscene}{wait 4}
+$call   CabinBGM->PlayBGM()
+
+:: GetDreamJournal
+@cutscene
+{hide-dialog}
+$call ViewTransitionTo("Desk")
+
+$if session:fromDream == "Dreams00"
+    $call GiveJournalEntry("44_TangCheckUp") // insert dream00 journal
+$endif //
+
+// From Dream
+
+:: FirstDream
+@trigger    DreamResponse
+@when       session:fromDream == "Dreams00"
+@cutscene
+@once
+{@guide}    Nice to see you're awake, O.
+{@player}   What...{wait 1} I just had the {slow}weirdest{/slow} dream.
+$branch .GetDreamJournal

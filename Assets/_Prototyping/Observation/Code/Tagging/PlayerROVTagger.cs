@@ -82,12 +82,12 @@ namespace ProtoAqua.Observation
             m_Loop = default;
         }
 
-        public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody)
+        public bool UpdateTool(float inDeltaTime, in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody)
         {
             return false;
         }
 
-        public void UpdateActive(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
+        public void UpdateActive(float inDeltaTime, in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
             Vector2 myPos = m_RangeCollider.transform.position;
             Vector2 closestPos;
             if (m_System.TryGetClosestCritterGameplayPlane(out closestPos))

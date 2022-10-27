@@ -390,6 +390,17 @@ namespace Aqua.Profile
             return (GetDiscoveredFlags(inFactId) & BFDiscoveredFlags.All) == BFDiscoveredFlags.All;
         }
 
+        public bool HasFact(Predicate<BFBase> inPredicate)
+        {
+            foreach(var fact in m_ObservedFacts)
+            {
+                if (inPredicate(Assets.Fact(fact)))
+                    return true;
+            }
+
+            return false;
+        }
+
         #endregion // Facts
 
         public bool HasTab(TabFlags tab) {

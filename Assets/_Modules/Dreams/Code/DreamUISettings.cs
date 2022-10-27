@@ -20,6 +20,8 @@ namespace Aqua.Dreams {
                     Save.Inventory.AddUpgrade(ItemIds.Flashlight);
                 }
             }
+
+            Script.WriteVariable("session:fromDream", inScene.Name);
         }
 
         void ISceneUnloadHandler.OnSceneUnload(SceneBinding inScene, object inContext) {

@@ -79,8 +79,8 @@ namespace ProtoAqua.Observation
             bool IsEnabled();
             void Enable(PlayerBody inBody);
             void Disable();
-            bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody);
-            void UpdateActive(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody);
+            bool UpdateTool(float inDeltaTime, in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody);
+            void UpdateActive(float inDeltaTime, in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody);
             bool HasTarget();
             PlayerROVAnimationFlags AnimFlags();
             float MoveSpeedMultiplier();
@@ -101,8 +101,8 @@ namespace ProtoAqua.Observation
             public bool HasTarget() { return false; }
             public PlayerROVAnimationFlags AnimFlags() { return 0; }
             public float MoveSpeedMultiplier() { return 1; }
-            public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) { return false; }
-            public void UpdateActive(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) { }
+            public bool UpdateTool(float inDeltaTime, in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) { return false; }
+            public void UpdateActive(float inDeltaTime, in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) { }
         }
 
         #endregion // Types
@@ -220,12 +220,12 @@ namespace ProtoAqua.Observation
 
             m_Input.GenerateInput(m_Transform, lockOn, status, out m_LastInputData);
 
-            if (m_Moving || !UpdateTool())
+            if (m_Moving || !UpdateTool(inDeltaTime))
             {
                 UpdateMove(inDeltaTime);
             }
 
-            m_CurrentTool.UpdateActive(m_LastInputData, m_Kinematics.State.Velocity, this);
+            m_CurrentTool.UpdateActive(inDeltaTime, m_LastInputData, m_Kinematics.State.Velocity, this);
         }
 
         private void LateUpdate()
@@ -300,9 +300,9 @@ namespace ProtoAqua.Observation
             return null;
         }
 
-        private bool UpdateTool()
+        private bool UpdateTool(float inDeltaTime)
         {
-            if (m_CurrentTool.UpdateTool(m_LastInputData, m_Kinematics.State.Velocity, this))
+            if (m_CurrentTool.UpdateTool(inDeltaTime, m_LastInputData, m_Kinematics.State.Velocity, this))
             {
                 SetEngineState(false);
                 return true;
@@ -365,7 +365,6 @@ namespace ProtoAqua.Observation
                 m_EngineSound.SetVolume(0).SetVolume(1, 0.25f);
 
                 m_Kinematics.Config.Drag = m_DragEngineOn;
-                Services.UI?.FindPanel<ScannerDisplay>()?.Hide();
             }
             else
             {

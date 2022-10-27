@@ -159,6 +159,10 @@ namespace Aqua.Profile
             return m_SpecterQueued > 0 && (m_SpecterSiteOverride.IsEmpty || m_SpecterSiteOverride == mapId);
         }
 
+        public bool IsSpecterQueuedExact(StringHash32 mapId) {
+            return m_SpecterQueued > 0 && m_SpecterSiteOverride == mapId;
+        }
+
         public void QueueSpecter(StringHash32 mapIdOverride = default(StringHash32)) {
             m_SpecterQueued++;
             m_SpecterSiteOverride = mapIdOverride;
