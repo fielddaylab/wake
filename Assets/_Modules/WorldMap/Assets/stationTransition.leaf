@@ -18,3 +18,15 @@ $call   PrepareDream(Dreams00)
 @when       previousStation == "KelpStation", LocationVisited("RS-1B")
 @once
 $call   PrepareDream(Dream04)
+
+:: CoralDream1
+@trigger    PlayerDream
+@when       previousStation == "CoralStation", LocationVisited("RS-2S")
+@once
+$call   PrepareDream(Dream02)
+
+:: BayouDream1
+@trigger    PlayerDream
+@when       previousStation == "BayouStation", LocationVisited("RS-3P")
+@once
+$call   PrepareDream(Dream03)
