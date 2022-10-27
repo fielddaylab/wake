@@ -6697,41 +6697,6 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
---- !u!1 &344491175 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8166205111049755876, guid: 540be5ac7e9e64aa48d344c84e046d8f,
-    type: 3}
-  m_PrefabInstance: {fileID: 1284480351}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &344491177
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 344491175}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e52de21a22b6dd44c9cc19f810c65059, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Events:
-    m_Signals:
-    - {fileID: 11400000, guid: a3f1a87f83440ea4f83a6c573082656f, type: 2}
-    m_Events:
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 344491175}
-          m_MethodName: SetActive
-          m_Mode: 6
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 1
-          m_CallState: 2
 --- !u!1 &355869291
 GameObject:
   m_ObjectHideFlags: 0
@@ -6993,7 +6958,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   distance: {x: 0.7, y: 0}
   period: {x: 0.6, y: 1}
-  duration: 1.5
+  duration: 1.2
 --- !u!61 &421962108
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -12883,8 +12848,6 @@ PlayableDirector:
     value: {fileID: 421962104}
   - key: {fileID: 358739684705689965, guid: 2a2f48f28ce663c489a57c263436f804, type: 2}
     value: {fileID: 421962105}
-  - key: {fileID: 364485849435813147, guid: 2a2f48f28ce663c489a57c263436f804, type: 2}
-    value: {fileID: 869724028}
   - key: {fileID: -844968244817527982, guid: 2a2f48f28ce663c489a57c263436f804, type: 2}
     value: {fileID: 2322484092456512738}
   - key: {fileID: -2388033826734950311, guid: 2a2f48f28ce663c489a57c263436f804, type: 2}
@@ -12901,8 +12864,6 @@ PlayableDirector:
     value: {fileID: 394394783}
   - key: {fileID: -2094929203622797565, guid: 2a2f48f28ce663c489a57c263436f804, type: 2}
     value: {fileID: 1602124940}
-  - key: {fileID: 2030126252274532144, guid: 2a2f48f28ce663c489a57c263436f804, type: 2}
-    value: {fileID: 869724029}
   - key: {fileID: -3063925206994482226, guid: 2a2f48f28ce663c489a57c263436f804, type: 2}
     value: {fileID: 1678941153}
   - key: {fileID: 6234179773543546356, guid: 2a2f48f28ce663c489a57c263436f804, type: 2}
@@ -19752,7 +19713,7 @@ PlayableDirector:
     value: {fileID: 421962105}
   - key: {fileID: 0}
     value: {fileID: 0}
-  - key: {fileID: 364485849435813147, guid: 2a2f48f28ce663c489a57c263436f804, type: 2}
+  - key: {fileID: 0}
     value: {fileID: 0}
   - key: {fileID: -844968244817527982, guid: 2a2f48f28ce663c489a57c263436f804, type: 2}
     value: {fileID: 2322484092456512738}
@@ -19825,6 +19786,11 @@ PrefabInstance:
     - target: {fileID: 480792455247234181, guid: 540be5ac7e9e64aa48d344c84e046d8f,
         type: 3}
       propertyPath: prewarm
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 480792455247234181, guid: 540be5ac7e9e64aa48d344c84e046d8f,
+        type: 3}
+      propertyPath: playOnAwake
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 480792455247234181, guid: 540be5ac7e9e64aa48d344c84e046d8f,
@@ -20078,7 +20044,7 @@ PlayableDirector:
     value: {fileID: 421962105}
   - key: {fileID: 0}
     value: {fileID: 0}
-  - key: {fileID: 364485849435813147, guid: 2a2f48f28ce663c489a57c263436f804, type: 2}
+  - key: {fileID: 0}
     value: {fileID: 0}
   - key: {fileID: -844968244817527982, guid: 2a2f48f28ce663c489a57c263436f804, type: 2}
     value: {fileID: 2322484092456512738}
