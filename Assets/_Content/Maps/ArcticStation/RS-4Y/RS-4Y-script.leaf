@@ -118,3 +118,8 @@ $endif
 $if GroupCount($UpperBlockerGroup) < $UpperBlockerCount
     $call   AboveIceBlocker->Deactivate()
 $endif
+
+:: IceRegionEntrance
+@function   PlayerEnterRegion
+@when       regionId == "IceRiver"
+$set    world:RS-4Y.seenIceRiver = true

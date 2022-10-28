@@ -1616,9 +1616,10 @@ Transform:
   - {fileID: 123189638}
   - {fileID: 1359197534}
   - {fileID: 1343216805}
+  - {fileID: 749725032}
   - {fileID: 1543473316}
   - {fileID: 2140556783}
-  - {fileID: 749725032}
+  - {fileID: 1599925392}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -8077,7 +8078,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 711474610}
-  m_RootOrder: 23
+  m_RootOrder: 24
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &1543473317
 BoxCollider2D:
@@ -9376,6 +9377,95 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 31b4b7ac3ae12274ca6265c0712d7175, type: 3}
+--- !u!1 &1599925391
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1599925392}
+  - component: {fileID: 1599925395}
+  - component: {fileID: 1599925394}
+  - component: {fileID: 1599925393}
+  m_Layer: 0
+  m_Name: IceRiverRegion
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1599925392
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1599925391}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 40.75, y: 11.6, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 711474610}
+  m_RootOrder: 26
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &1599925393
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1599925391}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 4.3115826, y: -0.42368507}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 58.77077, y: 9.722916}
+  m_EdgeRadius: 0
+--- !u!114 &1599925394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1599925391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e2bd9f1df975d842aa7db7e424e8e56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Collider: {fileID: 1599925393}
+--- !u!114 &1599925395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1599925391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced02461c9fab16498d5d024212b8a9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Id:
+    m_Source: IceRiver
+    m_HashValue: 2586576282
+  m_IsPersistent: 0
+  m_StartDisabled: 0
 --- !u!4 &1677523153 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5409637383755610233, guid: 3f1d80ab39c476f46b3c71da32017253,
@@ -14596,7 +14686,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 711474610}
-  m_RootOrder: 24
+  m_RootOrder: 25
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &2140556784
 BoxCollider2D:
@@ -14781,7 +14871,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Events:
     m_Signals:
-    - {fileID: 11400000, guid: 4ea08b00d79228f479b20c5900f28c97, type: 2}
+    - {fileID: 0}
     m_Events:
     - m_PersistentCalls:
         m_Calls:

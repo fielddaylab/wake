@@ -18,6 +18,11 @@
 {@guide} {!}Warning: Engine Power LOW{/!}
 {wait 3}
 
+:: RememberNearWhalefall
+@function   PlayerEnterRegion
+@when       regionId == "NearWhaleFall"
+$set    world:RS-4W.seenWhalefall = true
+
 // {@guide}    Do you| get the sense we're getting pulled in?
 // {hide-dialog} {wait 1}
 // {@guide}    {slow}Uhhhhhhh{/slow} any thoughts?? Maybe try steering us back?!
