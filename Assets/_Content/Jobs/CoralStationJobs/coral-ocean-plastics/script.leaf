@@ -13,11 +13,9 @@
 {@profCoral} We need to understand how plastic might affect Serenity Meadows.    
 $if JobTaskTop(scanReefEdge)
     {@profCoral}  Start by making sure you've scanned all the species here at Site V.
-                  Then observe their interactions and construct a food web. 
     {@player}     Copy that. 
 $elseif JobTaskTop(whatTurtlesEat)
     {@profCoral}  I need you to use your Observation Tank to learn more about the organisms you've scanned here at Site V.
-                  Then use what you find out to construct a Food Web. 
     {@player}    Copy that. 
 $else
     {@profCoral}  I'd like you to use what you've learned about the species at Site V to construct a food web. 
@@ -106,7 +104,7 @@ $call ArgueLoad(oceanPlasticArgue)
 $goto .argue.firstClaim
 
 ::argue.firstClaim
-$choice .argue.turtles; I've found a cirtter here that interacts with the plastic.
+$choice .argue.turtles; I've found a critter here that interacts with the plastic.
 //$choice .argue.queen; The conch will be impacted.
 //$choice .argue.staghorn; The coral will be impacted.
 $choice .argue.nan; The plastic won't affect anything. 

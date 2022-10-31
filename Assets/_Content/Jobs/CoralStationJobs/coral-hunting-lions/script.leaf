@@ -302,9 +302,15 @@ $choice .argue.giveUpArg; Let me get back to you
 $choose branch
 
 :: argue.incorrectFactsLionfish
-{@profCoral}	Hmmm. This isn't quite what I'm looking for. 
-$call ArgueRejectIncorrect()
-$goto .argue.chooseFactsLionfish
+$if ArgueIsFactSubmitted(BlueTang.Eats.TurfAlgae), ArgueIsFactSubmitted(Ick.Stresses.BlueTang), ArgueIsFactSubmitted(BlueheadWrasse.Eats.Ick), ArgueIsFactSubmitted(Lionfish.Eats.BlueheadWrasse)
+	// allow for submitting non-stressed rule
+	$branch .argue.correctFactsLionfish
+$else
+	{@profCoral}	Hmmm. This isn't quite what I'm looking for.
+
+	$call ArgueRejectIncorrect()
+	$goto .argue.chooseFactsLionfish
+$endif
 
 :: argue.giveUpArg
 $call ArgueClearFacts()
