@@ -1,5 +1,22 @@
 # basePath job.final-final
 
+// SEQUENCE
+
+:: sneakToShip
+@trigger    SceneStart
+@when       JobTaskTop(sneakOut), scene:name == "Helm"
+@once
+@cutscene
+$set jobs:final-snuckOut = true
+$call CheckJobTasks()
+
+:: returnToShip
+@trigger    SceneStart
+@when       JobTaskTop(checkShip), scene:name == "Helm"
+@once
+@cutscene
+$set jobs:final-checkShipRestored = true
+$call CheckJobTasks()
 
 // CATCH-ALL GUIDE TEXT
 
@@ -20,9 +37,10 @@ $call CheckJobTasks()
 
 :: argueBegin
 @trigger    TryArgumentation
-@when       !ArgueIsComplete(), JobTaskCompleted(tellMom)
+@when       !ArgueIsComplete(finalArgue), JobTaskCompleted(tellMom)
 @cutscene
 // argumentation here
+$call ArgueLoad(finalArgue)
 
 $branch .endArgue
 
@@ -34,6 +52,6 @@ $call ArgueComplete()
 
 :: argueRevisited
 @trigger    TryArgumentation
-@when       ArgueIsComplete()
+@when       ArgueIsComplete(finalArgue)
 @cutscene
 {@drKelp}  I've said my final word on the subject, O. You aren't going down there. It is too dangerous.

@@ -67,6 +67,22 @@ $elseif jobs:num-specters-seen >= 6, !jobs:specter6-comms.kelp.discussed
                     She was working on an upgrade, but I'm not sure if she ever finished it. 
                     You could try asking one of her old colleagues. I'm sorry I can't be more help, mijita. 
     $set jobs:specter6-comms.kelp.discussed = true
+
+$elseif JobInProgress(final-final), JobTaskTop(getUncleHelp)
+    // final job, ask uncle for help
+    {@$MerchantId}  Welcome back Ollie!
+    {@player}       Can you restore power to the ship and save {nameof @guide}?
+    $set jobs:final-uncleHelped = true
+    $call CheckJobTasks()
+$elseif JobInProgress(final-final), JobTaskTop(returnToShop)
+    // final job, after ship power restored
+    {@$MerchantId}  So? How'd it go?
+    {@player}       The ship power was restored. But {nameof @guide} is still toast.
+    {@$MerchantId}  Here's what happened to your sister:
+                    [Cutscene here]
+                    Now it's time for you to go down there.
+    $set jobs:final-returnedToShop = true
+    $call CheckJobTasks()
 $else
     {@$MerchantId} Welcome back, mijita. Need any upgrades for your ship? 
     $choice .action.openShop; Sure, I'll take a look. Thanks, Tío!
