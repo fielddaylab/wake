@@ -12,7 +12,7 @@
 @when       JobTaskTop(tellMom)
 @cutscene
 {@player}   Mom! Sam's in trouble!
-{@mom}      That's not for you to worry about. It's concerning, but I'll put a team on it who's more experienced.
+{@drKelp}      That's not for you to worry about. It's concerning, but I'll put a team on it who's more experienced.
             It's in the {nameof RS-0}. Does your sub even have a deep-pressure hull?
             No, so just leave it to the experts. I'm sure Sam will be fine. // Except doesn't the player have the hull at this point?
 $set jobs:final-told-mom = true
@@ -20,7 +20,7 @@ $call CheckJobTasks()
 
 :: argueBegin
 @trigger    TryArgumentation
-@when       !ArgueIsComplete()
+@when       !ArgueIsComplete(), JobTaskCompleted(tellMom)
 @cutscene
 // argumentation here
 
@@ -28,7 +28,7 @@ $branch .endArgue
 
 :: endArgue
 {@player}   I've figured out information that will save Sam. I'm going.
-{@mom}      Absolutely not. I won't lose another child to this foolishness.
+{@drKelp}      Absolutely not. I won't lose another child to this foolishness.
 $call ArgueComplete()
 
 
@@ -36,4 +36,4 @@ $call ArgueComplete()
 @trigger    TryArgumentation
 @when       ArgueIsComplete()
 @cutscene
-{@mom}  I've said my final word on the subject, O. You aren't going down there. It is too dangerous.
+{@drKelp}  I've said my final word on the subject, O. You aren't going down there. It is too dangerous.

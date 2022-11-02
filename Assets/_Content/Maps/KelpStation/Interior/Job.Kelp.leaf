@@ -29,19 +29,29 @@ $else
 $endif
 
 #WrongStationJobHandler(a)
-{@$JobGiverId}  Looks like you've got a job at another station. 
+$if JobInProgress(final-final)
+    // Final job case: Player talks to mom, but job is set in deep deep sea
+    $branch .action.report
+$else
+    {@$JobGiverId}  Looks like you've got a job at another station. 
                 If you have questions, you should probably head back there. 
                 Though if you want to stay and help me with the Kelp Refuge, I wouldn't say no...
     $choice .action.openJobBoard; Sure. Let me see the {h}Job Board{/h}.
     $choice .action.cancel; Never mind, Mom. I'll check back later. 
+$endif
 
 #WrongStationJobHandler(b)
-{@$JobGiverId}  Looks like you took a job at another station. 
+$if JobInProgress(final-final)
+    // Final job case: Player talks to mom, but job is set in deep deep sea
+    $branch .action.report
+$else
+    {@$JobGiverId}  Looks like you took a job at another station. 
                 You'll have to talk to them for the details.
                 Could always take a job here, though...
                 Still want to see the {h}Job Board{/h}?
     $choice .action.openJobBoard; Sure. Thanks, Mom!
     $choice .action.cancel; Nah. I'll check back later. 
+$endif
 
 #JobHandler(a)
 {@$JobGiverId}  {random Olivia! Do you need help with something?|Welcome back, Sweetie! ¿Qué pasa?|Do you need something, Mija?} 
