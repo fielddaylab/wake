@@ -159,7 +159,7 @@ namespace AquaAudio
                 return;
             }
 
-            state.VolumeChangeRoutine.Replace(Tween.Float(state.LastKnownProperties.Volume, 0, state.m_VolumeSetter, duration).Ease(curve).OnComplete(state.m_StopDelegate));
+            state.VolumeChangeRoutine.Replace(Tween.Float(state.LocalProperties.Volume, 0, state.m_VolumeSetter, duration).Ease(curve).OnComplete(state.m_StopDelegate));
         }
 
         static public void Restore(AudioTrackState state) {

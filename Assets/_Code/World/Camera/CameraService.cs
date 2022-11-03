@@ -315,9 +315,6 @@ namespace Aqua.Cameras
             ApplyCameraState(current, m_PositionRoot, m_Camera, m_FOVPlane, m_FOVMode, CameraPoseProperties.Position, m_Axis);
         }
 
-        private static readonly Matrix4x4 View2NDC = Matrix4x4.Translate(-Vector3.one) * Matrix4x4.Scale(Vector3.one * 2);
-        private static readonly Vector3 CenterViewportPos = new Vector3(0.5f, 0.5f, 0);
-
         private void UpdateCachedPlanes()
         {
             Vector3 cameraForwardVector = m_PositionRoot.forward;

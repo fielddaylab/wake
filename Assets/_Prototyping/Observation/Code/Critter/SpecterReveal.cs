@@ -9,7 +9,9 @@ public class SpecterReveal : MonoBehaviour
     public bool scanned;
     public ParticleSystem preScannedParticles;
     public GameObject specterVisuals;
+
     [FilterBestiaryId(BestiaryDescCategory.Critter)] public StringHash32 specterId;
+    public SerializedHash32 journalId;
 
     public void SetScanned() {
         if (!scanned) {

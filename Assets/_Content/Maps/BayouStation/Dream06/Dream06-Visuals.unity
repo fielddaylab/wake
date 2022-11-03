@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -23699,6 +23699,7 @@ GameObject:
   - component: {fileID: 1415699006}
   - component: {fileID: 1415699005}
   - component: {fileID: 1415699004}
+  - component: {fileID: 1415699007}
   m_Layer: 0
   m_Name: PlayableDirector03_RigExplo
   m_TagString: Untagged
@@ -23814,6 +23815,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 23
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1415699007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1415699003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2880845e4d325d49a11039a13d4c919, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Director: {fileID: 1415699005}
+  CloseAfter: 0
 --- !u!1001 &1416150887
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -30555,7 +30570,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Force: {fileID: 1770976816}
-  Multiplier: 0.3
 --- !u!114 &1770976814
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30619,6 +30633,7 @@ MonoBehaviour:
   ForceDirection: {x: 0, y: 10}
   ForceMagnitude: 10
   ResistBoost: 6
+  IsScalable: 0
 --- !u!4 &1770976817
 Transform:
   m_ObjectHideFlags: 0
@@ -41813,6 +41828,7 @@ GameObject:
   - component: {fileID: 2042421360}
   - component: {fileID: 2042421359}
   - component: {fileID: 2042421362}
+  - component: {fileID: 2042421363}
   m_Layer: 0
   m_Name: PlayableDirector00_Initial
   m_TagString: Untagged
@@ -41923,6 +41939,19 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &2042421363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2042421358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f03a7f20d5e11744b3b1d2b250009f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Director: {fileID: 2042421360}
 --- !u!1 &2050100286
 GameObject:
   m_ObjectHideFlags: 0
@@ -69473,6 +69502,7 @@ MonoBehaviour:
   ForceDirection: {x: 0, y: 6}
   ForceMagnitude: 10
   ResistBoost: 6
+  IsScalable: 0
 --- !u!114 &6587174692498684935
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -69486,7 +69516,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Force: {fileID: 6587174692498684934}
-  Multiplier: 0.3
 --- !u!1 &6587174692498684939
 GameObject:
   m_ObjectHideFlags: 0

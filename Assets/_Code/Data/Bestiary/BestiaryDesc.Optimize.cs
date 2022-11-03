@@ -22,6 +22,10 @@ namespace Aqua
         {
             FindAllFacts();
 
+            if ((m_Flags & BestiaryDescFlags.IsSpecter) != 0) {
+                m_Flags |= BestiaryDescFlags.DoNotUseInExperimentation;
+            }
+
             foreach(var fact in m_Facts)
             {
                 Assert.NotNull(fact, "Null fact on BestiaryDesc '{0}'", name);

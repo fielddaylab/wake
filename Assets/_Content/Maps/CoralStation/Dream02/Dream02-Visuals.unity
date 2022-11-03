@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -36272,6 +36272,7 @@ GameObject:
   - component: {fileID: 1304820711}
   - component: {fileID: 1304820710}
   - component: {fileID: 1304820709}
+  - component: {fileID: 1304820712}
   m_Layer: 0
   m_Name: Terrain
   m_TagString: Untagged
@@ -36315,7 +36316,7 @@ Terrain:
   m_DrawTreesAndFoliage: 1
   m_ReflectionProbeUsage: 1
   m_MaterialTemplate: {fileID: 2100000, guid: 1bddc324bf482401397544e31eb9dfd7, type: 2}
-  m_BakeLightProbesForTrees: 1
+  m_BakeLightProbesForTrees: 0
   m_PreserveTreePrototypeLayers: 0
   m_DeringLightProbesForTrees: 1
   m_ScaleInLightmap: 0.20238578
@@ -36337,6 +36338,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1304820712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1304820708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b587641419b101842b62d5046fca3f18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1308055079
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -60697,7 +60710,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Force: {fileID: 8923659441860190649}
-  Multiplier: 0.3
 --- !u!114 &8923659441860190649
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60718,6 +60730,7 @@ MonoBehaviour:
   ForceDirection: {x: 1.5, y: 0}
   ForceMagnitude: 5
   ResistBoost: 7
+  IsScalable: 0
 --- !u!61 &8923659441860190650
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -20,6 +20,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using UnityEngine.Scripting;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -311,6 +312,11 @@ namespace EasyAssetStreaming {
 
         private void OnDestroy() {
             Unload();
+        }
+
+        [Preserve]
+        private void OnDidApplyAnimationProperties() {
+            Refresh();
         }
 
         #endregion // Unity Events

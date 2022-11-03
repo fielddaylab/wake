@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -7147,7 +7147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DestroyInactiveChildren: 0
+  DestroyInactiveChildren: 1
   Recursive: 0
   DestroyGameObject: 1
 --- !u!4 &703424148
@@ -7229,6 +7229,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 9362852c314d93843aab5e299fe900ce,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 9362852c314d93843aab5e299fe900ce,
         type: 3}
@@ -34422,6 +34427,12 @@ PlayableDirector:
     value: {fileID: 0}
   - key: {fileID: 8785308741494314970, guid: c140ca6793020fe4e89197d2ca59cb7e, type: 2}
     value: {fileID: 0}
+  - key: {fileID: -2405508918818744647, guid: c140ca6793020fe4e89197d2ca59cb7e, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: 1797309396021172032, guid: c140ca6793020fe4e89197d2ca59cb7e, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: 7147522435816502259, guid: c140ca6793020fe4e89197d2ca59cb7e, type: 2}
+    value: {fileID: 0}
   m_ExposedReferences:
     m_References: []
 --- !u!4 &1850495301
@@ -34482,6 +34493,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c61f236e91db849aca201dbb014c08d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playableDirector: {fileID: 1850495300}
 --- !u!61 &1871124608
 BoxCollider2D:
   m_ObjectHideFlags: 0

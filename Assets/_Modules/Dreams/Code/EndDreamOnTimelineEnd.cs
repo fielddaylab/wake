@@ -16,9 +16,7 @@ namespace Aqua.Dreams {
         private void Awake() {
             Director.stopped += (d) => Close();
             Director.played += (d) => {
-                if (CloseAfter > 0) {
-                    enabled = true;
-                }
+                enabled = true;
             };
             if (CloseAfter <= 0 || Director.state != PlayState.Playing) {
                 enabled = false;
@@ -26,7 +24,9 @@ namespace Aqua.Dreams {
         }
 
         private void LateUpdate() {
-            if (Director.time >= CloseAfter) {
+            if (Director.state != PlayState.Playing
+                || (CloseAfter > 0 && Director.time >= CloseAfter)
+                || (Director.extrapolationMode == DirectorWrapMode.Hold && Director.time >= Director.duration)) {
                 Close();
             }
         }

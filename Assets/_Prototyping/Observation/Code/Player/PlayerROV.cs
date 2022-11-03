@@ -131,6 +131,9 @@ namespace ProtoAqua.Observation
         [SerializeField] private float m_CameraForwardLookWeight = 0.5f;
         [SerializeField] private float m_CameraForwardLookNoMove = 1;
         [SerializeField] private float m_CameraZoomTool = 1.1f;
+
+        [Header("Additional Settings")]
+        [SerializeField] private bool m_DreamMode = false;
         
         #endregion // Inspector
 
@@ -181,6 +184,7 @@ namespace ProtoAqua.Observation
 
             UpdateUpgradeMask();
 
+            ApplyPassiveUpgrades();
             SwitchTool(lastToolId, true);
 
             SetToolState(ToolId.Flashlight, Script.ReadVariable(Var_LastFlashlightState).AsBool(), true);
@@ -327,7 +331,7 @@ namespace ProtoAqua.Observation
             {
                 float dist = m_LastInputData.MoveVector.magnitude;
                 float moveMultiplier = m_CurrentTool.MoveSpeedMultiplier();
-                if (m_Microscope.IsEnabled()) {
+                if (m_Microscope && m_Microscope.IsEnabled()) {
                     moveMultiplier *= m_Microscope.MoveSpeedMultiplier();
                 }
                 
@@ -405,6 +409,10 @@ namespace ProtoAqua.Observation
         private bool SetToolState(ToolId inTool, bool state, bool inbForce)
         {
             var tool = GetTool(inTool);
+            if (!(UnityEngine.Object)tool) {
+                return false;
+            }
+
             if (!inbForce && tool.IsEnabled() == state) {
                 return false;
             }
@@ -456,6 +464,7 @@ namespace ProtoAqua.Observation
         private void OnInventoryUpdated(StringHash32 inItemId)
         {
             UpdateUpgradeMask();
+            ApplyPassiveUpgrades();
 
             if (inItemId == ItemIds.Flashlight)
                 SetToolState(ToolId.Flashlight, true, false);
@@ -473,13 +482,23 @@ namespace ProtoAqua.Observation
 
         private void UpdateUpgradeMask() {
             PassiveUpgradeMask upgrades = 0;
-            if (Save.Inventory.HasUpgrade(ItemIds.Engine)) {
-                upgrades |= PassiveUpgradeMask.Engine;
-            }
-            if (Save.Inventory.HasUpgrade(ItemIds.PropGuard)) {
-                upgrades |= PassiveUpgradeMask.PropGuard;
+            if (!m_DreamMode) {
+                if (Save.Inventory.HasUpgrade(ItemIds.Engine)) {
+                    upgrades |= PassiveUpgradeMask.Engine;
+                }
+                if (Save.Inventory.HasUpgrade(ItemIds.PropGuard)) {
+                    upgrades |= PassiveUpgradeMask.PropGuard;
+                }
             }
             m_UpgradeMask = upgrades;
+        }
+
+        private void ApplyPassiveUpgrades() {
+            if ((m_UpgradeMask & PassiveUpgradeMask.Engine) != 0) {
+                m_Kinematics.ScaledForceMultiplier = 0.1f;
+            } else {
+                m_Kinematics.ScaledForceMultiplier = 1;
+            }
         }
 
         // TODO: Implement

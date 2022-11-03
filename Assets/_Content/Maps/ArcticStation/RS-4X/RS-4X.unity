@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -810,6 +810,7 @@ MonoBehaviour:
   ForceDirection: {x: -1, y: 0}
   ForceMagnitude: 12
   ResistBoost: 10
+  IsScalable: 0
 --- !u!114 &608998487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -823,7 +824,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Force: {fileID: 608998486}
-  Multiplier: 0.2
 --- !u!114 &608998488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1317,7 +1317,7 @@ PrefabInstance:
     - target: {fileID: 1439181329158694721, guid: 1bc3999d7c9928c40b3d6cf018bfa355,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -6.05
       objectReference: {fileID: 0}
     - target: {fileID: 1439181329158694721, guid: 1bc3999d7c9928c40b3d6cf018bfa355,
         type: 3}

@@ -282,12 +282,9 @@ namespace Aqua.Profile
 
             BFBase fact = Assets.Fact(inFactId);
             BFDiscoveredFlags flags = BFType.DefaultDiscoveredFlags(fact);
-            StringHash32 pair = BFType.PairId(fact);
             int metaIdx = m_FactMetas.BinarySearch(inFactId);
             if (metaIdx >= 0)
                 flags |= m_FactMetas[metaIdx].Flags;
-            if (!pair.IsEmpty && (m_ObservedFacts.Contains(pair) || Services.Assets.Bestiary.IsAutoFact(pair)))
-                flags |= BFDiscoveredFlags.HasPair;
             if (fact.Parent.HasFlags(BestiaryDescFlags.IsSpecter) && !Save.Science.FullyDecrypted())
                 flags |= BFDiscoveredFlags.IsEncrypted;
             return flags;
@@ -299,12 +296,9 @@ namespace Aqua.Profile
                 return BFDiscoveredFlags.None;
 
             BFDiscoveredFlags flags = BFType.DefaultDiscoveredFlags(inFact);
-            StringHash32 pair = BFType.PairId(inFact);
             int metaIdx = m_FactMetas.BinarySearch(inFact.Id);
             if (metaIdx >= 0)
                 flags |= m_FactMetas[metaIdx].Flags;
-            if (!pair.IsEmpty && (m_ObservedFacts.Contains(pair) || Services.Assets.Bestiary.IsAutoFact(pair)))
-                flags |= BFDiscoveredFlags.HasPair;
             return flags;
         }
 

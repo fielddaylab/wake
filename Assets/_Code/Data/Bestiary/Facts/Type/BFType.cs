@@ -132,13 +132,6 @@ namespace Aqua {
             return false;
         }
 
-        static public StringHash32 PairId(BFBase inFact) {
-            if (IsBehavior(inFact)) {
-                return ((BFBehavior)inFact).PairId;
-            }
-            return null;
-        }
-
         /// <summary>
         /// Returns if the given fact is owned by someone else.
         /// </summary>
@@ -223,11 +216,6 @@ namespace Aqua {
         [MethodImpl(256)]
         static public bool HasRate(BFDiscoveredFlags flags) {
             return (flags & BFDiscoveredFlags.Rate) == BFDiscoveredFlags.Rate;
-        }
-
-        [MethodImpl(256)]
-        static public bool HasPair(BFDiscoveredFlags flags) {
-            return (flags & BFDiscoveredFlags.HasPair) == BFDiscoveredFlags.HasPair;
         }
 
         [MethodImpl(256)]

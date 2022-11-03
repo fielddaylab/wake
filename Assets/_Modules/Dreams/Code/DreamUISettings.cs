@@ -19,6 +19,8 @@ namespace Aqua.Dreams {
                 if (!Save.Inventory.HasUpgrade(ItemIds.Flashlight)) {
                     Save.Inventory.AddUpgrade(ItemIds.Flashlight);
                 }
+            } else {
+                Script.WriteVariable(PlayerROV.Var_LastFlashlightState, false);
             }
 
             Script.WriteVariable("session:fromDream", inScene.Name);

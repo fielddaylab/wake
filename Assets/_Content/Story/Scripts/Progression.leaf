@@ -1,8 +1,7 @@
 #basePath   progression
 
 #const      JobsPerSpecter = 4
-#const      MaxSpecters = 7
-#const      SpectersBeforeLast = 6
+#const      MaxSpecters =  8
 
 :: unlockPrediction
 @function   UpgradeAdded
@@ -25,11 +24,19 @@ $if jobs:specterCounter < $JobsPerSpecter
     $return
 $endif //
 
-$if SpecterCount() == 6
-    // check if player has any numerical models
-    $if !HasAnyNumericalModel()
+$if SpecterCount() == 7
+    $if !HasUpgrade("Engine")
+        $return
+    $elseif !HasUpgrade("Icebreaker")
+        $return
+    $elseif !HasUpgrade("Hull")
+        $return
+    $elseif !HasUpgrade("Flashlight")
+        $return
+    $elseif !HasAnyNumericalModel()
         $return
     $endif
 $endif //
 
+$set jobs:specterCounter = 0
 $call QueueSpecter()
