@@ -73,6 +73,7 @@ $call Specter->Scan(3)
             It appears to have originated at the Challenger Deep probe. 
 {@player}   That's where Sam is! They must've gotten the probe back online!
             Wow... kinda spooky, isn't it?
+$call GiveJournalEntry("S01")
 
 :: specterTrigger.2
 @trigger    PlayerSpecter
@@ -87,7 +88,8 @@ $call Specter->Scan(3)
 {@guide}	Certainly, O. The specter originated at Challenger Deep.
 {@player}	That must be Sam again!
             But... why did they send us this... this ghost thing? 
-{@guide}	Data inconclusive, O. 
+{@guide}	Data inconclusive, O.
+$call GiveJournalEntry("S02")
 
 :: specterTrigger.3
 @trigger    PlayerSpecter
@@ -102,7 +104,8 @@ $call Specter->Scan(3)
 {@guide}	Affirmative, O. Point of origin: the Challenger Deep probe.
 {@player}	I don't understand. Why does Sam keep sending me these ghosts?
             Why haven't they contacted us? 
-{@guide}	I'm sorry, O. The data is inconclusive. 
+{@guide}	I'm sorry, O. The data is inconclusive.
+$call GiveJournalEntry("S03")
 
 :: specterTrigger.4
 @trigger    PlayerSpecter
@@ -115,6 +118,7 @@ $call Specter->Scan(4)
 {@player}	Oh no. Another ghost.
 {@player}   {nameof @guide}, can you try contacting Sam on the Nautilus?
 {@guide}	Apologies, O. I cannot get a message through.
+$call GiveJournalEntry("S04")
 
 :: specterTrigger.5
 @trigger    PlayerSpecter
@@ -129,6 +133,7 @@ $call Specter->Scan(4)
 {@guide}	Yes. At this point, the probability of Sam returning safely on their own are 21.4%.
 {@player}   I need to go home and tell Mom.
             I just hope she'll listen.
+$call GiveJournalEntry("S05")
 
 :: specterTrigger.6
 @trigger    PlayerSpecter
