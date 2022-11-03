@@ -82,8 +82,6 @@ namespace ProtoAqua.Observation
                     yield return 2;
                     yield return PlayScanAnimation();
                     yield return 1;
-                    yield return GetSpecterJournal();
-                    yield return 1;
                 } else {
                     while(thread.IsRunning()) {
                         yield return null;
@@ -134,22 +132,6 @@ namespace ProtoAqua.Observation
                 yield return Script.PopupNewSpecter(Assets.Bestiary(m_LoadedReveal.specterId));
             }
             yield return 0.5f;
-        }
-
-        [LeafMember("GiveJournal"), Preserve]
-        private IEnumerator GetSpecterJournal() {
-            StringHash32 journalId = null;
-            if (m_CurrentReveal) {
-                journalId = m_CurrentReveal.journalId;
-            }
-            if (!journalId.IsEmpty) {
-                Services.UI.Dialog.Hide();
-                bool newEntry = Save.Inventory.AddJournalEntry(journalId);
-                if (newEntry && !Services.UI.IsSkippingCutscene()) {
-                    yield return Services.UI.OpenJournalNewEntry();
-                }
-                yield return 0.5f;
-            }
         }
 
         #endregion // Cutscene

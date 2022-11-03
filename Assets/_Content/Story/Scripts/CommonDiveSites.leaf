@@ -73,7 +73,7 @@ $call Specter->Scan(3)
             It appears to have originated at the Challenger Deep probe. 
 {@player}   That's where Sam is! They must've gotten the probe back online!
             Wow... kinda spooky, isn't it?
-$call Specter->GiveJournal()
+$call GiveJournalEntry("S01")
 
 :: specterTrigger.2
 @trigger    PlayerSpecter
@@ -88,8 +88,8 @@ $call Specter->Scan(3)
 {@guide}	Certainly, O. The specter originated at Challenger Deep.
 {@player}	That must be Sam again!
             But... why did they send us this... this ghost thing? 
-{@guide}	Data inconclusive, O. 
-$call Specter->GiveJournal()
+{@guide}	Data inconclusive, O.
+$call GiveJournalEntry("S02")
 
 :: specterTrigger.3
 @trigger    PlayerSpecter
@@ -104,8 +104,8 @@ $call Specter->Scan(3)
 {@guide}	Affirmative, O. Point of origin: the Challenger Deep probe.
 {@player}	I don't understand. Why does Sam keep sending me these ghosts?
             Why haven't they contacted us? 
-{@guide}	I'm sorry, O. The data is inconclusive. 
-$call Specter->GiveJournal()
+{@guide}	I'm sorry, O. The data is inconclusive.
+$call GiveJournalEntry("S03")
 
 :: specterTrigger.4
 @trigger    PlayerSpecter
@@ -118,7 +118,7 @@ $call Specter->Scan(4)
 {@player}	Oh no. Another ghost.
 {@player}   {nameof @guide}, can you try contacting Sam on the Nautilus?
 {@guide}	Apologies, O. I cannot get a message through.
-$call Specter->GiveJournal()
+$call GiveJournalEntry("S04")
 
 :: specterTrigger.5
 @trigger    PlayerSpecter
@@ -133,7 +133,7 @@ $call Specter->Scan(4)
 {@guide}	Yes. At this point, the probability of Sam returning safely on their own are 21.4%.
 {@player}   I need to go home and tell Mom.
             I just hope she'll listen.
-$call Specter->GiveJournal()
+$call GiveJournalEntry("S05")
 
 :: specterTrigger.6
 @trigger    PlayerSpecter
@@ -149,7 +149,7 @@ $call Specter->Scan(4)
 {@player}	Yeah. Well, she also told me Mer wanted to spend her whole life studying the otters...
             Turns out that wasn't true either.
             Next time I'm home, I'll talk to Tío. Maybe he can help. 
-$call Specter->GiveJournal()
+$call GiveJournalEntry("S06")
 
 :: specterTrigger.7
 @trigger    PlayerSpecter
@@ -163,8 +163,9 @@ $call Specter->Scan(5)
             We need to unscramble all this data!
             Can you try contacting the Nautilus? 
 {@guide}	Processing... processing...
-            I'm sorry, O. The Nautilus is still unreachable.
-$call Specter->GiveJournal()
+            I'm sorry, O.| The Nautilus is still unreachable.
+{hide-dialog}{wait 1}
+$call GiveJournalEntry("S07")
 
 :: specterTrigger.8
 @trigger    PlayerSpecter
@@ -173,10 +174,7 @@ $call Specter->GiveJournal()
 // eighth specter
 {wait 1}
 $call Specter->Spawn()
-$call Specter->Scan(5)
-{@player}	Ugh. I don't know what to do, {nameof @guide}.
-            We need to unscramble all this data!
-            Can you try contacting the Nautilus? 
-{@guide}	Processing... processing...
-            I'm sorry, O. The Nautilus is still unreachable.
-$call Specter->GiveJournal()
+$call Specter->Scan(3)
+{@player}	An eighth specter?!
+$call GiveJournalEntry("S08")
+
