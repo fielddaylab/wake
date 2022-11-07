@@ -17,7 +17,7 @@ $call GiveUpgrade("AutoFeeder", Silent)
 
 :: SpecterCheck
 @function   JobCompleted
-@when       SpecterCount() > 1, SpecterCount() < $MaxSpecters
+@when       SpecterCount() > 0, SpecterCount() < $MaxSpecters
 $set    jobs:specterCounter + 1
 
 $if jobs:specterCounter < $JobsPerSpecter

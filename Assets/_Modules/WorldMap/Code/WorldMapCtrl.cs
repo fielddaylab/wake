@@ -206,6 +206,7 @@ namespace Aqua.WorldMap
 
         static private IEnumerator LeafLoadDream(string mapName, StringHash32 preloadName) {
             using(var fader = Services.UI.WorldFaders.AllocFader()) {
+                Services.Events.Dispatch(GameEvents.HotbarHide);
                 Services.Audio.FadeOut(1);
                 yield return fader.Object.Show(Color.black, 1);
                 yield return 1f;
@@ -213,6 +214,7 @@ namespace Aqua.WorldMap
                 if (!preloadName.IsEmpty) {
                     Script.OnSceneLoad(() => {
                         Services.Assets.CancelPreload(preloadName);
+                        Services.Events.Dispatch(GameEvents.HotbarShow);
                     });
                 }
                 Services.Audio.FadeIn(1);
