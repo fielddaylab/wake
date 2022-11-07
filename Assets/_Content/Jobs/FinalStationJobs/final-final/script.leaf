@@ -203,11 +203,9 @@ $endif
     {@drKelp}   I'll pass this information on to the rescue team.
 {@player}   What!? I figured out this information. I'm going.
 {@drKelp}   Absolutely not. I won't lose another child to this foolishness.
-$call CompleteJob()
-
 
 :: argueRevisited
 @trigger    TryArgumentation
-@when       ArgueIsComplete(finalArgue)
+@when       ArgueIsComplete(finalArgueEat)
 @cutscene
 {@drKelp}  I've said my final word on the subject, O. You aren't going down there. It is too dangerous.
