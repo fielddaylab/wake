@@ -14,6 +14,7 @@ namespace Aqua {
         #region Inspector
 
         [SerializeField] private Sprite[] m_LevelIcons;
+        [SerializeField] private SerializedHash32[] m_LevelBadgeLayouts;
 
         [Header("Specters")]
         [SerializeField] private float m_SpecterMinIntervalMinutes = 10;
@@ -29,6 +30,7 @@ namespace Aqua {
         #endregion // Inspector
 
         public Sprite LevelIcon(int level) { return m_LevelIcons[Mathf.Clamp(level - 1, 0, m_LevelIcons.Length - 1)]; }
+        public StringHash32 LevelBadgeLayout(int level) { return m_LevelBadgeLayouts[Mathf.Clamp(level - 1, 0, m_LevelBadgeLayouts.Length - 1)]; }
 
         public int MaxSpecters() { return m_SpecterResourcePaths.Length; }
         public float MinSpecterIntervalSeconds() { return m_SpecterMinIntervalMinutes * 60f; }

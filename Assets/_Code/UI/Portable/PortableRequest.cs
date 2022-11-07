@@ -112,6 +112,7 @@ namespace Aqua.Portable
         Tech,
         Options,
         Specter,
+        Level,
 
         [Hidden]
         NULL = 255

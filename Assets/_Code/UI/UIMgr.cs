@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Aqua.Compression;
 using Aqua.Scripting;
 using BeauData;
 using BeauPools;
@@ -29,6 +30,7 @@ namespace Aqua
         [SerializeField, Required] private DialogPanel m_DialogPanel = null;
         [SerializeField, Required] private PopupPanel m_PopupPanel = null;
         [SerializeField, Required] private DialogPanel[] m_DialogStyles = null;
+        [SerializeField, Required] private LayoutPrefabPackage m_GenericLayouts = null;
 
         [Header("Overlays")]
         [SerializeField, Required] private LetterboxDisplay m_Letterbox = null;
@@ -111,6 +113,10 @@ namespace Aqua
             }
 
             return panel;
+        }
+
+        public LayoutPrefabPackage CompressedLayouts {
+            get { return m_GenericLayouts; }
         }
 
         #endregion // Dialog
