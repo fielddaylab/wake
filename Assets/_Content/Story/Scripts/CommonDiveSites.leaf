@@ -178,3 +178,11 @@ $call Specter->Scan(3)
 {@player}	An eighth specter?!
 $call GiveJournalEntry("S08")
 
+// Temp Hack: should unlock all facts for all specters you have automatically
+$call GiveFact(ColossalSquid.Eats.ViperFish, Silent)
+$call GiveFact(ColossalSquid.Eats.AnglerFish, Silent)
+$call GiveFact(ColossalSquid.Eats.GoassamerWorm, Silent)
+
+// TODO: rest of them
+
+

@@ -84,6 +84,7 @@ namespace Aqua.Portable {
                 if (m_Request.Type == PortableRequestType.SelectFact || m_Request.Type == PortableRequestType.SelectFactSet) {
                     GetAppButton(PortableAppId.Organisms).App.HandleRequest(m_Request);
                     GetAppButton(PortableAppId.Environments).App.HandleRequest(m_Request);
+                    GetAppButton(PortableAppId.Specter).App.HandleRequest(m_Request);
                 }
             } else {
                 requestTab = GetAppButton(PortableAppId.Job);

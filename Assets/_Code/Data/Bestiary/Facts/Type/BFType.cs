@@ -264,8 +264,9 @@ namespace Aqua {
             if (behavior != null && behavior.AutoGive)
                 return BFMode.Always;
             BFMode mode = s_ModeDelegates[(int)inFact.Type]?.Invoke(inFact) ?? BFMode.Player;
-            if (mode == BFMode.Player && inFact.Parent.HasFlags(BestiaryDescFlags.IsSpecter))
-                mode = BFMode.Always;
+            if (mode == BFMode.Player && inFact.Parent.HasFlags(BestiaryDescFlags.IsSpecter)) {
+                // mode = BFMode.Always;
+            }
             return mode;
         }
 
