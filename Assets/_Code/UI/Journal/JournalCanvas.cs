@@ -88,6 +88,7 @@ namespace Aqua {
         private Routine m_NewEntryRoutine;
         [NonSerialized] private bool m_InScene;
         [NonSerialized] private bool m_DeleteQueued;
+        [NonSerialized] private bool m_HiddenTriggerQueued;
 
         private JournalCanvas() {
             m_Decompressor.NewRoot = (string name, CompressedPrefabFlags flags, CompressedComponentTypes componentTypes, GameObject parent) => {
@@ -330,6 +331,8 @@ namespace Aqua {
             if (!m_InScene && !inbInstant) {
                 m_DeleteQueued = true;
             }
+
+            m_HiddenTriggerQueued = !inbInstant;
         }
 
         protected override void OnHideComplete(bool inbInstant) {
@@ -344,7 +347,7 @@ namespace Aqua {
             m_CurrentSection = -1;
             m_NewEntryRoutine.Stop();
 
-            if (Services.Script != null) {
+            if (Services.Script != null && m_HiddenTriggerQueued) {
                 Services.Script.TriggerResponse(GameTriggers.JournalHidden);
             }
 

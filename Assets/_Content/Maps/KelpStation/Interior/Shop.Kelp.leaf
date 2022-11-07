@@ -72,15 +72,28 @@ $elseif JobInProgress(final-final), JobTaskTop(getUncleHelp)
     // final job, ask uncle for help
     {@$MerchantId}  Welcome back Ollie!
     {@player}       Can you restore power to the ship and save {nameof @guide}?
+    {@$MerchantId}  Oh, uh. Well. I may be able to do something about that.
+                    Give me a minute...
+                    {hide-dialog} {fade-out black, 1, wait} {wait 2}
+                    {wait 0.1} {fade-in 1, wait} {wait 1}
+                    Power should be restored now. Why don't you head to your ship to see if everything is fixed?
     $set jobs:final-uncleHelped = true
     $call CheckJobTasks()
 $elseif JobInProgress(final-final), JobTaskTop(returnToShop)
     // final job, after ship power restored
     {@$MerchantId}  So? How'd it go?
-    {@player}       The ship power was restored. But {nameof @guide} is still toast.
+    {@player}       The lights are back on. But {nameof @guide} is still not responding to anything I do! It's horrible.
+    {@$MerchantId}  I'm sorry. There's nothing more I can do.
+    {@player}       Why is Mom like this? If she hadn't tried to stop me from rescuing {nameof @sam}, we'd still have {nameof @guide}.
     {@$MerchantId}  Here's what happened to your sister:
-                    [Cutscene here]
-                    Now it's time for you to go down there.
+                    {hide-dialog} {fade-out black, 1, wait} {wait 2}
+                    {wait 0.1} {fade-in 1, wait} {wait 1}
+    {@$MerchantId}  I've been able to move on after {nameof @mer}'s death, but it has been harder for your mother.
+                    She couldn't bear for it to happen again. I don't know that I could take another loss like that either.
+                    But {nameof @sam}'s life may be on the line here, and I believe you are the best equipped for the task.
+                    Try not to hold it against your mother.
+                    Now. It's time for you to go down there and rescue {nameof @sam}. Are you ready?
+    {@player}       Ready.
     $set jobs:final-returnedToShop = true
     $call CheckJobTasks()
 $else
