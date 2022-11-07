@@ -51,9 +51,10 @@ namespace ProtoAqua.Observation
         }
 
         [Flags]
-        private enum PassiveUpgradeMask {
+        public enum PassiveUpgrades {
             Engine = 0x01,
-            PropGuard = 0x02
+            PropGuard = 0x02,
+            Hull = 0x04
         }
 
         static public StringHash32 ToolIdToItemId(ToolId id) {
@@ -147,7 +148,7 @@ namespace ProtoAqua.Observation
         [NonSerialized] private uint m_CameraDriftHint;
         [NonSerialized] private ITool m_CurrentTool;
         [NonSerialized] private ToolId m_CurrentToolId = ToolId.NONE;
-        [NonSerialized] private PassiveUpgradeMask m_UpgradeMask = 0;
+        [NonSerialized] private PassiveUpgrades m_UpgradeMask = 0;
         [NonSerialized] private Routine m_StunRoutine;
         [NonSerialized] private int m_EngineRegionCount;
         [NonSerialized] private int m_SlowRegionCount;
@@ -210,7 +211,7 @@ namespace ProtoAqua.Observation
                 status |= PlayerBodyStatus.Stunned;
             }
             if (m_EngineRegionCount > 0) {
-                if ((m_UpgradeMask & PassiveUpgradeMask.Engine) != 0) {
+                if ((m_UpgradeMask & PassiveUpgrades.Engine) != 0) {
                     status |= PlayerBodyStatus.PowerEngineEngaged;
                 } else {
                     status |= PlayerBodyStatus.DraggedByCurrent;
@@ -481,24 +482,29 @@ namespace ProtoAqua.Observation
         }
 
         private void UpdateUpgradeMask() {
-            PassiveUpgradeMask upgrades = 0;
+            PassiveUpgrades upgrades = 0;
             if (!m_DreamMode) {
                 if (Save.Inventory.HasUpgrade(ItemIds.Engine)) {
-                    upgrades |= PassiveUpgradeMask.Engine;
+                    upgrades |= PassiveUpgrades.Engine;
                 }
                 if (Save.Inventory.HasUpgrade(ItemIds.PropGuard)) {
-                    upgrades |= PassiveUpgradeMask.PropGuard;
+                    upgrades |= PassiveUpgrades.PropGuard;
+                }
+                if (Save.Inventory.HasUpgrade(ItemIds.Hull)) {
+                    upgrades |= PassiveUpgrades.Hull;
                 }
             }
             m_UpgradeMask = upgrades;
         }
 
         private void ApplyPassiveUpgrades() {
-            if ((m_UpgradeMask & PassiveUpgradeMask.Engine) != 0) {
+            if ((m_UpgradeMask & PassiveUpgrades.Engine) != 0) {
                 m_Kinematics.ScaledForceMultiplier = 0.1f;
             } else {
                 m_Kinematics.ScaledForceMultiplier = 1;
             }
+
+            m_Animator.ApplyUpgradeMask(m_UpgradeMask);
         }
 
         // TODO: Implement

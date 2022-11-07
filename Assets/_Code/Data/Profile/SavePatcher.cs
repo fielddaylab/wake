@@ -5,7 +5,11 @@ using UnityEngine;
 
 namespace Aqua.Profile {
     static public class SavePatcher {
-        public const uint CurrentVersion = 3;
+        // 1: fix all unlocked by default sites
+        // 2: ???
+        // 3: fix for softlock in first job
+        // 4: exp->levels, adjusting starting exp
+        public const uint CurrentVersion = 4;
 
         static private Dictionary<StringHash32, StringHash32> s_RenameSet = new Dictionary<StringHash32, StringHash32>(32);
 
@@ -19,15 +23,17 @@ namespace Aqua.Profile {
         }
 
         static private void Patch(SaveData ioData) {
-            if (ioData.Version == 0) {
+            if (ioData.Version < 1) {
                 UpgradeFromVersion0(ioData);
+            }
+            if (ioData.Version < 2) {
                 UpgradeFromVersion1(ioData);
+            }
+            if (ioData.Version < 3) {
                 UpgradeFromVersion2(ioData);
-            } else if (ioData.Version == 1) {
-                UpgradeFromVersion1(ioData);
-                UpgradeFromVersion2(ioData);
-            } else if (ioData.Version == 2) {
-                UpgradeFromVersion2(ioData);
+            }
+            if (ioData.Version < 4) {
+                UpgradeFromVersion3(ioData);
             }
         }
 
@@ -50,6 +56,10 @@ namespace Aqua.Profile {
                 ioData.Map.UnlockRoom("Experimentation");
                 ioData.Inventory.AddUpgrade("ObservationTank");
             }
+        }
+        static private void UpgradeFromVersion3(SaveData ioData) {
+            ioData.Inventory.SetItemWithoutNotify(ItemIds.Exp, ioData.Inventory.Exp() - 10);
+            ioData.Science.SetCurrentLevelWithoutNotify(ScienceUtils.LevelForExp(ioData.Inventory.Exp()));
         }
 
         #region Patching Ids

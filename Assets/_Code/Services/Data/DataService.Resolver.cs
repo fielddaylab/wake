@@ -510,7 +510,7 @@ namespace Aqua
             static private bool CanAffordItem(StringHash32 inItemId)
             {
                 var itemDesc = Assets.Item(inItemId);
-                return Save.Cash >= itemDesc.CashCost() && Save.Exp >= itemDesc.RequiredExp();
+                return Save.Cash >= itemDesc.CashCost() && Save.ExpLevel >= itemDesc.RequiredLevel();
             }
 
             [LeafMember("PurchaseItem"), UnityEngine.Scripting.Preserve]

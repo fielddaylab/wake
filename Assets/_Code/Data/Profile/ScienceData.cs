@@ -14,7 +14,7 @@ namespace Aqua.Profile
         private List<SiteSurveyData> m_SiteData = new List<SiteSurveyData>();
         private List<ArgueData> m_ArgueData = new List<ArgueData>();
         private HashSet<StringHash32> m_CompletedArgues = new HashSet<StringHash32>();
-        private uint m_CurrentLevel = 0;
+        private uint m_CurrentLevel = 1;
 
         // specter/decryption stuff
         private uint m_SpecterCount = 0;
@@ -123,6 +123,19 @@ namespace Aqua.Profile
                     LevelAdjustment = (int) inNextLevel - (int) m_CurrentLevel
                 });
 
+                m_CurrentLevel = inNextLevel;
+                m_HasChanges = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool SetCurrentLevelWithoutNotify(uint inNextLevel)
+        {
+            if (m_CurrentLevel != inNextLevel)
+            {
+                DebugService.Log(LogMask.DataService, "[ScienceData] Player level changed from {0} to {1}", m_CurrentLevel, inNextLevel);
                 m_CurrentLevel = inNextLevel;
                 m_HasChanges = true;
                 return true;

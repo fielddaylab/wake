@@ -13,20 +13,14 @@ namespace Aqua {
     public class ScienceTweaks : TweakAsset, IBaked {
         #region Inspector
 
-        [SerializeField] private Sprite m_LevelIcon = null;
-        [SerializeField, StreamingImagePath] private string m_HiResLevelIconPath = null;
-        [SerializeField, StreamingImagePath] private string m_HiResLevelUpPath = null;
+        [SerializeField] private Sprite[] m_LevelIcons;
 
         [Header("Specters")]
         [SerializeField] private float m_SpecterMinIntervalMinutes = 10;
         [SerializeField] private string[] m_SpecterResourcePaths = null;
 
         [Header("Experience")]
-        [SerializeField] private uint m_BaseExperiencePerLevel = 20;
-        [SerializeField] private uint m_AdditionalExperiencePerLevel = 5;
-
-        [Header("Rewards")]
-        [SerializeField] private int m_CashPerLevel = 200;
+        [SerializeField] private uint[] m_BaseExperiencePerLevel = new uint[] { 30, 50 };
 
         [Header("Bestiary Ordering")]
         [SerializeField] private TaggedBestiaryDesc[] m_CanonicalOrganismOrdering = null;
@@ -34,10 +28,7 @@ namespace Aqua {
 
         #endregion // Inspector
 
-        public Sprite LevelIcon() { return m_LevelIcon; }
-        public StreamedImageSet LevelIconSet() { return new StreamedImageSet(m_LevelIcon, m_HiResLevelIconPath); }
-        public StreamedImageSet LevelUpSet() { return new StreamedImageSet(m_LevelIcon, m_HiResLevelUpPath); }
-        public int CashPerLevel() { return m_CashPerLevel; }
+        public Sprite LevelIcon(int level) { return m_LevelIcons[Mathf.Clamp(level - 1, 0, m_LevelIcons.Length - 1)]; }
 
         public int MaxSpecters() { return m_SpecterResourcePaths.Length; }
         public float MinSpecterIntervalSeconds() { return m_SpecterMinIntervalMinutes * 60f; }
@@ -49,7 +40,11 @@ namespace Aqua {
         protected override void Apply() {
             base.Apply();
 
-            ScienceUtils.UpdateLevelingCalculation(m_BaseExperiencePerLevel, m_AdditionalExperiencePerLevel);
+            uint[] cumulativeExp = (uint[]) m_BaseExperiencePerLevel.Clone();
+            for(int i = 1; i < cumulativeExp.Length; i++) {
+                cumulativeExp[i] += cumulativeExp[i - 1];
+            }
+            ScienceUtils.UpdateLevelingCalculation(cumulativeExp);
             ScienceUtils.UpdateMaxSpecters(m_SpecterResourcePaths.Length);
         }
 
@@ -137,17 +132,15 @@ namespace Aqua {
     }
 
     static public class ScienceUtils {
-        static private uint s_BaseExperiencePerLevel;
-        static private uint s_AdditionalExperiencePerLevel;
+        static private uint[] s_CumulativeExpPerLevel;
         static private int s_MaxSpecters;
 
         static internal void UpdateMaxSpecters(int maxSpecters) {
             s_MaxSpecters = maxSpecters;
         }
 
-        static internal void UpdateLevelingCalculation(uint baseExp, uint additionalExpPerLevel) {
-            s_BaseExperiencePerLevel = baseExp;
-            s_AdditionalExperiencePerLevel = additionalExpPerLevel;
+        static internal void UpdateLevelingCalculation(uint[] cumulativeExpPerLevel) {
+            s_CumulativeExpPerLevel = cumulativeExpPerLevel;
         }
 
         static public int MaxSpecters() {
@@ -163,7 +156,17 @@ namespace Aqua {
         }
 
         static public uint ExpForLevel(uint level) {
-            return level == 0 ? 0 : s_BaseExperiencePerLevel + s_AdditionalExperiencePerLevel * (level - 1);
+            if (level < 2) {
+                return 0;
+            } else {
+                return s_CumulativeExpPerLevel[Math.Min(level - 2, s_CumulativeExpPerLevel.Length - 1)];
+            }
+        }
+
+        static public uint LevelForExp(uint exp) {
+            int idx = 0;
+            while(idx < s_CumulativeExpPerLevel.Length && exp > s_CumulativeExpPerLevel[idx++]);
+            return (uint) (1 + idx);
         }
 
         static public uint ExpForNextLevel(SaveData data) {
@@ -182,15 +185,12 @@ namespace Aqua {
 
             PlayerInv totalExp = data.Inventory.GetItem(ItemIds.Exp);
             uint checkedLevel = levelUp.OriginalLevel + 1;
-            uint expToLevel;
-            while (totalExp.Count >= (expToLevel = ExpForLevel(checkedLevel))) {
-                totalExp.Count -= expToLevel;
+            while (totalExp.Count >= ExpForLevel(checkedLevel) && checkedLevel <= 4) {
                 checkedLevel++;
                 levelUp.LevelAdjustment++;
             }
 
             if (levelUp.LevelAdjustment > 0) {
-                data.Inventory.SetItemWithoutNotify(ItemIds.Exp, totalExp.Count);
                 data.Science.SetCurrentLevel(checkedLevel - 1);
                 return true;
             }

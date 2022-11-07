@@ -67,7 +67,7 @@ namespace Aqua.Modeling {
                 PopupContent content = default;
                 content.Text = Loc.Find(t);
                 content.TextColorOverride = c;
-                m_InlinePopup.Present(content, 0);
+                m_InlinePopup.Present(ref content, 0);
             };
             m_State.Display.FactsPopup = (f) => {
                 Array.Sort(f, BFType.SortByVisualOrder);
@@ -83,7 +83,7 @@ namespace Aqua.Modeling {
                 PopupContent content = default;
                 content.Facts = facts;
 
-                m_InlinePopup.Present(content, 0);
+                m_InlinePopup.Present(ref content, 0);
             };
             m_State.Display.ClearPopup = () => m_InlinePopup.Hide();
             m_State.Display.FilterNodes = (any, all, none, force) => {

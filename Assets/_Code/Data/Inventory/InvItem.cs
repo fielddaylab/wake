@@ -24,7 +24,7 @@ namespace Aqua {
         [Header("Value")]
         [SerializeField] private uint m_Default = 0;
         [SerializeField, FormerlySerializedAs("m_BuyCoinsValue")] private uint m_CashCost = 0;
-        [SerializeField] private uint m_RequiredExp = 0;
+        [SerializeField] private uint m_RequiredLevel = 1;
         [SerializeField] private InvItem m_Prerequisite = null;
 
         [Header("Assets")]
@@ -58,7 +58,7 @@ namespace Aqua {
         public uint DefaultAmount() { return m_Default; }
 
         [LeafLookup("Cost")] public int CashCost() { return (int) m_CashCost; }
-        [LeafLookup("Exp")] public int RequiredExp() { return (int) m_RequiredExp; }
+        [LeafLookup("Level")] public int RequiredLevel() { return (int) m_RequiredLevel; }
 
         #region Sorting
 

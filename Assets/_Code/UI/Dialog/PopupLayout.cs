@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Aqua.Compression;
 using BeauPools;
 using BeauRoutine;
 using BeauRoutine.Extensions;
@@ -40,6 +41,8 @@ namespace Aqua {
         [SerializeField] private GridLayoutGroup m_GridFactLayout = null;
         [SerializeField] private int m_CustomModuleSiblingIndex = 0;
         [SerializeField] private RectTransform m_ExtraBackground = null;
+        [SerializeField] private LayoutPrefabPackage m_CompressedLayouts = null;
+        [SerializeField] private RectTransform m_CompressedLayoutRoot = null;
         [SerializeField] private LayoutElement m_DividerGroup = null;
         [SerializeField] private ButtonConfig[] m_Buttons = null;
         [SerializeField] private Button m_CloseButton = null;
@@ -118,14 +121,14 @@ namespace Aqua {
             };
         }
 
-        public void Configure(PopupContent inContent, PopupFlags inFlags) {
-            ConfigureText(inContent, inFlags);
-            ConfigureOptions(inContent, inFlags);
-            ConfigureFacts(inContent.Facts);
+        public void Configure(ref PopupContent inContent, PopupFlags inFlags) {
+            ConfigureText(ref inContent, inFlags);
+            ConfigureOptions(ref inContent, inFlags);
+            ConfigureFacts(ref inContent.Facts);
             SetCustomModule(inContent.CustomModule);
         }
 
-        public void ConfigureText(PopupContent inContent, PopupFlags inFlags) {
+        public void ConfigureText(ref PopupContent inContent, PopupFlags inFlags) {
             if (m_HeaderText) {
                 if (!string.IsNullOrEmpty(inContent.Header)) {
                     m_HeaderText.SetTextFromString(inContent.Header);
@@ -202,7 +205,7 @@ namespace Aqua {
             }
         }
 
-        private void ConfigureOptions(PopupContent inContent, PopupFlags ioPopupFlags) {
+        private void ConfigureOptions(ref PopupContent inContent, PopupFlags ioPopupFlags) {
             m_OptionCount = inContent.Options.Length;
             if (m_OptionCount == 0) {
                 ioPopupFlags |= PopupFlags.ShowCloseButton;
@@ -233,7 +236,7 @@ namespace Aqua {
             }
         }
 
-        private void ConfigureFacts(PopupFacts inFacts) {
+        private void ConfigureFacts(ref PopupFacts inFacts) {
             if (!m_VerticalFactLayout || !m_GridFactLayout || !m_FactPools) {
                 return;
             }
@@ -390,7 +393,7 @@ namespace Aqua {
             return content;
         }
 
-        static public void AttemptTTS(PopupContent inContent) {
+        static public void AttemptTTS(ref PopupContent inContent) {
             if (!Accessibility.TTSFull) {
                 return;
             }

@@ -170,8 +170,10 @@ namespace Aqua.Shop
         }
 
         static public void SetAsHidden(ShopPreviewShipItem item) {
+            bool showMesh = item.HiddenMaterial != null;
             foreach(var mesh in item.Meshes) {
-                mesh.enabled = false;
+                mesh.enabled = showMesh;
+                mesh.sharedMaterial = item.HiddenMaterial;
             }
             item.IsPurchased = false;
         }

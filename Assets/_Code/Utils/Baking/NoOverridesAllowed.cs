@@ -36,7 +36,7 @@ namespace Aqua
             return false;
         }
 
-        [MenuItem("Aqualab/Revert Critical Prefab Overrides")]
+        [MenuItem("Aqualab/Prefab Overrides/Revert Critical Prefab Overrides")]
         static internal void RevertAll()
         {
             foreach(var obj in FindObjectsOfType<NoOverridesAllowed>())
@@ -48,7 +48,7 @@ namespace Aqua
             }
         }
 
-        [MenuItem("Aqualab/Revert Critical Prefab Overrides In All Scenes")]
+        [MenuItem("Aqualab/Prefab Overrides/Revert Critical Prefab Overrides In All Scenes")]
         static internal void RevertInAllScenes()
         {
             string currentPath = EditorSceneManager.GetActiveScene().path;

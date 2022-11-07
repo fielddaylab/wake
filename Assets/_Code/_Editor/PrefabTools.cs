@@ -222,5 +222,54 @@ namespace Aqua.Editor
                 EditorUtility.SetDirty(c);
             }
         }
+
+        [MenuItem("Aqualab/Prefabs/Revert All In Selection")]
+        static public void RevertAllInSelection() {
+            RevertAll(Selection.gameObjects, false);
+        }
+
+        [MenuItem("Aqualab/Prefabs/Revert All In Selection (Recursive)")]
+        static public void RevertAllInSelectionRecursive() {
+            RevertAll(Selection.gameObjects, true);
+        }
+
+        static public void RevertAll(GameObject[] gos, bool recursive) {
+            HashSet<UnityEngine.Object> toRevert = new HashSet<UnityEngine.Object>();
+            foreach(var go in gos) {
+                GatherRevertObjects(go, toRevert, recursive);
+            }
+            int count = toRevert.Count;
+            int idx = 0;
+            try {
+                foreach(var revert in toRevert) {
+                    try {
+                        idx++;
+                        if (EditorUtility.DisplayCancelableProgressBar("Reverting Objects", revert.name, (float) idx / count)) {
+                            return;
+                        }
+                        PrefabUtility.RevertObjectOverride(revert, InteractionMode.UserAction);
+                    } catch { }
+                }
+            } finally {
+                EditorUtility.ClearProgressBar();
+            }
+        }
+
+        static private List<Component> s_ScratchComponentList = new List<Component>(8);
+
+        static public void GatherRevertObjects(GameObject root, HashSet<UnityEngine.Object> objects, bool recursive) {
+            if (objects.Add(root)) {
+                root.GetComponents<Component>(s_ScratchComponentList);
+                foreach(var obj in s_ScratchComponentList) {
+                    objects.Add(obj);
+                }
+
+                if (recursive) {
+                    foreach(Transform t in root.transform) {
+                        GatherRevertObjects(t.gameObject, objects, recursive);
+                    }
+                }
+            }
+        }
     }
 }

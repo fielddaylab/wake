@@ -178,29 +178,31 @@ namespace Aqua.Compression {
                     }
                     EditorGUILayout.EndVertical();
                 }
-                EditorGUILayout.LabelField("Strings", prefabPackage.m_Bank.StringBank.Length.ToString());
-                if (prefabPackage.m_Bank.StringBank.Length > 0) {
-                    EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-                    {
-                        using(new EditorGUI.DisabledScope(true)) {
-                            foreach(var entry in prefabPackage.m_Bank.StringBank) {
-                                EditorGUILayout.TextField(entry);
+                if (prefabPackage.m_Bank != null) {
+                    EditorGUILayout.LabelField("Strings", prefabPackage.m_Bank.StringBank.Length.ToString());
+                    if (prefabPackage.m_Bank.StringBank.Length > 0) {
+                        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                        {
+                            using(new EditorGUI.DisabledScope(true)) {
+                                foreach(var entry in prefabPackage.m_Bank.StringBank) {
+                                    EditorGUILayout.TextField(entry);
+                                }
                             }
                         }
+                        EditorGUILayout.EndVertical();
                     }
-                    EditorGUILayout.EndVertical();
-                }
-                EditorGUILayout.LabelField("References", prefabPackage.m_Bank.AssetBank.Length.ToString());
-                if (prefabPackage.m_Bank.AssetBank.Length > 0) {
-                    EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-                    {
-                        using(new EditorGUI.DisabledScope(true)) {
-                            foreach(var entry in prefabPackage.m_Bank.AssetBank) {
-                                EditorGUILayout.ObjectField(entry, typeof(UnityEngine.Object), false);
+                    EditorGUILayout.LabelField("References", prefabPackage.m_Bank.AssetBank.Length.ToString());
+                    if (prefabPackage.m_Bank.AssetBank.Length > 0) {
+                        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                        {
+                            using(new EditorGUI.DisabledScope(true)) {
+                                foreach(var entry in prefabPackage.m_Bank.AssetBank) {
+                                    EditorGUILayout.ObjectField(entry, typeof(UnityEngine.Object), false);
+                                }
                             }
                         }
+                        EditorGUILayout.EndVertical();
                     }
-                    EditorGUILayout.EndVertical();
                 }
 
                 serializedObject.ApplyModifiedProperties();

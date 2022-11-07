@@ -212,10 +212,9 @@ namespace Aqua
 
             if (inItemId == ItemIds.Exp)
             {
-                // ScienceUtils.AttemptLevelUp(Save.Current, out var _);
+                ScienceUtils.AttemptLevelUp(Save.Current, out var _);
                 Services.Script.QueueTriggerResponse(GameTriggers.PlayerExpUp, -5);
             }
-
         }
 
         private void OnScienceLevelUpdated(ScienceLevelUp inLevelUp)
@@ -224,15 +223,13 @@ namespace Aqua
                 return;
 
             var scienceTweaks = Services.Tweaks.Get<ScienceTweaks>();
-            int cashAdjust = scienceTweaks.CashPerLevel() * inLevelUp.LevelAdjustment;
             uint newLevel = inLevelUp.OriginalLevel + (uint) inLevelUp.LevelAdjustment;
 
             Services.Script.QueueInvoke(() => {
-                Save.Inventory.AdjustItem(ItemIds.Cash, cashAdjust);
                 Services.Audio.PostEvent("ShopPurchase");
                 Services.UI.Popup.DisplayWithClose(
                     Loc.Format("ui.popup.levelUp.header", newLevel),
-                    Loc.Format("ui.popup.levelUp.description", inLevelUp.OriginalLevel + 1, newLevel + 1, cashAdjust),
+                    Loc.Format("ui.popup.levelUp.description", newLevel),
                 null, PopupFlags.ShowCloseButton
                 ).OnComplete((_) => {
                     Services.Script.TriggerResponse(GameTriggers.PlayerLevelUp);

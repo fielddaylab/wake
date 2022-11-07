@@ -110,14 +110,14 @@ namespace Aqua {
 
         private IEnumerator PresentMessageRoutine(Future<StringHash32> ioFuture, PopupContent inContent, PopupFlags inPopupFlags) {
             using (ioFuture) {
-                m_Layout.Configure(inContent, inPopupFlags);
+                m_Layout.Configure(ref inContent, inPopupFlags);
                 
                 Services.Events.Queue(GameEvents.PopupOpened);
 
                 ShowOrBounce();
 
                 SetInputState(true);
-                PopupLayout.AttemptTTS(inContent);
+                PopupLayout.AttemptTTS(ref inContent);
 
                 yield return m_Layout.WaitForInput(inContent, ioFuture);
 
