@@ -59,7 +59,7 @@ namespace Aqua.Profile {
         }
         static private void UpgradeFromVersion3(SaveData ioData) {
             ioData.Inventory.SetItemWithoutNotify(ItemIds.Exp, ioData.Inventory.Exp() - 10);
-            ioData.Science.SetCurrentLevelWithoutNotify(ScienceUtils.LevelForExp(ioData.Inventory.Exp()));
+            ioData.Science.SetCurrentLevelWithoutNotify(ScienceUtils.LevelForTotalExp(ioData.Inventory.Exp()));
         }
 
         #region Patching Ids

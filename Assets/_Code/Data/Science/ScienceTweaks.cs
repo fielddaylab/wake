@@ -14,6 +14,8 @@ namespace Aqua {
         #region Inspector
 
         [SerializeField] private Sprite[] m_LevelIcons;
+        [SerializeField] private SerializedHash32[] m_LevelBadgeLayouts;
+        [SerializeField] private Color32[] m_LevelColors;
 
         [Header("Specters")]
         [SerializeField] private float m_SpecterMinIntervalMinutes = 10;
@@ -29,6 +31,9 @@ namespace Aqua {
         #endregion // Inspector
 
         public Sprite LevelIcon(int level) { return m_LevelIcons[Mathf.Clamp(level - 1, 0, m_LevelIcons.Length - 1)]; }
+        public StringHash32 LevelBadgeLayout(int level) { return m_LevelBadgeLayouts[Mathf.Clamp(level - 1, 0, m_LevelBadgeLayouts.Length - 1)]; }
+        public Color LevelColor(int level) { return m_LevelColors[Mathf.Clamp(level - 1, 0, m_LevelColors.Length - 1)]; }
+        public int MaxLevels() { return m_BaseExperiencePerLevel.Length + 1; }
 
         public int MaxSpecters() { return m_SpecterResourcePaths.Length; }
         public float MinSpecterIntervalSeconds() { return m_SpecterMinIntervalMinutes * 60f; }
@@ -44,7 +49,7 @@ namespace Aqua {
             for(int i = 1; i < cumulativeExp.Length; i++) {
                 cumulativeExp[i] += cumulativeExp[i - 1];
             }
-            ScienceUtils.UpdateLevelingCalculation(cumulativeExp);
+            ScienceUtils.UpdateLevelingCalculation(m_BaseExperiencePerLevel, cumulativeExp);
             ScienceUtils.UpdateMaxSpecters(m_SpecterResourcePaths.Length);
         }
 
@@ -133,14 +138,18 @@ namespace Aqua {
 
     static public class ScienceUtils {
         static private uint[] s_CumulativeExpPerLevel;
+        static private uint[] s_BaseExpPerLevel;
         static private int s_MaxSpecters;
+        static private int s_MaxLevel;
 
         static internal void UpdateMaxSpecters(int maxSpecters) {
             s_MaxSpecters = maxSpecters;
         }
 
-        static internal void UpdateLevelingCalculation(uint[] cumulativeExpPerLevel) {
+        static internal void UpdateLevelingCalculation(uint[] baseExpPerLevel, uint[] cumulativeExpPerLevel) {
+            s_BaseExpPerLevel = baseExpPerLevel;
             s_CumulativeExpPerLevel = cumulativeExpPerLevel;
+            s_MaxLevel = cumulativeExpPerLevel.Length + 1;
         }
 
         static public int MaxSpecters() {
@@ -155,7 +164,7 @@ namespace Aqua {
             return (float) (specterCount - 1) / (s_MaxSpecters - 1);
         }
 
-        static public uint ExpForLevel(uint level) {
+        static public uint TotalExpForLevel(uint level) {
             if (level < 2) {
                 return 0;
             } else {
@@ -163,20 +172,60 @@ namespace Aqua {
             }
         }
 
-        static public uint LevelForExp(uint exp) {
+        static public uint ExpForLevel(uint level) {
+            if (level < 2) {
+                return 0;
+            } else {
+                return s_BaseExpPerLevel[Math.Min(level - 2, s_BaseExpPerLevel.Length - 1)];
+            }
+        }
+
+        static public uint LevelForTotalExp(uint exp) {
             int idx = 0;
             while(idx < s_CumulativeExpPerLevel.Length && exp > s_CumulativeExpPerLevel[idx++]);
             return (uint) (1 + idx);
         }
 
-        static public uint ExpForNextLevel(SaveData data) {
-            uint nextLevel = ExpForLevel(data.Science.CurrentLevel() + 1);
-            uint current = data.Inventory.ItemCount(ItemIds.Exp);
+        static public uint TotalExpForNextLevel(SaveData data) {
+            uint nextLevel = TotalExpForLevel(data.Science.CurrentLevel() + 1);
+            uint current = data.Inventory.Exp();
             return current >= nextLevel ? 0 : nextLevel - current;
         }
 
+        static public ScienceLevelProgress EvaluateLevel(uint exp) {
+            int idx = 0;
+            while(idx < s_CumulativeExpPerLevel.Length && exp > s_CumulativeExpPerLevel[idx++]);
+            ScienceLevelProgress progress;
+            progress.Level = (uint) idx;
+            if (idx >= s_CumulativeExpPerLevel.Length) {
+                progress.Percent = 1;
+                progress.ToNext = 0;
+                progress.ExpForLevel = 0;
+            } else {
+                progress.ExpForLevel = exp - s_CumulativeExpPerLevel[idx - 1];
+                progress.ToNext = ExpForLevel(progress.Level + 1) - progress.ExpForLevel;
+                progress.Percent = (float) progress.ExpForLevel / (progress.ExpForLevel + progress.ToNext);
+            }
+            return progress;
+        }
+
+        static public ScienceLevelProgress EvaluateLevel(SaveData data) {
+            ScienceLevelProgress progress;
+            progress.Level = data.Science.CurrentLevel();
+            if (progress.Level >= s_MaxLevel) {
+                progress.ExpForLevel = 0;
+                progress.ToNext = 0;
+                progress.Percent = 1;
+            } else {
+                progress.ExpForLevel = data.Inventory.Exp() - TotalExpForLevel(progress.Level);
+                progress.ToNext = ExpForLevel(progress.Level + 1) - progress.ExpForLevel;
+                progress.Percent = (float) progress.ExpForLevel / (progress.ExpForLevel + progress.ToNext);
+            }
+            return progress;
+        }
+
         static public bool CanLevelUp(SaveData data) {
-            return ExpForNextLevel(data) == 0;
+            return TotalExpForNextLevel(data) == 0;
         }
 
         static public bool AttemptLevelUp(SaveData data, out ScienceLevelUp levelUp) {
@@ -185,7 +234,7 @@ namespace Aqua {
 
             PlayerInv totalExp = data.Inventory.GetItem(ItemIds.Exp);
             uint checkedLevel = levelUp.OriginalLevel + 1;
-            while (totalExp.Count >= ExpForLevel(checkedLevel) && checkedLevel <= 4) {
+            while (checkedLevel <= s_MaxLevel && totalExp.Count >= TotalExpForLevel(checkedLevel)) {
                 checkedLevel++;
                 levelUp.LevelAdjustment++;
             }
@@ -202,5 +251,12 @@ namespace Aqua {
     public struct ScienceLevelUp {
         public uint OriginalLevel;
         public int LevelAdjustment;
+    }
+
+    public struct ScienceLevelProgress {
+        public uint Level;
+        public uint ExpForLevel;
+        public uint ToNext;
+        public float Percent;
     }
 }
