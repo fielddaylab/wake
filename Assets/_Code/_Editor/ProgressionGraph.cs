@@ -109,7 +109,7 @@ namespace Aqua.Editor {
                     AddRequirement(itemJSON, ItemIds.Cash, obj.CashCost(), true);
                 }
                 if (obj.RequiredLevel() > 0) {
-                    AddRequirement(itemJSON, ItemIds.Exp, (int) ScienceUtils.ExpForLevel((uint) obj.RequiredLevel()));
+                    AddRequirement(itemJSON, ItemIds.Exp, (int) ScienceUtils.TotalExpForLevel((uint) obj.RequiredLevel()));
                 }
                 if (obj.Prerequisite()) {
                     AddRequirement(itemJSON, obj.Prerequisite().name);

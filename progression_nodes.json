@@ -12,23 +12,11 @@
     "nodes": {
         "Cash": {
             "type": "currency",
-            "isToken": true,
-            "requires": [
-                {
-                    "id": "Exp",
-                    "amount": 0
-                }
-            ]
+            "isToken": true
         },
         "Exp": {
             "type": "currency",
-            "isToken": true,
-            "requires": [
-                {
-                    "id": "Exp",
-                    "amount": 0
-                }
-            ]
+            "isToken": true
         },
         "AutoFeeder": {
             "type": "item",
@@ -76,10 +64,6 @@
             "requires": [
                 {
                     "id": "Shop"
-                },
-                {
-                    "id": "Exp",
-                    "amount": 0
                 }
             ]
         },
@@ -91,12 +75,12 @@
                 },
                 {
                     "id": "Cash",
-                    "amount": 200,
+                    "amount": 150,
                     "consume": true
                 },
                 {
                     "id": "Exp",
-                    "amount": 75
+                    "amount": 25
                 }
             ]
         },
@@ -129,7 +113,7 @@
                 },
                 {
                     "id": "Exp",
-                    "amount": 75
+                    "amount": 25
                 }
             ]
         },
@@ -138,10 +122,6 @@
             "requires": [
                 {
                     "id": "Shop"
-                },
-                {
-                    "id": "Exp",
-                    "amount": 0
                 },
                 {
                     "id": "FlashlightCoordinates"
@@ -263,10 +243,6 @@
             "requires": [
                 {
                     "id": "Shop"
-                },
-                {
-                    "id": "Exp",
-                    "amount": 0
                 }
             ]
         },
@@ -320,7 +296,7 @@
                 },
                 {
                     "id": "Exp",
-                    "amount": 75
+                    "amount": 25
                 }
             ],
             "results": [
@@ -866,35 +842,6 @@
                 }
             ]
         },
-        "arctic-whale-csi": {
-            "type": "job",
-            "difficulty": {
-                "total": 0,
-                "max": 0
-            },
-            "requires": [
-                {
-                    "id": "ArcticStation"
-                }
-            ],
-            "results": [
-                {
-                    "id": "Cash",
-                    "amount": 100
-                },
-                {
-                    "id": "Exp",
-                    "amount": 5
-                },
-                {
-                    "id": "RS-4W"
-                },
-                {
-                    "id": "Microscope"
-                }
-            ],
-            "unlockType": "manual"
-        },
         "bayou-alt-energy": {
             "type": "job",
             "difficulty": {
@@ -1331,7 +1278,8 @@
                 {
                     "id": "RS-3P"
                 }
-            ]
+            ],
+            "unlockType": "manual"
         },
         "turtle-danger": {
             "type": "job",
@@ -1848,40 +1796,11 @@
                 }
             ]
         },
-        "coral-urchin-friends": {
-            "type": "job",
-            "difficulty": {
-                "total": 0,
-                "max": 0
-            },
-            "requires": [
-                {
-                    "id": "CoralStation"
-                },
-                {
-                    "id": "coral-urchin-friends"
-                }
-            ],
-            "results": [
-                {
-                    "id": "Cash",
-                    "amount": 100
-                },
-                {
-                    "id": "Exp",
-                    "amount": 5
-                },
-                {
-                    "id": "RS-2R"
-                }
-            ],
-            "unlockType": "manual"
-        },
         "final-final": {
             "type": "job",
             "difficulty": {
-                "total": 13,
-                "max": 5
+                "total": 6,
+                "max": 4
             },
             "requires": [
                 {
