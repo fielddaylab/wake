@@ -5,8 +5,8 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@profBayou}    We are increasingly curious about how the ecosystem manages detritus now that the amount of it in the {nameof RS-3P} is rising.
-                Please study how this substance is increasing and what eats it (if anything).
+{@bayouSci}    We are increasingly curious about how the ecosystem manages detritus now that the amount of it in the {nameof RS-3P} is rising.
+                Please study how this substance is increasing and what eats it, if anything.
 
 :: detritusCounted
 @trigger    JobTaskCompleted(countDetritus)
@@ -39,7 +39,7 @@ $call CheckJobTasks()
 @when       taskId == "eatDetritus"
 @once
 @cutscene
-{@guide}    So the {nameof DecomposingBacteria} are enjoying this increase in detritus. I am certain {nameof @profBayou} will be interested to know about this.
+{@guide}    So the {nameof DecomposingBacteria} are enjoying this increase in detritus. I am certain {nameof @bayouSci} will be interested to know about this.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -86,7 +86,7 @@ $endif
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Head back to {nameof @profBayou} in the research station.
+{@guide}    Head back to {nameof @bayouSci} in the research station.
 
 // ARGUMENTATION
 
@@ -95,11 +95,11 @@ $endif
 @when   !ArgueIsComplete(dirtyDetritusArgueFinal)
 @cutscene
 $if ArgueIsComplete(dirtyDetritusArgueHistory)
-    {@profBayou}    Previously we discussed the cyclical nature of the population histories in the {nameof RS-3P}.
+    {@bayouSci}    Previously we discussed the cyclical nature of the population histories in the {nameof RS-3P}.
     $branch .argue.beginFinal
 $else
     $call ArgueLoad(dirtyDetritusArgueHistory) 
-    {@profBayou}    Why is there so much {nameof Detritus} in the {nameof RS-3P}?
+    {@bayouSci}    Why is there so much {nameof Detritus} in the {nameof RS-3P}?
     $choice .argue.detritusReproduce; Detritus is reproducing on its own.
     $choice .argue.organismsDying; Organisms are dying out.
     $choice .argue.giveUpArgueless; Let me get back to you.
@@ -109,11 +109,11 @@ $endif
 // History
 
 :: argue.detritusReproduce
-{@profBayou}    Detritus is dead matter. It doesn't reproduce.
+{@bayouSci}    Detritus is dead matter. It doesn't reproduce.
 $goto .argue.intro
 
 :: argue.organismsDying
-{@profBayou}    Can you show me the population histories for {nameof Detritus} and all organisms in the {nameof RS-3P}?
+{@bayouSci}    Can you show me the population histories for {nameof Detritus} and all organisms in the {nameof RS-3P}?
 $if ArgueSetClaim(ClaimHistory, jobs.bayou-dirty-detritus.argue.claimLabelHistory)
     $call ArgueFactSlot(P_DeadZone.PopulationHistory.Cyanobacteria)
     $call ArgueFactSlot(P_DeadZone.PopulationHistory.WhiteShrimp)
@@ -132,15 +132,15 @@ $choose branch
 
 :: argue.unrelatedHistory
 $call ArgueRejectIncorrect()
-{@profBayou} That's not helpful, Ms. Ramirez. 
+{@bayouSci}     Not quite what I'm looking for, O. 
 $branch .argue.showClaimHistory
 
 :: argue.completeHistory
 $call ArgueCancelClaim()
 $call ArgueComplete()
-{@profBayou}    Oh. Interesting. All of these have been cycling over the past 12 years.
+{@bayouSci}    Oh. Interesting. All of these have been cycling over the past 12 years.
 {@player}   What does that mean?
-{@profBayou}    It means the populations rise and fall, rise and fall, over and over again.
+{@bayouSci}    It means the populations rise and fall, rise and fall, over and over again.
                 If I look at the most recent history... yes.
                 The {nameof WhiteShrimp} and {nameof Cyanobacteria} are currently declining, while {nameof Detritus} and {nameof DecomposingBacteria} are on the rise.
                 So in your previous job regarding the green-colored water, we established that there is a lot of {nameof Cyanobacteria}.
@@ -157,7 +157,7 @@ $endif
 $branch .argue.showClaimFinal
 
 :: argue.showClaimFinal
-{@profBayou}    Did you find anything that eats {nameof Detritus}?
+{@bayouSci}    Did you find anything that eats {nameof Detritus}?
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.completeFinal
@@ -167,22 +167,22 @@ $choose branch
 
 :: argue.unrelatedFinal
 $call ArgueRejectIncorrect()
-{@profBayou} That's not entirely helpful, Ms. Ramirez. 
+{@bayouSci}     Not quite what I'm looking for, O. 
 $branch .argue.showClaimFinal
 
 // Shared
 
 :: argue.giveUpArgueless
-{@profBayou} Okay, then. But don't take too long. A lot of people are waiting on our decision.
+{@bayouSci} Okay, then. But don't take too long. A lot of people are waiting for us to act.
 
 :: argue.giveUp
-{@profBayou} Okay, then. But don't take too long. A lot of people are waiting on our decision. 
+{@bayouSci} Okay, then. But don't take too long. A lot of people are waiting for us to act.
 $call ArgueClearFacts()
 $call ArgueCancelClaim()
 
 // End
 :: argue.completeFinal
 $call ArgueComplete()
-{@profBayou}    Okay, interesting. The {nameof DecomposingBacteria} must be loving all this {nameof Detritus}.
+{@bayouSci}    Okay, interesting. The {nameof DecomposingBacteria} must be loving all this {nameof Detritus}.
                 Unfortunately we still haven't uncovered why the shrimp are dying, but I suspect we are closing in on an explanation.
 $call CompleteJob()

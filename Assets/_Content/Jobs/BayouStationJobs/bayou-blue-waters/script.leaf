@@ -5,11 +5,11 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@profBayou}    Have you noticed how green the {nameof RS-3P} is, Ms. Ramirez?
+{@bayouSci}    Have you noticed how green the {nameof RS-3P} is, O?
 {@player}   Yeah, it's pretty overwhelming. I'm glad I don't have to leave my sub to study it.
-{@profBayou}    Well, that water used to be blue.
+{@bayouSci}    Well, that water used to be blue.
 {@player}   Really?
-{@profBayou}    Really. Well, blue-er. I'd like you to get to the bottom of why it has shifted so drastically.
+{@bayouSci}    Really. Well, blue-er. I'd like you to get to the bottom of why it has shifted so drastically.
                 We might be able to reverse the effects.
 
 :: cyanoScanned
@@ -25,7 +25,7 @@
 @when       JobTaskTop(reportBack)
 @once
 @cutscene
-{@guide}    We've learned quite a bit about {nameof Cyanobacteria}. Let's show {nameof @profBayou} how they're impacting the water.
+{@guide}    We've learned quite a bit about {nameof Cyanobacteria}. Let's show {nameof @bayouSci} how they're impacting the water.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -106,7 +106,7 @@ $endif
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Report back to {nameof @profBayou} with what you've learned about {nameof Cyanobacteria}.
+{@guide}    Report back to {nameof @bayouSci} with what you've learned about {nameof Cyanobacteria}.
 
 // ARGUMENTATION
 
@@ -115,11 +115,11 @@ $endif
 @when   !ArgueIsComplete(blueWatersArgueCyanoExtra)
 @cutscene
 $if ArgueIsComplete(blueWatersArgueCyanoPop)
-    {@profBayou}    Previously we discussed that there are enough {nameof Cyanobacteria} to turn the water green.
+    {@bayouSci}    Previously we discussed that there are enough {nameof Cyanobacteria} to turn the water green.
     $branch .argue.beginExtra
 $else
     $call ArgueLoad(blueWatersArgueCyanoPop) 
-    {@profBayou}    What is turning the water green?
+    {@bayouSci}    What is turning the water green?
     $choice .argue.stillSearching; I'm still searching!
     $choice .argue.lightTrick; It's a trick of the light.
     $if JobTaskTop(reportBack)
@@ -131,23 +131,19 @@ $endif
 // Population
 
 :: argue.stillSearching
-{@profBayou}    Let me know when you've found something.
-$call ArgueClearFacts()
-$call ArgueCancelClaim()
+{@bayouSci}    Let me know when you've found something.
 
 :: argue.lightTrick
 {@player}   Pretty sure it's a trick of the light -- nothing has changed about the ecosystem.
-{@profBayou}    As convenient as that would be Ms. Ramirez, that seems doubtful. I advise you to keep looking.
-$call ArgueClearFacts()
-$call ArgueCancelClaim()
+{@bayouSci}    As convenient as that would be seem, I doubt that is the case. I'd say keep looking.
 
 :: argue.cyanoCause
-{@profBayou}    Oh, really? But they are so small...
+{@bayouSci}    Oh, really? But they are so small...
 {@player}       There's a lot of them.
 $if ArgueSetClaim(ClaimPop, jobs.bayou-blue-waters.argue.claimLabelPop)
     $call ArgueFactSlot(P_DeadZone.Population.Cyanobacteria) 
 $endif
-{@profBayou}    They must have some truly impressive numbers if they are turning everything green.
+{@bayouSci}    They must have some truly massive numbers if they are turning everything green.
                 Can you show me the {nameof Cyanobacteria} populations?
 $branch .argue.showClaimPop
 
@@ -161,13 +157,13 @@ $choose branch
 
 :: argue.unrelatedPop
 $call ArgueRejectIncorrect()
-{@profBayou} That's not helpful, Ms. Ramirez. 
+{@bayouSci}     Not quite what I'm looking for, O. 
 $branch .argue.showClaimPop
 
 :: argue.completePop
 $call ArgueCancelClaim()
 $call ArgueComplete()
-{@profBayou}    Hmm. Yes, I believe this would do it.
+{@bayouSci}    Hmm. Yes, I believe this would do it.
 $branch .argue.beginExtra
 
 // Extra
@@ -180,11 +176,11 @@ $if ArgueSetClaim(ClaimExtra, jobs.bayou-blue-waters.argue.claimLabelExtra)
     $call ArgueFactSlot(Cyanobacteria.Reproduce) 
     $call ArgueFactSlot(Cyanobacteria.Reproduce.Stressed)
 $endif
-{@profBayou}    What else did you find out about {nameof Cyanobacteria}? I recall that it was bit dim down there last I looked.
+{@bayouSci}    What else did you find out about {nameof Cyanobacteria}? I recall that it was bit dim down there last I looked.
 $branch .argue.showClaimExtra
 
 :: argue.showClaimExtra
-{@profBayou}    How do {nameof Cyanobacteria} impact the light levels, and how quickly can we expect them to reproduce?
+{@bayouSci}    How do {nameof Cyanobacteria} impact the light levels, and how quickly can we expect them to reproduce?
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.completeExtra
@@ -194,20 +190,20 @@ $choose branch
 
 :: argue.unrelatedExtra
 $call ArgueRejectIncorrect()
-{@profBayou} That's not entirely helpful, Ms. Ramirez. 
+{@bayouSci} Not quite what I'm looking for, O. 
 $branch .argue.showClaimExtra
 
 // Shared
 
 :: argue.giveUp
-{@profBayou} Okay, then. But don't take too long. A lot of people are waiting on our decision. 
+{@bayouSci} Okay, then. But don't take too long. A lot of people are waiting on our decision. 
 $call ArgueClearFacts()
 $call ArgueCancelClaim()
 
 // End
 :: argue.completeExtra
 $call ArgueComplete()
-{@profBayou}    Hmm. So the {nameof Cyanobacteria} turn the water green, but they also take up a lot of light.
+{@bayouSci}    Hmm. So the {nameof Cyanobacteria} turn the water green, but they also take up a lot of light.
                 We'll need to consider how a spike in {nameof Cyanobacteria} might affect other species in the region.
-                Thank you Ms. Ramirez. That will be all for this job.
+                Thanks for your help!
 $call CompleteJob()
