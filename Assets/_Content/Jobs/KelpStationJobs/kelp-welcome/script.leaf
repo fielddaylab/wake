@@ -205,7 +205,7 @@ $call WheelPrompt->Deactivate()
 {@sam} Yes!! I knew you'd kill it.
                  And you finally get to ditch the Kelp Forest! 
                  Did you break the news to your mom yet?
-{@player}       Oh, uh.... no es importa. Tell me about the mission!
+{@player}       Oh, uh.... no es importante. Tell me about the mission!
 {@sam} It's super eerie down here, O. You'd love it. 
                 We're heading deeper to keep searching for the missing probe.
                 Might end up hitting a dead zone and losing contact....
@@ -232,7 +232,7 @@ $call schematic.button->ForceClick()
 {hide-dialog}{wait 1}{style default}
 // $call HelmButton->ForceOnTop()
 $call FocusHighlight->Focus(ExperimentationButton, 200, 200)
-    Click here to enter your {h}Experimentation Lab{/h}.
+    Click here to enter your {nameof Experimentation}.
 $call FocusHighlight->Clear()
 {hide-dialog}{fade-in 0.5, wait}
 $call ship.map->ResetSorting()

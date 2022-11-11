@@ -27,13 +27,6 @@ $set	jobs:coral-stressed.struggling = false
 @cutscene
 {@player} Okay. Site R... where are you?
 					
-:: helpGoToSiteR
-@trigger    RequestPartnerHelp
-@when 		scene:name == "CoralStation", !jobs:coral-stressed.got.scans
-@cutscene
-{@player}   Where should we go next, {nameof @guide}?
-{@guide}	You will need to explore until you find Site R. Then dive down and investigate the coral! 
-
 :: diveSite
 @trigger    SceneStart
 @when       scene:name == "RS-2R"
@@ -150,8 +143,8 @@ $endif
 @when 		JobTaskActive(siteR)
 @boostScore -5
 @cutscene
-{@player} What now, {nameof @guide}?
-{@guide}  You will need to find and scan the coral at Site R.
+{@player}   Where should we go next, {nameof @guide}?
+{@guide}	You will need to explore until you find Site R. Then dive down and investigate the coral! 
 
 :: catchStressCoral
 @trigger    RequestPartnerHelp
@@ -190,7 +183,7 @@ $choose branch
 ::argue.coralNeedsLightIntro
 {@profCoral} Hmmmm.
 			 Come to think of it, there was a lot of shade down there.
-			Do you have evidence about why a lac of sunlight might have affected the coral?
+			Do you have evidence about why a lack of sunlight might have affected the coral?
 $goto .argue.coralNeedsLight
 
 ::argue.coralNeedsLight

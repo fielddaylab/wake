@@ -5,7 +5,7 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@profBayou}    The Shrimpers are quite upset about the lack of shrimp in the water.
+{@bayouSci}    The Shrimpers are quite upset about the lack of shrimp in the water.
                 I need you to check that the populations are in fact decreasing.
 
 :: popCounted
@@ -13,7 +13,7 @@
 @when       JobTaskTop(reportBack)
 @once
 @cutscene
-{@guide}    We've got the current populations, let's head back {nameof @profBayou}.
+{@guide}    We've got the current populations, let's head back {nameof @bayouSci}.
 
 // Guide Text
 
@@ -42,7 +42,7 @@ $endif
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Head back to {nameof @profBayou} in the station.
+{@guide}    Head back to {nameof @bayouSci} in the station.
 
 // ARGUMENTATION
 
@@ -51,7 +51,7 @@ $endif
 @when   !ArgueIsComplete(shrimpYieldsArgue)
 @cutscene
 $call ArgueLoad(shrimpYieldsArgue) 
-{@profBayou}    So. Ollie.
+{@bayouSci}    So. Ollie.
                 The last count we got was around {h}700 shrimp{/h} in the {nameof RS-3P}. Are the reports of declining shrimp accurate?
 $choice .argue.reportsAccurate; Yes.
 $choice .argue.reportsInaccurate; Not really.
@@ -63,7 +63,7 @@ $choose branch
 $if ArgueSetClaim(Claim, jobs.bayou-shrimp-yields.argue.claimLabelAccurate)
     $call ArgueFactSlot(P_DeadZone.Population.WhiteShrimp) 
 $endif
-{@profBayou}    How many did you count?
+{@bayouSci}    How many did you count?
 $branch .argue.showClaimAccurate
 
 :: argue.showClaimAccurate
@@ -76,7 +76,7 @@ $choose branch
 
 :: argue.unrelatedAccurate
 $call ArgueRejectIncorrect()
-{@profBayou} That's not helpful, Ms. Ramirez. 
+{@bayouSci}     Not quite what I'm looking for, O.
 $branch .argue.showClaimAccurate
 
 // Inaccurate
@@ -85,7 +85,7 @@ $branch .argue.showClaimAccurate
 $if ArgueSetClaim(Claim, jobs.bayou-shrimp-yields.argue.claimLabelInaccurate)
     $call ArgueFactSlot(P_DeadZone.Population.WhiteShrimp) 
 $endif
-{@profBayou}    How many did you count?
+{@bayouSci}    How many did you count?
 $branch .argue.showClaimInaccurate
 
 :: argue.showClaimInaccurate
@@ -98,11 +98,11 @@ $choose branch
 
 :: argue.unrelatedInaccurate
 $call ArgueRejectIncorrect()
-{@profBayou} That's not helpful, Ms. Ramirez. 
+{@bayouSci}     Not quite what I'm looking for, O.
 $branch .argue.showClaimInaccurate
 
 :: argue.completeInaccurate
-{@profBayou}    I think this means the shrimp population is in decline.
+{@bayouSci}    I think this means the shrimp population is in decline.
                 Want to revisit your claim?
 $call ArgueClearFacts()
 $call ArgueCancelClaim()
@@ -111,14 +111,14 @@ $goto .argue.intro
 // Shared
 
 :: argue.giveUp
-{@profBayou}    Okay, then. But don't take too long. A lot of people are waiting on our decision. 
+{@bayouSci}    Okay, then. But don't take too long. A lot of people are waiting on our decision. 
 $call ArgueClearFacts()
 $call ArgueCancelClaim()
 
 // End
 :: argue.completeAccurate
 $call ArgueComplete()
-{@profBayou}    Oh, interesting. That is... unfortunate.
+{@bayouSci}    Oh, interesting. That is... unfortunate.
                 We need to get to the bottom of why the shrimp are dying out.
                 I'll have new jobs along this line posted shortly.
 $call CompleteJob()

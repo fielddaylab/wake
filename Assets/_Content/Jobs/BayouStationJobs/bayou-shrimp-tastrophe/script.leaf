@@ -5,7 +5,7 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@profBayou}    The Shrimpers' requests for an explanation have become more alarmed as the shrimp populations continue to drop.
+{@bayouSci}    The Shrimpers' requests for an explanation have become more alarmed as the shrimp populations continue to drop.
                 Perhaps after all your work in Site P, we can finally give them an answer.
                 Please construct a {h}Descriptive Model{/h} that explains the situation.
 
@@ -15,7 +15,7 @@
 @once
 @cutscene
 {@guide}    What a model! Looks like there are a lot of overlapping spikes and dips in organism populations and environmental conditions.
-            When you think you understand it, head back to {nameof @profBayou}.
+            When you think you understand it, head back to {nameof @bayouSci}.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -32,7 +32,7 @@
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Time to head back to {nameof profBayou} in the station.
+{@guide}    Time to head back to {nameof bayouSci} in the station.
 
 
 
@@ -44,14 +44,14 @@
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(tastropheArgueModel)
 @cutscene
-{@profBayou}    What explanation can I give to the Shrimpers for why the shrimp populations are so low?
+{@bayouSci}    What explanation can I give to the Shrimpers for why the shrimp populations are so low?
 $choice .argue.oxygen.begin; It has to do with the oxygen levels.
 $choice .argue.light.begin; It has to do with the light levels.
 $choice .argue.notSure; Still not sure.
 $choose branch
 
 :: argue.notSure
-{@profBayou}    That's okay. It is certainly one of our most perplexing issues to date.
+{@bayouSci}    That's okay. It is certainly one of our most perplexing issues to date.
                 Let me know when you're more certain.
 
 // ---------- Oxygen Route
@@ -59,11 +59,11 @@ $choose branch
 :: argue.oxygen.begin
 $if ArgueIsComplete(tastropheArgueShrimpOxygen), ArgueIsComplete(tastropheArgueBacteriaOxygen)
     // jump to model
-    {@profBayou}    We've established the shrimp and bacteria bits.
+    {@bayouSci}    We've established the shrimp and bacteria bits.
     $branch .argue.shared.loadModel
 $elseif ArgueIsComplete(tastropheArgueShrimpOxygen)
     // jump to bacteria half
-    {@profBayou}    We've established the shrimp bit.
+    {@bayouSci}    We've established the shrimp bit.
     $branch .argue.oxygen.loadBacteria
 $else
     // load shrimp half
@@ -76,11 +76,11 @@ $if ArgueSetClaim(ClaimShrimpOxygen, jobs.bayou-shrimp-tastrophe.argue.claimLabe
     $call ArgueFactSlot(P_DeadZone.Oxygen)
     $call ArgueFactSlot(WhiteShrimp.Consume.Oxygen)
 $endif
-{@profBayou}    The oxygen?
+{@bayouSci}    The oxygen?
 $branch .argue.oxygen.showShrimp
 
 :: argue.oxygen.showShrimp
-{@profBayou}    What does oxygen have to do with shrimp?
+{@bayouSci}    What does oxygen have to do with shrimp?
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.oxygen.completeShrimp
@@ -90,13 +90,13 @@ $choose branch
 
 :: argue.oxygen.unrelatedShrimp
 $call ArgueRejectIncorrect()
-{@profBayou}    That's not helpful, Ms. Ramirez.
+{@bayouSci}     Not quite what I'm looking for, O. 
 $branch .argue.oxygen.showShrimp
 
 :: argue.oxygen.completeShrimp
 $call ArgueCancelClaim()
 $call ArgueComplete()
-{@profBayou}    The shrimp are suffocating?!
+{@bayouSci}    The shrimp are suffocating?!
 $branch .argue.oxygen.loadBacteria
 
 
@@ -108,7 +108,7 @@ $endif
 $branch .argue.oxygen.showBacteria
 
 :: argue.oxygen.showBacteria
-{@profBayou}    Where did all the oxygen go?
+{@bayouSci}    Where did all the oxygen go?
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.oxygen.completeBacteria
@@ -118,13 +118,13 @@ $choose branch
 
 :: argue.oxygen.unrelatedBacteria
 $call ArgueRejectIncorrect()
-{@profBayou}    That's not helpful, Ms. Ramirez.
+{@bayouSci}     Not quite what I'm looking for, O. 
 $branch .argue.oxygen.showBacteria
 
 :: argue.oxygen.completeBacteria
 $call ArgueCancelClaim()
 $call ArgueComplete()
-{@profBayou}    The decomposers... Hmmm... There is a lot of detritus for them to get rid of.
+{@bayouSci}    The decomposers... Hmmm... There is a lot of detritus for them to get rid of.
                 They could overpower the system...
                 Sometimes models speak louder than words.
 $branch .argue.shared.loadModel
@@ -135,11 +135,11 @@ $branch .argue.shared.loadModel
 :: argue.light.begin
 $if ArgueIsComplete(tastropheArgueCyanoLight), ArgueIsComplete(tastropheArgueLightShrimpOxygen)
     // jump to model
-    {@profBayou}    We've established the {nameof Cyanobacteria} light and shrimp oxygen bits.
+    {@bayouSci}    We've established the {nameof Cyanobacteria} light and shrimp oxygen bits.
     $branch .argue.shared.loadModel
 $elseif ArgueIsComplete(tastropheArgueCyanoLight)
     // jump to shrimp half
-    {@profBayou}    We've established the {nameof Cyanobacteria} light bit.
+    {@bayouSci}    We've established the {nameof Cyanobacteria} light bit.
     $branch .argue.light.loadShrimp
 $else
     // load cyanobacteria half
@@ -151,11 +151,11 @@ $call ArgueLoad(tastropheArgueCyanoLight)
 $if ArgueSetClaim(ClaimCyanoLight, jobs.bayou-shrimp-tastrophe.argue.claimLabelCyanoLight)
     $call ArgueFactSlot(Cyanobacteria.Consume.Light)
 $endif
-{@profBayou}    Shrimp don't interact with light... 
+{@bayouSci}    Shrimp don't interact with light... 
 $branch .argue.light.showCyano
 
 :: argue.light.showCyano
-{@profBayou}    What interacts with light that you think is at the bottom of this?    
+{@bayouSci}    What interacts with light that you think is at the bottom of this?    
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.light.completeCyano
@@ -168,7 +168,7 @@ $if ArgueIsFactSubmitted(Cyanobacteria.Consume.Light.Stressed)
     $branch .argue.light.completeCyano
 $else
     $call ArgueRejectIncorrect()
-    {@profBayou}    That's not helpful, Ms. Ramirez.
+    {@bayouSci}     Not quite what I'm looking for, O.
     $branch .argue.light.showCyano
 $endif
 
@@ -176,7 +176,7 @@ $endif
 :: argue.light.completeCyano
 $call ArgueCancelClaim()
 $call ArgueComplete()
-{@profBayou}    Hmm, there is quite a bit of {nameof Cyanobacteria}. I'm sure that adds up over time.
+{@bayouSci}    Hmm, there is quite a bit of {nameof Cyanobacteria}. I'm sure that adds up over time.
 $branch .argue.light.loadShrimp
 
 :: argue.light.loadShrimp
@@ -189,7 +189,7 @@ $branch .argue.light.showShrimp
 
 :: argue.light.showShrimp
 // Note: This question with the above facts is probably the largest logical leap in the argumentation
-{@profBayou}    But what does increased numbers of {nameof Cyanobacteria} have to do with the shrimp? 
+{@bayouSci}    But what does increased numbers of {nameof Cyanobacteria} have to do with the shrimp? 
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.light.completeShrimp
@@ -199,13 +199,13 @@ $choose branch
 
 :: argue.light.unrelatedShrimp
 $call ArgueRejectIncorrect()
-{@profBayou}    That's not helpful, Ms. Ramirez.
+{@bayouSci}     Not quite what I'm looking for, O. 
 $branch .argue.light.showShrimp
 
 :: argue.light.completeShrimp
 $call ArgueCancelClaim()
 $call ArgueComplete()
-{@profBayou}    So their shading is the cause of the reduced oxygen?
+{@bayouSci}    So their shading is the cause of the reduced oxygen?
                 I'm getting lost in the details. Maybe a visual could better explain?
 $branch .argue.shared.loadModel
 
@@ -220,7 +220,7 @@ $endif
 $branch .argue.shared.showModel
 
 :: argue.shared.showModel
-{@profBayou}    May I see the final model you made?
+{@bayouSci}    May I see the final model you made?
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.shared.completeModel
@@ -230,11 +230,11 @@ $choose branch
 
 :: argue.shared.unrelatedModel
 $call ArgueRejectIncorrect()
-{@profBayou}    That's not what I'm looking for, Ms. Ramirez.
+{@bayouSci}     Not quite what I'm looking for, O. 
 $branch .argue.shared.showModel
 
 :: argue.giveUp
-{@profBayou}    Okay, then. But don't take too long. A lot of people are waiting on our decision. 
+{@bayouSci}    Okay, then. But don't take too long. A lot of people are waiting on our decision. 
 $call ArgueClearFacts()
 $call ArgueCancelClaim()
 
@@ -242,9 +242,9 @@ $call ArgueCancelClaim()
 
 :: argue.shared.completeModel
 $call ArgueComplete()
-{@profBayou}    Yes, I see now. The bacteria shade each other out and the reduction in light causes them stress and then they die.
+{@bayouSci}    Yes, I see now. The bacteria shade each other out and the reduction in light causes them stress and then they die.
                 That provides food for the decomposers which steal oxygen from the shrimp. If only we could control the {nameof Cyanobacteria}...
-                Your work here has been nothing short of -- ahem -- astounding, Ms. Ramirez. // profBayou rarely gives such a compliment, but it's a big job!
+                Your work here has been nothing short of astounding, O!
                 Keep up the good work.
 $call CompleteJob()
 

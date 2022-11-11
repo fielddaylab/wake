@@ -5,7 +5,7 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@profBayou}    The oxygen levels in the {nameof RS-3P} are decreasing, but our current models cannot account for the drop.
+{@bayouSci}    The oxygen levels in the {nameof RS-3P} are decreasing, but our current models cannot account for the drop.
                 We need you to make a model that lays out which organisms are producing oxygen and which organisms are consuming oxygen.
 
 :: allScanned
@@ -59,7 +59,7 @@
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Report back to {nameof @profBayou} to discuss your findings about oxygen.
+{@guide}    Report back to {nameof @bayouSci} to discuss your findings about oxygen.
 
 // ARGUMENTATION
 
@@ -68,14 +68,14 @@
 @when   !ArgueIsComplete(oxygenTrackingArgueFinal)
 @cutscene
 $if ArgueIsComplete(oxygenTrackingArgueModel)
-    {@profBayou}    You've already shown me the model.
+    {@bayouSci}    You've already shown me the model.
     $branch .argue.beginFinal
 $else
     $call ArgueLoad(oxygenTrackingArgueModel)
     $if ArgueSetClaim(ClaimModel, jobs.bayou-oxygen-tracking.argue.claimLabelModel)
         $call ArgueFactSlot(P_DeadZone.Model.OxygenTracking.Visual)
     $endif
-    {@profBayou}    Have you modeled the flow of oxygen through the {nameof RS-3P}?
+    {@bayouSci}    Have you modeled the flow of oxygen through the {nameof RS-3P}?
     $branch .argue.showClaimModel
 $endif
 
@@ -91,7 +91,7 @@ $choose branch
 
 :: argue.unrelatedModel
 $call ArgueRejectIncorrect()
-{@profBayou}    That's not helpful, Ms. Ramirez. 
+{@bayouSci}     Not quite what I'm looking for, O.
 $branch .argue.showClaimModel
 
 :: argue.completeModel
@@ -111,7 +111,7 @@ $endif
 $branch .argue.showClaimFinal
 
 :: argue.showClaimFinal
-{@profBayou}    Based on your model, which organisms consume oxygen in the {nameof RS-3P}?
+{@bayouSci}    Based on your model, which organisms consume oxygen in the {nameof RS-3P}?
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.completeFinal
@@ -121,19 +121,19 @@ $choose branch
 
 :: argue.unrelatedFinal
 $call ArgueRejectIncorrect()
-{@profBayou}    That's not helpful, Ms. Ramirez. 
+{@bayouSci}     Not quite what I'm looking for, O. 
 $branch .argue.showClaimFinal
 
 :: argue.completeFinal
 $call ArgueCancelClaim()
-{@profBayou}    I see. And does either of those stand out as the culprit?
+{@bayouSci}    I see. And does either of those stand out as the culprit?
                 In other words...
 $branch .argue.discussionStart
 
 // Discussion
 
 :: argue.discussionStart
-{@profBayou}    Between {nameof WhiteShrimp} and {nameof DecomposingBacteria}, which one consumes a larger share of the oxygen?
+{@bayouSci}    Between {nameof WhiteShrimp} and {nameof DecomposingBacteria}, which one consumes a larger share of the oxygen?
 $choice .argue.shrimpConsumeMore; The {nameof WhiteShrimp} consume more.
 $choice .argue.decompConsumeMore; The {nameof DecomposingBacteria} consume more.
 $choice .argue.aboutSame; They consume about the same in total.
@@ -141,7 +141,7 @@ $choice .argue.giveUpDiscuss; Let me get back to you.
 $choose branch
 
 :: argue.shrimpConsumeMore
-{@profBayou}    I suppose if you look at them individually, any one shrimp consumes more oxygen than any one bacterium.
+{@bayouSci}    I suppose if you look at them individually, any one shrimp consumes more oxygen than any one bacterium.
                 But the {nameof DecomposingBacteria} far outnumber the shrimp, so overall, the {nameof DecomposingBacteria} consume more oxygen in this case.
 $branch .argue.completeDiscussion
 
@@ -149,23 +149,23 @@ $branch .argue.completeDiscussion
 $branch .argue.completeDiscussion
 
 :: argue.aboutSame
-{@profBayou}    I don't see much evidence for this. Consider revising your claim.
+{@bayouSci}    I don't see much evidence for this. Consider revising your claim.
 $branch .argue.discussionStart
 
 :: argue.giveUpDiscuss
-{@profBayou}    Okay, then. But don't take too long. A lot of people are waiting on our decision. 
+{@bayouSci}    Okay, then. But don't take too long. A lot of people are waiting on our decision. 
 
 // Shared
 
 :: argue.giveUp
-{@profBayou}    Okay, then. But don't take too long. A lot of people are waiting on our decision. 
+{@bayouSci}    Okay, then. But don't take too long. A lot of people are waiting on our decision. 
 $call ArgueClearFacts()
 $call ArgueCancelClaim()
 
 // End
 :: argue.completeDiscussion
 $call ArgueComplete()
-{@profBayou}    So the {nameof DecomposingBacteria} are claiming most of the oxygen, and {nameof WhiteShrimp} are suffering.
+{@bayouSci}    So the {nameof DecomposingBacteria} are claiming most of the oxygen, and {nameof WhiteShrimp} are suffering.
                 But I am still wondering why there are so many {nameof DecomposingBacteria} all of the sudden...
                 Regardless, thank you for your help Ms. Ramirez.
 $call CompleteJob()
