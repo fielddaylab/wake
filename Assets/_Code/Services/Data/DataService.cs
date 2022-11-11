@@ -578,6 +578,7 @@ namespace Aqua
                             if (attempts > 0)
                             {
                                 Log.Warn("[DataService] Retrying server save...", attempts);
+                                Services.Events.Dispatch(GameEvents.ProfileSaveError);
                                 yield return m_SaveRetryDelay;
                             }
                             else

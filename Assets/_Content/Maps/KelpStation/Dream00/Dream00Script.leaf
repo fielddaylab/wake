@@ -3,11 +3,13 @@
 :: CutOffSound
 @function TimelineStarted
 @when     timelineId == "Dream00Timeline00"
-{wait 39.5}{bgm-stop}{wait 0.5}
+{wait 39.6}{bgm-stop}{wait 0.3}
 $call AudioStopAll()
 
 :: PinUI
 @function   ScannedNewObject
 @when       scanId = "RS-1C.dreamScan"
-{wait 5}
+{wait 3}
+$call PlantAudio->PlayAudio()
+{wait 2}
 $call ScanUIPin->PlayAnimation()

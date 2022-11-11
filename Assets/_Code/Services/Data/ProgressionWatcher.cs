@@ -227,12 +227,12 @@ namespace Aqua
 
             Services.Script.QueueInvoke(() => {
                 Services.Audio.PostEvent("ShopPurchase");
-                Services.UI.Popup.DisplayWithClose(
-                    Loc.Format("ui.popup.levelUp.header", newLevel),
-                    Loc.Format("ui.popup.levelUp.description", newLevel),
-                null, PopupFlags.ShowCloseButton
-                ).OnComplete((_) => {
-                    Services.Script.TriggerResponse(GameTriggers.PlayerLevelUp);
+                PopupContent content = default(PopupContent);
+                content.Header = Loc.Format("ui.popup.levelUp.header", newLevel);
+                content.Text = Loc.Format("ui.popup.levelUp.description", newLevel);
+                content.CustomLayout = scienceTweaks.LevelBadgeLayout((int) newLevel).FastConcat("_NoLanyard");
+                Services.UI.Popup.Present(content, PopupFlags.ShowCloseButton).OnComplete((_) => {
+                    Services.Script.QueueTriggerResponse(GameTriggers.PlayerLevelUp, -1);
                 });
             }, -1);
         }

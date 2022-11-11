@@ -283,6 +283,8 @@ namespace Aqua
             Services.Physics.Enabled = false;
             BootParams.ClearStartFlag();
 
+            Streaming.RetryErrored();
+
             bool bShowCutscene = (inFlags & SceneLoadFlags.Cutscene) != 0;
             if (bShowCutscene)
             {

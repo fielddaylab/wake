@@ -1,0 +1,137 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1114873137119239926
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 326394748517540594}
+  - component: {fileID: 2732833002609920369}
+  m_Layer: 5
+  m_Name: Decompressor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &326394748517540594
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1114873137119239926}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 8346136470439018459}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2732833002609920369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1114873137119239926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59038a4f190ab1544a04294eff1a87de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PoolRoot: {fileID: 8346136470439018459}
+  m_TextPool:
+    m_Prefab: {fileID: 1427796197099750816, guid: a28567c22d0367149b5bbba2870b7eb6,
+      type: 3}
+    m_Name: 
+    m_InitialCapacity: 4
+    m_PrewarmOnInitialize: 1
+    m_InitialPrewarm: 2
+    m_DefaultPoolRoot: {fileID: 0}
+    m_DefaultSpawnRoot: {fileID: 0}
+    m_ResetTransformOnAlloc: 0
+  m_RectGraphicPool:
+    m_Prefab: {fileID: 1183723326376647923, guid: 5791ddb7ff3a41e4f84c2e5a91e9ab1e,
+      type: 3}
+    m_Name: 
+    m_InitialCapacity: 4
+    m_PrewarmOnInitialize: 1
+    m_InitialPrewarm: 2
+    m_DefaultPoolRoot: {fileID: 0}
+    m_DefaultSpawnRoot: {fileID: 0}
+    m_ResetTransformOnAlloc: 0
+  m_ImagePool:
+    m_Prefab: {fileID: 2101593357499081746, guid: db6bb74ab01ee0e4aa0a7ee9310748e9,
+      type: 3}
+    m_Name: 
+    m_InitialCapacity: 4
+    m_PrewarmOnInitialize: 1
+    m_InitialPrewarm: 2
+    m_DefaultPoolRoot: {fileID: 0}
+    m_DefaultSpawnRoot: {fileID: 0}
+    m_ResetTransformOnAlloc: 0
+  m_StreamingUGUIPool:
+    m_Prefab: {fileID: 5834395121448060598, guid: 5d64ead43e0d6854a81b096961c6b848,
+      type: 3}
+    m_Name: 
+    m_InitialCapacity: 4
+    m_PrewarmOnInitialize: 1
+    m_InitialPrewarm: 2
+    m_DefaultPoolRoot: {fileID: 0}
+    m_DefaultSpawnRoot: {fileID: 0}
+    m_ResetTransformOnAlloc: 0
+  m_LocTextPool:
+    m_Prefab: {fileID: 1468060001566281596, guid: 55828f487c1385549b1ac51c5e397980,
+      type: 3}
+    m_Name: 
+    m_InitialCapacity: 4
+    m_PrewarmOnInitialize: 1
+    m_InitialPrewarm: 2
+    m_DefaultPoolRoot: {fileID: 0}
+    m_DefaultSpawnRoot: {fileID: 0}
+    m_ResetTransformOnAlloc: 0
+--- !u!1 &5644912777592073207
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8346136470439018459}
+  m_Layer: 5
+  m_Name: Pool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &8346136470439018459
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5644912777592073207}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 326394748517540594}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}

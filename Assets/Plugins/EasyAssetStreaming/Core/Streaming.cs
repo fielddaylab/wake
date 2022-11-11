@@ -66,6 +66,21 @@ namespace EasyAssetStreaming {
             public long Max;
         }
 
+        /// <summary>
+        /// What kind of result/error was encountered.
+        /// </summary>
+        public enum LoadResult {
+            Success,
+            Network,
+            Server,
+            Unknown
+        }
+
+        /// <summary>
+        /// Delegate for reporting errors.
+        /// </summary>
+        public delegate void LoadResultDelegate(LoadResult resultType);
+
         #endregion // Types
 
         #region State
@@ -189,6 +204,35 @@ namespace EasyAssetStreaming {
         }
 
         #endregion // Resolve
+
+        #region Errors
+
+        /// <summary>
+        /// Event dispatched when a load has completed/failed.
+        /// </summary>
+        static public event LoadResultDelegate OnLoadResult;
+
+        /// <summary>
+        /// Retries loading previously-errored assets.
+        /// </summary>
+        static public void RetryErrored() {
+            foreach(var id in s_Cache.ByAddressHash.Values) {
+                ref AssetStatus status = ref s_Cache.StateInfo[id.Index].Status;
+                if (status == AssetStatus.Error) {
+                    status = AssetStatus.PendingLoad;
+                    s_Cache.LoadInfo[id.Index].RetryCount = 0;
+                    QueueLoad(id);
+                }
+            }
+        }
+
+        static private void InvokeLoadResult(LoadResult resultType) {
+            if (OnLoadResult != null) {
+                OnLoadResult(resultType);
+            }
+        }
+
+        #endregion // Errors
 
         #region Queues
 
@@ -575,11 +619,21 @@ namespace EasyAssetStreaming {
                 }
                 
                 ref AssetStateInfo stateInfo = ref s_Cache.StateInfo[id.Index];
+                
+                // if unloading or unloaded then ignore
                 if ((stateInfo.Status & (AssetStatus.PendingUnload | AssetStatus.Unloaded)) != 0) {
                     UnloadSingle(id, now, 0);
                     s_LoadState.Count--;
                     continue;
                 }
+
+                // if already loading then ignore
+                if ((stateInfo.Status & AssetStatus.Loading) != 0) {
+                    s_LoadState.Count--;
+                    continue;
+                }
+
+                stateInfo.Status |= AssetStatus.Loading;
 
                 AssetMetaInfo metaInfo = s_Cache.MetaInfo[id.Index];
                 UnityEngine.Debug.LogFormat("[Streaming] Beginning download of '{0}'", metaInfo.Address);

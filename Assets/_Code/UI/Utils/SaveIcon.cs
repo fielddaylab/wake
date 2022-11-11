@@ -12,6 +12,7 @@ namespace Aqua
     public class SaveIcon : MonoBehaviour
     {
         static private readonly TextId Label_Saving = "ui.save.saving";
+        static private readonly TextId Label_SaveError = "ui.save.error";
         static private readonly TextId Label_SaveComplete = "ui.save.complete";
         
         #region Inspector
@@ -37,6 +38,7 @@ namespace Aqua
             m_Icon.Pause();
 
             Services.Events.Register(GameEvents.ProfileSaveBegin, OnSaveBegin, this)
+                .Register(GameEvents.ProfileSaveError, OnSaveError, this)
                 .Register(GameEvents.ProfileSaveCompleted, OnSaveComplete, this);
         }
 
@@ -49,6 +51,11 @@ namespace Aqua
         {
             m_DisplayTime = Time.realtimeSinceStartup;
             m_DisplayRoutine.Replace(this, Show()).Tick();
+        }
+
+        private void OnSaveError()
+        {
+            m_Label.SetText(Label_SaveError);
         }
 
         private void OnSaveComplete()

@@ -47,7 +47,7 @@ namespace Aqua {
 
             BFDetails details;
             details.Header = Loc.Find(DetailsHeader);
-            details.Image = property.ImageSet();
+            details.Image = null;
 
             if (fact.OnlyWhenStressed)
             {

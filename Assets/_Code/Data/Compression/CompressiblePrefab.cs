@@ -29,6 +29,8 @@ namespace Aqua.Compression {
 
         #endregion // Types
 
+        public bool IgnoreInactive;
+
         #region Compress
 
         #if UNITY_EDITOR
@@ -60,6 +62,9 @@ namespace Aqua.Compression {
                 immediateChildCount = transform.childCount;
                 for(int i = 0; i < immediateChildCount; i++) {
                     Transform child = transform.GetChild(i);
+                    if (IgnoreInactive && !child.gameObject.activeSelf) {
+                        continue;
+                    }
                     CompressedComponentTypes types = ComponentsOfInterest(child);
                     if ((types & ~CompressedComponentTypes.AnyTransform) != 0) {
                         layoutBuffer[layoutElementCount] = child;

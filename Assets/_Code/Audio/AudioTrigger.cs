@@ -3,6 +3,7 @@ using System.Collections;
 using Aqua;
 using Aqua.Scripting;
 using BeauRoutine;
+using Leaf.Runtime;
 using UnityEngine;
 
 namespace AquaAudio
@@ -11,6 +12,7 @@ namespace AquaAudio
     {
         [SerializeField] private string m_EventId = null;
         [SerializeField] private float m_CrossfadeDuration = 0;
+        [SerializeField] private bool m_PlayOnAwake = true;
 
         private Routine m_WaitRoutine;
         private AudioHandle m_Playback;
@@ -23,13 +25,24 @@ namespace AquaAudio
             if (Script.IsLoading)
             {
                 m_Playback = Services.Audio.PostEvent(m_EventId, AudioPlaybackFlags.PreloadOnly);
-                m_WaitRoutine = Routine.Start(this, WaitToPlay());
+                if (m_PlayOnAwake)
+                {
+                    m_WaitRoutine = Routine.Start(this, WaitToPlay());
+                }
             }
             else
             {
-                m_Playback = Services.Audio.PostEvent(m_EventId);
-                if (m_CrossfadeDuration > 0) {
-                    m_Playback.SetVolume(0, 0).SetVolume(1, m_CrossfadeDuration);
+                if (m_PlayOnAwake)
+                {
+                    m_Playback = Services.Audio.PostEvent(m_EventId);
+                    if (m_CrossfadeDuration > 0)
+                    {
+                        m_Playback.SetVolume(0, 0).SetVolume(1, m_CrossfadeDuration);
+                    }
+                }
+                else
+                {
+                    m_Playback = Services.Audio.PostEvent(m_EventId, AudioPlaybackFlags.PreloadOnly);
                 }
             }
         }
@@ -42,8 +55,33 @@ namespace AquaAudio
             }
 
             m_Playback.Play();
-            if (m_CrossfadeDuration > 0) {
+            if (m_CrossfadeDuration > 0)
+            {
                 m_Playback.SetVolume(0, 0).SetVolume(1, m_CrossfadeDuration);
+            }
+        }
+
+        [LeafMember("PlayAudio")]
+        public void Play()
+        {
+            if (Script.IsLoading)
+            {
+                m_WaitRoutine.Replace(this, WaitToPlay());
+            }
+            else
+            {
+                if (m_Playback.Exists())
+                {
+                    m_Playback.Play();
+                }
+                else
+                {
+                    m_Playback = Services.Audio.PostEvent(m_EventId);
+                    if (m_CrossfadeDuration > 0)
+                    {
+                        m_Playback.SetVolume(0, 0).SetVolume(1, m_CrossfadeDuration);
+                    }
+                }
             }
         }
 
@@ -53,12 +91,13 @@ namespace AquaAudio
             m_Playback.Stop(0.1f);
         }
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
 
-        public void BuildManifest(SceneManifestBuilder builder) {
+        public void BuildManifest(SceneManifestBuilder builder)
+        {
             AudioEvent.BuildManifestFromEventString(m_EventId, builder);
         }
 
-        #endif // UNITY_EDITOR
+#endif // UNITY_EDITOR
     }
 }

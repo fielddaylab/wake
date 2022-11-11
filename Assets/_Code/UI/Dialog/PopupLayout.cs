@@ -41,8 +41,9 @@ namespace Aqua {
         [SerializeField] private GridLayoutGroup m_GridFactLayout = null;
         [SerializeField] private int m_CustomModuleSiblingIndex = 0;
         [SerializeField] private RectTransform m_ExtraBackground = null;
-        [SerializeField] private LayoutPrefabPackage m_CompressedLayouts = null;
-        [SerializeField] private RectTransform m_CompressedLayoutRoot = null;
+        [SerializeField] private GameObject m_CompressedLayoutContainer = null;
+        [SerializeField] private GameObject m_CompressedLayoutRoot = null;
+        [SerializeField] private LayoutDecompressor m_LayoutDecompressor = null;
         [SerializeField] private LayoutElement m_DividerGroup = null;
         [SerializeField] private ButtonConfig[] m_Buttons = null;
         [SerializeField] private Button m_CloseButton = null;
@@ -64,6 +65,7 @@ namespace Aqua {
 
         [NonSerialized] private RectTransform m_CurrentCustomModule;
         [NonSerialized] private Transform m_OldCustomModuleParent;
+        [NonSerialized] private StringHash32 m_CurrentLayoutId;
 
         public OptionSelectedDelegate OnOptionSelected;
 
@@ -103,6 +105,7 @@ namespace Aqua {
                 m_ImageDisplay.Clear();
             }
             SetCustomModule(null);
+            SetCustomLayout(null);
 
             m_CachedFactsSet[0] = default;
             m_CachedFlagsSet[0] = default;
@@ -126,6 +129,7 @@ namespace Aqua {
             ConfigureOptions(ref inContent, inFlags);
             ConfigureFacts(ref inContent.Facts);
             SetCustomModule(inContent.CustomModule);
+            SetCustomLayout(inContent.CustomLayout);
         }
 
         public void ConfigureText(ref PopupContent inContent, PopupFlags inFlags) {
@@ -364,6 +368,23 @@ namespace Aqua {
             }
         }
 
+        private void SetCustomLayout(StringHash32 inLayoutId) {
+            if (m_CurrentLayoutId == inLayoutId || !m_LayoutDecompressor) {
+                return;
+            }
+
+            m_LayoutDecompressor.ClearAll();
+            m_CurrentLayoutId = inLayoutId;
+
+            if (!m_CurrentLayoutId.IsEmpty) {
+                GameObject layout = m_LayoutDecompressor.Decompress(Services.UI.CompressedLayouts, m_CurrentLayoutId, m_CompressedLayoutRoot);
+                m_CompressedLayoutContainer.SetActive(true);
+                layout.SetActive(true);
+            } else {
+                m_CompressedLayoutContainer.SetActive(false);
+            }
+        }
+
         #endregion // Custom Modules
 
         #region Callbacks
@@ -424,6 +445,7 @@ namespace Aqua {
         public Color? TextColorOverride;
         public StreamedImageSet Image;
         public RectTransform CustomModule;
+        public StringHash32 CustomLayout;
         public PopupFacts Facts;
         public ListSlice<NamedOption> Options;
     }
