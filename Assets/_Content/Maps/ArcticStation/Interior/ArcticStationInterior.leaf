@@ -39,9 +39,9 @@ $if CompletedJobCount(ArcticStation, 1)
     {@arcticSci} It was wedged between some data logs from more than ten years ago. 
     {@player}   Wow. Thank you, {nameof @arcticSci}!
     {@arcticSci} Of course. Anything for Mer's little sister.
-                 I'll let you know if I find anything else.  
+                 I'll let you know if I find anything else. 
                                  
-    // GiveJournalEntry()
+    $call GiveJournalEntry("N04_MersObsession")
 $else
     {@profArctic}   Still broken, I'm afraid.
 $endif
