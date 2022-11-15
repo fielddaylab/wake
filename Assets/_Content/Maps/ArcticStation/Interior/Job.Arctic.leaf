@@ -18,7 +18,6 @@ $if CompletedJobCount(ArcticStation, 3), !jobs:arctic-job3-journal.received
     {@player}       Wow. This must've been from right before she died. 
                     Thank you, {nameof @arcticSci}.
     $set jobs:arctic-job3-journal.received = true
-    // GiveJournalEntry()
 $elseif jobs:specter6-comms.kelp.discussed, !jobs:specter6-comms.arctic.discussed
     // STORY BEAT H
     {@player}   Oh, before I go... 
