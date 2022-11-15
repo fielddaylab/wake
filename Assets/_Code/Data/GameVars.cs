@@ -25,11 +25,14 @@ namespace Aqua
         static public readonly TableKeyPair PlayerLevel = TableKeyPair.Parse("player:expLevel");
 
         // global
-        static public readonly TableKeyPair PlayerGender = TableKeyPair.Parse("player:gender");
         static public readonly TableKeyPair SceneName = TableKeyPair.Parse("scene:name");
         static public readonly TableKeyPair MapId = TableKeyPair.Parse("scene:mapId");
         static public readonly TableKeyPair LastEntrance = TableKeyPair.Parse("scene:lastEntrance");
         static public readonly TableKeyPair ActNumber = TableKeyPair.Parse("global:actNumber");
+
+        // save data
+        static public readonly TableKeyPair TotalPlayTime_Seconds = TableKeyPair.Parse("time:seconds");
+        static public readonly TableKeyPair TotalPlayTime_Minutes = TableKeyPair.Parse("time:minutes");
     }
 
     static public class GameConsts

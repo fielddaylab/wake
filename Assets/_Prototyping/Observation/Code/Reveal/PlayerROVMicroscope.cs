@@ -99,11 +99,11 @@ namespace ProtoAqua.Observation {
 
         public float MoveSpeedMultiplier() { return 0.4f; }
 
-        public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
+        public bool UpdateTool(float inDeltaTime, in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
             return false;
         }
 
-        public void UpdateActive(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
+        public void UpdateActive(float inDeltaTime, in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
         }
 
         #endregion // ITool
@@ -147,7 +147,7 @@ namespace ProtoAqua.Observation {
 
         int IBaked.Order { get { return 15; }}
 
-        bool IBaked.Bake(BakeFlags flags) {
+        bool IBaked.Bake(BakeFlags flags, BakeContext context) {
             List<GameObject> microscopeViewGO = new List<GameObject>();
             List<Behaviour> microscopeViewComp = new List<Behaviour>();
 

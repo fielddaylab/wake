@@ -5,8 +5,10 @@ using Aqua.Profile;
 using Aqua.Scripting;
 using BeauRoutine;
 using BeauUtil;
+using Leaf.Runtime;
 using ScriptableBake;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Aqua.View {
     public sealed class ViewManager : SharedManager, ISceneLoadHandler, IScenePreloader, IBaked {
@@ -255,6 +257,34 @@ namespace Aqua.View {
 
         #endregion // Links
 
+        #region Leaf
+
+        [LeafMember("ViewTransitionTo"), Preserve]
+        static private IEnumerator LeafGotoView(StringHash32 viewId) {
+            ViewManager manager = ViewManager.Find<ViewManager>();
+            if (manager) {
+                manager.GoToNode(viewId);
+                return manager.m_Transition.Wait();
+            }
+
+            return null;
+        }
+
+        [LeafMember("ViewStartTransitionTo"), Preserve]
+        static private void LeafGotoViewNonBlocking(StringHash32 viewId) {
+            ViewManager manager = ViewManager.Find<ViewManager>();
+            if (manager) {
+                manager.GoToNode(viewId);
+            }
+        }
+
+        [LeafMember("ViewSnapTo"), Preserve]
+        static private void LeafSnapTo(StringHash32 viewId) {
+            ViewManager.Find<ViewManager>()?.SnapToNode(viewId);
+        }
+
+        #endregion // Leaf
+
         #region ISceneLoad
 
         IEnumerator IScenePreloader.OnPreloadScene(SceneBinding inScene, object inContext) {
@@ -280,7 +310,7 @@ namespace Aqua.View {
 
         int IBaked.Order { get { return 2; } }
 
-        bool IBaked.Bake(BakeFlags flags) {
+        bool IBaked.Bake(BakeFlags flags, BakeContext context) {
             m_AllNodes = FindObjectsOfType<ViewNode>();
             m_AllLinks = FindObjectsOfType<ViewLink>();
             Array.Sort(m_AllLinks, (a, b) => a.GroupId.Hash().CompareTo(b.GroupId.Hash()));

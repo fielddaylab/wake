@@ -5,6 +5,7 @@ using Aqua.Scripting;
 using Aqua.Profile;
 using System.Collections;
 using Aqua.Character;
+using BeauRoutine;
 
 namespace Aqua.StationMap
 {
@@ -22,7 +23,6 @@ namespace Aqua.StationMap
 
         [Header("Components")]
         [SerializeField, Required] private Collider2D m_Collider = null;
-        [SerializeField, Required] private Collider2D m_DistantCollider = null;
 
         #endregion // Inspector
 
@@ -123,7 +123,10 @@ namespace Aqua.StationMap
             Services.Events.Dispatch(Event_Dive);
             Services.UI.ShowLetterbox();
             Services.Events.Dispatch(GameEvents.BeginDive, Assets.Map(inspectable.TargetMapId()).name);
-            yield return 6;
+            yield return Routine.Race(
+                Routine.WaitSeconds(6),
+                Routine.WaitCondition(() => Services.Input.DoubleClick())
+            );
             Services.UI.HideLetterbox();
         }
     }

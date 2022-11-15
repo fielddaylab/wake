@@ -34,7 +34,7 @@ namespace Aqua.Scripting {
             return m_Interactable && m_LockCount == 0;
         }
 
-        [LeafMember("LockGroup")]
+        [LeafMember("LockGroup"), Preserve]
         public void Lock() {
             m_LockCount++;
             if (m_LockCount == 1) {
@@ -42,7 +42,7 @@ namespace Aqua.Scripting {
             }
         }
 
-        [LeafMember("UnlockGroup")]
+        [LeafMember("UnlockGroup"), Preserve]
         public void Unlock() {
             if (m_LockCount > 0) {
                 m_LockCount--;
@@ -55,7 +55,7 @@ namespace Aqua.Scripting {
         public void RegisterInspectable(ScriptInspectable inspectable) {
             if (!m_Children.Contains(inspectable)) {
                 m_Children.PushBack(inspectable);
-                inspectable.UpdateGroupState(m_Interactable);
+                inspectable.UpdateGroupState(CanInteract());
             }
         }
 
@@ -65,13 +65,16 @@ namespace Aqua.Scripting {
 
         private void DispatchUpdate() {
             bool canInteract = CanInteract();
+            Debug.LogFormat("Dispatching group '{0}' update for state {1} to {2} children", name, canInteract, m_Children.Count);
             foreach(var child in m_Children) {
                 child.UpdateGroupState(canInteract);
             }
         }
 
         static public ScriptInteractionGroup Find(StringHash32 id) {
-            s_Groups.TryGetValue(id, out ScriptInteractionGroup group);
+            if (!s_Groups.TryGetValue(id, out ScriptInteractionGroup group)) {
+                Debug.LogErrorFormat("[ScriptInteractionGroup] Unable to find group with id '{0}'", id);
+            }
             return group;
         }
 

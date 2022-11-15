@@ -112,6 +112,8 @@ namespace ProtoAqua.ExperimentV2 {
         private void OnBackClick() {
             ExperimentScreen.Transition(m_OrganismScreen, m_World, Routine.Call(() => m_OrganismScreen.Panel.ClearSelection()));
             Services.Events.Dispatch(ExperimentEvents.ExperimentEnded, m_ParentTank.Type);
+            Services.Camera.MoveToPose(m_ParentTank.CameraPose, 0.4f);
+            m_ParentTank.Guide.MoveTo(m_ParentTank.GuideTarget);
         }
 
         private IEnumerator TransitionToDone(ExperimentResult inResult) {
@@ -123,6 +125,8 @@ namespace ProtoAqua.ExperimentV2 {
                 using (var fader = Services.UI.WorldFaders.AllocFader()) {
                     yield return fader.Object.Show(Color.black, 0.5f);
                     SelectableTank.Reset(m_ParentTank, true);
+                    Services.Camera.SnapToPose(m_ParentTank.CameraPose);
+                    m_ParentTank.Guide.SnapTo(m_ParentTank.GuideTarget);
                     yield return 0.5f;
                     yield return fader.Object.Hide(0.5f, false);
                 }
@@ -163,6 +167,8 @@ namespace ProtoAqua.ExperimentV2 {
                 m_SelectedCritterInstance = ActorWorld.Alloc(m_World, inDesc.Id());
 
                 Services.Events.Dispatch(ExperimentEvents.ExperimentBegin, m_ParentTank.Type);
+                Services.Camera.MoveToPose(m_ParentTank.ZoomPose, 0.4f);
+                m_ParentTank.Guide.MoveTo(m_ParentTank.GuideTargetZoomed);
 
                 using (var table = TempVarTable.Alloc()) {
                     table.Set("tankType", m_ParentTank.Type.ToString());
@@ -198,8 +204,8 @@ namespace ProtoAqua.ExperimentV2 {
             ActorStateTransitionRange range = m_CritterTransitions[inId];
             WaterPropertyDesc property = Assets.Property(inId);
 
-            bool bHasMin = !float.IsInfinity(range.AliveMin);
-            bool bHasMax = !float.IsInfinity(range.AliveMax);
+            bool bHasMin = !float.IsInfinity(range.AliveMin) && range.AliveMin >= property.MinValue();
+            bool bHasMax = !float.IsInfinity(range.AliveMax) && range.AliveMax <= property.MaxValue();
             float min = bHasMin ? range.AliveMin : property.MinValue();
             float max = bHasMax ? range.AliveMax : property.MaxValue();
 
@@ -338,7 +344,7 @@ namespace ProtoAqua.ExperimentV2 {
 
         int IBaked.Order { get { return 0; } }
 
-        bool IBaked.Bake(BakeFlags flags) {
+        bool IBaked.Bake(BakeFlags flags, BakeContext context) {
             m_Dials = GetComponentsInChildren<WaterPropertyDial>(true);
             return true;
         }

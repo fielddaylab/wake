@@ -29,6 +29,8 @@ namespace Aqua.Compression {
 
         #endregion // Types
 
+        public bool IgnoreInactive;
+
         #region Compress
 
         #if UNITY_EDITOR
@@ -60,6 +62,9 @@ namespace Aqua.Compression {
                 immediateChildCount = transform.childCount;
                 for(int i = 0; i < immediateChildCount; i++) {
                     Transform child = transform.GetChild(i);
+                    if (IgnoreInactive && !child.gameObject.activeSelf) {
+                        continue;
+                    }
                     CompressedComponentTypes types = ComponentsOfInterest(child);
                     if ((types & ~CompressedComponentTypes.AnyTransform) != 0) {
                         layoutBuffer[layoutElementCount] = child;
@@ -216,9 +221,13 @@ namespace Aqua.Compression {
             unsafe {
                 int decompressedSize = 0;
                 byte* decompressed = Assets.Decompress(buffer, offset, length, &decompressedSize);
-                GameObject go = Decompress(decompressed, decompressedSize, bank, decompressor);
-                Assets.FreeDecompress(decompressed);
-                return go;
+                try {
+                    GameObject go = Decompress(decompressed, decompressedSize, bank, decompressor);
+                    return go;
+                }
+                finally {
+                    Assets.FreeDecompress(decompressed);
+                }
             }
         }
 

@@ -174,7 +174,11 @@ $branch .grantStressedData
 @boostScore -5
 @cutscene
 {@player} What should I do next, {nameof @guide}?
-{@guide}    Remake your visual model based on your new {nameof Ick} data.
+$if HasFact(LionfishInvasion.Model.IckStressVisual)
+    {@guide}    Let's see if we can make a {item}more descriptive model{/item} based on our newly acquired data.
+$else
+    {@guide}    Remake your visual model based on your new {nameof Ick} data.
+$endif
 
 // :: catchImproveDescribe
 // @trigger    RequestPartnerHelp
@@ -207,7 +211,7 @@ $choice .argue.giveUp; I'm still not sure...
 
 :: argue.transition
 {@profCoral}	I was afraid that might be the case.
-				Did adding Ick fix your model?
+				Did adding {nameof Ick} fix your model?
 $if ArgueSetClaim(checkUpClaim, jobs.coral-check-up.argue.claimLabel)
 		$call ArgueFactSlot(LionfishInvasion.Model.IckStressDescribe)
 $endif
@@ -216,8 +220,8 @@ $branch .argue.presentFacts
 
 :: argue.presentFacts
 $choice #argueFactSet; Present facts from AQOS
-		$answer correct, .argue.correctModel
-		$answer incorrect, .argue.incorrectModel
+    $answer correct, .argue.correctModel
+    $answer incorrect, .argue.incorrectModel
 $choice .argue.giveUp; Let me get back to you.
 
 :: argue.correctModel
@@ -230,7 +234,20 @@ $choice .argue.giveUp; Let me get back to you.
 $branch .end
 
 :: argue.incorrectModel
-{@profCoral}	Hmm. I don't see how this pertains to the issue at hand.
+$if ArgueIsFactSubmitted(LionfishInvasion.Model.IckStressVisual)
+{@profCoral}	Ah, I see you revised your {item}Visual{/item} model!
+                Where you able to build a more {h}Descriptive model{/h}?
+$elseif ArgueIsFactSubmitted(LionfishInvasion.Model.MuchAlgaeDescriptive)
+    Oh wait, isn't this your old model?
+	Did adding {nameof Ick} allow you to make a new model?   
+$elseif ArgueIsFactSubmitted(LionfishInvasion.Model.MuchAlgaeVisual)
+    Oh wait, isn't this your old model?
+	Did adding {nameof Ick} allow you to make a new model?   
+$else
+    Hmmmm | I'm not sure I see the connection to your model of the Ick and Algae...
+    Do you want to try something else?
+	Did your data on the {nameof Ick} allow you to make a new model?   
+$endif
 $call ArgueRejectIncorrect()
 {@profCoral}	Why do you say the Ick are stressing the Tang?
 $branch .argue.presentFacts

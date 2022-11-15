@@ -19,12 +19,11 @@ namespace Aqua.Scripting
             Now
         }
 
-        private const float AutosaveDelay = 5f;
+        private const float AutosaveDelay = 15f;
 
         private void Awake()
         {
             Services.Events.Register(GameEvents.SceneLoaded, OnSceneLoaded, this)
-                .Register(GameEvents.SceneWillUnload, OnAutosaveEvent, this)
                 .Register<Mode>(GameEvents.ProfileAutosaveHint, OnHint, this)
                 .Register(GameEvents.ProfileAutosaveSuppress, OnSuppress, this)
                 .Register<StringHash32>(GameEvents.ProfileSpawnLocationUpdate, OnSpawnLocationUpdate, this)
@@ -169,7 +168,7 @@ namespace Aqua.Scripting
 
         private IEnumerator DelayedSave(StringHash32 inLocation)
         {
-            while(Services.Script.IsCutscene() || Time.unscaledTime < m_DelayTimestamp + AutosaveDelay)
+            while(Script.ShouldBlock() || Time.unscaledTime < m_DelayTimestamp + AutosaveDelay)
             {
                 if (Services.Data.IsSaving())
                     yield break;

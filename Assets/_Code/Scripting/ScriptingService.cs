@@ -28,6 +28,7 @@ namespace Aqua
     {
         public delegate void ScriptThreadHandler(ScriptThreadHandle inHandle);
         public delegate void ScriptTargetHandler(StringHash32 inTarget);
+        public delegate void ScriptTapHandler(ScriptThreadHandle inHandle, StringHash32 inTarget);
         public delegate Future<StringHash32> ChoiceSelectorHandler();
 
         private struct QueuedEvent {
@@ -238,19 +239,19 @@ namespace Aqua
                     {
                         for(int i = responseCount - 1; i >= 0; --i)
                         {
-                            DebugService.Log(LogMask.Scripting,  "[ScriptingService] Executing function {0} with function id '{1}'", nodes[i].Id(), inFunctionId);
+                            DebugService.Log(LogMask.Scripting,  "[ScriptingService] Executing function {0} with function id '{1}'", nodes[i].Id().ToDebugString(), inFunctionId.ToDebugString());
                             StartThreadInternalNode(inContext, nodes[i], inContextTable, null);
                         }
                     }
                     else
                     {
-                        DebugService.Log(LogMask.Scripting,  "[ScriptingService] No functions available with id '{0}'", inFunctionId);
+                        DebugService.Log(LogMask.Scripting,  "[ScriptingService] No functions available with id '{0}'", inFunctionId.ToDebugString());
                     }
                 }
             }
             else
             {
-                DebugService.Log(LogMask.Scripting,  "[ScriptingService] No functions with id '{0}'", inFunctionId);
+                DebugService.Log(LogMask.Scripting,  "[ScriptingService] No functions with id '{0}'", inFunctionId.ToDebugString());
             }
             ResetCustomResolver();
         }
@@ -307,7 +308,10 @@ namespace Aqua
         /// </summary>
         public void KillLowPriorityThreads(TriggerPriority inThreshold = TriggerPriority.Cutscene, bool inbKillFunctions = false)
         {
-            DebugService.Log(LogMask.Scripting,  "[ScriptingService] Killing all with priority less than {0}", inThreshold);
+            if (DebugService.IsLogging(LogMask.Scripting))
+            {
+                DebugService.Log(LogMask.Scripting,  "[ScriptingService] Killing all with priority less than {0}", inThreshold);
+            }
 
             for(int i = m_ThreadList.Count - 1; i >= 0; --i)
             {
@@ -562,16 +566,6 @@ namespace Aqua
         /// <summary>
         /// Parses a string into a TagString.
         /// </summary>
-        public TagString ParseToTag(StringSlice inLine, object inContext = null)
-        {
-            TagString str = new TagString();
-            ParseToTag(ref str, inLine, inContext);
-            return str;
-        }
-
-        /// <summary>
-        /// Parses a string into a TagString.
-        /// </summary>
         public void ParseToTag(ref TagString ioTag, StringSlice inLine, object inContext = null)
         {
             TagStringParser parser = m_ParserPool.Alloc();
@@ -584,6 +578,13 @@ namespace Aqua
         #region Internal
 
         internal IMethodCache LeafInvoker { get { return m_LeafCache; } }
+
+        internal void TapCharacter(StringHash32 inTargetId, ScriptThreadHandle inHandle)
+        {
+            if (OnTargetTap != null) {
+                OnTargetTap(inHandle, inTargetId);
+            }
+        }
 
         internal void UntrackThread(ScriptThread inThread)
         {
@@ -746,6 +747,11 @@ namespace Aqua
         /// </summary>
         public event ScriptTargetHandler OnTargetedThreadKilled;
 
+        /// <summary>
+        /// Dispatched when a target is tapped to join a script.
+        /// </summary>
+        public event ScriptTapHandler OnTargetTap;
+
         #endregion // Events
 
         #region IService
@@ -784,6 +790,8 @@ namespace Aqua
             m_TablePool.Prewarm();
 
             m_ThreadPool = new DynamicPool<ScriptThread>(16, (p) => new ScriptThread(this));
+            m_ThreadPool.Prewarm(4);
+            
             m_QueuedTriggers = new RingBuffer<QueuedEvent>(16, RingBufferMode.Expand);
         }
 

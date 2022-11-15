@@ -25,6 +25,16 @@ namespace Aqua
     [ServiceDependency(typeof(UIMgr)), DefaultExecutionOrder(999999)]
     public partial class StateMgr : ServiceBehaviour, IDebuggable
     {
+        private struct PrioritizedCallback {
+            public readonly int Priority;
+            public readonly Action Callback;
+
+            public PrioritizedCallback(Action callback, int priority) {
+                Priority = priority;
+                Callback = callback;
+            }
+        }
+
         #region Inspector
 
         [SerializeField, Required] private GameObject m_InitialPreloadRoot = null;
@@ -36,6 +46,7 @@ namespace Aqua
         [NonSerialized] private bool m_SceneLock;
         [NonSerialized] private PlayerBody m_Body;
         [NonSerialized] private bool m_InitFrame;
+        [NonSerialized] private StringHash32 m_SceneName;
 
         private VariantTable m_TempSceneTable;
         private Func<IEnumerator> m_OnSceneReadyFunc;
@@ -43,9 +54,10 @@ namespace Aqua
         private RingBuffer<SceneBinding> m_SceneHistory = new RingBuffer<SceneBinding>(8, RingBufferMode.Overwrite);
         private Dictionary<Type, SharedManager> m_SharedManagers;
 
-        private RingBuffer<Action> m_OnLoadQueue = new RingBuffer<Action>(64, RingBufferMode.Expand);
+        private RingBuffer<PrioritizedCallback> m_OnLoadQueue = new RingBuffer<PrioritizedCallback>(64, RingBufferMode.Expand);
 
         public StringHash32 LastEntranceId { get { return m_EntranceId; } }
+        public StringHash32 SceneName { get { return m_SceneName; } }
 
         #region Scene Loading
 
@@ -271,6 +283,8 @@ namespace Aqua
             Services.Physics.Enabled = false;
             BootParams.ClearStartFlag();
 
+            Streaming.RetryErrored();
+
             bool bShowCutscene = (inFlags & SceneLoadFlags.Cutscene) != 0;
             if (bShowCutscene)
             {
@@ -409,7 +423,7 @@ namespace Aqua
                 if (allPreloaders.Count > 0)
                 {
                     DebugService.Log(LogMask.Loading, "[StateMgr] Executing preload steps for scene '{0}'", inScene.Path);
-                    yield return Routine.ForEachParallel(allPreloaders.ToArray(), (p) => p.OnPreloadScene(inScene, inContext));
+                    yield return Routine.ForEachParallelChunked(allPreloaders.ToArray(), (p) => p.OnPreloadScene(inScene, inContext), 8);
                 }
             }
 
@@ -439,7 +453,7 @@ namespace Aqua
                 if (allPreloaders.Count > 0)
                 {
                     DebugService.Log(LogMask.Loading, "[StateMgr] Executing preload steps for gameObject '{0}'", inRoot.FullPath(true));
-                    return Routine.ForEachParallel(allPreloaders.ToArray(), (p) => p.OnPreloadScene(inRoot.scene, inContext));
+                    return Routine.ForEachParallelChunked(allPreloaders.ToArray(), (p) => p.OnPreloadScene(inRoot.scene, inContext), 8);
                 }
             }
 
@@ -517,7 +531,7 @@ namespace Aqua
             }
 
             yield return LoadConditionalSubscenes(inBinding, inContext);
-            yield return Routine.Amortize(Bake.SceneAsync(inBinding, 0), 5);
+            yield return Routine.Amortize(Baking.BakeSceneAsync(inBinding, 0), 5);
         }
 
         #endif // UNITY_EDITOR
@@ -560,18 +574,19 @@ namespace Aqua
                 Save.Map.RecordVisitedLocation(map);
         }
 
-        public void OnLoad(Action inAction)
+        public void OnLoad(Action inAction, int priority)
         {
             if (m_SceneLock) {
-                m_OnLoadQueue.PushBack(inAction);
+                m_OnLoadQueue.PushBack(new PrioritizedCallback(inAction, priority));
             } else {
                 inAction();
             }
         }
 
         private void ProcessCallbackQueue() {
-            while(m_OnLoadQueue.TryPopFront(out Action action)) {
-                action();
+            m_OnLoadQueue.Sort((a, b) => b.Priority - a.Priority);
+            while(m_OnLoadQueue.TryPopFront(out var action)) {
+                action.Callback();
             }
         }
 
@@ -613,6 +628,7 @@ namespace Aqua
             Services.UI.BindCamera(Services.Camera.Current);
 
             m_Body = FindObjectOfType<PlayerBody>();
+            m_SceneName = inScene.Name;
         }
 
         #endregion // Scripting
@@ -837,6 +853,13 @@ namespace Aqua
         {
             SceneLoadFlags flags = SceneLoadFlags.Default;
             return StateUtil.LoadSceneWithWipe(inSceneName, inEntrance, flags);
+        }
+
+        [LeafMember("LoadSceneFade"), UnityEngine.Scripting.Preserve]
+        static private IEnumerator LeafLoadSceneFade(string inSceneName, StringHash32 inEntrance = default(StringHash32), string inLoadingMode = null)
+        {
+            SceneLoadFlags flags = SceneLoadFlags.Default;
+            return StateUtil.LoadSceneWithFader(inSceneName, inEntrance, flags);
         }
 
         #endregion // Leaf

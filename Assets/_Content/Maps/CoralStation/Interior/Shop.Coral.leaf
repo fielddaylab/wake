@@ -46,21 +46,49 @@ $else
 $endif
 
 #ShopHandler(a)
-$if JobCompleted(coral-hunting-lions)
-    {@$MerchantId} O!! You did it!
-    {@player} Um... what... ?
-    {@$MerchantId} The Lionfish. You figured it out!
-                    I {i}knew{/i} those things were rotten.
-                    Guess I better put back that ignition coil I borrowed from {nameof @profCoral}'s engine...
-$else
-    {@$MerchantId} Hey, O! Nice to see you again.
-                   So, you're a bigshot scientist... what's going on with those Lionfish?
-    {@player}      Not too much, yet.
-    {@$MerchantId} Ugh. I swear, he's never going to listen.
-                   I might need to take drastic measures...
-$endif
+{@$MerchantId}  Hey, O! Nice to see you again.
+                Wanna look around the shop?  
+$choice .action.openShop; Sure!
+$choice .action.cancel; Not right now.
+
+#ShopHandler(gotLionfish, JobCompleted(coral-hunting-lions))
+@once
+{@$MerchantId} O!! You did it!
+{@player} Um... what... ?
+{@$MerchantId} The Lionfish. You figured it out!
+                I {i}knew{/i} those things were rotten.
+                Guess I better put back that ignition coil I borrowed from {nameof @profCoral}'s engine...
 {@$MerchantId} Anyway. Wanna look around the shop?  
 $choice .action.openShop; Sure!
+$choice .action.cancel; Not right now.
+
+#ShopHandler(noGoLionfish, Chance(0.5), !JobCompleted(coral-hunting-lions))
+@once
+{@$MerchantId} Hey, O! Nice to see you again.
+                So, you're a bigshot scientist... what's going on with those Lionfish?
+{@player}      Not too much, yet.
+{@$MerchantId} Ugh. I swear, he's never going to listen.
+                I might need to take drastic measures...
+{@$MerchantId} Anyway. Wanna look around the shop?  
+$choice .action.openShop; Sure!
+$choice .action.cancel; Not right now.
+
+#ShopHandler(gotFlashlightAssignedHere, world:shop.boughtFlashlightFrom == "coral", HasUpgrade("Flashlight"))
+@once
+{@$MerchantId}  Hey O! Thank you so much for retrieving that {nameof Flashlight} for me! I hope it wasn't too difficult to find.
+                {slow}Really{/slow} regretting not picking it up myself. I hope your uncle will forgive me.
+                Anyways... wanna look around the shop?
+$choice .action.openShop; Sure do!
+$choice .action.cancel; Not right now.
+
+#ShopHandler(gotFlashlight, world:shop.boughtFlashlightFrom != "coral", HasUpgrade("Flashlight"))
+@once
+{@$MerchantId}  Hey O! Good to see you again... hold up|, is that the {nameof Flashlight}?
+                ...{wait 1}{auto}
+                Aww thank you so much for retrieving it! I hope that wasn't too difficult!
+                {slow}Definitely{/slow} regretting not picking it up myself. I hope your uncle will forgive me.
+                Anyways... wanna look around the shop?
+$choice .action.openShop; Sure do!
 $choice .action.cancel; Not right now.
 
 :: action.cancel
@@ -76,7 +104,7 @@ $choice .action.cancel; Not right now.
 {@$MerchantId}   {random Whoa,|Hey,|As a bonus,} this would unlock some jobs over at the {nameof $local:hintStation}!
 
 :: lowExp
-{@$MerchantId}   Oh, {random hang on|I'm sorry}... I can't let you have this just yet. You'll need {exp}{$local:needExp}{/exp} more before I can trust you with it.
+{@$MerchantId}   Oh, {random hang on|I'm sorry}... I can't let you have this just yet. You'll need some more {exp}experience{/exp} before I can trust you with it.
 
 :: freeItem
 {@$MerchantId}   So, want the {nameof $local:itemId}? Won't cost you anything.
@@ -113,7 +141,7 @@ $choice .action.cancel; Not right now.
 {@$MerchantId}  Come back with some more {pluralnameof Cash} next time!
 
 #CloseHandler(notEnoughExp, shop:needsExpCount)
-{@$MerchantId}  Come back when you've got more {pluralnameof Exp}!
+{@$MerchantId}  Come back when you've got more {exp}experience{/exp}!
 
 #OpenExplorationHandler(a)
 {@$MerchantId}  Need any exploration tools?
@@ -138,18 +166,32 @@ $choice .action.cancel; Not right now.
 $set    jobs:common-dive.seen.tagger-intro = true
 $EvaluateItemPurchase()
 
-#OverrideItemHandler(Flashlight, flashlight.first)
+#OverrideItemHandler(FlashlightCoordinates, flashlight.first)
 @boostScore 100
 @once
 {@$MerchantId}  The {nameof Flashlight}!
                 Use this one for dark spaces, deep sea, yadda yadda...
-                I mean, you're a brilliant scientist. I'm sure you know what a flashlight is. 
+                I mean, you're a brilliant scientist. I'm sure you know what a flashlight is.
+$set local:postPurchaseBranch = "interior.shop.coral.PostFlashlight"
 $EvaluateItemPurchase()
 
-#ItemHandler(Flashlight)
+#ItemHandler(FlashlightCoordinates)
 {@$MerchantId}  That's the {nameof Flashlight}!
                  Always a good idea. Needs no introduction. 
+$set local:postPurchaseBranch = "interior.shop.coral.PostFlashlight"
 $EvaluateItemPurchase()
+
+:: PostFlashlight
+$set    world:flashlightQuest = true
+$set    world:shop.boughtFlashlightFrom = "coral"
+{@coralMechanic}    ...oh no. {fast}Oh shoot I dropped it.{/fast}
+                    So.| Funny story.| I borrowed it from your uncle.
+                    And then{wait 0.5} {fast}I accidentally dropped it at {nameof FinalStation}.{/fast}
+                    Please go pick it up for me?
+
+$call UnlockSite(RS-0)
+$call UnlockStation(FinalStation)
+$call ShowPopup(map.unlock.finalStation.header, map.unlock.finalStation.desc)
 
 #ItemHandler(ProbeHacker)
 {@$MerchantId}  The {nameof ProbeHacker}! 

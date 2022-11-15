@@ -12,6 +12,7 @@ namespace Aqua
         static public readonly StringHash32 ProfileStarted = "profile:started"; // no args
         
         static public readonly StringHash32 ProfileSaveBegin = "profile:save-begin"; // no args
+        static public readonly StringHash32 ProfileSaveError = "profile:save-error"; // no args
         static public readonly StringHash32 ProfileSaveCompleted = "profile:save-completed"; // no args
 
         static public readonly StringHash32 ProfileAutosaveHint = "profile:autosave-hint"; // AutoSave.Mode mode
@@ -38,6 +39,7 @@ namespace Aqua
         static public readonly StringHash32 ScriptNodeSeen = "script:node-seen"; // StringHash32 nodeId
         static public readonly StringHash32 ScriptChoicePresented = "script:choice-presented"; // DialogRecord lastLine
         static public readonly StringHash32 ScriptFired = "script:fired"; // string nodeId
+        static public readonly StringHash32 TextLineDisplayed = "script:lineDisplayed"; // string text
 
         static public readonly StringHash32 GuideChatterStart = "guide:chatter-start"; // no args
         static public readonly StringHash32 GuideChatterEnd = "guide:chatter-end"; // no args
@@ -48,6 +50,8 @@ namespace Aqua
         static public readonly StringHash32 SiteDataUpdated = "site-data:updated"; // StringHash32 siteId
         static public readonly StringHash32 ArgueDataUpdated = "argue:updated"; // StringHash32 argumentationId
         static public readonly StringHash32 ScienceLevelUpdated = "science:level-updated"; // ScienceLevelUp
+        static public readonly StringHash32 DecryptLevelUpdated = "science:decrypt-level-updated"; // uint level
+        static public readonly StringHash32 MapsUpdated = "maps:updated";
 
         static public readonly StringHash32 VariableSet = "data:variable-set"; // TableKeyPair variableId
 

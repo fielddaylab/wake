@@ -341,6 +341,12 @@ namespace EasyAssetStreaming {
             Resize(m_AutoSize);
         }
 
+        protected override void OnDidApplyAnimationProperties() {
+            LoadClipping();
+            LoadAnchors();
+            ApplyVisible();
+        } 
+
         #if UNITY_EDITOR
 
         [NonSerialized] private Vector2 m_CachedParentSize;

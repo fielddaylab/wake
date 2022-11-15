@@ -1,12 +1,14 @@
 using System;
 using System.Collections;
 using Aqua;
+using Aqua.Scripting;
 using BeauRoutine;
+using Leaf.Runtime;
 using UnityEngine;
 
 namespace AquaAudio
 {
-    public class AudioBGMTrigger : MonoBehaviour
+    public class AudioBGMTrigger : ScriptComponent, ISceneManifestElement
     {
         [SerializeField] private string m_EventId = null;
         [SerializeField] private float m_Crossfade = 0.5f;
@@ -18,6 +20,9 @@ namespace AquaAudio
 
         private void OnEnable()
         {
+            if (string.IsNullOrEmpty(m_EventId))
+                return;
+
             if (Services.Audio.CurrentMusic().EventId() == m_EventId)
             {
                 return;
@@ -33,7 +38,14 @@ namespace AquaAudio
             }
             else
             {
-                m_BGM = Services.Audio.SetMusic(m_EventId, m_Crossfade);
+                if (m_PlayOnLoad)
+                {
+                    m_BGM = Services.Audio.SetMusic(m_EventId, m_Crossfade);
+                }
+                else
+                {
+                    m_BGM = Services.Audio.PostEvent(m_EventId, AudioPlaybackFlags.PreloadOnly);
+                }
             }
         }
 
@@ -47,6 +59,7 @@ namespace AquaAudio
             Services.Audio.SetMusic(m_BGM, m_Crossfade);
         }
 
+        [LeafMember("PlayBGM")]
         public void Play()
         {
             if (Script.IsLoading)
@@ -82,5 +95,13 @@ namespace AquaAudio
                 }
             }
         }
+
+        #if UNITY_EDITOR
+
+        public void BuildManifest(SceneManifestBuilder builder) {
+            AudioEvent.BuildManifestFromEventString(m_EventId, builder);
+        }
+
+        #endif // UNITY_EDITOR
     }
 }

@@ -66,6 +66,19 @@ namespace Aqua {
         }
 
         #endregion // Behavior
+
+        #if UNITY_EDITOR
+
+        public override void ClearEditorOnlyData()
+        {
+            base.ClearEditorOnlyData();
+
+            ValidationUtils.StripDebugInfo(ref HeaderId);
+            ValidationUtils.StripDebugInfo(ref DescriptionId);
+            ValidationUtils.StripDebugInfo(ref SentenceId);
+        }
+
+        #endif // UNITY_EDITOR
     }
 
     public enum BFModelType : byte

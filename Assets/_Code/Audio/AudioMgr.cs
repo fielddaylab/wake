@@ -207,6 +207,10 @@ namespace AquaAudio
             {
                 player.Stop();
             }
+            foreach(var player in m_StreamPlayers.ActiveObjects)
+            {
+                player.Stop();
+            }
         }
 
         private ushort NextId()
@@ -575,6 +579,16 @@ namespace AquaAudio
         [LeafMember("AudioOneShot"), Preserve]
         static private void LeafOneShot(StringHash32 id) {
             Services.Audio.PostEvent(id);
+        }
+
+        [LeafMember("AudioSetBGM"), Preserve]
+        static private void LeafSetBGM(StringHash32 id) {
+            Services.Audio.SetMusic(id);
+        }
+
+        [LeafMember("AudioStopAll"), Preserve]
+        static private void LeafStopAll() {
+            Services.Audio.StopAll();
         }
 
         #endregion // Leaf

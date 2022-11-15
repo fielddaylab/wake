@@ -8,7 +8,7 @@ using UnityEngine.UI;
 namespace Aqua
 {
     [DisallowMultipleComponent]
-    public class CursorInteractionHint : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+    public class CursorInteractionHint : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IEditorOnlyData
     {
         /// <summary>
         /// Tooltip string id.
@@ -80,5 +80,13 @@ namespace Aqua
         }
 
         #endregion // Handlers
+
+        #if UNITY_EDITOR
+
+        void IEditorOnlyData.ClearEditorOnlyData() {
+            ValidationUtils.StripDebugInfo(ref TooltipId);
+        }
+
+        #endif // UNITY_EDITOR
     }
 }

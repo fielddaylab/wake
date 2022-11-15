@@ -1,0 +1,209 @@
+# basePath job.bayou-blue-waters
+
+// INTRO
+
+:: start
+@trigger    JobStarted
+@cutscene
+{@bayouSci}    Have you noticed how green the {nameof RS-3P} is, O?
+{@player}   Yeah, it's pretty overwhelming. I'm glad I don't have to leave my sub to study it.
+{@bayouSci}    Well, that water used to be blue.
+{@player}   Really?
+{@bayouSci}    Really. Well, blue-er. I'd like you to get to the bottom of why it has shifted so drastically.
+                We might be able to reverse the effects.
+
+:: cyanoScanned
+@trigger    JobTaskCompleted
+@when       taskId == "findGreen"
+@once
+@cutscene
+{@guide}    This is a green thing! It could be the reason the water is no longer blue... somehow.
+            Let's count these creatures, then find out everything we can about them in experiments.
+
+:: experimentsCompleted
+@trigger    JobTasksUpdated
+@when       JobTaskTop(reportBack)
+@once
+@cutscene
+{@guide}    We've learned quite a bit about {nameof Cyanobacteria}. Let's show {nameof @bayouSci} how they're impacting the water.
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchFindGreen
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(findGreen)
+@boostScore -5
+@cutscene
+{@guide}    We're looking for what could be making the water in {fullnameof RS-3P} look green.
+            I'm sure some combination of your tools will reveal something.
+
+:: catchCountGreen
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(countGreen)
+@boostScore -5
+@cutscene
+$if scene:name == "RS-3P"
+    {@guide}    Count how many {nameof Cyanobacteria} there are here.
+$else
+    {@guide}    We still need to count how many {nameof Cyanobacteria} there are in the {nameof RS-3P}.
+$endif
+
+:: catchStressCB
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(stressCB)
+@boostScore -5
+@cutscene
+{@guide}    Stick {nameof Cyanobacteria} in the {nameof StressTank} and record the stress ranges.
+
+:: catchMeasureEffect
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(measureEffect)
+@boostScore -5
+@cutscene
+{@guide}    The {nameof MeasurementTank} will help us understand {nameof Cyanobacteria} better.
+$if !HasFact(Cyanobacteria.Consume.Light)
+    {@guide}    I recommend measuring {nameof Cyanobacteria}'s effect on its environment with water that does not stress it. 
+$elseif !HasFact(Cyanobacteria.Consume.Light.Stressed)
+    // Cyanobacteria stress requires Site W or Y (or give it to player via script)
+    $if HasEntity(RS-4Y)
+        {@guide}    Might I suggest measuring {nameof Cyanobacteria}'s effect on its environment with water that stresses it?
+                    One of the arctic sites could do the trick -- they have some pretty extreme conditions.
+    $elseif HasEntity(RS-4W)
+        {@guide}    Might I suggest measuring {nameof Cyanobacteria}'s effect on its environment with water that stresses it?
+                    One of the arctic sites could do the trick -- they have some pretty extreme conditions.
+    $else
+        {@guide}    We'll need to measure {nameof Cyanobacteria} in an environment with water that stresses it.
+                    ...Though scanning through AQOS, I don't believe we've identified any sites with conditions that would stress them.
+                    We may need to come back to this job once we've seen more extreme biomes.
+    $endif
+$endif
+
+:: catchMeasureReproduce
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(measureReproduce), !JobTaskActive(measureEffect)
+@boostScore -5
+@cutscene
+{@guide}    The {nameof MeasurementTank} will help us understand {nameof Cyanobacteria} better.
+$if !HasFact(Cyanobacteria.Reproduce)
+    {@guide}    Might I suggest measuring {nameof Cyanobacteria}'s reproduce rate in water that does not stress it?
+$elseif !HasFact(Cyanobacteria.Reproduce.Stressed)
+    // Cyanobacteria stress requires Site W or Y (or give it to player via script)
+    $if HasEntity(RS-4Y)
+        {@guide}    I recommend measuring {nameof Cyanobacteria}'s reproduce rate in water that stresses it.
+                    One of the arctic sites could do the trick -- they have some pretty extreme conditions.
+    $elseif HasEntity(RS-4W)
+        {@guide}    I recommend measuring {nameof Cyanobacteria}'s reproduce rate in water that stresses it.
+                    One of the arctic sites could do the trick -- they have some pretty extreme conditions.
+    $else
+        {@guide}    We'll need to measure {nameof Cyanobacteria} in an environment with water that stresses it.
+                    ...Though scanning through AQOS, I don't believe we've identified any sites with conditions that would stress them.
+                    We may need to come back to this job once we've seen more extreme biomes.
+    $endif
+$endif
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@guide}    Report back to {nameof @bayouSci} with what you've learned about {nameof Cyanobacteria}.
+
+// ARGUMENTATION
+
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(blueWatersArgueCyanoExtra)
+@cutscene
+$if ArgueIsComplete(blueWatersArgueCyanoPop)
+    {@bayouSci}    Previously we discussed that there are enough {nameof Cyanobacteria} to turn the water green.
+    $branch .argue.beginExtra
+$else
+    $call ArgueLoad(blueWatersArgueCyanoPop) 
+    {@bayouSci}    What is turning the water green?
+    $choice .argue.stillSearching; I'm still searching!
+    $choice .argue.lightTrick; It's a trick of the light.
+    $if JobTaskTop(reportBack)
+        $choice .argue.cyanoCause; Cyanobacteria!
+    $endif
+    $choose branch
+$endif
+
+// Population
+
+:: argue.stillSearching
+{@bayouSci}    Let me know when you've found something.
+
+:: argue.lightTrick
+{@player}   Pretty sure it's a trick of the light -- nothing has changed about the ecosystem.
+{@bayouSci}    As convenient as that would be seem, I doubt that is the case. I'd say keep looking.
+
+:: argue.cyanoCause
+{@bayouSci}    Oh, really? But they are so small...
+{@player}       There's a lot of them.
+$if ArgueSetClaim(ClaimPop, jobs.bayou-blue-waters.argue.claimLabelPop)
+    $call ArgueFactSlot(P_DeadZone.Population.Cyanobacteria) 
+$endif
+{@bayouSci}    They must have some truly massive numbers if they are turning everything green.
+                Can you show me the {nameof Cyanobacteria} populations?
+$branch .argue.showClaimPop
+
+:: argue.showClaimPop
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.completePop
+    $answer incorrect, .argue.unrelatedPop
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedPop
+$call ArgueRejectIncorrect()
+{@bayouSci}     Not quite what I'm looking for, O. 
+$branch .argue.showClaimPop
+
+:: argue.completePop
+$call ArgueCancelClaim()
+$call ArgueComplete()
+{@bayouSci}    Hmm. Yes, I believe this would do it.
+$branch .argue.beginExtra
+
+// Extra
+
+:: argue.beginExtra
+ $call ArgueLoad(blueWatersArgueCyanoExtra) 
+$if ArgueSetClaim(ClaimExtra, jobs.bayou-blue-waters.argue.claimLabelExtra)
+    $call ArgueFactSlot(Cyanobacteria.Consume.Light) 
+    $call ArgueFactSlot(Cyanobacteria.Consume.Light.Stressed) 
+    $call ArgueFactSlot(Cyanobacteria.Reproduce) 
+    $call ArgueFactSlot(Cyanobacteria.Reproduce.Stressed)
+$endif
+{@bayouSci}    What else did you find out about {nameof Cyanobacteria}? I recall that it was bit dim down there last I looked.
+$branch .argue.showClaimExtra
+
+:: argue.showClaimExtra
+{@bayouSci}    How do {nameof Cyanobacteria} impact the light levels, and how quickly can we expect them to reproduce?
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.completeExtra
+    $answer incorrect, .argue.unrelatedExtra
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedExtra
+$call ArgueRejectIncorrect()
+{@bayouSci} Not quite what I'm looking for, O. 
+$branch .argue.showClaimExtra
+
+// Shared
+
+:: argue.giveUp
+{@bayouSci} Okay, then. But don't take too long. A lot of people are waiting on our decision. 
+$call ArgueClearFacts()
+$call ArgueCancelClaim()
+
+// End
+:: argue.completeExtra
+$call ArgueComplete()
+{@bayouSci}    Hmm. So the {nameof Cyanobacteria} turn the water green, but they also take up a lot of light.
+                We'll need to consider how a spike in {nameof Cyanobacteria} might affect other species in the region.
+                Thanks for your help!
+$call CompleteJob()

@@ -10,6 +10,7 @@ namespace Aqua.Profile
         public string Id;
         public long LastUpdated;
         public uint Version;
+        public double Playtime;
 
         public CharacterProfile Character = new CharacterProfile();
         public InventoryData Inventory = new InventoryData();
@@ -29,7 +30,8 @@ namespace Aqua.Profile
         #region IProfileChunk
 
         // v2: added options
-        ushort ISerializedVersion.Version { get { return 4; } }
+        // v5: added playtime
+        ushort ISerializedVersion.Version { get { return 5; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
@@ -57,6 +59,9 @@ namespace Aqua.Profile
 
             if (ioSerializer.ObjectVersion >= 3)
                 ioSerializer.Object("science", ref Science);
+
+            if (ioSerializer.ObjectVersion >= 5)
+                ioSerializer.Serialize("playtime", ref Playtime);
         }
 
         public void MarkChangesPersisted()

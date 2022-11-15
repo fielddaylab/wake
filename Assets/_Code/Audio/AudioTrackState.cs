@@ -27,7 +27,7 @@ namespace AquaAudio
 
         public float Delay;
         public byte StopCounter;
-        public int LastKnownTime;
+        public ulong LastKnownTime;
         public double LastStartTime;
 
         public AudioCallback OnLoop;
@@ -159,7 +159,7 @@ namespace AquaAudio
                 return;
             }
 
-            state.VolumeChangeRoutine.Replace(Tween.Float(state.LastKnownProperties.Volume, 0, state.m_VolumeSetter, duration).Ease(curve).OnComplete(state.m_StopDelegate));
+            state.VolumeChangeRoutine.Replace(Tween.Float(state.LocalProperties.Volume, 0, state.m_VolumeSetter, duration).Ease(curve).OnComplete(state.m_StopDelegate));
         }
 
         static public void Restore(AudioTrackState state) {
@@ -169,8 +169,8 @@ namespace AquaAudio
 
             switch(state.Mode) {
                 case AudioEvent.PlaybackMode.Sample: {
-                    if (state.Sample.loop || (state.LastKnownTime < state.Sample.clip.samples - state.Sample.clip.frequency)) {
-                        state.Sample.timeSamples = state.LastKnownTime;
+                    if (state.Sample.loop || ((int) state.LastKnownTime < (state.Sample.clip.samples - state.Sample.clip.frequency))) {
+                        state.Sample.timeSamples = (int) state.LastKnownTime;
                         state.Sample.Play();
                     }
                     break;
@@ -257,18 +257,21 @@ namespace AquaAudio
                 return;
             }
             
-            int sourceTime = source.LastKnownTime;
-            target.LastKnownTime = sourceTime;
+            ulong sourceTime = 0;
             switch(target.Mode) {
                 case AudioEvent.PlaybackMode.Sample: {
-                    target.Sample.timeSamples = sourceTime;
+                    sourceTime = (ulong) source.Sample.timeSamples;
+                    target.Sample.timeSamples = (int) sourceTime;
                     break;
                 }
                 case AudioEvent.PlaybackMode.Stream: {
+                    sourceTime = source.Stream.HighResTime;
                     target.Stream.HighResTime = sourceTime;
                     break;
                 }
             }
+
+            target.LastKnownTime = sourceTime;
         }
 
         static public bool UpdatePlayback(AudioTrackState state, ref AudioPropertyBlock parentSettings, float deltaTime, double currentTime) {
@@ -329,12 +332,12 @@ namespace AquaAudio
             }
 
             bool bIsPlaying = false;
-            int currentTime = 0;
+            ulong currentTime = 0;
 
             switch(state.Mode) {
                 case AudioEvent.PlaybackMode.Sample: {
                     bIsPlaying = state.Sample.isPlaying;
-                    currentTime = state.Sample.timeSamples;
+                    currentTime = (ulong) state.Sample.timeSamples;
                     break;
                 }
                 case AudioEvent.PlaybackMode.Stream: {
@@ -394,7 +397,7 @@ namespace AquaAudio
         static private void SyncTime(AudioTrackState state) {
             switch(state.Mode) {
                 case AudioEvent.PlaybackMode.Sample: {
-                    state.Sample.timeSamples = state.LastKnownTime;
+                    state.Sample.timeSamples = (int) state.LastKnownTime;
                     break;
                 }
 

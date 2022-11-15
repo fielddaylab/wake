@@ -46,6 +46,10 @@ namespace Aqua.Portable {
                     continue;
                 }
 
+                if (organism.Entity.HasFlags(BestiaryDescFlags.IsSpecter) && !Save.Science.FullyDecrypted()) {
+                    continue;
+                }
+
                 entries.Add(organism);
             }
         }

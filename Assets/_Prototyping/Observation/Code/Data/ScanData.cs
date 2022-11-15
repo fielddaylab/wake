@@ -18,7 +18,9 @@ namespace ProtoAqua.Observation
 
         // Properties
         private ScanDataFlags m_Flags = 0;
-        [BlockMeta("scanDuration"), UnityEngine.Scripting.Preserve] private int m_ScanDuration = 1;
+        [BlockMeta("scanDuration"), UnityEngine.Scripting.Preserve] private float m_ScanDuration = 1;
+        [BlockMeta("freezeDisplay"), UnityEngine.Scripting.Preserve] private float m_FreezeDisplay = 0;
+        [BlockMeta("typingDuration"), UnityEngine.Scripting.Preserve] private float m_TypingDuration = 1;
 
         // Text
         [BlockMeta("header"), UnityEngine.Scripting.Preserve] private string m_HeaderText = null;
@@ -45,7 +47,9 @@ namespace ProtoAqua.Observation
         public StringHash32 Id() { return m_Id; }
 
         public ScanDataFlags Flags() { return m_Flags; }
-        public int ScanDuration() { return m_ScanDuration; }
+        public float ScanDuration() { return m_ScanDuration; }
+        public float FreezeDisplay() { return m_FreezeDisplay; }
+        public float TypingDuration() { return m_TypingDuration; }
 
         public string Header() { return m_HeaderText; }
         public string Text() { return m_DescText; }
@@ -59,7 +63,6 @@ namespace ProtoAqua.Observation
 
         public ListSlice<VariantComparison> Requirements() { return m_Requirements; }
         public StringHash32 FallbackId() { return m_Fallback; }
-
 
         #region Scan
 
@@ -103,6 +106,12 @@ namespace ProtoAqua.Observation
             m_Requirements = LeafUtils.ParseConditionsList(inRequirements);
         }
 
+        [BlockMeta("noDisplay"), UnityEngine.Scripting.Preserve]
+        private void SetNoDisplay()
+        {
+            m_Flags |= ScanDataFlags.DoNotShow;
+        }
+
         void IValidatable.Validate()
         {
             Assert.True(m_BestiaryId.IsEmpty || Services.Assets.Bestiary.HasId(m_BestiaryId),
@@ -123,12 +132,19 @@ namespace ProtoAqua.Observation
         #region Default
 
         static public readonly ScanData Error;
+        static public readonly ScanData Fake;
 
         static ScanData()
         {
             Error = new ScanData("");
             Error.m_HeaderText = "MISSING SCAN DATA";
             Error.m_DescText = "Scan is missing";
+
+            Fake = new ScanData("fake");
+            Fake.m_HeaderText = "";
+            Fake.m_DescText = "";
+            Fake.m_Flags |= ScanDataFlags.DoNotShow;
+            Fake.m_ScanDuration = 3;
         }
 
         #endregion // Default
@@ -145,6 +161,7 @@ namespace ProtoAqua.Observation
         Important   = 0x10,
         ActivateTool = 0x20,
 
-        DynamicFactType = 0x40
+        DynamicFactType = 0x40,
+        DoNotShow = 0x80,
     }
 }

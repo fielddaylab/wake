@@ -11,7 +11,7 @@ using UnityEditor;
 namespace Aqua
 {
     [CreateAssetMenu(menuName = "Aqualab Content/Map Description", fileName = "NewMapDesc")]
-    public class MapDesc : DBObject
+    public class MapDesc : DBObject, IEditorOnlyData
     {
         #region Inspector
 
@@ -38,6 +38,8 @@ namespace Aqua
 
         #endregion // Inspector
 
+        [NonSerialized] private StringHash32 m_PreloadGroup;
+
         public MapCategory Category() { return m_Category; }
         public MapFlags Flags() { return m_Flags; }
 
@@ -55,6 +57,7 @@ namespace Aqua
         public string HeaderImagePath() { return m_HeaderImagePath; }
         public MapDesc Parent() { return m_Parent; }
         public MapDesc QuickTravel() { return m_QuickTravel; }
+        public StringHash32 PreloadGroup() { return m_PreloadGroup; }
 
         [LeafLookup("Environment")] public StringHash32 EnvironmentId() { return m_EnvironmentId; }
         public int SortingOrder() { Assert.True(m_Category == MapCategory.Station, "MapDesc {0} is not a station", Id()); return m_StationSortingOrder; }
@@ -63,7 +66,21 @@ namespace Aqua
         public T GetProperty<T>(string inName) { return m_AdditionalProperties.Get<T>(inName); }
         public T GetProperty<T>(string inName, T inDefault) { return m_AdditionalProperties.Get<T>(inName, inDefault); }
 
+        internal void InitializePreloadGroup() {
+            m_PreloadGroup = "Scene/" + m_SceneName;
+        }
+
         #if UNITY_EDITOR
+
+        void IEditorOnlyData.ClearEditorOnlyData()
+        {
+            ValidationUtils.StripDebugInfo(ref m_LabelId);
+            ValidationUtils.StripDebugInfo(ref m_ShortLabelId);
+            ValidationUtils.StripDebugInfo(ref m_ProperNameId);
+            ValidationUtils.StripDebugInfo(ref m_MarkerLabelId);
+            ValidationUtils.StripDebugInfo(ref m_StationHeaderId);
+            ValidationUtils.StripDebugInfo(ref m_StationDescId);
+        }
 
         [CustomEditor(typeof(MapDesc)), CanEditMultipleObjects]
         private class Inspector : Editor {

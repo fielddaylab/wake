@@ -24,6 +24,14 @@ namespace Aqua
 
         public IReadOnlyPropertyBlock<PropertyName> MiscProperties { get { return m_MiscProperties; } }
 
+        #if UNITY_EDITOR
+
+        public void EditorApply() {
+            Apply();
+        }
+
+        #endif // UNITY_EDITOR
+
         #region ISerializedObject
 
         public virtual ushort Version { get { return 1; } }

@@ -33,8 +33,8 @@ namespace Aqua {
 
         #region Display
 
-        public void Present(PopupContent inContent, PopupFlags inPopupFlags) {
-            m_Layout.Configure(inContent, inPopupFlags);
+        public void Present(ref PopupContent inContent, PopupFlags inPopupFlags) {
+            m_Layout.Configure(ref inContent, inPopupFlags);
             ShowOrBounce();
             SetInputState(true);
         }

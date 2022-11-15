@@ -22,7 +22,7 @@ namespace Aqua.StationMap
                 site.Initialize(mapData, job);
             }
 
-            StringHash32 currentMap = MapDB.LookupCurrentMap();
+            StringHash32 currentMap = MapDB.LookupCurrentMap(); 
             mapData.SetCurrentStationId(currentMap);
         }
 
@@ -30,7 +30,7 @@ namespace Aqua.StationMap
 
         int IBaked.Order { get { return 0; } }
 
-        bool IBaked.Bake(BakeFlags flags)
+        bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
             List<DiveSite> diveSites = new List<DiveSite>(8);
             SceneHelper.ActiveScene().Scene.GetAllComponents<DiveSite>(true, diveSites);

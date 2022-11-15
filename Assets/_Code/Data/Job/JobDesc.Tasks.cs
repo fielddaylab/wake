@@ -5,6 +5,12 @@ using BeauUtil;
 using BeauUtil.Debugger;
 using ScriptableBake;
 using UnityEngine;
+using System.IO;
+using Aqua.Journal;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif // UNITY_EDITOR
 
 namespace Aqua
 {
@@ -34,7 +40,7 @@ namespace Aqua
 
         int IBaked.Order { get { return 16; }}
 
-        bool IBaked.Bake(BakeFlags flags)
+        bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
             if (m_Tasks.Length > MaxTasks)
             {
@@ -53,7 +59,15 @@ namespace Aqua
             ValidationUtils.EnsureUnique(ref m_PrerequisiteJobs);
             ValidationUtils.EnsureUnique(ref m_ExtraAssets);
 
-            bool validated = ValidateTaskIds(this);
+            bool validated = true;
+            if (!m_JournalId.IsEmpty) {
+                if (!ValidationUtils.FindAsset<JournalDesc>(m_JournalId.ToDebugString())) {
+                    Log.Error("[JobDesc] Job '{0}' refers to unknown journal entry '{1}'", name, m_JournalId.ToDebugString());
+                    validated = false;
+                }
+            }
+
+            validated &= ValidateTaskIds(this);
             if (!validated)
                 throw new BakeException("Tasks on {0} were invalid", name);
             return true;
@@ -157,6 +171,19 @@ namespace Aqua
         void IEditorOnlyData.ClearEditorOnlyData()
         {
             m_Tasks = null;
+
+            ValidationUtils.StripDebugInfo(ref m_NameId);
+            ValidationUtils.StripDebugInfo(ref m_DescId);
+            ValidationUtils.StripDebugInfo(ref m_DescShortId);
+
+            foreach(var task in m_OptimizedTaskList) {
+                ValidationUtils.StripDebugInfo(ref task.LabelId);
+                ValidationUtils.StripDebugInfo(ref task.Id);
+
+                for(int i = 0; i < task.Steps.Length; i++) {
+                    ValidationUtils.StripDebugInfo(ref task.Steps[i].Target);
+                }
+            }
         }
 
         static internal bool ValidateTaskIds(JobDesc inItem)
@@ -187,6 +214,8 @@ namespace Aqua
                     Log.Error("No root tasks (tasks with 0 prerequisites) found for job '{0}'", inItem.Id());
                 }
 
+                string jobDirectory = Path.GetDirectoryName(AssetDatabase.GetAssetPath(inItem));
+
                 foreach(var task in inItem.m_OptimizedTaskList)
                 {
                     foreach(var prereq in task.PrerequisiteTaskIndices)
@@ -213,9 +242,33 @@ namespace Aqua
                             case JobStepType.AcquireFact:
                             case JobStepType.AddFactToModel:
                             case JobStepType.UpgradeFact: {
-                                if (!ValidationUtils.FindAsset<BFBase>(step.Target)) {
+                                BFBase fact;
+                                if (!(fact = ValidationUtils.FindAsset<BFBase>(step.Target))) {
                                     Log.Error("Task '{0}' on job '{1}' references bestiary fact '{2}' that cannot be found", task.Id.Source(), inItem.Id(), step.Target.Source());
                                     bFailed = true;
+                                } else {
+                                    if (fact.Type == BFTypeId.Model) {
+                                        BFModel model = fact as BFModel;
+                                        if (model.ModelType != BFModelType.Custom) {
+                                            ScriptableObject modelScope = null;
+                                            foreach(var asset in inItem.m_ExtraAssets) {
+                                                if (asset.GetType().Name == "JobModelScope") {
+                                                    modelScope = asset;
+                                                    break;
+                                                }
+                                            }
+                                            if (!modelScope) {
+                                                Log.Error("Task '{0}' on job '{1}' requires fact '{2}' and JobModelScope, but no JobModelScope found", task.Id.Source(), inItem.Id(), fact.Id.ToDebugString());
+                                                bFailed = true;
+                                            } else {
+                                                string scopeDirectory = Path.GetDirectoryName(AssetDatabase.GetAssetPath(modelScope));
+                                                if (scopeDirectory != jobDirectory) {
+                                                    Log.Error("Task '{0}' on job '{1}' requires fact '{2}' and JobModelScope, but JobModelScope '{3}' is in another folder", task.Id.Source(), inItem.Id(), fact.Id.ToDebugString(), modelScope.name);
+                                                    bFailed = true;
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                                 break;
                             }

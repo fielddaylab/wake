@@ -95,7 +95,7 @@ namespace Aqua
 
                 case BFShapeId.State: {
                     StateFactDisplay display = m_StateFacts.Alloc(inParent);
-                    display.Populate((BFState) inFact);
+                    display.Populate((BFState) inFact, inFlags);
                     m_PoolSources.Add(display, BFShapeId.State);
                     return display;
                 }
@@ -251,7 +251,10 @@ namespace Aqua
         static private void TryFree<T>(MonoBehaviour inBehavior, IPool<T> inPool) where T : MonoBehaviour
         {
             T asType = inBehavior as T;
-            Assert.NotNull(asType, "Attempted to free {0} to a pool of {1}", inBehavior.GetType().Name, typeof(T).Name);
+            if (object.ReferenceEquals(asType, null))
+            {
+                Assert.NotNull(asType, "Attempted to free {0} to a pool of {1}", inBehavior.GetType().Name, typeof(T).Name);
+            }
             inPool.Free(asType);
         }
 
@@ -263,7 +266,7 @@ namespace Aqua
                 }
 
                 case BFShapeId.State: {
-                    ((StateFactDisplay) inBehavior).Populate((BFState) inFact);
+                    ((StateFactDisplay) inBehavior).Populate((BFState) inFact, inFlags);
                     break;
                 }
 

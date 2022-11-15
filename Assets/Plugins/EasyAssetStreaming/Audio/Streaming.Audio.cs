@@ -198,6 +198,7 @@ namespace EasyAssetStreaming {
                 UnityWebRequest request = loadInfo.Loader;
 
                 if (request.isNetworkError || request.isHttpError) {
+                    InvokeLoadResult(StreamingHelper.ErrorType(request));
                     if (loadInfo.RetryCount < RetryLimit && StreamingHelper.ShouldRetry(request)) {
                         UnityEngine.Debug.LogWarningFormat("[Streaming] Retrying audio load '{0}' from '{1}': {2}", id.MetaInfo.Address, id.MetaInfo.ResolvedAddress, loadInfo.Loader.error);
                         loadInfo.RetryCount++;
@@ -220,6 +221,7 @@ namespace EasyAssetStreaming {
                 id.StateInfo.Status = AssetStatus.Loaded;
                 RecomputeMemorySize(ref MemoryUsage, id, clip);
                 UnityEngine.Debug.LogFormat("[Streaming] ...finished loading audio (async) '{0}'", id.MetaInfo.Address);
+                InvokeLoadResult(LoadResult.Success);
                 InvokeCallbacks(id, clip);
             }
 

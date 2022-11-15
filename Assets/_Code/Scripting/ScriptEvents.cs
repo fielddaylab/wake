@@ -10,6 +10,8 @@ namespace Aqua.Scripting
 
             static public readonly StringHash32 BoxStyle = "box-style";
             static public readonly StringHash32 BroadcastEvent = "broadcast-event";
+            static public readonly StringHash32 BlockInput = "input-block";
+            static public readonly StringHash32 UnblockInput = "input-unblock";
             static public readonly StringHash32 DisableObject = "disable-object";
             static public readonly StringHash32 EnableObject = "enable-object";
             static public readonly StringHash32 FadeIn = "fade-in";

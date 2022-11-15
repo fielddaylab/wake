@@ -53,7 +53,7 @@ namespace Aqua
             BFDetails details;
 
             details.Header = Loc.Find("fact.state.header");
-            details.Image = desc.ImageSet();
+            details.Image = null;
             
             if (stateFact.HasDeath)
             {
@@ -86,7 +86,7 @@ namespace Aqua
 
         int IBaked.Order { get { return -9; } }
 
-        bool IBaked.Bake(BakeFlags flags)
+        bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
             if (HasStressed && HasDeath)
             {

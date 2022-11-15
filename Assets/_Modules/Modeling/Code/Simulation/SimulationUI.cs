@@ -89,10 +89,6 @@ namespace Aqua.Modeling {
             m_InterveneAddPanel.OnAdded = OnIntervenePanelAdded;
             m_InterveneAddPanel.OnRemoved = OnIntervenePanelRemoved;
 
-            m_InterveneButtonGroup.gameObject.SetActive(false);
-            m_InterveneAddToggleGroup.ForceActive(false);
-
-            m_SyncViewGroup.SetActive(false);
             m_SyncViewNormalToggle.onValueChanged.AddListener(OnSimulateViewToggled);
             m_SyncViewFillToggle.onValueChanged.AddListener(OnEvaluateViewToggled);
 
@@ -108,6 +104,15 @@ namespace Aqua.Modeling {
             };
         }
 
+        protected override void Start() {
+            base.Start();
+            
+            m_InterveneButtonGroup.gameObject.SetActive(false);
+            m_InterveneAddToggleGroup.ForceActive(false);
+
+            m_SyncViewGroup.SetActive(false);
+        }
+
         private void OnDestroy() {
         }
 
@@ -116,7 +121,8 @@ namespace Aqua.Modeling {
         private Routine m_DebugReload;
 
         private void LateUpdate() {
-            if (m_InputLayer.Device.KeyPressed(KeyCode.F8)) {
+            if (m_InputLayer.Device.KeyPressed(KeyCode.F8) || (m_InputLayer.Device.KeyPressed(KeyCode.M) && m_InputLayer.Device.KeyDown(KeyCode.LeftShift))) {
+                Log.Msg("[SimulationUI] Debug reloading simulation data");
                 m_DebugReload.Replace(this, DebugReloadGraph());
             }
         }

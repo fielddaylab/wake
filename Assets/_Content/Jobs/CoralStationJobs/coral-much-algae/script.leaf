@@ -52,7 +52,7 @@ $endif
 @once
 @cutscene
 {@guide} 	Adequate work, O! I believe you've scanned all the species here. 
-{@player}   Good. Let's get back to the Meredith. 
+{@player}   Good. Let's get back to the AquaLab. 
 			Something about this place just doesn't feel right. 
 
 :: helpEnterSite
@@ -206,7 +206,7 @@ $branch .argue.chooseClaim
 
 :: argue.chooseClaim
 {@profCoral} Okay, let's talk through what you found.
-			  Why is there so much algae at Site S?
+			  Why is there so much {nameof TurfAlgae} at {m}Site S{/m}?
 	$choice .argue.claimSparseFish; There aren't enough fish there to eat it.
 	$choice .argue.claimLionfishQuicken; The lionfish are making it reproduce faster!
 	$choice .argue.giveUp; Let me get back to you.
@@ -217,11 +217,11 @@ $choose branch
 
 :: argue.claimSparseFish
 {@profCoral}	Hmmm. That does make sense.
-			    What is supposed to eat the Turf Algae?
+			    What is supposed to eat the {nameof TurfAlgae}?
 $call ArgueLoad(coralMuchAlgaeArgue)
 $if ArgueSetClaim(coralMuchAlgaeArgueClaim, jobs.coral-much-algae.argue.claimLabel)
-		$call ArgueFactSlot(LionfishInvasion.Model.MuchAlgaeDescriptive)
-		$call ArgueFactSlot(BlueTang.Eats.TurfAlgae.Stressed)
+    $call ArgueFactSlot(LionfishInvasion.Model.MuchAlgaeDescriptive)
+    $call ArgueFactSlot(BlueTang.Eats.TurfAlgae)
 $endif
 $call ArgueDisplayClaim()
 $goto .argue.chooseFactsSparseFish
@@ -236,31 +236,30 @@ $choice .argue.giveUp; Let me get back to you
 $call ArgueComplete()
 {@profCoral}  How fascinating. For some reason, the {nameof BlueTang} aren't eating enough of the algae. 
 			  We should look into why.
-			  Let me know if you'd like another job, Ollie. I think the {nameof @BlueTang} could use a check-up. 
+			  Let me know if you'd like another job, Ollie. I think the {nameof BlueTang} could use a check-up. 
 $call CompleteJob()
 
 :: argue.incorrectFacts
+
 $if ArgueIsFactSubmitted(LionfishInvasion.Model.MuchAlgaeVisual)
 	{@profCoral}	Hmmm. This is a {h}Visual Model{/h}. Why don't you try again? 
+    $call ArgueRejectIncorrect()
+    $call ArgueClearFacts()
+    $goto .argue.chooseFactsSparseFish
 $endif
+
 $if ArgueIsFactSubmitted(LionfishInvasion.Model.MuchAlgaeDescriptive)
-	// A only
-	{@profCoral}	Your model is sound, Ollie. But I'm not sure how that second fact is relevant. 
-	$goto .argue.correctFacts
-$else
 	$if ArgueIsFactSubmitted(BlueTang.Eats.TurfAlgae.Stressed)
 		// B only 
 		{@profCoral}	Hmmm. So the Tang would normally be keeping the {nameof TurfAlgae} under control. 
 				 		Have you created a {h}Descriptive Model{/h} with this data?
-		$call ArgueClearFacts()
-		$call ArgueSubmitFact(BlueTang.Eats.TurfAlgae.Stressed)
+		$call ArgueRejectIncorrect()
 		$goto .argue.chooseFactsSparseFish
 	$else
 		// neither
-		{@profCoral}	I don't think that's helpful here, Ollie. 
+        {@profCoral}	Your model is sound, Ollie. But I'm not sure how that second fact is relevant. 
 		$call ArgueRejectIncorrect()
-		$call ArgueClearFacts()
-        $goto .chooseFactsSparseFish
+        $goto .argue.chooseFactsSparseFish
 	$endif
 $endif
 

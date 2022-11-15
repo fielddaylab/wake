@@ -24,6 +24,10 @@ namespace BeauUWT
             UnknownError = 255
         }
 
+        private const ulong HiResScale = 0x100000;
+        private const double HiResScale_Double = (double) HiResScale;
+        private const double HiResScaleInv = 1.0 / HiResScale_Double;
+
         #region Inspector
 
         [SerializeField] private string m_StreamURL = null;
@@ -139,7 +143,7 @@ namespace BeauUWT
         /// <summary>
         /// Playback position in samples.
         /// </summary>
-        public int HighResTime
+        public ulong HighResTime
         {
             get { return GetHiResTime(); }
             set { SetHiResTime(value); }

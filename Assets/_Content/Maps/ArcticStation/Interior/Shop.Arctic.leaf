@@ -36,7 +36,15 @@ $choice .action.cancel; Not right now.
 $choice .action.openShop; Sure, thanks!
 $choice .action.cancel; Not right now.
 
+#ShopHandler(gotFlashlight, world:shop.boughtFlashlightFrom == "arctic", HasUpgrade("Flashlight"))
+@once
+{@$MerchantId} Welcome back, kid! Nice work on retrieving that {nameof Flashlight}!
+    Anyhow. Wanna take a look around my shop? 
+$choice .action.openShop; Sure, thanks!
+$choice .action.cancel; Not right now.
+
 :: action.cancel
+@cutscene
 {@$MerchantId}  Well, good luck out there, kid. If you ever need anything, just holler. 
 
 // Generic
@@ -48,7 +56,7 @@ $choice .action.cancel; Not right now.
 {@$MerchantId}   {random Whoa,|Hey,|As a bonus,} this would unlock some jobs over at the {nameof $local:hintStation}!
 
 :: lowExp
-{@$MerchantId}   Oh, {random hang on|I'm sorry}... I can't let you have this just yet. You'll need {exp}{$local:needExp}{/exp} more before I can trust you with it.
+{@$MerchantId}   Oh, {random hang on|I'm sorry}... I can't let you have this just yet. You'll need more {exp}experience{/exp} before I can trust you with it.
 
 :: freeItem
 {@$MerchantId}   So, want the {nameof $local:itemId}? Won't cost you anything.
@@ -85,7 +93,7 @@ $choice .action.cancel; Not right now.
 {@$MerchantId}  Come back with some more {pluralnameof Cash} next time!
 
 #CloseHandler(notEnoughExp, shop:needsExpCount)
-{@$MerchantId}  Come back when you've got more {pluralnameof Exp}!
+{@$MerchantId}  Come back when you've got more {exp}experience{/exp}!
 
 #OpenExplorationHandler(a)
 {@$MerchantId}  Interested in any exploration tools?
@@ -110,18 +118,31 @@ $choice .action.cancel; Not right now.
 $set    jobs:common-dive.seen.tagger-intro = true
 $EvaluateItemPurchase()
 
-#OverrideItemHandler(Flashlight, flashlight.first)
+#OverrideItemHandler(FlashlightCoordinates, flashlight.first)
 @boostScore 100
 @once
 {@$MerchantId}  The {nameof Flashlight}!
                 You oughta get one of these as soon as possible
-                Real helpful for deep-sea jobs where the light can't reach. 
+                Real helpful for deep-sea jobs where the light can't reach.
+$set local:postPurchaseBranch = "interior.shop.arctic.PostFlashlight"
 $EvaluateItemPurchase()
 
-#ItemHandler(Flashlight)
+#ItemHandler(FlashlightCoordinates)
 {@$MerchantId}  That's the {nameof Flashlight}!
                 I'd suggest gettin' one of those as soon as possible. 
+$set local:postPurchaseBranch = "interior.shop.arctic.PostFlashlight"
 $EvaluateItemPurchase()
+
+:: PostFlashlight
+$set    world:flashlightQuest = true
+$set    world:shop.boughtFlashlightFrom = "arctic"
+{@arcticMechanic}   Yes yes, I'll get this... huh? Where's the...
+                    Oh yes.| {nameof @coralMechanic} borrowed it from your uncle and then dropped it by mistake.
+                    Well,| nothin' to do but go fish it up! I believe she dropped it at {nameof FinalStation}.
+
+$call UnlockSite(RS-0)
+$call UnlockStation(FinalStation)
+$call ShowPopup(map.unlock.finalStation.header, map.unlock.finalStation.desc)
 
 #ItemHandler(ProbeHacker)
 {@$MerchantId}  The {nameof ProbeHacker}! 

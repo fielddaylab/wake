@@ -7,6 +7,7 @@ using BeauUtil.Debugger;
 using Leaf.Runtime;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Aqua
 {
@@ -216,13 +217,15 @@ namespace Aqua
             m_VariableResolver.SetVar(GameVars.MapId, () => MapDB.LookupCurrentMap());
             m_VariableResolver.SetVar(GameVars.LastEntrance, () => Services.State.LastEntranceId);
 
-            m_VariableResolver.SetVar(GameVars.PlayerGender, GetPlayerPronouns);
             m_VariableResolver.SetVar(GameVars.CurrentJob, GetJobId);
             m_VariableResolver.SetVar(GameVars.CurrentStation, GetStationId);
             m_VariableResolver.SetVar(GameVars.ActNumber, GetActNumber);
             m_VariableResolver.SetVar(GameVars.PlayerCash, () => (int) Save.Cash);
             m_VariableResolver.SetVar(GameVars.PlayerExp, () => (int) Save.Exp);
             m_VariableResolver.SetVar(GameVars.PlayerLevel, () => (int) Save.ExpLevel);
+
+            m_VariableResolver.SetVar(GameVars.TotalPlayTime_Seconds, () => (float) Save.Current.Playtime);
+            m_VariableResolver.SetVar(GameVars.TotalPlayTime_Minutes, () => (float) (Save.Current.Playtime / 60));
         }
 
         private void HookSaveDataToVariableResolver(SaveData inData)
@@ -236,22 +239,9 @@ namespace Aqua
 
         #region Callbacks
 
-        private Variant GetPlayerPronouns()
-        {
-            switch(Save.Pronouns)
-            {
-                case Pronouns.Masculine:
-                    return "m";
-                case Pronouns.Feminine:
-                    return "f";
-                default:
-                    return "x";
-            }
-        }
-
         static private Variant GetSceneName()
         {
-            return SceneHelper.ActiveScene().Name;
+            return Services.State.SceneName;
         }
 
         private Variant GetJobId()
@@ -309,7 +299,11 @@ namespace Aqua
                     if (Services.UI.IsSkippingCutscene())
                         return null;
 
-                    Services.Audio.PostEvent("item.popup.new");
+                    if (Services.Assets.Bestiary.IsSpecter(inEntityId)) {
+                        Services.Audio.PostEvent("item.popup.specter");
+                    } else {
+                        Services.Audio.PostEvent("item.popup.new");
+                    }
                     return Script.PopupNewEntity(Assets.Bestiary(inEntityId)).Wait();
                 }
 
@@ -332,6 +326,18 @@ namespace Aqua
             static private bool HasFact(StringHash32 inFactId)
             {
                 return Save.Bestiary.HasFact(inFactId);
+            }
+
+            [LeafMember("HasAnyNumericalModel"), UnityEngine.Scripting.Preserve]
+            static private bool HasAnyNumericalModel()
+            {
+                return Save.Bestiary.HasFact((f) => {
+                    if (f.Type != BFTypeId.Model)
+                        return false;
+
+                    BFModelType modelType = ((BFModel) f).ModelType;
+                    return modelType >= BFModelType.Descriptive && modelType <= BFModelType.Intervention;
+                });
             }
 
             [LeafMember("IsFactFullyUpgraded"), UnityEngine.Scripting.Preserve]
@@ -504,7 +510,7 @@ namespace Aqua
             static private bool CanAffordItem(StringHash32 inItemId)
             {
                 var itemDesc = Assets.Item(inItemId);
-                return Save.Cash >= itemDesc.CashCost() && Save.Exp >= itemDesc.RequiredExp();
+                return Save.Cash >= itemDesc.CashCost() && Save.ExpLevel >= itemDesc.RequiredLevel();
             }
 
             [LeafMember("PurchaseItem"), UnityEngine.Scripting.Preserve]
@@ -519,6 +525,9 @@ namespace Aqua
                 } else {
                     invData.AdjustItem(inItemId, 1);
                 }
+
+                if (itemDesc.HasFlags(InvItemFlags.SkipPopup))
+                    return null;
                 
                 inThread.Dialog = null;
 
@@ -575,12 +584,15 @@ namespace Aqua
             {
                 if (Save.Inventory.AddUpgrade(inUpgradeId) && inMode != PopupMode.Silent)
                 {
+                    InvItem itemDesc = Assets.Item(inUpgradeId);
+                    if (itemDesc.HasFlags(InvItemFlags.SkipPopup))
+                        return null;
+
                     inThread.Dialog = null;
 
                     if (Services.UI.IsSkippingCutscene())
                         return null;
-                    
-                    InvItem itemDesc = Assets.Item(inUpgradeId);
+
                     Services.Audio.PostEvent("item.popup.new");
                     Color itemColor = Parsing.HexColor(ScriptingService.ColorTags.ItemColorString);
                 
@@ -622,7 +634,7 @@ namespace Aqua
                     if (Services.UI.IsSkippingCutscene())
                         return null;
 
-                    return Services.UI.FindPanel<JournalCanvas>().ShowNewEntry();
+                    return Services.UI.OpenJournalNewEntry();
                 }
                 return null;
             }
@@ -632,6 +644,33 @@ namespace Aqua
             #region Shop
 
             #endregion // Shop
+
+            #region Time
+
+            [LeafMember("ScheduledEventReady"), UnityEngine.Scripting.Preserve]
+            static private bool ScheduledEventReady(float inTime)
+            {
+                return Save.Current.Playtime >= inTime;
+            }
+
+            [LeafMember("ScheduledEventTime"), UnityEngine.Scripting.Preserve]
+            static private float ScheduledEventWithOffset(float inSecondsOffset)
+            {
+                return (float) (Save.Current.Playtime + inSecondsOffset);
+            }
+
+            [LeafMember("QueueSpecter"), UnityEngine.Scripting.Preserve]
+            static private void QueueSpecter(StringHash32 inMapOverride = default(StringHash32))
+            {
+                Save.Science.QueueSpecter(inMapOverride);
+            }
+
+            [LeafMember("SpecterCount"), UnityEngine.Scripting.Preserve]
+            static private int SpecterCount() {
+                return (int) Save.Science.SpecterCount();
+            }
+
+            #endregion // Time
 
             #region Jobs
 
@@ -760,6 +799,12 @@ namespace Aqua
 
                 StringHash32 jobStation = Assets.Job(inJobId).StationId();
                 return jobStation.IsEmpty || jobStation == Save.Map.CurrentStationId();
+            }
+
+            [LeafMember("CompletedJobCount"), UnityEngine.Scripting.Preserve]
+            static private bool CompletedJobCount(StringHash32 inStationId, int inCount)
+            {
+                return JobUtils.SummarizeJobProgress(inStationId, Save.Current).Completed >= inCount;
             }
 
             #endregion // Jobs

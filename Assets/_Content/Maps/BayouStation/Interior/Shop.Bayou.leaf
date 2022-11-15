@@ -27,18 +27,45 @@
 @boostScore 100
 @once
 {@$MerchantId}  Hey! You're O, right? Thank God you're here. 
-                I swear, those two have been driving me crazy.
-                If I have to hear them bickering about that stupid oil rig one more time...
-                Anyway. Wanna take a look around? We've got the best upgrades around. 
+                I swear, those two have been driving me crazy. 
+{@player}       How'd you know my name?
+{@$MerchantId}  Oh... I hope this isn't weird, but I'm a big fan of your sister's. 
+                I had an AquaLab Magazine article about her taped up on my wall when I was a kid.
+{@player}       My sister was in an article??
+{@$MerchantId}  Yeah. She's sort of famous in the oceanic tech world.
+                I've always wanted to follow in her footsteps. But I guess you must know all about that, huh?
+                Anyway. Why don't you take a look around? We've got the best upgrades around!
+$set jobs:bayou-mechanic.trackBayou = true
+$set jobs:bayou-mechanic.leftBayou = false
+$set jobs:bayou-mechanic.givenArticle = false
 $choice .action.openShop; Sure!
 $choice .action.cancel; Not right now!
 
 #ShopHandler(a)
-{@$MerchantId} Hey! Welcome back, O. Wanna take a look around?
+$if jobs:bayou-mechanic.trackBayou, jobs:bayou-mechanic.leftBayou
+    // STORY BEAT D
+    {@$MerchantId}  By the way, I found that article about your sister! 
+                    She was amazing, huh? Must be hard livin' in her shadow.
+    {@player}       Oh... I guess I never really thought about it.
+                    Can I take a look at the article? I'll bring it back when I'm done. 
+     {@$MerchantId} Nah. You keep it, O. It's the least I can do. 
+    $set jobs:bayou-mechanic.trackBayou = false
+    $set jobs:bayou-mechanic.givenArticle = true
+$else
+    {@$MerchantId} Hey! Welcome back, O. Wanna take a look around?
+    $choice .action.openShop; Sure do!
+    $choice .action.cancel; Not right now!
+$endif
+
+#ShopHandler(gotFlashlight, world:shop.boughtFlashlightFrom == "bayou", HasUpgrade("Flashlight"))
+@once
+{@$MerchantId} Hey, welcome back O! Nice work on retrieving that {nameof Flashlight}!
+    So, wanna take a look around?
 $choice .action.openShop; Sure do!
-$choice .action.cancel; Not right now!
+$choice .action.cancel; Not right now.
 
 :: action.cancel
+@cutscene
 {@$MerchantId}  Alright,| well you know where to find me!
 
 // Generic
@@ -50,7 +77,7 @@ $choice .action.cancel; Not right now!
 {@$MerchantId}   {random Whoa,|Hey,|As a bonus,} this would unlock some jobs over at the {nameof $local:hintStation}!
 
 :: lowExp
-{@$MerchantId}   Oh, {random hang on|I'm sorry}... Sorry, O. Not enough {exp}{$local:needExp}{/exp}.
+{@$MerchantId}   Oh, {random hang on|I'm sorry}... Sorry, O. Not enough {exp}experience{/exp}.
 
 :: freeItem
 {@$MerchantId}   So, want the {nameof $local:itemId}? Won't cost you anything.
@@ -87,7 +114,7 @@ $choice .action.cancel; Not right now!
 {@$MerchantId}  Come back with some more {pluralnameof Cash} next time!
 
 #CloseHandler(notEnoughExp, shop:needsExpCount)
-{@$MerchantId}  Come back when you've got more {pluralnameof Exp}!
+{@$MerchantId}  Come back when you've got more {exp}experience{/exp}!
 
 #OpenExplorationHandler(a)
 {@$MerchantId}  Interested in any exploration tools?
@@ -111,19 +138,32 @@ $choice .action.cancel; Not right now!
 $set    jobs:common-dive.seen.tagger-intro = true
 $EvaluateItemPurchase()
 
-#OverrideItemHandler(Flashlight, flashlight.first)
+#OverrideItemHandler(FlashlightCoordinates, flashlight.first)
 @boostScore 100
 @once
 {@$MerchantId}  The {nameof Flashlight}!
                 Every explorer should have one of these. 
                 Unless you want to end up lost in the Lower Depths with no light...
-                Been there, done that, don't recommend it. 
+                Been there, done that, don't recommend it.
+$set local:postPurchaseBranch = "interior.shop.bayou.PostFlashlight"
 $EvaluateItemPurchase()
 
-#ItemHandler(Flashlight)
+#ItemHandler(FlashlightCoordinates)
 {@$MerchantId}  That's the {nameof Flashlight}!
-                Definitely worth the money, if you've got it. 
+                Definitely worth the money, if you've got it.
+$set local:postPurchaseBranch = "interior.shop.bayou.PostFlashlight"
 $EvaluateItemPurchase()
+
+:: PostFlashlight
+$set    world:flashlightQuest = true
+$set    world:shop.boughtFlashlightFrom = "bayou"
+{@bayouMechanic}    Let me just... hang on.| Didn't {nameof @coralMechanic} have it last?
+                    Yeah I think {nameof @coralMechanic} borrowed it from your uncle. And then dropped it?
+                    It sounds like you'll have to go diving for it! I'm pretty sure she dropped it at {nameof FinalStation}.
+
+$call UnlockSite(RS-0)
+$call UnlockStation(FinalStation)
+$call ShowPopup(map.unlock.finalStation.header, map.unlock.finalStation.desc)
 
 #ItemHandler(ProbeHacker)
 {@$MerchantId}  The {nameof ProbeHacker}! 

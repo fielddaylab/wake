@@ -4,6 +4,7 @@ using BeauRoutine;
 using BeauUtil;
 using Leaf.Runtime;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Aqua.Scripting {
     public sealed class ScriptLight : ScriptComponent, IScenePreloader {
@@ -75,7 +76,7 @@ namespace Aqua.Scripting {
             }
         }
 
-        [LeafMember("SetLightIntensity")]
+        [LeafMember("SetLightIntensity"), Preserve]
         public void SetIntensity(float newIntensityMultiplier, float transitionTime = 0) {
             if (transitionTime <= 0) {
                 m_IntensityMultiplier = newIntensityMultiplier;
@@ -90,7 +91,7 @@ namespace Aqua.Scripting {
             }, transitionTime));
         }
 
-        [LeafMember("SetLightRange")]
+        [LeafMember("SetLightRange"), Preserve]
         public void SetRange(float newRangeMultiplier, float transitionTime = 0) {
             if (transitionTime <= 0) {
                 m_RangeMultiplier = newRangeMultiplier;
@@ -105,7 +106,7 @@ namespace Aqua.Scripting {
             }, transitionTime));
         }
 
-        [LeafMember("SetLightColor")]
+        [LeafMember("SetLightColor"), Preserve]
         public void SetColor(StringSlice colorString, float transitionTime = 0) {
             Color c = Parsing.ParseColor(colorString);
             SetColor(c, transitionTime);
@@ -129,7 +130,7 @@ namespace Aqua.Scripting {
             }, transitionTime));
         }
 
-        [LeafMember("ResetLightColor")]
+        [LeafMember("ResetLightColor"), Preserve]
         public void ResetColor(float transitionTime = 0) {
             if (!m_ColorOverride.HasValue) {
                 return;

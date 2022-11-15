@@ -306,7 +306,7 @@ namespace Aqua
 
         int IBaked.Order { get { return 0; } }
 
-        bool IBaked.Bake(BakeFlags flags)
+        bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
             if (m_CurrentDisplay) {
                 m_CurrentDisplay.Display(0);
@@ -324,9 +324,13 @@ namespace Aqua
 
         static private void CollectEntities(BestiaryData inSaveData, BestiaryDescCategory inCategory, BestiaryDescFlags inIgnore, Predicate<BestiaryDesc> inFilter, ICollection<BestiaryDesc> outCritters)
         {
+            bool fullyDecrypted = Save.Science.FullyDecrypted();
             foreach(var entity in inSaveData.GetEntities(inCategory))
             {
                 if (entity.HasFlags(inIgnore) || (inFilter != null && !inFilter(entity)))
+                    continue;
+
+                if (entity.HasFlags(BestiaryDescFlags.IsSpecter) && !fullyDecrypted)
                     continue;
 
                 outCritters.Add(entity);

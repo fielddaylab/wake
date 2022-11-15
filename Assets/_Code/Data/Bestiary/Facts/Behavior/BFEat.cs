@@ -34,7 +34,7 @@ namespace Aqua {
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.Eat, BFShapeId.Behavior, BFFlags.IsBehavior | BFFlags.IsGraphable, BFDiscoveredFlags.Base, Compare);
+            BFType.DefineAttributes(BFTypeId.Eat, BFShapeId.Behavior, BFFlags.IsBehavior | BFFlags.IsGraphable | BFFlags.HasRate, BFDiscoveredFlags.Base, Compare);
             BFType.DefineMethods(BFTypeId.Eat, CollectReferences, GenerateDetails, GenerateFragments, (f) => ((BFEat)f).Critter, null);
             BFType.DefineEditor(BFTypeId.Eat, null, BFMode.Player);
         }
@@ -131,34 +131,5 @@ namespace Aqua {
         }
 
         #endregion // Behavior
-
-        #if UNITY_EDITOR
-
-        protected override bool IsPair(BFBehavior inOther)
-        {
-            BFEat eat = inOther as BFEat;
-            return eat != null && eat.Critter == Critter;
-        }
-
-        public override bool Bake(BakeFlags flags)
-        {
-            bool bChanged = false;
-            if (OnlyWhenStressed)
-            {
-                var pair = FindPairedFact<BFEat>();
-                if (pair != null)
-                {
-                    float compare = Amount - pair.Amount;
-                    bChanged |= Ref.Replace(ref PairId, pair.Id);
-                }
-            }
-            else
-            {
-                bChanged |= Ref.Replace(ref PairId, null);
-            }
-            return bChanged;
-        }
-
-        #endif // UNITY_EDITOR
     }
 }

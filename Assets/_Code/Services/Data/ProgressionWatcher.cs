@@ -112,9 +112,10 @@ namespace Aqua
                 }
 
                 if (!job.JournalId().IsEmpty) {
+                    Services.UI.PreloadJournal();
                     Services.Script.QueueInvoke(() => {
                         if (Save.Inventory.AddJournalEntry(job.JournalId())) {
-                            Services.UI.FindPanel<JournalCanvas>().ShowNewEntry();
+                            Routine.Start(this, Services.UI.OpenJournalNewEntry()).Tick();
                         }
                     }, -5);
                 }
@@ -159,12 +160,10 @@ namespace Aqua
             if (m_ProfileLoading)
                 return;
             
-            using(var table = TempVarTable.Alloc())
-            {
-                table.Set("jobId", m_LoadedJobId);
-                table.Set("taskId", inTaskId);
-                Services.Script.TriggerResponse(GameTriggers.JobTaskCompleted, table);
-            }
+            var table = TempVarTable.Alloc();
+            table.Set("jobId", m_LoadedJobId);
+            table.Set("taskId", inTaskId);
+            Services.Script.QueueTriggerResponse(GameTriggers.JobTaskCompleted, 0, table);
         }
 
         private void OnJobTasksUpdated(JobTaskService.TaskStatusMask statusMask)
@@ -172,11 +171,9 @@ namespace Aqua
             if (m_ProfileLoading || !Bits.Contains(statusMask, JobTaskService.TaskStatusMask.Completed))
                 return;
 
-            using(var table = TempVarTable.Alloc())
-            {
-                table.Set("jobId", m_LoadedJobId);
-                Services.Script.TriggerResponse(GameTriggers.JobTasksUpdated, table);
-            }
+            var table = TempVarTable.Alloc();
+            table.Set("jobId", m_LoadedJobId);
+            Services.Script.QueueTriggerResponse(GameTriggers.JobTasksUpdated, 0, table);
         }
 
         private void OnBestiaryUpdated(BestiaryUpdateParams inUpdateParams)
@@ -215,10 +212,9 @@ namespace Aqua
 
             if (inItemId == ItemIds.Exp)
             {
-                // ScienceUtils.AttemptLevelUp(Save.Current, out var _);
+                ScienceUtils.AttemptLevelUp(Save.Current, out var _);
                 Services.Script.QueueTriggerResponse(GameTriggers.PlayerExpUp, -5);
             }
-
         }
 
         private void OnScienceLevelUpdated(ScienceLevelUp inLevelUp)
@@ -227,18 +223,16 @@ namespace Aqua
                 return;
 
             var scienceTweaks = Services.Tweaks.Get<ScienceTweaks>();
-            int cashAdjust = scienceTweaks.CashPerLevel() * inLevelUp.LevelAdjustment;
             uint newLevel = inLevelUp.OriginalLevel + (uint) inLevelUp.LevelAdjustment;
 
             Services.Script.QueueInvoke(() => {
-                Save.Inventory.AdjustItem(ItemIds.Cash, cashAdjust);
                 Services.Audio.PostEvent("ShopPurchase");
-                Services.UI.Popup.DisplayWithClose(
-                    Loc.Format("ui.popup.levelUp.header", newLevel),
-                    Loc.Format("ui.popup.levelUp.description", inLevelUp.OriginalLevel + 1, newLevel + 1, cashAdjust),
-                null, PopupFlags.ShowCloseButton
-                ).OnComplete((_) => {
-                    Services.Script.TriggerResponse(GameTriggers.PlayerLevelUp);
+                PopupContent content = default(PopupContent);
+                content.Header = Loc.Format("ui.popup.levelUp.header", newLevel);
+                content.Text = Loc.Format("ui.popup.levelUp.description", newLevel);
+                content.CustomLayout = scienceTweaks.LevelBadgeLayout((int) newLevel).FastConcat("_NoLanyard");
+                Services.UI.Popup.Present(content, PopupFlags.ShowCloseButton).OnComplete((_) => {
+                    Services.Script.QueueTriggerResponse(GameTriggers.PlayerLevelUp, -1);
                 });
             }, -1);
         }

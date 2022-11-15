@@ -1,0 +1,62 @@
+# basePath ship.cabin
+
+:: ClearDreamState
+@function   SceneLeave
+$set session:fromDream = null
+
+:: StartAudio.NoDream
+@function   SceneStart
+@when       !session:fromDream
+$call   CabinBGM->PlayBGM()
+
+// Dream Sequences
+
+:: StartAudio.FromDream
+@function   SceneStart
+@when       session:fromDream
+$set    player:dreamCounter + 1
+$call AudioOneShot("Cabin.WakeFromDream")
+{cutscene}{wait 3}{trigger-response DreamResponse}{/cutscene}{wait 4}
+$call   CabinBGM->PlayBGM()
+
+:: GetDreamJournal
+@cutscene
+{hide-dialog}
+$call ViewTransitionTo("Desk")
+
+$if session:fromDream == "Dreams00"
+    $call GiveJournalEntry("Dream00")
+$elseif session:fromDream == "Dream01"
+    $call GiveJournalEntry("Dream01")
+$elseif session:fromDream == "Dream02"
+    $call GiveJournalEntry("Dream02")
+$elseif session:fromDream == "Dream03"
+    $call GiveJournalEntry("Dream03")
+$elseif session:fromDream == "Dream04"
+    $call GiveJournalEntry("Dream04")
+$elseif session:fromDream == "Dream05"
+    $call GiveJournalEntry("Dream05")
+$elseif session:fromDream == "Dream06"
+    $call GiveJournalEntry("Dream06")
+$elseif session:fromDream == "Dream07"
+    $call GiveJournalEntry("Dream07")
+$endif //
+
+// From Dream
+
+:: FirstDream
+@trigger    DreamResponse
+@when       session:fromDream == "Dreams00"
+@cutscene
+@once
+{@guide}    Nice to see you're awake, O.
+{@player}   What...{wait 1} I just had the {slow}weirdest{/slow} dream.
+$branch .GetDreamJournal
+
+:: GenericDream
+@trigger    DreamResponse
+@cutscene
+@boostScore -5
+{@guide}    Good morning, O.
+{@player}   Ugh...{wait 1} More bad dreams.
+$branch .GetDreamJournal

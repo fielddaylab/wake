@@ -16,11 +16,11 @@
                 You're Ollie, right?
 {@player}       Um... yes. How did you know?
 {@profArctic}   Professor Whalen here used to work with your sister.
-                He still talks about her work all the time. Meredith is a legend around here. 
+                He talks about her work all the time. Meredith is a legend around here. 
 {@player}       Wait... for real? You taught my sister?
 {@arcticSci}   Taught her? No. Mer was a prodigy. I could barely keep up.
-                You look so much like her. It's uncanny.
-{@player}       Wow. I would love to hear more stories about her! 
+                She was always leaving pages of her journal scattered around. I'll see if I can dig any of them up. 
+{@player}       Wow. That would be amazing! 
                 Have you lived out here all this time, Professor? 
 {@arcticSci}    No. I'm only here for one task... seeking out a Bowhead Whale that I've lost track of. 
                 I would love your help. I sure have been worried about her.   
@@ -28,3 +28,20 @@
 $call UnlockSite(RS-4X)
 $call UnlockSite(RS-4Y)
 $call InteriorOpenJobBoard()
+
+:: job1.journal-mer
+@trigger    JournalHidden
+@once
+@cutscene
+$if CompletedJobCount(ArcticStation, 1)
+    // STORY BEAT B
+    {@arcticSci}   Oh, I almost forgot. I found an old page from your sister's journal!
+    {@arcticSci} It was wedged between some data logs from more than ten years ago. 
+    {@player}   Wow. Thank you, {nameof @arcticSci}!
+    {@arcticSci} Of course. Anything for Mer's little sister.
+                 I'll let you know if I find anything else. 
+                                 
+    $call GiveJournalEntry("N04_MersObsession")
+$else
+    {@profArctic}   Still broken, I'm afraid.
+$endif

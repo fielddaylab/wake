@@ -379,6 +379,16 @@ namespace EasyAssetStreaming {
             return webRequest.isNetworkError;
         }
 
+        static internal Streaming.LoadResult ErrorType(UnityWebRequest webRequest) {
+            if (webRequest.isNetworkError) {
+                return Streaming.LoadResult.Network;
+            } else if (webRequest.isHttpError) {
+                return Streaming.LoadResult.Server;
+            } else {
+                return Streaming.LoadResult.Unknown;
+            }
+        }
+
         #endregion // Web Requests
 
         #region Misc

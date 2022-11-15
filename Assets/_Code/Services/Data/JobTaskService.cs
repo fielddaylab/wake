@@ -5,12 +5,16 @@ using BeauUtil.Services;
 using BeauUtil.Debugger;
 using System.Runtime.InteropServices;
 using BeauRoutine;
+using Leaf.Runtime;
+using UnityEngine.Scripting;
 
 namespace Aqua
 {
     [ServiceDependency(typeof(DataService), typeof(EventService))]
     internal partial class JobTaskService : ServiceBehaviour
     {
+        static private readonly StringHash32 Event_ForceReprocess = "job:force-tasks-update";
+
         [StructLayout(LayoutKind.Sequential, Pack = 4)]
         private struct TaskState
         {
@@ -55,7 +59,8 @@ namespace Aqua
                 .Register<StringHash32>(GameEvents.JobPreComplete, OnJobPreComplete, this)
                 .Register(GameEvents.CutsceneEnd, OnCutsceneEnd, this)
                 .Register(GameEvents.ProfileLoaded, OnProfileLoaded, this)
-                .Register(GameEvents.PopupClosed, OnCutsceneEnd, this);
+                .Register(GameEvents.PopupClosed, OnCutsceneEnd, this)
+                .Register(Event_ForceReprocess, OnForceReprocess, this);
 
             RegisterDelayedTaskEvent(events, GameEvents.SceneLoaded, TaskEventMask.SceneLoad);
             RegisterTaskEvent(events, GameEvents.BestiaryUpdated, TaskEventMask.BestiaryUpdate);
@@ -149,6 +154,11 @@ namespace Aqua
             {
                 ProcessUpdateQueue(Save.Jobs);
             }
+        }
+
+        private void OnForceReprocess()
+        {
+            ProcessUpdates(0);
         }
 
         #endregion // Handlers
@@ -426,5 +436,10 @@ namespace Aqua
         }
 
         #endregion // Evaluation
+
+        [LeafMember("CheckJobTasks"), Preserve]
+        static private void ForceReevaluateTasks() {
+            Services.Events.Dispatch(Event_ForceReprocess);
+        }
     }
 }

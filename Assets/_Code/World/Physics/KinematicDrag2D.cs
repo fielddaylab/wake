@@ -24,7 +24,7 @@ namespace Aqua {
         [NonSerialized] private TriggerListener2D m_Listener;
 
         private void Awake() {
-            m_Listener = WorldUtils.TrackLayerMask(Collider, TrackingMask, OnAdd, OnRemove);
+            m_Listener = WorldUtils.ListenForLayerMask(Collider, TrackingMask, OnAdd, OnRemove);
         }
 
         private void OnAdd(Collider2D collider) {
@@ -43,13 +43,6 @@ namespace Aqua {
             if (k2d) {
                 k2d.AdditionalDrag -= Drag;
             }
-        }
-
-        private void FixedUpdate() {
-            if (!Services.Physics.Enabled)
-                return;
-
-            m_Listener.ProcessOccupants();
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Aqua.Compression;
 using BeauPools;
 using BeauRoutine;
 using BeauRoutine.Extensions;
@@ -40,6 +41,9 @@ namespace Aqua {
         [SerializeField] private GridLayoutGroup m_GridFactLayout = null;
         [SerializeField] private int m_CustomModuleSiblingIndex = 0;
         [SerializeField] private RectTransform m_ExtraBackground = null;
+        [SerializeField] private GameObject m_CompressedLayoutContainer = null;
+        [SerializeField] private GameObject m_CompressedLayoutRoot = null;
+        [SerializeField] private LayoutDecompressor m_LayoutDecompressor = null;
         [SerializeField] private LayoutElement m_DividerGroup = null;
         [SerializeField] private ButtonConfig[] m_Buttons = null;
         [SerializeField] private Button m_CloseButton = null;
@@ -61,6 +65,7 @@ namespace Aqua {
 
         [NonSerialized] private RectTransform m_CurrentCustomModule;
         [NonSerialized] private Transform m_OldCustomModuleParent;
+        [NonSerialized] private StringHash32 m_CurrentLayoutId;
 
         public OptionSelectedDelegate OnOptionSelected;
 
@@ -100,6 +105,7 @@ namespace Aqua {
                 m_ImageDisplay.Clear();
             }
             SetCustomModule(null);
+            SetCustomLayout(null);
 
             m_CachedFactsSet[0] = default;
             m_CachedFlagsSet[0] = default;
@@ -118,14 +124,15 @@ namespace Aqua {
             };
         }
 
-        public void Configure(PopupContent inContent, PopupFlags inFlags) {
-            ConfigureText(inContent, inFlags);
-            ConfigureOptions(inContent, inFlags);
-            ConfigureFacts(inContent.Facts);
+        public void Configure(ref PopupContent inContent, PopupFlags inFlags) {
+            ConfigureText(ref inContent, inFlags);
+            ConfigureOptions(ref inContent, inFlags);
+            ConfigureFacts(ref inContent.Facts);
             SetCustomModule(inContent.CustomModule);
+            SetCustomLayout(inContent.CustomLayout);
         }
 
-        public void ConfigureText(PopupContent inContent, PopupFlags inFlags) {
+        public void ConfigureText(ref PopupContent inContent, PopupFlags inFlags) {
             if (m_HeaderText) {
                 if (!string.IsNullOrEmpty(inContent.Header)) {
                     m_HeaderText.SetTextFromString(inContent.Header);
@@ -202,7 +209,7 @@ namespace Aqua {
             }
         }
 
-        private void ConfigureOptions(PopupContent inContent, PopupFlags ioPopupFlags) {
+        private void ConfigureOptions(ref PopupContent inContent, PopupFlags ioPopupFlags) {
             m_OptionCount = inContent.Options.Length;
             if (m_OptionCount == 0) {
                 ioPopupFlags |= PopupFlags.ShowCloseButton;
@@ -233,7 +240,7 @@ namespace Aqua {
             }
         }
 
-        private void ConfigureFacts(PopupFacts inFacts) {
+        private void ConfigureFacts(ref PopupFacts inFacts) {
             if (!m_VerticalFactLayout || !m_GridFactLayout || !m_FactPools) {
                 return;
             }
@@ -361,6 +368,23 @@ namespace Aqua {
             }
         }
 
+        private void SetCustomLayout(StringHash32 inLayoutId) {
+            if (m_CurrentLayoutId == inLayoutId || !m_LayoutDecompressor) {
+                return;
+            }
+
+            m_LayoutDecompressor.ClearAll();
+            m_CurrentLayoutId = inLayoutId;
+
+            if (!m_CurrentLayoutId.IsEmpty) {
+                GameObject layout = m_LayoutDecompressor.Decompress(Services.UI.CompressedLayouts, m_CurrentLayoutId, m_CompressedLayoutRoot);
+                m_CompressedLayoutContainer.SetActive(true);
+                layout.SetActive(true);
+            } else {
+                m_CompressedLayoutContainer.SetActive(false);
+            }
+        }
+
         #endregion // Custom Modules
 
         #region Callbacks
@@ -390,7 +414,7 @@ namespace Aqua {
             return content;
         }
 
-        static public void AttemptTTS(PopupContent inContent) {
+        static public void AttemptTTS(ref PopupContent inContent) {
             if (!Accessibility.TTSFull) {
                 return;
             }
@@ -421,6 +445,7 @@ namespace Aqua {
         public Color? TextColorOverride;
         public StreamedImageSet Image;
         public RectTransform CustomModule;
+        public StringHash32 CustomLayout;
         public PopupFacts Facts;
         public ListSlice<NamedOption> Options;
     }

@@ -1,0 +1,124 @@
+# basePath job.bayou-shrimp-yields
+
+// INTRO
+
+:: start
+@trigger    JobStarted
+@cutscene
+{@bayouSci}    The Shrimpers are quite upset about the lack of shrimp in the water.
+                I need you to check that the populations are in fact decreasing.
+
+:: popCounted
+@trigger    JobTasksUpdated
+@when       JobTaskTop(reportBack)
+@once
+@cutscene
+{@guide}    We've got the current populations, let's head back {nameof @bayouSci}.
+
+// Guide Text
+
+:: helpCountShrimp
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(countShrimp), scene:name == "RS-3P"
+@cutscene
+{@guide}    There's a bunch of shrimp around here.
+$if HasEntity(WhiteShrimp) 
+    {@guide}    Pull out your {nameof ROVTagger} and find as many as you can!
+$else
+    {@guide}    First you'll need to scan them. Then you can use your {nameof ROVTagger} to count them.
+$endif
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchCountShrimp
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(countShrimp)
+@boostScore -5
+@cutscene
+{@guide}    We need to count some shrimp in the {nameof RS-3P}.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@guide}    Head back to {nameof @bayouSci} in the station.
+
+// ARGUMENTATION
+
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(shrimpYieldsArgue)
+@cutscene
+$call ArgueLoad(shrimpYieldsArgue) 
+{@bayouSci}    So. Ollie.
+                The last count we got was around {h}700 shrimp{/h} in the {nameof RS-3P}. Are the reports of declining shrimp accurate?
+$choice .argue.reportsAccurate; Yes.
+$choice .argue.reportsInaccurate; Not really.
+$choose branch
+
+// Accurate
+
+:: argue.reportsAccurate
+$if ArgueSetClaim(Claim, jobs.bayou-shrimp-yields.argue.claimLabelAccurate)
+    $call ArgueFactSlot(P_DeadZone.Population.WhiteShrimp) 
+$endif
+{@bayouSci}    How many did you count?
+$branch .argue.showClaimAccurate
+
+:: argue.showClaimAccurate
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.completeAccurate 
+    $answer incorrect, .argue.unrelatedAccurate
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedAccurate
+$call ArgueRejectIncorrect()
+{@bayouSci}     Not quite what I'm looking for, O.
+$branch .argue.showClaimAccurate
+
+// Inaccurate
+
+:: argue.reportsInaccurate
+$if ArgueSetClaim(Claim, jobs.bayou-shrimp-yields.argue.claimLabelInaccurate)
+    $call ArgueFactSlot(P_DeadZone.Population.WhiteShrimp) 
+$endif
+{@bayouSci}    How many did you count?
+$branch .argue.showClaimInaccurate
+
+:: argue.showClaimInaccurate
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.completeInaccurate 
+    $answer incorrect, .argue.unrelatedInaccurate
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedInaccurate
+$call ArgueRejectIncorrect()
+{@bayouSci}     Not quite what I'm looking for, O.
+$branch .argue.showClaimInaccurate
+
+:: argue.completeInaccurate
+{@bayouSci}    I think this means the shrimp population is in decline.
+                Want to revisit your claim?
+$call ArgueClearFacts()
+$call ArgueCancelClaim()
+$goto .argue.intro
+
+// Shared
+
+:: argue.giveUp
+{@bayouSci}    Okay, then. But don't take too long. A lot of people are waiting on our decision. 
+$call ArgueClearFacts()
+$call ArgueCancelClaim()
+
+// End
+:: argue.completeAccurate
+$call ArgueComplete()
+{@bayouSci}    Oh, interesting. That is... unfortunate.
+                We need to get to the bottom of why the shrimp are dying out.
+                I'll have new jobs along this line posted shortly.
+$call CompleteJob()

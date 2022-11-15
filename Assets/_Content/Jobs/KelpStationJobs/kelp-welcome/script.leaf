@@ -18,6 +18,7 @@ $call FocusHighlight->Focus(hotbar.portable)
 $call FocusHighlight->Clear()
 
 {hide-dialog}{fade-in 0.5, wait}
+$call GiveJournalEntry("N01_Intro")
 
 :: diveSite
 @trigger    SceneStart
@@ -38,8 +39,8 @@ $call GiveUpgrade(ROVScanner, Silent)
 $call Player->SetTool(Scanner)
 {@guide}  The {item-name}Scanner{/item-name} searches for life forms automatically. 
             Click the red targets to ID a new plant or animal species. 
-{wait 0.5}
 {hide-dialog}
+{wait 0.5}
 
 {fade-out black.60, 0.5, wait}
 {@}
@@ -99,7 +100,6 @@ $endif
 @cutscene
 @once
 $set    jobs:kelp-welcome.got.scans = true
-$branch common.ringPhone
 
 {@guide}   You have scanned all of the local species. Your work is acceptable!
 {@player} Thanks, {nameof @guide}. 
@@ -108,6 +108,12 @@ $branch common.ringPhone
 {@guide}   Updating database|.|.|.|
 {@guide}   You are most welcome, O!
 {@guide}   Now head to the surface and board your new research vessel!
+$call Surface->Activate()
+
+:: navigation.goBackUp.savePatch
+@function   SceneStart
+@when       scene:name == "RS-1C", !jobs:kelp-welcome.got-scans, JobTaskActive(returnToShip)
+$set jobs:kelp-welcome.got.scans = true
 $call Surface->Activate()
 
 :: helpAtSiteCCompleted
@@ -127,10 +133,10 @@ $call Surface->Activate()
 @once
 
 $branch common.ringPhone
-{@player}My own ship!! I can't believe Mom trusted me with this.
+{@player}My own AquaLab!! I can't believe Mom trusted me with this.
 {@guide}Yes. And it includes several built-in safety features!
 {@player}Oh. Yeah, that tracks. 
-{@guide}Board your ship for your next task!
+{@guide}Board the AquaLab for your next task!
 {fade-out black.60, 0.5, wait}
 {@}
 {hide-dialog}
@@ -157,7 +163,6 @@ $call ship.map->ResetSorting()
 @trigger    SceneStart
 @when       scene:name == "KelpStation", JobTaskCompleted(gotoSiteC), !jobs:kelp-welcome.got.scans
 @cutscene
-$branch common.ringPhone
 
 {@player}   Is that everything, {nameof @guide}? 
 {@guide}   Hmmm. It appears you missed something. 
@@ -181,20 +186,44 @@ $call ship.map->ResetSorting()
 
 // BACK AT SHIP
 
+:: atHelmNotFinishedWithExperiment
+@function   SceneStart
+@when       scene:name == "Helm", !JobTaskCompleted(runExperiment)
+$call WheelPrompt->Deactivate()
+
 :: atShip
 @trigger    SceneStart
 @when       scene:name == "Helm", JobTaskActive(runExperiment)
 @boostScore 100
 @cutscene
 @once
-$branch common.ringPhone
 
-{@player} Wow. This ship... it's amazing.
-{@player} I wish Mer could see it. 
-{@guide} "Mer" does not compute.
-{@player} Oh... my big sister. She used to have a ship just like this.
+{@guide} This is your helm!
+         You appear to be receiving a transmission from a vessel called the Nautilus.
+{@player} Oh, that's my friend Sam! Put them through!
+{@sam} O, you there? How'd the test go?
+{@player} Not bad. Looks like you're not the newest scientist anymore. 
+{@sam} Yes!! I knew you'd kill it.
+                 And you finally get to ditch the Kelp Forest! 
+                 Did you break the news to your mom yet?
+{@player}       Oh, uh.... no es importante. Tell me about the mission!
+{@sam} It's super eerie down here, O. You'd love it. 
+                We're heading deeper to keep searching for the missing probe.
+                Might end up hitting a dead zone and losing contact....
+                ......
+{@player}       Sam? Hello? 
+{@sam}  .....weird readings on the scanner....
+                 ....not sure what.... 
+{@player}       Sam? Can you hear me? 
+                Sam?? 
+{@guide} Transmission lost.
+{@player} Wow. But they'll be fine, right, {nameof @guide}? 
+{@guide} According to my calculations, the mission to recover the Challenger Deep probe has a 23.8% chance of success.
+{@player} Oh, come on. I'm sure the odds are waaaaay better than that. 
+           Sam says the Nautilus crew is the best in the biz!
+$call GiveJournalEntry("N02_LosingConnection")
 {@player}  Anyway, what now, {nameof @guide}?
-{@guide} Updating schametic... 
+{@guide} Updating ship schematic... 
 {hide-dialog}
 
 $call UnlockRoom("Experimentation")
@@ -205,7 +234,7 @@ $call schematic.button->ForceClick()
 {hide-dialog}{wait 1}{style default}
 // $call HelmButton->ForceOnTop()
 $call FocusHighlight->Focus(ExperimentationButton, 200, 200)
-    Click here to enter your {h}Experimentation Lab{/h}.
+    Click here to enter your {nameof Experimentation}.
 $call FocusHighlight->Clear()
 {hide-dialog}{fade-in 0.5, wait}
 $call ship.map->ResetSorting()
@@ -274,7 +303,6 @@ $endif
 @cutscene
 @once
 
-$branch common.ringPhone
 {@guide}   Now return to the Helm and navigate your sub back to the {m}Research Station{/m}.
 
 // $call   UnlockRoom("office")
@@ -325,7 +353,12 @@ $endif
 @when 		JobTaskActive(returnToShip)
 @boostScore -5
 @cutscene
-{@guide}    Head to the surface and board your ship!
+
+$if !IsPlayerOnShip()
+    {@guide}    Head to the surface and board your ship!
+$else 
+    {@guide}    Head to the {m}helm{/m} when you're ready to continue.
+$endif
 
 :: catchRunExperiment
 @trigger    RequestPartnerHelp
@@ -365,7 +398,7 @@ $call ArgueLoad(welcomeArgue)
 {@drKelp}  Wow, that was quick! Are you sure you're ready?
 {@player}  Actually, I've still got a few things to do.
 // TODO: add a branch if player has not received V1ct0r help button yet
-{@drKelp}  Well, don't be afraid to ask {nameof @guide} if you need some help.
+{@drKelp}  Well, don't be afraid to ask if you need some help.
 {@drKelp}  I'll be here when you're ready. 
 	
 	
@@ -429,7 +462,7 @@ $call CompleteJob()
 
 {@drKelp}	I'm so thrilled, Mija. 
 {@drKelp}   With your help, we might actually be able to get the Kelp Refuge up and running!
-{@drKelp}   I can't think of a better way to honor your sister. 
+{@drKelp}   Your sister always wanted to devote her life to the otters. I can't think of a better way to honor her. 
 {@player}   Thanks, Mom.
 {@player}   What about the other science stations? Do they need help, too?
 {@drKelp}   Hmm. You mean in other ecosystems?

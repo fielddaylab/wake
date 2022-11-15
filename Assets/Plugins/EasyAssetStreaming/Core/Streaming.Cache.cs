@@ -35,8 +35,9 @@ namespace EasyAssetStreaming {
 
             PendingUnload = 0x02,
             PendingLoad = 0x04,
-            Loaded = 0x08,
-            Error = 0x10,
+            Loading = 0x08,
+            Loaded = 0x10,
+            Error = 0x20,
         }
 
         // invariant information

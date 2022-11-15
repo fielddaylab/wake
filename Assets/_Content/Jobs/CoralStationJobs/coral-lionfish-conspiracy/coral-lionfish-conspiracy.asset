@@ -25,15 +25,17 @@ MonoBehaviour:
   m_DescShortId:
     m_Source: 
     m_HashValue: 0
-  m_DescCompletedId:
-    m_Source: 
-    m_HashValue: 0
-  m_ExperimentDifficulty: 2
+  m_ExperimentDifficulty: 1
   m_ModelingDifficulty: 0
-  m_ArgumentationDifficulty: 1
+  m_ArgumentationDifficulty: 3
   m_PrerequisiteJobs:
   - {fileID: 11400000, guid: 5d8f8baced4915149bccfdddf87e8fdb, type: 2}
   m_PrereqConditions: 
+  m_PrereqBestiaryEntry:
+    m_HashValue: 0
+  m_PrereqScanId:
+    m_Source: 
+    m_HashValue: 0
   m_PrereqUpgrades:
   - m_HashValue: 165582993
   m_PrereqExp: 0
@@ -69,6 +71,22 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
+      m_Source: observeCoral
+      m_HashValue: 1561985884
+    LabelId:
+      m_Source: jobs.lionfish-conspiracy.task.observeCoral
+      m_HashValue: 3645962509
+    Steps:
+    - Type: 6
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: jobs:coral-lionfish-conspiracy.checkedCoral
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: scanNew
+      m_HashValue: 730217158
+  - Id:
       m_Source: observeInteractions
       m_HashValue: 4232217962
     LabelId:
@@ -88,8 +106,8 @@ MonoBehaviour:
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
-    - m_Source: scanNew
-      m_HashValue: 730217158
+    - m_Source: observeCoral
+      m_HashValue: 1561985884
   - Id:
       m_Source: arguePredator
       m_HashValue: 2405027910
@@ -136,10 +154,26 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
+      m_Source: observeCoral
+      m_HashValue: 1561985884
+    IdString: observeCoral
+    Index: 1
+    LabelId:
+      m_Source: jobs.lionfish-conspiracy.task.observeCoral
+      m_HashValue: 3645962509
+    Steps:
+    - Type: 6
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: jobs:coral-lionfish-conspiracy.checkedCoral
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  - Id:
       m_Source: observeInteractions
       m_HashValue: 4232217962
     IdString: observeInteractions
-    Index: 1
+    Index: 2
     LabelId:
       m_Source: jobs.lionfish-conspiracy.task.observeInteractions
       m_HashValue: 1611676689
@@ -156,12 +190,12 @@ MonoBehaviour:
         m_HashValue: 3761093643
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0000
+    PrerequisiteTaskIndices: 0100
   - Id:
       m_Source: arguePredator
       m_HashValue: 2405027910
     IdString: arguePredator
-    Index: 2
+    Index: 3
     LabelId:
       m_Source: jobs.lionfish-conspiracy.task.arguePredator
       m_HashValue: 2507088081
@@ -172,7 +206,7 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0100
+    PrerequisiteTaskIndices: 0200
   m_CashReward: 100
   m_ExpReward: 5
   m_JournalId:

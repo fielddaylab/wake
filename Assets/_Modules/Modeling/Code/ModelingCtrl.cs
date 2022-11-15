@@ -67,7 +67,7 @@ namespace Aqua.Modeling {
                 PopupContent content = default;
                 content.Text = Loc.Find(t);
                 content.TextColorOverride = c;
-                m_InlinePopup.Present(content, 0);
+                m_InlinePopup.Present(ref content, 0);
             };
             m_State.Display.FactsPopup = (f) => {
                 Array.Sort(f, BFType.SortByVisualOrder);
@@ -83,7 +83,7 @@ namespace Aqua.Modeling {
                 PopupContent content = default;
                 content.Facts = facts;
 
-                m_InlinePopup.Present(content, 0);
+                m_InlinePopup.Present(ref content, 0);
             };
             m_State.Display.ClearPopup = () => m_InlinePopup.Hide();
             m_State.Display.FilterNodes = (any, all, none, force) => {
@@ -311,7 +311,7 @@ namespace Aqua.Modeling {
         private void OnRequestConceptualExport() {
             if (m_ProgressInfo.Scope != null && !m_ProgressInfo.Scope.ConceptualModelId.IsEmpty && Save.Bestiary.RegisterFact(m_ProgressInfo.Scope.ConceptualModelId)) {
                 BFBase fact = Assets.Fact(m_ProgressInfo.Scope.ConceptualModelId);
-                Services.UI.Popup.PresentFact("'modeling.newConceptualModel.header", null, null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
+                Services.UI.Popup.PresentFact(Loc.Find("modeling.newConceptualModel.header"), null, null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
                     Services.Script.TriggerResponse(ModelingConsts.Trigger_ConceptExported);
                     Services.Events.Dispatch(ModelingConsts.Event_Concept_Exported);
                 });
@@ -335,7 +335,7 @@ namespace Aqua.Modeling {
         private void OnSyncAchieved() {
             if (m_ProgressInfo.Scope != null && !m_ProgressInfo.Scope.SyncModelId.IsEmpty && Save.Bestiary.RegisterFact(m_ProgressInfo.Scope.SyncModelId)) {
                 BFBase fact = Assets.Fact(m_ProgressInfo.Scope.SyncModelId);
-                Services.UI.Popup.PresentFact("'modeling.newSyncModel.header", null, null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
+                Services.UI.Popup.PresentFact(Loc.Find("modeling.newSyncModel.header"), null, null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
                     Services.Script.TriggerResponse(ModelingConsts.Trigger_SyncCompleted);
                 });
                 RefreshPhaseHeader();
@@ -346,7 +346,7 @@ namespace Aqua.Modeling {
         private void OnPredictCompleted() {
             if (m_ProgressInfo.Scope != null && !m_ProgressInfo.Scope.PredictModelId.IsEmpty && Save.Bestiary.RegisterFact(m_ProgressInfo.Scope.PredictModelId)) {
                 BFBase fact = Assets.Fact(m_ProgressInfo.Scope.PredictModelId);
-                Services.UI.Popup.PresentFact("'modeling.newPredictModel.header", null, null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
+                Services.UI.Popup.PresentFact(Loc.Find("modeling.newPredictModel.header"), null, null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
                     Services.Script.TriggerResponse(ModelingConsts.Trigger_PredictCompleted);
                     Services.Events.Dispatch(ModelingConsts.Event_Predict_Complete);
                 });
@@ -383,7 +383,7 @@ namespace Aqua.Modeling {
         private void OnInterventionCompleted() {
             if (m_ProgressInfo.Scope != null && !m_ProgressInfo.Scope.InterveneModelId.IsEmpty && Save.Bestiary.RegisterFact(m_ProgressInfo.Scope.InterveneModelId)) {
                 BFBase fact = Assets.Fact(m_ProgressInfo.Scope.InterveneModelId);
-                Services.UI.Popup.PresentFact("'modeling.newInterveneModel.header", null, null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
+                Services.UI.Popup.PresentFact(Loc.Find("modeling.newInterveneModel.header"), null, null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
                     Services.Script.TriggerResponse(ModelingConsts.Trigger_InterveneCompleted);
                     Services.Events.Dispatch(ModelingConsts.Event_Intervene_Complete);
                 });;

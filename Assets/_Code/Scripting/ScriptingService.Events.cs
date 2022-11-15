@@ -74,6 +74,7 @@ namespace Aqua
             m_TagEventParser.AddEvent("sfx", ScriptEvents.Global.PlaySound).WithStringData();
             m_TagEventParser.AddEvent("show-dialog", ScriptEvents.Global.ShowDialog);
             m_TagEventParser.AddEvent("wait-abs", ScriptEvents.Global.WaitAbsolute).WithFloatData(0.25f);
+            m_TagEventParser.AddEvent("block-input", ScriptEvents.Global.BlockInput).CloseWith(ScriptEvents.Global.UnblockInput);
             m_TagEventParser.AddEvent("cutscene", ScriptEvents.Global.CutsceneOn).CloseWith(ScriptEvents.Global.CutsceneOff);
             m_TagEventParser.AddEvent("enable-object", ScriptEvents.Global.EnableObject).WithStringData();
             m_TagEventParser.AddEvent("disable-object", ScriptEvents.Global.DisableObject).WithStringData();
@@ -95,6 +96,8 @@ namespace Aqua
             m_TagEventParser.AddEvent("sticky", ScriptEvents.Dialog.DoNotClose);
             m_TagEventParser.AddEvent("type", ScriptEvents.Dialog.SetTypeSFX).WithStringHashData();
             m_TagEventParser.AddEvent("voice", ScriptEvents.Dialog.SetVoiceType).WithStringHashData("default");
+
+            m_TagEventParser.Lock();
         }
 
         #endregion // Parser
@@ -217,7 +220,7 @@ namespace Aqua
             MapDesc map = obj as MapDesc;
             if (!map.IsReferenceNull())
             {
-                return Loc.FormatFromString("<" + ColorTags.MapColorString + ">" + "{0}</color>", map.LabelId());
+                return Loc.FormatFromString("<" + ColorTags.MapColorString + ">" + "{0}</color>", map.ProperNameId());
             }
 
             ScriptCharacterDef charDef = obj as ScriptCharacterDef;
@@ -278,6 +281,12 @@ namespace Aqua
                 return Loc.Find(charDef.NameId());
             }
 
+            MapDesc map = obj as MapDesc;
+            if (!map.IsReferenceNull())
+            {
+                return Loc.FormatFromString("<" + ColorTags.MapColorString + ">" + "{0}</color>", map.LabelId());
+            }
+
             return ReplaceNameOf(inTag, inContext);
         }
 
@@ -304,7 +313,7 @@ namespace Aqua
                 .Register(ScriptEvents.Global.PlayBGM, EventPlayBGM)
                 .Register(ScriptEvents.Global.PlaySound, EventPlaySound)
                 .Register(ScriptEvents.Global.StopBGM, (e, o) => { Services.Audio.StopMusic(e.Argument0.AsFloat()); })
-                .Register(ScriptEvents.Global.WaitAbsolute, (e, o) => { return Routine.WaitRealSeconds(e.Argument0.AsFloat()); })
+                .Register(ScriptEvents.Global.WaitAbsolute, (e, o) => { return Routine.WaitSeconds(e.Argument0.AsFloat()); })
                 .Register(ScriptEvents.Global.BroadcastEvent, EventBroadcastEvent)
                 .Register(ScriptEvents.Global.TriggerResponse, EventTriggerResponse)
                 .Register(ScriptEvents.Global.BoxStyle, EventSetBoxStyle)
@@ -314,7 +323,9 @@ namespace Aqua
                 .Register(ScriptEvents.Global.FadeOut, EventFadeOut)
                 .Register(ScriptEvents.Global.FadeIn, EventFadeIn)
                 .Register(ScriptEvents.Global.EnableObject, EventEnableObject)
-                .Register(ScriptEvents.Global.DisableObject, EventDisableObject);
+                .Register(ScriptEvents.Global.DisableObject, EventDisableObject)
+                .Register(ScriptEvents.Global.BlockInput, () => Services.Input.PauseAll())
+                .Register(ScriptEvents.Global.UnblockInput, () => Services.Input.ResumeAll());
 
             m_SkippedEvents = new HashSet<StringHash32>();
             m_SkippedEvents.Add(ScriptEvents.Global.CutsceneOn);

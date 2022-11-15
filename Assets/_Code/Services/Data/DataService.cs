@@ -578,6 +578,7 @@ namespace Aqua
                             if (attempts > 0)
                             {
                                 Log.Warn("[DataService] Retrying server save...", attempts);
+                                Services.Events.Dispatch(GameEvents.ProfileSaveError);
                                 yield return m_SaveRetryDelay;
                             }
                             else
@@ -634,21 +635,7 @@ namespace Aqua
         }
 
         #endregion // Saving
-
-        #region Dialog History
-
-        public void AddToDialogHistory(in DialogRecord inRecord)
-        {
-            // m_DialogHistory.PushBack(inRecord);
-        }
-
-        public RingBuffer<DialogRecord> DialogHistory
-        {
-            get { return /* m_DialogHistory */ null; }
-        }
-
-        #endregion // Dialog History
-
+        
         #region Options
 
         private void LoadOptionsSettings() 
@@ -713,6 +700,12 @@ namespace Aqua
             // m_DialogHistory = new RingBuffer<DialogRecord>(m_DialogHistorySize, RingBufferMode.Overwrite);
 
             OGD.Core.Configure(m_ServerAddress, GameId);
+        }
+
+        private void LateUpdate() {
+            if (m_CurrentSaveData != null && !Services.State.IsLoadingScene()) {
+                m_CurrentSaveData.Playtime += Time.unscaledDeltaTime;
+            }
         }
 
         protected override void Shutdown()

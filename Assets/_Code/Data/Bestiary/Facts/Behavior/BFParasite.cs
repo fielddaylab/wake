@@ -26,7 +26,7 @@ namespace Aqua {
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.Parasite, BFShapeId.Behavior, BFFlags.IsBehavior | BFFlags.IsGraphable, BFDiscoveredFlags.Base, null);
+            BFType.DefineAttributes(BFTypeId.Parasite, BFShapeId.Behavior, BFFlags.IsBehavior | BFFlags.IsGraphable | BFFlags.HasRate, BFDiscoveredFlags.Base, null);
             BFType.DefineMethods(BFTypeId.Parasite, CollectReferences, GenerateDetails, GenerateFragments, (f) => ((BFParasite)f).Critter, null);
             BFType.DefineEditor(BFTypeId.Parasite, null, BFMode.Player);
         }
@@ -83,19 +83,5 @@ namespace Aqua {
         }
 
         #endregion // Behavior
-
-        #if UNITY_EDITOR
-
-        protected override bool IsPair(BFBehavior inOther)
-        {
-            return false;
-        }
-
-        public override bool Bake(BakeFlags flags)
-        {
-            return false;
-        }
-
-        #endif // UNITY_EDITOR
     }
 }

@@ -158,23 +158,23 @@ namespace BeauUWT
             EnsureSource().time = inTime;
         }
 
-        private int GetHiResTime()
+        private ulong GetHiResTime()
         {
             if (m_UnitySource)
-                return (int) (m_UnitySource.time * 1000);
+                return (ulong) (m_UnitySource.time * HiResScale_Double);
             return 0;
         }
 
-        private void SetHiResTime(int inTime)
+        private void SetHiResTime(ulong inTime)
         {
             if (m_PlayRequested)
             {
-                m_QueuedTime = inTime / 1000f;
+                m_QueuedTime = (float) (inTime * HiResScaleInv);
                 m_QueuedTimeMode = TimeMode.Seconds;
             }
             if (m_StreamingClip)
             {
-                EnsureSource().time = inTime / 1000f;
+                EnsureSource().time = (float) (inTime * HiResScaleInv);
             }
         }
 

@@ -33,6 +33,9 @@ Open Task List
 :: save.saving
 Saving
 
+:: save.error
+Retrying
+
 :: save.complete
 Saved!
 
@@ -107,7 +110,7 @@ Click Or Tap The Screen
 To Continue
 
 :: boot.ready
-Aqualab
+Wake
 
 :: map.station
 Station
@@ -120,6 +123,16 @@ Leave Station
 
 :: station.warp
 Travel to Ship
+
+:: loadingStation
+Traveling to {map-name}{0}{/map-name}
+
+:: scan.progress
+Scanning
+
+:: level.clearanceLevelLabel
+Clearance
+Level
 
 # basePath ui.popup
 
@@ -149,6 +162,14 @@ New Organism Entry
 New Ecosystem Entry
 {env-name}{0}{/env-name}
 
+:: newBestiary.specter.header
+Data Transmission Received
+{critter-name}{0}{/critter-name}
+
+:: newBestiary.specter.description
+This information requires a {h}private key{/h} to decode.
+<margin-left=1.5em><alpha=#AA>{0}
+
 :: jobComplete.header
 Job Completed
 {0}
@@ -163,13 +184,10 @@ Earned {cash}{0}{/cash}
 Earned {exp}{0}{/exp}
 
 :: levelUp.header
-Science Rank Up
-Level {0}
+Rank Up!
 
 :: levelUp.description
-Your {h}Science Rank{/h} increased from {0} to {1}!
-
-You have been awarded a bonus of {cash}{2}{/cash}!
+Your {h}Clearance Level{/h} increased to {0}!
 
 :: okay
 Okay
@@ -261,13 +279,13 @@ With Support From
 Presents
 
 :: minimalTitle
-Aqualab
+Wake
 
 :: createdBy
 Created By:
 
 :: subtitle
-The Challenger Deep
+Tales from the Aqualab
 
 :: workingLabel
 working title
@@ -275,6 +293,12 @@ working title
 :: emptyPlayerCode
 Enter your
 Player Code
+
+:: subtitleA
+Tales From The
+
+:: subtitleB
+AQUALAB
 
 # basePath ui.ship
 
@@ -559,7 +583,7 @@ Personal
 All
 
 :: depthsTag
-Lower Depths
+Challenger Deep
 
 :: arcticTag
 Arctic

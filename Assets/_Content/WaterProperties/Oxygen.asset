@@ -17,6 +17,9 @@ MonoBehaviour:
   m_LabelId:
     m_Source: properties.oxygen.name
     m_HashValue: 1004675559
+  m_ShortLabelId:
+    m_Source: properties.oxygen.shortName
+    m_HashValue: 706784469
   m_Icon: {fileID: 21300000, guid: c2285444d6fbddb49a06c3349ed04ed2, type: 3}
   m_HiResIconPath: 
   m_Palette:
@@ -32,8 +35,10 @@ MonoBehaviour:
     Highlight:
       serializedVersion: 2
       rgba: 4288716960
-  m_Format: '{0:F1}ng/L'
-  m_DisplayScale: 100000
+  m_Format: "{0:F1}\u03BCg/L"
+  m_DisplayScale: 1
+  m_AdjustFormat: "{0:F1}e-5\u03BCg/L"
+  m_AdjustDisplayScale: 100000
   m_EnvironmentFactFormat:
     m_Source: properties.oxygen.sentence
     m_HashValue: 2170825993

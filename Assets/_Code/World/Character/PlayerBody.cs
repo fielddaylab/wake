@@ -4,6 +4,7 @@ using BeauUtil;
 using Leaf.Runtime;
 using ScriptableBake;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Aqua.Character
 {
@@ -49,7 +50,7 @@ namespace Aqua.Character
 
         #region Leaf
 
-        [LeafMember("PlayerInRegion")]
+        [LeafMember("PlayerInRegion"), Preserve]
         static private bool PlayerInRegion(StringHash32 inId)
         {
             return Script.CurrentPlayer?.InRegion(inId) ?? false;
@@ -63,7 +64,7 @@ namespace Aqua.Character
 
         int IBaked.Order { get; }
 
-        bool IBaked.Bake(BakeFlags flags)
+        bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
             return BakeImpl(flags);
         }
@@ -84,5 +85,6 @@ namespace Aqua.Character
         Stunned = 0x01,
         Slowed = 0x02,
         PowerEngineEngaged = 0x04,
+        DraggedByCurrent = 0x08
     }
 }

@@ -87,11 +87,13 @@ namespace Aqua.Testing {
         #region IDebuggable
 
         public IEnumerable<DMInfo> ConstructDebugMenus() {
-            DMInfo menu = new DMInfo("Auto Testing", 8);
+            // DMInfo menu = new DMInfo("Auto Testing", 8);
 
-            menu.AddButton("Scene Loading", () => RunTest("Scene Loading", SceneLoadValidation.LoadAllScenes(), 60));
+            // menu.AddButton("Scene Loading", () => RunTest("Scene Loading", SceneLoadValidation.LoadAllScenes(), 60));
 
-            yield return menu;
+            // yield return menu;
+
+            yield break;
         }
 
         #endregion // IDebuggable

@@ -2,7 +2,7 @@ using Aqua.Debugging;
 using BeauData;
 using BeauUtil;
 using BeauUtil.Debugger;
-using NativeWebClick;
+using NativeUtils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -320,16 +320,16 @@ namespace Aqua
             Input.multiTouchEnabled = false;
             m_InputModule.OnModeChanged += OnInputModeChanged;
 
-            NativeClick.Initialize();
-            NativeClick.OnMouseDown += OnNativeMouseDown;
+            NativeInput.Initialize();
+            NativeInput.OnMouseDown += OnNativeMouseDown;
         }
 
         protected override void OnDestroy()
         {
             m_InputModule.OnModeChanged -= OnInputModeChanged;
 
-            NativeClick.OnMouseDown -= OnNativeMouseDown;
-            NativeClick.Shutdown();
+            NativeInput.OnMouseDown -= OnNativeMouseDown;
+            NativeInput.Shutdown();
 
             base.OnDestroy();
         }

@@ -13,7 +13,7 @@ using UnityEditor;
 namespace Aqua.Compression {
 
     [CreateAssetMenu(menuName = "Aqualab/Layout Prefab Package")]
-    public class LayoutPrefabPackage : ScriptableObject {
+    public class LayoutPrefabPackage : ScriptableObject, IEditorOnlyData {
         #region Type
         
         [Serializable]
@@ -55,7 +55,14 @@ namespace Aqua.Compression {
 
         [ContextMenu("Compress")]
         private void Bake() {
-            GameObject[] allPrefabs = ValidationUtils.FindAllAssets<GameObject>(PrefabPredicate, Path.GetDirectoryName(AssetDatabase.GetAssetPath(this)));
+            GameObject[] prefabsInDirectory = ValidationUtils.FindAllAssets<GameObject>(PrefabPredicate, Path.GetDirectoryName(AssetDatabase.GetAssetPath(this)));
+            List<GameObject> prefabsToBuild = new List<GameObject>(prefabsInDirectory.Length);
+            foreach(var prefab in prefabsInDirectory) {
+                if (prefab.name.Contains("Template")) {
+                    continue;
+                }
+                prefabsToBuild.Add(prefab);
+            }
             PackageBuilder compressor = new PackageBuilder();
             List<PrefabEntry> toc = new List<PrefabEntry>();
             List<byte> allData = new List<byte>(4096);
@@ -65,8 +72,8 @@ namespace Aqua.Compression {
             try {
                 using(Profiling.Time("compressing prefabs")) {
                     int idx = 0;
-                    foreach(var prefab in allPrefabs) {
-                        EditorUtility.DisplayProgressBar("Compressing Prefabs...", string.Format("Compressing '{0}' ({1}/{2})", prefab.name, idx + 1, allPrefabs.Length), (idx + 1) / (float) allPrefabs.Length);
+                    foreach(var prefab in prefabsToBuild) {
+                        EditorUtility.DisplayProgressBar("Compressing Prefabs...", string.Format("Compressing '{0}' ({1}/{2})", prefab.name, idx + 1, prefabsToBuild.Count), (idx + 1) / (float) prefabsToBuild.Count);
                         idx++;
                         GameObject instantiated = GameObject.Instantiate(prefab, root.transform, false);
                         instantiated.name = prefab.name;
@@ -122,6 +129,12 @@ namespace Aqua.Compression {
 
         #if UNITY_EDITOR
 
+        void IEditorOnlyData.ClearEditorOnlyData() {
+            for(int i = 0; i < m_TOC.Length; i++) {
+                ValidationUtils.StripDebugInfo(ref m_TOC[i].Id);
+            }
+        }
+
         [CustomEditor(typeof(LayoutPrefabPackage), true)]
         private class Inspector : UnityEditor.Editor
         {
@@ -165,29 +178,31 @@ namespace Aqua.Compression {
                     }
                     EditorGUILayout.EndVertical();
                 }
-                EditorGUILayout.LabelField("Strings", prefabPackage.m_Bank.StringBank.Length.ToString());
-                if (prefabPackage.m_Bank.StringBank.Length > 0) {
-                    EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-                    {
-                        using(new EditorGUI.DisabledScope(true)) {
-                            foreach(var entry in prefabPackage.m_Bank.StringBank) {
-                                EditorGUILayout.TextField(entry);
+                if (prefabPackage.m_Bank != null) {
+                    EditorGUILayout.LabelField("Strings", prefabPackage.m_Bank.StringBank.Length.ToString());
+                    if (prefabPackage.m_Bank.StringBank.Length > 0) {
+                        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                        {
+                            using(new EditorGUI.DisabledScope(true)) {
+                                foreach(var entry in prefabPackage.m_Bank.StringBank) {
+                                    EditorGUILayout.TextField(entry);
+                                }
                             }
                         }
+                        EditorGUILayout.EndVertical();
                     }
-                    EditorGUILayout.EndVertical();
-                }
-                EditorGUILayout.LabelField("References", prefabPackage.m_Bank.AssetBank.Length.ToString());
-                if (prefabPackage.m_Bank.AssetBank.Length > 0) {
-                    EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-                    {
-                        using(new EditorGUI.DisabledScope(true)) {
-                            foreach(var entry in prefabPackage.m_Bank.AssetBank) {
-                                EditorGUILayout.ObjectField(entry, typeof(UnityEngine.Object), false);
+                    EditorGUILayout.LabelField("References", prefabPackage.m_Bank.AssetBank.Length.ToString());
+                    if (prefabPackage.m_Bank.AssetBank.Length > 0) {
+                        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                        {
+                            using(new EditorGUI.DisabledScope(true)) {
+                                foreach(var entry in prefabPackage.m_Bank.AssetBank) {
+                                    EditorGUILayout.ObjectField(entry, typeof(UnityEngine.Object), false);
+                                }
                             }
                         }
+                        EditorGUILayout.EndVertical();
                     }
-                    EditorGUILayout.EndVertical();
                 }
 
                 serializedObject.ApplyModifiedProperties();

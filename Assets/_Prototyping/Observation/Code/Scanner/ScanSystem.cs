@@ -19,6 +19,8 @@ namespace ProtoAqua.Observation {
         static public readonly StringHash32 Trigger_NewScan = "ScannedNewObject";
         static public readonly StringHash32 Trigger_Scan = "ScannedObject";
 
+        static public readonly StringHash32 ScanId_Fake = "fake";
+
         #region Types
 
         [Serializable] private class ScanIconPool : SerializablePool<ScanIcon> { }
@@ -102,7 +104,9 @@ namespace ProtoAqua.Observation {
             if (Script.IsPausedOrLoading)
                 return;
 
-            m_Listener.ProcessOccupants();
+            if (Frame.Interval(4)) {
+                m_Listener.ProcessOccupants();
+            }
 
             ScannableRegion region;
             for (int i = m_RegionsInRange.Count - 1; i >= 0; i--) {
@@ -111,7 +115,9 @@ namespace ProtoAqua.Observation {
                     Transform iconRoot = region.IconRootOverride;
                     if (!iconRoot)
                         iconRoot = region.TrackTransform;
-                    region.CurrentIcon.transform.position = iconRoot.position;
+                    Vector3 position = iconRoot.position;
+                    position.z += region.IconZAdjust;
+                    region.CurrentIcon.transform.position = position;
                 }
             }
         }
@@ -155,6 +161,11 @@ namespace ProtoAqua.Observation {
         #region ScanData
 
         public bool TryGetScanDataWithFallbacks(StringHash32 inId, out ScanData outData) {
+            if (inId == ScanId_Fake) {
+                outData = ScanData.Fake;
+                return true;
+            }
+
             StringHash32 id = inId;
             bool bFound = false;
             outData = null;
@@ -179,46 +190,65 @@ namespace ProtoAqua.Observation {
 
         public bool WasScanned(StringHash32 inId) { return Save.Inventory.WasScanned(inId); }
 
-        public ScanResult RegisterScanned(ScanData inData, List<StringHash32> outNewFacts) {
+        public ScanResult RegisterScanned(ScanData inData, List<StringHash32> outNewFacts, ScannableRegion region) {
             ScriptThreadHandle responseHandle = default;
             ScanResult result = ScanResult.NoChange;
 
             using (var table = TempVarTable.Alloc()) {
                 table.Set("scanId", inData.Id());
+                table.Set("objectId", ScriptObject.FindId(region));
 
-                if (Save.Inventory.RegisterScanned(inData.Id())) {
-                    result |= ScanResult.NewScan;
-
-                    StringHash32 bestiaryId = inData.BestiaryId();
-                    if (!bestiaryId.IsEmpty && Save.Bestiary.RegisterEntity(bestiaryId)) {
-                        result |= ScanResult.NewBestiary;
+                if (inData.Id() == ScanId_Fake) {
+                    if (region.ScannedLocal) {
+                        result = ScanResult.NoChange;
+                    } else {
+                        region.ScannedLocal = true;
+                        if (region.CurrentIcon) {
+                            var config = GetConfig(inData.Flags());
+                            region.CurrentIcon.SetColor(config.NodeConfig.ScannedLineColor, config.NodeConfig.ScannedFillColor);
+                        }
+                        result = ScanResult.NewScan;
                     }
+                } else {
+                    region.ScannedLocal = true;
 
-                    // TODO: Logbook
+                    if (Save.Inventory.RegisterScanned(inData.Id())) {
+                        result |= ScanResult.NewScan;
 
-                    if (!bestiaryId.IsEmpty && (inData.Flags() & ScanDataFlags.DynamicFactType) != 0) {
-                        foreach (var fact in Assets.Bestiary(bestiaryId).FactsOfType(inData.DynamicFactType())) {
-                            if (Save.Bestiary.RegisterFact(fact.Id, false)) {
-                                result |= ScanResult.NewFacts;
-                                outNewFacts.Add(fact.Id);
+                        StringHash32 bestiaryId = inData.BestiaryId();
+                        if (!bestiaryId.IsEmpty && Save.Bestiary.RegisterEntity(bestiaryId)) {
+                            result |= ScanResult.NewBestiary;
+                        }
+
+                        // TODO: Logbook
+
+                        if (!bestiaryId.IsEmpty && (inData.Flags() & ScanDataFlags.DynamicFactType) != 0) {
+                            foreach (var fact in Assets.Bestiary(bestiaryId).FactsOfType(inData.DynamicFactType())) {
+                                if (Save.Bestiary.RegisterFact(fact.Id, false)) {
+                                    result |= ScanResult.NewFacts;
+                                    outNewFacts.Add(fact.Id);
+                                }
                             }
                         }
-                    }
 
-                    foreach (var factId in inData.FactIds()) {
-                        if (Save.Bestiary.RegisterFact(factId, false)) {
-                            result |= ScanResult.NewFacts;
-                            outNewFacts.Add(factId);
+                        foreach (var factId in inData.FactIds()) {
+                            if (Save.Bestiary.RegisterFact(factId, false)) {
+                                result |= ScanResult.NewFacts;
+                                outNewFacts.Add(factId);
+                            }
                         }
-                    }
 
-                    var config = GetConfig(inData.Flags());
-                    foreach (var scannable in m_RegionsInRange) {
-                        if (scannable.ScanId == inData.Id() && scannable.CurrentIcon) {
-                            scannable.CurrentIcon.SetColor(config.NodeConfig.ScannedLineColor, config.NodeConfig.ScannedFillColor);
+                        var config = GetConfig(inData.Flags());
+                        foreach (var scannable in m_RegionsInRange) {
+                            if (scannable.ScanId == inData.Id() && scannable.CurrentIcon) {
+                                scannable.CurrentIcon.SetColor(config.NodeConfig.ScannedLineColor, config.NodeConfig.ScannedFillColor);
+                            }
                         }
-                    }
 
+                    }
+                }
+
+                if (result != ScanResult.NoChange) {
                     responseHandle = Services.Script.TriggerResponse(Trigger_NewScan, table);
                 }
 
@@ -341,7 +371,7 @@ namespace ProtoAqua.Observation {
         private void RefreshIcon(ScannableRegion inRegion) {
             var config = GetConfig(inRegion.ScanData.Flags());
             inRegion.CurrentIcon.SetIcon(config.Icon);
-            if (WasScanned(inRegion.ScanData.Id())) {
+            if (inRegion.ScannedLocal || WasScanned(inRegion.ScanData.Id())) {
                 inRegion.CurrentIcon.SetColor(config.NodeConfig.ScannedLineColor, config.NodeConfig.ScannedFillColor);
             } else {
                 inRegion.CurrentIcon.SetColor(config.NodeConfig.UnscannedLineColor, config.NodeConfig.UnscannedFillColor);

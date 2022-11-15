@@ -93,6 +93,7 @@ $goto .argue.showMe
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(siteOModel)
 @cutscene
+$call ArgueLoad(siteOModel)
 {@profBayou} What did you observe in {h}Site O{/h}? Are the {pluralnameof LoggerheadTurtle} in danger?
 $choice .argue.turtleSafe; The turtles should be safe from predators.
 $choice .argue.turtleNotSafe; The turtles might not be safe from predators.

@@ -1,0 +1,119 @@
+# basePath RS-0.script
+
+#include "Headers/Common.leaf"
+
+:: setup.always
+@function   SceneStart
+$call GiveUpgrade("ROVScanner", Silent)
+
+// Flashlight Quest
+
+:: setup.flashlightQuest
+@function   SceneStart
+@when       !HasUpgrade("Flashlight")
+$set    temp:flashlightQuest = true
+
+:: start.flashlightQuest
+@trigger    SceneStart
+@when       !HasUpgrade("Flashlight")
+@once
+@boostScore 10
+@cutscene
+{@player}   So, she dropped the flashlight here?
+{@guide}    Yes. I predict it is on the sea floor.
+
+:: flashlightQuest.helpA
+@trigger    RequestPartnerHelp
+@when       temp:flashlightQuest, !temp:gotFlashlight
+@cutscene
+@once
+@boostScore 1000001
+{@player}   It's so dark down here, V.
+{@guide}    It is. The {nameof Flashlight} should be somewhere on the sea floor.
+
+:: flashlightQuest.helpB
+@trigger    RequestPartnerHelp
+@when       temp:flashlightQuest, !temp:gotFlashlight
+@chatter
+@boostScore 1000000
+{@guide}    The flashlight should be down here somewhere...
+
+:: flashlightQuest.helpInStarsA
+@trigger    RequestPartnerHelp
+@when       temp:flashlightQuest, !temp:gotFlashlight, PlayerInRegion("AnglerRegion")
+@cutscene
+@once
+@boostScore 1000001
+{@player}   These glittering lights... ¡Qué fascinante!
+{@guide}    This light pattern has a|{#happy} 46.7% match with the night sky.
+{@player}   Aww, V, are you getting poetic?
+
+:: flashlightQuest.scanFlashlight
+@trigger    ScannedObject
+@when       scanId == "RS-0.flashlight"
+@cutscene
+$call AutoSaveSuppress()
+{@player}   This looks like the flashlight all right!
+{hide-dialog} {fade-out black, 1, wait} {wait 2}
+$call SceneFlashlight->Deactivate()
+$call GiveUpgrade("Flashlight", Silent)
+{wait 0.1} {fade-in 1, wait} {wait 1}
+{@player}   Even with it on, I can't see a thing!
+{@guide}    I recommend we surface immediately.
+$set    temp:gotFlashlight = true
+$call AnglerMusicTrigger->PlayBGM()
+
+:: flashlightQuest.helpGotFlashlight
+@trigger    RequestPartnerHelp
+@when       temp:flashlightQuest, temp:gotFlashlight, !temp:triggeredAnglers
+@chatter
+@boostScore 1000000
+{@guide}    Remaining here any longer is inadvisable.
+
+:: flashlightQuest.helpGotFlashlightSawAnglers
+@trigger    RequestPartnerHelp
+@when       temp:flashlightQuest, temp:gotFlashlight, temp:triggeredAnglers
+@cutscene
+@once
+@boostScore 1000001
+{@guide #narrow}    Remaining here is extremely inadvisable.
+{@player}   Oh, you think?!
+
+:: flashlightQuest.helpGotFlashlightSawAnglersB
+@trigger    RequestPartnerHelp
+@when       temp:flashlightQuest, temp:gotFlashlight, temp:triggeredAnglers
+@chatter
+@repeat 1
+@boostScore 100000
+{@guide}    So many teeth...
+
+:: flashlightQuest.helpGotFlashlightSawAnglersC
+@trigger    RequestPartnerHelp
+@when       temp:flashlightQuest, temp:gotFlashlight, temp:triggeredAnglers
+@chatter
+@repeat 1
+@boostScore 100000
+{@guide}    We need to surface right now!
+
+:: flashlightQuest.onFlashlightOn
+@function   ToolActivated
+@when       temp:flashlightQuest, toolId == "Flashlight"
+$call   AnglerLit->Activate()
+
+:: flashlightQuest.onFlashlightOff
+@function   ToolDeactivated
+@when       temp:flashlightQuest, !temp:triggeredAnglers, toolId == "Flashlight"
+$call   AnglerLit->Deactivate()
+
+:: flashlightQuest.enterRegion
+@function   PlayerEnterRegion
+@when       temp:flashlightQuest, !temp:triggeredAnglers, regionId == "AnglerLit", IsToolActive(Flashlight)
+$set    temp:triggeredAnglers = true
+$set    world:lowerDepths.sawAnglers = true
+
+// Other Visits
+
+:: setup.hasFlashlight
+@function   SceneStart
+@when       HasUpgrade("Flashlight")
+$call SceneFlashlight->Deactivate()

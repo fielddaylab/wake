@@ -25,14 +25,16 @@ MonoBehaviour:
   m_DescShortId:
     m_Source: 
     m_HashValue: 0
-  m_DescCompletedId:
+  m_ExperimentDifficulty: 2
+  m_ModelingDifficulty: 0
+  m_ArgumentationDifficulty: 1
+  m_PrerequisiteJobs: []
+  m_PrereqConditions: 
+  m_PrereqBestiaryEntry:
+    m_HashValue: 1161043395
+  m_PrereqScanId:
     m_Source: 
     m_HashValue: 0
-  m_ExperimentDifficulty: 0
-  m_ModelingDifficulty: 0
-  m_ArgumentationDifficulty: 0
-  m_PrerequisiteJobs: []
-  m_PrereqConditions: HasEntity("PlasticBag")
   m_PrereqUpgrades:
   - m_HashValue: 1203385870
   - m_HashValue: 3082617054
@@ -208,26 +210,10 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 0000
   - Id:
-      m_Source: makeModel
-      m_HashValue: 248199788
-    IdString: makeModel
-    Index: 2
-    LabelId:
-      m_Source: jobs.coral-ocean-plastics.task.makeModel
-      m_HashValue: 3782278713
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: ReefEdge.Model.PlasticsVisual
-        m_HashValue: 3763740320
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 0100
-  - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
     IdString: reportBack
-    Index: 3
+    Index: 2
     LabelId:
       m_Source: jobs.coral-ocean-plastics.task.reportBack
       m_HashValue: 4040639279
@@ -238,7 +224,7 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0200
+    PrerequisiteTaskIndices: 0100
   m_CashReward: 100
   m_ExpReward: 5
   m_JournalId:

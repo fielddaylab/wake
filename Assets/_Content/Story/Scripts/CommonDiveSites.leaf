@@ -16,6 +16,7 @@ $set    player:noProbeHacker.triedToScan = true
 $set    player:noProbeHacker.triedToScan = true
 {@guide}    Looks like we'll need some new equipment if we're going to scan these probes.
 
+
 // intro scripts
 
 :: generic.tagger.intro
@@ -55,3 +56,149 @@ $set    jobs:common-dive.seen.probe-intro = true
 {@guide}	Your new {nameof Microscope} allows you to scan and tag microscopic species!
             You can click to activate your {nameof Microscope} at the top of your task bar or by pressing the [5] on your keyboard.
 $set    jobs:common-dive.seen.micro-intro = true
+
+
+// Specters
+
+:: specterTrigger.1
+@trigger    PlayerSpecter
+@when       specterIndex = 0
+@cutscene
+// first specter
+{wait 1}
+$call Specter->Spawn()
+{@player}	Whoa! {nameof @guide}, what is that thing?
+$call Specter->Scan(3)
+{@guide}	Data inconclusive. 
+            It appears to have originated at the Challenger Deep probe. 
+{@player}   That's where Sam is! They must've gotten the probe back online!
+            Wow... kinda spooky, isn't it?
+$call GiveJournalEntry("S01")
+
+:: specterTrigger.2
+@trigger    PlayerSpecter
+@when       specterIndex = 1
+@cutscene
+// second specter
+{wait 1}
+$call Specter->Spawn()
+{@player}	Wow... another one of those glitchy ghost species!
+            Can you pinpoint its origin, {nameof @guide}?
+$call Specter->Scan(3)
+{@guide}	Certainly, O. The specter originated at Challenger Deep.
+{@player}	That must be Sam again!
+            But... why did they send us this... this ghost thing? 
+{@guide}	Data inconclusive, O.
+$call GiveJournalEntry("S02")
+
+:: specterTrigger.3
+@trigger    PlayerSpecter
+@when       specterIndex = 2
+@cutscene
+// third specter
+{wait 1}
+$call Specter->Spawn()
+{@player}   Wow. Another one.
+            Are you able to get the source location, {nameof @guide}?
+$call Specter->Scan(3)
+{@guide}	Affirmative, O. Point of origin: the Challenger Deep probe.
+{@player}	I don't understand. Why does Sam keep sending me these ghosts?
+            Why haven't they contacted us? 
+{@guide}	I'm sorry, O. The data is inconclusive.
+$call GiveJournalEntry("S03")
+
+:: specterTrigger.4
+@trigger    PlayerSpecter
+@when       specterIndex = 3
+@cutscene
+// fourth specter
+{wait 1}
+$call Specter->Spawn()
+$call Specter->Scan(4)
+{@player}	Oh no. Another ghost.
+{@player}   {nameof @guide}, can you try contacting Sam on the Nautilus?
+{@guide}	Apologies, O. I cannot get a message through.
+$call GiveJournalEntry("S04")
+
+:: specterTrigger.5
+@trigger    PlayerSpecter
+@when       specterIndex = 4
+@cutscene
+// fifth specter
+{wait 1}
+$call Specter->Spawn()
+$call Specter->Scan(4)
+{@player}	Another ghost from Sam.
+            Something must be wrong {nameof @guide}.
+{@guide}	Yes. At this point, the probability of Sam returning safely on their own are 21.4%.
+{@player}   I need to go home and tell Mom.
+            I just hope she'll listen.
+$call GiveJournalEntry("S05")
+
+:: specterTrigger.6
+@trigger    PlayerSpecter
+@when       specterIndex = 5
+@cutscene
+// sixth specter
+{wait 1}
+$call Specter->Spawn()
+$call Specter->Scan(4)
+{@player}	Another ghost.
+            I think Sam needs our help, {nameof @guide}. 
+{@guide}	Your mother suggested that Sam is fine. 
+{@player}	Yeah. Well, she also told me Mer wanted to spend her whole life studying the otters...
+            Turns out that wasn't true either.
+            Next time I'm home, I'll talk to Tío. Maybe he can help. 
+$call GiveJournalEntry("S06")
+
+:: specterTrigger.7
+@trigger    PlayerSpecter
+@when       specterIndex = 6
+@cutscene
+// seventh specter
+{wait 1}
+$call Specter->Spawn()
+$call Specter->Scan(5)
+{@player}	Ugh. I don't know what to do, {nameof @guide}.
+            We need to unscramble all this data!
+            Can you try contacting the Nautilus? 
+{@guide}	Processing... processing...
+            I'm sorry, O.| The Nautilus is still unreachable.
+{hide-dialog}{wait 1}
+$call GiveJournalEntry("S07")
+
+:: specterTrigger.8
+@trigger    PlayerSpecter
+@when       specterIndex = 7
+@cutscene
+// eighth specter
+{wait 1}
+$call Specter->Spawn()
+$call Specter->Scan(3)
+{@player}	An eighth specter?!
+$call GiveJournalEntry("S08")
+
+// Temp Hack: should unlock all facts for all specters you have automatically
+$call GiveFact(ColossalSquid.Eats.ViperFish, Silent)
+$call GiveFact(ColossalSquid.Eats.AnglerFish, Silent)
+$call GiveFact(ColossalSquid.Eats.GoassamerWorm, Silent)
+
+$call GiveFact(DinnerJelly.Eats.AnglerFish, Silent)
+$call GiveFact(DinnerJelly.Eats.BloodJelly, Silent)
+$call GiveFact(DinnerJelly.Eats.FlapjackOcto, Silent)
+$call GiveFact(DinnerJelly.Eats.GoassamerWorm, Silent)
+$call GiveFact(DinnerJelly.Eats.MysidShrimp, Silent)
+$call GiveFact(DinnerJelly.Eats.ViperFish, Silent)
+
+$call GiveFact(AnglerFish.Eats.GoassamerWorm, Silent)
+$call GiveFact(AnglerFish.Eats.ArcticCopepod, Silent)
+
+$call GiveFact(FlapjackOcto.Eats.GoassamerWorm, Silent)
+
+$call GiveFact(BloodJelly.Eats.GoassamerWorm, Silent)
+
+$call GiveFact(GoassamerWorm.Eats.Detritus, Silent)
+
+$call GiveFact(MysidShrimp.Eats.Detritus, Silent)
+
+$call GiveFact(ViperFish.Eats.GoassamerWorm, Silent)

@@ -51,6 +51,13 @@ namespace Aqua.StationInterior
         protected override void Awake() {
             base.Awake();
 
+            Script.OnSceneLoad(OnSceneLoad, 5);
+
+            Services.Events.Register<StringHash32>(GameEvents.ViewLeaving, OnViewLeaving, this)
+                .Register<StringHash32>(GameEvents.ViewArrived, OnViewArrived, this);
+        }
+
+        private void Start() {
             m_BackButtonGroup.Hide();
             m_CurrencyUI.gameObject.SetActive(false);
             m_CurrencyUI.SetAnchorPos(m_CurrencyOffscreenPos, Axis.Y);
@@ -64,11 +71,6 @@ namespace Aqua.StationInterior
 
             m_LeavePanelGroup.Hide();
             m_LeavePanel.SetAnchorPos(-64, Axis.Y);
-
-            Script.OnSceneLoad(OnSceneLoad);
-
-            Services.Events.Register<StringHash32>(GameEvents.ViewLeaving, OnViewLeaving, this)
-                .Register<StringHash32>(GameEvents.ViewArrived, OnViewArrived, this);
         }
 
         protected override void OnDestroy() {
@@ -79,7 +81,11 @@ namespace Aqua.StationInterior
         #region Handlers
 
         private void OnSceneLoad() {
-            bool hasSeenSurface = Save.Map.HasVisitedLocation(m_WarpButton.Config.TargetId);
+            StringHash32 stationScene = Save.Map.CurrentStationId();
+            StringHash32 entrance = Assets.Map(MapDB.LookupCurrentMap()).Parent().Id();
+            bool hasSeenSurface = Save.Map.HasVisitedLocation(stationScene);
+            m_WarpButton.Config.TargetId = stationScene;
+            m_WarpButton.Config.TargetEntranceId = entrance;
             m_WarpButton.Locked = !hasSeenSurface;
             m_WarpButton.RefreshState();
         }

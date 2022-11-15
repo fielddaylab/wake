@@ -1,0 +1,56 @@
+# basePath StationTransition
+
+:: bayouMechanicArticleTracking
+@trigger    TravelingToStation
+@once
+@chatter
+$set jobs:bayou-mechanic.leftBayou = true
+
+:: KelpDream1
+@trigger    PlayerDream
+@when       previousStation == "KelpStation"
+@boostScore 100
+@once
+$call   PrepareDream(Dreams00)
+
+:: KelpDream2
+@trigger    PlayerDream
+@when       previousStation == "KelpStation", LocationVisited("RS-1B")
+@once
+$call   PrepareDream(Dream04)
+
+:: CoralDream1
+@trigger    PlayerDream
+@when       previousStation == "CoralStation", LocationVisited("RS-2S")
+@once
+$call   PrepareDream(Dream02)
+
+:: BayouDream1
+@trigger    PlayerDream
+@when       previousStation == "BayouStation", LocationVisited("RS-3P")
+@once
+$call   PrepareDream(Dream03)
+
+:: BayouDream2
+@trigger    PlayerDream
+@when       previousStation == "BayouStation", LocationVisited("RS-3N"), HasEntity("Tubeworm")
+@once
+$call   PrepareDream(Dream06)
+
+:: ArcticDream1
+@trigger    PlayerDream
+@when       previousStation == "ArcticStation", LocationVisited("RS-4W"), world:RS-4W.seenWhalefall
+@once
+$call   PrepareDream(Dream01)
+
+:: ArcticDream2
+@trigger    PlayerDream
+@when       previousStation == "ArcticStation", LocationVisited("RS-4Y"), world:RS-4Y.seenIceRiver
+@once
+$call       PrepareDream(Dream05)
+
+:: FinalDream
+@trigger    PlayerDream
+@when       nextStation == "FinalStation", world:finaleMode // in final sequence
+@once
+$call       PrepareDream(Dream07)

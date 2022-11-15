@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: arctic-seal-habitats
   m_EditorClassIdentifier: 
   m_Category: 0
-  m_Flags: 1
+  m_Flags: 0
   m_NameId:
     m_Source: jobs.arctic-seal-habbits.name
     m_HashValue: 556461152
@@ -25,14 +25,16 @@ MonoBehaviour:
   m_DescShortId:
     m_Source: jobs.arctic-seal-habbits.desc.short
     m_HashValue: 98025834
-  m_DescCompletedId:
-    m_Source: 
-    m_HashValue: 0
   m_ExperimentDifficulty: 0
   m_ModelingDifficulty: 0
-  m_ArgumentationDifficulty: 1
+  m_ArgumentationDifficulty: 2
   m_PrerequisiteJobs: []
   m_PrereqConditions: 
+  m_PrereqBestiaryEntry:
+    m_HashValue: 0
+  m_PrereqScanId:
+    m_Source: 
+    m_HashValue: 0
   m_PrereqUpgrades:
   - m_HashValue: 3082617054
   - m_HashValue: 955872468
@@ -71,11 +73,65 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
+      m_Source: countSeal
+      m_HashValue: 2767960973
+    LabelId:
+      m_Source: jobs.arctic-seal-habbits.task.countSeal
+      m_HashValue: 1198722562
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Y_IceCrevice.Population.RibbonSeal
+        m_HashValue: 2325311853
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: findHabitat
+      m_HashValue: 626293957
+    - m_Source: findRibbon
+      m_HashValue: 2382993726
+  - Id:
       m_Source: findMicro
       m_HashValue: 3884350846
     LabelId:
       m_Source: jobs.arctic-seal-habbits.task.find3
       m_HashValue: 2274368196
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: ArcticCopepod
+        m_HashValue: 856578931
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: GlacialAmphipod
+        m_HashValue: 304378836
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Clione
+        m_HashValue: 1162365859
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: IceAlgae
+        m_HashValue: 2471897816
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: findHabitat
+      m_HashValue: 626293957
+    - m_Source: findRibbon
+      m_HashValue: 2382993726
+  - Id:
+      m_Source: countMicro
+      m_HashValue: 2175848344
+    LabelId:
+      m_Source: jobs.arctic-seal-habbits.task.countMicro
+      m_HashValue: 1428529905
     Steps:
     - Type: 1
       Target:
@@ -95,41 +151,15 @@ MonoBehaviour:
         m_HashValue: 2991694166
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: findHabitat
-      m_HashValue: 626293957
-  - Id:
-      m_Source: countMicro
-      m_HashValue: 2175848344
-    LabelId:
-      m_Source: jobs.arctic-seal-habbits.task.countMicro
-      m_HashValue: 1428529905
-    Steps:
     - Type: 1
       Target:
-        m_Source: Y_IceCrevice.Population.RibbonSeal
-        m_HashValue: 2325311853
+        m_Source: Y_IceCrevice.Population.IceAlgae
+        m_HashValue: 2576985297
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
     - m_Source: findMicro
       m_HashValue: 3884350846
-  - Id:
-      m_Source: findPop
-      m_HashValue: 128499209
-    LabelId:
-      m_Source: jobs.arctic-seal-habbits.task.count
-      m_HashValue: 1761522099
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: Y_IceCrevice.Population.RibbonSeal
-        m_HashValue: 2325311853
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: findHabitat
-      m_HashValue: 626293957
   - Id:
       m_Source: report
       m_HashValue: 431699179
@@ -137,15 +167,15 @@ MonoBehaviour:
       m_Source: jobs.arctic-seal-habbits.task.report
       m_HashValue: 598769310
     Steps:
-    - Type: 1
+    - Type: 10
       Target:
-        m_Source: Y_IceCrevice.Population.RibbonSeal
-        m_HashValue: 2325311853
+        m_Source: 
+        m_HashValue: 0
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds:
-    - m_Source: findPop
-      m_HashValue: 128499209
+    - m_Source: countSeal
+      m_HashValue: 2767960973
     - m_Source: countMicro
       m_HashValue: 2175848344
     - m_Source: findRibbon
@@ -168,13 +198,79 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
+      m_Source: findRibbon
+      m_HashValue: 2382993726
+    IdString: findRibbon
+    Index: 1
+    LabelId:
+      m_Source: jobs.arctic-seal-habbits.task.find
+      m_HashValue: 1053574303
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: RibbonSeal
+        m_HashValue: 3868886068
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
       m_Source: findMicro
       m_HashValue: 3884350846
     IdString: findMicro
-    Index: 1
+    Index: 2
     LabelId:
       m_Source: jobs.arctic-seal-habbits.task.find3
       m_HashValue: 2274368196
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: ArcticCopepod
+        m_HashValue: 856578931
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: GlacialAmphipod
+        m_HashValue: 304378836
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Clione
+        m_HashValue: 1162365859
+      ConditionString: 
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: IceAlgae
+        m_HashValue: 2471897816
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 00000100
+  - Id:
+      m_Source: countSeal
+      m_HashValue: 2767960973
+    IdString: countSeal
+    Index: 3
+    LabelId:
+      m_Source: jobs.arctic-seal-habbits.task.countSeal
+      m_HashValue: 1198722562
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Y_IceCrevice.Population.RibbonSeal
+        m_HashValue: 2325311853
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 00000100
+  - Id:
+      m_Source: countMicro
+      m_HashValue: 2175848344
+    IdString: countMicro
+    Index: 4
+    LabelId:
+      m_Source: jobs.arctic-seal-habbits.task.countMicro
+      m_HashValue: 1428529905
     Steps:
     - Type: 1
       Target:
@@ -194,55 +290,13 @@ MonoBehaviour:
         m_HashValue: 2991694166
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0000
-  - Id:
-      m_Source: findRibbon
-      m_HashValue: 2382993726
-    IdString: findRibbon
-    Index: 2
-    LabelId:
-      m_Source: jobs.arctic-seal-habbits.task.find
-      m_HashValue: 1053574303
-    Steps:
-    - Type: 0
-      Target:
-        m_Source: RibbonSeal
-        m_HashValue: 3868886068
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 
-  - Id:
-      m_Source: countMicro
-      m_HashValue: 2175848344
-    IdString: countMicro
-    Index: 3
-    LabelId:
-      m_Source: jobs.arctic-seal-habbits.task.countMicro
-      m_HashValue: 1428529905
-    Steps:
     - Type: 1
       Target:
-        m_Source: Y_IceCrevice.Population.RibbonSeal
-        m_HashValue: 2325311853
+        m_Source: Y_IceCrevice.Population.IceAlgae
+        m_HashValue: 2576985297
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0100
-  - Id:
-      m_Source: findPop
-      m_HashValue: 128499209
-    IdString: findPop
-    Index: 4
-    LabelId:
-      m_Source: jobs.arctic-seal-habbits.task.count
-      m_HashValue: 1761522099
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: Y_IceCrevice.Population.RibbonSeal
-        m_HashValue: 2325311853
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 0000
+    PrerequisiteTaskIndices: 0200
   - Id:
       m_Source: report
       m_HashValue: 431699179
@@ -252,13 +306,13 @@ MonoBehaviour:
       m_Source: jobs.arctic-seal-habbits.task.report
       m_HashValue: 598769310
     Steps:
-    - Type: 1
+    - Type: 10
       Target:
-        m_Source: Y_IceCrevice.Population.RibbonSeal
-        m_HashValue: 2325311853
+        m_Source: 
+        m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 040003000200
+    PrerequisiteTaskIndices: 030004000100
   m_CashReward: 100
   m_ExpReward: 5
   m_JournalId:

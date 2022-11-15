@@ -1,0 +1,42 @@
+#basePath   progression
+
+#const      JobsPerSpecter = 4
+#const      MaxSpecters =  8
+
+:: unlockPrediction
+@function   UpgradeAdded
+@when       upgradeId == "PredictionModel"
+$call GiveUpgrade("SyncModel", Silent)
+$call GiveUpgrade("WaterModeling", Silent)
+
+:: unlockMeasurement
+@function   UpgradeAdded
+@when       upgradeId == "MeasurementTank"
+$call GiveUpgrade("WaterStabilizer", Silent)
+$call GiveUpgrade("AutoFeeder", Silent)
+
+:: SpecterCheck
+@function   JobCompleted
+@when       SpecterCount() > 0, SpecterCount() < $MaxSpecters
+$set    jobs:specterCounter + 1
+
+$if jobs:specterCounter < $JobsPerSpecter
+    $return
+$endif //
+
+$if SpecterCount() == 7
+    $if !HasUpgrade("Engine")
+        $return
+    $elseif !HasUpgrade("Icebreaker")
+        $return
+    $elseif !HasUpgrade("Hull")
+        $return
+    $elseif !HasUpgrade("Flashlight")
+        $return
+    $elseif !HasAnyNumericalModel()
+        $return
+    $endif
+$endif //
+
+$set jobs:specterCounter = 0
+$call QueueSpecter()

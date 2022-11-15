@@ -64,18 +64,21 @@ namespace Aqua.Shop
                         m_CurrentSubPreview = preview;
                         SetAsPreview(preview);
                         m_ExplorePreviewTransition.Replace(this, RotateSubJoint(preview.Rotation));
+                        Services.Audio.PostEvent("Shop.Preview");
                         break;
                     }
                     break;
                 }
 
                 case ShopBoard.CategoryId.Science: {
-                    m_SciencePreviewGroup.SetActive(true);
                     var hiRes = item.SketchPath();
                     if (!string.IsNullOrEmpty(hiRes)) {
+                        m_SciencePreviewGroup.SetActive(true);
                         m_SciencePreview.Path = hiRes;
+                        Services.Audio.PostEvent("Shop.Preview");
                     } else {
                         m_SciencePreview.Path = string.Empty;
+                        m_SciencePreviewGroup.SetActive(false);
                     }
                     break;
                 }
@@ -99,15 +102,20 @@ namespace Aqua.Shop
 
         public IEnumerator AnimatePurchase() {
             if (m_CurrentSubPreview != null) {
-                foreach(var particleSystem in m_CurrentSubPreview.WeldParticles) {
-                    particleSystem.Play(true);
+                if (m_CurrentSubPreview.IsFake) {
+                    SetAsHidden(m_CurrentSubPreview);
+                    m_CurrentSubPreview = null;
+                } else {
+                    foreach(var particleSystem in m_CurrentSubPreview.WeldParticles) {
+                        particleSystem.Play(true);
+                    }
+                    Services.Audio.PostEvent("Shop.Weld");
+                    yield return 2.2f;
+                    Services.UI.WorldFaders.Flash(Color.white, 0.3f);
+                    SetAsActive(m_CurrentSubPreview);
+                    Services.Audio.PostEvent("Shop.FinishWelding");
+                    yield return 0.5;
                 }
-                Services.Audio.PostEvent("Shop.Weld");
-                yield return 2.2f;
-                Services.UI.WorldFaders.Flash(Color.white, 0.3f);
-                SetAsActive(m_CurrentSubPreview);
-                Services.Audio.PostEvent("Shop.FinishWelding");
-                yield return 0.5;
             }
         }
 
@@ -119,7 +127,7 @@ namespace Aqua.Shop
 
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext) {
             foreach(var preview in m_ExplorationItems) {
-                if (Save.Inventory.HasUpgrade(preview.ItemId)) {
+                if (!preview.IsFake && Save.Inventory.HasUpgrade(preview.ItemId)) {
                     SetAsActive(preview);
                 } else {
                     SetAsHidden(preview);
@@ -133,7 +141,7 @@ namespace Aqua.Shop
 
         int IBaked.Order => 0;
 
-        bool IBaked.Bake(BakeFlags flags) {
+        bool IBaked.Bake(BakeFlags flags, BakeContext context) {
             m_SubRotateJoint = GameObject.Find("GrabberEnd_end")?.transform;
             m_ExplorationItems = FindObjectsOfType<ShopPreviewShipItem>();
             return true;
@@ -162,8 +170,10 @@ namespace Aqua.Shop
         }
 
         static public void SetAsHidden(ShopPreviewShipItem item) {
+            bool showMesh = item.HiddenMaterial != null;
             foreach(var mesh in item.Meshes) {
-                mesh.enabled = false;
+                mesh.enabled = showMesh;
+                mesh.sharedMaterial = item.HiddenMaterial;
             }
             item.IsPurchased = false;
         }

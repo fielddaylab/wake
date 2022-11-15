@@ -1,0 +1,211 @@
+# basePath job.final-final
+
+// SEQUENCE
+
+:: sneakToShip
+@trigger    SceneStart
+@when       JobTaskTop(sneakOut), scene:name == "Helm"
+@once
+@cutscene
+$set jobs:final-snuckOut = true
+$call CheckJobTasks()
+
+:: returnToShip
+@trigger    SceneStart
+@when       JobTaskTop(checkShip), scene:name == "Helm"
+@once
+@cutscene
+$set jobs:final-checkShipRestored = true
+$call CheckJobTasks()
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchTellMom
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(tellMom)
+@boostScore -5
+@cutscene
+{@guide}    You should tell Mom about Sam's predicament.
+
+:: catchExperimentSpecters
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(experimentSpecters)
+@boostScore -5
+@cutscene
+{@guide}    Run experiments using the specter data {nameof @sam} has sent you.
+
+:: catchCreateModel
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(createModel)
+@boostScore -5
+@cutscene
+{@guide}    Create a visual model of the interactions in the {nameof RS-0}.
+$call GiveFact(ColossalSquid.Eats.AnglerFish, Silent)
+$call GiveFact(ColossalSquid.Eats.ViperFish, Silent)
+$call GiveFact(ColossalSquid.Eats.GoassamerWorm, Silent)
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(reportBack)
+@boostScore -5
+@cutscene
+{@guide}    Try to persuade your mom that {nameof @sam} can be rescued.
+
+:: catchSneakOut
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(sneakOut)
+@boostScore -5
+@cutscene
+{@guide}    You've made up your mind that the only way to help {nameof @sam} is to sneak to the ship.
+            So head to the helm.
+
+:: catchGetUncleHelp
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(getUncleHelp)
+@boostScore -5
+@cutscene
+{@guide}    [Systems malfunctioning]
+
+:: catchCheckShip
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(checkShip)
+@boostScore -5
+@cutscene
+{@guide}    [Systems malfunctioning]
+
+:: catchReturnToShop
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(returnToShop)
+@boostScore -5
+@cutscene
+{@guide}    [Systems malfunctioning]
+
+
+// ARGUMENTATION
+
+:: tryTellMom
+@trigger    TryArgumentation
+@when       JobTaskTop(tellMom)
+@cutscene
+{@player}   Mom! Sam's in trouble!
+{@drKelp}   That's not for you to worry about. It's concerning, but I'll put a team on it who's more experienced.
+            It's in the {nameof RS-0}. Have you even been to that region?
+            No, so just leave it to the experts. I'm sure Sam will be fine.
+$set jobs:final-told-mom = true
+$call CheckJobTasks()
+
+:: argueBegin
+@trigger    TryArgumentation
+@when       !ArgueIsComplete(finalArgueEat), JobTaskCompleted(tellMom)
+@cutscene
+$set jobs:final-argue-paint-route = false
+$if ArgueIsComplete(finalArgueModel)
+    $branch .argue.loadArgueEat
+$else
+    $branch .argue.chooseClaimModel
+$endif
+
+
+:: argue.chooseClaimModel
+{@drKelp}    How do you propose we save {nameof @sam}?
+	$choice .argue.paintJob; {nameof @sam} needs a new paint job.
+	$choice .argue.lights; {nameof @sam}'s lights are the problem.
+    $if HasFact(DeepDeepSea.Model.Visual)
+        $choice .argue.unknownModel; Still working on that.
+    $endif
+    $choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unknownModel
+{@player}   Still working on that. We made a model though!
+{@drKelp}   And I love that for you. But just this once, please leave this to the experts.
+
+:: argue.giveUpArgument
+$call ArgueUnload()
+$call ArgueCancelClaim()
+$branch .argue.giveUp
+
+:: argue.giveUp
+{@drKelp}   Please leave this one to the experts, honey.
+
+:: argue.paintJob
+$set jobs:final-argue-paint-route = true
+{@drKelp}    What do you mean?
+$choice .argue.darkColor; If {nameof @sam}'s ship is a darker color, it will be harder for the attacker to see.
+$choice .argue.redColor; If {nameof @sam}'s ship is red, it will seem invisible to the attacker.
+
+:: argue.darkColor
+{@drKelp}   I don't think dark colors matter.
+            Most fish are dark... They all get eaten.
+
+:: argue.lights
+{@drKelp}    Well, it's a bit dark down there for {nameof @sam} to go without a light source.
+$choice .argue.redColor; Don't shut them off, just filter them to red.
+
+:: argue.redColor
+{@drKelp}   Red?
+$call ArgueLoad(finalArgueModel)
+$if ArgueSetClaim(finalArgueModelClaim, jobs.final-final.argue.claimLabelModel)
+    $call ArgueFactSlot(DeepDeepSea.Model.Visual)
+$endif
+$call ArgueDisplayClaim()
+$branch .argue.chooseFactsModel
+
+:: argue.chooseFactsModel
+{@drKelp}   What's so special about red?
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.correctFactsModel
+		$answer incorrect, .argue.incorrectFactsModel
+$choice .argue.giveUpArgument; Let me get back to you
+
+:: argue.incorrectFactsModel
+{@drKelp}   Are you sure this is what you wanted to show me?
+            You're not making sense. I really wish you'd drop this subject.
+$branch .argue.chooseFactsModel
+
+:: argue.correctFactsModel
+$call ArgueComplete()
+{@drKelp}    I'm not seeing it.
+$branch .argue.loadArgueEat
+
+:: argue.loadArgueEat
+$call ArgueLoad(finalArgueEat)
+$if ArgueSetClaim(finalArgueEatClaim, jobs.final-final.argue.claimLabelEat)
+    $call ArgueFactSlot(ColossalSquid.Eats.ViperFish)
+    $call ArgueFactSlot(ColossalSquid.Eats.AnglerFish)
+    $call ArgueFactSlot(ColossalSquid.Eats.GoassamerWorm) // typo in Goassamer asset
+$endif
+$call ArgueDisplayClaim()
+$branch .argue.chooseFactsEat
+
+:: argue.chooseFactsEat
+{@drKelp}    How does the color red make a difference to the attacker?
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.endArgue
+		$answer incorrect, .argue.incorrectFactsEat
+$choice .argue.giveUpArgument; Let me get back to you
+
+:: argue.incorrectFactsEat
+{@drKelp}   Are you sure this is what you wanted to show me?
+            You're not making sense. I really wish you'd drop this subject.
+$branch .argue.chooseFactsEat
+
+// End
+
+:: argue.endArgue
+$call ArgueComplete()
+{@drKelp}   Oh, so appearing red will allow {nameof @sam} to slip out unnoticed.
+$if jobs:final-argue-paint-route
+    {@drKelp}   Applying a paint job is a bit impractical. But we do have a way to filter our lights to red.
+$else
+    {@drKelp}   And our subs do have a setting that allows us to switch to red light.
+$endif
+    {@drKelp}   I'll pass this information on to the rescue team.
+{@player}   What!? I figured out this information. I'm going.
+{@drKelp}   Absolutely not. I won't lose another child to this foolishness.
+
+:: argueRevisited
+@trigger    TryArgumentation
+@when       ArgueIsComplete(finalArgueEat)
+@cutscene
+{@drKelp}  I've said my final word on the subject, O. You aren't going down there. It is too dangerous.

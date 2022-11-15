@@ -66,7 +66,7 @@ namespace ProtoAqua.ExperimentV2.Editor {
                     {
                         using(Log.DisableMsgStackTrace())
                         {
-                            Bake.Objects(new UnityEngine.Object[] { Definitions }, BakeFlags.Verbose | BakeFlags.ShowProgressBar);
+                            Baking.BakeObjects(new UnityEngine.Object[] { Definitions }, BakeFlags.Verbose | BakeFlags.ShowProgressBar);
                         }
                     }
                     using(Profiling.Time("post-bake save assets"))

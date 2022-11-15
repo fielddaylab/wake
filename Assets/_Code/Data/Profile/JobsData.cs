@@ -85,7 +85,7 @@ namespace Aqua.Profile {
         #region Progress
 
         internal JobStatusFlags GetBaseStatus(StringHash32 inJobId) {
-            Assert.True(Services.Assets.Jobs.HasId(inJobId), "Could not find JobDesc with id '{0}'", inJobId);
+            Assert.True(Services.Assets.Jobs.HasId(inJobId), "Could not find JobDesc with id '{0}'", inJobId.ToDebugString());
 
             if (m_InProgressJobs.Contains(inJobId)) {
                 if (m_CurrentJobId == inJobId) {
@@ -103,12 +103,12 @@ namespace Aqua.Profile {
         }
 
         public bool IsInProgress(StringHash32 inJobId) {
-            Assert.True(Services.Assets.Jobs.HasId(inJobId), "Could not find JobDesc with id '{0}'", inJobId);
+            Assert.True(Services.Assets.Jobs.HasId(inJobId), "Could not find JobDesc with id '{0}'", inJobId.ToDebugString());
             return m_InProgressJobs.Contains(inJobId);
         }
 
         public bool IsStartedOrComplete(StringHash32 inJobId) {
-            Assert.True(Services.Assets.Jobs.HasId(inJobId), "Could not find JobDesc with id '{0}'", inJobId);
+            Assert.True(Services.Assets.Jobs.HasId(inJobId), "Could not find JobDesc with id '{0}'", inJobId.ToDebugString());
             return m_InProgressJobs.Contains(inJobId) || m_CompletedJobs.Contains(inJobId);
         }
 
@@ -141,7 +141,7 @@ namespace Aqua.Profile {
 
         public bool MarkComplete(StringHash32 inJobId) {
             Assert.False(inJobId.IsEmpty);
-            Assert.True(Services.Assets.Jobs.HasId(inJobId), "Could not find JobDesc with id '{0}'", inJobId);
+            Assert.True(Services.Assets.Jobs.HasId(inJobId), "Could not find JobDesc with id '{0}'", inJobId.ToDebugString());
 
             if (m_CompletedJobs.Add(inJobId)) {
                 bool bIsCurrent = m_CurrentJobId == inJobId;
@@ -171,7 +171,7 @@ namespace Aqua.Profile {
         }
 
         public bool IsComplete(StringHash32 inJobId) {
-            Assert.True(Services.Assets.Jobs.HasId(inJobId), "Could not find JobDesc with id '{0}'", inJobId);
+            Assert.True(Services.Assets.Jobs.HasId(inJobId), "Could not find JobDesc with id '{0}'", inJobId.ToDebugString());
             return m_CompletedJobs.Contains(inJobId);
         }
 

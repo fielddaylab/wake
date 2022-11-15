@@ -18,8 +18,12 @@ namespace Aqua.Scripting
     public class ScriptPawn : ScriptComponent
     {
         [SerializeField, ScriptCharacterId] private StringHash32 m_CharacterId = default;
-        [SerializeField] private ScriptInspectable m_Interaction = null;
+        
+        [Header("Locomotion")]
         [SerializeField] private ScriptObject m_DefaultNode = null;
+
+        [Header("Optional")]
+        [SerializeField] private ScriptInspectable m_Interaction = null;
 
         [NonSerialized] private StringHash32 m_LastNodeId;
 

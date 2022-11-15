@@ -12,7 +12,9 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace Aqua {
-    public class JournalCanvas : SharedPanel {
+    public class JournalCanvas : SharedPanel, ISceneLoadHandler {
+        static public readonly StringHash32 PreloadGroup = "Prefab/Journal";
+
         #region Type
 
         [Serializable] private class TextPool : SerializablePool<TMP_Text> { }
@@ -84,6 +86,9 @@ namespace Aqua {
         [NonSerialized] private float m_OriginalNavWidth;
         [NonSerialized] private RequestType m_RequestType;
         private Routine m_NewEntryRoutine;
+        [NonSerialized] private bool m_InScene;
+        [NonSerialized] private bool m_DeleteQueued;
+        [NonSerialized] private bool m_HiddenTriggerQueued;
 
         private JournalCanvas() {
             m_Decompressor.NewRoot = (string name, CompressedPrefabFlags flags, CompressedComponentTypes componentTypes, GameObject parent) => {
@@ -122,6 +127,14 @@ namespace Aqua {
                 JournalTab cachedTab = tab;
                 tab.Toggle.onValueChanged.AddListener((b) => OnTabToggle(cachedTab, b));
             }
+        }
+
+        protected override void OnDestroy() {
+            if (!m_InScene && Services.Valid) {
+                Services.Assets.CancelPreload(PreloadGroup);
+            }
+
+            base.OnDestroy();
         }
 
         #region Loading
@@ -314,6 +327,12 @@ namespace Aqua {
 
             m_LoadRoutine.Stop();
             m_RequestType = RequestType.None;
+
+            if (!m_InScene && !inbInstant) {
+                m_DeleteQueued = true;
+            }
+
+            m_HiddenTriggerQueued = !inbInstant;
         }
 
         protected override void OnHideComplete(bool inbInstant) {
@@ -327,6 +346,14 @@ namespace Aqua {
             m_RightPage.DisableMasking();
             m_CurrentSection = -1;
             m_NewEntryRoutine.Stop();
+
+            if (Services.Script != null && m_HiddenTriggerQueued) {
+                Services.Script.TriggerResponse(GameTriggers.JournalHidden);
+            }
+
+            if (m_DeleteQueued) {
+                Async.InvokeAsync(() => Destroy(this.Canvas.gameObject));
+            }
         }
 
         #endregion // Events
@@ -402,6 +429,10 @@ namespace Aqua {
             if (state && m_CurrentTab != tab.Category) {
                 FilterList(tab.Category);
             }
+        }
+
+        void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext) {
+            m_InScene = true;
         }
 
         #endregion // Handlers

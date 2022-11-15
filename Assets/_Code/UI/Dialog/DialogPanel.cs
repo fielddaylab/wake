@@ -16,10 +16,12 @@ namespace Aqua
 {
     public class DialogPanel : BasePanel
     {
+        public delegate void UpdatePortraitDelegate(StringHash32 characterId, StringHash32 poseId);
+
         private const float SkipMultiplier = 1f / 1024;
         private const float DefaultMultiplier = 0.55f;
 
-        public static Action<StringHash32, StringHash32> UpdatePortrait;
+        public static UpdatePortraitDelegate UpdatePortrait;
 
         #region Types
 
@@ -70,6 +72,14 @@ namespace Aqua
                 IsCutsceneSkip = false;
             }
         }
+
+        public sealed class TextDisplayArgs
+        {
+            public string VisibleText;
+            public string NodeId;
+        }
+
+        static private readonly TextDisplayArgs s_TextDisplayArgs = new TextDisplayArgs();
 
         #endregion // Types
 
@@ -134,7 +144,7 @@ namespace Aqua
         [NonSerialized] private float m_SelfOriginalY;
         [NonSerialized] private ScriptThreadHandle m_CurrentThread;
 
-        [NonSerialized] private TagString m_TempTagString = new TagString();
+        [NonSerialized] private TagString m_TempTagString;
 
         public StringHash32 StyleId() { return m_StyleId; }
 
@@ -176,7 +186,6 @@ namespace Aqua
                 return;
             
             m_CurrentState.ResetFull();
-            m_CurrentThread = default;
 
             ResetSpeaker();
 
@@ -317,7 +326,12 @@ namespace Aqua
             
             Sprite portraitSprite = m_CurrentState.TargetDef.Portrait(inPortraitId);
             m_CurrentState.PortraitId = inPortraitId;
-            UpdatePortrait?.Invoke(m_CurrentState.TargetId, m_CurrentState.PortraitId);
+            
+            if (m_CurrentThread.IsRunning()) {
+                m_CurrentThread.TapCharacter(m_CurrentState.TargetId);
+                UpdatePortrait?.Invoke(m_CurrentState.TargetId, m_CurrentState.PortraitId);
+            }
+
             if (portraitSprite)
             {
                 if (m_SpeakerPortraitGroup)
@@ -396,8 +410,11 @@ namespace Aqua
                     m_TextDisplay.maxVisibleCharacters = 0;
 
                     UpdateSkipHeld();
-
                     RebuildLayout();
+
+                    s_TextDisplayArgs.VisibleText = inLine.VisibleText;
+                    s_TextDisplayArgs.NodeId = m_CurrentThread.GetThread()?.PeekNode().FullName();
+                    Services.Events.Dispatch(GameEvents.TextLineDisplayed, s_TextDisplayArgs);
                 }
 
                 TagStringEventHandler handler = GetHandler();
@@ -605,7 +622,7 @@ namespace Aqua
                 button.Populate(option.TargetId, m_TempTagString.RichText, inChoice, (option.Flags & LeafChoice.OptionFlags.IsSelector) != 0);
             }
 
-            m_TempTagString.Clear();
+            m_TempTagString?.Clear();
 
             for(int i = optionsToShow; i < m_OptionButtons.Length; ++i)
             {
@@ -778,7 +795,7 @@ namespace Aqua
         private IEnumerator RebuildDelayed()
         {
             yield return null;
-            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform) m_TextLayout.transform);
+            LayoutRebuilder.MarkLayoutForRebuild((RectTransform) m_TextLayout.transform);
         }
     
         #endregion // BasePanel

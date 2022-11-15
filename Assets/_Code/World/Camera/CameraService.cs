@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections;
+using System.Runtime.CompilerServices;
 using Aqua.Debugging;
 using BeauRoutine;
 using BeauRoutine.Splines;
@@ -70,54 +71,9 @@ namespace Aqua.Cameras
 
         public struct PlanePositionHelper
         {
-            public Camera Camera;
-            public Ray CenterRay;
-            public Plane GameplayPlane;
-            public Matrix4x4 ViewportToWorld;
+            public Matrix4x4 WorldToCamera;
+            public Matrix4x4 CameraToWorld;
             public float GameplayDistance;
-
-            public Vector3 CastToPlane(Transform inTransform)
-            {
-                Vector3 transformPos = inTransform.position;
-                Vector3 from = Camera.WorldToViewportPoint(transformPos, Camera.MonoOrStereoscopicEye.Mono);
-
-                from.z = 0;
-                Vector3 near = ViewportToWorld.MultiplyPoint(from);
-                
-                from.z = 1;
-                Vector3 far = ViewportToWorld.MultiplyPoint(from);
-
-                Ray ray = new Ray(near, far - near);
-                Vector3 planeNormal = GameplayPlane.normal;
-
-                float gameplayDist = (-Vector3.Dot(ray.origin, planeNormal) - GameplayPlane.distance) / Vector3.Dot(ray.direction, planeNormal);
-                return near + (ray.direction * gameplayDist);
-            }
-
-            public Vector3 CastToPlane(Transform inTransform, out float outDistanceRatio)
-            {
-                Vector3 transformPos = inTransform.position;
-                Vector3 from = Camera.WorldToViewportPoint(transformPos, Camera.MonoOrStereoscopicEye.Mono);
-
-                Plane transformPlane = new Plane(GameplayPlane.normal, transformPos);
-                
-                from.z = 0;
-                Vector3 near = ViewportToWorld.MultiplyPoint(from);
-                
-                from.z = 1;
-                Vector3 far = ViewportToWorld.MultiplyPoint(from);
-
-                Ray ray = new Ray(near, far - near);
-                Vector3 planeNormal = GameplayPlane.normal;
-
-                float gameplayDist = (-Vector3.Dot(ray.origin, planeNormal) - GameplayPlane.distance) / Vector3.Dot(ray.direction, planeNormal);
-                float planeDist = (-Vector3.Dot(CenterRay.origin, planeNormal) - GameplayPlane.distance) / Vector3.Dot(CenterRay.direction, planeNormal);
-
-                // Debug.DrawRay(ray.origin, ray.direction * transformDist, Color.yellow, 0.2f);
-
-                outDistanceRatio = planeDist / GameplayDistance;
-                return near + (ray.direction * gameplayDist);
-            }
         }
 
         #endregion // Types
@@ -143,12 +99,10 @@ namespace Aqua.Cameras
         [NonSerialized] private bool m_Paused;
         [NonSerialized] private bool m_CacheDirty;
 
-        [NonSerialized] private Plane m_LastGameplayPlane;
         [NonSerialized] private Vector3 m_LastGameplayPlaneCenter;
         [NonSerialized] private float m_LastGameplayPlaneDistance;
-        [NonSerialized] private Ray m_LastCenterRay;
-        [NonSerialized] private Matrix4x4 m_LastVPMatrix;
-        [NonSerialized] private Matrix4x4 m_LastVPMatrixInv;
+        [NonSerialized] private Matrix4x4 m_LastCameraMatrix;
+        [NonSerialized] private Matrix4x4 m_LastCameraMatrixInv;
         [NonSerialized] private Rect m_LastScreenAspectClip;
 
         #if DEVELOPMENT
@@ -325,7 +279,7 @@ namespace Aqua.Cameras
 
         private void UpdateHintedCaches(Vector3 inTargetPosition)
         {
-            int frameCount = Time.frameCount % (int) (m_CacheFrameSkip + 1);
+            int frameCount = Frame.Index % (int) (m_CacheFrameSkip + 1);
 
             // update points and bounds on alternating frames if specified
             if (m_CacheFrameSkip == 0 || m_CacheDirty)
@@ -361,32 +315,27 @@ namespace Aqua.Cameras
             ApplyCameraState(current, m_PositionRoot, m_Camera, m_FOVPlane, m_FOVMode, CameraPoseProperties.Position, m_Axis);
         }
 
-        private static readonly Matrix4x4 View2NDC = Matrix4x4.Translate(-Vector3.one) * Matrix4x4.Scale(Vector3.one * 2);
-        private static readonly Vector3 CenterViewportPos = new Vector3(0.5f, 0.5f, 0);
-
         private void UpdateCachedPlanes()
         {
             Vector3 cameraForwardVector = m_PositionRoot.forward;
+            Plane p;
 
             if (m_FOVPlane)
             {
-                m_LastGameplayPlane = new Plane(-cameraForwardVector, m_FOVPlane.Target.position);
+                p = new Plane(-cameraForwardVector, m_FOVPlane.Target.position);
             }
             else
             {
-                m_LastGameplayPlane = new Plane(-cameraForwardVector, Vector3.zero);
+                p = new Plane(-cameraForwardVector, Vector3.zero);
             }
 
             Ray r = new Ray(m_PositionRoot.position, cameraForwardVector);
-            m_LastGameplayPlane.Raycast(r, out float planeCastDist);
+            p.Raycast(r, out float planeCastDist);
             m_LastGameplayPlaneCenter = r.GetPoint(planeCastDist);
             m_LastGameplayPlaneDistance = planeCastDist;
 
-            m_LastCenterRay = r;
-
-            Matrix4x4 projWorld = m_Camera.projectionMatrix * m_Camera.worldToCameraMatrix;
-            m_LastVPMatrix = projWorld;
-            m_LastVPMatrixInv = Matrix4x4.Inverse(projWorld) * View2NDC;
+            m_LastCameraMatrix = m_Camera.transform.worldToLocalMatrix;
+            m_LastCameraMatrixInv = m_Camera.transform.localToWorldMatrix;
         }
 
         #endregion // Update
@@ -1382,12 +1331,12 @@ namespace Aqua.Cameras
         /// <summary>
         /// Casts from a screen position to a world position on the current camera plane.
         /// </summary>
-        public Vector3 ScreenToGameplayPosition(Vector2 inScreenPos)
+        public Vector3 ScreenToGameplayPosition(Vector2 inScreenPos, float inZOffset = 0)
         {
             Vector3 screenPos = inScreenPos;
             screenPos.z = 1;
 
-            Plane p = new Plane(-m_Camera.transform.forward, m_FOVPlane.Target.position);
+            Plane p = new Plane(-m_Camera.transform.forward, m_FOVPlane.Target.position + new Vector3(0, 0, inZOffset));
             Ray r = m_Camera.ScreenPointToRay(screenPos);
 
             float dist;
@@ -1433,10 +1382,8 @@ namespace Aqua.Cameras
         {
             return new PlanePositionHelper()
             {
-                Camera = m_Camera,
-                CenterRay = m_LastCenterRay,
-                GameplayPlane = m_LastGameplayPlane,
-                ViewportToWorld = m_LastVPMatrixInv,
+                WorldToCamera = m_LastCameraMatrix,
+                CameraToWorld = m_LastCameraMatrixInv,
                 GameplayDistance = m_LastGameplayPlaneDistance
             };
         }
@@ -1598,6 +1545,26 @@ namespace Aqua.Cameras
             size.y = inPlane.ZoomedHeight(inZoom);
             size.x = inCamera.aspect * size.y;
             return size;
+        }
+
+        [MethodImpl(256)]
+        static public Vector3 CastToPlane(in PlanePositionHelper inHelper, Transform inTransform, out float outDistanceRatio)
+        {
+            return CastToPlane(inHelper, inTransform.position, out outDistanceRatio);
+        }
+
+        static public Vector3 CastToPlane(in PlanePositionHelper inHelper, Vector3 inPosition, out float outDistanceRatio)
+        {
+            UnityEngine.Profiling.Profiler.BeginSample("CameraPositionCast");
+            Vector3 cameraSpace = inHelper.WorldToCamera.MultiplyPoint3x4(inPosition);
+            float scale = inHelper.GameplayDistance / Math.Abs(cameraSpace.z);
+            outDistanceRatio = 1 / scale;
+            cameraSpace.x *= scale;
+            cameraSpace.y *= scale;
+            cameraSpace.z = inHelper.GameplayDistance;
+            Vector3 worldSpace = inHelper.CameraToWorld.MultiplyPoint3x4(cameraSpace);
+            UnityEngine.Profiling.Profiler.EndSample();
+            return worldSpace;
         }
 
         #endregion // Utils

@@ -37,19 +37,19 @@ namespace Aqua {
             get { return StateUtil.IsLoading || Services.Pause.IsPaused(); }
         }
 
-        [LeafMember("ScriptBlocking")]
+        [LeafMember("ScriptBlocking"), Preserve]
         static public bool ShouldBlock() {
             return !Services.Valid || Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.UI.IsLetterboxed() || StateUtil.IsLoading;
         }
 
-        [LeafMember("ScriptBlockingIgnoreLetterbox")]
+        [LeafMember("ScriptBlockingIgnoreLetterbox"), Preserve]
         static public bool ShouldBlockIgnoreLetterbox() {
             return Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || StateUtil.IsLoading;
         }
 
         [MethodImpl(256)]
-        static public void OnSceneLoad(Action action) {
-            Services.State.OnLoad(action);
+        static public void OnSceneLoad(Action action, int priority = 0) {
+            Services.State.OnLoad(action, priority);
         }
 
         static public PlayerBody CurrentPlayer {
@@ -72,6 +72,10 @@ namespace Aqua {
         #region Popups
 
         static public Future<StringHash32> PopupNewEntity(BestiaryDesc entity, string descriptionOverride = null, ListSlice<BFBase> extraFacts = default) {
+            if (entity.HasFlags(BestiaryDescFlags.IsSpecter)) {
+                return PopupNewSpecter(entity, descriptionOverride, extraFacts);
+            }
+
             using (PooledList<BFBase> allFacts = PooledList<BFBase>.Create(entity.AssumedFacts)) {
                 allFacts.AddRange(extraFacts);
                 allFacts.Sort(BFType.SortByVisualOrder);
@@ -89,6 +93,12 @@ namespace Aqua {
                         new PopupFacts(allFacts));
                 }
             }
+        }
+
+        static public Future<StringHash32> PopupNewSpecter(BestiaryDesc entity, string descriptionOverride = null, ListSlice<BFBase> extraFacts = default) {
+            string header = Loc.Format("ui.popup.newBestiary.specter.header", Formatting.ScrambleLoc(entity.CommonName()));
+            string text = Loc.Format("ui.popup.newBestiary.specter.description", Formatting.ScrambleLoc(entity.EncodedMessage()));
+            return Services.UI.Popup.Present(header, text, entity.ImageSet(), PopupFlags.TallImage);
         }
 
         static public Future<StringHash32> PopupNewFact(BFBase fact, BestiaryDesc entity = null, string textOverride = null) {
@@ -110,6 +120,16 @@ namespace Aqua {
         static public Future<StringHash32> PopupFactDetails(BFBase fact, BFDiscoveredFlags flags, BestiaryDesc reference, params NamedOption[] options) {
             BFDetails details = BFType.GenerateDetails(fact, flags, reference);
             bool showFact = (BFType.Flags(fact) & BFFlags.HideFactInDetails) == 0;
+
+            if ((flags & BFDiscoveredFlags.IsEncrypted) != 0) {
+                details.Header = Loc.Format("fact.encrypted.header", Formatting.Scramble(details.Header));
+                details.Description = Loc.Format("fact.encrypted.description", Formatting.Scramble(details.Description));
+                details.Image = default;
+
+                return Services.UI.Popup.Present(
+                    details.Header, details.Description, details.Image, PopupFlags.ShowCloseButton | PopupFlags.TallImage, options
+                );
+            }
 
             if (showFact) {
                 return Services.UI.Popup.PresentFactDetails(
@@ -294,8 +314,9 @@ namespace Aqua {
         [LeafMember, Preserve]
         static public bool IsPlayerOnShip() {
             StringHash32 currentMapId = MapDB.LookupCurrentMap();
-            return ((currentMapId == MapIds.Helm) || (currentMapId == MapIds.Modeling) || (currentMapId == MapIds.Experimentation) ||
-            (currentMapId == MapIds.JobBoard) || (currentMapId == MapIds.WorldMap));
+            return ((currentMapId == MapIds.Helm) || (currentMapId == MapIds.Modeling) || (currentMapId == MapIds.Experimentation)
+            || (currentMapId == MapIds.WorldMap)) || (currentMapId == MapIds.ModelingFoyer)
+            || (currentMapId == MapIds.Cabin);
         }
 
         [LeafMember, Preserve]

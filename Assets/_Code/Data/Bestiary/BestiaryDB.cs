@@ -50,6 +50,7 @@ namespace Aqua
 
         [NonSerialized] private Dictionary<StringHash32, BFBase> m_FactMap;
         [NonSerialized] private HashSet<StringHash32> m_AutoFacts;
+        [NonSerialized] private HashSet<StringHash32> m_SpecterIds;
 
         #region Defaults
 
@@ -159,13 +160,22 @@ namespace Aqua
 
             BFBase fact;
             m_FactMap.TryGetValue(inFactId, out fact);
-            Assert.NotNull(fact, "Could not find BFBase with id '{0}'", inFactId);
+            if (object.ReferenceEquals(fact, null))
+            {
+                Assert.NotNull(fact, "Could not find BFBase with id '{0}'", inFactId);
+            }
             return fact;
         }
 
         public TFact Fact<TFact>(StringHash32 inFactId) where TFact : BFBase
         {
             return (TFact) Fact(inFactId);
+        }
+
+        public bool IsSpecter(StringHash32 inEntityId)
+        {
+            EnsureCreated();
+            return m_SpecterIds.Contains(inEntityId);
         }
 
         public bool IsAutoFact(StringHash32 inFactId)
@@ -195,6 +205,7 @@ namespace Aqua
             base.PreLookupConstruct();
             m_FactMap = new Dictionary<StringHash32, BFBase>(Count());
             m_AutoFacts = new HashSet<StringHash32>();
+            m_SpecterIds = new HashSet<StringHash32>();
 
             foreach(var fact in m_AllFacts)
             {
@@ -211,13 +222,21 @@ namespace Aqua
             }
         }
 
+        protected override void ConstructLookupForItem(BestiaryDesc desc, int index) {
+            base.ConstructLookupForItem(desc, index);
+
+            if (desc.HasFlags(BestiaryDescFlags.IsSpecter)) {
+                m_SpecterIds.Add(desc.Id());
+            }
+        }
+
         #endregion // Internal
 
         #if UNITY_EDITOR
 
         int IBaked.Order { get { return 10; } }
 
-        bool IBaked.Bake(BakeFlags flags)
+        bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
             SortObjects(SortByCategory);
 

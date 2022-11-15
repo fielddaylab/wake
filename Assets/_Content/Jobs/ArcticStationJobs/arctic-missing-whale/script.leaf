@@ -14,7 +14,10 @@
 {@player}       Aw, no te preocupes, Professor. I'm sure you'll see Linda again.
                 I mean, how hard can it be to find a whale? They're not exactly small.
 {@player}       I'll get out there and start searching. 
-{@arcticSci}    Thank you, Ollie. Do let me know what you find. 
+{@arcticSci}    Thank you, Ollie.
+                Linda's last known location was somewhere near {fullnameof RS-4W}.
+                Finding either her or her tracker would be most helpful.
+                Do let me know what you find. 
 
 $call UnlockSite(RS-4W)
 
@@ -86,7 +89,7 @@ $endif
 @when 		HasEntity(WhaleTracker), HasEntity(Detritus), !HasFact(W_WhaleFall.Population.Detritus) 
 @cutscene
 {@player}   Okay, {nameof @guide}. What now?
-{@guide}	You'll need to scan more of the detritus in order to complete your task. 
+{@guide}	You'll need to count the detritus in order to complete your task.
 
 :: gotScans
 @trigger    JobTasksUpdated
@@ -96,7 +99,8 @@ $endif
 {@player}   Looks like we've got all we need.
 {@guide}    Yes! A windfall of data. 
 {@player}   And some bad news for {nameof @arcticSci}.
-            I guess we better go tell him. At least now he'll know where she is. 
+            I guess we better go tell him. At least now he'll know where she is.
+$call GiveJournalEntry("N03_AfterWhaleFall")
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
@@ -207,7 +211,7 @@ $goto .argue.showClaim
 $call ArgueComplete()
 {@arcticSci}   Oh. Well, then. 
                 Well. That's unfortunate.
-{@player}       I'm so sorry, Professor. I know you've been studyihng Linda for a long time. 
+{@player}       I'm so sorry, Professor. I know you've been studying Linda for a long time. 
 {@arcticSci}   Oh, don't be sorry, Ollie. I'm grateful to you. Now we know where she is.
                 Though I do wonder how she died.
                 If you ever want to help out again, perhaps we could get to the bottom of this together.

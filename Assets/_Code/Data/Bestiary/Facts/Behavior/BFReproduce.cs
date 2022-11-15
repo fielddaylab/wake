@@ -27,7 +27,7 @@ namespace Aqua {
 
         static public void Configure()
         {
-            BFType.DefineAttributes(BFTypeId.Reproduce, BFShapeId.Behavior, BFFlags.IsBehavior | BFFlags.SelfTarget, BFDiscoveredFlags.All, CompareStressedPair);
+            BFType.DefineAttributes(BFTypeId.Reproduce, BFShapeId.Behavior, BFFlags.IsBehavior | BFFlags.SelfTarget | BFFlags.HasRate, BFDiscoveredFlags.All, CompareStressedPair);
             BFType.DefineMethods(BFTypeId.Reproduce, null, GenerateDetails, GenerateFragments, null, null);
             BFType.DefineEditor(BFTypeId.Reproduce, null, BFMode.Player);
         }
@@ -83,28 +83,5 @@ namespace Aqua {
         }
 
         #endregion // Behavior
-
-        #if UNITY_EDITOR
-
-        public override bool Bake(BakeFlags flags)
-        {
-            bool bChanged = false;
-            if (OnlyWhenStressed)
-            {
-                var pair = FindPairedFact<BFReproduce>();
-                if (pair != null)
-                {
-                    float compare = Amount - pair.Amount;
-                    bChanged |= Ref.Replace(ref PairId, pair.Id);
-                }
-            }
-            else
-            {
-                bChanged |= Ref.Replace(ref PairId, null);
-            }
-            return bChanged;
-        }
-
-        #endif // UNITY_EDITOR
     }
 }
