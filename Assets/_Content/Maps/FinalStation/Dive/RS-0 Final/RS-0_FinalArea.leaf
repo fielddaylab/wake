@@ -1,0 +1,33 @@
+#basePath Dream05
+::samFinalTrigger
+@trigger PlayerEnterRegion
+@when regionId == "chalDeep00"
+@once
+
+{wait 2}
+
+{@player} 
+No time to mess around! I need to rescue Sam!
+
+
+::samFinalTrigger2
+@trigger PlayerEnterRegion
+@when regionId == "samRadio"
+@once
+
+{wait 2}
+
+{@player}
+Sam! Are you okay!? {wait-abs 2}
+{@sam}
+All our systems are failing! We're running out of oxygen! {wait-abs 2}
+{@player}
+Turn on your red lights! {wait-abs 1}
+{@sam}
+I can't, the lights are broken! {wait-abs 1}
+
+{wait 1}
+{@player}
+I'm going to turn on the probe lights to distract it!
+
+
