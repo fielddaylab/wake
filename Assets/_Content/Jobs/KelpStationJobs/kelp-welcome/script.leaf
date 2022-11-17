@@ -28,12 +28,14 @@ $call GiveJournalEntry("N01_Intro")
 @cutscene
 $branch common.ringPhone
 
-{@guide}Greetings, Olivia Ramirez! 
-{@player}Yikes! Who's there?
-{@guide}   I am {nameof @guide}, your onboard A.I.
-{@guide}   Did your job-giver not inform you that I would be uploaded to your sub?
-{@player}  Nah. Mom's been pretty distracted lately.  
-{@player}  Okay, {nameof @guide}. What do we do first? 
+{@kelpMechanic} One more thing, mijita!
+{@kelpMechanic} I'm patching through your onboard A.I. 
+{@kelpMechanic} It should come online in three...|two...|one...
+{@guide} Greetings! I am {nameof @guide}, your A.I. companion.
+{@guide} I have been programmed to guide you through your jobs and keep your ship's life support systems functioning. 
+{@guide} What should I call you?
+{@player} Oh... uh, you can call me O.
+{@player} So... what should I do first, {nameof @guide}?
 {@guide}  Use your {item-name}Scanner{/item-name} to ID all the species here at the Forested Lagoon. 
 $call GiveUpgrade(ROVScanner, Silent)
 $call Player->SetTool(Scanner)
@@ -133,10 +135,10 @@ $call Surface->Activate()
 @once
 
 $branch common.ringPhone
-{@player}My own AquaLab!! I can't believe Mom trusted me with this.
-{@guide}Yes. And it includes several built-in safety features!
-{@player}Oh. Yeah, that tracks. 
-{@guide}Board the AquaLab for your next task!
+{@player}Wow. Mer's old AquaLab!
+{@player}She used to keep a trunk full of notes and drawings in her cabin. I wonder if it's still there. 
+{@player} How do we get onboard, {nameof @guide}?
+
 {fade-out black.60, 0.5, wait}
 {@}
 {hide-dialog}
@@ -166,7 +168,7 @@ $call ship.map->ResetSorting()
 
 {@player}   Is that everything, {nameof @guide}? 
 {@guide}   Hmmm. It appears you missed something. 
-{@guide}    Head back to {h}site C{/h} and try again!
+{@guide}    Head back to {h}site C{/h} and try again.
 
 
 :: helpReturnToShip
@@ -175,7 +177,7 @@ $call ship.map->ResetSorting()
 @boostScore 100
 @cutscene
 {@player} 	What now?
-{@guide}	We need to head into the {h}helm{/h}. 
+{@guide}	You need to head to the {h}helm{/h}. 
 $call ship.map->ForceOnTop()
 $call schematic.button->ForceOnTop()
 $call FocusHighlight->Focus(schematic.button, 250, 250)
@@ -199,15 +201,14 @@ $call WheelPrompt->Deactivate()
 @once
 
 {@guide} This is your helm!
-         We're receiving a transmission from a deep-sea vessel called the Nautilus.
+         It appears you are receiving a transmission from a deep-sea vessel called the Nautilus.
 {@player} Oh, that's my friend Sam! Put them through!
 {@sam} O, can you hear me?   
-{@player} Yes! Mom <i>finally</i> let me go out on my first job!
+{@player} ¡Sí, estoy aquí!
 {@player} How's the mission? Any sign of the Challenger Deep?
 {@sam} Not yet, but we're getting close. 
-{@sam} It's super eerie down here, O. I can see why your sister loved it.  
-{@sam} Dinn says we're about to hit a dead zone. 
-{@sam} We might end up losing contact...
+{@sam} It's pretty eerie down here, O. I can see why your sister loved it.  
+{@sam} Dinn says we're about to hit a dead zone, so we might end up losing contact...
 {@sam} ......
 {@player} Sam?
 {@sam} ....weird readings on the scanner....
@@ -218,7 +219,8 @@ $call WheelPrompt->Deactivate()
 {@player} They'll probably find the Challenger Deep probe any minute!
 {@player} I wish I could see it. 
 $call GiveJournalEntry("N02_LosingConnection")
-{@player}  Anyway, what now, {nameof @guide}?
+
+{@player}  Okay. What now, {nameof @guide}?
 {@guide} Updating ship schematic... 
 {hide-dialog}
 
@@ -230,13 +232,10 @@ $call schematic.button->ForceClick()
 {hide-dialog}{wait 1}{style default}
 // $call HelmButton->ForceOnTop()
 $call FocusHighlight->Focus(ExperimentationButton, 200, 200)
-    Click here to enter your {nameof Experimentation}.
+    Head to your {nameof Experimentation} to start your next task!
 $call FocusHighlight->Clear()
 {hide-dialog}{fade-in 0.5, wait}
 $call ship.map->ResetSorting()
-
-{@guide} Head to your {nameof Experimentation} to start your next task!
-$call FocusHighlight->Clear()
 $call AutoSaveNow()
 
 :: helpGoToExperimentRoom
@@ -244,8 +243,8 @@ $call AutoSaveNow()
 @when 		JobTaskActive(runExperiment), scene:name != "ExperimentV2"
 @cutscene
 {@player}   Can you help me find my way, {nameof @guide}?
-{@guide}    Certainly, O. Open your schematic in the upper left.
-{@guide}  Then head to {nameof Experimentation}!
+{@guide}    Certainly, O. Open your ship schematic in the upper left.
+{@guide}  Then select your {nameof Experimentation}!
 
 :: firstCaptureCircle
 @trigger    BehaviorCaptureChance
@@ -299,7 +298,8 @@ $endif
 @cutscene
 @once
 
-{@guide}   Now return to the Helm and navigate your sub back to the {m}Research Station{/m}.
+{@guide}  You've gathered the data you need!
+{@guide}  Now open your ship schematic and {m}Quick-Travel{/m} back to the Research Station.
 
 // $call   UnlockRoom("office")
 
@@ -312,8 +312,8 @@ $endif
 {@player} 	What now, {nameof @guide}?
 {@guide}	You need to report your findings. 
 $if !IsPlayerOnStation()
-	{@guide}	Use your sub to navigate to the Site C Research Station. 
-                Your mother will be waiting for you there!
+	{@guide}  Open your schematic and {m}quick-travel{/m} to the research station.	
+                Your mother will be waiting for you there.
 $endif
 
 :: helpReportBackInArgumentation

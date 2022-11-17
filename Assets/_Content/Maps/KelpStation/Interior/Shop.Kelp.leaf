@@ -31,14 +31,21 @@ $goto act1.momMadEnd
 #ShopHandler(first)
 @boostScore 100
 @once
-{@$MerchantId}  Well, well. My favorite junior scientist!
-                How are things on the job?
-{@player}       Great. I think Mom's gonna let me travel to another ecosystem!
-{@$MerchantId}  Well, then, we better make sure you're prepared. 
-                Want to look at some ship upgrades?
+{@$MerchantId}  ¡Hola, mijita!
+                What do you think of {nameof @guide}? Sweet A.I., right?
+                His enthusiasm for data was Mer's idea... she wanted to make sure he was happy on the job.
+{@player}       Wait... you and Mer created {nameof @guide}?
+{@$MerchantId}  ¡Claro que sí! Didn't I tell you?
+                Anyway, now that you and {nameof @guide} will be traveling outside the Kelp Forest, you'll need some upgrades. 
+{@player}   What is all this stuff, Tío?
+{@$MerchantId}  My shop has all the tools and upgrades you'll need.
+                You're a Level 1 scientist, so you'll need to stick to the basics for now.
+                You can find sub upgrades under the Exploration tab...
+                And tools for your lab under the Science tab. 
+                Want to take a look? 
 $set jobs:kelp-mechanic.givenJournal = false
-$choice .action.openShop; Sure, I'll take a look! 
-$choice .action.cancel; No thanks, Tío. I'll come back later.  
+$choice .action.openShop; Sure! 
+$choice .action.cancel; No thanks. I'll come back later.  
 
 #ShopHandler(a)
 $if jobs:bayou-mechanic.givenArticle, !jobs:kelp-mechanic.givenJournal
@@ -167,29 +174,29 @@ $choice .action.cancel; Not right now.
 {@$MerchantId}  Anything catch your eye?
 
 #CloseHandler(a)
-{@$MerchantId}  Thank ya!
+{@$MerchantId}  Thank you!
 
 #CloseHandler(purchased, shop:purchaseCount)
 @boostScore 10
 {@$MerchantId}  Come back anytime!
 
 #CloseHandler(notEnoughCash, shop:notEnoughCount)
-{@$MerchantId}  Come back with some more {pluralnameof Cash} next time!
+{@$MerchantId}  Come back with some more {pluralnameof Cash} next time.
 
 #CloseHandler(notEnoughExp, shop:needsExpCount)
 {@$MerchantId}  Come back when you've got some more {exp}experience{/exp}!
 
 #OpenExplorationHandler(a)
-{@$MerchantId}  Interested in any exploration tools?
+{@$MerchantId}  Interested in any sub upgrades? 
 
 #OpenExplorationHandler(b)
 {@$MerchantId}  Any upgrades you want for your sub?
 
 #OpenScienceHandler(a)
-{@$MerchantId}  Any science-type things you want?
+{@$MerchantId}  Do you need any new tools for your lab? 
 
 #OpenScienceHandler(b)
-{@$MerchantId}  Need anything for your scientific pursuits?
+{@$MerchantId}  Need any new experimentation tools? 
 
 // Exploration
 
@@ -293,9 +300,9 @@ $EvaluateItemPurchase()
 // Modeling
 
 #ItemHandler(VisualModel)
-{@$MerchantId}  The {nameof VisualModel} can be used at your {map-name}Modeling Station{/map-name}.
-                Use it to create visualizations of the different interactions between species.
-{@player}    Nice. This could definitely be useful.  
+{@$MerchantId}  The {nameof VisualModel} tool can be used at your {map-name}Modeling Station{/map-name}.
+                Use it to visualize the different interactions between species.
+{@player}    Hmm. This could definitely be useful.  
 $EvaluateItemPurchase()
 
 #ItemHandler(PredictionModel)

@@ -67,12 +67,14 @@ $set    jobs:common-dive.seen.micro-intro = true
 // first specter
 {wait 1}
 $call Specter->Spawn()
-{@player}	Whoa! {nameof @guide}, what is that thing?
+{@player}	Whoa! {nameof @guide}, what is that thing?? 
 $call Specter->Scan(3)
-{@guide}	Data inconclusive. 
-            It appears to have originated at the Challenger Deep probe. 
-{@player}   That's where Sam is! They must've gotten the probe back online!
-            Wow... kinda spooky, isn't it?
+{@guide}  Data inconclusive.
+{@player} Wow... it looks like a ghost.
+{@player} Where did it come from?
+{@guide} Sensors indicate that the anomoly was sent by Challenger Deep.
+{@player} That's where Sam is! They must've gotten the probe back online!
+{@player} But why would they send this to us? 
 $call GiveJournalEntry("S01")
 
 :: specterTrigger.2
