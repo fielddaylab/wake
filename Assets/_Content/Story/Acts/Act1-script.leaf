@@ -20,13 +20,14 @@ $call CameraSnapToTarget()
 
 $set world:intro.completed = false
 $set jobs:num-specters-seen = 0
-{@player} Wow, this place looks so different at night!
+{@player} Hello?
 {@player} Tío, you still there? 
 {fade-in 3}
 {@kelpMechanic} Sí, mijita. I can hear you on the comms.
-{@kelpMechanic} Keep exploring. The computer will calculate your score. 
+{@kelpMechanic} Keep exploring a little longer.
+{@kelpMechanic} You just need a few more seconds of driving time to end your probation!
 {@player} Thanks, Tío. 
-{@player} Just... don't let Mom find out.
+{@player} Just... don't tell Mom I'm out here, okay?
 {@kelpMechanic} No promises, Ollie. 
 {hide-dialog}
 $start .tutorialMove
@@ -48,8 +49,9 @@ $CutsceneDelayed(8, .intro-part2)
 {@drKelp}Olivia?? Is that you out there?
 {@player}Uh oh.
 {@player}Mom, I can explain--
-{@drKelp}Sweetie, what were you thinking?! Taking the sub out at night, after last time?
-{@drKelp}Come back to the {m}Kelp Station{/m} immediately.
+{@drKelp} Sweetie, what were you thinking?? 
+{@drKelp} Did you forget what happened last time you took the sub out at night? 
+{@drKelp}Come back to the {m}Forested Lagoon Station{/m} immediately.
 {@drKelp}And be careful!
 {@player}Copy that, Mom. On my way.
 $call StationEntrance->Activate()
@@ -78,18 +80,21 @@ $call Uncle->TeleportTo(tio-intro-pos)
 @cutscene
 @once
 
-{@drKelp}Olivia! Honey, thank goodness you're okay!
+{@drKelp}Olivia! Mija, thank goodness you're okay!
 {@player}I'm fine, Mom. It was no big deal. 
-{@drKelp}Enrique, I can't believe you let her go out at night. 
-{@drKelp}She's on probation! She could've crashed, she could've gotten lost--
+{@drKelp} Ay dios mio.  
+{@drKelp} Enrique, I can't believe you let her take the sub out at night.
+{@drKelp} She's on probation! She could've crashed again, she could've gotten lost--
 {@kelpMechanic}Actually, she's not on probation anymore. 
-{@kelpMechanic}Good news, mijita. You passed.  
+{@kelpMechanic}Good news, mijita. Your probation hours are done. 
+{@kelpMechanic} You're a Level 1 scientist now!   
 {@player}YES!!!
-{@drKelp}Wow. Olivia.|.|.|
-{@drKelp}This is fantastic! You're a scientist now!
-{@drKelp}And just in time. I could really use your help. 
-{@player}You mean...| you want me to work here!? At the {nameof RS-1C}? 
-{@drKelp}Of course! You know this place better than anyone. 
+{@drKelp} Wow... Olivia, this is fantastic news!
+{@drKelp} But you <i>still</i> shouldn't have gone out there alone.
+{@player} Okay, okay. When do I get my first job? 
+{@drKelp} Well, I could certainly use help here.
+{@player} You mean... you want me to work here? At the kelp forest ecosystem? 
+{@drKelp} Of course! You know this place better than anyone.
 {@drKelp}Sun's almost up. Let's get you started with your first job! 
 $call InteriorOpenJobBoard()
 $set global:Act1.TalkedToMomMad = true
@@ -104,7 +109,8 @@ $set global:Act1.TalkedToMomMad = true
 @who        drKelp
 @when       !JobStartedOrComplete(kelp-welcome)
 @cutscene
-{@drKelp}   You've got your first job, Olivia! Let's see how it goes, then we'll talk about giving you more to do around here. 
+{@drKelp}   You've got your first job, Olivia! 
+{@drKelp} Let's see how it goes, and then I'll think about giving you more to do around here.  
 $call InteriorOpenJobBoard()
 
 // :: momMad
