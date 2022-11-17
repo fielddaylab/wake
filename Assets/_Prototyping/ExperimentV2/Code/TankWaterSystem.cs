@@ -115,7 +115,7 @@ namespace ProtoAqua.ExperimentV2 {
             Vector3 shapeSize = particleEmitShape.scale;
             shapeSize.x = critterLocalBounds.width;
             shapeSize.y = critterLocalBounds.height / 4;
-            particleEmitShape.scale = shapeSize;
+            //particleEmitShape.scale = shapeSize;
 
             ParticleSystem.EmitParams emit = default;
             emit.position = splashPosition;
@@ -129,30 +129,27 @@ namespace ProtoAqua.ExperimentV2 {
 
         #region Fill
 
-        public IEnumerator RequestFill(SelectableTank inTank) {
-            return inTank.WaterTransition.Replace(inTank, RequestFill_Routine(inTank)).Wait();
+        public IEnumerator RequestFill(SelectableTank inTank, float inDuration) {
+            return inTank.WaterTransition.Replace(inTank, RequestFill_Routine(inTank, inDuration)).Wait();
         }
 
-        private IEnumerator RequestFill_Routine(SelectableTank inTank) {
-            m_FillParticles.transform.SetPosition(inTank.transform.position.x, Axis.X, Space.World);
-            m_FillParticles.Play(true);
-
+        private IEnumerator RequestFill_Routine(SelectableTank inTank, float inDuration) {
             AudioHandle pourAudio = Services.Audio.PostEvent("tank_water_pour").SetVolume(0).SetVolume(1, 0.1f);
 
             inTank.CurrentState |= TankState.Filling;
 
             while (inTank.WaterFillProportion < 1) {
+                OnTankWaterFill(inTank);
                 yield return null;
             }
 
-            m_FillParticles.Stop();
             inTank.CurrentState &= ~TankState.Filling;
 
             pourAudio.Stop(0.1f);
 
-            while (m_FillParticles.particleCount > 0) {
-                yield return null;
-            }
+            yield return null;
+
+            m_UnderwaterParticles.Stop();
         }
 
         private void OnTankWaterFill(SelectableTank inTank) {
@@ -165,7 +162,8 @@ namespace ProtoAqua.ExperimentV2 {
             SetWaterHeightImpl(inTank, newHeightProportion, false);
 
             m_UnderwaterParticles.transform.SetPosition(inTank.transform.position.x, Axis.X, Space.World);
-            m_UnderwaterParticles.gameObject.SetActive(true);
+            m_UnderwaterParticles.Play();
+            //m_UnderwaterParticles.gameObject.SetActive(true);
         }
 
         #endregion // Fill
@@ -257,10 +255,12 @@ namespace ProtoAqua.ExperimentV2 {
 
         private IEnumerator DrainWaterOverTime_Routine(SelectableTank inTank, float inDuration) {
             var audio = Services.Audio.PostEvent("tank_water_drain");
+            var main = m_UnderwaterParticles.main;
             try {
                 inTank.CurrentState |= TankState.Draining;
                 inTank.WaterDrainParticles.Play();
-                m_UnderwaterParticles.gameObject.SetActive(false);
+                m_UnderwaterParticles.Play();
+                //m_UnderwaterParticles.gameObject.SetActive(false);
                 yield return Tween.Float(inTank.WaterFillProportion, 0, (f) => SetWaterHeightImpl(inTank, f, false), inDuration * inTank.WaterFillProportion)
                     .OnUpdate((f) => audio.SetPitch(Mathf.Lerp(MaxWaterPitch, 1, WaterPitchCurve.Evaluate(f))));
                 inTank.CurrentState &= ~TankState.Draining;
@@ -268,6 +268,7 @@ namespace ProtoAqua.ExperimentV2 {
                 inTank.WaterDrainParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             } finally {
                 inTank.WaterDrainParticles.Stop();
+                m_UnderwaterParticles.Stop();
                 audio.Stop(0);
             }
         }

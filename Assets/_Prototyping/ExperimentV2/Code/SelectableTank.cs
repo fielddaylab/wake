@@ -159,7 +159,7 @@ namespace ProtoAqua.ExperimentV2
         }
 
         static public IEnumerator FillTankSequence(SelectableTank tank) {
-            yield return tank.WaterSystem.RequestFill(tank);
+            yield return tank.WaterSystem.RequestFill(tank, 3f);
             yield return 0.2f;
         }
 

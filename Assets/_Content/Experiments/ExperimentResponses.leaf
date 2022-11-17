@@ -22,7 +22,7 @@ $set temp:newObservationTimer = 0
 @who        guide
 @repeat 1
 @chatter
-{@guide}    Looks like you have gathered all the data you need!
+{@guide}    I think we've learned all that we can from this experiment.
 
 :: behavior.idle.nothingLeft.2
 @trigger    ExperimentIdle
@@ -30,7 +30,7 @@ $set temp:newObservationTimer = 0
 @who        guide
 @repeat 1
 @chatter
-{@guide}    You have recorded all the behaviors!
+{@guide}    You've been pretty thorough here! I doubt we'll learn anything more from this experiment.
 
 :: behavior.idle.nothingLeft.missedSome.1
 @trigger    ExperimentIdle
