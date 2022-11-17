@@ -441,6 +441,8 @@ MonoBehaviour:
   m_DefaultText:
     m_Source: experiment.measure.autoFeeder.malfunction
     m_HashValue: 788215082
+  m_Prefix: 
+  m_Postfix: 
 --- !u!1 &7062623916233405240
 GameObject:
   m_ObjectHideFlags: 0
@@ -517,11 +519,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10bb3e1993eaf2141b63bcec13b09dd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RootTransform: {fileID: 6031292898526546190}
-  m_RootGroup: {fileID: 3950259542038000783}
-  m_PanelAnimators: []
-  m_InputBehavior: 1
-  m_HideOnStart: 1
   m_StabilizerToggle: {fileID: 6533723231011496962}
   m_AutoFeederToggle: {fileID: 3531453623928235563}
   m_StabilizerDisabledObject: {fileID: 9103045404750963146}
@@ -550,7 +547,9 @@ MonoBehaviour:
   NextButtonArrow: 0
   BackButton: 1
   Panel: {fileID: 0}
+  CustomLabel: {fileID: 0}
   CustomButton: {fileID: 0}
+  CustomButtonLabel: {fileID: 0}
 --- !u!1 &7885280190867086761
 GameObject:
   m_ObjectHideFlags: 0
@@ -766,6 +765,8 @@ MonoBehaviour:
   m_DefaultText:
     m_Source: experiment.measure.stabilizer.malfunction
     m_HashValue: 1446668315
+  m_Prefix: 
+  m_Postfix: 
 --- !u!1001 &2811015509293922310
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -896,8 +897,9 @@ PrefabInstance:
     - target: {fileID: 4197767324988259859, guid: 2291df1296061094184dc74f593281f5,
         type: 3}
       propertyPath: m_text
-      value: The Auto-Feeder dispenses a nutrient-dense food system to ensure maximum
-        organism survival rates while discouraging predation.
+      value: When ON, all organisms get enough food without eating each other. Leave
+        it ON to see how an organism reproduces. Turn this OFF only if you want to
+        see the rate at which one species eats another.
       objectReference: {fileID: 0}
     - target: {fileID: 5534202634151249673, guid: 2291df1296061094184dc74f593281f5,
         type: 3}
@@ -1080,8 +1082,8 @@ PrefabInstance:
     - target: {fileID: 4197767324988259859, guid: 2291df1296061094184dc74f593281f5,
         type: 3}
       propertyPath: m_text
-      value: The Tank Stabilizer maintains consistant water chemistry parameters
-        in order to observe an organism's effect on its environment.
+      value: "When ON, the tank keeps the same water chemistry and light conditions.
+        Turn this OFF only if you want to see an organism\u2019s effect on its environment."
       objectReference: {fileID: 0}
     - target: {fileID: 7757411915982789898, guid: 2291df1296061094184dc74f593281f5,
         type: 3}

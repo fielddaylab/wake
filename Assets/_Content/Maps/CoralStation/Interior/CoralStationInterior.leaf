@@ -61,6 +61,8 @@ $call UnlockSite(RS-2S)
 $set    world:coral.metScientist = true
 $set    world:coral.metMechanic = true
 
+$call GiveJournalEntry("N09_CoralPeople")
+
 $branch .warpMechanicToDefault
 
 :: intro.mechanic
