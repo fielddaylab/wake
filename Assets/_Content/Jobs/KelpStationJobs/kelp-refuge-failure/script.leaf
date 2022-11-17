@@ -11,12 +11,13 @@
 {@drKelp}   We make the best predictions we can with the information available to us.
 {@drKelp}   If things don't turn out as planned, we learn more, adjust our thinking, and carry on.
 {@player}   ....Okay, Mom. Where do we start?
-{@drKelp}    I need you to use your new predictive modeling tool. 
+{@drKelp}    I need you to use your new predictive modeling tool.
 			Start by gathering data from Kelp Refuge site.
 			Once you have those numbers, run a simulation and figure out what's happening down there. 
 {@player}   Okay. I can handle that. 
 {@player}   But Mom... no entiendo. The Refuge is your dream. Why aren't you sadder about this?
 {@drKelp}   It takes a lot to break my heart, Mija.
+$call GiveJournalEntry("N11_RefugeNotWorking")
 
 :: helpLeaveShip
 @trigger    RequestPartnerHelp

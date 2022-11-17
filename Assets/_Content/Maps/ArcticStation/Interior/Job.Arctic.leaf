@@ -11,25 +11,9 @@
 
 #NoJobHandler(a)
 $if CompletedJobCount(ArcticStation, 3), !jobs:arctic-job3-journal.received
-    // STORY BEAT C
-    {@arcticSci}   Oh, one more thing before you go, Ollie. 
-                    I found another of Meredith's old journal pages, from ten years ago!
-                    She mentioned you. Thought you'd like to have it. 
-    {@player}       Wow. This must've been from right before she died. 
-                    Thank you, {nameof @arcticSci}.
-    $set jobs:arctic-job3-journal.received = true
+    $branch .mersArticle
 $elseif jobs:specter6-comms.kelp.discussed, !jobs:specter6-comms.arctic.discussed
-    // STORY BEAT H
-    {@player}   Oh, before I go... 
-                {@nameof @profArctic}, my uncle said Mer was working on an upgrade for her comms system.
-                 Do you know anything about that?
-    {@arcticSci} Hmm... I do remember her working on some fixes. 
-                  She was waiting to use it until she was sure it wouldn't damage her A.I. 
-                  There was some kind of upgrade code. Mollusca? Nautili? 
-                  No, that's not quite right... 
-    {@player}   Please let me know if you remember, Professor. It's important. 
-    {@arcticSci} Certainly, Ollie. I'll see what I can dig up. 
-    $set jobs:specter6-comms.arctic.discussed = true
+    $branch .commsDiscussion
 $else
     {@$JobGiverId}  Hey, want to see the {h}Job Board{/h}?
     $choice .action.openJobBoard; Sure!
@@ -69,3 +53,26 @@ $choice .action.cancel.currentJob; Nope.
 :: action.cancel.currentJob
 @cutscene
 {@$JobGiverId}  Just let me know when you're ready then.
+
+:: mersArticle
+// STORY BEAT C
+    {@arcticSci}   Oh, if you've got a moment, Ollie... 
+                    I found another of Meredith's old journal pages, from ten years ago!
+                    She mentioned you. Thought you'd like to have it. 
+    {@player}       Wow. This must've been from right before she died. 
+                    Thank you, {nameof @arcticSci}.
+    $call GiveJournalEntry("N05_MersArticle")
+    $set jobs:arctic-job3-journal.received = true
+
+:: commsDiscussion
+    // STORY BEAT H
+    {@player}   Oh, before I go... 
+                {@nameof @profArctic}, my uncle said Mer was working on an upgrade for her comms system.
+                 Do you know anything about that?
+    {@arcticSci} Hmm... I do remember her working on some fixes. 
+                  She was waiting to use it until she was sure it wouldn't damage her A.I. 
+                  There was some kind of upgrade code. Mollusca? Nautili? 
+                  No, that's not quite right... 
+    {@player}   Please let me know if you remember, Professor. It's important. 
+    {@arcticSci} Certainly, Ollie. I'll see what I can dig up. 
+    $set jobs:specter6-comms.arctic.discussed = true
