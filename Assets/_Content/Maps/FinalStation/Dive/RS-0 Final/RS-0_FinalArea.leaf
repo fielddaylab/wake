@@ -1,4 +1,4 @@
-#basePath Dream05
+#basePath RS-0-Final
 ::samFinalTrigger
 @trigger PlayerEnterRegion
 @when regionId == "chalDeep00"
@@ -26,7 +26,7 @@ Turn on your red lights!
 {@sam}
 I can't, the lights are broken! 
 {@player}
-I'm going to turn on the probe lights to distract it! {wait-abs 3}
+I'm going to turn on the probe lights to distract it! {wait-abs 2}
 
 ::samFinalTrigger3
 @trigger PlayerEnterRegion
@@ -35,6 +35,15 @@ I'm going to turn on the probe lights to distract it! {wait-abs 3}
 
 {@sam}
 O? Are you there? Come to the station! {wait-abs 1}
+
+
+::stationExit
+@function SceneStart
+@when LocationVisited(RS-0-Station)
+$call topCollider->Deactivate()
+$call particles->Activate()
+$call triggers->Deactivate() 
+$call darkVol->Activate()
 
 
 

@@ -1,0 +1,13 @@
+# basePath credits
+
+:: checkIntro
+@trigger    SceneStart
+@noDelay
+
+{fade-out black, 0}
+
+$call hotbar.guide->Lock()
+$call hotbar.portable->Lock()
+
+{wait 0.5}
+{fade-in 1}
