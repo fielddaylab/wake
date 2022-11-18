@@ -1,6 +1,7 @@
 using UnityEngine;
 using Aqua;
 using UnityEngine.UI;
+using BeauUtil.UI;
 
 namespace ProtoAqua.Observation
 {
@@ -9,7 +10,7 @@ namespace ProtoAqua.Observation
         #region Inspector
 
         public Image Icon;
-        public Image Meter;
+        public EllipseGraphic Meter;
 
         #endregion // Inspector
     }

@@ -1,6 +1,7 @@
 using Aqua.Compression;
 using UnityEngine;
 using BeauUtil;
+using BeauUtil.UI;
 using UnityEngine.UI;
 using EasyAssetStreaming;
 using TMPro;

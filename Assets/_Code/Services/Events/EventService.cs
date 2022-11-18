@@ -26,228 +26,7 @@ namespace Aqua
 
         private class HandlerBlock
         {
-            private RingBuffer<Handler> m_Actions = new RingBuffer<Handler>(8, RingBufferMode.Expand);
-            private bool m_DeletesQueued;
-            private int m_ExecutionDepth;
-            private StringHash32 m_EventId;
-
-            public HandlerBlock(StringHash32 inEventId)
-            {
-                m_EventId = inEventId;
-            }
-
-            public void Invoke(object inContext)
-            {
-                if (m_Actions.Count == 0)
-                    return;
-
-                ++m_ExecutionDepth;
-
-                for(int i = m_Actions.Count - 1; i >= 0; --i)
-                {
-                    ref Handler handler = ref m_Actions[i];
-                    if (!handler.Invoke(inContext))
-                        m_DeletesQueued = true;
-                }
-
-                if (--m_ExecutionDepth == 0)
-                {
-                    if (m_DeletesQueued)
-                        Cleanup();
-                }
-            }
-
-            public void Add(in Handler inHandler)
-            {
-                m_Actions.PushBack(inHandler);
-            }
-
-            public void Delete(UnityEngine.Object inObject)
-            {
-                for(int i = m_Actions.Count - 1; i >= 0; --i)
-                {
-                    ref Handler handler = ref m_Actions[i];
-                    if (handler.Match(inObject))
-                    {
-                        if (m_ExecutionDepth > 0)
-                        {
-                            handler.Delete = true;
-                            m_DeletesQueued = true;
-                        }
-                        else
-                        {
-                            m_Actions.FastRemoveAt(i);
-                        }
-                    }
-                }
-            }
-
-            public void Delete(Action inAction)
-            {
-                for(int i = m_Actions.Count - 1; i >= 0; --i)
-                {
-                    ref Handler handler = ref m_Actions[i];
-                    if (handler.Match(inAction))
-                    {
-                        if (m_ExecutionDepth > 0)
-                        {
-                            handler.Delete = true;
-                            m_DeletesQueued = true;
-                        }
-                        else
-                        {
-                            m_Actions.FastRemoveAt(i);
-                        }
-                    }
-                }
-            }
-
-            public void Delete(Action<object> inAction)
-            {
-                for(int i = m_Actions.Count - 1; i >= 0; --i)
-                {
-                    ref Handler handler = ref m_Actions[i];
-                    if (handler.Match(inAction))
-                    {
-                        if (m_ExecutionDepth > 0)
-                        {
-                            handler.Delete = true;
-                            m_DeletesQueued = true;
-                        }
-                        else
-                        {
-                            m_Actions.FastRemoveAt(i);
-                        }
-                    }
-                }
-            }
-
-            public void Delete(MulticastDelegate inCastedAction)
-            {
-                for(int i = m_Actions.Count - 1; i >= 0; --i)
-                {
-                    ref Handler handler = ref m_Actions[i];
-                    if (handler.Match(inCastedAction))
-                    {
-                        if (m_ExecutionDepth > 0)
-                        {
-                            handler.Delete = true;
-                            m_DeletesQueued = true;
-                        }
-                        else
-                        {
-                            m_Actions.FastRemoveAt(i);
-                        }
-                    }
-                }
-            }
-
-            public void Clear()
-            {
-                if (m_ExecutionDepth > 0)
-                {
-                    for(int i = m_Actions.Count - 1; i >= 0; --i)
-                    {
-                        ref Handler handler = ref m_Actions[i];
-                        handler.Delete = true;
-                    }
-                    m_DeletesQueued = true;
-                }
-                else
-                {
-                    m_Actions.Clear();
-                    m_DeletesQueued = false;
-                }
-            }
-
-            public int Cleanup()
-            {
-                int cleanedUpFromDestroy = 0;
-
-                if (m_ExecutionDepth > 0)
-                {
-                    m_DeletesQueued = true;
-                }
-                else
-                {
-                    for(int i = m_Actions.Count - 1; i >= 0; --i)
-                    {
-                        bool bindingDestroyed;
-                        if (m_Actions[i].ShouldDelete(out bindingDestroyed))
-                        {
-                            if (bindingDestroyed)
-                            {
-                                #if UNITY_EDITOR
-                                Log.Warn("[EventService] Cleaning up binding on event '{0}' for dead object '{1}'",
-                                    m_EventId, m_Actions[i].Name);
-                                #endif // UNITY_EDITOR
-                                ++cleanedUpFromDestroy;
-                            }
-                            m_Actions.FastRemoveAt(i);
-                        }
-                    }
-                }
-
-                return cleanedUpFromDestroy;
-            }
-        }
-
-        private struct Handler
-        {
-            private RuntimeObjectHandle m_Binding;
-            private CastableAction<object> m_Action;
-
-            public string Name;
-            public bool Delete;
-
-            public Handler(CastableAction<object> inAction, UnityEngine.Object inBinding)
-            {
-                m_Binding = inBinding;
-                m_Action = inAction;
-                Delete = false;
-
-                #if UNITY_EDITOR
-                Name = inBinding.IsReferenceNull() ? null : inBinding.name;
-                #else
-                Name = null;
-                #endif // UNITY_EDITOR
-            }
-
-            public bool Match(UnityEngine.Object inBinding)
-            {
-                return m_Binding.Equals(inBinding);
-            }
-
-            public bool Match(Action inAction)
-            {
-                return m_Action.Equals(inAction);
-            }
-
-            public bool Match(Action<object> inActionWithContext)
-            {
-                return m_Action.Equals(inActionWithContext);
-            }
-
-            public bool Match(MulticastDelegate inActionWithCastedContext)
-            {
-                return m_Action.Equals(inActionWithCastedContext);
-            }
-
-            public bool Invoke(object inContext)
-            {
-                bool discard;
-                if (ShouldDelete(out discard))
-                    return false;
-
-                m_Action.Invoke(inContext);
-                return !Delete;
-            }
-
-            public bool ShouldDelete(out bool outReferenceDestroyed)
-            {
-                outReferenceDestroyed = m_Binding.WasDestroyed();
-                return Delete || outReferenceDestroyed;
-            }
+            public CastableEvent<object> Invoker = new CastableEvent<object>();
         }
 
         // Implements the event listener
@@ -329,10 +108,10 @@ namespace Aqua
             HandlerBlock block;
             if (!m_Handlers.TryGetValue(inEventId, out block))
             {
-                block = new HandlerBlock(inEventId);
+                block = new HandlerBlock();
                 m_Handlers.Add(inEventId, block);
             }
-            block.Add(new Handler(CastableAction<object>.Create(inAction), inBinding));
+            block.Invoker.Register(inAction, inBinding);
 
             return this;
         }
@@ -345,10 +124,10 @@ namespace Aqua
             HandlerBlock block;
             if (!m_Handlers.TryGetValue(inEventId, out block))
             {
-                block = new HandlerBlock(inEventId);
+                block = new HandlerBlock();
                 m_Handlers.Add(inEventId, block);
             }
-            block.Add(new Handler(CastableAction<object>.Create(inActionWithContext), inBinding));
+            block.Invoker.Register(inActionWithContext, inBinding);
 
             return this;
         }
@@ -361,10 +140,10 @@ namespace Aqua
             HandlerBlock block;
             if (!m_Handlers.TryGetValue(inEventId, out block))
             {
-                block = new HandlerBlock(inEventId);
+                block = new HandlerBlock();
                 m_Handlers.Add(inEventId, block);
             }
-            block.Add(new Handler(CastableAction<object>.Create(inActionWithCastedContext), inBinding));
+            block.Invoker.Register(inActionWithCastedContext, inBinding);
 
             return this;
         }
@@ -377,7 +156,7 @@ namespace Aqua
             HandlerBlock block;
             if (m_Handlers.TryGetValue(inEventId, out block))
             {
-                block.Delete(inAction);
+                block.Invoker.Deregister(inAction);
             }
 
             return this;
@@ -391,7 +170,7 @@ namespace Aqua
             HandlerBlock block;
             if (m_Handlers.TryGetValue(inEventId, out block))
             {
-                block.Delete(inActionWithContext);
+                block.Invoker.Deregister(inActionWithContext);
             }
 
             return this;
@@ -405,7 +184,7 @@ namespace Aqua
             HandlerBlock block;
             if (m_Handlers.TryGetValue(inEventId, out block))
             {
-                block.Delete(inActionWithCastedContext);
+                block.Invoker.Deregister(inActionWithCastedContext);
             }
 
             return this;
@@ -419,7 +198,7 @@ namespace Aqua
             HandlerBlock block;
             if (m_Handlers.TryGetValue(inEventId, out block))
             {
-                block.Clear();
+                block.Invoker.Clear();
             }
 
             return this;
@@ -435,7 +214,7 @@ namespace Aqua
 
             foreach(var block in m_Handlers.Values)
             {
-                block.Delete(inBinding);
+                block.Invoker.DeregisterAll(inBinding);
             }
 
             return this;
@@ -465,7 +244,7 @@ namespace Aqua
             HandlerBlock block;
             if (m_Handlers.TryGetValue(inEventId, out block))
             {
-                block.Invoke(inContext);
+                block.Invoker.Invoke(inContext);
             }
         }
 
@@ -485,7 +264,7 @@ namespace Aqua
             int cleanedUpFromDestroyed = 0;
             foreach(var block in m_Handlers.Values)
             {
-                cleanedUpFromDestroyed += block.Cleanup();
+                cleanedUpFromDestroyed += block.Invoker.DeregisterAllWithDeadContext();
             }
 
             if (cleanedUpFromDestroyed > 0)

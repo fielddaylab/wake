@@ -346,7 +346,7 @@ namespace Aqua
         /// Executes a script command.
         /// Format should be "method arg0, arg1, arg2, ..." or "targetId->method arg0, arg1, arg2, ..."
         /// </summary>
-        public object Execute(StringSlice inCommand)
+        public NonBoxedValue Execute(StringSlice inCommand)
         {
             StringSlice target = StringSlice.Empty, method, args;
             var methodArgs = TagData.Parse(inCommand, Parsing.InlineEvent);
@@ -360,7 +360,7 @@ namespace Aqua
                 method = method.Substring(indirectIndex + 2);
             }
 
-            object result;
+            NonBoxedValue result;
             if (target.IsEmpty)
             {
                 m_LeafCache.TryStaticInvoke(method, args, null, out result);

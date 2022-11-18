@@ -13,7 +13,7 @@ namespace Aqua.Editor
 {
     static public class SceneArtProfiler {
         public struct AssetStats {
-            public string SceneName;
+            public string RootName;
             public Dictionary<int, int> UseCount;
             public long AssetSize;
         }
@@ -25,7 +25,7 @@ namespace Aqua.Editor
         public struct AssetStatDB {
             public AssetStats Total;
             public AssetMetaDB Metadata;
-            public List<AssetStats> ByScene;
+            public List<AssetStats> ByRoot;
         }
 
         private struct IdWithRefCount {
@@ -48,14 +48,14 @@ namespace Aqua.Editor
             public int[] SubAssets;
         }
 
-        [MenuItem("Aqualab/Generate Art Stats")]
+        [MenuItem("Aqualab/DEBUG/Generate Art Stats")]
         static private void GenerateStats() {
             string currentPath = EditorSceneManager.GetActiveScene().path;
             List<SceneBinding> allScenes = new List<SceneBinding>(SceneHelper.AllBuildScenes(true));
             AssetStatDB statDB = new AssetStatDB();
             statDB.Total.UseCount = new Dictionary<int, int>();
             statDB.Metadata.Metadata = new Dictionary<int, AssetMeta>();
-            statDB.ByScene = new List<AssetStats>(allScenes.Count);
+            statDB.ByRoot = new List<AssetStats>(allScenes.Count);
 
             try
             {
@@ -65,9 +65,8 @@ namespace Aqua.Editor
                     {
                         SceneBinding scene = allScenes[i];
                         AssetStats forScene = new AssetStats();
-                        forScene.SceneName = scene.Name;
+                        forScene.RootName = scene.Name;
                         forScene.UseCount = new Dictionary<int, int>();
-                        statDB.ByScene.Add(forScene);
 
                         bool cancel = EditorUtility.DisplayCancelableProgressBar("Profiling scene", string.Format("{0} ({1}/{2})", scene.Name, i + 1, allScenes.Count), (float) i / allScenes.Count);
                         if (cancel) {
@@ -98,13 +97,61 @@ namespace Aqua.Editor
                                 Reference(spriteRenderer.sprite, ref forScene, ref statDB);
                             }
                         }
+
+                        statDB.ByRoot.Add(forScene);
+                    }
+
+                    var allResourcePrefabs = Resources.LoadAll<GameObject>("");
+                    for(int i = 0; i < allResourcePrefabs.Length; i++)
+                    {
+                        GameObject prefab = allResourcePrefabs[i];
+                        AssetStats forPrefab = new AssetStats();
+                        forPrefab.RootName = prefab.name;
+                        forPrefab.UseCount = new Dictionary<int, int>();
+
+                        bool cancel = EditorUtility.DisplayCancelableProgressBar("Profiling prefab", string.Format("{0} ({1}/{2})", prefab.name, i + 1, allResourcePrefabs.Length), (float) i / allResourcePrefabs.Length);
+                        if (cancel) {
+                            return;
+                        }
+                        Log.Msg("[SceneArtProfiler] Loading '{0}'", prefab.name);
+
+                        GameObject instantiated = null;
+
+                        try {
+                            instantiated = GameObject.Instantiate(prefab);
+                            foreach(var meshFilter in instantiated.GetComponentsInChildren<MeshFilter>(true)) {
+                                if (!meshFilter.GetComponent<StreamingQuadTexture>()) {
+                                    Reference(meshFilter.sharedMesh, ref forPrefab, ref statDB);
+                                }
+                            }
+
+                            foreach(var renderer in instantiated.GetComponentsInChildren<Renderer>(true)) {
+                                foreach(var material in renderer.sharedMaterials) {
+                                    Reference(material, ref forPrefab, ref statDB);
+                                }
+                            }
+
+                            foreach(var skinned in instantiated.GetComponentsInChildren<SkinnedMeshRenderer>(true)) {
+                                Reference(skinned.sharedMesh, ref forPrefab, ref statDB);
+                            }
+
+                            foreach(var spriteRenderer in instantiated.GetComponentsInChildren<SpriteRenderer>(true)) {
+                                Reference(spriteRenderer.sprite, ref forPrefab, ref statDB);
+                            }
+
+                            statDB.ByRoot.Add(forPrefab);
+                        } finally {
+                            if (instantiated) {
+                                GameObject.DestroyImmediate(instantiated);
+                            }
+                        }
                     }
 
                     using(var writer = new StreamWriter(File.Open("SceneStats.txt", FileMode.Create))) {
-                        writer.Write("BY SCENE\n----\n\n");
-                        foreach(var sceneStats in statDB.ByScene) {
-                            writer.Write("Scene: ");
-                            writer.Write(sceneStats.SceneName);
+                        writer.Write("BY ROOT\n----\n\n");
+                        foreach(var sceneStats in statDB.ByRoot) {
+                            writer.Write("Root: ");
+                            writer.Write(sceneStats.RootName);
                             writer.Write(" (");
                             writer.Write(EditorUtility.FormatBytes(sceneStats.AssetSize));
                             writer.Write(")\n");
@@ -123,7 +170,7 @@ namespace Aqua.Editor
                             writer.Write("\n");
                         }
 
-                        writer.Write("\nNUM SCENES REFERENCING ASSETS\n---\n\n");
+                        writer.Write("\nNUM ROOTS REFERENCING ASSETS\n---\n\n");
                         
                         IdWithRefCount[] refs = ArrayUtils.MapFrom(statDB.Total.UseCount, (kv) => new IdWithRefCount(kv, statDB.Metadata));
                         Array.Sort(refs, (a, b) => {
@@ -147,7 +194,7 @@ namespace Aqua.Editor
                             writer.Write(EditorUtility.FormatBytes(meta.Size));
                             writer.Write(") - Referenced in ");
                             writer.Write(r.Count);
-                            writer.Write(" scenes(s)");
+                            writer.Write(" root(s)");
                             writer.Write("\n");
                         }
 
@@ -164,7 +211,7 @@ namespace Aqua.Editor
                             writer.Write(EditorUtility.FormatBytes(meta.Size));
                             writer.Write(") - Referenced in ");
                             writer.Write(r.Count);
-                            writer.Write(" scenes(s)");
+                            writer.Write(" root(s)");
                             writer.Write("\n");
                         }
 

@@ -90,7 +90,7 @@ namespace Aqua {
 
             T val = default(T);
             if (((ulong)(*mem) % Unsafe.AlignOf<T>()) == 0) {
-                val = Unsafe.FastReinterpret<byte, T>(*mem);
+                val = Unsafe.Reinterpret<byte, T>(*mem);
             } else {
                 Unsafe.Copy(*mem, sizeof(T), &val, sizeof(T));
             }
@@ -274,7 +274,7 @@ namespace Aqua {
                 return false;
             }
 
-            header = Unsafe.FastReinterpret<byte, CompressionHeader>(src);
+            header = Unsafe.Reinterpret<byte, CompressionHeader>(src);
             return header.Magic[0] == 'L' && header.Magic[1] == 'Z' && header.Magic[2] == 'B' && header.Magic[3] == '0';
         }
 

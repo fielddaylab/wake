@@ -7,6 +7,7 @@ using BeauPools;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
+using BeauUtil.UI;
 using EasyAssetStreaming;
 using NativeUtils;
 using TMPro;
@@ -42,6 +43,9 @@ namespace Aqua {
         [Header("Preload")]
         [SerializeField, Required] private TextAsset[] m_PreloadGroupFiles = null;
 
+        [Header("Sprites")]
+        [SerializeField, Required] private Sprite m_DefaultSquare = null;
+
         #endregion // Inspector
 
         public ActDB Acts { get { return m_Acts; } }
@@ -66,6 +70,8 @@ namespace Aqua {
 
         protected override void Initialize() {
             base.Initialize();
+
+            SharedCanvasResources.DefaultWhiteSprite = m_DefaultSquare;
 
             m_Acts.Initialize();
             m_Jobs.Initialize();

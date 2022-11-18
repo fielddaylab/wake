@@ -35,6 +35,7 @@ namespace EasyAssetStreaming {
         internal struct ManifestEntry {
             public string Path;
             public StreamingAssetType Type;
+            public long Size;
 
             public Textures.TextureSettings Texture;
         }
@@ -137,9 +138,11 @@ namespace EasyAssetStreaming {
 
                     entry.Path = relativePath;
                     entry.Type = IdentifyAssetTypeFromExt(ext);
+                    entry.Size = new FileInfo(fullPath).Length;
 
                     WriteEnum(entryJSON, "Type", entry.Type.Id);
                     WriteEnum(entryJSON, "SubType", entry.Type.Sub, StreamingAssetSubTypeId.Default);
+                    entryJSON["Size"].AsLong = entry.Size;
 
                     if (entry.Type.Id == StreamingAssetTypeId.Texture) {
                         if (entry.Type.Sub == StreamingAssetSubTypeId.Default) {
@@ -250,6 +253,7 @@ namespace EasyAssetStreaming {
                     JSON entryJSON = entryKV.Value;
                     StreamingAssetTypeId assetType = ParseEnum(entryJSON["Type"], StreamingAssetTypeId.Unknown);
                     StreamingAssetSubTypeId subType = ParseEnum(entryJSON["SubType"], StreamingAssetSubTypeId.Default);
+                    entry.Size = entryJSON["Size"].AsLong;
                     entry.Type = new StreamingAssetType(assetType, subType);
                     if (entryJSON["Texture"] != null) {
                         entry.Texture = Textures.ParseTextureSettings(entryJSON["Texture"]);
