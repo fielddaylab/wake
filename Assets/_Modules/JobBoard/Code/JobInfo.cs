@@ -105,7 +105,7 @@ namespace Aqua.JobBoard
             if (!inbHas)
             {
                 inDisplay.Locked.SetActive(true);
-                inDisplay.Icon.color = ColorBank.Gray.WithAlpha(0.5f);
+                inDisplay.Icon.color = ColorBank.Gray.WithAlpha(0.8f);
             }
             else
             {

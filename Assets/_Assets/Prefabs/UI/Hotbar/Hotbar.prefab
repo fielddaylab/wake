@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 2677484287609406807}
   - component: {fileID: 5163452557771742230}
   - component: {fileID: 762579485759374012}
+  - component: {fileID: 6670224965367142582}
   m_Layer: 5
   m_Name: Hotbar
   m_TagString: Untagged
@@ -198,6 +199,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_CanvasGroup: {fileID: 5163452557771742230}
+--- !u!114 &6670224965367142582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 183757642039306739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9372e1872ff7904c960bcf35508f1bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_WhiteSprite: {fileID: 21300000, guid: 510a9ede8615ea84b99bd898b716ef68, type: 3}
 --- !u!114 &548855573121191927
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -506,6 +520,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6627765098526452176}
     m_Modifications:
+    - target: {fileID: 110751972680460203, guid: a9f3cd04611672d4a83d28806bc60d11,
+        type: 3}
+      propertyPath: m_TargetGraphic
+      value: 
+      objectReference: {fileID: 3525846830054235203}
     - target: {fileID: 403321102130430852, guid: a9f3cd04611672d4a83d28806bc60d11,
         type: 3}
       propertyPath: m_Name
@@ -630,3 +649,15 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 183757643545937624}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3525846830054235203 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3630611140473543323, guid: a9f3cd04611672d4a83d28806bc60d11,
+    type: 3}
+  m_PrefabInstance: {fileID: 183757643545937624}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3cce1025f282c247b38ed00ee6ddc0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -339,14 +339,6 @@ namespace Aqua
 
         private void LogAcceptJob(StringHash32 jobId)
         {
-            if (SetCurrentJob(jobId))
-            {
-                using(var e = m_Log.NewEvent("switch_job")) {
-                    e.Param("job_name", m_CurrentJobName);
-                    e.Param("prev_job_name", m_PreviousJobName);
-                }
-            }
-
             using(var e = m_Log.NewEvent("accept_job")) {
                 e.Param("job_name", m_CurrentJobName);
             }
@@ -411,10 +403,6 @@ namespace Aqua
             using(var e = m_Log.NewEvent("complete_job")) {
                 e.Param("job_name", parsedJobName);
             }
-
-            m_PreviousJobName = m_CurrentJobName;
-            m_CurrentJobHash = null;
-            m_CurrentJobName = NoActiveJobId;
         }
 
         private void LogCompleteTask(StringHash32 inTaskId)

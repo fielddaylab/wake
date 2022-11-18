@@ -1,6 +1,7 @@
 using System;
 using BeauPools;
 using BeauUtil;
+using BeauUtil.UI;
 using EasyAssetStreaming;
 using TMPro;
 using UnityEngine;

@@ -3,6 +3,7 @@ using BeauPools;
 using UnityEngine;
 using UnityEngine.UI;
 using BeauUtil;
+using BeauUtil.UI;
 
 namespace Aqua.Modeling {
     public class ModelConnectionDisplay : MonoBehaviour, IPoolAllocHandler {

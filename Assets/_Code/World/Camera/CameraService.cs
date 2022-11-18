@@ -1408,6 +1408,37 @@ namespace Aqua.Cameras
 
         #region Render Regions
 
+        private void UpdateCameraRenderResolution() {
+            if (!m_RenderScale) {
+                return;
+            }
+
+            float currentHeight = Screen.height;
+            switch(Save.Options.Performance.Resolution) {
+                case Option.OptionsPerformance.ResolutionMode.Minimum: {
+                    m_RenderScale.Mode = CameraRenderScale.ScaleMode.PixelHeight;
+                    m_RenderScale.PixelHeight = (int) DesiredHeight;
+                    break;
+                }
+                case Option.OptionsPerformance.ResolutionMode.Moderate: {
+                    float scaleForMin = DesiredHeight / currentHeight;
+                    m_RenderScale.Mode = CameraRenderScale.ScaleMode.Scale;
+                    if (scaleForMin < 1) {
+                        float newScale = 1 - ((1 - scaleForMin) * 0.5f);
+                        m_RenderScale.Scale = newScale;
+                    } else {
+                        m_RenderScale.Scale = 1;
+                    }
+                    break;
+                }
+                case Option.OptionsPerformance.ResolutionMode.High: {
+                    m_RenderScale.Mode = CameraRenderScale.ScaleMode.Scale;
+                    m_RenderScale.Scale = 1;
+                    break;
+                }
+            }
+        }
+
         private void UpdateCameraRenderRegion() {
             float aspect = DesiredWidth / DesiredHeight;
             float scrW = Screen.width, scrH = Screen.height;
@@ -1434,6 +1465,7 @@ namespace Aqua.Cameras
         }
 
         private void OnCameraPreRender(ScriptableRenderContext ctx, Camera[] cameras) {
+            UpdateCameraRenderResolution();
             UpdateCameraRenderRegion();
 
             foreach(var camera in cameras) {
