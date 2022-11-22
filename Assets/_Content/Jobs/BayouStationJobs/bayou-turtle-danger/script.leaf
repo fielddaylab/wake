@@ -21,7 +21,8 @@ $if !HasEntity(Cyanobacteria)
                     That means you'll be able to detect a new organism at Site O.
                     Make sure to scan it and count its population, as you did for the other species. 
 $endif
-{@player} Copy that. I'll be back soon. 
+{@player} Copy that. I'll be back soon.
+$call GiveJournalEntry("N15_BayouFight")
 
 :: diveSite
 @trigger    SceneStart
