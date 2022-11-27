@@ -45,15 +45,17 @@ namespace Aqua.Animation
                 if (currentHash == 0) {
                     OnStateEnd(true);
                 } else {
+                    bool bFound = false;
                     for(int i = 0; i < States.Length; i++) {
                         ref State entry = ref States[i];
                         if (entry.StateNameHash == currentHash) {
                             OnStateBegin(i);
+                            bFound = true;
                             break;
                         }
                     }
 
-                    if (timeUpdated) {
+                    if (timeUpdated && !bFound) {
                         OnStateEnd(true);
                     }
                 }
