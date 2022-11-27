@@ -7,7 +7,7 @@
 @cutscene
 {@bayouSci} Okay, kid, let's get to it.
             Last time I was down at Site N, there was an explosion. 
-            It took out our comms tower--I was lucky to escape. 
+            It took out our comms tower--I was lucky to escape.
             The professor here thinks it was my fault.
 {@profBayou} That's not accurate, Silias. I merely said that you've been known to drive recklessly...
              And you're the only person who was down there. 
@@ -20,8 +20,9 @@ $if HasEntity(Methane),HasEntity(Methanogen)
 $else
     {@bayouSci} What are you waitin' for? Head down to {h}Site N{/h} and start scanning some stuff.
                 Oh, and try not to crash, okay? I'd hate to have to tell your mother we got you blown up.  
-    {@player} Yeah. Me too.  
+    {@player} Yeah. Me too.
 $endif
+$call GiveJournalEntry("N16_BayouExplosion")
 
 :: atSiteN
 @trigger SceneStart
