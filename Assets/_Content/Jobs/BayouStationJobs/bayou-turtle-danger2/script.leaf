@@ -20,6 +20,90 @@
 {@bayouSci}   Oh... ah... I do, of course.
               Just couldn't stand to leave the kid hangin'. She looked so clueless.
 {@player}     Um. Thanks, Silias. I guess. 
+$set jobs:bayou-turtle-danger.sync-failed = false
+
+
+// MODELING SUGGESTIONS
+
+:: triggerSyncFailure
+@trigger    SimulationSyncError
+@when       !jobs:bayou-turtle-danger.sync-failed
+@once
+$set jobs:bayou-turtle-danger.sync-failed = true
+
+:: helpModelSync.Visual
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(syncModel), scene:name == "Modeling", modeling:phase == "visual"
+@cutscene
+$branch .modelSuggestions
+
+:: helpModelSync.Sync
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(syncModel), scene:name == "Modeling", modeling:phase == "sync"
+@cutscene
+$branch .modelSuggestions
+
+:: modelSuggestions
+$if HasFact(LoggerheadTurtle.Reproduce), HasFact(LoggerheadTurtle.Eats.Cyanobacteria), HasFact(LoggerheadTurtle.Eats.AngelFish), HasFact(RedGrouper.Reproduce), HasFact(RedGrouper.Eats.AngelFish), IsFactFullyUpgraded(LoggerheadTurtle.Eats.AngelFish), HasFact(RedGrouper.Eats.Cyanobacteria), IsFactFullyUpgraded(RedGrouper.Eats.Cyanobacteria), HasFact(AngelFish.Reproduce.Stressed), HasFact(AngelFish.Eats.SeaPearl.Stressed), IsFactFullyUpgraded(AngelFish.Eats.SeaPearl.Stressed), HasFact(Cyanobacteria.Reproduce), HasFact(SeaPearl.Reproduce.Stressed), HasFact(ElkhornCoral.Reproduce.Stressed)
+    $if HasFact(O_OilRig.turtleDangerJellies.Model.Visual)
+        {@guide}    You're done with this portion! Head to the {h}Describe{/h} tab next.
+    $else
+        {@guide}    Once you import your facts and save the Visual model, we should be good to make our Describe model!
+    $endif
+$else
+    $if !jobs:hide-n-seek.sync-failed
+        {@guide}    Time to try out your model in the {h}Describe{/h} tab.
+    $else
+        {@guide}    Seems like we don't have enough information to complete our model accurately.
+                    Look for {h}question marks{/h} in the  Visual model interface, those point to where we may need more data.
+        $if !HasFact(LoggerheadTurtle.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(LoggerheadTurtle.Eats.Cyanobacteria)
+            $branch .suggestTurtleEat
+        $elseif !HasFact(LoggerheadTurtle.Eats.AngelFish)
+            $branch .suggestTurtleEat
+        $elseif !HasFact(RedGrouper.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(RedGrouper.Eats.AngelFish)
+            $branch .suggestGrouperEat
+        $elseif !IsFactFullyUpgraded(RedGrouper.Eats.AngelFish)
+            $branch .suggestGrouperEat
+        $elseif !HasFact(RedGrouper.Eats.Cyanobacteria)
+            $branch .suggestGrouperEat
+        $elseif !IsFactFullyUpgraded(RedGrouper.Eats.Cyanobacteria)
+            $branch .suggestGrouperEat
+        $elseif !HasFact(AngelFish.Reproduce.Stressed)
+            $branch .suggestReproduce
+        $elseif !HasFact(AngelFish.Eats.SeaPearl.Stressed)
+            $branch .suggestAngelEat
+        $elseif !IsFactFullyUpgraded(AngelFish.Eats.SeaPearl.Stressed)
+            $branch .suggestAngelEat
+        $elseif !HasFact(Cyanobacteria.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(SeaPearl.Reproduce.Stressed)
+            $branch .suggestReproduce
+        $elseif !HasFact(ElkhornCoral.Reproduce.Stressed)
+            $branch .suggestReproduce
+        $endif
+    $endif
+$endif
+
+:: suggestReproduce
+{@guide}    Did you get all the reproduction rates?
+
+:: suggestMeasure
+{@guide}    Using the {h}Measurement Tank{/h} to find the rates of unmeasured behaviors may help us here.
+
+:: suggestTurtleEat
+{@guide}    Maybe look into what {nameof LoggerheadTurtle} eats?
+
+:: suggestGrouperEat
+{@guide}    Maybe look into what {nameof RedGrouper} eats?
+
+:: suggestAngelEat
+{@guide}    Maybe look into what {nameof AngelFish} eats?
+
+
 
 // CATCH-ALL GUIDE TEXT
 :: catchHistoricalData

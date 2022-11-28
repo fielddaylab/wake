@@ -9,6 +9,7 @@
 			 I wondered if you could collect data to improve the model's accuracy.
 {@player}	Sure, Professor. I'd love to help. 
 $set jobs:coral-tang-checkup.grantedData = false
+$set jobs:coral-tang-checkup.sync-failed = false
 $if JobTaskCompleted(observeIck)
 	{@profCoral} I noticed that you already measured the stress ranges of the Blue Tang.
 				 I used your data to measure their eating and reproduction rates under stress. I'll send you the data. 
@@ -89,34 +90,6 @@ $branch .grantStressedData
 @cutscene
 {@guide}     Use the measurement tank to get the reproduction rate of Blue Tang when stressed
 
-// :: measureHint2
-// @trigger	ExperimentFinished
-// @when		IsFactFullyUpgraded(BlueTang.Reproduce.Stressed), !IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed)
-// @once
-// @cutscene
-// {@guide}	The presence of {nameof Ick} really slows down {nameof BlueTang} reproduction. What about consumption?
-//             Do Tang eat slower when stressed? You'll need to measure {nameof BlueTang} and {nameof TurfAlgae} in {h}water that stresses{/h} the {nameof BlueTang}.
-
-// :: helpMeasure2
-// @trigger    RequestPartnerHelp
-// @when 		JobTaskActive(measureIck), IsFactFullyUpgraded(BlueTang.Reproduce.Stressed), !IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed)
-// @cutscene
-// {@guide}     Use the {map-name}Measurement Tank{/map-name} to get the rate at which {nameof BlueTang} eats {nameof TurfAlgae} when stressed.
-
-// :: measureHint3
-// @trigger	ExperimentFinished
-// @when		IsFactFullyUpgraded(BlueTang.Reproduce.Stressed), IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed)
-// @once
-// @cutscene
-// {@guide}	I calculate that this may be the missing element from our previous model.
-// 			Let's try to revise your {map-name}descriptive model{/map-name} in light of the new information just acquired.
-
-// :: helpMeasure3
-// @trigger    RequestPartnerHelp
-// @when 		JobTaskActive(improveDescribe), IsFactFullyUpgraded(BlueTang.Reproduce.Stressed), IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed)
-// @cutscene
-// {@guide}	Go to the {map-name}modeling tool{/map-name} and redo your {h}descriptive model{/h} with the new information you have.	 
-
 :: describeComplete
 @trigger	JobTasksUpdated
 @when		JobTaskTop(report)
@@ -124,6 +97,82 @@ $branch .grantStressedData
 @cutscene
 {@guide}	This model seems much more aligned with what we observed at Site S! 
 			Time to report back to {nameof @profCoral}.
+
+
+// MODELING SUGGESTIONS
+
+:: triggerSyncFailure
+@trigger    SimulationSyncError
+@when       !jobs:coral-tang-checkup.sync-failed
+@once
+$set jobs:coral-tang-checkup.sync-failed = true
+
+:: helpModelSync.Visual
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reviseModels), scene:name == "Modeling", modeling:phase == "visual"
+@cutscene
+$branch .modelSuggestions
+
+:: helpModelSync.Sync
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reviseModels), scene:name == "Modeling", modeling:phase == "sync"
+@cutscene
+$branch .modelSuggestions
+
+:: modelSuggestions
+$if HasFact(Fisher.Eats.Lionfish), IsFactFullyUpgraded(Fisher.Eats.Lionfish), HasFact(BlueTang.Reproduce.Stressed), HasFact(BlueTang.Eats.TurfAlgae), IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae), HasFact(BlueTang.Eats.TurfAlgae.Stressed), IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed), HasFact(Lionfish.Eats.BlueheadWrasse), HasFact(Lionfish.Eats.BlueTang), HasFact(Ick.Reproduce), HasFact(Ick.Stresses.BlueTang), IsFactFullyUpgraded(Ick.Stresses.BlueTang), HasFact(StaghornCoral.Reproduce), HasFact(RedGrouper.Reproduce)
+    $if HasFact(LionfishInvasion.Model.IckStressVisual)
+        {@guide}    You're done with this portion! Head to the {h}Describe{/h} tab next.
+    $else
+        {@guide}    Once you import your facts and save the Visual model, we should be good to make our Describe model!
+    $endif
+$else
+    $if !jobs:coral-tang-checkup.sync-failed
+        {@guide}    Time to try out your model in the {h}Describe{/h} tab.
+    $else
+        {@guide}    Seems like we don't have enough information to complete our model accurately.
+                    Look for {h}question marks{/h} in the  Visual model interface, those point to where we may need more data.
+
+		$if !HasFact(Fisher.Eats.Lionfish)
+			$branch .suggestObserve
+		$elseif !IsFactFullyUpgraded(Fisher.Eats.Lionfish)
+			$branch .suggestMeasure
+		$elseif !HasFact(BlueTang.Reproduce.Stressed)
+			$branch .suggestReproduce
+		$elseif !HasFact(BlueTang.Eats.TurfAlgae)
+			$branch .suggestObserve
+		$elseif !IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae)
+			$branch .suggestMeasure
+		$elseif !HasFact(BlueTang.Eats.TurfAlgae.Stressed)
+			$branch .suggestObserve
+		$elseif !IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed)
+			$branch .suggestMeasure
+		$elseif !HasFact(Lionfish.Eats.BlueheadWrasse)
+			$branch .suggestObserve
+		$elseif !HasFact(Lionfish.Eats.BlueTang)
+			$branch .suggestObserve
+		$elseif !HasFact(Ick.Reproduce)
+			$branch .suggestReproduce
+		$elseif !HasFact(Ick.Stresses.BlueTang)
+			$branch .suggestObserve
+		$elseif !IsFactFullyUpgraded(Ick.Stresses.BlueTang)
+			$branch .suggestMeasure
+		$elseif !HasFact(StaghornCoral.Reproduce)
+			$branch .suggestReproduce
+		$elseif !HasFact(RedGrouper.Reproduce)
+			$branch .suggestReproduce
+		$endif
+    $endif
+$endif
+
+:: suggestReproduce
+{@guide}    Did you get all the reproduction rates?
+
+:: suggestObserve
+{@guide}    Are you sure you have observed all the interactions here?
+
+:: suggestMeasure
+{@guide}    You may need to measure the rates of interactions.
 
 
 // CATCH-ALL GUIDE TEXT

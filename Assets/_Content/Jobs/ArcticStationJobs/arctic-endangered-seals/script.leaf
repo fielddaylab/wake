@@ -15,35 +15,7 @@ $call GiveFact(ArcticCopepod.Reproduce)
 $call GiveFact(ArcticCopepod.Reproduce.Stressed)
 {@arcticSci}    In addition, we deployed a population history probe after you discovered {fullnameof RS-4Y}.
                 The data is limited because it's only been out a short while, but every bit counts.
-
-:: helpModelSync
-@trigger    RequestPartnerHelp
-@when 		JobTaskActive(modelSync), scene:name == "Modeling", modeling:phase == "visual"
-@cutscene
-$if HasFact(RibbonSeal.Eats.ArcticCod), HasFact(ArcticCod.Eats.ArcticCopepod), HasFact(ArcticCod.Eats.GlacialAmphipod), HasFact(ArcticCod.Eats.IceAlgae), HasFact(ArcticCopepod.Eats.IceAlgae), HasFact(GlacialAmphipod.Eats.IceAlgae)
-    $if HasFact(Y_IceCrevice.Model.EndangeredSealsVisual)
-        {@guide}    You're done with this portion! Head to the {h}Describe{/h} tab next.
-    $else
-        {@guide}    Once you import your facts, we should be good to make our model!
-    $endif
-$else
-    {@guide}    Seems like we don't have enough information to begin our model.
-                Look for {h}question marks{/h} in the interface, those point to where we may need more data.
-    $if !HasFact(RibbonSeal.Eats.ArcticCod)
-        {@guide}    Maybe look into what {pluralnameof RibbonSeal} eat?
-    $elseif !HasFact(ArcticCod.Eats.ArcticCopepod)
-        {@guide}    Maybe look into what {nameof ArcticCod} eats?
-    $elseif !HasFact(ArcticCod.Eats.GlacialAmphipod)
-        {@guide}    Maybe look into what {nameof ArcticCod} eats?
-    $elseif !HasFact(ArcticCod.Eats.IceAlgae)
-        {@guide}    Maybe look into what {nameof ArcticCod} eats?
-    $elseif !HasFact(ArcticCopepod.Eats.IceAlgae)
-        {@guide}    Maybe look into what an {nameof ArcticCopepod} eats?
-    $elseif !HasFact(GlacialAmphipod.Eats.IceAlgae)
-        {@guide}    Maybe look into what a {nameof GlacialAmphipod} eats?
-    $endif
-$endif
-
+$set jobs:arctic-endangered-seals.sync-failed = false
 
 :: afterModelSync
 @trigger    JobTaskCompleted
@@ -56,6 +28,87 @@ $endif
 @when       taskId == "modelPredict"
 @cutscene
 {@guide}    All right, back to {nameof arcticSci}!
+
+
+// MODEL SUGGESTIONS
+
+:: triggerSyncFailure
+@trigger    SimulationSyncError
+@when !jobs:arctic-endangered-seals.sync-failed
+@once
+$set jobs:arctic-endangered-seals.sync-failed = true
+
+:: helpModelSync.Visual
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(modelSync), scene:name == "Modeling", modeling:phase == "visual"
+@cutscene
+$branch .modelSuggestions
+
+:: helpModelSync.Sync
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(modelSync), scene:name == "Modeling", modeling:phase == "sync"
+@cutscene
+$branch .modelSuggestions
+
+:: modelSuggestions
+$if HasFact(RibbonSeal.Eats.ArcticCod), HasFact(ArcticCod.Eats.ArcticCopepod), IsFactFullyUpgraded(ArcticCod.Eats.ArcticCopepod), HasFact(ArcticCod.Eats.GlacialAmphipod), IsFactFullyUpgraded(ArcticCod.Eats.GlacialAmphipod), HasFact(ArcticCod.Eats.IceAlgae), IsFactFullyUpgraded(ArcticCod.Eats.IceAlgae), HasFact(ArcticCopepod.Eats.IceAlgae), HasFact(GlacialAmphipod.Eats.IceAlgae), HasFact(RibbonSeal.Reproduce), HasFact(ArcticCod.Reproduce), HasFact(GlacialAmphipod.Reproduce), HasFact(ArcticCopepod.Reproduce), HasFact(IceAlgae.Reproduce),  HasFact(GlacialAmphipod.Reproduce.Stressed), HasFact(ArcticCopepod.Reproduce.Stressed), HasFact(IceAlgae.Reproduce.Stressed)
+    $if HasFact(Y_IceCrevice.Model.EndangeredSealsVisual)
+        {@guide}    You're done with this portion! Head to the {h}Describe{/h} tab next.
+    $else
+        {@guide}    Once you import your facts and save the Visual model, we should be good to make our Describe model!
+    $endif
+$else
+    $if !jobs:arctic-endangered-seals.sync-failed
+        {@guide}    Time to try out your model in the {h}Describe{/h} tab.
+    $else
+        {@guide}    Seems like we don't have enough information to complete our model accurately.
+                    Look for {h}question marks{/h} in the Visual model interface, those point to where we may need more data.
+        $if !HasFact(RibbonSeal.Eats.ArcticCod)
+            {@guide}    Maybe look into what {pluralnameof RibbonSeal} eat?
+        $elseif !HasFact(ArcticCod.Eats.ArcticCopepod)
+            $branch .suggestArcticCodEat
+        $elseif !IsFactFullyUpgraded(ArcticCod.Eats.ArcticCopepod)
+            $branch .suggestMeasure
+        $elseif !HasFact(ArcticCod.Eats.GlacialAmphipod)
+            $branch .suggestArcticCodEat
+        $elseif !IsFactFullyUpgraded(ArcticCod.Eats.GlacialAmphipod)
+            $branch .suggestMeasure
+        $elseif !HasFact(ArcticCod.Eats.IceAlgae)
+            $branch .suggestArcticCodEat
+        $elseif !IsFactFullyUpgraded(ArcticCod.Eats.IceAlgae)
+            $branch .suggestMeasure
+        $elseif !HasFact(ArcticCopepod.Eats.IceAlgae)
+            {@guide}    Maybe look into what an {nameof ArcticCopepod} eats?
+        $elseif !HasFact(GlacialAmphipod.Eats.IceAlgae)
+            {@guide}    Maybe look into what a {nameof GlacialAmphipod} eats?
+        $elseif !HasFact(RibbonSeal.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(ArcticCod.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(GlacialAmphipod.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(ArcticCopepod.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(IceAlgae.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(GlacialAmphipod.Reproduce.Stressed)
+            $branch .suggestReproduce
+        $elseif !HasFact(ArcticCopepod.Reproduce.Stressed)
+            $branch .suggestReproduce
+        $elseif !HasFact(IceAlgae.Reproduce.Stressed)
+            $branch .suggestReproduce
+        $endif
+    $endif
+$endif
+
+:: suggestReproduce
+{@guide}    Did you get all the reproduction rates?
+
+:: suggestMeasure
+{@guide}    Using the {h}Measurement Tank{/h} to find the rates of unmeasured behaviors may help us here.
+
+:: suggestArcticCodEat
+{@guide}    Maybe look into what {nameof ArcticCod} eats?
 
 
 // CATCH-ALL GUIDE TEXT

@@ -15,6 +15,7 @@
 {@player}   But Mom...
 {@drKelp}	Head to your {nameof Modeling} and get some answers for me, okay, Sweetie?
 {@player}   Okay. Got it. 
+$set jobs:kelp-refuge-failure-sim.sync-failed = false
 
 :: helpGoToModeling
 @trigger    RequestPartnerHelp
@@ -61,6 +62,81 @@ $endif
 @cutscene
 {@player}   What now, {nameof @guide}?
 {@guide}	Head back to the {m}research station{/m} and tell your mother what you found out. 
+
+
+// MODELING SUGGESTIONS
+
+:: triggerSyncFailure
+@trigger    SimulationSyncError
+@when       !jobs:kelp-refuge-failure-sim.sync-failed
+@once
+$set jobs:kelp-refuge-failure-sim.sync-failed = true
+
+:: helpModelSync.Visual
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(createModel), scene:name == "Modeling", modeling:phase == "visual"
+@cutscene
+$branch .modelSuggestions
+
+:: helpModelSync.Sync
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(createModel), scene:name == "Modeling", modeling:phase == "sync"
+@cutscene
+$branch .modelSuggestions
+
+:: modelSuggestions
+$if HasFact(SeaOtter.Eats.Urchin), HasFact(Urchin.Eats.BullKelp), HasFact(Urchin.Eats.GiantKelp), HasFact(BullKelp.Reproduce), HasFact(BullKelp.Reproduce.Stressed), HasFact(BullKelp.Produce.Oxygen), HasFact(BullKelp.Consume.Light), HasFact(BullKelp.Consume.CarbonDioxide), HasFact(GiantKelp.Reproduce), HasFact(GiantKelp.Reproduce.Stressed), HasFact(GiantKelp.Produce.Oxygen), HasFact(GiantKelp.Consume.Light), HasFact(GiantKelp.Consume.CarbonDioxide)
+    $if HasFact(MixedKelp.Model.RefugeConcept)
+        {@guide}    You're done with this portion! Head to the {h}Describe{/h} tab next.
+    $else
+        {@guide}    Once you import your facts and save the Visual model, we should be good to make our Describe model!
+    $endif
+$else
+    $if !jobs:kelp-refuge-failure-sim.sync-failed
+        {@guide}    Time to try out your model in the {h}Describe{/h} tab.
+    $else
+        {@guide}    Seems like we don't have enough information to complete our model accurately.
+                    Look for {h}question marks{/h} in the  Visual model interface, those point to where we may need more data.
+
+		$if !HasFact(SeaOtter.Eats.Urchin)
+			$branch .suggestObserve
+		$elseif !HasFact(Urchin.Eats.BullKelp)
+			$branch .suggestObserve
+		$elseif !HasFact(Urchin.Eats.GiantKelp)
+			$branch .suggestObserve
+		$elseif !HasFact(BullKelp.Reproduce)
+			$branch .suggestReproduce
+		$elseif !HasFact(BullKelp.Reproduce.Stressed)
+			$branch .suggestReproduce
+		$elseif !HasFact(BullKelp.Produce.Oxygen)
+			$branch .suggestMeasureEnviro
+		$elseif !HasFact(BullKelp.Consume.Light)
+			$branch .suggestMeasureEnviro
+		$elseif !HasFact(BullKelp.Consume.CarbonDioxide)
+			$branch .suggestMeasureEnviro
+		$elseif !HasFact(GiantKelp.Reproduce)
+			$branch .suggestReproduce
+		$elseif !HasFact(GiantKelp.Reproduce.Stressed)
+			$branch .suggestReproduce
+		$elseif !HasFact(GiantKelp.Produce.Oxygen)
+			$branch .suggestMeasureEnviro
+		$elseif !HasFact(GiantKelp.Consume.Light)
+			$branch .suggestMeasureEnviro
+		$elseif !HasFact(GiantKelp.Consume.CarbonDioxide)
+			$branch .suggestMeasureEnviro
+		$endif
+    $endif
+$endif
+
+:: suggestReproduce
+{@guide}    Did you get all the reproduction rates?
+
+:: suggestObserve
+{@guide}    Are you sure you have observed all the interactions here?
+
+:: suggestMeasureEnviro
+{@guide}    Are you sure you've found out all the ways the different organisms affect the water conditions? The {h}Measurement Tank{/h} may still be useful.
+
 
 // CATCH-ALL GUIDE TEXT
 

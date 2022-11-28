@@ -32,6 +32,7 @@ $else
 		$endif
 	$endif
 $endif
+$set jobs:coral-much-algae.sync-failed = false
 
 
 // SCANNING
@@ -138,6 +139,69 @@ $endif
 		    I mean, if he ever takes a break from studying turtles.
 {@guide} Estimated probability: 1.2%.
 {@player} Ha. You're a little bit snarky today, V. Qué chido.
+
+
+// MODELING SUGGESTIONS
+
+:: triggerSyncFailure
+@trigger    SimulationSyncError
+@when       !jobs:coral-much-algae.sync-failed
+@once
+$set jobs:coral-much-algae.sync-failed = true
+
+:: helpModelSync.Visual
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(modelPopulations), scene:name == "Modeling", modeling:phase == "visual"
+@cutscene
+$branch .modelSuggestions
+
+:: helpModelSync.Sync
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(modelPopulations), scene:name == "Modeling", modeling:phase == "sync"
+@cutscene
+$branch .modelSuggestions
+
+:: modelSuggestions
+$if HasFact(RedGrouper.Reproduce), HasFact(BlueTang.Eats.TurfAlgae), IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae), HasFact(Lionfish.Eats.BlueTang), HasFact(Lionfish.Eats.BlueheadWrasse), HasFact(Fisher.Eats.Lionfish), IsFactFullyUpgraded(Fisher.Eats.Lionfish)
+    $if HasFact(LionfishInvasion.Model.MuchAlgaeVisual)
+        {@guide}    You're done with this portion! Head to the {h}Describe{/h} tab next.
+    $else
+        {@guide}    Once you import your facts and save the Visual model, we should be good to make our Describe model!
+    $endif
+$else
+    $if !jobs:coral-much-algae.sync-failed
+        {@guide}    Time to try out your model in the {h}Describe{/h} tab.
+    $else
+        {@guide}    Seems like we don't have enough information to complete our model accurately.
+                    Look for {h}question marks{/h} in the  Visual model interface, those point to where we may need more data.
+
+		$if !HasFact(RedGrouper.Reproduce)
+			$branch .suggestReproduce
+		$elseif !HasFact(BlueTang.Eats.TurfAlgae)
+			$branch .suggestObserve
+		$elseif !IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae)
+			$branch .suggestMeasure
+		$elseif !HasFact(Lionfish.Eats.BlueTang)
+			$branch .suggestObserve
+		$elseif !HasFact(Lionfish.Eats.BlueheadWrasse)
+			$branch .suggestObserve
+		$elseif !HasFact(Fisher.Eats.Lionfish)
+			$branch .suggestObserve
+		$elseif !IsFactFullyUpgraded(Fisher.Eats.Lionfish)
+			$branch .suggestMeasure
+		$endif
+    $endif
+$endif
+
+:: suggestReproduce
+{@guide}    Did you get all the reproduction rates?
+
+:: suggestObserve
+{@guide}    Are you sure you have observed all the interactions here?
+
+:: suggestMeasure
+{@guide}    You may need to measure the rates of interactions.
+
 
 // CATCH-ALL GUIDE TEXT
 
