@@ -64,7 +64,7 @@ $if jobs:bayou-mechanic.givenArticle, !jobs:kelp-mechanic.givenJournal
                    Now. Por favor, let's stay focused on the job. 
     // He tells you Mer created Victor. Get Mer’s journal page that shows Victor 1.0 version.
     $set jobs:kelp-mechanic.givenJournal = true
-$elseif jobs:num-specters-seen >= 6, !jobs:specter6-comms.kelp.discussed
+$elseif HasJournalEntry("S04"), !jobs:specter6-comms.kelp.discussed
     // STORY BEAT G
     {@player}  Tío, I need to ask you something.
                I've been getting weird communications from Sam. 

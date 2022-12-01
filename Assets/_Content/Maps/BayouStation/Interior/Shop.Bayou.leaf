@@ -41,17 +41,8 @@ $set jobs:bayou-mechanic.givenArticle = false
 $choice .action.openShop; Sure!
 $choice .action.cancel; Not right now!
 
+// Default case
 #ShopHandler(a)
-$if jobs:bayou-mechanic.trackBayou, jobs:bayou-mechanic.leftBayou
-    // STORY BEAT D
-    {@$MerchantId}  By the way, I found that article about your sister! 
-                    She was amazing, huh? Must be hard livin' in her shadow.
-    {@player}       Oh... I guess I never really thought about it.
-                    Can I take a look at the article? I'll bring it back when I'm done. 
-     {@$MerchantId} Nah. You keep it, O. It's the least I can do. 
-    $set jobs:bayou-mechanic.trackBayou = false
-    $set jobs:bayou-mechanic.givenArticle = true
-$else
     {@$MerchantId} Hey! Welcome back, O. Wanna take a look around?
     $choice .action.openShop; Sure do!
     $choice .action.cancel; Not right now!
@@ -67,6 +58,22 @@ $choice .action.cancel; Not right now.
 :: action.cancel
 @cutscene
 {@$MerchantId}  Alright,| well you know where to find me!
+
+#ShopHandler(jobs:bayou-mechanic.trackBayou, jobs:bayou-mechanic.leftBayou)
+@boostScore 10
+@once
+// STORY BEAT D
+{@$MerchantId}  By the way, I found that article about your sister! 
+                She was amazing, huh? Must be hard livin' in her shadow.
+{@player}       Oh... I guess I never really thought about it.
+                Can I take a look at the article? I'll bring it back when I'm done. 
+{@$MerchantId}  Nah. You keep it, O. It's the least I can do. 
+$set jobs:bayou-mechanic.trackBayou = false
+$set jobs:bayou-mechanic.givenArticle = true
+{@$MerchantId}  Wanna take a look around the shop?
+$choice .action.openShop; Sure do!
+$choice .action.cancel; Not right now!
+
 
 // Generic
 

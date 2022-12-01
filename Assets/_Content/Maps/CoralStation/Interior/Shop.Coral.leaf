@@ -16,41 +16,44 @@
 
 // Intros
 
+// first time player talks to mechanic
 #ShopHandler(first)
 @boostScore 100
 @once
-$if world:coral.mechanic.toldToReturn
-    {@coralMechanic} Hey there, O!
-                     You talk {nameof @profCoral} into getting rid of those Lionfish yet?
-    {@player} Um... not exactly. 
-    {@coralMechanic} Ugh. I swear, nobody listens to me around here.
-                     Those things are pure, spiny evil. 
-                     And not just because I'm deathly allergic.
-    {@player}       Oh, yikes... that sounds awful.
-    {@coralMechanic} Awww. It's sweet that you care, O. 
-                     Wanna take a look around? 
-    
-    $choice .action.openShop; Sure!
-    $choice .action.cancel; Maybe later. 
-$else
-    {@coralMechanic}  Hey, O! Welcome back.
-                      I'm glad the Lionfish drama didn't send you packing...
-                      I'm pretty fun to be around when I'm not on a vendetta against venomous monsters. 
-    {@player}   I mean... vendettas are pretty fun, too.
-    {@coralMechanic} Aww, O. Where have you been all my life? 
-    {@player}   The Kelp Forest, mostly.
-    {@coralMechanic} Ha. I've heard it's nice there. 
-                     Wanna take another look around? 
-    $choice .action.openShop; Sure! 
-    $choice .action.cancel; Not right now.
-$endif
+{@coralMechanic}  Hey, O!
+                  I'm glad the Lionfish drama didn't send you packing...
+                  I'm pretty fun to be around when I'm not on a vendetta against venomous monsters. 
+{@player}   I mean... vendettas are pretty fun, too.
+{@coralMechanic} Aww, O. Where have you been all my life? 
+{@player}   The Kelp Forest, mostly.
+{@coralMechanic} Ha. I've heard it's nice there. 
+                 Wanna take a look around?
+$choice .action.openShop; Sure! 
+$choice .action.cancel; Not right now.
 
+// second time player arrives in the station and has talked to mechanic previously
+#ShopHandler(world:coral.leftStation, world:coral.metMechanic)
+@boostscore 50
+@once
+{@coralMechanic}    Hey, O! Nice to see you again.
+                    I usually forget people's names the first time... luckily, you're very memorable. 
+                    So, I think I know the answer, but who's the owner of that {slow}magnificent{/slow} sub?
+{@player} Oh, that's my sub! Is it a good one?
+          Really hoping I don't crash it this time...
+{@coralMechanic} Ha. Didn't peg you for the daredevil type.
+                 Don't worry, O. I can fix anything. 
+                 Wanna look around the shop?  
+$choice .action.openShop; Sure!
+$choice .action.cancel; Not right now.
+
+// Default case:
 #ShopHandler(a)
 {@$MerchantId}  Hey, O! Nice to see you again.
                 Wanna look around the shop?  
 $choice .action.openShop; Sure!
 $choice .action.cancel; Not right now.
 
+// After Hunting Lions job completed
 #ShopHandler(gotLionfish, JobCompleted(coral-hunting-lions))
 @once
 {@$MerchantId} O!! You did it!
@@ -62,7 +65,8 @@ $choice .action.cancel; Not right now.
 $choice .action.openShop; Sure!
 $choice .action.cancel; Not right now.
 
-#ShopHandler(noGoLionfish, Chance(0.5), !JobCompleted(coral-hunting-lions))
+// 50% chance to occur after completing at least one job at coral station
+#ShopHandler(noGoLionfish, Chance(0.5), !JobCompleted(coral-hunting-lions), CompletedJobCount(CoralStation, 1))
 @once
 {@$MerchantId} Hey, O! Nice to see you again.
                 So, you're a bigshot scientist... what's going on with those Lionfish?
