@@ -15,6 +15,10 @@ $call       CoralMechanic->TeleportTo(mechanic-intro-pos)
 {@coralMechanic}    And they've got a {slow}sweet{/slow} sub.
 {@profCoral}        Welcome to our station. Come and check in with us over here!
 
+:: on-leave
+@function   SceneLeave
+$set    world:coral.leftStation = true
+
 :: on-arrive-intro
 @function   SceneStart
 @when       !world:coral.metScientist
@@ -28,6 +32,7 @@ $call       CoralMechanic->TeleportTo(mechanic-intro-pos)
 @once
 @cutscene
 
+$set    world:coral.leftStation = false
 {@profCoral} Hello, there. Welcome to--
 {@coralMechanic} Yeah, yeah. Serenity Meadows, the happiest ecosystem on Earth...
                  Except for the killer Lionfish who are literally out there ruining everything.

@@ -16,11 +16,13 @@ namespace Aqua
 
         private void Awake()
         {
-            if (!string.IsNullOrEmpty(m_Condition))
+            if (string.IsNullOrEmpty(m_Condition)) {
                 return;
-            
-            if (Services.Data.CheckConditions(m_Condition))
+            }
+
+            if (Services.Data.CheckConditions(m_Condition)) {
                 gameObject.SetActive(false);
+            }
         }
     }
 }
