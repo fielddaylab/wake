@@ -1,32 +1,44 @@
 #basePath RS-0-Final
-::samFinalTrigger
-@trigger PlayerEnterRegion
-@when regionId == "chalDeep00"
-@once
 
-{wait 2}
+::stationEnter
+@trigger    SceneStart
+@when       JobStartedOrComplete(final-final)
+@cutscene
+{@guide}    Oxygen level and pressure stabilized. You have entered the lower depths.
 
-{@player} 
-No time to mess around! I need to rescue Sam!
+::firstScanChallengerDeep
+@trigger    ScannedObject
+@when       scanId == "RS-0-Final.probe"
+{@player}   No time to mess around! I need to rescue Sam!
+$set jobs:final-challenger-deep.scanned = true
+
+
+// ::samFinalTrigger
+// @trigger PlayerEnterRegion
+// @when regionId == "chalDeep00"
+// @once
+
+// {wait 2}
+
+// {@player} 
+// No time to mess around! I need to rescue Sam!
 
 
 ::samFinalTrigger2
 @trigger PlayerEnterRegion
-@when regionId == "samRadio"
+@when regionId == "samRadio", jobs:final-challenger-deep.scanned
 @once
 
 {wait 2}
 
-{@player}
-Sam! Are you okay!? 
-{@sam}
-All our systems are failing! We're running out of oxygen! 
-{@player}
-Turn on your red lights! 
-{@sam}
-I can't, the lights are broken! 
-{@player}
-I'm going to turn on the probe lights to distract it! {wait-abs 2}
+{@player} Sam! Are you okay!? 
+{@sam} All our systems are failing! We're running out of oxygen! 
+{@player} Turn on your red lights! 
+{@sam} I can't, the lights are broken! 
+{@player} I'm going to turn on the probe lights to distract it!
+//$call chalDeepActivator->Activate()
+{wait-abs 2}
+
 
 ::samFinalTrigger3
 @trigger PlayerEnterRegion
@@ -34,7 +46,9 @@ I'm going to turn on the probe lights to distract it! {wait-abs 2}
 @once
 
 {@sam}
-O? Are you there? Come to the station! {wait-abs 1}
+O? Are you there? Come to the station!
+$call StationEntrance->Activate()
+{wait-abs 1}
 
 
 ::stationExit

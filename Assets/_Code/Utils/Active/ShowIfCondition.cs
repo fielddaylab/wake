@@ -58,6 +58,7 @@ namespace Aqua
 
         private void SetState(bool inbState)
         {
+            Debug.Log("[ShowIf] Setting...");
             if (m_Initialized && inbState == m_LastState)
                 return;
 
@@ -65,6 +66,7 @@ namespace Aqua
             m_LastState = inbState;
             foreach(var obj in m_ToShow) {
                 obj.SetActive(inbState);
+                Debug.Log("[ShowIf] Showing: " + obj.name + " : " + inbState);
             }
             foreach (var obj in m_ToHide) {
                 obj.SetActive(!inbState);

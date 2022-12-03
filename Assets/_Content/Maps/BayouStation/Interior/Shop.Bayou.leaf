@@ -43,10 +43,9 @@ $choice .action.cancel; Not right now!
 
 // Default case
 #ShopHandler(a)
-    {@$MerchantId} Hey! Welcome back, O. Wanna take a look around?
-    $choice .action.openShop; Sure do!
-    $choice .action.cancel; Not right now!
-$endif
+{@$MerchantId} Hey! Welcome back, O. Wanna take a look around?
+$choice .action.openShop; Sure do!
+$choice .action.cancel; Not right now!
 
 #ShopHandler(gotFlashlight, world:shop.boughtFlashlightFrom == "bayou", HasUpgrade("Flashlight"))
 @once
@@ -54,10 +53,6 @@ $endif
     So, wanna take a look around?
 $choice .action.openShop; Sure do!
 $choice .action.cancel; Not right now.
-
-:: action.cancel
-@cutscene
-{@$MerchantId}  Alright,| well you know where to find me!
 
 #ShopHandler(jobs:bayou-mechanic.trackBayou, jobs:bayou-mechanic.leftBayou)
 @boostScore 10
@@ -74,6 +69,10 @@ $set jobs:bayou-mechanic.givenArticle = true
 $choice .action.openShop; Sure do!
 $choice .action.cancel; Not right now!
 
+
+:: action.cancel
+@cutscene
+{@$MerchantId}  Alright,| well you know where to find me!
 
 // Generic
 
