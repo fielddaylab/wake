@@ -286,6 +286,11 @@ namespace EasyAssetStreaming {
                 return entry;
             }
 
+            static public ManifestEntry Entry(StreamingAssetHandle id) {
+                AssetMetaInfo meta = id.MetaInfo;
+                return Entry(meta.AddressHash, meta.Address, meta.Type);
+            }
+
             #endregion // Access
         }
 

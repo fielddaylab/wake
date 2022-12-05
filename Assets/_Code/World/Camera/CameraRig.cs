@@ -24,6 +24,7 @@ namespace Aqua.Cameras
         [Header("Settings")]
         public CameraMode DefaultMode = CameraMode.Scripted;
         public bool ThreeDMode = false;
+        public float AudioListenerZOffset = 0;
 
         [SerializeField, HideInInspector] public CameraTarget InitialTarget;
 

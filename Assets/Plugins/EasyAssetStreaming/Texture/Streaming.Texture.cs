@@ -270,6 +270,7 @@ namespace EasyAssetStreaming {
                 string url = id.MetaInfo.ResolvedAddress;
                 var request = id.LoadInfo.Loader = new UnityWebRequest(url, UnityWebRequest.kHttpVerbGET);
                 request.downloadHandler = new DownloadHandlerBuffer();
+                InvokeLoadBegin(id, request, id.LoadInfo.RetryCount);
                 var sent = request.SendWebRequest();
                 sent.completed += (_) => {
                     HandleTextureUWRFinished(id);
@@ -343,8 +344,9 @@ namespace EasyAssetStreaming {
 
                 UnityWebRequest request = loadInfo.Loader;
 
+                InvokeLoadResult(id, request, StreamingHelper.ResultType(request));
+
                 if (request.isNetworkError || request.isHttpError) {
-                    InvokeLoadResult(StreamingHelper.ErrorType(request));
                     if (loadInfo.RetryCount < RetryLimit && StreamingHelper.ShouldRetry(request)) {
                         UnityEngine.Debug.LogWarningFormat("[Streaming] Retrying texture load '{0}' from '{1}': {2}", id.MetaInfo.Address, id.MetaInfo.ResolvedAddress, loadInfo.Loader.error);
                         loadInfo.RetryCount++;
@@ -377,7 +379,6 @@ namespace EasyAssetStreaming {
                 id.LoadInfo.RetryCount = 0;
                 RecomputeMemorySize(ref MemoryUsage, id, texture);
                 UnityEngine.Debug.LogFormat("[Streaming] ...finished loading (async) '{0}' (format {1})", id.MetaInfo.Address, texture.format.ToString());
-                InvokeLoadResult(LoadResult.Success);
                 InvokeCallbacks(id, texture);
             }
 

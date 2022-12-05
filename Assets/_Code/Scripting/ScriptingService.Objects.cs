@@ -282,7 +282,7 @@ namespace Aqua
             if (m_ScriptObjects.Contains(inObject))
                 return false;
 
-            m_ScriptObjects.Add(inObject);
+            m_ScriptObjects.PushBack(inObject);
             m_ScriptObjectListDirty = true;
             return true;
         }

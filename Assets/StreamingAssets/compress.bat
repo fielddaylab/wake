@@ -11,6 +11,8 @@ for /d /r %%s in (*) do (
     pngquant *.png --ext .png --verbose -f --skip-if-larger
     
     for %%a in (*.mp3) do (
+        ffmpeg -i "%%a" -ab 96k "%%a.webm"
+    
         ffmpeg -i "%%a" -ab 96k "temp-%%a"
         del "%%a"
         ren "temp-%%a" "%%a"

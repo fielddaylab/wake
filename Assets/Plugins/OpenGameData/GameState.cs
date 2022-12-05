@@ -25,8 +25,11 @@ namespace OGD {
                 var status = Core.ParseStatus(response.status);
                 if (status == Core.ReturnStatus.Success && response.val != null && response.val.Length > 0) {
                     onSuccess?.Invoke(response.val[0]);
+                    return Core.Error.Success;
                 } else {
-                    onError?.Invoke(new Core.Error(status, response.msg));
+                    Core.Error error = new Core.Error(status, response.msg);
+                    onError?.Invoke(error);
+                    return error;
                 }
             }, (error, data) => {
                 s_CurrentRequestGameState = null;
@@ -50,8 +53,11 @@ namespace OGD {
                 var status = Core.ParseStatus(response.status);
                 if (status == Core.ReturnStatus.Success) {
                     onSuccess?.Invoke();
+                    return Core.Error.Success;
                 } else {
-                    onError?.Invoke(new Core.Error(status, response.msg));
+                    Core.Error error = new Core.Error(status, response.msg);
+                    onError?.Invoke(error);
+                    return error;
                 }
             }, (error, data) => {
                 s_CurrentPostGameState = null;

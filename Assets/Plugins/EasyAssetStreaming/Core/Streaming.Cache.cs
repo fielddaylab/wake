@@ -152,6 +152,9 @@ namespace EasyAssetStreaming {
 
                     if (loadInfo.Loader != null) {
                         loadInfo.Loader.Dispose();
+                        if (OnLoadResult != null) {
+                            InvokeLoadResult(new StreamingAssetHandle((uint) i, m_Slots[i].Generation), loadInfo.Loader, LoadResult.Cancelled);
+                        }
                     }
 
                     if (callbackInfo.List != null) {

@@ -182,7 +182,9 @@ namespace Aqua {
 
         static public uint LevelForTotalExp(uint exp) {
             int idx = 0;
-            while(idx < s_CumulativeExpPerLevel.Length && exp > s_CumulativeExpPerLevel[idx++]);
+            while(idx < s_CumulativeExpPerLevel.Length && exp > s_CumulativeExpPerLevel[idx]) {
+                idx++;
+            }
             return (uint) (1 + idx);
         }
 
@@ -193,16 +195,14 @@ namespace Aqua {
         }
 
         static public ScienceLevelProgress EvaluateLevel(uint exp) {
-            int idx = 0;
-            while(idx < s_CumulativeExpPerLevel.Length && exp > s_CumulativeExpPerLevel[idx++]);
             ScienceLevelProgress progress;
-            progress.Level = (uint) idx;
-            if (idx >= s_CumulativeExpPerLevel.Length) {
+            progress.Level = LevelForTotalExp(exp);
+            if (progress.Level >= s_MaxLevel) {
                 progress.Percent = 1;
                 progress.ToNext = 0;
                 progress.ExpForLevel = 0;
             } else {
-                progress.ExpForLevel = exp - s_CumulativeExpPerLevel[idx - 1];
+                progress.ExpForLevel = exp - TotalExpForLevel(progress.Level);
                 progress.ToNext = ExpForLevel(progress.Level + 1) - progress.ExpForLevel;
                 progress.Percent = (float) progress.ExpForLevel / (progress.ExpForLevel + progress.ToNext);
             }

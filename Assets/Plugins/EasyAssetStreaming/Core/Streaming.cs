@@ -70,16 +70,23 @@ namespace EasyAssetStreaming {
         /// What kind of result/error was encountered.
         /// </summary>
         public enum LoadResult {
-            Success,
-            Network,
-            Server,
-            Unknown
+            Success_Download,
+            Success_Cached,
+            Error_Network,
+            Error_Server,
+            Cancelled,
+            Error_Unknown
         }
 
         /// <summary>
         /// Delegate for reporting errors.
         /// </summary>
-        public delegate void LoadResultDelegate(LoadResult resultType);
+        public delegate void LoadBeginDelegate(StreamingAssetHandle id, long size, UnityWebRequest request, int retryStatus);
+
+        /// <summary>
+        /// Delegate for reporting errors.
+        /// </summary>
+        public delegate void LoadResultDelegate(StreamingAssetHandle id, long size, UnityWebRequest request, LoadResult resultType);
 
         #endregion // Types
 
@@ -210,25 +217,53 @@ namespace EasyAssetStreaming {
         /// <summary>
         /// Event dispatched when a load has completed/failed.
         /// </summary>
+        static public event LoadBeginDelegate OnLoadBegin;
+
+        /// <summary>
+        /// Event dispatched when a load has completed/failed.
+        /// </summary>
         static public event LoadResultDelegate OnLoadResult;
 
         /// <summary>
         /// Retries loading previously-errored assets.
         /// </summary>
-        static public void RetryErrored() {
+        static public int RetryErrored() {
+            int errorCount = 0;
             foreach(var id in s_Cache.ByAddressHash.Values) {
                 ref AssetStatus status = ref s_Cache.StateInfo[id.Index].Status;
                 if (status == AssetStatus.Error) {
                     status = AssetStatus.PendingLoad;
                     s_Cache.LoadInfo[id.Index].RetryCount = 0;
                     QueueLoad(id);
+                    errorCount++;
                 }
+            }
+            return errorCount;
+        }
+
+        /// <summary>
+        /// Returns the number of assets with loading failures.
+        /// </summary>
+        static public int ErrorCount() {
+            int errorCount = 0;
+            foreach(var id in s_Cache.ByAddressHash.Values) {
+                ref AssetStatus status = ref s_Cache.StateInfo[id.Index].Status;
+                if (status == AssetStatus.Error) {
+                    errorCount++;
+                }
+            }
+            return errorCount;
+        }
+
+        static private void InvokeLoadBegin(StreamingAssetHandle id, UnityWebRequest request, int retryCount) {
+            if (OnLoadBegin != null) {
+                OnLoadBegin(id, Manifest.Entry(id).Size, request, retryCount);
             }
         }
 
-        static private void InvokeLoadResult(LoadResult resultType) {
+        static private void InvokeLoadResult(StreamingAssetHandle id, UnityWebRequest request, LoadResult result) {
             if (OnLoadResult != null) {
-                OnLoadResult(resultType);
+                OnLoadResult(id, Manifest.Entry(id).Size, request, result);
             }
         }
 
@@ -457,6 +492,7 @@ namespace EasyAssetStreaming {
 
             if (loadInfo.Loader != null) {
                 loadInfo.Loader.Dispose();
+                InvokeLoadResult(id, loadInfo.Loader, LoadResult.Cancelled);
                 loadInfo.Loader = null;
             }
 

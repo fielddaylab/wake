@@ -116,9 +116,14 @@ namespace Aqua {
 
                 ShowOrBounce();
 
-                SetInputState(true);
                 PopupLayout.AttemptTTS(ref inContent);
 
+                if (inContent.Execute != null) {
+                    SetInputState(false);
+                    yield return inContent.Execute();
+                }
+
+                SetInputState(true);
                 yield return m_Layout.WaitForInput(inContent, ioFuture);
 
                 Services.TTS.Cancel();

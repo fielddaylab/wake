@@ -94,7 +94,7 @@ namespace Aqua
         private Dictionary<StringHash32, FunctionSet> m_LoadedFunctions;
 
         // objects
-        [NonSerialized] private List<ScriptObject> m_ScriptObjects = new List<ScriptObject>();
+        [NonSerialized] private RingBuffer<ScriptObject> m_ScriptObjects = new RingBuffer<ScriptObject>(256, RingBufferMode.Expand, CompareUtils.DefaultComparer<ScriptObject>());
         [NonSerialized] private bool m_ScriptObjectListDirty = false;
 
         // pools

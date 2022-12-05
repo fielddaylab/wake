@@ -4,10 +4,12 @@ using System.IO;
 using BeauUtil;
 using BeauUtil.Debugger;
 using EasyAssetStreaming;
+using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Profiling;
+using UnityEngine.UI;
 
 namespace Aqua.Editor
 {
@@ -96,6 +98,20 @@ namespace Aqua.Editor
                             foreach(var spriteRenderer in go.GetComponentsInChildren<SpriteRenderer>(true)) {
                                 Reference(spriteRenderer.sprite, ref forScene, ref statDB);
                             }
+
+                            foreach(var txt in go.GetComponentsInChildren<TMP_Text>(true)) {
+                                Reference(txt.font, ref forScene, ref statDB);
+                            }
+
+                            foreach(var graphic in go.GetComponentsInChildren<Graphic>(true)) {
+                                Reference(graphic.material, ref forScene, ref statDB);
+                                Reference(graphic.mainTexture, ref forScene, ref statDB);
+                            }
+
+                            foreach(var graphic in go.GetComponentsInChildren<Image>(true)) {
+                                Reference(graphic.sprite, ref forScene, ref statDB);
+                                Reference(graphic.overrideSprite, ref forScene, ref statDB);
+                            }
                         }
 
                         statDB.ByRoot.Add(forScene);
@@ -137,6 +153,20 @@ namespace Aqua.Editor
 
                             foreach(var spriteRenderer in instantiated.GetComponentsInChildren<SpriteRenderer>(true)) {
                                 Reference(spriteRenderer.sprite, ref forPrefab, ref statDB);
+                            }
+
+                            foreach(var txt in instantiated.GetComponentsInChildren<TMP_Text>(true)) {
+                                Reference(txt.font, ref forPrefab, ref statDB);
+                            }
+
+                            foreach(var graphic in instantiated.GetComponentsInChildren<Graphic>(true)) {
+                                Reference(graphic.material, ref forPrefab, ref statDB);
+                                Reference(graphic.mainTexture, ref forPrefab, ref statDB);
+                            }
+
+                            foreach(var graphic in instantiated.GetComponentsInChildren<Image>(true)) {
+                                Reference(graphic.sprite, ref forPrefab, ref statDB);
+                                Reference(graphic.overrideSprite, ref forPrefab, ref statDB);
                             }
 
                             statDB.ByRoot.Add(forPrefab);
@@ -324,6 +354,13 @@ namespace Aqua.Editor
                 meta.SubAssets = new int[1];
                 meta.SubAssets[0] = textureId;
                 return 1;
+            }
+
+            TMP_FontAsset font = meta.Asset as TMP_FontAsset;
+            if (font != null) {
+                int materialId = GetMeta(font.material, db).Id;
+                meta.SubAssets = new int[1];
+                meta.SubAssets[0] = materialId;
             }
 
             return 0;

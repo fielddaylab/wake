@@ -100,6 +100,7 @@ namespace Aqua.Cameras
         [NonSerialized] private bool m_CacheDirty;
 
         [NonSerialized] private Vector3 m_LastGameplayPlaneCenter;
+        [NonSerialized] private Vector3 m_LastCameraForward;
         [NonSerialized] private float m_LastGameplayPlaneDistance;
         [NonSerialized] private Matrix4x4 m_LastCameraMatrix;
         [NonSerialized] private Matrix4x4 m_LastCameraMatrixInv;
@@ -334,6 +335,7 @@ namespace Aqua.Cameras
             m_LastGameplayPlaneCenter = r.GetPoint(planeCastDist);
             m_LastGameplayPlaneDistance = planeCastDist;
 
+            m_LastCameraForward = m_Camera.transform.forward;
             m_LastCameraMatrix = m_Camera.transform.worldToLocalMatrix;
             m_LastCameraMatrixInv = m_Camera.transform.localToWorldMatrix;
         }
