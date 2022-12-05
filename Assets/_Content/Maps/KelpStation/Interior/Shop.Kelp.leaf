@@ -83,7 +83,8 @@ $elseif JobInProgress(final-final), JobTaskTop(getUncleHelp)
                     Give me a minute...
                     {hide-dialog} {fade-out black, 1, wait} {wait 2}
                     {wait 0.1} {fade-in 1, wait} {wait 1}
-                    Power should be restored now. Why don't you head to your ship to see if everything is fixed?
+                    $set jobs:final-power-disabled = false
+    {@$MerchantId}  Power should be restored now. Why don't you head to your ship to see if everything is fixed?
     $set jobs:final-uncleHelped = true
     $call CheckJobTasks()
 $elseif JobInProgress(final-final), JobTaskTop(returnToShop)
@@ -103,6 +104,7 @@ $elseif JobInProgress(final-final), JobTaskTop(returnToShop)
     {@player}       Ready.
     $set jobs:final-returnedToShop = true
     $call CheckJobTasks()
+    $call 
 $else
     {@$MerchantId} Welcome back, mijita. Need any upgrades for your ship? 
     $choice .action.openShop; Sure, I'll take a look. Thanks, Tío!

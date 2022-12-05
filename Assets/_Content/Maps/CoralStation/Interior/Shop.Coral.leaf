@@ -31,20 +31,21 @@
 $choice .action.openShop; Sure! 
 $choice .action.cancel; Not right now.
 
-// second time player arrives in the station and has talked to mechanic previously
-#ShopHandler(world:coral.leftStation, world:coral.metMechanic)
-@boostscore 50
-@once
-{@coralMechanic}    Hey, O! Nice to see you again.
-                    I usually forget people's names the first time... luckily, you're very memorable. 
-                    So, I think I know the answer, but who's the owner of that {slow}magnificent{/slow} sub?
-{@player} Oh, that's my sub! Is it a good one?
-          Really hoping I don't crash it this time...
-{@coralMechanic} Ha. Didn't peg you for the daredevil type.
-                 Don't worry, O. I can fix anything. 
-                 Wanna look around the shop?  
-$choice .action.openShop; Sure!
-$choice .action.cancel; Not right now.
+// TODO: this handler evaluates to true, even when it's not. Disabling until it's fixed.
+// // second time player arrives in the station and has talked to mechanic previously
+// #ShopHandler(world:coral.leftStation == true)
+// @boostScore 50
+// @once
+// {@coralMechanic}    Hey, O! Nice to see you again.
+//                     I usually forget people's names the first time... luckily, you're very memorable. 
+//                     So, I think I know the answer, but who's the owner of that {slow}magnificent{/slow} sub?
+// {@player} Oh, that's my sub! Is it a good one?
+//           Really hoping I don't crash it this time...
+// {@coralMechanic} Ha. Didn't peg you for the daredevil type.
+//                  Don't worry, O. I can fix anything. 
+//                  Wanna look around the shop?  
+// $choice .action.openShop; Sure!
+// $choice .action.cancel; Not right now.
 
 // Default case:
 #ShopHandler(a)
