@@ -7,7 +7,14 @@
 
 {@player} 
 Oh, that's the challenger deep!
-{wait 3}
+
+
+::chalDeepTrigger
+@trigger ScannedObject
+@when scanId == "RS-0-Final.probe"
+@once
+{@player}
+{wait 2}
 No time to mess around! I need to rescue Sam!
 
 

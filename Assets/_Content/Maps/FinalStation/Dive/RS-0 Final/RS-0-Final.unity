@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -1866,8 +1866,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1465808695431303181, guid: 13ef6a3fd456b1e2b98471b0943ece52,
         type: 3}
+      propertyPath: m_LockMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1465808695431303181, guid: 13ef6a3fd456b1e2b98471b0943ece52,
+        type: 3}
       propertyPath: m_TargetMap.m_HashValue
       value: 2130434146
+      objectReference: {fileID: 0}
+    - target: {fileID: 1465808695431303181, guid: 13ef6a3fd456b1e2b98471b0943ece52,
+        type: 3}
+      propertyPath: m_LabelOverride.m_Source
+      value: ui.dive.enterStation.label
+      objectReference: {fileID: 0}
+    - target: {fileID: 1465808695431303181, guid: 13ef6a3fd456b1e2b98471b0943ece52,
+        type: 3}
+      propertyPath: m_LabelOverride.m_HashValue
+      value: 803614427
       objectReference: {fileID: 0}
     - target: {fileID: 2900845772267729116, guid: 13ef6a3fd456b1e2b98471b0943ece52,
         type: 3}
@@ -2211,7 +2226,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Scripts:
   - {fileID: -1942890987711236906, guid: 607ec78944eebd448a22a9418f75ad68, type: 3}
-  - {fileID: -1942890987711236906, guid: 0c0c7bd86557fb54080140fddb309e74, type: 3}
   - {fileID: -1942890987711236906, guid: e6ae316a1345b944f8629e57d4a7c3bb, type: 3}
 --- !u!4 &1344444609
 Transform:
