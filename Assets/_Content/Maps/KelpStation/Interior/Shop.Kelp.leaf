@@ -104,7 +104,6 @@ $elseif JobInProgress(final-final), JobTaskTop(returnToShop)
     {@player}       Ready.
     $set jobs:final-returnedToShop = true
     $call CheckJobTasks()
-    $call 
 $else
     {@$MerchantId} Welcome back, mijita. Need any upgrades for your ship? 
     $choice .action.openShop; Sure, I'll take a look. Thanks, Tío!
