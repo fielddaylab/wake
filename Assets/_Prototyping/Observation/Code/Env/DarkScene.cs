@@ -19,6 +19,10 @@ namespace ProtoAqua.Observation {
                     return;
                 }
 
+                if (scan == null || scan.transform == null || scan.transform.parent == null || scan.transform.parent.GetComponent<FlashlightRegion>() == null) {
+                    return;
+                }
+
                 var region = scan.transform.parent.GetComponent<FlashlightRegion>(); 
                 
                 if (!region) {
