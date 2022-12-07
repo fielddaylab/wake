@@ -29,21 +29,30 @@ namespace Aqua.Entity {
         [NonSerialized] private int m_LastUpdateMask;
 
         // everything sleeping
-        private readonly RingBuffer<TEntity> m_Sleeping = new RingBuffer<TEntity>(64, RingBufferMode.Expand);
+        private readonly RingBuffer<TEntity> m_Sleeping;
         
         // everything not sleeping
-        private readonly RingBuffer<TEntity> m_Awake = new RingBuffer<TEntity>(64, RingBufferMode.Expand);
+        private readonly RingBuffer<TEntity> m_Awake;
         
         // everything active
-        private readonly RingBuffer<TEntity> m_Active = new RingBuffer<TEntity>(32, RingBufferMode.Expand);
+        private readonly RingBuffer<TEntity> m_Active;
         
         // all entities
-        private readonly HashSet<TEntity> m_All = new HashSet<TEntity>();
+        private readonly HashSet<TEntity> m_All;
 
         [NonSerialized] private bool m_ForceSleep = false;
         [NonSerialized] private ListModifiedFlags m_DirtyLists;
 
         #endregion // State
+
+        public EntityActivationSet(int capacity) {
+            m_Sleeping = new RingBuffer<TEntity>(capacity, RingBufferMode.Expand);
+            m_Awake = new RingBuffer<TEntity>(capacity / 2, RingBufferMode.Expand);
+            m_Active = new RingBuffer<TEntity>(capacity / 4, RingBufferMode.Expand);
+            m_All = new HashSet<TEntity>(CompareUtils.DefaultComparer<TEntity>());
+
+            m_All.Initialize(capacity);
+        }
 
         #region Callbacks
 

@@ -177,8 +177,17 @@ $call GiveJournalEntry("S07")
 {wait 1}
 $call Specter->Spawn()
 $call Specter->Scan(3)
-{@player}	An eighth specter?!
+{@guide}    Transmission size was too large so only a portion of the organism image came through.
+            It seems like this is only the eye of a much larger organism.
+{@player}   That's not horrifying at all.
 $call GiveJournalEntry("S08")
+// Tio tells you to return ASAP
+$branch common.ringPhone
+
+{@kelpMechanic} O? O, this is Tío.
+                I found the upgrade for {nameof @guide}. I searched for the term "ammonite" in the directory, and it popped up.
+                This is the breakthrough you've been waiting for. Talk to me at the Kelp Station as soon as you can!
+$set jobs:final-final.upgradeReady = true
 
 // Temp Hack: should unlock all facts for all specters you have automatically
 $call GiveFact(ColossalSquid.Eats.ViperFish, Silent)

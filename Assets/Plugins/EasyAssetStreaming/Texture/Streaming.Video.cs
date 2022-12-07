@@ -42,6 +42,7 @@ namespace EasyAssetStreaming {
 
             static public void StartLoading(StreamingAssetHandle id) {
                 VideoPlayer player = PlayerMap[id];
+                InvokeLoadBegin(id, null, id.LoadInfo.RetryCount);
                 player.Prepare();
             }
 
@@ -97,7 +98,7 @@ namespace EasyAssetStreaming {
                 RecomputeMemorySize(ref Textures.MemoryUsage, id, texture);
 
                 UnityEngine.Debug.LogFormat("[Streaming] ...finished loading (async) '{0}'", id.MetaInfo.Address);
-                InvokeLoadResult(LoadResult.Success);
+                InvokeLoadResult(id, null, LoadResult.Success_Download);
                 
                 player.Play();
                 s_Cache.BindAsset(id, texture);
@@ -107,7 +108,7 @@ namespace EasyAssetStreaming {
             static private void OnVideoPrepareError(StreamingAssetHandle id, VideoPlayer player, string error) {
                 UnityEngine.Debug.LogErrorFormat("[Streaming] Failed to load video '{0}' from '{1}': {2}", id.MetaInfo.Address, id.MetaInfo.ResolvedAddress, error);
                 id.StateInfo.Status = AssetStatus.Error;
-                InvokeLoadResult(LoadResult.Unknown); // TODO: Parse out "error"? 
+                InvokeLoadResult(id, null, LoadResult.Error_Unknown); // TODO: Parse out "error"? 
                 InvokeCallbacks(id, null);
             }
 

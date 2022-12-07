@@ -1,0 +1,16 @@
+# basePath interior.RS-0-Station
+
+#include "Headers/Common.leaf"
+
+:: intro
+@trigger    Talk
+@who        *
+@once
+@cutscene
+
+$set jobs:final-final.rescueComplete = true
+$call CheckJobTasks()
+{@sam}  O! You did it!
+        Let's get out of here!
+
+$call LoadSceneFade("RS-0-Credits")

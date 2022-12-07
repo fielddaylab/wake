@@ -447,6 +447,7 @@ namespace Aqua {
         public RectTransform CustomModule;
         public StringHash32 CustomLayout;
         public PopupFacts Facts;
+        public Func<IEnumerator> Execute;
         public ListSlice<NamedOption> Options;
     }
 

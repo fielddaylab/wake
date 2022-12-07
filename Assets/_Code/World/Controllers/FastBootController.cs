@@ -33,7 +33,7 @@ namespace Aqua {
         public SpriteRenderer LoadingSpinner;
         
         [Header("Ready")]
-        public TMP_Text ReadyText;
+        // public TMP_Text ReadyText;
         public TMP_Text PromptText;
 
         [Header("Run")]
@@ -59,13 +59,13 @@ namespace Aqua {
             LoadingSpinner.gameObject.SetActive(false);
             LoadingText.gameObject.SetActive(false);
 
-            ReadyText.gameObject.SetActive(true);
+            // ReadyText.gameObject.SetActive(true);
             PromptText.gameObject.SetActive(true);
-            ReadyText.alpha = 0;
+            // ReadyText.alpha = 0;
             PromptText.alpha = 0;
             yield return Routine.Combine(
-                PromptText.FadeTo(1, 0.2f),
-                ReadyText.FadeTo(1, 0.2f)
+                PromptText.FadeTo(1, 0.2f)
+                // ReadyText.FadeTo(1, 0.2f)
             );
         }
 

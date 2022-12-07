@@ -61,10 +61,6 @@ $endif
 $choice .action.openShop; Sure!
 $choice .action.cancel; Not right now.
 
-:: action.cancel
-@cutscene
-{@$MerchantId}  No prob.| You know where to find me!
-
 #ShopHandler(jobs:bayou-mechanic.trackBayou, jobs:bayou-mechanic.leftBayou)
 @boostScore 10
 @once
@@ -88,6 +84,10 @@ $set jobs:bayou-mechanic.givenArticle = true
 $choice .action.openShop; Sure, thanks!
 $choice .action.cancel; Not right now!
 
+
+:: action.cancel
+@cutscene
+{@$MerchantId}  Alright,| well you know where to find me!
 
 // Generic
 

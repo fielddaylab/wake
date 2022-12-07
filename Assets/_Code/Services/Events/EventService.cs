@@ -26,7 +26,7 @@ namespace Aqua
 
         private class HandlerBlock
         {
-            public CastableEvent<object> Invoker = new CastableEvent<object>();
+            public CastableEvent<object> Invoker = new CastableEvent<object>(4);
         }
 
         // Implements the event listener

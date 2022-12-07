@@ -16,6 +16,7 @@ using TMPro;
 using EasyAssetStreaming;
 using EasyBugReporter;
 using BeauUtil.Variants;
+using System.Text;
 
 namespace Aqua.Debugging
 {
@@ -61,6 +62,8 @@ namespace Aqua.Debugging
         [NonSerialized] private long m_LastKnownStreamingMem;
         [NonSerialized] private long m_UnlockAllLastPress;
 
+        private readonly StringBuilder m_TextBuilder = new StringBuilder(128);
+
         private void LateUpdate()
         {
             CheckInput();
@@ -74,7 +77,10 @@ namespace Aqua.Debugging
                 bChanged |= Ref.Replace(ref m_LastKnownStreamingMem, Streaming.TextureMemoryUsage().Current);
                 if (bChanged)
                 {
-                    m_StreamingDebugText.SetText(string.Format("{0} / {1:0.00}MB", m_LastKnownStreamingCount, m_LastKnownStreamingMem / (1024f * 1024f)));
+                    m_TextBuilder.AppendNoAlloc(m_LastKnownStreamingCount).Append(" / ")
+                        .AppendNoAlloc(m_LastKnownStreamingMem / (1024f * 1024f), 2).Append("MB");
+                    m_StreamingDebugText.SetText(m_TextBuilder);
+                    m_TextBuilder.Clear();
                 }
             }
         }

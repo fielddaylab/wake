@@ -48,6 +48,7 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.final-final.task.tellMom
       m_HashValue: 3323484621
+    Category: 6
     Steps:
     - Type: 6
       Target:
@@ -62,6 +63,7 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.final-final.task.createModel
       m_HashValue: 1111136982
+    Category: 4
     Steps:
     - Type: 1
       Target:
@@ -78,6 +80,7 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.final-final.task.reportBack
       m_HashValue: 377457624
+    Category: 5
     Steps:
     - Type: 10
       Target:
@@ -94,6 +97,7 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.final-final.task.sneakOut
       m_HashValue: 1168020589
+    Category: 6
     Steps:
     - Type: 6
       Target:
@@ -110,6 +114,7 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.final-final.task.getUncleHelp
       m_HashValue: 3013625325
+    Category: 6
     Steps:
     - Type: 6
       Target:
@@ -126,6 +131,7 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.final-final.task.checkShip
       m_HashValue: 1192926505
+    Category: 6
     Steps:
     - Type: 6
       Target:
@@ -137,17 +143,18 @@ MonoBehaviour:
     - m_Source: getUncleHelp
       m_HashValue: 1667028217
   - Id:
-      m_Source: returnToShop
-      m_HashValue: 3161246646
+      m_Source: performRescue
+      m_HashValue: 3787595199
     LabelId:
-      m_Source: jobs.final-final.task.returnToShop
-      m_HashValue: 4212159882
+      m_Source: jobs.final-final.task.performRescue
+      m_HashValue: 3321614251
+    Category: 6
     Steps:
     - Type: 6
       Target:
         m_Source: 
         m_HashValue: 0
-      ConditionString: jobs:final-returnedToShop
+      ConditionString: jobs:final-final.rescueComplete
       Amount: 0
     PrerequisiteTaskIds:
     - m_Source: checkShip
@@ -250,19 +257,19 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 0400
   - Id:
-      m_Source: returnToShop
-      m_HashValue: 3161246646
-    IdString: returnToShop
+      m_Source: performRescue
+      m_HashValue: 3787595199
+    IdString: performRescue
     Index: 6
     LabelId:
-      m_Source: jobs.final-final.task.returnToShop
-      m_HashValue: 4212159882
+      m_Source: jobs.final-final.task.performRescue
+      m_HashValue: 3321614251
     Steps:
     - Type: 6
       Target:
         m_Source: 
         m_HashValue: 0
-      ConditionString: jobs:final-returnedToShop
+      ConditionString: jobs:final-final.rescueComplete
       Amount: 0
     PrerequisiteTaskIndices: 0500
   m_CashReward: 0

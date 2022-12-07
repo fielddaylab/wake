@@ -124,6 +124,11 @@ namespace Aqua {
 
         [MethodImpl(256)]
         static public T Fact<T>(StringHash32 inId)where T : BFBase {
+            #if UNITY_EDITOR
+            if (!UnityEditor.EditorApplication.isPlaying) {
+                return inId.IsEmpty ? null : ValidationUtils.FindAsset<T>(inId.ToDebugString());
+            }
+            #endif // UNITY_EDITOR
             return BestiaryDB.Fact<T>(inId);
         }
 
@@ -144,6 +149,11 @@ namespace Aqua {
 
         [MethodImpl(256)]
         static public JobDesc Job(StringHash32 inId) {
+            #if UNITY_EDITOR
+            if (!UnityEditor.EditorApplication.isPlaying) {
+                return inId.IsEmpty ? null : ValidationUtils.FindAsset<JobDesc>(inId.ToDebugString());
+            }
+            #endif // UNITY_EDITOR
             return JobDB.Get(inId);
         }
 

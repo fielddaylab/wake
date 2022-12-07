@@ -8,6 +8,7 @@ var UWTStreamLibraryImpl = {
          * @property {number} id       Full identifier
          * @property {Audio} resource Inner Audio resource
          * @property {boolean} active   Whether or not this element has been allocated
+         * @property {HtmlSourceElement[]} sources  List of HTMLAudioSources (ogg, mp3)
         */
         StreamElement: function(index) {
             this.index = index;
@@ -24,6 +25,17 @@ var UWTStreamLibraryImpl = {
             this.resource.controls = false;
             this.resource.disableRemotePlayback = true;
             this.resource.crossOrigin = "anonymous";
+            this.sources = [
+                document.createElement("source"),
+                document.createElement("source")
+            ];
+
+            this.sources[0].type = "audio/ogg";
+            this.sources[1].type = "audio/mpeg";
+
+            for(var i = 0; i < this.sources.length; i++) {
+                this.resource.appendChild(this.sources[i]);
+            }
         
             this.resource.onplay = this.resource.onplaying = function() {
                 self.playing = true;
@@ -81,6 +93,20 @@ var UWTStreamLibraryImpl = {
         */
         ExtractIndex: function(id) {
             return (id >> 8) & 16777215;
+        },
+
+        /**
+         * @param {string} path 
+         * @param {string} ext
+         * @return {string}
+         */
+        ChangeExtension: function(path, ext) {
+            const idx = path.lastIndexOf(".");
+            if (idx >= 0) {
+                return path.substring(0, idx) + ext;
+            } else {
+                return path + ext;
+            }
         }
     }, 
 
@@ -150,10 +176,15 @@ var UWTStreamLibraryImpl = {
             pool.push(element);
         }
 
-        element.resource.src = Pointer_stringify(path);;
+        var baseURL = Pointer_stringify(path);
+
+        element.sources[0].src = uwt.ChangeExtension(baseURL, ".ogg");
+        element.sources[1].src = uwt.ChangeExtension(baseURL, ".mp3");
+
         element.resource.volume = 1;
         element.resource.loop = false;
         element.resource.muted = false;
+        element.resource.load();
         element.playing = false;
         element.active = true;
 

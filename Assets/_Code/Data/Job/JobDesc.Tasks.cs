@@ -18,11 +18,23 @@ namespace Aqua
     {
         private const int MaxTasks = ushort.MaxValue;
 
+        internal enum JobTaskCategory
+        {
+            Unknown,
+            Travel,
+            Scan_Count,
+            Experiment,
+            Model,
+            Argue,
+            Narrative
+        }
+
         [Serializable]
         internal class EditorJobTask
         {
             public SerializedHash32 Id;
             public TextId LabelId;
+            public JobTaskCategory Category;
             
             public JobStep[] Steps = null;
 
@@ -38,6 +50,15 @@ namespace Aqua
             return ArrayUtils.MapFrom(m_Tasks, (t) => t.Id.ToDebugString());
         }
 
+        internal JobTaskCategory EditorTaskCategory(StringHash32 id) {
+            foreach(var task in m_Tasks) {
+                if (task.Id == id) {
+                    return task.Category;
+                }
+            }
+            return JobTaskCategory.Unknown;
+        }
+
         int IBaked.Order { get { return 16; }}
 
         bool IBaked.Bake(BakeFlags flags, BakeContext context)
@@ -46,6 +67,12 @@ namespace Aqua
             {
                 Log.Error("[JobDesc] Job '{0}' has more than {1} tasks", name, MaxTasks);
                 Array.Resize(ref m_Tasks, MaxTasks);
+            }
+
+            foreach(var editorTask in m_Tasks) {
+                if (editorTask.Category == JobTaskCategory.Unknown || editorTask.Category > JobTaskCategory.Narrative) {
+                    editorTask.Category = ApproximateTaskCategory(editorTask.Steps);
+                }
             }
 
             m_OptimizedTaskList = GenerateOptimizedTasks(m_Tasks);
@@ -302,6 +329,77 @@ namespace Aqua
             }
 
             return !bFailed;
+        }
+
+        static internal JobTaskCategory ApproximateTaskCategory(JobStep[] steps) {
+            JobTaskCategory fallback = JobTaskCategory.Unknown;
+
+            foreach(var step in steps) {
+                switch(step.Type) {
+                    case JobStepType.GotoScene:
+                    case JobStepType.GotoStation:
+                        return JobTaskCategory.Travel;
+
+                    case JobStepType.UpgradeFact:
+                        return JobTaskCategory.Experiment;
+
+                    case JobStepType.ScanObject:
+                        return JobTaskCategory.Scan_Count;
+
+                    case JobStepType.EvaluateCondition:
+                    case JobStepType.SeeScriptNode:
+                    case JobStepType.GetItem:
+                        fallback = JobTaskCategory.Narrative;
+                        break;
+
+                    case JobStepType.FinishArgumentation:
+                        return JobTaskCategory.Argue;
+
+                    case JobStepType.AddFactToModel:
+                        return JobTaskCategory.Model;
+
+                    case JobStepType.AcquireBestiaryEntry: {
+                        BestiaryDesc entry = Assets.Bestiary(step.Target);
+                        if (entry != null) {
+                            if (entry.Category() == BestiaryDescCategory.Critter) {
+                                return JobTaskCategory.Scan_Count;
+                            } else {
+                                fallback = JobTaskCategory.Travel;
+                            }
+                        }
+                        break;
+                    }
+
+                    case JobStepType.AcquireFact: {
+                        BFBase fact = Assets.Fact(step.Target);
+                        if (fact != null) {
+                            switch(fact.Type) {
+                                case BFTypeId.WaterProperty:
+                                case BFTypeId.WaterPropertyHistory:
+                                case BFTypeId.Population:
+                                case BFTypeId.PopulationHistory:
+                                    return JobTaskCategory.Scan_Count;
+
+                                case BFTypeId.Model:
+                                    return JobTaskCategory.Model;
+
+                                case BFTypeId.State:
+                                case BFTypeId.Consume:
+                                case BFTypeId.Death:
+                                case BFTypeId.Eat:
+                                case BFTypeId.Grow:
+                                case BFTypeId.Parasite:
+                                case BFTypeId.Reproduce:
+                                case BFTypeId.Produce:
+                                    return JobTaskCategory.Experiment;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+
+            return fallback;
         }
 
         #endif // UNITY_EDITOR

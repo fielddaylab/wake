@@ -21,6 +21,7 @@ namespace Aqua.Cameras
             public float Height;
             public float Zoom;
             public float FOV;
+            public float AudioListenerZOffset;
             public CameraPoseProperties Properties;
         }
 
@@ -30,6 +31,7 @@ namespace Aqua.Cameras
         [HideIfField("IsFOVDirect")] public Transform Target = null;
         [HideIfField("IsFOVDirect")] public float Height = 10;
         [HideIfField("IsFOVDirect")] public float Zoom = 1;
+        [HideIfField("IsFOVDirect")] public float AudioListenerZOffset = 0;
         [ShowIfField("IsFOVDirect")] public float FieldOfView = 30;
 
         [AutoEnum] public CameraPoseProperties Properties = CameraPoseProperties.Default;
@@ -43,6 +45,7 @@ namespace Aqua.Cameras
             data.Target = Target;
             data.Height = Height;
             data.Zoom = Zoom;
+            data.AudioListenerZOffset = AudioListenerZOffset;
             data.Properties = Properties;
             data.FOV = FieldOfView;
         }
@@ -60,6 +63,7 @@ namespace Aqua.Cameras
             Target = data.Target;
             Height = data.Height;
             Zoom = data.Zoom;
+            AudioListenerZOffset = data.AudioListenerZOffset;
             Properties = data.Properties;
             FieldOfView = data.FOV;
         }

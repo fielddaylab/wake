@@ -140,6 +140,7 @@ namespace EasyAssetStreaming {
                 string url = id.MetaInfo.ResolvedAddress;
                 var request = id.LoadInfo.Loader = new UnityWebRequest(url, UnityWebRequest.kHttpVerbGET);
                 request.downloadHandler = new DownloadHandlerAudioClip(url, GetAudioTypeForURL(url));
+                InvokeLoadBegin(id, request, id.LoadInfo.RetryCount);
                 var sent = request.SendWebRequest();
                 sent.completed += (_) => {
                     HandleAudioUWRFinished(id);
@@ -196,9 +197,9 @@ namespace EasyAssetStreaming {
                 }
 
                 UnityWebRequest request = loadInfo.Loader;
+                InvokeLoadResult(id, request, StreamingHelper.ResultType(request));
 
                 if (request.isNetworkError || request.isHttpError) {
-                    InvokeLoadResult(StreamingHelper.ErrorType(request));
                     if (loadInfo.RetryCount < RetryLimit && StreamingHelper.ShouldRetry(request)) {
                         UnityEngine.Debug.LogWarningFormat("[Streaming] Retrying audio load '{0}' from '{1}': {2}", id.MetaInfo.Address, id.MetaInfo.ResolvedAddress, loadInfo.Loader.error);
                         loadInfo.RetryCount++;
@@ -221,7 +222,6 @@ namespace EasyAssetStreaming {
                 id.StateInfo.Status = AssetStatus.Loaded;
                 RecomputeMemorySize(ref MemoryUsage, id, clip);
                 UnityEngine.Debug.LogFormat("[Streaming] ...finished loading audio (async) '{0}'", id.MetaInfo.Address);
-                InvokeLoadResult(LoadResult.Success);
                 InvokeCallbacks(id, clip);
             }
 

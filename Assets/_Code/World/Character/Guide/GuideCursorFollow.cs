@@ -18,15 +18,23 @@ public class GuideCursorFollow : WorldInput
     [NonSerialized] private Vector3? m_LookAtTarget;
     [NonSerialized] private Plane m_LookPlane;
     [SerializeField] private float m_PlaneOffset = 15f;
+    [SerializeField] private string m_DisableConditions = null;
+    private bool m_Disabled = false;
 
     void Start() {
         m_LookPlane = new Plane(Vector3.back, v1ctorHead.position + Vector3.back * m_PlaneOffset);
+
+        if (Services.Data.CheckConditions(m_DisableConditions)) {
+            // guide should not get enabled
+            m_Disabled = true;
+            return;
+        }
 
         Device.OnUpdate += UpdateInput;
     }
 
     void Update() {
-        if (Script.IsLoading || Script.IsPaused) {
+        if (Script.IsLoading || Script.IsPaused || m_Disabled) {
             return;
         }
 

@@ -18,6 +18,15 @@ $call CheckJobTasks()
 $set jobs:final-checkShipRestored = true
 $call CheckJobTasks()
 
+:: modelCompleted
+@trigger    JobTasksUpdated
+@when       JobTaskTop(reportBack)
+@once
+@cutscene
+{@player}   I figured it out! And Mom said that if I figure this out... I could go help Sam.
+{@guide}    That's not exactly what she said--
+{@player}   To the Kelp Station!
+
 // CATCH-ALL GUIDE TEXT
 
 :: catchTellMom
@@ -71,14 +80,14 @@ $call GiveFact(ColossalSquid.Eats.GoassamerWorm, Silent)
 @when       JobTaskTop(checkShip)
 @boostScore -5
 @cutscene
-{@guide}    [Systems malfunctioning]
+{@guide}    Hello again, O. If you return to the ship, you will see the power has been restored.
 
-:: catchReturnToShop
+:: catchPerformRescue
 @trigger    RequestPartnerHelp
-@when       JobTaskTop(returnToShop)
+@when       JobTaskTop(performRescue)
 @boostScore -5
 @cutscene
-{@guide}    [Systems malfunctioning]
+{@guide}    Travel to the Deep Deep Sea and rescue {nameof @sam}.
 
 
 // ARGUMENTATION
@@ -203,6 +212,12 @@ $endif
     {@drKelp}   I'll pass this information on to the rescue team.
 {@player}   What!? I figured out this information. I'm going.
 {@drKelp}   Absolutely not. I won't lose another child to this foolishness.
+{@player}   I'm leaving.
+{@drKelp}   If you're going to insist...
+            I'm sorry O. I have to make sure you stay safe.
+{hide-dialog} {fade-out black, 1, wait} {wait 2}
+// TODO: hide mother
+$set jobs:final-power-disabled = true
 
 :: argueRevisited
 @trigger    TryArgumentation

@@ -849,17 +849,29 @@ namespace Aqua
         #region Leaf
 
         [LeafMember("LoadScene"), UnityEngine.Scripting.Preserve]
-        static private IEnumerator LeafLoadScene(string inSceneName, StringHash32 inEntrance = default(StringHash32), string inLoadingMode = null)
+        static private IEnumerator LeafLoadScene([BindThread] ScriptThread inThread, string inSceneName, StringHash32 inEntrance = default(StringHash32), string inLoadingMode = null)
         {
             SceneLoadFlags flags = SceneLoadFlags.Default;
-            return StateUtil.LoadSceneWithWipe(inSceneName, inEntrance, flags);
+            IEnumerator transition = StateUtil.LoadSceneWithWipe(inSceneName, inEntrance, flags);
+            if (LeafRuntime.PredictEnd(inThread)) {
+                return null;
+            }
+            else {
+                return transition;
+            }
         }
 
         [LeafMember("LoadSceneFade"), UnityEngine.Scripting.Preserve]
-        static private IEnumerator LeafLoadSceneFade(string inSceneName, StringHash32 inEntrance = default(StringHash32), string inLoadingMode = null)
+        static private IEnumerator LeafLoadSceneFade([BindThread] ScriptThread inThread, string inSceneName, StringHash32 inEntrance = default(StringHash32), string inLoadingMode = null)
         {
             SceneLoadFlags flags = SceneLoadFlags.Default;
-            return StateUtil.LoadSceneWithFader(inSceneName, inEntrance, flags);
+            IEnumerator transition = StateUtil.LoadSceneWithFader(inSceneName, inEntrance, flags);
+            if (LeafRuntime.PredictEnd(inThread)) {
+                return null;
+            }
+            else {
+                return transition;
+            }
         }
 
         #endregion // Leaf

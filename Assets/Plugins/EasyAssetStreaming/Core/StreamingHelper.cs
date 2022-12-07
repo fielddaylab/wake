@@ -379,13 +379,17 @@ namespace EasyAssetStreaming {
             return webRequest.isNetworkError;
         }
 
-        static internal Streaming.LoadResult ErrorType(UnityWebRequest webRequest) {
+        static internal Streaming.LoadResult ResultType(UnityWebRequest webRequest) {
             if (webRequest.isNetworkError) {
-                return Streaming.LoadResult.Network;
+                return Streaming.LoadResult.Error_Network;
             } else if (webRequest.isHttpError) {
-                return Streaming.LoadResult.Server;
+                return Streaming.LoadResult.Error_Server;
+            } else if (webRequest.responseCode == 304) { // Not Modified
+                return Streaming.LoadResult.Success_Cached;
+            } else if (webRequest.responseCode >= 200 && webRequest.responseCode < 400) { // Success
+                return Streaming.LoadResult.Success_Download;
             } else {
-                return Streaming.LoadResult.Unknown;
+                return Streaming.LoadResult.Error_Unknown;
             }
         }
 

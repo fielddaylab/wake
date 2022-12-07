@@ -6,12 +6,15 @@ using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Services;
 using Leaf;
+using UnityEngine;
 
 namespace Aqua
 {
     [ServiceDependency(typeof(DataService), typeof(AssetsService), typeof(EventService))]
     internal partial class ProgressionWatcher : ServiceBehaviour
     {
+        [SerializeField] private GameObject m_LevelUpPopup;
+
         [NonSerialized] private LeafAsset m_JobScript;
         [NonSerialized] private LeafAsset m_ActScript;
 

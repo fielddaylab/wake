@@ -31,7 +31,7 @@ namespace Aqua.Entity {
         private readonly EntityActivationSet<Visual2DTransform, UpdateArgs> m_UpdateSet;
 
         private Visual2DSystem() {
-            m_UpdateSet = new EntityActivationSet<Visual2DTransform, UpdateArgs>();
+            m_UpdateSet = new EntityActivationSet<Visual2DTransform, UpdateArgs>(1024);
             m_UpdateSet.SetStatus = SetStatus;
             m_UpdateSet.UpdateAwake = UpdateTransform;
             m_UpdateSet.UpdateActive = UpdateActive;

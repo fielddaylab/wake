@@ -74,15 +74,18 @@ namespace Aqua.Compression {
     public struct CompressedImage {
         [FieldOffset(0)] public CompressedGraphic Graphic;
         [FieldOffset(4)] public ushort SpriteIdx;
+        [FieldOffset(6)] public ushort Flags;
 
         static public void Compress(PackageBuilder compressor, Image image, out CompressedImage data) {
             CompressedGraphic.Compress(image, out data.Graphic);
             data.SpriteIdx = compressor.AddAsset(image.sprite);
+            data.Flags = image.preserveAspect ? (ushort) 1 : (ushort) 0;
         }
 
         static public void Decompress(PackageBank bank, in CompressedImage data, Image image) {
             CompressedGraphic.Decompress(data.Graphic, image);
             image.sprite = (Sprite) bank.GetAsset(data.SpriteIdx);
+            image.preserveAspect = (data.Flags & 1) != 0;
         }
     }
 

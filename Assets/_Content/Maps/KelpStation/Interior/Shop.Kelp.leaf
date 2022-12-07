@@ -72,6 +72,12 @@ $elseif HasJournalEntry("S04"), !jobs:specter6-comms.kelp.discussed
     {@$MerchantId} Of course, Ollie. I'll ring you on the comms as soon as I find something, okay?
     {@$MerchantId} Thanks, Tío. 
     $set jobs:specter6-comms.kelp.discussed = true
+$elseif jobs:final-final.upgradeReady, !JobStartedOrComplete(final-final)
+    // final job unlocked after seeing 8th specter
+    {@$MerchantId}  So, mijita. Ready to upgrade {nameof @guide} and rescue {nameof @sam}? Or did you just want to shop for tools?
+    $choice .discussUpgrade; Tell me about the upgrade!
+    $choice .action.openShop; Shop for tools
+    $choice .action.cancel; Actually, never mind. 
 
 $elseif JobInProgress(final-final), JobTaskTop(getUncleHelp)
     // final job, ask uncle for help
@@ -81,25 +87,10 @@ $elseif JobInProgress(final-final), JobTaskTop(getUncleHelp)
                     Give me a minute...
                     {hide-dialog} {fade-out black, 1, wait} {wait 2}
                     {wait 0.1} {fade-in 1, wait} {wait 1}
-                    Power should be restored now. Why don't you head to your ship to see if everything is fixed?
+                    $set jobs:final-power-disabled = false
+    {@$MerchantId}  Power should be restored now. Why don't you head to your ship to see if everything is fixed?
     $set jobs:final-uncleHelped = true
-    $call CheckJobTasks()
-$elseif JobInProgress(final-final), JobTaskTop(returnToShop)
-    // final job, after ship power restored
-    {@$MerchantId}  So? How'd it go?
-    {@player}       The lights are back on. But {nameof @guide} is still not responding to anything I do! It's horrible.
-    {@$MerchantId}  I'm sorry. There's nothing more I can do.
-    {@player}       Why is Mom like this? If she hadn't tried to stop me from rescuing {nameof @sam}, we'd still have {nameof @guide}.
-    {@$MerchantId}  Here's what happened to your sister:
-                    {hide-dialog} {fade-out black, 1, wait} {wait 2}
-                    {wait 0.1} {fade-in 1, wait} {wait 1}
-    {@$MerchantId}  I've been able to move on after {nameof @mer}'s death, but it has been harder for your mother.
-                    She couldn't bear for it to happen again. I don't know that I could take another loss like that either.
-                    But {nameof @sam}'s life may be on the line here, and I believe you are the best equipped for the task.
-                    Try not to hold it against your mother.
-                    Now. It's time for you to go down there and rescue {nameof @sam}. Are you ready?
-    {@player}       Ready.
-    $set jobs:final-returnedToShop = true
+    $set jobs:final-power-disabled = false
     $call CheckJobTasks()
 $else
     {@$MerchantId} Welcome back, mijita. Need any upgrades for your ship? 
@@ -162,6 +153,14 @@ $choice .action.cancel; Not right now.
 
 :: purchased
 {@$MerchantId}   {random Good choice!|Good call.|Alright, it's yours!}
+
+:: genericWelcome
+{@$MerchantId}  Okay, but don't wait too long on this. Sam needs you.
+                What can I get you?
+
+:: discussUpgrade
+{@$MerchantId}  I've found the code to upgrade {nameof guide} and unscramble all the glitches!
+                Head up to your ship to test it out.
 
 // Idle
 

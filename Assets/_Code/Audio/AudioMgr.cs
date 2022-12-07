@@ -31,6 +31,7 @@ namespace AquaAudio
 
         #region Inspector
 
+        [SerializeField] private AudioListener m_Listener;
         [SerializeField] private AudioPackage m_DefaultPackage = null;
         [SerializeField] private SamplePool m_SamplePlayers = null;
         [SerializeField] private StreamPool m_StreamPlayers = null;
@@ -49,27 +50,17 @@ namespace AquaAudio
         private AudioPropertyBlock m_MasterProperties;
         private AudioPropertyBlock m_MixerProperties;
         private AudioPropertyBlock m_DebugProperties;
-        private ushort m_Id;
+        [NonSerialized] private ushort m_Id;
+
+        [NonSerialized] private Transform m_ListenerTransform;
 
         private AudioPropertyBlock[] m_BusMixes;
 
         private AudioHandle m_BGM;
-        private float m_FadeMultiplier = 1;
+        [NonSerialized] private float m_FadeMultiplier = 1;
         private Routine m_FadeMultiplierRoutine;
 
         #region IService
-
-        protected override void Shutdown()
-        {
-            DestroyPool();
-
-            m_LoadedPackages.Clear();
-            m_EventLookup.Clear();
-
-            SceneHelper.OnSceneLoaded -= OnGlobalSceneLoaded;
-
-            AudioSettings.OnAudioConfigurationChanged -= OnAudioSettingsChanged;
-        }
 
         protected override void Initialize()
         {
@@ -77,6 +68,8 @@ namespace AquaAudio
             m_MasterProperties = AudioPropertyBlock.Default;
             m_MixerProperties = AudioPropertyBlock.Default;
             m_DebugProperties = AudioPropertyBlock.Default;
+
+            m_ListenerTransform = m_Listener.transform;
 
             m_BusMixes = new AudioPropertyBlock[BusCount - 1];
             for(int i = 0; i < m_BusMixes.Length; ++i)
@@ -88,6 +81,18 @@ namespace AquaAudio
 
             SceneHelper.OnSceneLoaded += OnGlobalSceneLoaded;
             AudioSettings.OnAudioConfigurationChanged += OnAudioSettingsChanged;
+        }
+
+        protected override void Shutdown()
+        {
+            DestroyPool();
+
+            m_LoadedPackages.Clear();
+            m_EventLookup.Clear();
+
+            SceneHelper.OnSceneLoaded -= OnGlobalSceneLoaded;
+
+            AudioSettings.OnAudioConfigurationChanged -= OnAudioSettingsChanged;
         }
 
         #endregion // IService
