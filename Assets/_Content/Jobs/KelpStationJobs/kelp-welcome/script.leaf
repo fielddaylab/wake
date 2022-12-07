@@ -20,12 +20,10 @@ $call FocusHighlight->Clear()
 {hide-dialog}{fade-in 0.5, wait}
 {style default}
 
-{@drKelp} Start by scanning all the species here at the Forested Lagoon.
-{@drKelp} I want to make sure you can gather the basics by yourself. 
-{@drKelp} While you're working, I'll install your onboard A.I. and get the AquaLab set up.
+{@drKelp} Thank you, Olivia! 
+{@drKelp} While you're working, I'll get the AquaLab set up for you.
 {@player} Wow... the AquaLab? You're giving me Mer's old ship? 
 {@drKelp} She would've wanted you to have it, Mija.
-{@drKelp} Just... please be careful out there.
 $call GiveJournalEntry("N01_Intro")
 
 :: diveSite
@@ -36,19 +34,19 @@ $call GiveJournalEntry("N01_Intro")
 @cutscene
 $branch common.ringPhone
 
-{@kelpMechanic} One more thing, mijita!
-{@kelpMechanic} I'm patching through your onboard A.I. 
-{@kelpMechanic} It should come online in three...|two...|one...
-{@guide} Greetings! I am {nameof @guide}, your A.I. companion.
-{@guide} I have been programmed to guide you through your jobs and keep your ship's life support systems functioning. 
-{@guide} What should I call you?
-{@player} Oh... uh, you can call me O.
-{@player} So... what should I do first, {nameof @guide}?
-{@guide}  Use your {item-name}Scanner{/item-name} to ID all the species here at the Forested Lagoon. 
+{@kelpMechanic} Hold on, mijita, one more thing! 
+{@kelpMechanic} I'm sending an A.I. upgrade to your data card.
+{@kelpMechanic} It should come online in 3...|2...|1...
+{@guide} Greetings! I am {nameof @guide}, your onboard A.I. 
+{@guide} What should I call you? 
+{@player} Oh... uh, my friends call me O. 
+{@guide} Affirmative, O. Updating database. 
+{@guide} It appears you have one active job. And lots of thrilling data to collect!
+{@guide} First, use your {item-name}Scanner{/item-name} to ID all the species here at the Forested Lagoon. 
 $call GiveUpgrade(ROVScanner, Silent)
 $call Player->SetTool(Scanner)
 {@guide}  The {item-name}Scanner{/item-name} searches for life forms automatically. 
-            Click the red targets to ID a new plant or animal species. 
+          Click the red targets to ID a new plant or animal species. 
 {hide-dialog}
 {wait 0.5}
 
@@ -113,10 +111,6 @@ $set    jobs:kelp-welcome.got.scans = true
 
 {@guide}   You have scanned all of the local species. Your work is acceptable!
 {@player} Thanks, {nameof @guide}. 
-{@guide} You are most welcome, Olivia!
-{@player}  Hey {nameof @guide}... would you mind calling me O?
-{@guide}   Updating database|.|.|.|
-{@guide}   You are most welcome, O!
 {@guide}   Now head to the surface and board your new research vessel!
 $call Surface->Activate()
 
@@ -144,7 +138,7 @@ $call Surface->Activate()
 
 $branch common.ringPhone
 {@player}Wow. Mer's old AquaLab!
-{@player}She used to keep a trunk full of notes and drawings in her cabin. I wonder if it's still there. 
+{@player}She used to keep a trunk full of notes in her cabin. I wonder if it's still there. 
 {@player} How do we get onboard, {nameof @guide}?
 
 {fade-out black.60, 0.5, wait}
@@ -154,14 +148,14 @@ $branch common.ringPhone
 $call ship.map->ForceOnTop()
 $call schematic.button->ForceOnTop()
 $call FocusHighlight->Focus(schematic.button, 250, 250)
-    This is your ship's {h}schematic{/h}. 
+    Use your {h}schematic{/h} to visit different areas of your ship.  
 $call FocusHighlight->Clear()
 
 $call schematic.button->ForceClick()
 {hide-dialog}{wait 1}{style default}
 // $call HelmButton->ForceOnTop()
 $call FocusHighlight->Focus(HelmButton, 200, 200)
-    Click here to enter your {h}helm{/h}
+    Click here to enter the {h}helm{/h}!
 $call FocusHighlight->Clear()
 {hide-dialog}{fade-in 0.5, wait}
 $call schematic.button->ResetSorting()
@@ -208,27 +202,25 @@ $call WheelPrompt->Deactivate()
 @cutscene
 @once
 
-{@guide} This is your helm!
-         It appears you are receiving a transmission from a deep-sea vessel called the Nautilus.
-{@player} Oh, that's my friend Sam! Put them through!
-{@sam} O, can you hear me?   
-{@player} ¡Sí, estoy aquí!
-{@player} How's the mission? Any sign of the Challenger Deep?
-{@sam} Not yet, but we're getting close. 
-{@sam} It's pretty eerie down here, O. I can see why your sister loved it.  
-{@sam} Dinn says we're about to hit a dead zone, so we might end up losing contact...
-{@sam} ......
+{@player} Wow. It's beautiful! 
+{@player} {nameof @guide}, can you put out a radio call to my friend Sam? 
+{@guide} Affirmative, O. 
+$branch common.ringPhone
+{@player} Sam! ¿Qué tal?
+{@sam} Whoa... O, is that you? On the AquaLab?? 
+{@player} Yep. I'm a level 1 scientist now. No big deal. 
+{@player} How's the mission going? Any sign of the Challenger Deep probe? 
+{@sam} Not yet, but we're getting close. I wish could be here to see it. 
+{@sam} Dinn says we're about to hit a dead zone, so I might lose you in a second...
+{@sam} ....
 {@player} Sam?
-{@sam} ....weird readings on the scanner....
+{@sam} ....getting some weird readings on the scanner....
 {@player} Sam? Hello?
 {@player} Sam???
 {@guide} Transmission lost.
-{@player} Wow. They must've reached the lower depths. 
-{@player} They'll probably find the Challenger Deep probe any minute!
-{@player} I wish I could see it. 
 $call GiveJournalEntry("N02_LosingConnection")
 
-{@player}  Okay. What now, {nameof @guide}?
+{@player}  Okay. What should I do now, {nameof @guide}?
 {@guide} Updating ship schematic... 
 {hide-dialog}
 
@@ -290,7 +282,7 @@ $endif
 @trigger    RequestPartnerHelp
 @when 		scene:name == "ExperimentV2", !JobTaskCompleted(runExperiment)
 @cutscene
-{@player}   Ok, now what? 
+{@player}   Okay, now what? 
 $if ExperimentIsRunning()
     {@guide}	Watch the tank and click to record new behaviors.  
                 You need to find out how these species interact.
@@ -306,8 +298,8 @@ $endif
 @cutscene
 @once
 
-{@guide}  You've gathered the data you need!
-{@guide}  Now open your ship schematic and {m}Quick-Travel{/m} back to the Research Station.
+{@guide}  You've gathered the data you need! Time to head back to the station. 
+{@guide}  You can board your sub from the Helm, or you can open your schematic and use {m}Quick-Travel{/m} to get there faster!
 
 // $call   UnlockRoom("office")
 
@@ -320,7 +312,7 @@ $endif
 {@player} 	What now, {nameof @guide}?
 {@guide}	You need to report your findings. 
 $if !IsPlayerOnStation()
-	{@guide}  Open your schematic and {m}quick-travel{/m} to the research station.	
+	{@guide}  Open your schematic and {m}Quick-Travel{/m} to the research station.	
                 Your mother will be waiting for you there.
 $endif
 
@@ -369,7 +361,7 @@ $endif
 @when 		JobTaskActive(runExperiment)
 @boostScore -5
 @cutscene
-{@guide}    Head to the Observation Tank and run your experiment! 
+{@guide}    Head to the Observation Tank and run your experiment.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
@@ -466,9 +458,8 @@ $call CompleteJob()
 
 {@drKelp}	I'm so thrilled, Mija. 
 {@drKelp}   With your help, we might actually be able to get the Kelp Refuge up and running!
-{@drKelp}   Your sister always wanted to devote her life to the otters. I can't think of a better way to honor her. 
-{@player}   Thanks, Mom.
-{@player}   What about the other science stations? Do they need help, too?
+{@drKelp}   Your sister used to love this place. I can't think of a better way to honor her. 
+{@player}   What about the other research stations? Do they need help, too?
 {@drKelp}   Hmm. You mean in other ecosystems?
 {@drKelp}    I'm sure they would love your help, Mija.
 {@drKelp}    But for now, I want you closer to home. Just in case. 

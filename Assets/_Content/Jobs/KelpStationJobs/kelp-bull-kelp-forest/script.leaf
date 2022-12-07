@@ -7,10 +7,10 @@
 @cutscene
 @once
  
-{@drKelp}   You already identified all the species here at {h}Site C{/h}.  
-{@drKelp}   Now you'll need to find {h}Site A{/h}, which we call {nameof RS-1A}, and do the same thing there. 
+{@drKelp}   Okay, Mija. You already identified all the species here at {h}Site C{/h}.  
+{@drKelp}   Now you'll need to head to {h}Site A{/h}, {nameof RS-1A}, and do the same thing. 
 {@drKelp}   Oh, and let me know if any bull kelp snags on your sub!
-{@drKelp}   I was thinking I could whip up some bull kelp cookies between my next two meetings... 
+{@drKelp}   I was thinking I could whip up some kelp cookies between my next two meetings. 
 {@player}   Mom! Aren't you busy enough?
 {@drKelp}   Okay, okay, no importa. It was just a thought.    
 
@@ -22,7 +22,7 @@ $call QueueSpecter(RS-1A)
 @when 		scene:name == "Helm", JobTaskTop(siteA)
 @cutscene
 {@player}   Can you remind me what to do next, {nameof @guide}?
-{@guide}	Certainly, O. You need to board your sub and head over to Site A.
+{@guide}	Certainly, O. You need to board your sub and head to Site A.
 
 :: helpWrongSite
 @trigger    RequestPartnerHelp
@@ -37,7 +37,7 @@ $call QueueSpecter(RS-1A)
 @when 		scene:name == "KelpStation", JobTaskTop(siteA)
 @cutscene
 {@player} 	Where should we be going, again?
-{@guide}	Head to the west side of the Kelp region and look for {h}Site A{/h}.      
+{@guide}	Head west and look for {h}Site A{/h}.      
 
 // at the site
 
@@ -48,12 +48,11 @@ $call QueueSpecter(RS-1A)
 @once
 @cutscene
 
-{@player}    Wow, Rodeo Cove!
-{@player}    My sister used to bring me here when I was a kid.
+{@player}    Wow, Rodeo Cove! My sister used to bring me here when I was little.
 {@player}    I wonder if Ovid the Otter still lives here. He was my favorite. 
 {@guide}    According to my database, otters live an average of 9 years in the wild...
 {@guide}    So there is a 10.8% chance that Ovid is still alive!
-{@player}   Gee. Thanks, {nameof @guide}.
+{@player}   Gee. Thanks for that cheery thought, {nameof @guide}.
 {@guide}    Don't mention it, O! 
 {wait 0.5}
 {hide-dialog}
@@ -65,7 +64,7 @@ $call QueueSpecter(RS-1A)
 @once
 
 {@player}    What now, {nameof @guide}?
-{@guide}     You need to scan any news species here, and then head back to your ship!
+{@guide}     Scan any new species you can find, and then head back to your ship.
 {@player}    Okay. Copy that. 
 
 // to experimentation
@@ -193,7 +192,7 @@ $goto .argue.chooseFacts
 
 ::argue.done
 $call ArgueComplete()
-{@drKelp} Perfect, Olivia! 
+{@drKelp} Yes, that looks right!
           Just like here at the Forested Lagoon, {pluralnameof SeaOtter} eat the {pluralnameof Urchin}.
 And {pluralnameof Urchin} eat the {critter-name}Kelp{/critter-name}!
 $call CompleteJob()
@@ -205,15 +204,14 @@ $call CompleteJob()
 @once
 
 {@drKelp}   You've proven that both {pluralnameof BullKelp} and {pluralnameof GiantKelp} provide energy to their ecosystems. 
-            No wonder my colleagues want your help. You're a natural!
-{@player}   Your colleagues??
+            Nice job out there, Mija. 
 {@player}   Does that mean I can take a job at another station?
-{@drKelp}   Well... if that's what you want. 
-{@drKelp}   But remember, don't take too many risks. You're still so new at this.   
+{@drKelp}   Well... if that's what you really want.
+{@drKelp}   But are you sure you don't want to stay here? You're still so new at this.   
 {@player}   No te preocupes, Mom. I'll be careful.
 {@drKelp}   Okay, then. 
 {@drKelp}   I'll have {nameof @guide} update the map aboard your AquaLab. 
-            In the meantime, stop by your uncle's shop. You'll need some upgrades!
+            In the meantime, stop by your uncle's shop. You'll need some upgrades. 
 {hide-dialog}
 $call UnlockRoom("Shop")
 $call SetJob(kelp-shop-welcome)

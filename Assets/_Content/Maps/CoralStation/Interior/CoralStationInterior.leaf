@@ -32,10 +32,10 @@ $call       CoralMechanic->TeleportTo(mechanic-intro-pos)
 {@coralMechanic} Yeah, yeah. Serenity Meadows, the happiest ecosystem on Earth...
                  Except for the killer Lionfish who are literally out there ruining everything.
 {@player}   Oh, um... is this a bad time?
-{@profCoral} Of course not. We were just about to get back to work.
-{@profCoral} You must be O. I'm {nameof @profCoral}, and this is--
+{@profCoral} Not at all. We were just about to get back to work.
+{@profCoral} You must be Ollie. I'm {nameof @profCoral}, and this is--
 {@coralMechanic} Sofia. Mechanic extraordinaire.  
-                 I hope you like turtles, O. He's obsessed. 
+                 I hope you like turtles, Ollie. He's obsessed. 
 {@profCoral} The Loggerhead Turtles are my research interest, but you'll find several other species here, too.
              We maintain a few different sites in the region. I'll send you the coordinates.
 $branch common.download
@@ -45,7 +45,15 @@ $call UnlockSite(RS-2S)
 
 {@player}       Thanks! 
                 Um... what was that about killer Lionfish?
-{@profCoral}    Don't worry, O. Serenity Meadows is perfectly safe. 
+{@profCoral}    No need to worry, O. Serenity Meadows is perfectly safe. 
+{@coralMechanic} Unless you're allergic to Lionfish, like I am. Then it's a death trap.
+                 I got stung a couple weeks ago. Puffed up like a balloon.
+                 Plus, I'm sure the Lionfish are causing the ecosystem collapse over at the Restoration Reef. 
+                 I mean, they're new to the area. And they're monsters!! What else could it be?
+                 Right, O? 
+{@player}       Oh... um, I don't know... 
+{@profCoral}    <i>If</i> the Lionfish are causing trouble, {nameof @coralMechanic}, we'll figure it out in due time. 
+                 Ollie... maybe you could help us.  
                 Let me know if you'd like to view the job board! 
 
 $set    world:coral.metScientist = true

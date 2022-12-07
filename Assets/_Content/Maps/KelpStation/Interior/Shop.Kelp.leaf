@@ -22,26 +22,21 @@ $goto act1.momMadEnd
 
 #ShopLockedHandler(b, JobStartedOrComplete(kelp-welcome))
 @boostScore -100
-{@$MerchantId} Ollie! Welcome back.
-               I'm still getting things set up for the day.
+{@$MerchantId} I'm still getting my shop set up for the day.
                Why don't you check back soon? I'll talk you through all the ship upgrades. 
                And good luck out there, mijita.
-{@player}     Thanks, Tío!
+{@player}     Thanks, Tío.
 
 #ShopHandler(first)
 @boostScore 100
 @once
 {@$MerchantId}  ¡Hola, mijita!
-                What do you think of {nameof @guide}? Sweet A.I., right?
-                His enthusiasm for data was Mer's idea... she wanted to make sure he was happy on the job.
+                What do you think of {nameof @guide}? Pretty sweet A.I., right?
+                His love of data was Mer's idea. 
 {@player}       Wait... you and Mer created {nameof @guide}?
 {@$MerchantId}  ¡Claro que sí! Didn't I tell you?
                 Anyway, now that you and {nameof @guide} will be traveling outside the Kelp Forest, you'll need some upgrades. 
-{@player}   What is all this stuff, Tío?
-{@$MerchantId}  My shop has all the tools and upgrades you'll need.
-                You're a Level 1 scientist, so you'll need to stick to the basics for now.
-                You can find sub upgrades under the Exploration tab...
-                And tools for your lab under the Science tab. 
+                 Since you're a level 1 scientist, you'll need to stick to the basics for now. 
                 Want to take a look? 
 $set jobs:kelp-mechanic.givenJournal = false
 $choice .action.openShop; Sure! 
@@ -50,29 +45,32 @@ $choice .action.cancel; No thanks. I'll come back later.
 #ShopHandler(a)
 $if jobs:bayou-mechanic.givenArticle, !jobs:kelp-mechanic.givenJournal
     // STORY BEAT E
-    {@player}   Hey Tío.... did you know Mer worked on the Challenger Deep probe?
-    {@$MerchantId} Where did you hear about that, mijita?
-    {@player} On a job. Is it true? 
-    {@$MerchantId} Yes. Mer designed the probe.
-                   She even created an experimental A.I. that was capable of picking up its transmissions.
-                   {@nameof @guide}, I believe she called it.
-    {@player}   Wait... Mer created {nameof @guide}??
-                Is that why I'm getting all these glitchy messages? 
-    {@$MerchantId} It might be best to save this talk for later, Ollie.
-                    Your mother probably had a reason for not telling you. 
-                   But.... I suppose it couldn't hurt to give you this. Meredith's specs from when she created {nameof @guide}.
-                   Now. Por favor, let's stay focused on the job. 
+    {@$MerchantId} You look thoughtful, mijita. Is something bothering you?
+    {@player}   Well... maybe a little bit.
+                Mom's always saying that Mer's dream was to stay here and create a Kelp Refuge.
+                But I read an article about Mer. She didn't talk about the Refuge at all.
+    {@$MerchantId} Well... your sister did love this place, Ollie.
+                   But the older she got, the more she fell in love with Lower Depths.
+                   If she had survived, I think she would've devoted her life to learning more about that place.
+    {@player}      So... what happened?
+    {@$MerchantId} ¿Qué?
+    {@player}     I still don't know exactly how she died.
+                  Mom said it was an equipment malfunction, but if Mer was such a tech genius... 
+    {@$MerchantId} Lo siento, Ollie. It's not my place to say.
+                   For now, let's focus on work, okay?            
+
     // He tells you Mer created Victor. Get Mer’s journal page that shows Victor 1.0 version.
     $set jobs:kelp-mechanic.givenJournal = true
 $elseif HasJournalEntry("S04"), !jobs:specter6-comms.kelp.discussed
     // STORY BEAT G
-    {@player}  Tío, I need to ask you something.
-               I've been getting weird communications from Sam. 
-               Not messages.... just scrambled data. Sort of like ghosts. 
-                They show up in AQOS, but the entries don’t make any sense.
-    {@$MerchantId}  Hmm. Meredith mentioned there might be glitches. 
-                    She was working on an upgrade, but I'm not sure if she ever finished it. 
-                    You could try asking one of her old colleagues. I'm sorry I can't be more help, mijita. 
+    {@player}  Tío, I'm so worried about Sam. I'm still getting those weird, glitchy messages. 
+               Any luck finding that upgrade for {nameof @guide}?
+    {@$MerchantId} I'm sorry, mijita. Nothing yet.
+                   Mer was working on so many projects. 
+                   If there is an upgrade, it might take a while to track down.
+    {@player}      Please keep looking. 
+    {@$MerchantId} Of course, Ollie. I'll ring you on the comms as soon as I find something, okay?
+    {@$MerchantId} Thanks, Tío. 
     $set jobs:specter6-comms.kelp.discussed = true
 
 $elseif JobInProgress(final-final), JobTaskTop(getUncleHelp)
@@ -144,7 +142,7 @@ $choice .action.cancel; Not right now.
 {@$MerchantId}   {random Oh hey,|You'll be happy to know that|And I can tell you that} this would unlock a {h}Job{/h} right here.
 
 :: unlockHintSomewhere
-{@$MerchantId}   {random Whoa,|Hey,|As a bonus,} this would unlock some jobs over at the {nameof $local:hintStation}!
+{@$MerchantId}   This would unlock some jobs over at the {nameof $local:hintStation}!
 
 :: lowExp
 {@$MerchantId}   Oh, {random hang on|sorry, mijita}... I can't let you have this just yet. You'll need more {exp}experience{/exp} first. 
@@ -154,7 +152,7 @@ $choice .action.cancel; Not right now.
 
 :: costItem
 {@$MerchantId}   So, want to buy the {nameof $local:itemId}? \
-                {random It'll|That'll} be {cash}{$local:cashCost}{/cash}!
+                That'll be {cash}{$local:cashCost}{/cash}.
 
 :: cancel
 {@$MerchantId}   Suit yourself!
@@ -168,17 +166,17 @@ $choice .action.cancel; Not right now.
 // Idle
 
 #OpenHandler(a)
-{@$MerchantId}  What do you think? 
+{@$MerchantId}  Anything you want to learn more about? 
 
 #OpenHandler(b)
-{@$MerchantId}  Anything catch your eye?
+{@$MerchantId}  Does anything catch your eye?
 
 #CloseHandler(a)
 {@$MerchantId}  Thank you!
 
 #CloseHandler(purchased, shop:purchaseCount)
 @boostScore 10
-{@$MerchantId}  Come back anytime!
+{@$MerchantId}  Come back anytime, mijita! 
 
 #CloseHandler(notEnoughCash, shop:notEnoughCount)
 {@$MerchantId}  Come back with some more {pluralnameof Cash} next time.
@@ -201,11 +199,12 @@ $choice .action.cancel; Not right now.
 // Exploration
 
 #ItemHandler(ROVTagger)
-{@$MerchantId}  {nameof ROVTagger}!| This should come in handy. 
-                The {nameof ROVTagger} will show up at the top of your screen while you're out in your sub.
-                When you move close to a species you've scanned, the {nameof ROVTagger} will {h}count{/h} them.
-                Count enough of them, and it'll give you a population estimate! 
-{@guide}    Wow. That's pretty impressive! 
+{@$MerchantId}  {nameof ROVTagger}!| Maybe my greatest work. 
+                You can switch on {nameof ROVTagger} when you're out in your sub.
+                When you move close to a species you've already scanned, {nameof ROVTagger} will {h}count{/h} them.
+                Count enough organisms, and it'll give you a population estimate! 
+                MUCH faster than counting each critter by hand. 
+{@player}    Wow. That's pretty cool, Tío!  
 $set    jobs:common-dive.seen.tagger-intro = true
 $EvaluateItemPurchase()
 
@@ -213,8 +212,9 @@ $EvaluateItemPurchase()
 @boostScore 100
 @once
 {@$MerchantId}  The {nameof Flashlight}!
-                The ocean can be dangerous if you can't see what's coming.
-                We should |definitely| get this on your sub as soon as we can.
+                You'll definitely need one of these, Ollie. The ocean can be dangerous if you can't see what's coming.
+                I mean... I guess the ocean can be dangerous either way. But don't tell your mother I said that.
+                We should get this on your sub as soon as we can.
 $set local:postPurchaseBranch = "interior.shop.kelp.PostFlashlight"
 $EvaluateItemPurchase()
 
@@ -230,40 +230,44 @@ $set    world:shop.boughtFlashlightFrom = "kelp"
 {@kelpMechanic} ...wait.{wait 0.5} I| lent that out to {nameof @coralMechanic}.
                 And then she| dropped it| somewhere at {nameof FinalStation}.
                 ...{wait 0.5}{auto}
-                Okay. New plan, mijita. Go retrieve it and you can keep it.
+                Okay. New plan, mijita. Go retrieve it, and you can keep it.
+{@player}       {nameof FinalStation}... isn't that near where Sam's mission started out?
+{@kelpMechanic} Yes, I think so.
+                But don't worry, Mijita. You won't need to go {i}too{/i} deep.
+                Just keep an eye out for monsters down there. 
 
 $call UnlockSite(RS-0)
 $call UnlockStation(FinalStation)
 $call ShowPopup(map.unlock.finalStation.header, map.unlock.finalStation.desc)
 
 #ItemHandler(ProbeHacker)
-{@$MerchantId}  The {nameof ProbeHacker}! Your sister helped me develop this one.
+{@$MerchantId}  The {nameof ProbeHacker}! Your sister helped me develop this one, too.
 {@player}       Wow... for real??
-{@$MerchantId}  Claro que sí. You know what a genius she was. 
-                The {nameof ProbeHacker} will allow you to read data from any {h}probes{/h} you find.
+{@$MerchantId}  Claro que sí. You know how she was. A total tech geek. 
+                The {nameof ProbeHacker} will allow you to obtain data from any {h}probes{/h} you find.
                 Even Challenger Deep... if it wasn't lost at the bottom of the ocean.
 $EvaluateItemPurchase()
 
 #ItemHandler(Microscope)
 {@$MerchantId}  That's the {nameof Microscope}!
-                There are creatures out there that you can't see with the naked eye.
-                Sometimes they look like clouds or mist. With the {nameof Microscope}, you can see them more closely.
+                In some of your jobs, you'll need to find organisms that are too small to see.
+                Sometimes they look like clouds or mist. With the {nameof Microscope}, you should be able to ID them. 
 $EvaluateItemPurchase()
 
 // Navigation
 
 #ItemHandler(PropGuard)
-{@$MerchantId}  The {nameof PropGuard}?| Not a bad idea.
-                Your propeller can get tangled up in areas of thick vegetation.  
-                The {nameof PropGuard} will help you pass through safely.
-{@player}      Nice. Sounds perfect for exploring!
+{@$MerchantId}  The {nameof PropGuard}?| Not a bad idea. 
+                Your propeller can get tangled up in kelp and other thick vegetation.   
+                The {nameof PropGuard} will help you get through safely.
+{@player}      Ooh, sounds perfect for exploring. 
 {@$MerchantId}  Just don't get complacent, mijita.
-                Even with the {nameof PropGuard}, it's easy to get tangled up out there. 
+                Even with the {nameof PropGuard}, it's easy to get in over your head out there. 
 $EvaluateItemPurchase()
 
 #ItemHandler(Engine)
 {@$MerchantId}  That's the {nameof Engine}!
-                It boosts your sub's engine, so you can move against strong currents.
+                It'll boost your sub's engine and help you move through strong currents.
 {@player}       Ooh. That sounds awesome!
 {@$MerchantId}  The {nameof Engine} is also harder to control, so be careful with it...
                 Your mother would kill me if you crashed another sub. 
@@ -271,8 +275,8 @@ $EvaluateItemPurchase()
 $EvaluateItemPurchase()
 
 #ItemHandler(Hull)
-{@$MerchantId}   The {nameof Hull} is crucial if you want to go deeper.
-                 The depths of the ocean would crush your little sub like a tin can. 
+{@$MerchantId}   The {nameof Hull}! Super important if you ever want to go deeper.
+                 The lower depths would crush your sub like a tin can. 
 {@player}       Well, that's comforting. 
 {@$MerchantId}  Don't worry, Mijita. 
                 With this plating, you'll be able to withstand much more pressure...
@@ -280,37 +284,46 @@ $EvaluateItemPurchase()
 $EvaluateItemPurchase()
 
 #ItemHandler(Icebreaker)
-{@$MerchantId}  Whoa, careful, Mijita! That's the {nameof Icebreaker}!
+{@$MerchantId}  Whoa, careful, Mijita! That's the {nameof Icebreaker}.
                 It shatters ice by emitting a powerful, localized electrical field.
 {@player}      Oh. So, um... I probably shouldn't play with that. 
-{@$MerchantId}  Nope. But it's incredibly useful if you find yourself in the Arctic. 
+{@$MerchantId}  Nope. But it's super helpful for jobs out in the Arctic. 
 $EvaluateItemPurchase()
 
 // Experimentation
 
 #ItemHandler(StressTank)
-{@$MerchantId}   The {nameof StressTank} can be used to measure the stress ranges of different creatures.
+{@$MerchantId}   This is the {nameof StressTank}!
+                 Use it to measure the stress ranges of different organisms. 
+                Really helpful if you want to understand the conditions that different creatures need to thrive.
+{@player}       Awww. I hope it doesn't stress them out {i}too{/i} much...
+{@$MerchantId}  Don't worry. The tank is designed to stop making adjustments before any creatures end up harmed. 
 $EvaluateItemPurchase()
 
 #ItemHandler(MeasurementTank)
-{@$MerchantId}  The {nameof MeasurementTank} can be used to measure various rates for different creatures.
-                Really handy if you need some eating rates, or reproduction, or respiration.
+{@$MerchantId}  Oh, the {nameof MeasurementTank} is super useful!
+                Use it to measure different rates for an organisms--how fast they reproduce, how quickly they eat, stuff like that.  
+               You'll need this for some of the more complicated jobs out there. 
 $EvaluateItemPurchase()
 
 // Modeling
 
 #ItemHandler(VisualModel)
-{@$MerchantId}  The {nameof VisualModel} tool can be used at your {map-name}Modeling Station{/map-name}.
-                Use it to visualize the different interactions between species.
-{@player}    Hmm. This could definitely be useful.  
+{@$MerchantId}  The {nameof VisualModel}! Every scientist needs one of these. 
+                Perfect for your {map-name}Modeling Station{/map-name}!
+                Use it to create visual models and understand the interactions between species.
+{@player}       Ooh, this definitely sounds useful.       
 $EvaluateItemPurchase()
 
 #ItemHandler(PredictionModel)
-{@$MerchantId}  The {nameof PredictionModel} can be used at the {map-name}Modeling Station{/map-name}.
-            Use it to make predictions about creatures in different ecosystems.
+{@$MerchantId}  The {nameof PredictionModel} is an essential tool for your {map-name}Modeling Station{/map-name}!
+                Once you've got enough data, you can use it to make predictions. 
+                Super useful if you want to understand what might happen in an ecosystem.
 $EvaluateItemPurchase()
 
 #ItemHandler(InterveneModel)
-{@$MerchantId}  The {nameof InterveneModel} can be used at the {map-name}Modeling Station{/map-name}.
-           Use it to model the outcomes of potential interventions for different ecosystems.
+{@$MerchantId}  The {nameof InterveneModel} is an amazing tool... 
+                Especially for people like you, who are always trying to help.
+                Someday, you might find yourself working to rescue a struggling ecosystem.
+                You can use the {nameof InterveneModel} to model the outcomes of different interventions. 
 $EvaluateItemPurchase()
