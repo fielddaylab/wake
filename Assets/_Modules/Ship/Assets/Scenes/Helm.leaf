@@ -6,13 +6,13 @@
 @when       SpecterCount() >= 8 // <- total number of specters
 @once
 @cutscene
-// Prof Whalen messages you while you're in your helm, after completing the final required job.
-// He’s found the code to upgrade Victor and unscramble all the glitches. 
-{@arcticSci}    I've found the code to upgrade {nameof guide} and unscramble all the glitches!
-
 // Upgrade Victor - instantly the specters unscramble. Sam’s distress call comes through.
+{@player}       All right, let's see what this upgrade Tío gave me can do.
+{@guide}        Incoming message from {nameof @sam}!
 
-{@sam}  O! Do you copy? 
+$branch common.ringPhone
+
+{@sam}  O! Do you copy?
         Things are bad down here, O. We’re in big trouble. 
 {@player}   Sam!! Can you hear me? Are you okay?
             Sam???

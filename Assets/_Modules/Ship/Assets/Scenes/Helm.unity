@@ -30323,11 +30323,31 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 757913865129046602, guid: 8a74e79b42859fc4a87005877f51f12a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 769409824137156203, guid: 8a74e79b42859fc4a87005877f51f12a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1872643034831442526, guid: 8a74e79b42859fc4a87005877f51f12a,
         type: 3}
       propertyPath: mainCamera
       value: 
       objectReference: {fileID: 1358266470}
+    - target: {fileID: 1872643034831442526, guid: 8a74e79b42859fc4a87005877f51f12a,
+        type: 3}
+      propertyPath: m_DisableConditions
+      value: jobs:final-power-disabled
+      objectReference: {fileID: 0}
+    - target: {fileID: 1872643035457608417, guid: 8a74e79b42859fc4a87005877f51f12a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2306239266753568082, guid: 8a74e79b42859fc4a87005877f51f12a,
         type: 3}
       propertyPath: TooltipId.m_Source
@@ -30337,6 +30357,11 @@ PrefabInstance:
         type: 3}
       propertyPath: TooltipId.m_HashValue
       value: 2749820570
+      objectReference: {fileID: 0}
+    - target: {fileID: 2547340754872401048, guid: 8a74e79b42859fc4a87005877f51f12a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5983256456486292616, guid: 8a74e79b42859fc4a87005877f51f12a,
         type: 3}
@@ -30398,8 +30423,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6891321324390001636, guid: 8a74e79b42859fc4a87005877f51f12a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8a74e79b42859fc4a87005877f51f12a, type: 3}
+--- !u!1 &1848736338 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6891321324390001636, guid: 8a74e79b42859fc4a87005877f51f12a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1848736337}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1848736339 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 769409824137156203, guid: 8a74e79b42859fc4a87005877f51f12a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1848736337}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1911265534
 GameObject:
   m_ObjectHideFlags: 0
@@ -35312,6 +35354,7 @@ MonoBehaviour:
   Target: {fileID: 165901918}
   Height: 24
   Zoom: 1.02
+  AudioListenerZOffset: 0
   FieldOfView: 33.795124
   Properties: 31
 --- !u!1 &1988147503
@@ -45302,6 +45345,8 @@ MonoBehaviour:
   - {fileID: 1239798692}
   m_ToHide:
   - {fileID: 661781586}
+  - {fileID: 1848736339}
+  - {fileID: 1848736338}
   m_ContinuousCheck: 1
 --- !u!4 &2130178321
 Transform:
@@ -45364,6 +45409,7 @@ MonoBehaviour:
   Target: {fileID: 4773830748114465825}
   Height: 6.6
   Zoom: 1.09
+  AudioListenerZOffset: 0
   FieldOfView: 30
   Properties: 15
 --- !u!1001 &1832392107619922766

@@ -55,14 +55,18 @@ $set jobs:final-final.probe-eaten = true
 
 // TODO: trigger this after animation end
 ::samFinalTrigger3
-@trigger PlayerEnterRegion
-@when regionId == "samRadio01"
+@trigger    TimelineStarted
+@when       timelineId == "RS-0_timeline04"
 @once
 
-{@sam}
-O? Are you there? Come to the station
-$call StationEntrance->Activate()
+$call StationEntranceFinal->Activate()
 $call EntranceEffects->Activate()
+{wait 17}
+$call StationEntranceFinal->Activate()
+
+{@sam}
+O? Are you there? I've activated the entrance for you.
+Come to the station!
 {wait-abs 1}
 
 
