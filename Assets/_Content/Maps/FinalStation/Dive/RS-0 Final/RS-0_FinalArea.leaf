@@ -11,14 +11,15 @@
 @when regionId == "chalDeep00"
 @once
 
-{@player} 
-Oh, that's the challenger deep!
+{@player} Wow! {nameof@guide}, that's the Challenger Deep. Mer's life's work!
+{@guide} Yes. This probe contains 10 years' worth of deep-sea data. 
+
 $set jobs:final-final.probe-eaten = false
 
 ::firstScanChallengerDeep
 @trigger    ScannedObject
 @when       scanId == "RS-0-Final.probe"
-{@player}   No time to mess around! I need to rescue Sam!
+{@player}   No time to upload the data now. I need to find Sam!
 
 ::guideFlashlightOffTrigger
 @trigger PlayerEnterRegion
@@ -38,16 +39,30 @@ $set jobs:final-final.probe-eaten = false
 
 {wait 2}
 
-{@player}
-Sam! Are you okay!? 
-{@sam}
-All our systems are failing! We're running out of oxygen! 
-{@player}
-Turn on your red lights! 
-{@sam}
-I can't, the lights are broken!
-{@player}
-I'm going to turn on the probe lights to distract it!
+{@sam} O! Is that you?
+{@player} Sam! I solved it. You need to turn on your red lights!
+{@player} Those white and blue lights are drawing the squid right to you!
+{@sam} O, do you copy?! We're running out of air!
+{@player} Ugh. Why can't they hear me??
+{@guide} The Nautilus's systems are heavily damaged. They cannot receive transmissions. 
+{@player} Oh no. {nameof @guide}, we need to get that squid away from them!
+          What if I turn on my lights to distract it?
+{@guide}   Turning on your flashlight now would result in imminent death.
+{@player}  Ugh. Okay, let's see...
+{@player}  What about the Challenger Deep?
+{@guide} As much as I love data, O, it is unlikely that more data would help us right now. 
+{@player} No! I mean, what if I turn the probe on?? 
+{@player} It would light up, right?
+{@guide} Yes. The lights of the probe would draw the squid away.  
+{@player} And we could save Sam and the rest of the crew? 
+{@guide} Affirmative. 
+{@guide} But if you turn on the probe, there is a 99.2% chance that the Challenger Deep--and all of your sister's work--would be lost. 
+{@player} ....
+{@guide} O?
+{@player} Mer's gone. But I can still save Sam. 
+{@player} Let's do this. 
+{@player} Sam, if you can hear me, I'm turning on the probe to draw the squid away!
+{@player} Just hold on!
 $call ChalDeepScannable->Deactivate()
 $set jobs:final-final.probe-eaten = true
 {wait-abs 2}
@@ -64,9 +79,9 @@ $call EntranceEffects->Activate()
 {wait 17}
 $call StationEntranceFinal->Activate()
 
-{@sam}
-O? Are you there? I've activated the entrance for you.
-Come to the station!
+{@sam} O! Are you there? 
+       You did it!!
+       I've activated the entrance for you. Come inside the station!
 {wait-abs 1}
 
 
