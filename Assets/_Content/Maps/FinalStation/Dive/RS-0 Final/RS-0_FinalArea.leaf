@@ -4,15 +4,15 @@
 @trigger    SceneStart
 @when       JobStartedOrComplete(final-final)
 @chatter
-{@guide}    Oxygen level and pressure stabilized. You have entered the lower depths.
+{@guide}    Oxygen level and pressure stabilized. You have entered the Lower Depths.
 
 ::samFinalTrigger
 @trigger PlayerEnterRegion
 @when regionId == "chalDeep00"
 @once
 
-{@player} Wow! {nameof@guide}, that's the Challenger Deep. Mer's life's work!
-{@guide} Yes. This probe contains 10 years' worth of deep-sea data. 
+{@player} Wow. {nameof @guide}, that's the Challenger Deep. Mer's life's work!
+{@guide} Affirmative. This probe contains 10 years' worth of deep-sea data.
 
 $set jobs:final-final.probe-eaten = false
 
@@ -39,9 +39,10 @@ $set jobs:final-final.probe-eaten = false
 
 {wait 2}
 
+{@player} {nameof @guide}, that's the Nautilus! Sam's station! 
 {@sam} O! Is that you?
-{@player} Sam! I solved it. You need to turn on your red lights!
-{@player} Those white and blue lights are drawing the squid right to you!
+{@player} Sam, I solved it! You need to turn on your red lights!
+{@player} Those white and blue lights are drawing the squid right to you.
 {@sam} O, do you copy?! We're running out of air!
 {@player} Ugh. Why can't they hear me??
 {@guide} The Nautilus's systems are heavily damaged. They cannot receive transmissions. 
@@ -54,9 +55,7 @@ $set jobs:final-final.probe-eaten = false
 {@player} No! I mean, what if I turn the probe on?? 
 {@player} It would light up, right?
 {@guide} Yes. The lights of the probe would draw the squid away.  
-{@player} And we could save Sam and the rest of the crew? 
-{@guide} Affirmative. 
-{@guide} But if you turn on the probe, there is a 99.2% chance that the Challenger Deep--and all of your sister's work--would be lost. 
+{@guide} But there is a 99.2% chance that the Challenger Deep——and all of your sister's work——would be lost. 
 {@player} ....
 {@guide} O?
 {@player} Mer's gone. But I can still save Sam. 
