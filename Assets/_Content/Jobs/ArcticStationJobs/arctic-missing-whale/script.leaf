@@ -162,6 +162,9 @@ $if ArgueSetClaim(Claim, jobs.arctic-missing-whale.argue.claimLabel)
 $endif
 {@arcticSci}   Have you found Linda?
 $choice .argue.showClaim; Yes... but I'm sorry. It's not good news.
+$if jobs:arctic-whalefall.num-attempts >= 2
+    $choice .argue.sweptAway; No idea -- I keep getting swept away!
+$endif
 $choice .argue.cantFind; No, sorry. No sign of her yet. 
 $choose branch
 
@@ -205,6 +208,16 @@ $goto .argue.showClaim
 :: argue.cantFind
 {@arcticSci}   Alas. I had a feeling this would happen.
                 We may never track her down. I hope nothing bad has happened to her...
+
+:: argue.sweptAway
+{@arcticSci}    Ah, yes. Perhaps we should have warned you about the currents in some places.
+$if HasUpgrade(Engine)
+    {@arcticSci}    But it seems you've acquired a stronger {h}Engine{/h}! You shouldn't be swept away any more.
+                    Good luck out there.
+$else
+    {@arcticSci}    Until you have a stronger {h}Engine{/h}, it may be wise to switch to a new job for now.
+                    You can always come back to this job later!
+$endif
 
 // END
 :: argue.complete

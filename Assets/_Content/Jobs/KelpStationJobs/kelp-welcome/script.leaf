@@ -20,10 +20,13 @@ $call FocusHighlight->Clear()
 {hide-dialog}{fade-in 0.5, wait}
 {style default}
 
-{@drKelp} Thank you, Olivia! 
+{@drKelp} Gracias, Olivia! 
 {@drKelp} While you're working, I'll get the AquaLab set up for you.
 {@player} Wow... the AquaLab? You're giving me Mer's old ship? 
-{@drKelp} She would've wanted you to have it, Mija.
+{@drKelp} Of course. She would've wanted you to have it.
+{@drKelp} Now that you're officially a scientist, your data card should give you clearance to operate the ship.
+{@drKelp} Just make sure not to lose your card, or the whole thing will power down. 
+{@player} Got it. Gracias, Mom. 
 $call GiveJournalEntry("N01_Intro")
 
 :: diveSite
@@ -40,8 +43,8 @@ $branch common.ringPhone
 {@guide} Greetings! I am {nameof @guide}, your onboard A.I. 
 {@guide} What should I call you? 
 {@player} Oh... uh, my friends call me O. 
-{@guide} Affirmative, O. Updating database. 
-{@guide} It appears you have one active job. And lots of thrilling data to collect!
+{@guide} Updating database. 
+{@guide} It appears you have one active job, O. And lots of thrilling data to collect!
 {@guide} First, use your {item-name}Scanner{/item-name} to ID all the species here at the Forested Lagoon. 
 $call GiveUpgrade(ROVScanner, Silent)
 $call Player->SetTool(Scanner)
@@ -220,6 +223,11 @@ $branch common.ringPhone
 {@guide} Transmission lost.
 $call GiveJournalEntry("N02_LosingConnection")
 
+:: closeJournalContinue
+@trigger    JournalHidden
+@when       scene:name == "Helm", JobTaskActive(runExperiment)
+@once
+@cutscene
 {@player}  Okay. What should I do now, {nameof @guide}?
 {@guide} Updating ship schematic... 
 {hide-dialog}

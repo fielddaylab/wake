@@ -31,6 +31,7 @@ namespace Aqua.Compression {
         #endregion // Types
 
         public bool IgnoreInactive;
+        public bool PreserveNames;
 
         #region Compress
 
@@ -87,7 +88,7 @@ namespace Aqua.Compression {
 
                 for(int i = 0; i < layoutElementCount; i++) {
                     CompressedPrefabFlags flags = i == 0 ? CompressedPrefabFlags.IsRoot : 0;
-                    WriteObject(&bufferHead, &bufferLength, (Transform) layoutBuffer[i].Object, flags, typeBuffer[i], compressor, rectBounds);
+                    WriteObject(&bufferHead, &bufferLength, (Transform) layoutBuffer[i].Object, flags, typeBuffer[i], compressor, rectBounds, PreserveNames);
                 }
 
                 // revert
@@ -100,9 +101,9 @@ namespace Aqua.Compression {
             }
         }
 
-        static private unsafe void WriteObject(byte** buffer, int* size, Transform obj, CompressedPrefabFlags flags, CompressedComponentTypes components, PackageBuilder compressor, CompressedRectTransformBounds rectBounds) {
+        static private unsafe void WriteObject(byte** buffer, int* size, Transform obj, CompressedPrefabFlags flags, CompressedComponentTypes components, PackageBuilder compressor, CompressedRectTransformBounds rectBounds, bool preserveNames) {
             ObjectHeader objHeader;
-            objHeader.NameIdx = compressor.AddString(obj.name);
+            objHeader.NameIdx = compressor.AddString(preserveNames ? obj.name : "$");
             objHeader.ComponentTypes = components;
             objHeader.Flags = flags;
 

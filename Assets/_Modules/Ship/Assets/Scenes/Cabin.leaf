@@ -8,6 +8,34 @@ $set session:fromDream = null
 @function   SceneStart
 @when       !session:fromDream
 $call   CabinBGM->PlayBGM()
+$if HasJournalEntry("N18_BayouNecklace"), !jobs:final-final.tioUpgradeCallComplete
+    $branch .TioCall
+$endif
+
+
+:: TioCall
+@trigger    JournalHidden
+@once
+{@player} {nameof @guide}, I'm really worried about Sam.
+{@player} I need to put a call through to Tío.
+{@guide} Affirmative, O.
+
+$branch common.ringPhone
+
+{@player} Tío?
+{@kelpMechanic} Sí, I'm here, Ollie.
+{@kelpMechanic} How can I help my favorite scientist? 
+{@player} I just found out Mer was working on an upgrade for {nameof @guide}.
+{@player} It could help to unscramble all these glitchy messages from Sam.
+{@kelpMechanic} Hmm. An upgrade? 
+{@kelpMechanic} I remember Mer talking about that, but I'm not sure if she ever finished it. 
+{@kelpMechanic} She called it something to do with a cephalopod... a nautilus, or maybe an orthoceras...?
+{@player} An ammonite?
+{@kelpMechanic} Oh, that was it!
+{@kelpMechanic} I'll see what I can dig up, mijita. 
+{@player} Gracias, Tío. Please hurry. 
+$set jobs:final-final.tioUpgradeCallComplete = true
+
 
 // Dream Sequences
 
