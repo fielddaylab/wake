@@ -24,9 +24,9 @@ public class GuideCursorFollow : WorldInput
     void Start() {
         m_LookPlane = new Plane(Vector3.back, v1ctorHead.position + Vector3.back * m_PlaneOffset);
 
-        if (Services.Data.CheckConditions(m_DisableConditions)) {
+        if (!string.IsNullOrEmpty(m_DisableConditions) && Services.Data.CheckConditions(m_DisableConditions)) {
             // guide should not get enabled
-            m_Disabled = true;
+            m_Disabled = true;   
             return;
         }
 
