@@ -228,6 +228,11 @@ $call WheelPrompt->Deactivate()
 {@player} I wish I could see it. 
 $call GiveJournalEntry("N02_LosingConnection")
 
+:: closeJournalContinue
+@trigger    JournalHidden
+@when       scene:name == "Helm", JobTaskActive(runExperiment)
+@once
+@cutscene
 {@player}  Okay. What now, {nameof @guide}?
 {@guide} Updating ship schematic... 
 {hide-dialog}
