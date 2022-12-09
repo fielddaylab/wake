@@ -1,24 +1,30 @@
 #basePath RS-0-Final
 
+
+//note: flashlight should be switched on when you arrive, can this be made automatic?  
+
 ::stationEnter
 @trigger    SceneStart
 @when       JobStartedOrComplete(final-final)
 @chatter
-{@guide}    Oxygen level and pressure stabilized. You have entered the lower depths.
+{@guide}    Oxygen level and pressure stabilized. You have entered the Lower Depths.
 
 ::samFinalTrigger
 @trigger PlayerEnterRegion
 @when regionId == "chalDeep00"
 @once
 
-{@player} 
-Oh, that's the challenger deep!
+{@player} Wow. {nameof @guide}, that's the Challenger Deep. Mer's life's work!
+{@guide} Affirmative. This probe contains 10 years of deep-sea data.
+
 $set jobs:final-final.probe-eaten = false
 
 ::firstScanChallengerDeep
 @trigger    ScannedObject
 @when       scanId == "RS-0-Final.probe"
-{@player}   No time to mess around! I need to rescue Sam!
+{@guide}   I would not recommend activating the probe now, O. 
+{@guide}    The lights are extremely bright and might attract the creature. 
+{@player}   Right. I don't have time to stop, anyway. We need to find Sam! 
 
 ::guideFlashlightOffTrigger
 @trigger PlayerEnterRegion
@@ -26,7 +32,7 @@ $set jobs:final-final.probe-eaten = false
 @once
 @cutscene
 
-{@guide}    WARNING: Massive, dangerous organism nearby.
+{@guide}    WARNING: the colossal squid is nearby. 
             Disabling your flashlight to avoid detection.
 // TODO: disable flashlight
 
@@ -38,16 +44,30 @@ $set jobs:final-final.probe-eaten = false
 
 {wait 2}
 
-{@player}
-Sam! Are you okay!? 
-{@sam}
-All our systems are failing! We're running out of oxygen! 
-{@player}
-Turn on your red lights! 
-{@sam}
-I can't, the lights are broken!
-{@player}
-I'm going to turn on the probe lights to distract it!
+{@player} {nameof @guide}, that's Sam's station! 
+{@sam} O! Is that you?
+{@player} Sam, I solved it! You need to turn on your red lights!
+{@player} Those white and blue lights are drawing the squid right to you.
+{@sam} O, do you copy?! We're running out of air!
+{@player} Ugh. Why can't they hear me??
+{@guide} The Nautilus's systems are heavily damaged. They cannot receive transmissions. 
+{@player} Oh no. There's no way to get inside and warn them. We'd be crushed!
+{@guide} Affirmative. You must lure the squid away from the station. 
+{@player} What if I turn on my lights to distract it?
+{@guide}   Turning on your flashlight now would result in imminent death.
+{@player}  Ugh. Okay, let's see...
+{@player}  What about the Challenger Deep?
+{@guide} As much as I love data, it is unlikely that more data would help us right now. 
+{@player} No! I mean, what if I turn the probe on?? 
+{@player} You said it would light up, right? 
+{@guide} Yes. The probe lights would draw the squid away.  
+{@guide} But there is a 99.8% chance that the creature would destroy the Challenger Deep. All of your sister's work would be lost. 
+{@player} ....
+{@guide} O?
+{@player} Mer's gone. But I can still save Sam. 
+{@player} Let's do this. 
+{@player} Sam, if you can hear me, I'm turning on the probe to draw the squid away!
+{@player} Just hold on a little longer!
 $call ChalDeepScannable->Deactivate()
 $set jobs:final-final.probe-eaten = true
 {wait-abs 2}
@@ -64,9 +84,12 @@ $call EntranceEffects->Activate()
 {wait 17}
 $call StationEntranceFinal->Activate()
 
-{@sam}
-O? Are you there? I've activated the entrance for you.
-Come to the station!
+{@guide} The Challenger Deep signal has been lost. 
+{@player} Wow. I can't believe it's really gone.
+{@player} ... 
+{@player} I'm sorry, Mer. 
+{@guide} O, the oxygen levels inside the Nautilus station are becoming critical.
+{@guide} We should go inside and retrieve the crew. 
 {wait-abs 1}
 
 

@@ -24,22 +24,31 @@
 #ShopHandler(first)
 @boostScore 100
 @once
-{@$MerchantId}  Welcome to the Shop. You're Meredith's sister, aren't ya? 
-                She was really something'! What an explorer. 
-                Such a shame, what happened... but it's good to see ya followin' in her footsteps. 
+{@$MerchantId}  Hey, kid. Welcome to my humble little shop.
+                You're Meredith's sister, aren't ya? She musta been a lot older than you... 
+{@person}       Yeah. Ten years.
+{@$MerchantId}  Ah. Such a shame, what happened to her. 
+                But I'm glad you've got your mom and your uncle to look out for ya.
+                There's nothin' more important than family.  
+{@person}       Yeah. I guess so.  
+                Where's your family? Do you get to see them often?
+{@$MerchantId}  Well.. depends what you mean.
+                I see my Arctic family just about every day.  
+                Juno might seem like a loner, but she's made this place feel like home for a whole lot of us. 
                 Anyhow. Wanna take a look around my shop? 
 $choice .action.openShop; Sure, thanks!
 $choice .action.cancel; Not right now.
 
 #ShopHandler(a)
-{@$MerchantId} Welcome back, kid! Wanna take a look around my shop? 
+{@$MerchantId} Welcome back, kid. Wanna take a look around?  
 $choice .action.openShop; Sure, thanks!
 $choice .action.cancel; Not right now.
 
 #ShopHandler(gotFlashlight, world:shop.boughtFlashlightFrom == "arctic", HasUpgrade("Flashlight"))
 @once
-{@$MerchantId} Welcome back, kid! Nice work on retrieving that {nameof Flashlight}!
-    Anyhow. Wanna take a look around my shop? 
+{@$MerchantId} Welcome back, kid! Nice work retrieving that {nameof Flashlight}.
+        Told ya you could handle it. 
+        Wanna take a look around? 
 $choice .action.openShop; Sure, thanks!
 $choice .action.cancel; Not right now.
 
@@ -50,59 +59,59 @@ $choice .action.cancel; Not right now.
 // Generic
 
 :: unlockHintHere
-{@$MerchantId}   {random Oh hey,|You'll be happy to know that|And I can tell you that} this would unlock a {h}Job{/h} right here.
+{@$MerchantId}   {random Oh hey,|You'll be happy to know that|Looks like} this would unlock a {h}Job{/h} right here.
 
 :: unlockHintSomewhere
-{@$MerchantId}   {random Whoa,|Hey,|As a bonus,} this would unlock some jobs over at the {nameof $local:hintStation}!
+{@$MerchantId}   {random Whoa,|Hey,|Looks like} this would unlock some jobs over at the {nameof $local:hintStation}!
 
 :: lowExp
-{@$MerchantId}   Oh, {random hang on|I'm sorry}... I can't let you have this just yet. You'll need more {exp}experience{/exp} before I can trust you with it.
+{@$MerchantId}   Oh, {random not so fast, kid|sorry, kid}... I can't let you have this. You'll need more {exp}experience{/exp} first. 
 
 :: freeItem
-{@$MerchantId}   So, want the {nameof $local:itemId}? Won't cost you anything.
+{@$MerchantId}   So, want the {nameof $local:itemId}? Won't cost you a thing.
 
 :: costItem
 {@$MerchantId}   So, want to buy the {nameof $local:itemId}? \
                 {random It'll|That'll} be {cash}{$local:cashCost}{/cash}!
 
 :: cancel
-{@$MerchantId}   Suit yourself!
+{@$MerchantId}   Suit yourself, kid. 
 
 :: notEnoughCash
-{@$MerchantId}   Not enough cash, child.
+{@$MerchantId}   Sorry, kid. Not enough cash. 
 
 :: purchased
-{@$MerchantId}   {random Good choice!|Good call.|Alright, it's yours!}
+{@$MerchantId}   {random A fine choice.|Here ya go, kid.|Okey dokey, it's all yours!}
 
 // Idle
 
 #OpenHandler(a)
-{@$MerchantId}  What're ya buyin'?
+{@$MerchantId}  Anything catch your eye?
 
 #OpenHandler(b)
-{@$MerchantId}  Anything catch your eye?
+{@$MerchantId}  So what'll it be, kid? 
 
 #CloseHandler(a)
 {@$MerchantId}  Thank ya!
 
 #CloseHandler(purchased, shop:purchaseCount)
 @boostScore 10
-{@$MerchantId}  Come back anytime!
+{@$MerchantId}  Come back anytime, Ollie. 
 
 #CloseHandler(notEnoughCash, shop:notEnoughCount)
-{@$MerchantId}  Come back with some more {pluralnameof Cash} next time!
+{@$MerchantId}  Come back with more {pluralnameof Cash} next time. 
 
 #CloseHandler(notEnoughExp, shop:needsExpCount)
-{@$MerchantId}  Come back when you've got more {exp}experience{/exp}!
+{@$MerchantId}  Come back when you've got more {exp}experience{/exp}. 
 
 #OpenExplorationHandler(a)
-{@$MerchantId}  Interested in any exploration tools?
+{@$MerchantId}  I've got plenty of exploration tools. Anything you need?
 
 #OpenExplorationHandler(b)
-{@$MerchantId}  Any upgrades you want for your sub?
+{@$MerchantId} Plenty of sub upgrades here. What do you think, kid?
 
 #OpenScienceHandler(a)
-{@$MerchantId}  Any science-type things you want?
+{@$MerchantId}  Looking to upgrade your lab? 
 
 #OpenScienceHandler(b)
 {@$MerchantId}  Need anything for your scientific pursuits?
@@ -110,18 +119,17 @@ $choice .action.cancel; Not right now.
 // Exploration
 
 #ItemHandler(ROVTagger)
-{@$MerchantId}  The {nameof ROVTagger}!|
-                You should see the {nameof ROVTagger} at the top of your view.
+{@$MerchantId}  The {nameof ROVTagger}.| A worthy sub upgrade. 
                 If you switch it on and move close to a species you've already scanned, the {nameof ROVTagger} will {h}count{/h} it.
-                Count enough of them and it'll do the rest and give you a population estimate.
-{@player} Ooh, that sounds awesome! 
+                Count enough organisms, and it'll do the rest and give you a population estimate.
+{@player} Ooh, sounds awesome! I could definitely use that.  
 $set    jobs:common-dive.seen.tagger-intro = true
 $EvaluateItemPurchase()
 
 #OverrideItemHandler(FlashlightCoordinates, flashlight.first)
 @boostScore 100
 @once
-{@$MerchantId}  The {nameof Flashlight}!
+{@$MerchantId}  The {nameof Flashlight}.
                 You oughta get one of these as soon as possible
                 Real helpful for deep-sea jobs where the light can't reach.
 $set local:postPurchaseBranch = "interior.shop.arctic.PostFlashlight"
@@ -136,9 +144,15 @@ $EvaluateItemPurchase()
 :: PostFlashlight
 $set    world:flashlightQuest = true
 $set    world:shop.boughtFlashlightFrom = "arctic"
-{@arcticMechanic}   Yes yes, I'll get this... huh? Where's the...
-                    Oh yes.| {nameof @coralMechanic} borrowed it from your uncle and then dropped it by mistake.
-                    Well,| nothin' to do but go fish it up! I believe she dropped it at {nameof FinalStation}.
+{@arcticMechanic}  Alright, kid, I'll just grab that for ya...
+                    Huh? 
+                    Oh, that's right. |{nameof @coralMechanic} borrowed the {nameof Flashlight} from your uncle, and then dropped it by the {nameof FinalStation}.
+                    Well,| nothin' to do but go fish it up! 
+{@player}           Wait. You want {i}me{/i} to go get it??  
+{@arcticMechanic}   What's the matter, kid? Your sister used to explore the Lower Depths all the time.  
+{@player}           But... that's different. My sister was a genius.
+{@arcticMechanic}   Well, I don't know much about that.  
+                    But if you want that flashlight, you're gonna have to dive down there and get it. 
 
 $call UnlockSite(RS-0)
 $call UnlockStation(FinalStation)
@@ -161,7 +175,7 @@ $EvaluateItemPurchase()
 
 #ItemHandler(PropGuard)
 {@$MerchantId}  The {nameof PropGuard}!
-                This baby's super useful. 
+                This baby is super useful. 
                 You don't want your propeller getting all caught up in the weeds. 
 $EvaluateItemPurchase()
 
@@ -187,27 +201,33 @@ $EvaluateItemPurchase()
 // Experimentation
 
 #ItemHandler(StressTank)
-{@$MerchantId}   Use the {nameof StressTank} to measure the stress ranges of different creatures.
+{@$MerchantId}   The {nameof StressTank} 
+                Use it to measure the stress ranges of different creatures.
+                 Real useful for figuring out the ideal conditions for plants and critters.    
 $EvaluateItemPurchase()
 
 #ItemHandler(MeasurementTank)
-{@$MerchantId}  The {nameof MeasurementTank} can be used to measure various rates for different creatures.
-                Real useful for gettin' eating rates, or reproduction, or respiration.
+{@$MerchantId}  The {nameof MeasurementTank}! 
+                This one's great for measuring various rates for different creatures.
+                If you want to really understand what makes an ecosystem tick, this one's a must. 
 $EvaluateItemPurchase()
 
 // Modeling
 
 #ItemHandler(VisualModel)
-{@$MerchantId}  The {nameof VisualModel} can be used at your {map-name}Modeling Station{/map-name}.
-               Use it to create visualizations of the different connections between species.
+{@$MerchantId}  The {nameof VisualModel}!
+                A handy upgrade for your {map-name}Modeling Station{/map-name}.
+                Use it to visualize how different species interact. 
 $EvaluateItemPurchase()
 
 #ItemHandler(PredictionModel)
-{@$MerchantId}  The {nameof PredictionModel} can be used at the {map-name}Modeling Station{/map-name}.
-            Use it to make predictions about critters in different ecosystems!
+{@$MerchantId}  The {nameof PredictionModel}!
+                This would make a fine addition to your {map-name}Modeling Station{/map-name}.
+               You can use it to make predictions about critters in different ecosystems.
 $EvaluateItemPurchase()
 
 #ItemHandler(InterveneModel)
-{@$MerchantId}  The {nameof InterveneModel} can be used at the {map-name}Modeling Station{/map-name}.
-           Use it to model the outcomes of possible interventions for different ecosystems.
+{@$MerchantId}  The {nameof InterveneModel}! 
+                A handy tool for your {map-name}Modeling Station{/map-name}.
+               If you want to intervene to help an ecosystem, you can use this to model possible outcomes.
 $EvaluateItemPurchase()

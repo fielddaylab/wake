@@ -12,14 +12,19 @@
 
 {@arcticSci}    Oh my. You must be.... ah.
 {@profArctic}   Don't scare the kid away, Jacques.  
-{@profArctic}   Welcome to the Arctic Station! I'm the lead scientist here. You can call me Juno. 
+{@profArctic}   Welcome to the Arctic Station. I'm the lead scientist here. You can call me Juno. 
                 You're Ollie, right?
-{@player}       Um... yes. How did you know?
-{@profArctic}   Professor Whalen here used to work with your sister.
-                He talks about her work all the time. Meredith is a legend around here. 
+{@player}       Um... yeah. How do you know my name? 
+{@profArctic}   Professor Whalen here used to work with your sister. You look just like her. 
 {@player}       Wait... for real? You taught my sister?
-{@arcticSci}   Taught her? No. Mer was a prodigy. I could barely keep up.
-                She was always leaving pages of her journal scattered around. I'll see if I can dig any of them up. 
+{@arcticSci}    Taught her? No. Mer was a prodigy. I could barely keep up.
+{@player}       Wow. I wish I could've seen her at work.
+                I found some of her old notes this week, but most of them were on her sub when it malfunctioned. 
+{@artic}        Her sub malfunctioned? What do you mean? 
+{@player}       You know. When she died. Mom said it was a freak accident. 
+{@arctic}       Ah. Your mother said that?
+                Well... ahem. At any rate, Meredith used to leave her notes scattered all around this place. 
+                I'll see if I can dig any of them up. 
 {@player}       Wow. That would be amazing! 
                 Have you lived out here all this time, Professor? 
 {@arcticSci}    No. I'm only here for one task... seeking out a Bowhead Whale that I've lost track of. 
@@ -36,11 +41,13 @@ $set jobs:arctic-job3-journal.received = false
 @cutscene
 $if CompletedJobCount(ArcticStation, 1)
     // STORY BEAT B
-    {@arcticSci}   Oh, I almost forgot. I found an old page from your sister's journal!
-    {@arcticSci} It was wedged between some data logs from more than ten years ago. 
+    {@arcticSci}   Oh, I almost forgot, Ollie. I found an old page of your sister's notes!
+    {@arcticSci} She thought whale echolocation was the key to creating a whole new form of technology...
+    {@arcticSci} Messages carried by soundwaves, sent across long distances. 
+    {@player}   Huh... whales? Mom never mentioned that.
+    {@arcticSci} Well, it was a slow process. But the more your sister learned about whales, the more she wanted to protect them.
     {@player}   Wow. Thank you, {nameof @arcticSci}!
-    {@arcticSci} Of course. Anything for Mer's little sister.
-                 I'll let you know if I find anything else. 
+    {@arcticSci} Of course. Anything for Meredith's sister.
                                  
     $call GiveJournalEntry("N04_MersObsession")
 $else
