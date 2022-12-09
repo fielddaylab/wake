@@ -13,7 +13,7 @@ namespace Aqua.Profile
     {
         private List<SiteSurveyData> m_SiteData = new List<SiteSurveyData>();
         private List<ArgueData> m_ArgueData = new List<ArgueData>();
-        private HashSet<StringHash32> m_CompletedArgues = new HashSet<StringHash32>();
+        private HashSet<StringHash32> m_CompletedArgues = Collections.NewSet<StringHash32>(40);
         private uint m_CurrentLevel = 1;
 
         // specter/decryption stuff

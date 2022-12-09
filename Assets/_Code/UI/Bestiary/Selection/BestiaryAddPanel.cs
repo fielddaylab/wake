@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Aqua;
 using Aqua.Profile;
 using BeauPools;
+using BeauRoutine;
 using BeauRoutine.Extensions;
 using BeauUtil;
 using ScriptableBake;
@@ -39,7 +40,7 @@ namespace Aqua
 
         [NonSerialized] private bool m_NeedsRebuild = true;
         [NonSerialized] private int m_SelectedCount;
-        private readonly HashSet<BestiaryDesc> m_SelectedSet = new HashSet<BestiaryDesc>();
+        private readonly HashSet<BestiaryDesc> m_SelectedSet = Collections.NewSet<BestiaryDesc>(4);
         private BestiarySelectButton.ToggleDelegate m_ToggleDelegate;
 
         public Predicate<BestiaryDesc> Filter;
@@ -49,6 +50,8 @@ namespace Aqua
         public Action OnUpdated;
 
         public Predicate<BestiaryDesc> HighlightFilter;
+        public Predicate<BestiaryDesc> MarkerFilter;
+        public Func<BestiaryDesc, Color> ColorFilter;
 
         #region Unity Events
 
@@ -143,6 +146,14 @@ namespace Aqua
                 case BestiaryUpdateParams.UpdateType.Unknown:
                     InvalidateListAndClearSet();
                     break;
+
+                case BestiaryUpdateParams.UpdateType.Fact:{
+                    BFBase fact = Assets.Fact(inUpdate.Id);
+                    if (fact.Type == BFTypeId.State && (MarkerFilter != null || ColorFilter != null)) {
+                        InvalidateList();
+                    }
+                    break;
+                }
             }
         }
 
@@ -247,7 +258,26 @@ namespace Aqua
                 button.Label.SetTextFromString(name);
                 button.Critter = critter;
                 button.OnToggle = m_ToggleDelegate ?? (m_ToggleDelegate = OnToggleSelected);
-                button.Highlight.SetActive(HighlightFilter != null && HighlightFilter(critter));
+                
+                bool highlight = HighlightFilter != null && HighlightFilter(critter);
+                bool marker = MarkerFilter != null && MarkerFilter(critter);
+
+                button.Highlight.SetActive(highlight);
+                button.Marker.gameObject.SetActive(marker);
+
+                if (ColorFilter != null) {
+                    button.Color.Color = ColorFilter(critter);
+                } else {
+                    button.Color.Color = Color.white;
+                }
+
+                if (marker) {
+                    if (highlight) {
+                        button.Marker.SetAnchorPos(-14, Axis.Y);
+                    } else {
+                        button.Marker.SetAnchorPos(0, Axis.Y);
+                    }
+                }
             }
 
             while(emptyCount-- > 0)

@@ -208,14 +208,14 @@ namespace Aqua.Portable {
         }
 
         private void UpdateButtonState(PortableUpgradeButton button) {
-            button.gameObject.SetActive(false);
+            // button.gameObject.SetActive(false);
 
             bool selected = m_SelectedItem == button.CachedItem;
 
             if(!selected) { button.Outline.Color = m_BaseOutlineColor; }
             else { UpdateInfoSection(button); }
 
-            button.gameObject.SetActive(true);
+            // button.gameObject.SetActive(true);
         }
 
         #endregion // Categories

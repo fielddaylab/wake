@@ -27,6 +27,7 @@ namespace Aqua
         [SerializeField] private float m_DisplayScale = 1;
         [SerializeField] private string m_AdjustFormat = "{0}";
         [SerializeField] private float m_AdjustDisplayScale = 1;
+        [SerializeField] private bool m_ScientificNotation = false;
 
         [Header("Facts")]
         [SerializeField] private TextId m_EnvironmentFactFormat = default;

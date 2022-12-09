@@ -35,6 +35,14 @@ namespace ProtoAqua.Observation {
             ValidationUtils.StripDebugInfo(ref ScanId);
         }
 
+        protected override bool CustomBake() {
+            if (ColliderPosition && Click) {
+                return Ref.Replace(ref Click.IsDynamic, ColliderPosition.IsDynamic);
+            }
+
+            return false;
+        }
+
         #endif // UNITY_EDITOR
     }
 }

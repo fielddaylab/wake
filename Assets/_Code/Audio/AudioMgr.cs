@@ -39,8 +39,8 @@ namespace AquaAudio
 
         #endregion // Inspector
 
-        private readonly HashSet<AudioPackage> m_LoadedPackages = new HashSet<AudioPackage>();
-        private readonly Dictionary<StringHash32, AudioEvent> m_EventLookup = new Dictionary<StringHash32, AudioEvent>();
+        private readonly HashSet<AudioPackage> m_LoadedPackages = Collections.NewSet<AudioPackage>(8);
+        private readonly Dictionary<StringHash32, AudioEvent> m_EventLookup = new Dictionary<StringHash32, AudioEvent>(128);
 
         private readonly FixedPool<AudioTrackState> m_TrackPool = new FixedPool<AudioTrackState>(MaxTracks, Pool.DefaultConstructor<AudioTrackState>());
         private readonly RingBuffer<AudioTrackState> m_ActiveSamples = new RingBuffer<AudioTrackState>(MaxSampleTracks, RingBufferMode.Fixed);

@@ -21,8 +21,8 @@ namespace Aqua.Profile
 
         // Conversation History
 
-        private HashSet<StringHash32> m_TrackedVisitedNodes = new HashSet<StringHash32>();
-        private HashSet<StringHash32> m_TrackedVisitedNodesForSession = new HashSet<StringHash32>();
+        private HashSet<StringHash32> m_TrackedVisitedNodes = Collections.NewSet<StringHash32>(512);
+        private HashSet<StringHash32> m_TrackedVisitedNodesForSession = Collections.NewSet<StringHash32>(64);
         private RingBuffer<StringHash32> m_RecentNodeHistory = new RingBuffer<StringHash32>(32, RingBufferMode.Overwrite);
 
         private uint m_ActIndex = 0;

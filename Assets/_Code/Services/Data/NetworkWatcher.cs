@@ -4,6 +4,7 @@ using Aqua.Option;
 using AquaAudio;
 using BeauUtil;
 using BeauUtil.Services;
+using BeauUWT;
 using EasyAssetStreaming;
 using Leaf;
 using UnityEngine;
@@ -14,7 +15,7 @@ namespace Aqua
     [ServiceDependency(typeof(DataService), typeof(EventService), typeof(AudioMgr))]
     internal partial class NetworkWatcher : ServiceBehaviour
     {
-        private readonly HashSet<UnityWebRequest> m_Requests = new HashSet<UnityWebRequest>();
+        private readonly HashSet<UnityWebRequest> m_Requests = Collections.NewSet<UnityWebRequest>(24);
 
         protected override void Initialize()
         {

@@ -49,7 +49,7 @@ namespace Aqua {
         protected override void PreLookupConstruct() {
             base.PreLookupConstruct();
             m_HiddenJobs = new HashSet<StringHash32>();
-            m_JobsPerSite = new Dictionary<StringHash32, List<JobDesc>>();
+            m_JobsPerSite = new Dictionary<StringHash32, List<JobDesc>>(5);
             m_CommonJobs = new List<JobDesc>();
         }
 
@@ -65,7 +65,7 @@ namespace Aqua {
                 bucket = m_CommonJobs;
             } else {
                 if (!m_JobsPerSite.TryGetValue(stationId, out bucket)) {
-                    bucket = new List<JobDesc>(8);
+                    bucket = new List<JobDesc>(16);
                     m_JobsPerSite.Add(stationId, bucket);
                 }
             }

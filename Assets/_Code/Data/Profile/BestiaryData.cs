@@ -44,8 +44,8 @@ namespace Aqua.Profile
 
         #endregion // Types
 
-        private HashSet<StringHash32> m_ObservedEntities = new HashSet<StringHash32>();
-        private HashSet<StringHash32> m_ObservedFacts = new HashSet<StringHash32>();
+        private HashSet<StringHash32> m_ObservedEntities = Collections.NewSet<StringHash32>(80);
+        private HashSet<StringHash32> m_ObservedFacts = Collections.NewSet<StringHash32>(512);
         private RingBuffer<FactData> m_FactMetas = new RingBuffer<FactData>();
         private TabFlags m_UnlockedTabs = 0;
 

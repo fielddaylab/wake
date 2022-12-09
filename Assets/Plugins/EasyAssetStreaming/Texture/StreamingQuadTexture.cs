@@ -557,22 +557,24 @@ namespace EasyAssetStreaming {
             m_ColorGroup = GetComponent<ColorGroup>();
             #endif // USING_BEAUUTIL
 
-            EditorApplication.delayCall += () => {
-                if (!this) {
-                    return;
-                }
+            if (this.isActiveAndEnabled) {
+                EditorApplication.delayCall += () => {
+                    if (!this || !this.isActiveAndEnabled) {
+                        return;
+                    }
 
-                if (!m_Material) {
-                    m_Material = AssetDatabase.GetBuiltinExtraResource<Material>("Sprites-Default.mat");
-                }
+                    if (!m_Material) {
+                        m_Material = AssetDatabase.GetBuiltinExtraResource<Material>("Sprites-Default.mat");
+                    }
 
-                LoadMaterial();
-                LoadTexture();
-                ApplySorting();
-                Resize(m_AutoSize);
-                LoadMesh();
-                ApplyVisible();
-            };
+                    LoadMaterial();
+                    LoadTexture();
+                    ApplySorting();
+                    Resize(m_AutoSize);
+                    LoadMesh();
+                    ApplyVisible();
+                };
+            }
         }
 
         #endif // UNITY_EDITOR

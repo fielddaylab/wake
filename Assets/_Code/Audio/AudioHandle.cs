@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using BeauRoutine;
 using BeauUtil;
+using UnityEngine;
 
 namespace AquaAudio {
     public struct AudioHandle : IEquatable<AudioHandle> {
@@ -148,6 +149,40 @@ namespace AquaAudio {
         }
 
         #endregion // Callbacks
+
+        #region Positions
+
+        public AudioHandle TrackPosition(Transform position, Vector3 offset = default(Vector3)) {
+            var track = GetTrack();
+            if (!object.ReferenceEquals(track, null)) {
+                track.PositionSource = position;
+                track.PositionOffset = offset;
+            }
+            return this;
+        }
+
+        public AudioHandle SetPosition(Transform position, Vector3 offset = default(Vector3)) {
+            var track = GetTrack();
+            if (!object.ReferenceEquals(track, null)) {
+                track.PositionSource = null;
+                if (position) {
+                    offset += position.position;
+                }
+                track.PositionOffset = offset;
+            }
+            return this;
+        }
+
+        public AudioHandle SetPosition(Vector3 offset) {
+            var track = GetTrack();
+            if (!object.ReferenceEquals(track, null)) {
+                track.PositionSource = null;
+                track.PositionOffset = offset;
+            }
+            return this;
+        }
+
+        #endregion // Positions
 
         #region Overrides
 

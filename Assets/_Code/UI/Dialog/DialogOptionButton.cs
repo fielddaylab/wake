@@ -20,7 +20,7 @@ namespace Aqua
     {
         #region Inspector
 
-        [SerializeField, Required] private RectTransform m_Transform = null;
+        [SerializeField, Required] private LayoutOffset m_Offset = null;
         [SerializeField, Required] private CanvasGroup m_Group = null;
         [SerializeField, Required] private TMP_Text m_Text = null;
         [SerializeField, Required] private Button m_Button = null;
@@ -36,7 +36,6 @@ namespace Aqua
 
         [NonSerialized] private Variant m_Option;
         [NonSerialized] private Routine m_Anim;
-        [NonSerialized] private Vector2 m_OriginalAnchor;
 
         [NonSerialized] private LeafChoice m_Choice;
         [NonSerialized] private bool m_SelectorMode;
@@ -66,7 +65,7 @@ namespace Aqua
         {
             m_Group.alpha = 0;
             m_Group.blocksRaycasts = false;
-            m_OriginalAnchor = m_Transform.anchoredPosition;
+            m_Offset.Offset0 = default(Vector2);
         }
 
         public IEnumerator AnimateOn(float inDelay)
@@ -74,8 +73,9 @@ namespace Aqua
             yield return inDelay;
             yield return Routine.Combine(
                 m_Group.FadeTo(1, m_ToOnTween.Time),
-                m_Transform.AnchorPosTo(m_OriginalAnchor + m_ToOnOffset, m_ToOnTween).From()
+                Tween.Vector(m_Offset.Offset0, m_ToOnOffset, (v) => m_Offset.Offset0 = v, m_ToOnTween).From()
             );
+
             m_Group.blocksRaycasts = true;
         }
 
@@ -84,8 +84,8 @@ namespace Aqua
             m_Group.blocksRaycasts = false;
             yield return inDelay;
             yield return Routine.Combine(
-                m_Group.FadeTo(0, m_ToOnTween.Time),
-                m_Transform.AnchorPosTo(m_OriginalAnchor + m_ToOffOffset, m_ToOffTween)
+                m_Group.FadeTo(0, m_ToOffTween.Time),
+                Tween.Vector(m_Offset.Offset0, m_ToOffOffset, (v) => m_Offset.Offset0 = v, m_ToOffTween)
             );
         }
 

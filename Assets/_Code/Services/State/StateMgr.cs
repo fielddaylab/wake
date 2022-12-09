@@ -716,7 +716,7 @@ namespace Aqua
             // if (SceneHelper.ActiveScene().BuildIndex >= GameConsts.GameSceneIndexStart)
             //     Services.UI.ForceLoadingScreen();
 
-            m_SharedManagers = new Dictionary<Type, SharedManager>(8);
+            m_SharedManagers = new Dictionary<Type, SharedManager>(8, ReferenceEqualityComparer<Type>.Default);
 
             Frame.CreateBuffer();
             StartCoroutine(EndOfFrame());

@@ -41,7 +41,7 @@ namespace Aqua {
             WaterPropertyDB = inService.WaterProp;
             JournalDB = inService.Journal;
 
-            s_GlobalLookup = new Dictionary<StringHash32, ScriptableObject>(512);
+            s_GlobalLookup = new Dictionary<StringHash32, ScriptableObject>(1600);
 
             Import(BestiaryDB);
             Import(CharacterDB);

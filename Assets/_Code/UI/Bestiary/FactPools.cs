@@ -37,7 +37,7 @@ namespace Aqua
         #endregion // Inspector
 
         [NonSerialized] private bool m_ConfiguredPools;
-        [NonSerialized] private Dictionary<MonoBehaviour, BFShapeId> m_PoolSources = new Dictionary<MonoBehaviour, BFShapeId>(64);
+        [NonSerialized] private Dictionary<MonoBehaviour, BFShapeId> m_PoolSources = Collections.NewDictionary<MonoBehaviour, BFShapeId>(64);
 
         private void Awake()
         {

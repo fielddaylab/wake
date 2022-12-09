@@ -49,9 +49,7 @@ namespace Aqua.Entity {
             m_Sleeping = new RingBuffer<TEntity>(capacity, RingBufferMode.Expand);
             m_Awake = new RingBuffer<TEntity>(capacity / 2, RingBufferMode.Expand);
             m_Active = new RingBuffer<TEntity>(capacity / 4, RingBufferMode.Expand);
-            m_All = new HashSet<TEntity>(CompareUtils.DefaultComparer<TEntity>());
-
-            m_All.Initialize(capacity);
+            m_All = Collections.NewSet<TEntity>(capacity);
         }
 
         #region Callbacks

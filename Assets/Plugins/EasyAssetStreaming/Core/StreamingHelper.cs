@@ -376,14 +376,20 @@ namespace EasyAssetStreaming {
         #region Web Requests
 
         static internal bool ShouldRetry(UnityWebRequest webRequest) {
+            #if DEVELOPMENT
+            return webRequest.isNetworkError || !webRequest.isHttpError; // if no error flags set, failure was a simulated failure
+            #else
             return webRequest.isNetworkError;
+            #endif // DEVELOPMENT
         }
 
-        static internal Streaming.LoadResult ResultType(UnityWebRequest webRequest) {
+        static internal Streaming.LoadResult ResultType(UnityWebRequest webRequest, bool wasFailure) {
             if (webRequest.isNetworkError) {
                 return Streaming.LoadResult.Error_Network;
             } else if (webRequest.isHttpError) {
                 return Streaming.LoadResult.Error_Server;
+            } else if (wasFailure) { // if no error flags set but otherwise failure, failure was simulated
+                return Streaming.LoadResult.Error_Simulated;
             } else if (webRequest.responseCode == 304) { // Not Modified
                 return Streaming.LoadResult.Success_Cached;
             } else if (webRequest.responseCode >= 200 && webRequest.responseCode < 400) { // Success

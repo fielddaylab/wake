@@ -20,6 +20,7 @@ namespace AquaAudio
 
         public AudioEvent Event;
         public AudioBusId Bus;
+        public AudioEmitterMode EmitterMode;
 
         public AudioSource Sample;
         public UWTStreamPlayer Stream;
@@ -30,6 +31,8 @@ namespace AquaAudio
         public ulong LastKnownTime;
         public double LastStartTime;
 
+        public Transform PositionSource;
+        public Vector3 PositionOffset;
         public AudioCallback OnLoop;
 
         public AudioPropertyBlock EventProperties;
@@ -66,6 +69,8 @@ namespace AquaAudio
             state.State = StateId.Idle;
             state.Flags = 0;
             state.StopCounter = 0;
+            state.PositionSource = null;
+            state.PositionOffset = default(Vector3);
 
             return new AudioHandle(state, id);
         }
@@ -86,6 +91,8 @@ namespace AquaAudio
             state.State = StateId.Idle;
             state.Flags = 0;
             state.StopCounter = 0;
+            state.PositionSource = null;
+            state.PositionOffset = default(Vector3);
 
             return new AudioHandle(state, id);
         }
@@ -97,6 +104,8 @@ namespace AquaAudio
             state.Position = null;
             state.Event = null;
             state.OnLoop = null;
+            state.PositionSource = null;
+            state.PositionOffset = default(Vector3);
             state.Bus = AudioBusId.Master;
             state.VolumeChangeRoutine.Stop();
             state.PitchChangeRoutine.Stop();

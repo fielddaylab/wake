@@ -22,6 +22,9 @@ namespace ProtoAqua.ExperimentV2 {
         [SerializeField, Required] private ExperimentScreen m_OrganismScreen = null;
         [SerializeField, Required] private ExperimentScreen m_PropertiesScreen = null;
 
+        [Header("Settings")]
+        [SerializeField] private Color m_AlreadyObtainedColor = Color.white;
+
         #endregion // Inspector
 
         [SerializeField, HideInInspector] private WaterPropertyDial[] m_Dials;
@@ -61,6 +64,14 @@ namespace ProtoAqua.ExperimentV2 {
             m_OrganismScreen.Panel.OnAdded = OnCritterAdded;
             m_OrganismScreen.Panel.OnCleared = OnCrittersCleared;
             m_HeaderUI.BackButton.onClick.AddListener(OnBackClick);
+
+            m_OrganismScreen.Panel.ColorFilter = (b) => {
+                StringHash32 firstId = b.FirstStressedFactId();
+                if (firstId.IsEmpty || Save.Bestiary.HasFact(firstId)) {
+                    return m_AlreadyObtainedColor;
+                }
+                return Color.white;
+            };
         }
 
         #region Tank

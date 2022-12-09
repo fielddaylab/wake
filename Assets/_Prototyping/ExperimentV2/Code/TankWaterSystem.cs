@@ -11,23 +11,12 @@ namespace ProtoAqua.ExperimentV2 {
         private const float MaxWaterPitch = 3f;
         private const Curve WaterPitchCurve = Curve.CubeIn;
 
-        private class ParticleListenerProxy : MonoBehaviour {
-            public SelectableTank Tank;
-            public Action<SelectableTank> Callback;
-
-            private void OnParticleCollision(GameObject particles) {
-                if (particles.layer == GameLayers.Water_Index) {
-                    Callback(Tank);
-                }
-            }
-        }
-
         #region Inspector
 
         [SerializeField, Required] private ParticleSystem m_FillParticles = null;
-        [SerializeField, Required] private ParticleSystem m_FillImpactParticles = null;
         [SerializeField, Required] private ParticleSystem m_SplashDownParticles = null;
         [SerializeField, Required] private ParticleSystem m_UnderwaterParticles = null;
+        [SerializeField, Required] private GameObject m_FillParticleForceGroup = null;
 
         #endregion // Inspector
 
@@ -36,21 +25,12 @@ namespace ProtoAqua.ExperimentV2 {
         public void InitializeTank(SelectableTank inTank) {
             WorldUtils.ListenForLayerMask(inTank.WaterTrigger, GameLayers.Critter_Mask, (c) => OnWaterEnter(inTank, c), null);
 
-            SetWaterHeight(inTank, inTank.StartingWaterHeight);
-
             inTank.WaterSystem = this;
-
-            var proxy = inTank.WaterCollider3D.gameObject.AddComponent<ParticleListenerProxy>();
-            proxy.Tank = inTank;
-            proxy.Callback = OnTankWaterFill;
         }
 
         public void SetActiveTank(SelectableTank inTank) {
             var downParticleTrigger = m_SplashDownParticles.trigger;
             downParticleTrigger.SetCollider(0, inTank.WaterCollider3D);
-
-            var fillImpactParticleTrigger = m_FillImpactParticles.trigger;
-            fillImpactParticleTrigger.SetCollider(0, inTank.WaterCollider3D);
         }
 
         #region Splash
@@ -138,141 +118,28 @@ namespace ProtoAqua.ExperimentV2 {
 
             inTank.CurrentState |= TankState.Filling;
 
-            while (inTank.WaterFillProportion < 1) {
-                OnTankWaterFill(inTank);
-                yield return null;
-            }
+            m_FillParticles.transform.position = inTank.WaterCollider3D.bounds.center;
+            m_FillParticles.Play();
+
+            yield return 0.5f;
+
+            m_FillParticleForceGroup.SetActive(true);
+
+            yield return 3;
+
+            m_FillParticles.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            m_FillParticleForceGroup.SetActive(false);
+            
+            pourAudio.Stop(0.5f);
+            yield return 0.5f;
 
             inTank.CurrentState &= ~TankState.Filling;
-
-            pourAudio.Stop(0.1f);
 
             yield return null;
 
             m_UnderwaterParticles.Stop();
         }
 
-        private void OnTankWaterFill(SelectableTank inTank) {
-            if ((inTank.CurrentState & TankState.Filling) != 0 && inTank.WaterFillProportion >= 1) {
-                return;
-            }
-
-            float fillAmount = 0.5f * Routine.DeltaTime;
-            float newHeightProportion = Math.Min(inTank.WaterFillProportion + fillAmount, 1);
-            SetWaterHeightImpl(inTank, newHeightProportion, false);
-
-            m_UnderwaterParticles.transform.SetPosition(inTank.transform.position.x, Axis.X, Space.World);
-            m_UnderwaterParticles.Play();
-            //m_UnderwaterParticles.gameObject.SetActive(true);
-        }
-
         #endregion // Fill
-
-        #region Water Height
-
-        static public void SetWaterHeight(SelectableTank inTank, float inProportion) {
-            SetWaterHeightImpl(inTank, inProportion, true);
-        }
-
-        static private void SetWaterHeightImpl(SelectableTank inTank, float inProportion, bool inKillAnimation) {
-            inTank.WaterFillProportion = inProportion;
-
-            Rect originalRect = inTank.WaterRect;
-            Vector2 originalCenter = originalRect.center;
-
-            Rect newRect = originalRect;
-            Curve evalCurve;
-            if ((inTank.CurrentState & TankState.Draining) != 0) {
-                evalCurve = Curve.Smooth;
-            } else {
-                evalCurve = Curve.QuadOut;
-            }
-            newRect.height *= TweenUtil.Evaluate(evalCurve, inProportion);
-
-            Vector2 newCenter = newRect.center;
-            float newHeight = newRect.height;
-
-            Vector3 collider3dCenter = inTank.WaterCollider3D.center;
-            collider3dCenter.y = newCenter.y - originalCenter.y;
-            inTank.WaterCollider3D.center = collider3dCenter;
-
-            Vector3 collider3dSize = inTank.WaterCollider3D.size;
-            collider3dSize.y = Math.Max(newHeight, 0.02f);
-            inTank.WaterCollider3D.size = collider3dSize;
-
-            Vector2 colliderCenter = inTank.WaterTrigger.offset;
-            colliderCenter.y = newCenter.y - originalCenter.y;
-            inTank.WaterTrigger.offset = colliderCenter;
-
-            inTank.WaterTrigger.size = newRect.size;
-
-            var particleShape = inTank.WaterAmbientParticles.shape;
-            Vector3 shapeScale = particleShape.scale;
-            shapeScale.x = newRect.width;
-            shapeScale.y = newRect.height;
-            Vector3 shapePos = particleShape.position;
-            shapePos.y = newCenter.y - originalCenter.y;
-            particleShape.position = shapePos;
-            particleShape.scale = shapeScale;
-
-            var particleEmission = inTank.WaterAmbientParticles.emission;
-            particleEmission.enabled = inProportion > 0;
-
-            var drainShape = inTank.WaterDrainParticles.shape;
-            drainShape.length = newHeight * 0.5f;
-            var drainEmission = inTank.WaterDrainParticles.emission;
-            drainEmission.enabled = inProportion > 0.2f;
-
-            if (inProportion > 0 && (inTank.CurrentState & TankState.Selected) != 0) {
-                if (!inTank.WaterAudioLoop.IsPlaying()) {
-                    inTank.WaterAudioLoop = Services.Audio.PostEvent("tank_water_loop");
-                }
-                inTank.WaterAudioLoop.SetVolume(inProportion);
-                inTank.WaterAudioLoop.SetPitch(Mathf.Lerp(MaxWaterPitch, 1, WaterPitchCurve.Evaluate(inProportion)));
-            } else {
-                inTank.WaterAudioLoop.Stop();
-            }
-
-            // match the water level with the water collider
-            Vector3 matchedPos = inTank.WaterTransform3D.position + inTank.WaterCollider3D.center * inTank.WaterTransform3D.localScale.y;
-            float matchedScale = collider3dSize.y * inTank.WaterTransform3D.localScale.y;
-
-            inTank.WaterRenderer.SetPosition(matchedPos, Axis.Y);
-            inTank.WaterRenderer.SetScale(matchedScale, Axis.Y);
-
-            if (inKillAnimation) {
-                inTank.WaterTransition.Stop();
-            }
-        }
-
-        #endregion // Water Height
-
-        #region Drain
-
-        public IEnumerator DrainWaterOverTime(SelectableTank inTank, float inDuration) {
-            return inTank.WaterTransition.Replace(inTank, DrainWaterOverTime_Routine(inTank, inDuration)).Wait();
-        }
-
-        private IEnumerator DrainWaterOverTime_Routine(SelectableTank inTank, float inDuration) {
-            var audio = Services.Audio.PostEvent("tank_water_drain");
-            var main = m_UnderwaterParticles.main;
-            try {
-                inTank.CurrentState |= TankState.Draining;
-                inTank.WaterDrainParticles.Play();
-                m_UnderwaterParticles.Play();
-                //m_UnderwaterParticles.gameObject.SetActive(false);
-                yield return Tween.Float(inTank.WaterFillProportion, 0, (f) => SetWaterHeightImpl(inTank, f, false), inDuration * inTank.WaterFillProportion)
-                    .OnUpdate((f) => audio.SetPitch(Mathf.Lerp(MaxWaterPitch, 1, WaterPitchCurve.Evaluate(f))));
-                inTank.CurrentState &= ~TankState.Draining;
-
-                inTank.WaterDrainParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-            } finally {
-                inTank.WaterDrainParticles.Stop();
-                m_UnderwaterParticles.Stop();
-                audio.Stop(0);
-            }
-        }
-    
-        #endregion // Drain
     }
 }

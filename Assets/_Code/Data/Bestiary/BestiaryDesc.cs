@@ -51,6 +51,7 @@ namespace Aqua
         [SerializeField, HideInInspector] private StringHash32[] m_InhabitingOrganisms;
         [SerializeField, HideInInspector] private uint m_HistoricalRecordDuration = 2;
         [SerializeField, HideInInspector] private ActorStateTransitionSet m_StateTransitions;
+        [SerializeField, HideInInspector] private StringHash32 m_FirstStressFactId;
 
         #endregion // Inspector
 
@@ -105,6 +106,12 @@ namespace Aqua
         public StreamedImageSet ImageSet() { return new StreamedImageSet(m_SketchPath, m_Icon); }
 
         #region Facts
+
+        public StringHash32 FirstStressedFactId()
+        {
+            Assert.True(m_Type == BestiaryDescCategory.Critter, "BestiaryDesc '{0}' is not a critter", name);
+            return m_FirstStressFactId;
+        }
 
         public TFact FactOfType<TFact>() where TFact : BFBase
         {

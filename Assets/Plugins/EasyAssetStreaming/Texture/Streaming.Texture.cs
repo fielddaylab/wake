@@ -215,9 +215,11 @@ namespace EasyAssetStreaming {
 
             #region State
 
-            static public readonly Dictionary<StreamingAssetHandle, Texture> TextureMap = new Dictionary<StreamingAssetHandle, Texture>();
+            static public readonly Dictionary<StreamingAssetHandle, Texture> TextureMap = new Dictionary<StreamingAssetHandle, Texture>(16);
             static public MemoryStat MemoryUsage = default;
             static public long MemoryBudget = 0;
+
+            static private List<StreamingAssetHandle> s_TexturePostProcessQueue = new List<StreamingAssetHandle>(8);
 
             #endregion // State
 
@@ -344,9 +346,10 @@ namespace EasyAssetStreaming {
 
                 UnityWebRequest request = loadInfo.Loader;
 
-                InvokeLoadResult(id, request, StreamingHelper.ResultType(request));
+                bool failed = DownloadFailed(request);
+                InvokeLoadResult(id, request, StreamingHelper.ResultType(request, failed));
 
-                if (request.isNetworkError || request.isHttpError) {
+                if (failed) {
                     if (loadInfo.RetryCount < RetryLimit && StreamingHelper.ShouldRetry(request)) {
                         UnityEngine.Debug.LogWarningFormat("[Streaming] Retrying texture load '{0}' from '{1}': {2}", id.MetaInfo.Address, id.MetaInfo.ResolvedAddress, loadInfo.Loader.error);
                         loadInfo.RetryCount++;
@@ -368,7 +371,9 @@ namespace EasyAssetStreaming {
                     var settings = ApplySettings(id, texture);
                     TextureCompression compression = ResolveCompression(settings.CompressionLevel);
                     texture.LoadImage(source, compression == 0);
-                    PostApplySettings(texture, settings, compression, true);
+                    if (compression > 0) {
+                        s_TexturePostProcessQueue.Add(id);
+                    }
                 } catch(Exception e) {
                     UnityEngine.Debug.LogException(e);
                     OnTextureDownloadFail(id, e.ToString());

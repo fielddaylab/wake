@@ -117,7 +117,7 @@ namespace Aqua.JobBoard {
         private void AllocateButtons() {
             StringHash32 id;
             JobButton button;
-            foreach (var job in JobUtils.VisibleJobs()) {
+            foreach (var job in JobUtils.VisibleJobs(JobUtils.JobQueryFlags.IncludeCompleted)) {
                 id = job.JobId;
                 if (!m_JobButtonMap.TryGetValue(id, out button)) {
                     button = m_ButtonPool.Alloc();
@@ -161,7 +161,8 @@ namespace Aqua.JobBoard {
                 return job.Job.StationId() == Save.Map.CurrentStationId();
             }
 
-            return (job.Status & JobStatusFlags.Completed) == 0;
+            // return (job.Status & JobStatusFlags.Completed) == 0;
+            return true;
         }
 
         private void OrderButtons() {
@@ -172,7 +173,8 @@ namespace Aqua.JobBoard {
 
             using (PooledList<JobButton> progress = PooledList<JobButton>.Create())
             using (PooledList<JobButton> available = PooledList<JobButton>.Create())
-            using (PooledList<JobButton> locked = PooledList<JobButton>.Create()) {
+            using (PooledList<JobButton> locked = PooledList<JobButton>.Create())
+            using (PooledList<JobButton> completed = PooledList<JobButton>.Create()) {
                 foreach (var button in m_ButtonPool.ActiveObjects) {
                     if (!button.gameObject.activeSelf)
                         continue;
@@ -197,6 +199,10 @@ namespace Aqua.JobBoard {
                             locked.Add(button);
                             m_HasLockedJobs = false;
                             break;
+
+                        case JobProgressCategory.Completed:
+                            completed.Add(button);
+                            break;
                     }
                 }
 
@@ -205,6 +211,7 @@ namespace Aqua.JobBoard {
                 OrderList(JobProgressCategory.InProgress, progress, ref siblingIndex);
                 OrderList(JobProgressCategory.Available, available, ref siblingIndex);
                 OrderList(JobProgressCategory.Locked, locked, ref siblingIndex);
+                OrderList(JobProgressCategory.Completed, completed, ref siblingIndex);
             }
         }
 

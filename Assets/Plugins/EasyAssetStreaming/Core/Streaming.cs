@@ -75,7 +75,8 @@ namespace EasyAssetStreaming {
             Error_Network,
             Error_Server,
             Cancelled,
-            Error_Unknown
+            Error_Unknown,
+            Error_Simulated
         }
 
         /// <summary>
@@ -114,6 +115,15 @@ namespace EasyAssetStreaming {
         static private bool s_UpdateEnabled = true;
         static private bool s_TickInitialized;
         static private GameObject s_UpdateHookGO;
+
+        // Simulated conditions
+
+        #if DEVELOPMENT
+
+        static private float s_SimulatedFailureRate = 0;
+        static private float s_SimulatedDelay = 0;
+
+        #endif // DEVELOPMENT
 
         #endregion // State
 
@@ -732,6 +742,15 @@ namespace EasyAssetStreaming {
             if (memUsage.Max < memUsage.Current) {
                 memUsage.Max = memUsage.Current;
             }
+        }
+
+        [MethodImpl(256)]
+        static private bool DownloadFailed(UnityWebRequest request) {
+            #if DEVELOPMENT
+            return request.isNetworkError || request.isHttpError || UnityEngine.Random.value < s_SimulatedFailureRate;
+            #else
+            return request.isNetworkError || request.isHttpError;
+            #endif // DEVELOPMENT
         }
 
         #endregion // Utilities

@@ -14,14 +14,14 @@ namespace Aqua.Profile {
     public class JobsData : IProfileChunk, ISerializedVersion, ISerializedCallbacks {
         // Serialized
         private StringHash32 m_CurrentJobId;
-        private HashSet<StringHash32> m_InProgressJobs = new HashSet<StringHash32>();
-        private HashSet<StringHash32> m_CompletedJobs = new HashSet<StringHash32>();
-        private HashSet<StringHash32> m_UnlockedJobs = new HashSet<StringHash32>();
-        private HashSet<JobTaskKey> m_CompletedTasks = new HashSet<JobTaskKey>();
+        private HashSet<StringHash32> m_InProgressJobs = Collections.NewSet<StringHash32>(4);
+        private HashSet<StringHash32> m_CompletedJobs = Collections.NewSet<StringHash32>(40);
+        private HashSet<StringHash32> m_UnlockedJobs = Collections.NewSet<StringHash32>(8);
+        private HashSet<JobTaskKey> m_CompletedTasks = Collections.NewSet<JobTaskKey>(8);
 
         // Non-Serialized
         private PlayerJob m_CurrentJob;
-        private HashSet<StringHash32> m_CurrentJobTaskIds = new HashSet<StringHash32>();
+        private HashSet<StringHash32> m_CurrentJobTaskIds = Collections.NewSet<StringHash32>(8);
         private bool m_HasChanges;
 
         #region Current Job

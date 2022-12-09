@@ -103,7 +103,7 @@ namespace Aqua
 
         public bool KeyPressed(KeyCode inKeyCode)
         {
-            return IsActive() && Input.GetKeyDown(inKeyCode);
+            return IsActive() && inKeyCode > 0 && Input.GetKeyDown(inKeyCode);
         }
 
         public bool KeyReleased(KeyCode inKeyCode)

@@ -13,8 +13,8 @@ namespace Aqua
         [SerializeField, HideInInspector] private int m_UpgradeCount;
         [SerializeField, HideInInspector] private int m_ArtifactCount;
 
-        private readonly HashSet<StringHash32> m_CountableItemIds = new HashSet<StringHash32>();
-        private readonly HashSet<StringHash32> m_AlwaysVisibleItemIds = new HashSet<StringHash32>();
+        private readonly HashSet<StringHash32> m_CountableItemIds = Collections.NewSet<StringHash32>(2);
+        private readonly HashSet<StringHash32> m_AlwaysVisibleItemIds = Collections.NewSet<StringHash32>(2);
 
         public ListSlice<InvItem> Currencies { get { return new ListSlice<InvItem>(m_Objects, 0, m_CurrencyCount); } }
         public ListSlice<InvItem> Upgrades { get { return new ListSlice<InvItem>(m_Objects, m_CurrencyCount, m_UpgradeCount); } }

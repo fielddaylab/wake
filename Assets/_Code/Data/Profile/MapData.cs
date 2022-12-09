@@ -34,10 +34,10 @@ namespace Aqua.Profile
         private StringHash32 m_CurrentMapId;
         private StringHash32 m_CurrentMapEntranceId;
 
-        private HashSet<StringHash32> m_UnlockedStationIds = new HashSet<StringHash32>();
-        private HashSet<StringHash32> m_UnlockedSiteIds = new HashSet<StringHash32>();
-        private HashSet<StringHash32> m_UnlockedRoomIds = new HashSet<StringHash32>();
-        private HashSet<StringHash32> m_VisitedLocations = new HashSet<StringHash32>();
+        private HashSet<StringHash32> m_UnlockedStationIds = Collections.NewSet<StringHash32>(5);
+        private HashSet<StringHash32> m_UnlockedSiteIds = Collections.NewSet<StringHash32>(18);
+        private HashSet<StringHash32> m_UnlockedRoomIds = Collections.NewSet<StringHash32>(8);
+        private HashSet<StringHash32> m_VisitedLocations = Collections.NewSet<StringHash32>(40);
 
         private int m_RandomSeedOffset;
         

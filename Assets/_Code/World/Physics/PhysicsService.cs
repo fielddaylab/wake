@@ -25,7 +25,7 @@ namespace Aqua
         #endregion // Inspector
 
         private BufferedCollection<KinematicObject2D> m_KinematicObjects = new BufferedCollection<KinematicObject2D>();
-        private Dictionary<Rigidbody2D, KinematicObject2D> m_RigidbodyMap = new Dictionary<Rigidbody2D, KinematicObject2D>();
+        private Dictionary<Rigidbody2D, KinematicObject2D> m_RigidbodyMap = Collections.NewDictionary<Rigidbody2D, KinematicObject2D>(8);
         private PhysicsContact[] m_Contacts;
 
         private ulong m_TickCount;

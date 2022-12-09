@@ -16,8 +16,6 @@ namespace Aqua
 
         #endregion // Inspector
 
-        [NonSerialized] private Dictionary<StringHash32, ScriptCharacterDef> m_ActorDefinitionMap;
-
         public ScriptCharacterDef Default() { return m_NullActorDefinition; }
         public Sprite ErrorPortrait() { return m_ErrorPortrait; }
 

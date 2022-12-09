@@ -48,8 +48,8 @@ namespace Aqua.Modeling {
             public BestiaryDesc Target;
             public int Amount;
 
-            public readonly HashSet<BestiaryDesc> AdditionalEntities = new HashSet<BestiaryDesc>();
-            public readonly HashSet<BFBase> AdditionalFacts = new HashSet<BFBase>();
+            public readonly HashSet<BestiaryDesc> AdditionalEntities = Collections.NewSet<BestiaryDesc>(2);
+            public readonly HashSet<BFBase> AdditionalFacts = Collections.NewSet<BFBase>(8);
         }
 
         [SerializeField] private float m_ErrorScale = 2;
@@ -83,11 +83,11 @@ namespace Aqua.Modeling {
         private AsyncHandle m_PredictProfileTask;
         private AsyncHandle m_PredictDataTask;
 
-        private readonly HashSet<BestiaryDesc> m_RelevantCritters = new HashSet<BestiaryDesc>();
-        private readonly HashSet<StringHash32> m_RelevantCritterIds = new HashSet<StringHash32>();
+        private readonly HashSet<BestiaryDesc> m_RelevantCritters = Collections.NewSet<BestiaryDesc>(16);
+        private readonly HashSet<StringHash32> m_RelevantCritterIds = Collections.NewSet<StringHash32>(16);
         private readonly List<StringHash32> m_RelevantCritterIdsList = new List<StringHash32>();
         private WaterPropertyMask m_RelevantWaterProperties = default;
-        private readonly HashSet<StringHash32> m_CrittersWithHistoricalData = new HashSet<StringHash32>();
+        private readonly HashSet<StringHash32> m_CrittersWithHistoricalData = Collections.NewSet<StringHash32>(16);
         private WaterPropertyMask m_WaterPropertiesWithHistoricalData = default;
 
         public readonly InterventionData Intervention = new InterventionData();

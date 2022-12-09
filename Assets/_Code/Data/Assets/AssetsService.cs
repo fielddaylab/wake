@@ -64,8 +64,8 @@ namespace Aqua {
         public Material DefaultSpriteMaterial { get { return m_DefaultSpriteMaterial; } }
         public Material OverlaySpriteMaterial { get { return m_OverlaySpriteMaterial; } }
 
-        private Dictionary<StringHash32, PreloadGroup> m_PreloadGroupMap = new Dictionary<StringHash32, PreloadGroup>();
-        private Dictionary<StringHash32, int> m_PreloadPathRefCountMap = new Dictionary<StringHash32, int>();
+        private Dictionary<StringHash32, PreloadGroup> m_PreloadGroupMap = new Dictionary<StringHash32, PreloadGroup>(32);
+        private Dictionary<StringHash32, int> m_PreloadPathRefCountMap = new Dictionary<StringHash32, int>(64);
         private Unsafe.ArenaHandle m_DecompressionBuffer;
 
         protected override void Initialize() {

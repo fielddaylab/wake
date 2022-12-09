@@ -10,6 +10,10 @@ namespace Aqua {
         static private readonly int ScrambleCharLength = ScrambleChars.Length;
 
         static public unsafe string Scramble(StringSlice text, uint initialSeed = 0) {
+            return Scramble(text, ref initialSeed);
+        }
+
+        static public unsafe string Scramble(StringSlice text, ref uint initialSeed) {
             char* buffer = Frame.AllocArray<char>(text.Length);
             char* write = buffer;
             uint seed = text.Hash32().HashValue ^ initialSeed;

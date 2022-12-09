@@ -88,12 +88,16 @@ namespace Aqua
                 case BestiaryDescCategory.Critter:
                     {
                         m_StateTransitions.Reset();
+                        m_FirstStressFactId = null;
                         foreach(var fact in m_Facts)
                         {
                             if (fact.Type == BFTypeId.State)
                             {
                                 BFState state = (BFState) fact;
                                 m_StateTransitions[state.Property] = state.Range;
+                                if (m_FirstStressFactId.IsEmpty) {
+                                    m_FirstStressFactId = fact.Id;
+                                }
                             }
                         }
                         break;

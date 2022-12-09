@@ -63,6 +63,9 @@ namespace Aqua.Entity {
                 return UpdateAwakeResult.Active;
             } else {
                 transform.OffscreenTickDelay = Math.Min((int) distOffset / 30, 60);
+                if (transform.IsDynamic) {
+                    transform.OffscreenTickDelay /= 4;
+                }
                 return UpdateAwakeResult.Inactive;
             }
         }

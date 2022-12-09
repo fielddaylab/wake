@@ -203,9 +203,9 @@ namespace Aqua
         protected override void PreLookupConstruct()
         {
             base.PreLookupConstruct();
-            m_FactMap = new Dictionary<StringHash32, BFBase>(Count());
-            m_AutoFacts = new HashSet<StringHash32>();
-            m_SpecterIds = new HashSet<StringHash32>();
+            m_FactMap = new Dictionary<StringHash32, BFBase>(m_AllFacts.Length);
+            m_AutoFacts = Collections.NewSet<StringHash32>(160);
+            m_SpecterIds = Collections.NewSet<StringHash32>(8);
 
             foreach(var fact in m_AllFacts)
             {

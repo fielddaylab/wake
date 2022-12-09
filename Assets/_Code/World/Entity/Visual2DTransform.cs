@@ -13,6 +13,7 @@ namespace Aqua.Entity {
         public Collider2D Collider;
         public LayerMask UpdateMask;
         public float Radius;
+        public bool IsDynamic;
 
         #endregion // Inspector
 
@@ -108,13 +109,16 @@ namespace Aqua.Entity {
 
         bool IBaked.Bake(BakeFlags flags, BakeContext context) {
             bool bChanged = false;
+            
             if (Source == null) {
                 Source = transform.parent;
                 bChanged = true;
             }
+            
             if (Collider != null) {
                 bChanged |= Ref.Replace(ref Radius, PhysicsUtils.GetRadius(Collider));
             }
+
             if (Ref.Replace(ref Collider, GetComponent<Collider2D>())) {
                 bChanged = true;
                 Radius = Collider != null ? PhysicsUtils.GetRadius(Collider) : 0;

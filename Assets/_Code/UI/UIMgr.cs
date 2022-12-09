@@ -438,7 +438,7 @@ namespace Aqua
                 m_DialogStyleMap.Add(panel.StyleId(), panel);
             }
 
-            m_SharedPanels = new Dictionary<Type, SharedPanel>(16);
+            m_SharedPanels = new Dictionary<Type, SharedPanel>(16, ReferenceEqualityComparer<Type>.Default);
             m_CursorHintMgr = new CursorHintMgr(m_Cursor, m_Tooltip);
             SceneHelper.OnSceneUnload += CleanupFromScene;
 

@@ -495,17 +495,19 @@ namespace EasyAssetStreaming {
             m_ColorGroup = GetComponent<ColorGroup>();
             #endif // USING_BEAUUTIL
 
-            EditorApplication.delayCall += () => {
-                if (!this) {
-                    return;
-                }
+            if (this.isActiveAndEnabled) {
+                EditorApplication.delayCall += () => {
+                    if (!this || !this.isActiveAndEnabled) {
+                        return;
+                    }
 
-                LoadTexture();
-                Resize(m_AutoSize);
-                LoadClipping();
-                LoadAnchors();
-                ApplyVisible();
-            };
+                    LoadTexture();
+                    Resize(m_AutoSize);
+                    LoadClipping();
+                    LoadAnchors();
+                    ApplyVisible();
+                };
+            }
         }
 
         #endif // UNITY_EDITOR

@@ -32,6 +32,7 @@ namespace AquaAudio {
         [SerializeField] private FloatRange m_Delay = new FloatRange(0);
         [SerializeField] private bool m_Loop = false;
         [SerializeField] private bool m_RandomizeStartingPosition = false;
+        [SerializeField] private AudioEmitterSettings m_EmitterSettings = default(AudioEmitterSettings);
 
         #endregion // Inspector
 
@@ -88,6 +89,23 @@ namespace AquaAudio {
 
             inSource.clip = GetNextClip(inRandom);
             inSource.loop = m_Loop;
+
+            AudioEmitterSettings emitter = m_EmitterSettings;
+            switch(emitter.Mode) {
+                case AudioEmitterMode.Flat: {
+                    inSource.spatialBlend = 0;
+                    break;
+                }
+
+                case AudioEmitterMode.World:
+                case AudioEmitterMode.ListenerRelative: {
+                    inSource.spatialBlend = 1 - emitter.Despatialize;
+                    inSource.minDistance = emitter.MinDistance;
+                    inSource.maxDistance = emitter.MaxDistance;
+                    inSource.rolloffMode = emitter.Rolloff;
+                    break;
+                }
+            }
 
             if (m_Loop && m_RandomizeStartingPosition)
                 inSource.time = inRandom.NextFloat(inSource.clip.length);

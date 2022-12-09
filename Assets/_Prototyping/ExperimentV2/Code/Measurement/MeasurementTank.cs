@@ -110,6 +110,7 @@ namespace ProtoAqua.ExperimentV2
             m_EnvironmentScreen.Panel.OnCleared += OnEnvironmentCleared;
 
             m_OrganismScreen.Panel.HighlightFilter = EvaluateOrganismHighlight;
+            m_OrganismScreen.Panel.MarkerFilter = EvaluateOrganismMarker;
 
             // m_FeaturePanel.OnUpdated = OnFeaturesUpdated;
             m_FeatureScreen.OnReset += (s, w) => m_FeaturePanel.ClearSelection();
@@ -135,17 +136,12 @@ namespace ProtoAqua.ExperimentV2
 
         private void Activate() {
             m_World = m_ParentTank.ActorBehavior.World;
-            TankWaterSystem.SetWaterHeight(m_ParentTank, 0);
             m_SetupPhase = SetupPhase.Begin;
             ExperimentScreen.Transition(m_BeginScreen, m_World);
             m_ExperimentData = null;
         }
 
         private void Deactivate() {
-            if (m_ParentTank.WaterFillProportion > 0) {
-                m_ParentTank.WaterSystem.DrainWaterOverTime(m_ParentTank, 1.5f);
-            }
-
             m_AutoFeederParticles.Stop();
 
             m_ParentTank.CurrentState = 0;
@@ -159,25 +155,30 @@ namespace ProtoAqua.ExperimentV2
         private void OnEnvironmentAdded(BestiaryDesc inDesc) {
             m_SelectedEnvironment = inDesc;
             m_ParentTank.ActorBehavior.UpdateEnvState(inDesc.GetEnvironment());
-            m_ParentTank.WaterColor.SetColor(inDesc.WaterColor().WithAlpha(m_ParentTank.DefaultWaterColor.a));
             m_OrganismScreen.Panel.Refresh();
         }
 
         private void OnEnvironmentRemoved(BestiaryDesc inDesc) {
             if (Ref.CompareExchange(ref m_SelectedEnvironment, inDesc, null)) {
                 m_ParentTank.ActorBehavior.ClearEnvState();
-                m_ParentTank.WaterColor.SetColor(m_ParentTank.DefaultWaterColor);
             }
         }
 
         private void OnEnvironmentCleared() {
             m_SelectedEnvironment = null;
             m_ParentTank.ActorBehavior.ClearEnvState();
-            m_ParentTank.WaterColor.SetColor(m_ParentTank.DefaultWaterColor);
         }
 
         private bool EvaluateOrganismHighlight(BestiaryDesc organism) {
             return m_SelectedEnvironment?.HasOrganism(organism.Id()) ?? false;
+        }
+
+        private bool EvaluateOrganismMarker(BestiaryDesc organism) {
+            StringHash32 stressFactToCheck = organism.FirstStressedFactId();
+            if (!stressFactToCheck.IsEmpty && m_SelectedEnvironment && Save.Bestiary.HasFact(stressFactToCheck)) {
+                return organism.EvaluateActorState(m_SelectedEnvironment.GetEnvironment(), out var _) >= ActorStateId.Stressed;
+            }
+            return false;
         }
 
         #endregion // Environment Callbacks
@@ -235,7 +236,7 @@ namespace ProtoAqua.ExperimentV2
             m_SetupPhase--;
             switch (m_SetupPhase) {
                 case SetupPhase.Environment: {
-                        ExperimentScreen.Transition(m_EnvironmentScreen, m_World, SelectableTank.DrainTankSequence(m_ParentTank));
+                        ExperimentScreen.Transition(m_EnvironmentScreen, m_World);
                         break;
                     }
                 case SetupPhase.Critters: {
@@ -437,7 +438,6 @@ namespace ProtoAqua.ExperimentV2
                 Services.Script.KillLowPriorityThreads();
                 using (var fader = Services.UI.WorldFaders.AllocFader()) {
                     yield return fader.Object.Show(Color.black, 1);
-                    yield return m_ParentTank.WaterSystem.DrainWaterOverTime(m_ParentTank, 1f);
                     ClearStateAfterExperiment();
                     yield return 0.5f;
                     yield return fader.Object.Hide(0.5f, false);
@@ -459,8 +459,6 @@ namespace ProtoAqua.ExperimentV2
         }
 
         private void ClearStateAfterExperiment() {
-            TankWaterSystem.SetWaterHeight(m_ParentTank, 0);
-
             SelectableTank.Reset(m_ParentTank, true);
             Services.Camera.SnapToPose(m_ParentTank.CameraPose);
             m_ParentTank.Guide.SnapTo(m_ParentTank.GuideTarget);

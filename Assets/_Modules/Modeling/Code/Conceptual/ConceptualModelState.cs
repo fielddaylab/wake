@@ -18,14 +18,14 @@ namespace Aqua.Modeling {
         public readonly RingBuffer<MissingFactRecord> MissingFacts = new RingBuffer<MissingFactRecord>(24);
         public WorldFilterMask GraphedMask;
 
-        public readonly HashSet<BestiaryDesc> GraphedEntities = new HashSet<BestiaryDesc>();
-        public readonly HashSet<BFBase> GraphedFacts = new HashSet<BFBase>();
+        public readonly HashSet<BestiaryDesc> GraphedEntities = Collections.NewSet<BestiaryDesc>(16);
+        public readonly HashSet<BFBase> GraphedFacts = Collections.NewSet<BFBase>(64);
 
-        public readonly HashSet<BestiaryDesc> PendingEntities = new HashSet<BestiaryDesc>();
-        public readonly HashSet<BFBase> PendingFacts = new HashSet<BFBase>();
+        public readonly HashSet<BestiaryDesc> PendingEntities = Collections.NewSet<BestiaryDesc>(16);
+        public readonly HashSet<BFBase> PendingFacts = Collections.NewSet<BFBase>(64);
 
-        public readonly HashSet<BestiaryDesc> SimulatedEntities = new HashSet<BestiaryDesc>();
-        public readonly HashSet<BFBase> SimulatedFacts = new HashSet<BFBase>();
+        public readonly HashSet<BestiaryDesc> SimulatedEntities = Collections.NewSet<BestiaryDesc>(16);
+        public readonly HashSet<BFBase> SimulatedFacts = Collections.NewSet<BFBase>(64);
 
         public void LoadFrom(SiteSurveyData siteData) {
             GraphedEntities.Clear();

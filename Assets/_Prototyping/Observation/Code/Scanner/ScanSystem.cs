@@ -65,8 +65,8 @@ namespace ProtoAqua.Observation {
 
         #endregion // Inspector
 
-        private readonly HashSet<ScanDataPackage> m_LoadedPackages = new HashSet<ScanDataPackage>();
-        private readonly Dictionary<StringHash32, ScanData> m_ScanDataMap = new Dictionary<StringHash32, ScanData>();
+        private readonly HashSet<ScanDataPackage> m_LoadedPackages = Collections.NewSet<ScanDataPackage>(3);
+        private readonly Dictionary<StringHash32, ScanData> m_ScanDataMap = new Dictionary<StringHash32, ScanData>(32);
 
         private readonly RingBuffer<ScannableRegion> m_RegionsInRange = new RingBuffer<ScannableRegion>(16, RingBufferMode.Expand);
 

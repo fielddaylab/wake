@@ -327,7 +327,7 @@ namespace Aqua
                 .Register(ScriptEvents.Global.BlockInput, () => Services.Input.PauseAll())
                 .Register(ScriptEvents.Global.UnblockInput, () => Services.Input.ResumeAll());
 
-            m_SkippedEvents = new HashSet<StringHash32>();
+            m_SkippedEvents = Collections.NewSet<StringHash32>(18);
             m_SkippedEvents.Add(ScriptEvents.Global.CutsceneOn);
             m_SkippedEvents.Add(ScriptEvents.Global.CutsceneOff);
             m_SkippedEvents.Add(ScriptEvents.Global.PlaySound);
@@ -347,7 +347,7 @@ namespace Aqua
             m_SkippedEvents.Add(LeafUtils.Events.Character);
             m_SkippedEvents.Add(LeafUtils.Events.Pose);
 
-            m_DialogOnlyEvents = new HashSet<StringHash32>();
+            m_DialogOnlyEvents = Collections.NewSet<StringHash32>(10);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Auto);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Clear);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.InputContinue);
