@@ -77,11 +77,9 @@ $choice .action.cancel; Not right now.
 {@player}       Oh. I... never really thought about it like that. 
                 Is it okay if I borrow the article?  
 {@$MerchantId}  You keep it, O. It's the least I can do. 
+$call GiveJournalEntry("N05_MersArticle")
 $set jobs:bayou-mechanic.trackBayou = false
 $set jobs:bayou-mechanic.givenArticle = true
-{@$MerchantId}  Wanna take a look around my shop?
-$choice .action.openShop; Sure, thanks!
-$choice .action.cancel; Not right now!
 
 
 :: action.cancel
