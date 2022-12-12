@@ -218,7 +218,10 @@ namespace Aqua
             if (rectTransform && !rectTransform.IsPointerInteractable())
                 return false;
             
-            return ExecuteEvents.Execute(inRoot, m_InputModule.GetPointerEventData(), ExecuteEvents.pointerClickHandler);
+            ++m_ForceClick;
+            bool bSuccess = ExecuteEvents.Execute(inRoot, m_InputModule.GetPointerEventData(), ExecuteEvents.pointerClickHandler);
+            --m_ForceClick;
+            return bSuccess;
         }
 
         public bool ForceClick(GameObject inRoot)

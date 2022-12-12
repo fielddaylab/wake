@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Aqua.Entity;
 using BeauRoutine;
 using BeauUtil;
 using UnityEngine;
@@ -156,6 +157,7 @@ namespace AquaAudio {
             var track = GetTrack();
             if (!object.ReferenceEquals(track, null)) {
                 track.PositionSource = position;
+                track.SourceEntity = position ? position.GetComponent<IActiveEntity>() : null;
                 track.PositionOffset = offset;
             }
             return this;
@@ -165,6 +167,7 @@ namespace AquaAudio {
             var track = GetTrack();
             if (!object.ReferenceEquals(track, null)) {
                 track.PositionSource = null;
+                track.SourceEntity = null;
                 if (position) {
                     offset += position.position;
                 }
@@ -177,6 +180,7 @@ namespace AquaAudio {
             var track = GetTrack();
             if (!object.ReferenceEquals(track, null)) {
                 track.PositionSource = null;
+                track.SourceEntity = null;
                 track.PositionOffset = offset;
             }
             return this;

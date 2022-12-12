@@ -32,7 +32,12 @@ namespace ProtoAqua.Observation {
                 meter = m_AllMeters[used++];
                 meter.gameObject.SetActive(true);
                 meter.Icon.sprite = Assets.Bestiary(manifest.Id).Icon();
-                meter.Meter.ArcFill = progress / (float) manifest.Required;
+
+                float fill = progress / (float) manifest.Required;
+                if (fill != meter.Meter.ArcFill) {
+                    meter.Meter.ArcFill = fill;
+                    meter.Ping();
+                }
             }
 
             for(int i = used; i < m_AllMeters.Length; i++)

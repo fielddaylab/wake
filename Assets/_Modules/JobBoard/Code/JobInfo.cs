@@ -24,6 +24,7 @@ namespace Aqua.JobBoard
         [SerializeField] private RectTransform m_NoJobDisplay = null;
         [SerializeField] private RectTransform m_HasRequiredUpgradesGroup = null;
         [SerializeField] private LayoutGroup m_Layout = null;
+        [SerializeField] private AppearAnimSet m_AppearAnim = null;
 
         #endregion // Inspector
 
@@ -50,6 +51,7 @@ namespace Aqua.JobBoard
             UpdateStatus(inJob, inStatus, false);
 
             m_Layout.ForceRebuild();
+            m_AppearAnim.Play();
         }
 
         private void PopulateRequiredUpgrades(JobDesc inJob, SaveData inSave)

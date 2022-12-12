@@ -1,5 +1,7 @@
 using System.Collections;
 using BeauRoutine;
+using BeauUtil;
+using BeauUtil.Debugger;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -120,9 +122,46 @@ namespace Aqua {
         }
 
         static public void ScrollYToShow(this ScrollRect inRect, RectTransform inTransform) {
+            Assert.True(inTransform.parent == inRect.content);
             float transformY = inTransform.rect.center.y;
-            float totalHeight = ((RectTransform) inTransform.parent).rect.height;
+            float totalHeight = inRect.content.rect.height;
             inRect.verticalNormalizedPosition = transformY / totalHeight;
         }
+
+        static public bool IsVisible(this ScrollRect inRect, RectTransform inTransform, Vector2 inPadding) {
+            return IsVisible(inRect.viewport, inTransform, inPadding);
+        }
+
+        static public bool IsVisible(this ScrollRect inRect, RectTransform inTransform) {
+            return IsVisible(inRect, inTransform, s_DefaultVisiblePadding);
+        }
+
+        static public bool IsVisible(RectTransform inParent, RectTransform inChild) {
+            return IsVisible(inParent, inChild, s_DefaultVisiblePadding);
+        }
+
+        static public bool IsVisible(RectTransform inParent, RectTransform inTransform, Vector2 inPadding) {
+            RectTransform viewport = inParent;
+            Assert.True(inTransform.IsChildOf(viewport));
+
+            Rect clipping = inParent.rect;
+            clipping.size += inPadding;
+
+            Rect transformBox = inTransform.rect;
+            Vector2 transformPos = transformBox.position + (Vector2) inTransform.localPosition;
+            
+            RectTransform check = inTransform.parent as RectTransform;
+            Vector2 offset;
+            while(check && check != viewport) {
+                offset = check.localPosition;
+                transformPos += offset;
+                check = check.parent as RectTransform;
+            }
+
+            transformBox.position = transformPos;
+            return transformBox.Overlaps(clipping);
+        }
+
+        static private readonly Vector2 s_DefaultVisiblePadding = new Vector2(8, 8);
     }
 }

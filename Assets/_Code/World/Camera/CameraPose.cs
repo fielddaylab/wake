@@ -21,7 +21,6 @@ namespace Aqua.Cameras
             public float Height;
             public float Zoom;
             public float FOV;
-            public float AudioListenerZOffset;
             public CameraPoseProperties Properties;
         }
 
@@ -45,7 +44,6 @@ namespace Aqua.Cameras
             data.Target = Target;
             data.Height = Height;
             data.Zoom = Zoom;
-            data.AudioListenerZOffset = AudioListenerZOffset;
             data.Properties = Properties;
             data.FOV = FieldOfView;
         }
@@ -63,7 +61,6 @@ namespace Aqua.Cameras
             Target = data.Target;
             Height = data.Height;
             Zoom = data.Zoom;
-            AudioListenerZOffset = data.AudioListenerZOffset;
             Properties = data.Properties;
             FieldOfView = data.FOV;
         }

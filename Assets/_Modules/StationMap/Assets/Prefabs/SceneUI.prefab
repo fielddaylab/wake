@@ -366,6 +366,9 @@ GameObject:
   - component: {fileID: 1803931414461605132}
   - component: {fileID: 8645921734882081831}
   - component: {fileID: 7989888709165835736}
+  - component: {fileID: 8317990660653630954}
+  - component: {fileID: 5971323472024181014}
+  - component: {fileID: 2310051897043822054}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -415,8 +418,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TooltipId:
-    m_Source: ui.ship.exterior.toShip.tooltip
-    m_HashValue: 3525431477
+    m_Source: ui.ship.exterior.shipMap.tooltip
+    m_HashValue: 1581992060
   TooltipOverride: 
   Cursor: 1
 --- !u!114 &2414959237666765913
@@ -582,3 +585,47 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Group: {fileID: 8645921734882081831}
+--- !u!114 &8317990660653630954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8820919845292636976}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee012376a32f0314ead77f5ad3a9b360, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Offset0: {x: 0, y: 0}
+  m_Offset1: {x: 0, y: 0}
+--- !u!114 &5971323472024181014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8820919845292636976}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b65daf6ebab4aca41a9a0c35e749ef1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2310051897043822054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8820919845292636976}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbc67c900561e7045ac48ef02da1b6cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Selectable: {fileID: 2414959237666765913}
+  m_EnterEvent: ui_hover
+  m_ExitEvent: 
+  m_DownEvent: 
+  m_UpEvent: 
+  m_ClickEvent: ui_click

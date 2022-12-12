@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
+using BeauUtil.Variants;
 using UnityEngine;
 
 namespace Aqua
@@ -239,7 +241,7 @@ namespace Aqua
         /// <summary>
         /// Dispatches the given event with an optional argument.
         /// </summary>
-        public void Dispatch(StringHash32 inEventId, object inContext = null)
+        public void Dispatch(StringHash32 inEventId, object inContext = default(object))
         {
             HandlerBlock block;
             if (m_Handlers.TryGetValue(inEventId, out block))
@@ -251,7 +253,7 @@ namespace Aqua
         /// <summary>
         /// Queues the given event to dispatch at the end of the frame.
         /// </summary>
-        public void Queue(StringHash32 inEventId, object inContext = null)
+        public void Queue(StringHash32 inEventId, object inContext = default(object))
         {
             m_QueuedEvents.PushBack(new QueuedEvent(inEventId, inContext));
         }
@@ -326,5 +328,13 @@ namespace Aqua
         }
 
         #endregion // IService
+    }
+
+    public struct EventArg {
+        [StructLayout(LayoutKind.Explicit, Size = 16)]
+        public unsafe struct UnmanagedUnion {
+            [FieldOffset(0)] public Variant Variant;
+            [FieldOffset(0)] public fixed byte PackedStruct[16];
+        }
     }
 }

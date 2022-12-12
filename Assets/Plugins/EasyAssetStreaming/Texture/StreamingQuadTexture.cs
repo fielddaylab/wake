@@ -61,6 +61,7 @@ namespace EasyAssetStreaming {
 
         #endregion // Inspector
 
+        [NonSerialized] private StreamingHelper.AwakeTracker m_Awake;
         [NonSerialized] private StreamingAssetHandle m_AssetHandle;
         [NonSerialized] private Texture m_LoadedTexture;
         [NonSerialized] private Mesh m_MeshInstance;
@@ -280,6 +281,10 @@ namespace EasyAssetStreaming {
 
         #region Unity Events
 
+        private void Awake() {
+            m_Awake.OnNaturalAwake();
+        }
+
         private void OnEnable() {
             #if UNITY_EDITOR
             if (!Application.IsPlaying(this)) {
@@ -303,7 +308,9 @@ namespace EasyAssetStreaming {
             if (m_ClippedUVs == default) {
                 m_ClippedUVs = m_UVRect;
             }
-            Refresh();
+            if (!m_Awake.IsForcing()) {
+                Refresh();
+            }
         }
 
         private void OnDisable() {
@@ -316,7 +323,9 @@ namespace EasyAssetStreaming {
 
         [Preserve]
         private void OnDidApplyAnimationProperties() {
-            Refresh();
+            if (isActiveAndEnabled) {
+                Refresh();
+            }
         }
 
         #endregion // Unity Events
@@ -327,6 +336,7 @@ namespace EasyAssetStreaming {
         /// Prefetches
         /// </summary>
         public void Preload() {
+            m_Awake.AwakeIfNotAwoken(this);
             LoadTexture();
             if (m_MainTexturePropertyId == 0) {
                 LoadMaterial();

@@ -10,6 +10,7 @@ namespace Aqua.Shop {
     public class ShopCategoryButton : MonoBehaviour {
         public Toggle Toggle;
         public ActiveGroup Group;
+        public AppearAnim Anim;
 
         [Header("Left Column")]
         public TextId LeftHeader;

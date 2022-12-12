@@ -10,6 +10,7 @@ namespace Aqua.Shop {
         public Button Button;
         public ColorGroup Outline;
         public PointerListener Listener;
+        public AppearAnim Anim;
 
         [Header("Info")]
         public LocText Title;

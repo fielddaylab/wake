@@ -493,6 +493,51 @@ namespace EasyAssetStreaming {
             return hash;
         }
 
+        internal struct AwakeTracker {
+            private const byte State_Unactivated = 0;
+            private const byte State_Activated = 1;
+            private const byte State_ForcingActive = 2;
+
+            private byte m_State;
+
+            internal void OnNaturalAwake() {
+                if (m_State == State_Unactivated) {
+                    m_State = State_Activated;
+                }
+            }
+
+            internal void AwakeIfNotAwoken(Behaviour behavior) {
+                if (m_State == State_Unactivated) {
+                    m_State = State_ForcingActive;
+
+                    Transform transform = behavior.transform;
+                    GameObject go = behavior.gameObject;
+                    bool wasDisabled = behavior.enabled;
+                    bool wasInactiveSelf = !go.activeSelf;
+
+                    behavior.enabled = true;
+                    go.SetActive(true);
+                    
+                    if (!go.activeInHierarchy) {
+                        Transform prevParent = transform.parent;
+                        int prevSib = transform.GetSiblingIndex();
+                        transform.SetParent(null, false);
+                        transform.SetParent(prevParent, false);
+                        transform.SetSiblingIndex(prevSib);
+                    }
+
+                    behavior.enabled = !wasDisabled;
+                    go.SetActive(!wasInactiveSelf);
+                
+                    m_State = State_Activated;
+                }
+            }
+
+            internal bool IsForcing() {
+                return m_State == State_ForcingActive;
+            }
+        }
+
         #endregion // Misc
     }
 }

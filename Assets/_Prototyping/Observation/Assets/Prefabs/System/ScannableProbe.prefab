@@ -1,5 +1,96 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &597772407581611900
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8201020099830398916}
+  - component: {fileID: 2527164614192004282}
+  - component: {fileID: 1614826904278258659}
+  - component: {fileID: 32908033056869697}
+  m_Layer: 19
+  m_Name: V2DAudio
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8201020099830398916
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 597772407581611900}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5774820918325110237}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2527164614192004282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 597772407581611900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a4f3b327b540ee49b125764505491c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Source: {fileID: 2003565938470526053}
+  Collider: {fileID: 0}
+  UpdateMask:
+    serializedVersion: 2
+    m_Bits: 524288
+  Radius: 8
+  IsDynamic: 0
+--- !u!114 &1614826904278258659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 597772407581611900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced02461c9fab16498d5d024212b8a9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Id:
+    m_Source: ProbeSecret
+    m_HashValue: 2645027893
+  m_IsPersistent: 0
+  m_StartDisabled: 0
+--- !u!114 &32908033056869697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 597772407581611900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44e393b9985dcaf4d868d49266be77ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_DotSFX:
+    m_Source: Secret.Dot3D
+    m_HashValue: 142080223
+  m_DashSFX:
+    m_Source: Secret.Dash3D
+    m_HashValue: 722287930
+  m_UnitTiming: 0.1
+  Pattern: ... --- ...
+  PlayOnAwake: 1
+  Location: {fileID: 8201020099830398916}
 --- !u!114 &4240154042435590562
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -125,6 +216,7 @@ MonoBehaviour:
   Target: {fileID: 0}
   Height: 10
   Zoom: 1
+  AudioListenerZOffset: 0
   FieldOfView: 30
   Properties: 7
 --- !u!1 &5774820918325110238
@@ -161,6 +253,7 @@ Transform:
   - {fileID: 5607336348621733069}
   - {fileID: 8222278560379112455}
   - {fileID: 2003565938470526053}
+  - {fileID: 8201020099830398916}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

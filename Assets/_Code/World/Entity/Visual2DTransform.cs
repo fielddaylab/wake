@@ -103,6 +103,7 @@ namespace Aqua.Entity {
         private void Reset() {
             Source = transform.parent;
             Collider = GetComponent<Collider2D>();
+            UpdateMask |= (1 << gameObject.layer);
         }
 
         int IBaked.Order { get { return -15; } }
@@ -121,7 +122,9 @@ namespace Aqua.Entity {
 
             if (Ref.Replace(ref Collider, GetComponent<Collider2D>())) {
                 bChanged = true;
-                Radius = Collider != null ? PhysicsUtils.GetRadius(Collider) : 0;
+                if (Collider != null) {
+                    Radius = PhysicsUtils.GetRadius(Collider);
+                }
             }
 
             return bChanged;
