@@ -15,6 +15,7 @@ $endif
 
 :: TioCall
 @trigger    JournalHidden
+// @when    After certain number of journal entries/dreams?
 @once
 {@player} {nameof @guide}, I'm really worried about Sam.
 {@player} I need to put a call through to Tío.
@@ -53,21 +54,21 @@ $call   CabinBGM->PlayBGM()
 $call ViewTransitionTo("Desk")
 
 $if session:fromDream == "Dreams00"
-    $call GiveJournalEntry("Dream00")
+    $call GiveJournalEntry("Dream00_Kelp1")
 $elseif session:fromDream == "Dream01"
-    $call GiveJournalEntry("Dream01")
+    $call GiveJournalEntry("Dream01_WhaleFall")
 $elseif session:fromDream == "Dream02"
-    $call GiveJournalEntry("Dream02")
+    $call GiveJournalEntry("Dream02_Coral")
 $elseif session:fromDream == "Dream03"
-    $call GiveJournalEntry("Dream03")
+    $call GiveJournalEntry("Dream03_DeadZone")
 $elseif session:fromDream == "Dream04"
-    $call GiveJournalEntry("Dream04")
+    $call GiveJournalEntry("Dream04_Kelp2Barren")
 $elseif session:fromDream == "Dream05"
-    $call GiveJournalEntry("Dream05")
+    $call GiveJournalEntry("Dream05_Arctic2")
 $elseif session:fromDream == "Dream06"
-    $call GiveJournalEntry("Dream06")
+    $call GiveJournalEntry("Dream06_Rig")
 $elseif session:fromDream == "Dream07"
-    $call GiveJournalEntry("Dream07")
+    $call GiveJournalEntry("Dream07_Final")
 $endif //
 
 // From Dream
@@ -146,7 +147,7 @@ $branch .GetDreamJournal
 {@player} I'm fine. Just another dream. 
           Any luck unscrambling those messages from Sam? 
 {@guide}  I'm afraid not, O. The encryption is like nothing I've ever seen. 
-{@olayer} Ugh. I'm worried about Sam. 
+{@player} Ugh. I'm worried about Sam. 
           I wonder if Mom would send a team down to check on them... just in case. 
 $branch .GetDreamJournal
 
