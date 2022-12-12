@@ -147,6 +147,13 @@ namespace Aqua.StationInterior
         #region Animations
 
         private IEnumerator AnimateSharedOn(float offsetX) {
+            IAsyncLoadPanel load = m_CurrentPanel as IAsyncLoadPanel;
+            if (load != null) {
+                while (load.IsLoading()) {
+                    yield return null;
+                }
+            }
+            
             m_CurrencyUI.gameObject.SetActive(true);
             m_CurrencyUI.SetAnchorPos(offsetX, Axis.X);
             yield return Routine.Combine(

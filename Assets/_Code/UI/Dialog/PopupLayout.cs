@@ -32,18 +32,27 @@ namespace Aqua {
         [SerializeField] private LayoutGroup m_Layout = null;
         [SerializeField] private LocText m_HeaderText = null;
         [SerializeField] private LocText m_SubheaderText = null;
+        [SerializeField] private LocText m_ContentsText = null;
+        [SerializeField] private AppearAnimSet m_AppearAnim = null;
+
+        [Header("Image")]
         [SerializeField] private StreamedImageSetDisplay m_ImageDisplay = null;
         [SerializeField] private Graphic m_ImageBG = null;
-        [SerializeField] private LocText m_ContentsText = null;
+        
+        [Header("Facts")]
         [SerializeField] private FactPools m_FactPools = null;
         [SerializeField] private RectTransformPool m_KnownFactBadgePool = null;
         [SerializeField] private VerticalLayoutGroup m_VerticalFactLayout = null;
         [SerializeField] private GridLayoutGroup m_GridFactLayout = null;
+        
+        [Header("Custom")]
         [SerializeField] private int m_CustomModuleSiblingIndex = 0;
         [SerializeField] private RectTransform m_ExtraBackground = null;
         [SerializeField] private GameObject m_CompressedLayoutContainer = null;
         [SerializeField] private GameObject m_CompressedLayoutRoot = null;
         [SerializeField] private LayoutDecompressor m_LayoutDecompressor = null;
+        
+        [Header("Buttons")]
         [SerializeField] private LayoutElement m_DividerGroup = null;
         [SerializeField] private ButtonConfig[] m_Buttons = null;
         [SerializeField] private Button m_CloseButton = null;
@@ -344,6 +353,10 @@ namespace Aqua {
             m_OptionWasSelected = false;
         }
 
+        public void PlayAnim(float delay = 0) {
+            m_AppearAnim.Play(delay);
+        }
+
         #endregion // Display
 
         #region Custom Modules
@@ -440,9 +453,9 @@ namespace Aqua {
         public string Header;
         public string Subheader;
         public string Text;
-        public Color? HeaderColorOverride;
-        public Color? SubheaderColorOverride;
-        public Color? TextColorOverride;
+        public Color32? HeaderColorOverride;
+        public Color32? SubheaderColorOverride;
+        public Color32? TextColorOverride;
         public StreamedImageSet Image;
         public RectTransform CustomModule;
         public StringHash32 CustomLayout;

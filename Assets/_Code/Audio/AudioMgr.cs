@@ -15,6 +15,7 @@ using BeauUWT;
 
 namespace AquaAudio
 {
+    [DefaultExecutionOrder(99999)]
     public class AudioMgr : ServiceBehaviour, ILoadable
     {
         public const int BusCount = (int) AudioBusId.LENGTH;
@@ -101,10 +102,11 @@ namespace AquaAudio
 
         private void LateUpdate()
         {
-            UnsafeUpdate();
+            Vector3 listenerPos = UpdateListener(false);
+            UnsafeUpdate(listenerPos);
         }
 
-        private unsafe void UnsafeUpdate()
+        private unsafe void UnsafeUpdate(Vector3 listenerPos)
         {
             AudioPropertyBlock masterProperties = m_MasterProperties;
             AudioPropertyBlock.Combine(masterProperties, m_MixerProperties, ref masterProperties);
@@ -130,7 +132,7 @@ namespace AquaAudio
             for(int i = count - 1; i >= 0; i--)
             {
                 track = m_ActiveStreams[i];
-                if (!AudioTrackState.UpdatePlayback(track, ref properties[(int) track.Bus], deltaTime, currentTime))
+                if (!AudioTrackState.UpdatePlayback(track, ref properties[(int) track.Bus], deltaTime, currentTime, listenerPos))
                 {
                     FreePlayer(track);
                     m_ActiveStreams.FastRemoveAt(i);
@@ -141,11 +143,28 @@ namespace AquaAudio
             for(int i = count - 1; i >= 0; i--)
             {
                 track = m_ActiveSamples[i];
-                if (!AudioTrackState.UpdatePlayback(track, ref properties[(int) track.Bus], deltaTime, currentTime))
+                if (!AudioTrackState.UpdatePlayback(track, ref properties[(int) track.Bus], deltaTime, currentTime, listenerPos))
                 {
                     FreePlayer(track);
                     m_ActiveSamples.FastRemoveAt(i);
                 }
+            }
+        }
+
+        private Vector3 UpdateListener(bool snap) {
+            if (!snap && Script.IsLoading) {
+                return m_ListenerTransform.position;
+            }
+
+            Vector3 target = Services.Camera.FocusPosition;
+            if (snap) {
+                m_ListenerTransform.position = target;
+                return target;
+            } else {
+                Vector3 current = m_ListenerTransform.position;
+                Vector3 now = Vector3.Lerp(current, target, TweenUtil.Lerp(50));
+                m_ListenerTransform.position = now;
+                return now;
             }
         }
 
@@ -575,6 +594,8 @@ namespace AquaAudio
                     GameObject.Destroy(listener);
                 }
             }
+
+            UpdateListener(true);
         }
 
         #endregion // Callbacks

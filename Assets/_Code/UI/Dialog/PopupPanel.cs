@@ -103,6 +103,7 @@ namespace Aqua {
         private void ShowOrBounce() {
             if (IsShowing()) {
                 m_BoxAnim.Replace(this, BounceAnim());
+                m_Layout.PlayAnim();
             } else {
                 Show();
             }
@@ -163,6 +164,8 @@ namespace Aqua {
             m_RootGroup.alpha = durationMultiplier < 1 ? 0.5f : 0;
             m_RootTransform.SetScale(durationMultiplier < 1 ? 0.75f : 0.5f);
             m_RootTransform.gameObject.SetActive(true);
+            
+            m_Layout.PlayAnim(0.15f);
 
             yield return Routine.Combine(
                 m_RootGroup.FadeTo(1, 0.2f * durationMultiplier),

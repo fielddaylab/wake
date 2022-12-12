@@ -23,8 +23,9 @@ namespace ProtoAqua.Observation
             m_FlashlightButton.Toggle.onValueChanged.AddListener((b) => { OnToolToggled(PlayerROV.ToolId.Flashlight, b); });
             m_MicroscopeButton.Toggle.onValueChanged.AddListener((b) => { OnToolToggled(PlayerROV.ToolId.Microscope, b); });
 
-            Services.Events.Register<PlayerROV.ToolState>(PlayerROV.Event_ToolSwitched, OnToolSwitched, this);
-            Services.Events.Register(GameEvents.InventoryUpdated, RefreshItemList, this);
+            Services.Events.Register<PlayerROV.ToolState>(PlayerROV.Event_ToolSwitched, OnToolSwitched, this)
+                .Register<PlayerROV.ToolState>(PlayerROV.Event_ToolPermissions, OnToolPermissions, this)
+                .Register(GameEvents.InventoryUpdated, RefreshItemList, this);
         }
 
         protected override void OnDestroy()
@@ -44,29 +45,43 @@ namespace ProtoAqua.Observation
             Services.Events.Dispatch(PlayerROV.Event_RequestToolToggle, new PlayerROV.ToolState(inToolId, state));
         }
 
+        private void OnToolPermissions(PlayerROV.ToolState state) {
+            if (state.Id != PlayerROV.ToolId.NONE) {
+                var toggle = GetButton(state.Id).Toggle;
+                toggle.interactable = state.Active;
+                if (!state.Active) {
+                    toggle.SetIsOnWithoutNotify(false);
+                }
+            }
+        }
+
         private void OnToolSwitched(PlayerROV.ToolState state)
         {
-            switch(state.Id)
+            if (state.Id != PlayerROV.ToolId.NONE) {
+                GetButton(state.Id).Toggle.SetIsOnWithoutNotify(state.Active);
+            }
+        }
+
+        private ToolButton GetButton(PlayerROV.ToolId id) {
+            switch(id)
             {
                 case PlayerROV.ToolId.Scanner:
-                    m_ScannerButton.Toggle.SetIsOnWithoutNotify(state.Active);
-                    break;
+                    return m_ScannerButton;
 
                 case PlayerROV.ToolId.Tagger:
-                    m_TaggerButton.Toggle.SetIsOnWithoutNotify(state.Active);
-                    break;
+                    return m_TaggerButton;
 
                 case PlayerROV.ToolId.Breaker:
-                    m_BreakerButton.Toggle.SetIsOnWithoutNotify(state.Active);
-                    break;
+                    return m_BreakerButton;
 
                 case PlayerROV.ToolId.Flashlight:
-                    m_FlashlightButton.Toggle.SetIsOnWithoutNotify(state.Active);
-                    break;
+                    return m_FlashlightButton;
 
                 case PlayerROV.ToolId.Microscope:
-                    m_MicroscopeButton.Toggle.SetIsOnWithoutNotify(state.Active);
-                    break;
+                    return m_MicroscopeButton;
+
+                default:
+                    return null;
             }
         }
 

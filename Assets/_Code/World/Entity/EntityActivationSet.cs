@@ -98,7 +98,7 @@ namespace Aqua.Entity {
              m_DirtyLists &= ~ListModifiedFlags.Awake;
 
             TEntity entity;
-            for(int i = 0, length = m_Awake.Count; i < length; i++) {
+            for(int i = 0; i < m_Awake.Count; i++) {
                 entity = m_Awake[i];
                 bool wasActive = (entity.ActiveStatus & EntityActiveStatus.Active) != 0;
                 UpdateAwakeResult result = UpdateAwake(entity, args);

@@ -26,6 +26,7 @@ namespace ProtoAqua.Observation {
         [NonSerialized] public bool CanScan;
         [NonSerialized] public bool InMicroscope;
         [NonSerialized] public bool ScannedLocal;
+
         public ScanStartDelegate OnScanStart;
         public ScanCompleteDelegate OnScanComplete;
 

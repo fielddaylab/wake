@@ -12,6 +12,7 @@ using UnityEditor;
 
 namespace AquaAudio {
     
+    [Serializable]
     public struct AudioEmitterSettings {
         [AutoEnum] public AudioEmitterMode Mode;
         [Range(0, 300)] public float MinDistance;

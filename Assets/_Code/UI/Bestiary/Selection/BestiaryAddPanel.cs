@@ -31,10 +31,13 @@ namespace Aqua
         [SerializeField, AutoEnum] private BestiaryDescCategory m_Category = BestiaryDescCategory.Critter;
         [SerializeField, AutoEnum] private BestiaryDescFlags m_IgnoreFlags = 0;
         [SerializeField] private ToggleGroup m_ToggleGroup = null;
+        [SerializeField] private ScrollRect m_ScrollLayout = null;
+        [SerializeField] private CanvasGroup m_ContentLoadGroup = null;
         [SerializeField] private BestiaryButtonPool m_ButtonPool = null;
         [SerializeField] private RectTransformPool m_EmptySlotPool = null;
         [SerializeField] private int m_MinIcons = 30;
         [SerializeField] private int m_PerRow = 0;
+        [SerializeField] private float m_AnimateIntervalMultiplier = 0.2f;
 
         #endregion // Inspector
 
@@ -95,7 +98,11 @@ namespace Aqua
 
         protected override IEnumerator TransitionToShow()
         {
-            return CanvasGroup.Show(0.2f, null);
+            CanvasGroup.alpha = 0;
+            CanvasGroup.gameObject.SetActive(true);
+            yield return null;
+            AnimateButtons(0.15f);
+            yield return CanvasGroup.Show(0.2f, null);
         }
 
         protected override IEnumerator TransitionToHide()
@@ -286,7 +293,7 @@ namespace Aqua
             }
         }
 
-        private void OnToggleSelected(BestiaryDesc inCritter, bool inbOn)
+        private void OnToggleSelected(BestiaryDesc inCritter, BestiarySelectButton inButton, bool inbOn)
         {
             if (inbOn && m_SelectedSet.Add(inCritter))
             {
@@ -294,6 +301,8 @@ namespace Aqua
                 if (m_CurrentDisplay) {
                     m_CurrentDisplay.Display(m_SelectedCount);
                 }
+
+                inButton.Flash.Ping();
 
                 if (m_MaxAllowed > 1 && m_SelectedCount == m_MaxAllowed)
                 {
@@ -325,6 +334,19 @@ namespace Aqua
             foreach(var button in m_ButtonPool.ActiveObjects)
             {
                 button.Toggle.interactable = !inbAtCapacity || button.Toggle.isOn;
+            }
+        }
+
+        private void AnimateButtons(float delay) {
+            foreach(var anim in m_ButtonPool.ActiveObjects) {
+                if (m_ScrollLayout.IsVisible((RectTransform) anim.transform)) {
+                    delay += anim.Anim.Ping(delay) * m_AnimateIntervalMultiplier;
+                }
+            }
+            foreach(var anim in m_EmptySlotPool.ActiveObjects) {
+                if (m_ScrollLayout.IsVisible(anim)) {
+                    delay += anim.GetComponent<AppearAnim>().Ping(delay) * m_AnimateIntervalMultiplier;
+                }
             }
         }
 

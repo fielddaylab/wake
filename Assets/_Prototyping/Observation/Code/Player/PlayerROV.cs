@@ -10,6 +10,7 @@ using Aqua.Character;
 using Leaf.Runtime;
 using System.Collections;
 using BeauUtil.Variants;
+using UnityEngine.Scripting;
 
 namespace ProtoAqua.Observation
 {
@@ -19,7 +20,8 @@ namespace ProtoAqua.Observation
 
         static public readonly StringHash32 Event_RequestToolToggle = "PlayerROV::RequestToolToggle"; // ToolState
         static public readonly StringHash32 Event_RequestToolSwitch = "PlayerROV::RequestToolSwitch"; // tool id
-        static public readonly StringHash32 Event_ToolSwitched = "PlayerROV::ToolSwitched"; // tool id
+        static public readonly StringHash32 Event_ToolSwitched = "PlayerROV::ToolSwitched"; // ToolState
+        static public readonly StringHash32 Event_ToolPermissions = "PlayerROV::ToolPermissions"; // ToolState
 
         static public readonly StringHash32 Trigger_ToolActivated = "ToolActivated";
         static public readonly StringHash32 Trigger_ToolDeactivated = "ToolDeactivated";
@@ -55,6 +57,17 @@ namespace ProtoAqua.Observation
             Engine = 0x01,
             PropGuard = 0x02,
             Hull = 0x04
+        }
+
+        static public bool ToolIsPassive(ToolId id) {
+            switch(id) {
+                case ToolId.Flashlight:
+                case ToolId.Microscope:
+                    return true;
+
+                default:
+                    return false;
+            }
         }
 
         static public StringHash32 ToolIdToItemId(ToolId id) {
@@ -550,7 +563,7 @@ namespace ProtoAqua.Observation
             SetToolState(inToolId, true, false);
         }
 
-        [LeafMember("IsToolActive")]
+        [LeafMember("IsToolActive"), Preserve]
         static private bool LeafIsToolActive(ToolId inToolId)
         {
             PlayerROV rov = Services.State.Player as PlayerROV;
@@ -558,6 +571,24 @@ namespace ProtoAqua.Observation
                 return false;
 
             return rov.GetTool(inToolId).IsEnabled();
+        }
+
+        [LeafMember("SetToolAllowed"), Preserve]
+        static private void LeafSetToolAllowed(ToolId inToolId, bool allowed) {
+            PlayerROV rov = Services.State.Player as PlayerROV;
+            if (rov == null) {
+                return;
+            }
+
+            var tool = rov.GetTool(inToolId);
+            if (!allowed && tool.IsEnabled()) {
+                tool.Disable();
+                if (!ToolIsPassive(inToolId)) {
+                    rov.SwitchTool(ToolId.Scanner, false);
+                }
+            }
+
+            Services.Events.Dispatch(Event_ToolPermissions, new ToolState(inToolId, allowed));
         }
 
         #endregion // Leaf

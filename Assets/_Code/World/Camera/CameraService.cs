@@ -99,7 +99,7 @@ namespace Aqua.Cameras
         [NonSerialized] private bool m_Paused;
         [NonSerialized] private bool m_CacheDirty;
 
-        [NonSerialized] private Vector3 m_LastGameplayPlaneCenter;
+        [NonSerialized] private Vector3 m_CameraFocusCenter;
         [NonSerialized] private Vector3 m_LastCameraForward;
         [NonSerialized] private float m_LastGameplayPlaneDistance;
         [NonSerialized] private Matrix4x4 m_LastCameraMatrix;
@@ -127,7 +127,7 @@ namespace Aqua.Cameras
         public float Zoom { get { return m_FOVPlane.Zoom; } }
         public float AspectRatio { get { return m_Camera.aspect; } }
 
-        public Vector3 FocusPosition { get { return m_LastGameplayPlaneCenter; }}
+        public Vector3 FocusPosition { get { return m_CameraFocusCenter; }}
 
         public CameraMode Mode { get { return m_Mode; } }
 
@@ -332,12 +332,21 @@ namespace Aqua.Cameras
 
             Ray r = new Ray(m_PositionRoot.position, cameraForwardVector);
             p.Raycast(r, out float planeCastDist);
-            m_LastGameplayPlaneCenter = r.GetPoint(planeCastDist);
+            m_CameraFocusCenter = r.GetPoint(planeCastDist);
             m_LastGameplayPlaneDistance = planeCastDist;
 
             m_LastCameraForward = m_Camera.transform.forward;
             m_LastCameraMatrix = m_Camera.transform.worldToLocalMatrix;
             m_LastCameraMatrixInv = m_Camera.transform.localToWorldMatrix;
+
+            // HACK:    This lets us get the focus point for audio closer to the ship in 3d scenes
+            //          without completely losing the effects of other hints
+            if (m_Axis == Axis.XYZ && m_Mode == CameraMode.Hinted && m_TargetStack.Count > 0) {
+                Transform anchor = m_TargetStack[m_TargetStack.Count - 1].Anchor;
+                if (anchor != null) {
+                    m_CameraFocusCenter = Vector3.Lerp(m_CameraFocusCenter, anchor.position, 0.25f);
+                }
+            }
         }
 
         #endregion // Update

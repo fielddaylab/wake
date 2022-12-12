@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Aqua.Debugging;
+using Aqua.Entity;
 using BeauRoutine;
 using BeauUtil.Debugger;
 using BeauUWT;
@@ -33,6 +34,7 @@ namespace AquaAudio
 
         public Transform PositionSource;
         public Vector3 PositionOffset;
+        public IActiveEntity SourceEntity;
         public AudioCallback OnLoop;
 
         public AudioPropertyBlock EventProperties;
@@ -71,6 +73,7 @@ namespace AquaAudio
             state.StopCounter = 0;
             state.PositionSource = null;
             state.PositionOffset = default(Vector3);
+            state.SourceEntity = null;
 
             return new AudioHandle(state, id);
         }
@@ -93,6 +96,7 @@ namespace AquaAudio
             state.StopCounter = 0;
             state.PositionSource = null;
             state.PositionOffset = default(Vector3);
+            state.SourceEntity = null;
 
             return new AudioHandle(state, id);
         }
@@ -106,6 +110,7 @@ namespace AquaAudio
             state.OnLoop = null;
             state.PositionSource = null;
             state.PositionOffset = default(Vector3);
+            state.SourceEntity = null;
             state.Bus = AudioBusId.Master;
             state.VolumeChangeRoutine.Stop();
             state.PitchChangeRoutine.Stop();
@@ -283,20 +288,24 @@ namespace AquaAudio
             target.LastKnownTime = sourceTime;
         }
 
-        static public bool UpdatePlayback(AudioTrackState state, ref AudioPropertyBlock parentSettings, float deltaTime, double currentTime) {
+        static public bool UpdatePlayback(AudioTrackState state, ref AudioPropertyBlock parentSettings, float deltaTime, double currentTime, Vector3 listenerPos) {
             state.LastKnownProperties = parentSettings;
             AudioPropertyBlock.Combine(state.LastKnownProperties, state.EventProperties, ref state.LastKnownProperties);
             AudioPropertyBlock.Combine(state.LastKnownProperties, state.LocalProperties, ref state.LastKnownProperties);
 
+            if (state.SourceEntity != null && state.SourceEntity.ActiveStatus != EntityActiveStatus.AwakeAndActive) {
+                state.LastKnownProperties.Mute = true;
+            }
+
             switch(state.State) {
                 case StateId.PlayRequested: {
-                    return UpdatePlayRequested(state, deltaTime, currentTime);
+                    return UpdatePlayRequested(state, deltaTime, currentTime, listenerPos);
                 }
                 case StateId.Playing: {
-                    return UpdatePlaying(state);
+                    return UpdatePlaying(state, listenerPos);
                 }
                 case StateId.Paused: {
-                    return UpdatePaused(state);
+                    return UpdatePaused(state, listenerPos);
                 }
                 case StateId.Idle: {
                     return true;
@@ -311,7 +320,7 @@ namespace AquaAudio
             }
         }
 
-        static private bool UpdatePlayRequested(AudioTrackState state, float deltaTime, double currentTime) {
+        static private bool UpdatePlayRequested(AudioTrackState state, float deltaTime, double currentTime, Vector3 listenerPos) {
             if (state.LastKnownProperties.Pause) {
                 return true;
             }
@@ -319,6 +328,7 @@ namespace AquaAudio
             state.Delay -= deltaTime;
             if (state.Delay <= 0 && (state.Stream == null || state.Stream.IsReady())) {
                 SyncSettings(state);
+                SyncPosition(state, listenerPos);
                 state.State = StateId.Playing;
                 state.LastStartTime = currentTime;
                 state.Sample?.Play();
@@ -329,7 +339,7 @@ namespace AquaAudio
             return true;
         }
 
-        static private bool UpdatePlaying(AudioTrackState state) {
+        static private bool UpdatePlaying(AudioTrackState state, Vector3 listenerPos) {
             SyncSettings(state);
 
             if (state.LastKnownProperties.Pause) {
@@ -366,6 +376,7 @@ namespace AquaAudio
                     return true;
                 }
             } else {
+                SyncPosition(state, listenerPos);
                 if (state.LastKnownTime > currentTime) {
                     state.OnLoop?.Invoke(new AudioHandle(state, state.InstanceId));
                 }
@@ -375,10 +386,11 @@ namespace AquaAudio
             }
         }
 
-        static private bool UpdatePaused(AudioTrackState state) {
+        static private bool UpdatePaused(AudioTrackState state, Vector3 listenerPos) {
             if (!state.LastKnownProperties.Pause) {
                 SyncSettings(state);
                 SyncTime(state);
+                SyncPosition(state, listenerPos);
                 state.Sample?.UnPause();
                 state.Stream?.UnPause();
                 state.State = StateId.Playing;
@@ -401,6 +413,24 @@ namespace AquaAudio
                     break;
                 }
             }
+        }
+
+        static private void SyncPosition(AudioTrackState state, Vector3 listenerPos) {
+            AudioEmitterMode mode = state.Event.EmitterMode();
+            if (mode == AudioEmitterMode.Flat || state.Mode != AudioEvent.PlaybackMode.Sample) {
+                return;
+            }
+
+            Vector3 pos = state.PositionOffset;
+            if (state.PositionSource) {
+                pos += state.PositionSource.position;
+            }
+
+            if (mode == AudioEmitterMode.ListenerRelative) {
+                pos += listenerPos;
+            }
+
+            state.Position.position = pos;
         }
 
         static private void SyncTime(AudioTrackState state) {

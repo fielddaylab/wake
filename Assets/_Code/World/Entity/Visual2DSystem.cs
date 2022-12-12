@@ -22,6 +22,7 @@ namespace Aqua.Entity {
         #region Inspector
 
         [SerializeField] private float m_CameraRadius = 8;
+        [SerializeField] private LayerMask m_DefaultUpdates = GameLayers.Audio_Mask;
 
         #endregion // Inspector
 
@@ -35,6 +36,11 @@ namespace Aqua.Entity {
             m_UpdateSet.SetStatus = SetStatus;
             m_UpdateSet.UpdateAwake = UpdateTransform;
             m_UpdateSet.UpdateActive = UpdateActive;
+        }
+
+        protected override void Awake() {
+            base.Awake();
+            m_UpdateMask = m_DefaultUpdates;
         }
 
         private UpdateAwakeResult UpdateTransform(Visual2DTransform transform, in UpdateArgs updateArgs) {

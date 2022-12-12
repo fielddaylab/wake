@@ -64,6 +64,10 @@ static public class GameLayers
 	public const int Breakable_Index = 18;
 	public const int Breakable_Mask = 262144;
 
+	// Layer 19: Audio
+	public const int Audio_Index = 19;
+	public const int Audio_Mask = 524288;
+
 	// Layer 28: PostProcess
 	public const int PostProcess_Index = 28;
 	public const int PostProcess_Mask = 268435456;

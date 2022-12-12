@@ -10,8 +10,8 @@ using Leaf.Runtime;
 namespace ProtoAqua.Observation {
     public class PatternAudio : ScriptComponent {
         [Header("Setup")]
-        [SerializeField] private SerializedHash32 m_DotSFX = "Secret.Dot";
-        [SerializeField] private SerializedHash32 m_DashSFX = "Secret.Dash";
+        [SerializeField] private SerializedHash32 m_DotSFX = "Secret.Dot3D";
+        [SerializeField] private SerializedHash32 m_DashSFX = "Secret.Dash3D";
         [SerializeField] private float m_UnitTiming = 0.1f;
 
         [Header("Pattern")]
@@ -77,13 +77,13 @@ namespace ProtoAqua.Observation {
                 switch(c) {
                     case '.': { // dot
                         m_CurrentDot.Stop();
-                        m_CurrentDot = Services.Audio.PostEvent(m_DotSFX);
+                        m_CurrentDot = Services.Audio.PostEvent(m_DotSFX).TrackPosition(Location);
                         delay = 1;
                         break;
                     }
                     case '-': { // dash
                         m_CurrentDash.Stop();
-                        m_CurrentDash = Services.Audio.PostEvent(m_DashSFX);
+                        m_CurrentDash = Services.Audio.PostEvent(m_DashSFX).TrackPosition(Location);
                         delay = 3;
                         break;
                     }

@@ -20,6 +20,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace Aqua
 {
+    [DefaultExecutionOrder(10000)]
     public class UIMgr : ServiceBehaviour, IDebuggable
     {
         #region Inspector
@@ -377,8 +378,12 @@ namespace Aqua
             Vector2 cursorPos = m_Cursor.Process();
             m_Tooltip.Process(cursorPos);
 
-            m_UIUpdates.ForEach((o) => o.OnUIUpdate());
+            m_UIUpdates.ForEach(UpdateUpdater);
         }
+
+        static private readonly Action<IUpdaterUI> UpdateUpdater = (o) => {
+            o.OnUIUpdate();
+        };
 
         public void BindCamera(Camera inCamera)
         {

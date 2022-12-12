@@ -13,7 +13,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace Aqua.JobBoard {
-    public class JobBoard : BasePanel {
+    public class JobBoard : BasePanel, IAsyncLoadPanel {
         [Serializable] private class HeaderPool : SerializablePool<ListHeader> { }
         [Serializable] private class ButtonPool : SerializablePool<JobButton> { }
 
@@ -25,6 +25,8 @@ namespace Aqua.JobBoard {
 
         [Header("Groups")]
         [SerializeField] private ToggleGroup m_JobToggle = null;
+        [SerializeField] private LayoutGroup m_JobListLayout = null;
+        [SerializeField] private ScrollRect m_JobListScroll = null;
         [SerializeField] private JobInfo m_Info = null;
 
         [Inline(InlineAttribute.DisplayType.HeaderLabel)]
@@ -41,6 +43,7 @@ namespace Aqua.JobBoard {
         [SerializeField] private TweenSettings m_TweenOffAnim = new TweenSettings(0.2f);
         [SerializeField] private float m_OffscreenPos = 0;
         [SerializeField] private float m_OnscreenPos = 0;
+        [SerializeField] private FlashAnim m_AcceptFlash = null;
 
         [Header("Camera")]
         [SerializeField, InstanceOnly] private CameraPose m_DefaultPose = null;
@@ -54,6 +57,7 @@ namespace Aqua.JobBoard {
         [NonSerialized] private bool m_HasLockedJobs = false;
         [NonSerialized] private bool m_HasAvailableJobs = false;
         [NonSerialized] private CameraPose m_OverrideZoomPose = null;
+        [NonSerialized] private Routine m_AsyncLoadRoutine;
 
         #region Unity Events
 
@@ -85,6 +89,7 @@ namespace Aqua.JobBoard {
         private void OnButtonSelected(JobButton inJobButton) {
             m_SelectedJobButton = inJobButton;
             m_Info.Populate(inJobButton.Job, inJobButton.Status);
+            Services.Audio.PostEvent("Menu.Fill");
             m_JobToggle.allowSwitchOff = false;
         }
 
@@ -93,6 +98,12 @@ namespace Aqua.JobBoard {
             switch (m_SelectedJobButton.Group) {
                 case JobProgressCategory.Available:
                 case JobProgressCategory.InProgress: {
+                        if (m_SelectedJobButton.Group == JobProgressCategory.Available) {
+                            Services.Audio.PostEvent("JobBoard.Accept");
+                        } else {
+                            Services.Audio.PostEvent("JobBoard.Switch");
+                        }
+                        m_AcceptFlash.Ping();
                         profileJobData.SetCurrentJob(m_SelectedJobButton.Job.Id());
                         Routine.Start(this, WaitToExit()).ExecuteWhileDisabled().Tick();
                         break;
@@ -114,7 +125,28 @@ namespace Aqua.JobBoard {
 
         #region Job Buttons
 
-        private void AllocateButtons() {
+        public bool IsLoading() {
+            return m_AsyncLoadRoutine;
+        }
+
+        private IEnumerator LoadButtons() {
+            m_JobListLayout.enabled = false;
+            m_JobListScroll.enabled = false;
+            
+            yield return Async.Schedule(AllocateButtons(), AsyncFlags.MainThreadOnly);
+            UpdateButtonStatuses();
+            yield return null;
+            OrderButtons();
+
+            m_JobListLayout.enabled = true;
+            m_JobListScroll.enabled = true;
+            yield return null;
+
+            UpdateUnselectedLabel();
+            AnimateButtonsOn();
+        }
+
+        private IEnumerator AllocateButtons() {
             StringHash32 id;
             JobButton button;
             foreach (var job in JobUtils.VisibleJobs(JobUtils.JobQueryFlags.IncludeCompleted)) {
@@ -124,6 +156,7 @@ namespace Aqua.JobBoard {
                     button.Initialize(m_JobToggle, OnButtonSelected);
                     button.Populate(job.Job, JobStatusFlags.Hidden);
                     m_JobButtonMap[id] = button;
+                    yield return null;
                 }
             }
         }
@@ -283,6 +316,17 @@ namespace Aqua.JobBoard {
             }
         }
 
+        private void AnimateButtonsOn() {
+            float delay = m_TweenOnAnim.Time + 0.1f;
+            RectTransform clipping = m_JobListScroll.viewport;
+            foreach(RectTransform child in m_JobListLayout.transform) {
+                AppearAnim anim = child.GetComponent<AppearAnim>();
+                if (anim && CanvasExtensions.IsVisible(clipping, child)) {
+                    delay += anim.Ping(delay) * 0.2f;
+                }
+            }
+        }
+
         #endregion // Job Buttons
 
         #region Camera
@@ -304,10 +348,7 @@ namespace Aqua.JobBoard {
             base.OnShow(inbInstant);
 
             m_JobToggle.allowSwitchOff = true;
-            AllocateButtons();
-            UpdateButtonStatuses();
-            OrderButtons();
-            UpdateUnselectedLabel();
+            m_AsyncLoadRoutine.Replace(this, LoadButtons());
 
             m_Info.Clear();
         }
@@ -342,6 +383,7 @@ namespace Aqua.JobBoard {
 
         protected override IEnumerator TransitionToShow() {
             CanvasGroup.Show();
+            yield return m_AsyncLoadRoutine;
             MoveCameraToZoom();
             yield return Root.AnchorPosTo(m_OnscreenPos, m_TweenOnAnim, Axis.Y).DelayBy(0.2f);
         }
