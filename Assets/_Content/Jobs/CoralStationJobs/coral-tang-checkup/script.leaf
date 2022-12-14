@@ -120,7 +120,7 @@ $branch .modelSuggestions
 $branch .modelSuggestions
 
 :: modelSuggestions
-$if HasFact(Fisher.Eats.Lionfish), IsFactFullyUpgraded(Fisher.Eats.Lionfish), HasFact(BlueTang.Reproduce.Stressed), HasFact(BlueTang.Eats.TurfAlgae), IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae), HasFact(BlueTang.Eats.TurfAlgae.Stressed), IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed), HasFact(Lionfish.Eats.BlueheadWrasse), HasFact(Lionfish.Eats.BlueTang), HasFact(Ick.Reproduce), HasFact(Ick.Stresses.BlueTang), IsFactFullyUpgraded(Ick.Stresses.BlueTang), HasFact(StaghornCoral.Reproduce), HasFact(RedGrouper.Reproduce)
+$if HasFact(Fishers.Eats.Lionfish), IsFactFullyUpgraded(Fishers.Eats.Lionfish), HasFact(BlueTang.Reproduce.Stressed), HasFact(BlueTang.Eats.TurfAlgae), IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae), HasFact(BlueTang.Eats.TurfAlgae.Stressed), IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed), HasFact(Lionfish.Eats.BlueheadWrasse), HasFact(Lionfish.Eats.BlueTang), HasFact(Ick.Reproduce), HasFact(Ick.Stresses.BlueTang), IsFactFullyUpgraded(Ick.Stresses.BlueTang), HasFact(StaghornCoral.Reproduce), HasFact(RedGrouper.Reproduce)
     $if HasFact(LionfishInvasion.Model.IckStressVisual)
         {@guide}    You're done with this portion! Head to the {h}Describe{/h} tab next.
     $else
@@ -133,9 +133,9 @@ $else
         {@guide}    Seems like we don't have enough information to complete our model accurately.
                     Look for {h}question marks{/h} in the  Visual model interface, those point to where we may need more data.
 
-		$if !HasFact(Fisher.Eats.Lionfish)
+		$if !HasFact(Fishers.Eats.Lionfish)
 			$branch .suggestObserve
-		$elseif !IsFactFullyUpgraded(Fisher.Eats.Lionfish)
+		$elseif !IsFactFullyUpgraded(Fishers.Eats.Lionfish)
 			$branch .suggestMeasure
 		$elseif !HasFact(BlueTang.Reproduce.Stressed)
 			$branch .suggestReproduce

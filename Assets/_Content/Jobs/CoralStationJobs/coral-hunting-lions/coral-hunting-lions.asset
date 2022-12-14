@@ -234,6 +234,112 @@ MonoBehaviour:
     - m_Source: countPopulation
       m_HashValue: 1635493235
   - Id:
+      m_Source: measureEatRates
+      m_HashValue: 1302348262
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.measureEatRates
+      m_HashValue: 1847961002
+    Category: 3
+    Steps:
+    - Type: 2
+      Target:
+        m_Source: Lionfish.Eats.BlueheadWrasse
+        m_HashValue: 3761093643
+      ConditionString: 
+      Amount: 0
+    - Type: 2
+      Target:
+        m_Source: Lionfish.Eats.BlueTang
+        m_HashValue: 2564734920
+      ConditionString: 
+      Amount: 0
+    - Type: 2
+      Target:
+        m_Source: BlueTang.Eats.TurfAlgae
+        m_HashValue: 115798069
+      ConditionString: 
+      Amount: 0
+    - Type: 2
+      Target:
+        m_Source: RedGrouper.Eats.BlueTang
+        m_HashValue: 1688490569
+      ConditionString: 
+      Amount: 0
+    - Type: 2
+      Target:
+        m_Source: RedGrouper.Eats.BlueheadWrasse
+        m_HashValue: 299259218
+      ConditionString: 
+      Amount: 0
+    - Type: 2
+      Target:
+        m_Source: BlueheadWrasse.Eats.Ick
+        m_HashValue: 170722032
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: obtainStressRules
+      m_HashValue: 3804672883
+  - Id:
+      m_Source: measureStressReproduceRates
+      m_HashValue: 795492441
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.measureStressReproduceRates
+      m_HashValue: 651488821
+    Category: 3
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: StaghornCoral.Reproduce
+        m_HashValue: 3964275685
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BlueheadWrasse.Reproduce
+        m_HashValue: 1563920227
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BlueTang.Reproduce
+        m_HashValue: 427368968
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Lionfish.Reproduce
+        m_HashValue: 3773007000
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: TurfAlgae.Reproduce
+        m_HashValue: 1199979687
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: RedGrouper.Reproduce
+        m_HashValue: 2555751373
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Sargassum.Reproduce
+        m_HashValue: 3860466180
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Ick.Reproduce
+        m_HashValue: 516665143
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: measureEatRates
+      m_HashValue: 1302348262
+  - Id:
       m_Source: obtainStressRules
       m_HashValue: 3804672883
     LabelId:
@@ -361,115 +467,15 @@ MonoBehaviour:
         m_HashValue: 4064289156
       ConditionString: 
       Amount: 0
+    - Type: 1
+      Target:
+        m_Source: StaghornCoral.Reproduce.Stressed
+        m_HashValue: 2550962424
+      ConditionString: 
+      Amount: 0
     PrerequisiteTaskIds:
     - m_Source: observeEatRules
       m_HashValue: 4279728306
-  - Id:
-      m_Source: measureEatRates
-      m_HashValue: 1302348262
-    LabelId:
-      m_Source: jobs.coral-hunting-lions.task.measureEatRates
-      m_HashValue: 1847961002
-    Category: 3
-    Steps:
-    - Type: 2
-      Target:
-        m_Source: Lionfish.Eats.BlueheadWrasse
-        m_HashValue: 3761093643
-      ConditionString: 
-      Amount: 0
-    - Type: 2
-      Target:
-        m_Source: Lionfish.Eats.BlueTang
-        m_HashValue: 2564734920
-      ConditionString: 
-      Amount: 0
-    - Type: 2
-      Target:
-        m_Source: BlueTang.Eats.TurfAlgae
-        m_HashValue: 115798069
-      ConditionString: 
-      Amount: 0
-    - Type: 2
-      Target:
-        m_Source: RedGrouper.Eats.BlueTang
-        m_HashValue: 1688490569
-      ConditionString: 
-      Amount: 0
-    - Type: 2
-      Target:
-        m_Source: RedGrouper.Eats.BlueheadWrasse
-        m_HashValue: 299259218
-      ConditionString: 
-      Amount: 0
-    - Type: 2
-      Target:
-        m_Source: BlueheadWrasse.Eats.Ick
-        m_HashValue: 170722032
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: obtainStressRules
-      m_HashValue: 3804672883
-  - Id:
-      m_Source: measureStressReproduceRates
-      m_HashValue: 795492441
-    LabelId:
-      m_Source: jobs.coral-hunting-lions.task.measureStressReproduceRates
-      m_HashValue: 651488821
-    Category: 3
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: StaghornCoral.Reproduce
-        m_HashValue: 3964275685
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: BlueheadWrasse.Reproduce
-        m_HashValue: 1563920227
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: BlueTang.Reproduce
-        m_HashValue: 427368968
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: Lionfish.Reproduce
-        m_HashValue: 3773007000
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: TurfAlgae.Reproduce
-        m_HashValue: 1199979687
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: RedGrouper.Reproduce
-        m_HashValue: 2555751373
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: Sargassum.Reproduce
-        m_HashValue: 3860466180
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: Ick.Reproduce
-        m_HashValue: 516665143
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: measureEatRates
-      m_HashValue: 1302348262
   - Id:
       m_Source: obtainChemistry
       m_HashValue: 1751383414

@@ -162,7 +162,7 @@ $branch .modelSuggestions
 $branch .modelSuggestions
 
 :: modelSuggestions
-$if HasFact(RedGrouper.Reproduce), HasFact(BlueTang.Eats.TurfAlgae), IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae), HasFact(Lionfish.Eats.BlueTang), HasFact(Lionfish.Eats.BlueheadWrasse), HasFact(Fisher.Eats.Lionfish), IsFactFullyUpgraded(Fisher.Eats.Lionfish)
+$if HasFact(RedGrouper.Reproduce), HasFact(BlueTang.Eats.TurfAlgae), IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae), HasFact(Lionfish.Eats.BlueTang), HasFact(Lionfish.Eats.BlueheadWrasse), HasFact(Fishers.Eats.Lionfish), IsFactFullyUpgraded(Fishers.Eats.Lionfish)
     $if HasFact(LionfishInvasion.Model.MuchAlgaeVisual)
         {@guide}    You're done with this portion! Head to the {h}Describe{/h} tab next.
     $else
@@ -185,9 +185,9 @@ $else
 			$branch .suggestObserve
 		$elseif !HasFact(Lionfish.Eats.BlueheadWrasse)
 			$branch .suggestObserve
-		$elseif !HasFact(Fisher.Eats.Lionfish)
+		$elseif !HasFact(Fishers.Eats.Lionfish)
 			$branch .suggestObserve
-		$elseif !IsFactFullyUpgraded(Fisher.Eats.Lionfish)
+		$elseif !IsFactFullyUpgraded(Fishers.Eats.Lionfish)
 			$branch .suggestMeasure
 		$endif
     $endif
