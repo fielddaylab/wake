@@ -186,12 +186,12 @@ $call Specter->Scan(3)
 {@guide}    It appears that this is only the eye of a much larger creature.
 {@player}   Whoa. An eye?!  
             {nameof @guide}, what are we going to do? Sam is down there with a monster!
-$call GiveJournalEntry("S08")
+
 // Tio tells you to return ASAP
 $branch common.ringPhone
 
 {@kelpMechanic} Mijita, it's me. Are you there? 
-{@player} Tío! {i}Please{/i} tell me you've got good news!
+{@player} Tío! <i>Please</i> tell me you've got good news!
 {@kelpMechanic} Sí, mijita. I found the Ammonite upgrade for {nameof @guide}!
 {@player}       Yes! Thank you, Tío!
 {@kelpMechanic} De nada, Ollie.
@@ -199,6 +199,8 @@ $branch common.ringPhone
                 Took forever to find... had to dig through all her old boxes.
                 Come talk to me at the Forested Lagoon, and I'll get the upgrade added to your card!
 $set jobs:final-final.upgradeReady = true
+
+$call GiveJournalEntry("S08")
 
 // Temp Hack: should unlock all facts for all specters you have automatically
 $call GiveFact(ColossalSquid.Eats.ViperFish, Silent)
