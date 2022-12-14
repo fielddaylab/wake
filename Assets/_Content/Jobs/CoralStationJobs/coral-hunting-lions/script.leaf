@@ -145,7 +145,7 @@ $branch .modelSuggestions
 $branch .modelSuggestions
 
 :: modelSuggestions
-$if HasFact(Fisher.Eats.Lionfish), IsFactFullyUpgraded(Fisher.Eats.Lionfish), HasFact(Lionfish.Reproduce), HasFact(Lionfish.Eats.BlueTang), IsFactFullyUpgraded(Lionfish.Eats.BlueTang), HasFact(Lionfish.Eats.BlueheadWrasse), IsFactFullyUpgraded(Lionfish.Eats.BlueheadWrasse), HasFact(Lionfish.Consume.Oxygen), HasFact(Lionfish.Produce.CarbonDioxide), HasFact(RedGrouper.Reproduce), HasFact(RedGrouper.Eats.BlueheadWrasse), IsFactFullyUpgraded(RedGrouper.Eats.BlueheadWrasse), HasFact(RedGrouper.Eats.BlueTang), IsFactFullyUpgraded(RedGrouper.Eats.BlueTang), HasFact(RedGrouper.Consume.Oxygen), HasFact(RedGrouper.Produce.CarbonDioxide), HasFact(BlueTang.Reproduce), HasFact(BlueTang.Eats.TurfAlgae), IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae), HasFact(BlueTang.Eats.TurfAlgae.Stressed), IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed), HasFact(BlueTang.Consume.Oxygen), HasFact(BlueTang.Produce.CarbonDioxide), HasFact(BlueheadWrasse.Reproduce), HasFact(BlueheadWrasse.Eats.Ick), IsFactFullyUpgraded(BlueheadWrasse.Eats.Ick), HasFact(BlueheadWrasse.Consume.Oxygen), HasFact(BlueheadWrasse.Produce.CarbonDioxide), HasFact(Ick.Reproduce), HasFact(Ick.Stresses.BlueTang), HasFact(Sargassum.Reproduce), HasFact(Sargassum.Produce.Oxygen), HasFact(Sargassum.Consume.CarbonDioxide), HasFact(Sargassum.Consume.Light), HasFact(TurfAlgae.Reproduce), HasFact(TurfAlgae.Produce.Oxygen), HasFact(TurfAlgae.Consume.CarbonDioxide), HasFact(TurfAlgae.Consume.Light), HasFact(StaghornCoral.Reproduce), HasFact(StaghornCoral.Produce.Oxygen), HasFact(StaghornCoral.Consume.CarbonDioxide), HasFact(StaghornCoral.Consume.Light)
+$if HasFact(Fishers.Eats.Lionfish), IsFactFullyUpgraded(Fishers.Eats.Lionfish), HasFact(Lionfish.Reproduce), HasFact(Lionfish.Eats.BlueTang), IsFactFullyUpgraded(Lionfish.Eats.BlueTang), HasFact(Lionfish.Eats.BlueheadWrasse), IsFactFullyUpgraded(Lionfish.Eats.BlueheadWrasse), HasFact(Lionfish.Consume.Oxygen), HasFact(Lionfish.Produce.CarbonDioxide), HasFact(RedGrouper.Reproduce), HasFact(RedGrouper.Eats.BlueheadWrasse), IsFactFullyUpgraded(RedGrouper.Eats.BlueheadWrasse), HasFact(RedGrouper.Eats.BlueTang), IsFactFullyUpgraded(RedGrouper.Eats.BlueTang), HasFact(RedGrouper.Consume.Oxygen), HasFact(RedGrouper.Produce.CO2), HasFact(BlueTang.Reproduce), HasFact(BlueTang.Eats.TurfAlgae), IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae), HasFact(BlueTang.Eats.TurfAlgae.Stressed), IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed), HasFact(BlueTang.Consume.Oxygen), HasFact(BlueTang.Produce.CarbonDioxide), HasFact(BlueheadWrasse.Reproduce), HasFact(BlueheadWrasse.Eats.Ick), IsFactFullyUpgraded(BlueheadWrasse.Eats.Ick), HasFact(BlueheadWrasse.Consume.Oxygen), HasFact(BlueheadWrasse.Produce.CarbonDioxide), HasFact(Ick.Reproduce), HasFact(Ick.Stresses.BlueTang), HasFact(Sargassum.Reproduce), HasFact(Sargassum.Produce.Oxygen), HasFact(Sargassum.Consume.CO2), HasFact(Sargassum.Consume.Light), HasFact(TurfAlgae.Reproduce), HasFact(TurfAlgae.Produce.Oxygen), HasFact(TurfAlgae.Consume.CarbonDioxide), HasFact(TurfAlgae.Consume.Light), HasFact(StaghornCoral.Reproduce), HasFact(StaghornCoral.Produce.Oxygen), HasFact(StaghornCoral.Consume.CO2), HasFact(StaghornCoral.Consume.Light)
     $if HasFact(LionfishInvasion.Model.HuntingLionsVisual)
         {@guide}    You're done with this portion! Head to the {h}Describe{/h} tab next.
     $else
@@ -157,9 +157,9 @@ $else
     $else
         {@guide}    Seems like we don't have enough information to complete our model accurately.
                     Look for {h}question marks{/h} in the  Visual model interface, those point to where we may need more data.
-		$if !HasFact(Fisher.Eats.Lionfish)
+		$if !HasFact(Fishers.Eats.Lionfish)
 			$branch .suggestObserve
-		$elseif !IsFactFullyUpgraded(Fisher.Eats.Lionfish)
+		$elseif !IsFactFullyUpgraded(Fishers.Eats.Lionfish)
 			$branch .suggestMeasure
 		$elseif !HasFact(Lionfish.Reproduce)
 			$branch .suggestReproduce
@@ -187,7 +187,7 @@ $else
 			$branch .suggestMeasure
 		$elseif !HasFact(RedGrouper.Consume.Oxygen)
 			$branch .suggestMeasureEnviro
-		$elseif !HasFact(RedGrouper.Produce.CarbonDioxide)
+		$elseif !HasFact(RedGrouper.Produce.CO2)
 			$branch .suggestMeasureEnviro
 		$elseif !HasFact(BlueTang.Reproduce)
 			$branch .suggestReproduce
@@ -221,7 +221,7 @@ $else
 			$branch .suggestReproduce
 		$elseif !HasFact(Sargassum.Produce.Oxygen)
 			$branch .suggestMeasureEnviro
-		$elseif !HasFact(Sargassum.Consume.CarbonDioxide)
+		$elseif !HasFact(Sargassum.Consume.CO2)
 			$branch .suggestMeasureEnviro
 		$elseif !HasFact(Sargassum.Consume.Light)
 			$branch .suggestMeasureEnviro
@@ -235,9 +235,11 @@ $else
 			$branch .suggestMeasureEnviro
 		$elseif !HasFact(StaghornCoral.Reproduce)
 			$branch .suggestReproduce
+		$elseif !HasFact(StaghornCoral.Reproduce.Stressed)
+			$branch .suggestReproduce
 		$elseif !HasFact(StaghornCoral.Produce.Oxygen)
 			$branch .suggestMeasureEnviro
-		$elseif !HasFact(StaghornCoral.Consume.CarbonDioxide)
+		$elseif !HasFact(StaghornCoral.Consume.CO2)
 			$branch .suggestMeasureEnviro
 		$elseif !HasFact(StaghornCoral.Consume.Light) 
 			$branch .suggestMeasureEnviro

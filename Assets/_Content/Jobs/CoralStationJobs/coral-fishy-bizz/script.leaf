@@ -171,7 +171,7 @@ $branch .modelSuggestions
 $branch .modelSuggestions
 
 :: modelSuggestions
-$if HasFact(Fisher.Eats.RedGrouper), IsFactFullyUpgraded(Fisher.Eats.RedGrouper), HasFact(RedGrouper.Reproduce)
+$if HasFact(Fishers.Eats.RedGrouper), IsFactFullyUpgraded(Fishers.Eats.RedGrouper), HasFact(RedGrouper.Reproduce)
     $if HasFact(ReefEdge.Model.GrouperConcept)
         {@guide}    You're done with this portion! Head to the {h}Describe{/h} tab next.
     $else
@@ -183,9 +183,9 @@ $else
     $else
         {@guide}    Seems like we don't have enough information to complete our model accurately.
                     Look for {h}question marks{/h} in the  Visual model interface, those point to where we may need more data.
-		$if !HasFact(Fisher.Eats.RedGrouper)
+		$if !HasFact(Fishers.Eats.RedGrouper)
 			$branch .suggestObserve
-		$elseif !IsFactFullyUpgraded(Fisher.Eats.RedGrouper)
+		$elseif !IsFactFullyUpgraded(Fishers.Eats.RedGrouper)
 			$branch .suggestMeasure
 		$elseif !HasFact(RedGrouper.Reproduce)
 			$branch .suggestReproduce
