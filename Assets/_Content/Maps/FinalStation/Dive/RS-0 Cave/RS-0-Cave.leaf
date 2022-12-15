@@ -1,0 +1,25 @@
+#basePath RS-0-Cave
+
+:: preJellyTrigger
+@trigger    PlayerEnterRegion
+@when       regionId == "postJelly00"
+@cutscene
+@once
+{@guide}    WARNING: Low oxygen.
+
+:: polypTrigger
+@trigger    PlayerEnterRegion
+@when       regionId == "polypZone00"
+@cutscene
+@once
+{@player}   Is this even a cave?
+
+
+:: teethTrigger
+@trigger    PlayerEnterRegion
+@when       regionId == "teethZone00"
+@cutscene
+@once
+{@player}   {nameof @guide}, are you seeing the teeth?
+{@guide}    Negative. I am incapable of hallucinating which is what you are currently doing.
+            You are experiencing visual hallucinations as a result of low oxygen. This is called hypoxia.

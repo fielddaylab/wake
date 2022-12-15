@@ -15,10 +15,9 @@ $endif
 
 :: TioCall
 @trigger    JournalHidden
-// @when    After certain number of journal entries/dreams?
-@cutscene
+@when       HasJournalEntry("N18_BayouNecklace")
 @once
-{wait 1}
+@cutscene
 {@player} {nameof @guide}, I'm really worried about Sam.
 {@player} I need to put a call through to Tío.
 {@guide} Affirmative, O.

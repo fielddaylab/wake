@@ -6,8 +6,9 @@
 ::stationEnter
 @trigger    SceneStart
 @when       JobStartedOrComplete(final-final)
-@chatter
-{@guide}    Oxygen level and pressure stabilized. You have entered the Lower Depths.
+@cutscene   // if chatter, disappears by time scene loads
+{@guide}    We have arrived at the Challenger Deep research location. Oxygen Levels Restored.
+{@player}   Great, I will pretend I wasn't just swallowed by a monster.
 
 ::samFinalTrigger
 @trigger PlayerEnterRegion
@@ -58,9 +59,9 @@ $set jobs:final-final.probe-eaten = false
 {@player}  Ugh. Okay, let's see...
 {@player}  What about the Challenger Deep?
 {@guide} As much as I love data, it is unlikely that more data would help us right now. 
-{@player} No! I mean, what if I turn the probe on?? 
-{@player} You said it would light up, right? 
-{@guide} Yes. The probe lights would draw the squid away.  
+{@player}   No! I mean, what if I turn the probe on?? 
+            We can't make the station red, but we can create a big, blinking diversion.
+{@guide} In that case, the probe lights would draw the squid away.  
 {@guide} But there is a 99.8% chance that the creature would destroy the Challenger Deep. All of your sister's work would be lost. 
 {@player} ....
 {@guide} O?
