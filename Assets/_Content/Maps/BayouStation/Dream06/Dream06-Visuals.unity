@@ -9864,6 +9864,8 @@ PlayableDirector:
     value: {fileID: 2042421362}
   - key: {fileID: 5695044919168753802, guid: c7deb1b7d13722b40ace1970690d607b, type: 2}
     value: {fileID: 1629547223}
+  - key: {fileID: -5295311527295928432, guid: c7deb1b7d13722b40ace1970690d607b, type: 2}
+    value: {fileID: 1698539574}
   m_ExposedReferences:
     m_References: []
 --- !u!95 &822458922
@@ -16616,7 +16618,8 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -40.551746, y: 22.474545, z: -3.1768076}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1872655983}
   m_Father: {fileID: 1708208786}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -16862,6 +16865,102 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1206755381}
   m_Mesh: {fileID: 7203376766322253185, guid: d9453d149ad33a545b16012beaadeaa9, type: 3}
+--- !u!1 &1213041790
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1213041794}
+  - component: {fileID: 1213041793}
+  - component: {fileID: 1213041792}
+  - component: {fileID: 1213041791}
+  m_Layer: 0
+  m_Name: VentExplodeAudio
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1213041791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1213041790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e52de21a22b6dd44c9cc19f810c65059, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Events:
+    m_Signals:
+    - {fileID: 11400000, guid: 09e8f5ee0f949ef44bd9462f0c27c7a8, type: 2}
+    m_Events:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1213041792}
+          m_MethodName: Play
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+--- !u!114 &1213041792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1213041790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd21237e2bc1d7141b90c7a2747e28c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EventId: Dream06_VentsExplode
+  m_CrossfadeDuration: 0
+  m_FadeOutDuration: 0.1
+  m_PlayOnAwake: 0
+  m_Location: {fileID: 0}
+--- !u!114 &1213041793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1213041790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced02461c9fab16498d5d024212b8a9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Id:
+    m_Source: 4a9665d5-86bd-465b-a68d-f5d8f7fe7e48
+    m_HashValue: 1624578376
+  m_IsPersistent: 0
+  m_StartDisabled: 0
+--- !u!4 &1213041794
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1213041790}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 58.388115, y: -38.06479, z: 20.78816}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 35
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1213319555
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23735,6 +23834,10 @@ PlayableDirector:
     value: {fileID: 110848989}
   - key: {fileID: 1259333318132459836, guid: 760e7e7487d1a434aaf578767ee8c88c, type: 2}
     value: {fileID: 782181845}
+  - key: {fileID: -6366533258715580088, guid: 760e7e7487d1a434aaf578767ee8c88c, type: 2}
+    value: {fileID: 1698539570}
+  - key: {fileID: -582615443836396971, guid: 760e7e7487d1a434aaf578767ee8c88c, type: 2}
+    value: {fileID: 1213041791}
   m_ExposedReferences:
     m_References: []
 --- !u!4 &1415699006
@@ -23764,7 +23867,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Director: {fileID: 1415699005}
-  CloseAfter: 0
+  CloseAfter: 9.55
 --- !u!1001 &1416150887
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -30069,6 +30172,102 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1690975166}
   m_Mesh: {fileID: -9123351490265259355, guid: d9453d149ad33a545b16012beaadeaa9, type: 3}
+--- !u!1 &1698539570
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1698539573}
+  - component: {fileID: 1698539572}
+  - component: {fileID: 1698539571}
+  - component: {fileID: 1698539574}
+  m_Layer: 0
+  m_Name: QuakeAudio
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1698539571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1698539570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd21237e2bc1d7141b90c7a2747e28c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EventId: Dream06_Quake
+  m_CrossfadeDuration: 0.5
+  m_FadeOutDuration: 0.1
+  m_PlayOnAwake: 0
+  m_Location: {fileID: 0}
+--- !u!114 &1698539572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1698539570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced02461c9fab16498d5d024212b8a9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Id:
+    m_Source: 3933cee1-72fa-4803-a25f-2bed155d729c
+    m_HashValue: 2413309279
+  m_IsPersistent: 0
+  m_StartDisabled: 0
+--- !u!4 &1698539573
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1698539570}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 58.388115, y: -38.06479, z: 20.78816}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 34
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1698539574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1698539570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e52de21a22b6dd44c9cc19f810c65059, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Events:
+    m_Signals:
+    - {fileID: 11400000, guid: 09e8f5ee0f949ef44bd9462f0c27c7a8, type: 2}
+    m_Events:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1698539571}
+          m_MethodName: Play
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1708208785
 GameObject:
   m_ObjectHideFlags: 0
@@ -40758,6 +40957,72 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 879113734025795056}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1872655982
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1872655983}
+  - component: {fileID: 1872655985}
+  - component: {fileID: 1872655984}
+  m_Layer: 0
+  m_Name: Audio
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1872655983
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1872655982}
+  m_LocalRotation: {x: 0.000000009542252, y: 0.9987008, z: 0.050959002, w: -0.00000018701023}
+  m_LocalPosition: {x: 4.913063, y: -3.2746143, z: 1.997478}
+  m_LocalScale: {x: 1.9047935, y: 1.904794, z: 1.904794}
+  m_Children: []
+  m_Father: {fileID: 1201764584}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1872655984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1872655982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd21237e2bc1d7141b90c7a2747e28c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EventId: Dive.BrokenComms.Loop
+  m_CrossfadeDuration: 0
+  m_FadeOutDuration: 0.25
+  m_PlayOnAwake: 1
+  m_Location: {fileID: 1872655983}
+--- !u!114 &1872655985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1872655982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced02461c9fab16498d5d024212b8a9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Id:
+    m_Source: 89257793-8a24-48c3-a60a-ebce15f42dcb
+    m_HashValue: 1940382636
+  m_IsPersistent: 0
+  m_StartDisabled: 0
 --- !u!4 &1918299518 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2b68353988cef4e4bb7594fc1227ded4,

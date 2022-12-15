@@ -24,6 +24,10 @@ namespace Aqua.Dreams {
         }
 
         private void LateUpdate() {
+            if (Director.time <= 0) {
+                return;
+            }
+
             if (Director.state != PlayState.Playing
                 || (CloseAfter > 0 && Director.time >= CloseAfter)
                 || (Director.extrapolationMode == DirectorWrapMode.Hold && Director.time >= Director.duration)) {

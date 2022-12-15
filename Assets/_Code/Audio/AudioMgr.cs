@@ -47,6 +47,8 @@ namespace AquaAudio
         private readonly RingBuffer<AudioTrackState> m_ActiveSamples = new RingBuffer<AudioTrackState>(MaxSampleTracks, RingBufferMode.Fixed);
         private readonly RingBuffer<AudioTrackState> m_ActiveStreams = new RingBuffer<AudioTrackState>(MaxStreamTracks, RingBufferMode.Fixed);
 
+        private readonly RingBuffer<IAudioVolume> m_Volumes = new RingBuffer<IAudioVolume>(16, RingBufferMode.Expand);
+
         private System.Random m_Random;
         private AudioPropertyBlock m_MasterProperties;
         private AudioPropertyBlock m_MixerProperties;
@@ -103,6 +105,11 @@ namespace AquaAudio
         private void LateUpdate()
         {
             Vector3 listenerPos = UpdateListener(false);
+            Vector3 avatarPos = listenerPos;
+            if (Services.State.Player) {
+                avatarPos = Services.State.Player.Kinematics.Transform.position;
+            }
+            UpdateVolumes(listenerPos, avatarPos);
             UnsafeUpdate(listenerPos);
         }
 
@@ -165,6 +172,17 @@ namespace AquaAudio
                 Vector3 now = Vector3.Lerp(current, target, TweenUtil.Lerp(50));
                 m_ListenerTransform.position = now;
                 return now;
+            }
+        }
+
+        private void UpdateVolumes(Vector3 listenerPos, Vector3 avatarPos) {
+            IAudioVolume vol;
+            for(int i = 0, len = m_Volumes.Count; i < len; i++) {
+                vol = m_Volumes[i];
+                if (Frame.Interval(10, i)) {
+                    vol.UpdateCache();
+                }
+                vol.UpdateFromListener(listenerPos, avatarPos);
             }
         }
 
@@ -599,6 +617,19 @@ namespace AquaAudio
         }
 
         #endregion // Callbacks
+
+        #region Volumes
+
+        public void RegisterVolume(IAudioVolume volume) {
+            m_Volumes.PushBack(volume);
+            volume.UpdateCache();
+        }
+
+        public void DeregisterVolume(IAudioVolume volume) {
+            m_Volumes.FastRemove(volume);
+        }
+
+        #endregion // Volumes
 
         #region Leaf
 

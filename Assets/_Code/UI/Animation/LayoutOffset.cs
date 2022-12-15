@@ -4,7 +4,7 @@ using UnityEngine.Scripting;
 
 namespace UnityEngine.UI {
     [ExecuteAlways, RequireComponent(typeof(RectTransform))]
-    public class LayoutOffset : MonoBehaviour, ICanvasElement, ILayoutElement, ILayoutSelfController {
+    public class LayoutOffset : MonoBehaviour, ILayoutElement, ILayoutSelfController {
         private enum CallbackMode : byte {
             None,
             CanvasElement,
@@ -21,7 +21,6 @@ namespace UnityEngine.UI {
         [NonSerialized] private RectTransform m_Rect;
         [NonSerialized] private Vector2 m_AppliedOffset;
         [NonSerialized] private CallbackMode m_RebuildMode;
-        [NonSerialized] private bool m_InLayoutGroup;
 
         public Vector2 Offset0 {
             get { return m_Offset0; }
@@ -49,9 +48,7 @@ namespace UnityEngine.UI {
             if (!m_Rect) {
                 m_Rect = (RectTransform) transform;
             }
-            Transform parent = m_Rect.parent;
-            m_InLayoutGroup = parent && parent.GetComponent<ILayoutGroup>() != null;
-            CanvasUpdateRegistry.TryRegisterCanvasElementForLayoutRebuild(this);
+            ApplyOffset(m_Offset0 + m_Offset1);
         }
 
         private void OnDisable() {
@@ -64,8 +61,6 @@ namespace UnityEngine.UI {
             if (object.ReferenceEquals(m_Rect, null)) {
                 m_Rect = (RectTransform) transform;
             }
-            Transform parent = m_Rect.parent;
-            m_InLayoutGroup = parent && parent.GetComponent<ILayoutGroup>() != null;
         }
 
         [Preserve]
@@ -106,41 +101,6 @@ namespace UnityEngine.UI {
         }
 
         #endregion // Updates
-
-        #region ICanvasElement
-
-        Transform ICanvasElement.transform { get { return m_Rect; } }
-
-        void ICanvasElement.Rebuild(CanvasUpdate executing) {
-            switch(executing) {
-                case CanvasUpdate.Prelayout: {
-                    if (m_RebuildMode == CallbackMode.None) {
-                        m_RebuildMode = CallbackMode.CanvasElement;
-                        // Debug.LogFormat("[LayoutOffset] ({0}) CanvasUpdate.PreLayout", gameObject.name);
-                        ApplyOffset(default(Vector2));
-                    }
-                    break;
-                }
-                case CanvasUpdate.PostLayout: {
-                    if (m_RebuildMode == CallbackMode.CanvasElement) {
-                        m_RebuildMode = CallbackMode.None;
-                        ApplyOffset(m_Offset0 + m_Offset1);
-                        // Debug.LogFormat("[LayoutOffset] ({0}) CanvasUpdate.PostLayout", gameObject.name);
-                    }
-                    break;
-                }
-            }
-        }
-
-        void ICanvasElement.LayoutComplete() { }
-
-        void ICanvasElement.GraphicUpdateComplete() { }
-
-        bool ICanvasElement.IsDestroyed() {
-            return !this;
-        }
-
-        #endregion // ICanvasElement
 
         #region ILayoutElement
 

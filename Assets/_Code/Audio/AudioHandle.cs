@@ -96,6 +96,13 @@ namespace AquaAudio {
             return track != null;
         }
 
+        public bool IsReady() {
+            var track = GetTrack();
+            if (!object.ReferenceEquals(track, null))
+                return AudioTrackState.IsReady(track);
+            return false;
+        }
+
         public bool IsPlaying() {
             var track = GetTrack();
             if (!object.ReferenceEquals(track, null))

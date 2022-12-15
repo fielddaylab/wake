@@ -33,7 +33,7 @@ namespace ProtoAqua.Observation {
         }
 
         private IEnumerator StartPattern() {
-            yield return RNG.Instance.Next(8, 12);
+            yield return RNG.Instance.Next(6, 9);
             m_Pattern.Play();
         }
     }

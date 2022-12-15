@@ -17,6 +17,9 @@ namespace ProtoAqua.Observation {
         [Header("Pattern")]
         public string Pattern = "... --- ...";
         public bool PlayOnAwake = true;
+        [Range(0.01f, 4)] public float PlaybackRate = 1;
+        [Range(0, 1)] public float PlaybackVolume = 1;
+        public int PatternEndDelay = 16;
         public Transform Location = null;
 
         private Routine m_Playback;
@@ -77,13 +80,13 @@ namespace ProtoAqua.Observation {
                 switch(c) {
                     case '.': { // dot
                         m_CurrentDot.Stop();
-                        m_CurrentDot = Services.Audio.PostEvent(m_DotSFX).TrackPosition(Location);
+                        m_CurrentDot = Services.Audio.PostEvent(m_DotSFX).TrackPosition(Location).SetVolume(PlaybackVolume);
                         delay = 1;
                         break;
                     }
                     case '-': { // dash
                         m_CurrentDash.Stop();
-                        m_CurrentDash = Services.Audio.PostEvent(m_DashSFX).TrackPosition(Location);
+                        m_CurrentDash = Services.Audio.PostEvent(m_DashSFX).TrackPosition(Location).SetVolume(PlaybackVolume);
                         delay = 3;
                         break;
                     }
@@ -108,9 +111,9 @@ namespace ProtoAqua.Observation {
 
                 if (delay > 0) {
                     if (idx == Pattern.Length - 1) { // slightly longer delay at end of message
-                        delay += 16;
+                        delay += PatternEndDelay;
                     }
-                    delay = (delay + 1) * m_UnitTiming;
+                    delay = (delay + 1) * (m_UnitTiming / PlaybackRate);
                     while(delay > 0) {
                         yield return null;
                         delay -= Routine.DeltaTime;
