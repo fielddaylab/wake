@@ -21,14 +21,14 @@
 $goto act1.momMadEnd
 
 #ShopLockedHandler(b, JobStartedOrComplete(kelp-welcome))
-@boostScore -100
+@boostScore 90
 {@$MerchantId} I'm still getting my shop set up for the day.
                Why don't you check back soon? I'll talk you through all the ship upgrades. 
                And good luck out there, mijita.
 {@player}     Thanks, Tío.
 
 #ShopHandler(first)
-@boostScore 100
+@boostScore 80
 @once
 {@$MerchantId}  ¡Hola, mijita!
                 What do you think of {nameof @guide}? Pretty sweet A.I., right?
