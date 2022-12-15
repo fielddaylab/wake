@@ -88,11 +88,10 @@ namespace Aqua.Modeling {
                 obj.gameObject.SetActive(false);
                 block.Divergence = temp;
             };
-
-            Services.Events?.Register(ModelingConsts.Event_Intervene_Error, OnInterveneError);
         }
 
         private void Start() {
+            Services.Events.Register(ModelingConsts.Event_Intervene_Error, OnInterveneError, this);
             m_DivergenceIcons.TryInitialize(null, null, 0);
             
             Action<GraphDivergencePoint> callbackInvoker = (g) => OnDivergenceClicked?.Invoke(g);
@@ -100,6 +99,10 @@ namespace Aqua.Modeling {
                 i.OnClick = callbackInvoker;
             });
             m_DivergenceIcons.Prewarm();
+        }
+
+        private void OnDestroy() {
+            Services.Events?.DeregisterAll(this);
         }
 
         public void AllocateBlocks(ModelState state) {

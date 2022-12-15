@@ -600,6 +600,8 @@ namespace Aqua.Modeling {
         /// Dispatches the intervention update message.
         /// </summary>
         public void DispatchInterventionUpdate() {
+            m_PredictDataTask.Cancel();
+            m_PredictReady &= ~DataReadyFlags.Data;
             OnInterventionUpdated?.Invoke();
         }
 
