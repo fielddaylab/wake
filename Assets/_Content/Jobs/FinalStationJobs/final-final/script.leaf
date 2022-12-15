@@ -23,7 +23,10 @@ $call CheckJobTasks()
 @when       JobTaskTop(reportBack)
 @once
 @cutscene
-{@player}   I figured it out! And Mom said that if I figure this out... I could go help Sam.
+{@guide}    Based on this data, predators in the deep consume mainly bioluminescent and lightly colored organisms.
+            Red organisms appear to have natural camouflage.
+{@player}   That's it! The key to saving {nameof @sam}!
+            And Mom said that if I figure this out... I could go help.
 {@guide}    That's not exactly what she said--
 {@player}   To the Kelp Station!
 
@@ -204,12 +207,9 @@ $branch .argue.chooseFactsEat
 :: argue.endArgue
 $call ArgueComplete()
 {@drKelp}   Oh, so appearing red will allow {nameof @sam} to slip out unnoticed.
-$if jobs:final-argue-paint-route
-    {@drKelp}   Applying a paint job is a bit impractical. But we do have a way to filter our lights to red.
-$else
-    {@drKelp}   And our subs do have a setting that allows us to switch to red light.
-$endif
-    {@drKelp}   I'll pass this information on to the rescue team.
+            Red light doesn’t reach the depths, so those species wouldn’t reflect any light.
+            They basically become invisible. The same would be true for {nameof @sam}.
+{@drKelp}   I'll pass this information on to the rescue team.
 {@player}   What!? I figured out this information. I'm going.
 {@drKelp}   Absolutely not. I won't lose another child to this foolishness.
 {@player}   I'm leaving.
