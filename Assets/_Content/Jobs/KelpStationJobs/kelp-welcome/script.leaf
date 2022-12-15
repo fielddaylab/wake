@@ -21,10 +21,10 @@ $call FocusHighlight->Clear()
 {style default}
 
 {@drKelp} Gracias, Olivia! 
-{@drKelp} While you're working, I'll get the AquaLab set up for you.
+{@drKelp} I'll get the AquaLab set up for you.
 {@player} Wow... the AquaLab? You're giving me Mer's old ship? 
 {@drKelp} Of course. She would've wanted you to have it.
-{@drKelp} Now that you're officially a scientist, your data card should give you clearance to operate the ship.
+{@drKelp} Your data card should give you clearance.
 {@drKelp} Just make sure not to lose your card, or the whole thing will power down. 
 {@player} Got it. Gracias, Mom. 
 $call GiveJournalEntry("N01_Intro")
@@ -37,19 +37,15 @@ $call GiveJournalEntry("N01_Intro")
 @cutscene
 $branch common.ringPhone
 
-{@kelpMechanic} Hold on, mijita, one more thing! 
-{@kelpMechanic} I'm sending an A.I. upgrade to your data card.
-{@kelpMechanic} It should come online in 3...|2...|1...
 {@guide} Greetings! I am {nameof @guide}, your onboard A.I. 
 {@guide} What should I call you? 
-{@player} Oh... uh, my friends call me O. 
+{@player} Oh... my name's Olivia Ramirez, but my friends call me O. 
 {@guide} Updating database. 
 {@guide} It appears you have one active job, O. And lots of thrilling data to collect!
-{@guide} First, use your {item-name}Scanner{/item-name} to ID all the species here at the Forested Lagoon. 
+{@guide} First, use your {item-name}Scanner{/item-name} to identify all the species here at the Forested Lagoon. 
 $call GiveUpgrade(ROVScanner, Silent)
 $call Player->SetTool(Scanner)
-{@guide}  The {item-name}Scanner{/item-name} searches for life forms automatically. 
-          Click the red targets to ID a new plant or animal species. 
+{@guide}   Click the red targets to ID a new plant or animal. 
 {hide-dialog}
 {wait 0.5}
 
@@ -79,7 +75,7 @@ $call UnlockRoom("exterior")
 @when 		scene:name == "Helm", !jobs:kelp-welcome.got.scans
 @cutscene
 $if global:nav.shipRoom != "exterior"
-	{@player}   Um... what are we supposed to do, again?
+	{@player}   Um... what are we supposed to do , again?
 	{@guide}	Head out the door and find the sub!
 $else
 	{@player}   Where's the sub again?
