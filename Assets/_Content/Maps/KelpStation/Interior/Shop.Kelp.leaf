@@ -203,12 +203,12 @@ $choice .action.cancel; Not right now.
 // Exploration
 
 #ItemHandler(ROVTagger)
-{@$MerchantId}  {nameof ROVTagger}!| Maybe my greatest work. 
+{@$MerchantId}  {nameof ROVTagger}!| Simple, but really useful. 
                 You can switch on {nameof ROVTagger} when you're out in your sub.
                 When you move close to a species you've already scanned, {nameof ROVTagger} will {h}count{/h} them.
                 Count enough organisms, and it'll give you a population estimate! 
                 MUCH faster than counting each critter by hand. 
-{@player}    Wow. That's pretty cool, Tío!  
+{@player}    Wow. I could definitely use this! 
 $set    jobs:common-dive.seen.tagger-intro = true
 $EvaluateItemPurchase()
 

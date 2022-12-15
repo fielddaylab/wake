@@ -19,7 +19,7 @@ $endif
 @once
 @cutscene
 {@player} {nameof @guide}, I'm really worried about Sam.
-{@player} I need to put a call through to Tío.
+{@player} Can you call Tío? I need to talk to him. 
 {@guide} Affirmative, O.
 
 $branch common.ringPhone
@@ -29,12 +29,12 @@ $branch common.ringPhone
 {@kelpMechanic} How can I help my favorite scientist? 
 {@player} I just found out Mer was working on an upgrade for {nameof @guide}.
 {@player} It could help to unscramble all these glitchy messages from Sam.
-{@kelpMechanic} Hmm. An upgrade? 
-{@kelpMechanic} I remember Mer talking about that, but I'm not sure if she ever finished it. 
+{@kelpMechanic} Hmm. I remember Mer talking about an upgrade.  
+{@kelpMechanic} Not sure if she ever finished it. 
 {@kelpMechanic} She called it something to do with a cephalopod... a nautilus, or maybe an orthoceras...?
 {@player} An ammonite?
-{@kelpMechanic} Oh, that was it!
-{@kelpMechanic} I'll see what I can dig up, mijita. 
+{@kelpMechanic} Oh, that was it! 
+{@kelpMechanic} I'll see if I can find it. 
 {@player} Gracias, Tío. Please hurry. 
 $set jobs:final-final.tioUpgradeCallComplete = true
 
@@ -180,16 +180,13 @@ $branch .GetDreamJournal
 @when       session:fromDream == "Dreams07"
 @cutscene
 @once
-{@guide}   Good morning, O. We have reached our destination!
-{@player}  Thanks, {nameof @guide}.
-            Any calls from Tío while I was sleeping?
-{@guide}    Not yet. 
-{@player}   Ugh. I don't know what to do, {nameof @guide}.
-            Sam's team is alone. They could be in trouble. 
-            What if there are monsters down there??
-{@guide}    Remember what your sister used to say, O: an ocean without monsters would be like sleep without dreams.
-{@player}   "Sleep without dreams"... 
-            That would be nice.   
+{@guide}   Good morning, O. We have reached our destination.
+{@player}  Thanks, {nameof @guide}. 
+{@player}  Status update? 
+{@guide}   We are prepared to descend to the Lower Depths.
+{@guide}   Due to the uncertain nature of this mission, I am unable to calculate your odds of survival.
+{@player}  I know, {namoef @guide}. It's worth the risk.   
+{@player}  Let's go find Sam. 
 $branch .GetDreamJournal
 
 :: GenericDream
