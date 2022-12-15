@@ -141,7 +141,6 @@ $call Surface->Activate()
 
 $branch common.ringPhone
 {@player}Wow. Mer's old AquaLab!
-{@player}She used to keep a trunk full of notes in her cabin. I wonder if it's still there. 
 {@player} How do we get onboard, {nameof @guide}?
 
 {fade-out black.60, 0.5, wait}
@@ -205,16 +204,17 @@ $call WheelPrompt->Deactivate()
 @cutscene
 @once
 
-{@player} Wow. It's beautiful! 
-{@player} {nameof @guide}, can you put out a radio call to my friend Sam? 
-{@guide} Affirmative, O. 
+{@player} Wow. It's beautiful!  
 $branch common.ringPhone
-{@player} Sam! ¿Qué tal?
-{@sam} Whoa... O, is that you? On the AquaLab?? 
+{@guide} O, we are receiving a call from the Nautilus.
+{@player} That must be my friend Sam! Put them through! 
+{@sam} O! I was hoping I'd be able to reach you.
+{@sam} Heard you're the new captain of the AquaLab!
 {@player} Yep. I'm a level 1 scientist now. No big deal. 
-{@player} How's the mission going? Any sign of the Challenger Deep probe? 
-{@sam} Not yet, but we're getting close. I wish could be here to see it. 
-{@sam} Dinn says we're about to hit a dead zone, so I might lose you in a second...
+{@player} How's the mission? Any sign of Challenger Deep? 
+{@sam} Not yet, but we're close. 
+{@sam} It's super eerie down here... I can see why your sister loved it. 
+{@sam} Ex says we're about to hit a dead zone, so I might lose you in a second...
 {@sam} ....
 {@player} Sam?
 {@sam} ....getting some weird readings on the scanner....
@@ -228,7 +228,7 @@ $call GiveJournalEntry("N02_LosingConnection")
 @when       scene:name == "Helm", JobTaskActive(runExperiment)
 @once
 @cutscene
-{@player}  Okay. What should I do now, {nameof @guide}?
+{@player}  What should I do now, {nameof @guide}?
 {@guide} Updating ship schematic... 
 {hide-dialog}
 

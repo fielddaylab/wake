@@ -25,7 +25,7 @@ $endif
 $branch common.ringPhone
 
 {@player} Tío?
-{@kelpMechanic} Sí, I'm here, Ollie.
+{@kelpMechanic} Hola, mijita! 
 {@kelpMechanic} How can I help my favorite scientist? 
 {@player} I just found out Mer was working on an upgrade for {nameof @guide}.
 {@player} It could help to unscramble all these glitchy messages from Sam.
@@ -79,17 +79,13 @@ $endif //
 @when       session:fromDream == "Dreams00"
 @cutscene
 @once
-{@guide}    Good morning, O!
+{@guide}    Good morning, O! We have arrived at the next ecosystem. 
 {@player}   Whoa. {nameof @guide}....
 {@player}   I'm awake, right?
 {@guide}    Affirmative, O. 
             My sensors indicate you are experiencing stress. 
 {@player}   Oh... it's no big deal. Just a weird dream.
-            Probably shouldn't have eaten those cinnamon-kelp cookies right before bed.
-            Status update?
-{@guide}    We have arrived at the next ecosystem.
-{@player}   Wow... I actually made it out of the Kelp Forest!
-            Let's go check it out, {nameof @guide}.
+            Come on, {nameof @guide}. Let's get out there and explore! 
 $branch .GetDreamJournal
 
 :: SecondDream
@@ -100,12 +96,10 @@ $branch .GetDreamJournal
 {@guide}    Rise and shine, O! 
             We have arrived at a new ecosystem, full of fascinating data to collect!
             O? 
-{@player}   Um, that's great, {nameof @guide}. Nice navigating. 
-            Wait... was Mer's old trunk open when I went to sleep?
-            I thought I closed it last night....
-{@guide}    I was open when I came in here to wake you, O.
-            Would you like me to investigate this matter? 
-{@player}   Oh, uh.... no. Let's just leave it alone for now. 
+{@player}   Phew... Mer's trunk is still there.
+{@guide}    Were you concerned that it had been lost?
+{@player}   Oh... no. Not really.
+            Just had another weird dream. 
 $branch .GetDreamJournal
 
 :: ThirdDream
@@ -113,14 +107,13 @@ $branch .GetDreamJournal
 @when       session:fromDream == "Dream02"
 @cutscene
 @once
-{@player}  Ahhh!
+{@player}  AHHH!
            Wow... that was a weird one.
-{@guide}    Fascinating. The human brain turning data input into unconscious hallucinations!
-{@player}   Yeah. I started having really weird dreams after Mer died. 
-{@player}   Though I've never had so many in a row. 
+{@guide}   Fascinating how the human brain turns data input into unconscious hallucinations!
+{@player}   Yeah. I guess so. 
+{@player}   Though I've never had so many weird ones in a row. 
 {@guide}    Perhaps you could ask your mother--
-{@player}   NO!
-            Um... I mean, no thanks, {nameof @guide}.
+{@player}   No. Don't tell her about this, {nameof @guide}.
            If Mom knew I was having nightmares, she'd want me to stay home all the time. 
            Besides... they're just dreams. No big deal.  
 $branch .GetDreamJournal
@@ -145,11 +138,11 @@ $branch .GetDreamJournal
 @once
 {@guide} O? What has happened? 
 {@guide} I heard you shouting. Your tone indicated what humans call "panic."
-{@player} I'm fine. Just another dream. 
+{@player} I'm fine, {nameof @guide}. 
           Any luck unscrambling those messages from Sam? 
-{@guide}  I'm afraid not, O. The encryption is like nothing I've ever seen. 
-{@player} Ugh. I'm worried about Sam. 
-          I wonder if Mom would send a team down to check on them... just in case. 
+{@guide}  I'm afraid not. The encryption is like nothing I've ever seen. 
+{@player} Ugh. I'm so worried. 
+          I wonder if Mom would send a team down to check on Sam... just in case. 
 $branch .GetDreamJournal
 
 :: SixthDream
@@ -159,7 +152,7 @@ $branch .GetDreamJournal
 @once
 {@guide} Good morning, O. 
         According to my sensors, you did not get optimal rest. 
-{@player} Yeah. My sleep has been weird lately.
+{@player} Yeah. 
           I can't stop thinking about Mer. 
           And Sam.
           And just... everything. 
@@ -178,8 +171,8 @@ $branch .GetDreamJournal
 {@player} The reef at the Bayou. It's gone!
           I tried to help them, but it was too late, I couldn't fix it...
 {@guide}  Ah. Another dream!
-{@player} Oh... yeah. I guess it was.
-          Sorry, {nameof @guide}. It all seemed so real. 
+{@player} Oh... yeah. I guess so.
+          I hope that place is still standing. 
 $branch .GetDreamJournal
 
 :: EighthDream
@@ -192,11 +185,11 @@ $branch .GetDreamJournal
             Any calls from Tío while I was sleeping?
 {@guide}    Not yet. 
 {@player}   Ugh. I don't know what to do, {nameof @guide}.
-            Sam's team is alone down there. They could be in trouble. 
-            What if there are monsters?
+            Sam's team is alone. They could be in trouble. 
+            What if there are monsters down there??
 {@guide}    Remember what your sister used to say, O: an ocean without monsters would be like sleep without dreams.
 {@player}   "Sleep without dreams"... 
-             If only. 
+            That would be nice.   
 $branch .GetDreamJournal
 
 :: GenericDream
