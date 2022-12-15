@@ -27,7 +27,7 @@ $goto act1.momMadEnd
                And good luck out there, mijita.
 {@player}     Thanks, Tío.
 
-#ShopHandler(first)
+#ShopHandler(first, JobStartedOrComplete(kelp-shop-welcome))
 @boostScore 80
 @once
 {@$MerchantId}  ¡Hola, mijita!
@@ -35,10 +35,12 @@ $goto act1.momMadEnd
                 His love of data was Mer's idea. 
 {@player}       Wait... you and Mer created {nameof @guide}?
 {@$MerchantId}  ¡Claro que sí! Didn't I tell you?
+$set jobs:kelp-mechanic.initiated-first-convo = true
 $call GiveJournalEntry("N24_TioVictor")
 
 :: ContinueAfterTioVictorJournal
 @trigger    JournalHidden
+@when       JobStartedOrComplete(kelp-shop-welcome), jobs:kelp-mechanic.initiated-first-convo
 @once
 {@$MerchantId}  Anyway, now that you and {nameof @guide} will be traveling outside the Kelp Forest, you'll need some upgrades. 
                 Since you're a level 1 scientist, you'll need to stick to the basics for now. 
