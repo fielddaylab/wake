@@ -272,6 +272,7 @@ namespace EasyAssetStreaming {
                 string url = id.MetaInfo.ResolvedAddress;
                 var request = id.LoadInfo.Loader = new UnityWebRequest(url, UnityWebRequest.kHttpVerbGET);
                 request.downloadHandler = new DownloadHandlerBuffer();
+                request.timeout = TimeOutSecs;
                 InvokeLoadBegin(id, request, id.LoadInfo.RetryCount);
                 var sent = request.SendWebRequest();
                 sent.completed += (_) => {

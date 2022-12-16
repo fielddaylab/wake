@@ -75,7 +75,7 @@ namespace OGD {
         }
 
         public delegate void DefaultErrorHandlerDelegate(Error err);
-        public delegate void RequestNotificationDelegate(UnityWebRequest request);
+        public delegate void RequestNotificationDelegate(UnityWebRequest request, int retryStatus);
         public delegate void RequestNotificationErrorDelegate(UnityWebRequest request, Error err);
         
         internal delegate Error ResponseProcessorDelegate<TResponse>(TResponse response, object userData);
@@ -181,6 +181,7 @@ namespace OGD {
             public ResponseProcessorDelegate<TResponse> Handler;
             public RequestErrorHandlerDelegate ErrorHandler;
             public object UserData;
+            public int RetryCount;
 
             public void Dispose() {
                 var request = this;
@@ -191,25 +192,25 @@ namespace OGD {
         /// <summary>
         /// Submits a query as a GET request.
         /// </summary>
-        static internal Request<T> Get<T>(Query query, ResponseProcessorDelegate<T> handler, RequestErrorHandlerDelegate errorHandler, object userData) {
-            return SendRequest<T>(query, UnityWebRequest.kHttpVerbGET, handler, errorHandler, userData);
+        static internal Request<T> Get<T>(Query query, ResponseProcessorDelegate<T> handler, RequestErrorHandlerDelegate errorHandler, object userData, int retryCount = 0) {
+            return SendRequest<T>(query, UnityWebRequest.kHttpVerbGET, handler, errorHandler, userData, retryCount);
         }
 
         /// <summary>
         /// Submits a query as a PUT request.
         /// </summary>
-        static internal Request<T> Put<T>(Query query, ResponseProcessorDelegate<T> handler, RequestErrorHandlerDelegate errorHandler, object userData) {
-            return SendRequest<T>(query, UnityWebRequest.kHttpVerbPUT, handler, errorHandler, userData);
+        static internal Request<T> Put<T>(Query query, ResponseProcessorDelegate<T> handler, RequestErrorHandlerDelegate errorHandler, object userData, int retryCount = 0) {
+            return SendRequest<T>(query, UnityWebRequest.kHttpVerbPUT, handler, errorHandler, userData, retryCount);
         }
 
         /// <summary>
         /// Submits a query as a POST request.
         /// </summary>
-        static internal Request<T> Post<T>(Query query, ResponseProcessorDelegate<T> handler, RequestErrorHandlerDelegate errorHandler, object userData) {
-            return SendRequest<T>(query, UnityWebRequest.kHttpVerbPOST, handler, errorHandler, userData);
+        static internal Request<T> Post<T>(Query query, ResponseProcessorDelegate<T> handler, RequestErrorHandlerDelegate errorHandler, object userData, int retryCount = 0) {
+            return SendRequest<T>(query, UnityWebRequest.kHttpVerbPOST, handler, errorHandler, userData, retryCount);
         }
 
-        static private Request<T> SendRequest<T>(Query query, string method, ResponseProcessorDelegate<T> handler, RequestErrorHandlerDelegate errorHandler, object userData) {
+        static private Request<T> SendRequest<T>(Query query, string method, ResponseProcessorDelegate<T> handler, RequestErrorHandlerDelegate errorHandler, object userData, int retryCount) {
             StringBuilder pathBuilder = AllocStringBuilder();
             pathBuilder.Append(s_ServerAddress).Append(query.API);
             if (query.ArgsBuilder != null && query.ArgsBuilder.Length > 0) {
@@ -232,7 +233,7 @@ namespace OGD {
             sent.completed += (a) => HandleUWRCompleted(uwr, request);
 
             if (OnRequestSent != null) {
-                OnRequestSent(uwr);
+                OnRequestSent(uwr, request.RetryCount);
             }
 
             return request;

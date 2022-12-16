@@ -16,7 +16,7 @@ using BeauUWT;
 namespace AquaAudio
 {
     [DefaultExecutionOrder(99999)]
-    public class AudioMgr : ServiceBehaviour, ILoadable
+    public class AudioMgr : ServiceBehaviour
     {
         public const int BusCount = (int) AudioBusId.LENGTH;
         private const int MaxSampleTracks = 48;
@@ -567,7 +567,7 @@ namespace AquaAudio
             m_Id = 0;
         }
 
-        bool ILoadable.IsLoading() {
+        public bool IsLoadingStreams() {
             for(int i = 0; i < m_ActiveStreams.Count; i++) {
                 var stream = m_ActiveStreams[i].Stream;
                 if (!stream.IsReady() && stream.GetError() == UWTStreamPlayer.ErrorCode.NoError) {

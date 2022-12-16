@@ -300,9 +300,10 @@ namespace Aqua
             {
                 AutoSave.Suppress();
             }
-
-            if ((inFlags & SceneLoadFlags.DoNotDispatchPreUnload) == 0)
+ 
+            if ((inFlags & SceneLoadFlags.DoNotDispatchPreUnload) == 0) {
                 Services.Events.Dispatch(GameEvents.SceneWillUnload);
+            }
 
             // if we started from another scene than the boot or title scene
             if (inNextScene.BuildIndex < 0 || inNextScene.BuildIndex >= GameConsts.GameSceneIndexStart)
@@ -440,9 +441,7 @@ namespace Aqua
                 }
             }
 
-            while(Streaming.IsLoading()) {
-                yield return null;
-            }
+            yield return WaitForStreaming();
         }
 
         private IEnumerator WaitForPreload(GameObject inRoot, object inContext)
@@ -458,6 +457,22 @@ namespace Aqua
             }
 
             return null;
+        }
+
+        private IEnumerator WaitForStreaming() {
+            float downloadTime = 30;
+            while(downloadTime > 0 && (Streaming.IsLoading() || Services.Audio.IsLoadingStreams())) {
+                yield return null;
+                downloadTime -= Routine.DeltaTime;
+            }
+
+            while (Streaming.ErrorCount() > 0) {
+                yield return LoadingIcon.PromptRetry();
+                Streaming.RetryErrored();
+                while(Streaming.IsLoading()) {
+                    yield return null;
+                }
+            }
         }
 
         private IEnumerator WaitForCleanup()

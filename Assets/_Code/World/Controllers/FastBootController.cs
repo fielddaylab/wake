@@ -99,8 +99,8 @@ namespace Aqua {
         public void OnSceneLoad(SceneBinding inScene, object inContext) {
             int buildIdx = SceneHelper.ActiveScene().BuildIndex + 1;
             SceneBinding nextScene = SceneHelper.FindSceneByIndex(buildIdx);
-            Async.Invoke(() => {
-                Services.State.LoadScene(nextScene, null, null);
+            Async.InvokeAsync(() => {
+                Services.State.LoadScene(nextScene, null, null, SceneLoadFlags.DoNotDispatchPreUnload);
                 Services.State.OnSceneLoadReady(SceneLoadReady);
             });
         }
@@ -126,6 +126,8 @@ namespace Aqua {
                 fader.Dispose();
             }, 0);
             yield return fader.Object.Show(Color.black, 0.3f);
+
+            LoadingIcon.Queue();
 
             if (BootAudio != null) {
                 yield return BootAudio.WaitToComplete();

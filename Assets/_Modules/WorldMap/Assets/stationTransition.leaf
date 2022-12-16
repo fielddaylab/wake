@@ -51,6 +51,6 @@ $call       PrepareDream(Dream05)
 
 :: FinalDream
 @trigger    PlayerDream
-@when       nextStation == "FinalStation", world:finaleMode // in final sequence
+@when       nextStation == "FinalStation", player:currentJob == "final-final" // in final sequence
 @once
 $call       PrepareDream(Dream07)
