@@ -224,6 +224,22 @@ namespace Aqua.WorldMap
 
         #endregion // Dream
 
+        #region Sam
+
+        static private bool s_ActivateSamConvoFlag;
+
+        [LeafMember("ActivateSamConvo"), Preserve]
+        static private void LeafActivateSamConvo() {
+            s_ActivateSamConvoFlag = true;
+        }
+
+        [LeafMember("IsSamConvoActivated"), Preserve]
+        static private bool LeafIsSamConvoActivated() {
+            return s_ActivateSamConvoFlag;
+        }
+
+        #endregion // Sam
+
         #region IScene
 
         IEnumerator IScenePreloader.OnPreloadScene(SceneBinding inScene, object inContext)
