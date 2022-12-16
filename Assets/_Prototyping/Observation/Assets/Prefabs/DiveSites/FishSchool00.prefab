@@ -51,11 +51,11 @@ MonoBehaviour:
   _groupChildToSchool: 0
   _childAmount: 25
   _spawnSphere: 1
-  _spawnSphereDepth: 1
+  _spawnSphereDepth: 0.5
   _spawnSphereHeight: 1
   _childSpeedMultipler: 1.5
-  _minSpeed: 0.25
-  _maxSpeed: 1.5
+  _minSpeed: 0.5
+  _maxSpeed: 0.75
   _speedCurveMultiplier:
     serializedVersion: 2
     m_Curve:
@@ -66,8 +66,8 @@ MonoBehaviour:
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0
-      outWeight: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
       value: 1
@@ -75,33 +75,33 @@ MonoBehaviour:
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0
-      outWeight: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _minScale: 1
-  _maxScale: 1.5
-  _minDamping: 1
-  _maxDamping: 6
-  _waypointDistance: 5
-  _minAnimationSpeed: 4
-  _maxAnimationSpeed: 8
+  _minScale: 0.5
+  _maxScale: 1.25
+  _minDamping: 0.5
+  _maxDamping: 3
+  _waypointDistance: 1
+  _minAnimationSpeed: 5
+  _maxAnimationSpeed: 5
   _randomPositionTimerMax: 10
-  _randomPositionTimerMin: 5
+  _randomPositionTimerMin: 6
   _acceleration: 0.025
   _brake: 0.01
-  _positionSphere: 10
-  _positionSphereDepth: 2
-  _positionSphereHeight: 2
+  _positionSphere: 20
+  _positionSphereDepth: 1.5
+  _positionSphereHeight: 1.5
   _childTriggerPos: 0
-  _forceChildWaypoints: 0
+  _forceChildWaypoints: 1
   _autoRandomPosition: 1
   _forcedRandomDelay: 0
   _schoolSpeed: 0
   _roamers: []
-  _posBuffer: {x: 9.6, y: -7.29, z: -2}
-  _posOffset: {x: 0, y: 0, z: 0}
+  _posBuffer: {x: 49.14, y: -6.81, z: 4.79}
+  _posOffset: {x: 11, y: 0, z: 0}
   _avoidance: 0
   _avoidAngle: 0.35
   _avoidDistance: 1

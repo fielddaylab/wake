@@ -11,13 +11,13 @@ on:
   #   branches: [ develop ] 
 
 env:
-  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+  UNITY_LICENSE: ${{ secrets.FIELDDAY_UNITY_LICENSE_2019 }}
   UNITY_VERSION: 2019.4.40f1
   
 jobs:
   build:
     name: Build Unity Project
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
@@ -27,10 +27,10 @@ jobs:
     steps:
       
     - name: Install OpenConnect
-      run: sudo add-apt-repository ppa:phusen/openconnect && sudo apt-get update && sudo apt-get install openconnect
+      run: sudo apt-get update && sudo apt-get install openconnect
       
     - name: Connect to VPN
-      run: echo ${{ secrets.VPN_PASSWORD }} | sudo openconnect --protocol=gp -u ${{ secrets.VPN_USERNAME }} --passwd-on-stdin soe.vpn.wisc.edu &
+      run: echo ${{ secrets.FIELDDAY_VPN_PASSWORD }} | sudo openconnect --protocol=gp -u ${{ secrets.FIELDDAY_VPN_USERNAME }} --passwd-on-stdin soe.vpn.wisc.edu &
       
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -100,16 +100,7 @@ jobs:
         switches: -avzr --delete
         path: build/WebGL/WebGL/*
         remote_path: ${{ secrets.DEPLOY_DIR }}/${{ env.BRANCH }}
-        remote_host: ${{ secrets.DEPLOY_HOST }}
-        remote_user: ${{ secrets.DEPLOY_USER }}
-        remote_key: ${{ secrets.DEPLOY_KEY }}
+        remote_host: ${{ secrets.FIELDDAY_WISC_EDU_DEPLOY_HOST }}
+        remote_user: ${{ secrets.FIELDDAY_WISC_EDU_DEPLOY_USER }}
+        remote_key: ${{ secrets.FIELDDAY_WISC_EDU_DEPLOY_KEY }}
     
-    - name: Upload to alternate web server via rsync
-      uses: burnett01/rsync-deployments@5.2
-      with:
-        switches: -avzr --delete
-        path: build/WebGL/WebGL/*
-        remote_path: ${{ secrets.DEPLOY_DIR_ALTERNATE }}/${{ env.BRANCH }}
-        remote_host: ${{ secrets.DEPLOY_HOST }}
-        remote_user: ${{ secrets.DEPLOY_USER }}
-        remote_key: ${{ secrets.DEPLOY_KEY }}
