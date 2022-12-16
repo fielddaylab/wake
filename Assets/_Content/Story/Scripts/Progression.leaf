@@ -15,6 +15,13 @@ $call GiveUpgrade("WaterModeling", Silent)
 $call GiveUpgrade("WaterStabilizer", Silent)
 $call GiveUpgrade("AutoFeeder", Silent)
 
+:: firstSpecterCheck
+@function   SceneStart
+@when       world:initial-sam-convo.completed, AnyJobsCompleted() >= 4, !world:initial-specter-queued
+@once
+$set world:initial-specter-queued = true // @once tag not applying for some reason?
+$call QueueSpecter()
+
 :: SpecterCheck
 @function   JobCompleted
 @when       SpecterCount() > 0, SpecterCount() < $MaxSpecters
