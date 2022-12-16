@@ -59,6 +59,7 @@ namespace Aqua.Portable {
         [NonSerialized] private List<BestiaryFactButton> m_InstantiatedButtons = new List<BestiaryFactButton>();
         [NonSerialized] private Action<BFBase> m_CachedSelectFactDelegate;
         [NonSerialized] private PortableRequest m_Request;
+        [NonSerialized] private bool m_LoadRequest = false;
 
         #region Panel
 
@@ -79,6 +80,7 @@ namespace Aqua.Portable {
 
             m_ListPools.Clear();
             m_EntryToggleGroup.SetAllTogglesOff(false);
+            m_LoadRequest = false;
 
             m_InfoPage.gameObject.SetActive(false);
 

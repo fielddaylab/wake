@@ -11,6 +11,8 @@ namespace Aqua.Portable
 {
     public class PortableMenuApp : BasePanel, IAsyncLoadPanel
     {
+        static private readonly string[] PortableAppIdToString = Enum.GetNames(typeof(PortableAppId));
+
         #region Inspector
 
         [Header("Portable App")]
@@ -52,7 +54,7 @@ namespace Aqua.Portable
         {
             base.OnShow(inbInstant);
 
-            Script.WriteVariable("portable:app", m_Id.ToString());
+            Script.WriteVariable("portable:app", PortableAppIdToString[(int) m_Id]);
             Services.Events.Dispatch(GameEvents.PortableAppOpened, m_Id);
 
             IEnumerator dataLoad = LoadData();
@@ -66,12 +68,6 @@ namespace Aqua.Portable
         {
             base.OnShowComplete(inbInstant);
 
-            using(var table = TempVarTable.Alloc())
-            {
-                table.Set("appId", m_Id.ToString());
-                Services.Script.TriggerResponse(GameTriggers.PortableAppOpened, table);
-            }
-
             if (m_LoadRoutine) {
                 SetInputState(false);
             }
@@ -81,7 +77,7 @@ namespace Aqua.Portable
         {
             m_LoadRoutine.Stop();
 
-            Services.Data?.CompareExchange("portable:app", m_Id.ToString(), null);
+            Services.Data?.CompareExchange("portable:app", PortableAppIdToString[(int) m_Id], null);
             Services.Events?.Dispatch(GameEvents.PortableAppClosed, m_Id);
 
             base.OnHide(inbInstant);
@@ -89,6 +85,14 @@ namespace Aqua.Portable
 
         private void OnLoadComplete() {
             SetInputState(true);
+
+            if (IsShowing()) {
+                using(var table = TempVarTable.Alloc())
+                {
+                    table.Set("appId", PortableAppIdToString[(int) m_Id]);
+                    Services.Script.TriggerResponse(GameTriggers.PortableAppOpened, table);
+                }
+            }
         }
     }
 }

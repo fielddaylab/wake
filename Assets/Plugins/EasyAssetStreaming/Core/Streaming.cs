@@ -27,7 +27,8 @@ namespace EasyAssetStreaming {
 
         private const int RetryLimit = 10;
         private const float RetryDelayBase = 1f;
-        private const float RetryDelayExtra = 0.1f;
+        private const float RetryDelayExtra = 0.05f;
+        private const int TimeOutSecs = 8;
 
         #endregion // Consts
 
@@ -296,7 +297,7 @@ namespace EasyAssetStreaming {
             s_LoadState.Count++;
             
             ref AssetStatus status = ref s_Cache.StateInfo[id.Index].Status;
-            status = (status | AssetStatus.PendingLoad) & ~AssetStatus.PendingUnload;
+            status = (status | AssetStatus.PendingLoad) & ~(AssetStatus.PendingUnload | AssetStatus.Loading);
         }
 
         static private void DecrementLoadCounter() {
