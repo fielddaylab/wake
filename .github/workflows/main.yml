@@ -12,12 +12,12 @@ on:
 
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-  UNITY_VERSION: 2020.4.40f1
+  UNITY_VERSION: 2019.4.40f1
   
 jobs:
   build:
     name: Build Unity Project
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
