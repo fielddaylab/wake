@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Aqua.Debugging;
 using Aqua.Profile;
 using Aqua.Scripting;
 using BeauRoutine;
@@ -164,6 +165,7 @@ namespace Aqua.WorldMap
             }
 
             s_DreamLoadFlag = false;
+            s_BetweenDreamTravels++;
 
             // TODO: dream implementation
             using(var table = TempVarTable.Alloc()) {
@@ -188,10 +190,12 @@ namespace Aqua.WorldMap
         #region Dream
 
         static private bool s_DreamLoadFlag;
+        static private int s_BetweenDreamTravels;
 
         [LeafMember("PrepareDream"), Preserve]
         static private IEnumerator LeafPrepareDream(string mapName) {
             s_DreamLoadFlag = true;
+            s_BetweenDreamTravels = 0; // player has seen dream, so reset tally
 
             StringHash32 preloadGroup = "Scene/" + mapName;
             bool preloaded = false;
@@ -221,6 +225,12 @@ namespace Aqua.WorldMap
                 yield return fader.Object.Hide(1, false);
             }
         }
+
+        [LeafMember("CurrBetweenDreamTravels"), Preserve]
+        static private int LeafCurrBetweenDreamTravels() {
+            return s_BetweenDreamTravels;
+        }
+
 
         #endregion // Dream
 
