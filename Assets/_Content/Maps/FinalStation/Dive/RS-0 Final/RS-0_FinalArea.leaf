@@ -30,8 +30,7 @@
 ::activationScanChallengerDeep
 @trigger    ScannedObject
 @when       scanId == "RS-0-Final.probe.activating"
-@cutscene
-{@player}   Here we go! Activating the Challenger Deep.
+{@player}   Here we go! Activating the Challenger Deep.{auto}{wait abs-2}
 $call ChalActivateAnimTrigger-Probe->SetAnimInt("Activate", 1)
 $call ChalActivateAnimTrigger-Probe->PlayAnim("Activate-to-pull")
 $call ChalActivateAnimTrigger-Squid->SetAnimInt("Anim", 3)
@@ -47,8 +46,7 @@ $call ChalActivateAnimTrigger-Squid->PlayAnim("ChalCrush")
 
 {@guide}    WARNING: the colossal squid is nearby. 
             Disabling your flashlight to avoid detection.
-// TODO: disable flashlight
-
+$call SetToolAllowed(Flashlight, false)
 
 ::samFinalTrigger2
 @trigger PlayerEnterRegion
@@ -98,6 +96,7 @@ $call EntranceEffects->Activate()
 {wait 17}
 $call StationEntranceFinal->Activate()
 
+{wait 3}
 {@guide} The Challenger Deep signal has been lost. 
 {@player} Wow. I can't believe it's really gone.
 {@player} ... 
