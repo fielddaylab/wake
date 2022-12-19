@@ -32,15 +32,8 @@
 @when       scanId == "RS-0-Final.probe.activating"
 @cutscene
 {@player}   Here we go! Activating the Challenger Deep.
-$call ChalActivateAnimTrigger->Activate()
-
-::chalActivationTriggerBox
-@trigger PlayerEnterRegion
-@when   regionId == "ChalActivateAnimTrigger"
-@cutscene
-@once
-{@guide}    UOOU'VE ENETER IT!
-$call ChalActivateAnimTrigger->Deactivate()
+$call ChalActivateAnimTrigger-Probe->SetAnimInt("Activate", 1)
+$call ChalActivateAnimTrigger-Probe->PlayAnim()
 
 ::guideFlashlightOffTrigger
 @trigger PlayerEnterRegion

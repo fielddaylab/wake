@@ -4244,14 +4244,15 @@ GameObject:
   m_Component:
   - component: {fileID: 710182568}
   - component: {fileID: 710182570}
-  - component: {fileID: 710182569}
+  - component: {fileID: 710182572}
+  - component: {fileID: 710182571}
   m_Layer: 29
   m_Name: ChalDeep_AnimStart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &710182568
 Transform:
   m_ObjectHideFlags: 0
@@ -4266,33 +4267,6 @@ Transform:
   m_Father: {fileID: 1566276039}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &710182569
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 710182567}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6e77b091cc839b408a9c08be6e479f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Animator: {fileID: 779920366}
-  Collider: {fileID: 710182570}
-  CollisionMask:
-    serializedVersion: 2
-    m_Bits: 256
-  OnEnter:
-    m_Name: Activate
-    m_Type: 3
-    m_IntValue: 0
-    m_FloatValue: 0
-  OnExit:
-    m_Name: Activate
-    m_Type: 3
-    m_IntValue: 1
-    m_FloatValue: 0
 --- !u!61 &710182570
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4319,6 +4293,36 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 18.5, y: 2}
   m_EdgeRadius: 0
+--- !u!114 &710182571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 710182567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75a1cbcc6f1b5ef469c41d66ce8d7ccc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Animator: {fileID: 779920366}
+--- !u!114 &710182572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 710182567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced02461c9fab16498d5d024212b8a9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Id:
+    m_Source: ChalActivateAnimTrigger-Probe
+    m_HashValue: 393791758
+  m_IsPersistent: 0
+  m_StartDisabled: 0
 --- !u!95 &779920366 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 8857206230756354285, guid: d3c23fb7c999e6c48b29025017c99b93,
