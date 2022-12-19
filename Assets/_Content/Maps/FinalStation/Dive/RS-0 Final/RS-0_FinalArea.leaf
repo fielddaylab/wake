@@ -33,8 +33,9 @@
 @cutscene
 {@player}   Here we go! Activating the Challenger Deep.
 $call ChalActivateAnimTrigger-Probe->SetAnimInt("Activate", 1)
-$call ChalActivateAnimTrigger-Probe->SetAnimInt("Anim", 3)
-$call ChalActivateAnimTrigger-Probe->PlayAnim()
+$call ChalActivateAnimTrigger-Probe->PlayAnim("Activate-to-pull")
+$call ChalActivateAnimTrigger-Squid->SetAnimInt("Anim", 3)
+$call ChalActivateAnimTrigger-Squid->PlayAnim("ChalCrush")
 
 
 
