@@ -43,7 +43,7 @@ $set jobs:final-final.probe-eaten = false
 @when regionId == "samRadio"
 @once
 
-{wait 2}
+{wait 1}
 
 {@player} {nameof @guide}, that's Sam's station! 
 {@sam} O! Is that you?
@@ -72,6 +72,13 @@ $set jobs:final-final.probe-eaten = false
 $call ChalDeepScannable->Deactivate()
 $set jobs:final-final.probe-eaten = true
 {wait-abs 2}
+
+
+//TODO Implement scanning for playing chal deep activation- use bool?
+//::secondScanChallengerDeep
+//@trigger    ScannedObject
+//@when       scanId == "RS-0-Final_1.probe"
+//play animation
 
 
 // TODO: trigger this after animation end
