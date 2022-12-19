@@ -8,10 +8,25 @@ $set session:fromDream = null
 @function   SceneStart
 @when       !session:fromDream
 $call   CabinBGM->PlayBGM()
-$if HasJournalEntry("N18_BayouNecklace"), !jobs:final-final.tioUpgradeCallComplete
+$if !world:cabin.first-visit-complete
+    $branch .TrunkSequence
+$elseif HasJournalEntry("N18_BayouNecklace"), !jobs:final-final.tioUpgradeCallComplete
     $branch .TioCall
 $endif
 
+:: TrunkSequence
+{@player}   Mer's old trunk! I was hoping it would be here.
+{@guide}    Would you like me to scan its contents, O?
+{@player}   Oh... no thanks, {nameof @guide}. 
+            I'd like to look through it by myself. 
+$set world:cabin.first-visit-complete = true
+
+:: TrunkAfterJournal
+@trigger    JournalHidden
+@when !world:cabin.first-visit-complete
+@once
+@cutscene
+$branch .TrunkSequence
 
 :: TioCall
 @trigger    JournalHidden
