@@ -19,15 +19,28 @@
 {@player} Wow. {nameof @guide}, that's the Challenger Deep. Mer's life's work!
 {@guide} Affirmative. This probe contains 10 years of deep-sea data.
 
-$set jobs:final-final.probe-eaten = false
-
 ::firstScanChallengerDeep
 @trigger    ScannedObject
-@when       scanId == "RS-0-Final.probe"
+@when       scanId == "RS-0-Final.probe.passing"
 @cutscene
 {@guide}   I would not recommend activating the probe now, O. 
 {@guide}    The lights are extremely bright and might attract the creature. 
 {@player}   Right. I don't have time to stop, anyway. We need to find Sam! 
+
+::activationScanChallengerDeep
+@trigger    ScannedObject
+@when       scanId == "RS-0-Final.probe.activating"
+@cutscene
+{@player}   Here we go! Activating the Challenger Deep.
+$call ChalActivateAnimTrigger->Activate()
+
+::chalActivationTriggerBox
+@trigger PlayerEnterRegion
+@when   regionId == "ChalActivateAnimTrigger"
+@cutscene
+@once
+{@guide}    UOOU'VE ENETER IT!
+$call ChalActivateAnimTrigger->Deactivate()
 
 ::guideFlashlightOffTrigger
 @trigger PlayerEnterRegion
@@ -72,8 +85,8 @@ $set jobs:final-final.probe-eaten = false
 {@player} Let's do this. 
 {@player} Sam, if you can hear me, I'm turning on the probe to draw the squid away!
 {@player} Just hold on a little longer!
-$call ChalDeepScannable->Deactivate()
-$set jobs:final-final.probe-eaten = true
+$call ChalDeepScannablePassing->Deactivate()
+$call ChalDeepScannableActivating->Activate()
 {wait-abs 2}
 
 
