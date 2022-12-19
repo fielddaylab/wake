@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -1263,8 +1263,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 242032751}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 92.21, y: 1.82, z: -10.051745}
-  m_LocalScale: {x: 0.48285103, y: 4.9363985, z: 1}
+  m_LocalPosition: {x: 91.85, y: 1.82, z: -10.051745}
+  m_LocalScale: {x: 0.5738202, y: 4.9363985, z: 1}
   m_Children: []
   m_Father: {fileID: 1566276039}
   m_RootOrder: 5
@@ -4245,6 +4245,7 @@ GameObject:
   - component: {fileID: 710182568}
   - component: {fileID: 710182570}
   - component: {fileID: 710182572}
+  - component: {fileID: 710182569}
   - component: {fileID: 710182571}
   m_Layer: 29
   m_Name: ChalDeep_AnimStart
@@ -4267,6 +4268,19 @@ Transform:
   m_Father: {fileID: 1566276039}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &710182569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 710182567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75a1cbcc6f1b5ef469c41d66ce8d7ccc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Animator: {fileID: 779920366}
 --- !u!61 &710182570
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4305,7 +4319,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75a1cbcc6f1b5ef469c41d66ce8d7ccc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Animator: {fileID: 779920366}
+  m_Animator: {fileID: 392438120}
 --- !u!114 &710182572
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7610,33 +7624,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1521826956}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1552175875 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8514749928233873093, guid: d3c23fb7c999e6c48b29025017c99b93,
-    type: 3}
-  m_PrefabInstance: {fileID: 8857206229989542659}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1552175876
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1552175875}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e52de21a22b6dd44c9cc19f810c65059, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Events:
-    m_Signals:
-    - {fileID: 0}
-    - {fileID: 11400000, guid: ff3f2369b4b46034794ff3915e5642cf, type: 2}
-    m_Events:
-    - m_PersistentCalls:
-        m_Calls: []
-    - m_PersistentCalls:
-        m_Calls: []
 --- !u!4 &1559400647 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2233336809958650328, guid: 37f33b48e5907f543815da698a62b121,
@@ -7653,7 +7640,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1563319581}
   - component: {fileID: 1563319584}
-  - component: {fileID: 1563319582}
   - component: {fileID: 1563319589}
   m_Layer: 29
   m_Name: ChalEnable_Trigger
@@ -7676,24 +7662,6 @@ Transform:
   m_Father: {fileID: 1566276039}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1563319582
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1563319580}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e52de21a22b6dd44c9cc19f810c65059, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Events:
-    m_Signals:
-    - {fileID: 0}
-    m_Events:
-    - m_PersistentCalls:
-        m_Calls: []
 --- !u!114 &1563319584
 MonoBehaviour:
   m_ObjectHideFlags: 0

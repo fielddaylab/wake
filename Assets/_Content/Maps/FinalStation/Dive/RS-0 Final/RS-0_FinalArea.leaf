@@ -33,7 +33,10 @@
 @cutscene
 {@player}   Here we go! Activating the Challenger Deep.
 $call ChalActivateAnimTrigger-Probe->SetAnimInt("Activate", 1)
+$call ChalActivateAnimTrigger-Probe->SetAnimInt("Anim", 3)
 $call ChalActivateAnimTrigger-Probe->PlayAnim()
+
+
 
 ::guideFlashlightOffTrigger
 @trigger PlayerEnterRegion
@@ -81,13 +84,6 @@ $call ChalActivateAnimTrigger-Probe->PlayAnim()
 $call ChalDeepScannablePassing->Deactivate()
 $call ChalDeepScannableActivating->Activate()
 {wait-abs 2}
-
-
-//TODO Implement scanning for playing chal deep activation- use bool?
-//::secondScanChallengerDeep
-//@trigger    ScannedObject
-//@when       scanId == "RS-0-Final_1.probe"
-//play animation
 
 
 // TODO: trigger this after animation end
