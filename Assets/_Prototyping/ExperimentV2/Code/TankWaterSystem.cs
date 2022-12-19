@@ -125,7 +125,7 @@ namespace ProtoAqua.ExperimentV2 {
 
             m_FillParticleForceGroup.SetActive(true);
 
-            yield return 3;
+            yield return 1;
 
             m_FillParticles.Stop(true, ParticleSystemStopBehavior.StopEmitting);
             m_FillParticleForceGroup.SetActive(false);

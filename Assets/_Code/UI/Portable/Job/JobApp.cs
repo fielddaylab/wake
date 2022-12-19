@@ -8,6 +8,7 @@ using TMPro;
 using BeauPools;
 using System;
 using Aqua.Profile;
+using System.Collections;
 
 namespace Aqua.Portable
 {
@@ -15,10 +16,14 @@ namespace Aqua.Portable
     {
         #region Inspector
 
+        [Header("Active Job")]
         [SerializeField, Required] private JobInfoDisplay m_JobDisplay = null;
         [SerializeField, Required] private PortableJobTaskList m_JobTaskList = null;
-        [SerializeField, Required] private Transform m_NoJobDisplay = null;
+        [SerializeField, Required] private AppearAnimSet m_JobAppearAnim = null;
         [SerializeField, Required] private LayoutGroup m_LayoutRebuilder = null;
+        
+        [Header("No Job")]
+        [SerializeField, Required] private Transform m_NoJobDisplay = null;
 
         #endregion
 
@@ -39,7 +44,7 @@ namespace Aqua.Portable
 
         #region Page Display
 
-        private void LoadData()
+        protected override IEnumerator LoadData()
         {
             JobsData jobsData = Save.Jobs;
             PlayerJob currentJob = jobsData.CurrentJob;
@@ -54,9 +59,12 @@ namespace Aqua.Portable
                 m_NoJobDisplay.gameObject.SetActive(false);
                 m_JobDisplay.gameObject.SetActive(true);
                 m_JobDisplay.Populate(currentJob.Job, currentJob.Status);
-                m_JobTaskList.LoadTasks(currentJob.Job, jobsData);
-
+                yield return Routine.Amortize(m_JobTaskList.LoadTasks(currentJob.Job, jobsData), 5);
                 m_LayoutRebuilder.ForceRebuild();
+                yield return null;
+
+                float delay = m_JobAppearAnim.Play();
+                m_JobTaskList.AnimateTasks(delay);
             }
         }
 

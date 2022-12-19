@@ -315,30 +315,27 @@ namespace ProtoAqua.ExperimentV2 {
 
             Services.Events.Dispatch(ExperimentEvents.ExperimentBegin, m_ParentTank.Type);
 
-            m_UnobservedStateLabel.alpha = 0;
-            m_UnobservedStateLabel.gameObject.SetActive(true);
+            // m_UnobservedStateLabel.alpha = 0;
+            // m_UnobservedStateLabel.gameObject.SetActive(true);
 
-            if (potentialNewObservationsCount > 0) {
-                m_UnobservedStateLabel.SetText("?");
-                m_UnobservedStateLabel.SetColor(ColorBank.Yellow);
-            } else {
-                m_UnobservedStateLabel.SetText("-");
-                m_UnobservedStateLabel.SetColor(ColorBank.DarkGray);
-            }
+            // if (potentialNewObservationsCount > 0) {
+            //     m_UnobservedStateLabel.SetText("?");
+            //     m_UnobservedStateLabel.SetColor(ColorBank.Yellow);
+            // } else {
+            //     m_UnobservedStateLabel.SetText("-");
+            //     m_UnobservedStateLabel.SetColor(ColorBank.DarkGray);
+            // }
 
             m_RunningScreen.CustomButton.interactable = false;
 
-            yield return Routine.Combine(
-                ExperimentScreen.Transition(m_RunningScreen, m_World),
-                m_UnobservedStateLabel.FadeTo(1, 0.2f)
-            );
+            yield return ExperimentScreen.Transition(m_RunningScreen, m_World);
 
             m_IdleRoutine.Replace(this, IdleUpdate());
 
             if (potentialNewObservationsCount > 0) {
                 Services.Audio.PostEvent("Experiment.HasNewBehaviors");
                 m_RunningScreen.CustomButton.interactable = false;
-                yield return m_UnobservedStateLabel.transform.ScaleTo(1.02f, 0.2f, Axis.XY).Ease(Curve.CubeOut).Yoyo(true).RevertOnCancel();
+                // yield return m_UnobservedStateLabel.transform.ScaleTo(1.02f, 0.2f, Axis.XY).Ease(Curve.CubeOut).Yoyo(true).RevertOnCancel();
                 yield return 15;
             }
 

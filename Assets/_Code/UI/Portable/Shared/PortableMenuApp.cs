@@ -48,6 +48,7 @@ namespace Aqua.Portable
             base.Awake();
 
             m_ParentMenu = GetComponentInParent<PortableMenu>();
+            m_RootGroup.alpha = 0;
         }
 
         protected override void OnShow(bool inbInstant)
@@ -64,6 +65,15 @@ namespace Aqua.Portable
             }
         }
 
+        protected override IEnumerator TransitionToShow() {
+            m_RootTransform.gameObject.SetActive(true);
+            m_RootGroup.alpha = 0;
+            if (m_LoadRoutine) {
+                yield return m_LoadRoutine;
+            }
+            m_RootGroup.alpha = 1;
+        }
+
         protected override void OnShowComplete(bool inbInstant)
         {
             base.OnShowComplete(inbInstant);
@@ -76,6 +86,7 @@ namespace Aqua.Portable
         protected override void OnHide(bool inbInstant)
         {
             m_LoadRoutine.Stop();
+            m_RootGroup.alpha = 0;
 
             Services.Data?.CompareExchange("portable:app", PortableAppIdToString[(int) m_Id], null);
             Services.Events?.Dispatch(GameEvents.PortableAppClosed, m_Id);

@@ -270,7 +270,9 @@ namespace Aqua
             Services.Physics.Enabled = true;
 
             Services.Events.Dispatch(GameEvents.SceneLoaded);
-            Services.Script.TriggerResponse(GameTriggers.SceneStart);
+            if (Services.Data.IsProfileLoaded()) {
+                Services.Script.TriggerResponse(GameTriggers.SceneStart);
+            }
             m_InitFrame = false;
         }
 
@@ -389,11 +391,13 @@ namespace Aqua
 
                 Services.Events.Dispatch(GameEvents.SceneLoaded);
 
-                // if we're suppressing triggers, then only call functions
-                if ((inFlags & SceneLoadFlags.SuppressTriggers) != 0) {
-                    Services.Script.TryCallFunctions(GameTriggers.SceneStart);
-                } else {
-                    Services.Script.TriggerResponse(GameTriggers.SceneStart);
+                if (Services.Data.IsProfileLoaded()) {
+                    // if we're suppressing triggers, then only call functions
+                    if ((inFlags & SceneLoadFlags.SuppressTriggers) != 0) {
+                        Services.Script.TryCallFunctions(GameTriggers.SceneStart);
+                    } else {
+                        Services.Script.TriggerResponse(GameTriggers.SceneStart);
+                    }
                 }
             }
             m_InitFrame = false;

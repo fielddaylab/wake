@@ -65,6 +65,12 @@ namespace Aqua.Compression {
             m_ImagePool.ConfigureTransforms(m_PoolRoot, null, false);
             m_StreamingUGUIPool.ConfigureTransforms(m_PoolRoot, null, false);
             m_LocTextPool.ConfigureTransforms(m_PoolRoot, null, false);
+
+            m_TextPool.Initialize();
+            m_RectGraphicPool.Initialize();
+            m_ImagePool.Initialize();
+            m_StreamingUGUIPool.Initialize();
+            m_LocTextPool.Initialize();
         }
 
         private void ResetPools() {

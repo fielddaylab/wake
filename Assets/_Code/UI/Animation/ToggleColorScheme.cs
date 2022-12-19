@@ -93,5 +93,25 @@ namespace Aqua
                 return toggle.isOn ? State.On : State.Off;
             }
         }
+
+        #if UNITY_EDITOR
+
+        private void OnValidate() {
+            if (Application.IsPlaying(this)) {
+                return;
+            }
+
+            if (!m_Toggle) {
+                m_Toggle = GetComponentInParent<Toggle>();
+                if (!m_Toggle) {
+                    return;
+                }
+            }
+
+            State nextState = GetState(m_Toggle);
+            OnToggleUpdated(nextState, true);
+        }
+
+        #endif // UNITY_EDITOR
     }
 }

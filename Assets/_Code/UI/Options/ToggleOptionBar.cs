@@ -68,7 +68,7 @@ namespace Aqua.Option
                 m_Items[i].gameObject.SetActive(false);
             }
 
-            m_ToggleLayout.ForceRebuild();
+            m_ToggleLayout.MarkForRebuild();
             m_Syncing = false;
         }
 
