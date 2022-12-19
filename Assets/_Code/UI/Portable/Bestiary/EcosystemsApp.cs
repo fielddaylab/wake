@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Aqua;
 using BeauPools;
 using BeauRoutine;
@@ -51,7 +52,7 @@ namespace Aqua.Portable {
             page.Description.SetText(entry.Description());
         }
 
-        private void PopulateEntryFacts(BestiaryPage page, BestiaryDesc entry, ListSlice<BFBase> facts, BestiaryApp.FinalizeButtonDelegate finalizeCallback) {
+        private IEnumerator PopulateEntryFacts(BestiaryPage page, BestiaryDesc entry, ListSlice<BFBase> facts, BestiaryApp.FinalizeButtonDelegate finalizeCallback) {
             m_ModelsHeader.gameObject.SetActive(false);
             m_PopulationHeader.gameObject.SetActive(false);
             m_WaterChemistryHeader.gameObject.SetActive(false);
@@ -120,6 +121,7 @@ namespace Aqua.Portable {
                     entry, target);
 
                 finalizeCallback(fact, factDisplay);
+                yield return null;
             }
 
             for (; spacingsUsed < m_GroupSpacings.Length; spacingsUsed++) {

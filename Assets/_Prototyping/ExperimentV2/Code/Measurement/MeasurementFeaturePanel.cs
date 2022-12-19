@@ -24,8 +24,6 @@ namespace ProtoAqua.ExperimentV2
         private void Awake() {
             m_StabilizerToggle.onValueChanged.AddListener((b) => OnFeatureChanged(MeasurementTank.FeatureMask.Stabilizer, b));
             m_AutoFeederToggle.onValueChanged.AddListener((b) => OnFeatureChanged(MeasurementTank.FeatureMask.AutoFeeder, b));
-
-            m_StabilizerToggle.SetIsOnWithoutNotify(true);
         }
 
         #region BasePanel
@@ -33,11 +31,11 @@ namespace ProtoAqua.ExperimentV2
         private void OnEnable() {
             bool bHasStabilizer = Save.Inventory.HasUpgrade(ItemIds.WaterStabilizer);
             m_StabilizerToggle.interactable = bHasStabilizer;
-            m_StabilizerDisabledObject.SetActive(!bHasStabilizer);
+            // m_StabilizerDisabledObject.SetActive(!bHasStabilizer);
 
             bool bHasFeeder = Save.Inventory.HasUpgrade(ItemIds.AutoFeeder);
             m_AutoFeederToggle.interactable = bHasFeeder;
-            m_AutoFeederDisabledObject.SetActive(!bHasFeeder);
+            // m_AutoFeederDisabledObject.SetActive(!bHasFeeder);
         }
 
         #endregion // BasePanel
@@ -54,7 +52,7 @@ namespace ProtoAqua.ExperimentV2
 
         public void ClearSelection() {
             if (ClearSelectedSet()) {
-                m_StabilizerToggle.SetIsOnWithoutNotify(true);
+                m_StabilizerToggle.SetIsOnWithoutNotify(false);
                 m_AutoFeederToggle.SetIsOnWithoutNotify(false);
             }
         }
@@ -62,6 +60,7 @@ namespace ProtoAqua.ExperimentV2
         private bool ClearSelectedSet() {
             if (m_SelectedFeatures != MeasurementTank.DefaultFeatures) {
                 m_SelectedFeatures = MeasurementTank.DefaultFeatures;
+                OnUpdated?.Invoke(m_SelectedFeatures);
                 return true;
             }
 

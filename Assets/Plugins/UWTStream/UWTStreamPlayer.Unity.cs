@@ -143,7 +143,7 @@ namespace BeauUWT
 
         private float GetTime()
         {
-            if (m_UnitySource)
+            if (!object.ReferenceEquals(m_UnitySource, null))
                 return m_UnitySource.time;
             return 0;
         }
@@ -160,7 +160,7 @@ namespace BeauUWT
 
         private ulong GetHiResTime()
         {
-            if (m_UnitySource)
+            if (!object.ReferenceEquals(m_UnitySource, null))
                 return (ulong) (m_UnitySource.time * HiResScale_Double);
             return 0;
         }
@@ -255,7 +255,7 @@ namespace BeauUWT
 
             Debug.LogFormat("[UWTStream] Downloading from {0}", m_StreamURL);
 
-            m_WebRequest = UnityWebRequest.Get(m_StreamURL);
+            m_WebRequest = new UnityWebRequest(new Uri(m_StreamURL), UnityWebRequest.kHttpVerbGET);
             m_WebRequest.useHttpContinue = false;
             
             m_WebRequest.downloadHandler = m_AudioClipDownloadHandler = new DownloadHandlerAudioClip(m_StreamURL, GetAudioTypeForURL(m_StreamURL));

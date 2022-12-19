@@ -25,6 +25,7 @@ namespace Aqua
         public string[] Paths;
 
         // Non-serialized
+        public string[] PathUrls;
         public int RefCount;
 
         [Preserve]

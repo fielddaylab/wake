@@ -27,6 +27,7 @@ namespace Aqua
 
         [Header("Animation")]
         public Graphic Flash;
+        public AppearAnim Appear;
 
         #endregion // Inspector
 

@@ -12,6 +12,7 @@ using BeauUtil.Variants;
 using System;
 using BeauUtil.Debugger;
 using System.Collections.Generic;
+using BeauRoutine;
 
 [assembly: InternalsVisibleTo("Aqua.Shared.Editor")]
 [assembly: InternalsVisibleTo("Assembly-CSharp-Editor")]
@@ -105,6 +106,7 @@ namespace Aqua
             #endif // DEVELOPMENT
 
             LoadBootParamsSecondPass();
+            Async.InvokeAsync(RetrieveExpensiveSystemResources);
         }
 
         private void OnDestroy()
@@ -195,5 +197,9 @@ namespace Aqua
         #endif // UNITY_EDITOR
 
         #endregion // Boot Parameters
+    
+        static private void RetrieveExpensiveSystemResources() {
+            Char.IsWhiteSpace('0');
+        }
     }
 }
