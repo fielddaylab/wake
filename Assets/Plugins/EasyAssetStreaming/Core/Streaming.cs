@@ -164,7 +164,7 @@ namespace EasyAssetStreaming {
         /// Returns the status of the asset with the given streaming id.
         /// </summary>
         static public AssetStatus Status(StreamingAssetHandle id) {
-            if (!s_Cache.IsValid(id)) {
+            if (s_Cache == null || !s_Cache.IsValid(id)) {
                 return AssetStatus.Invalid;
             }
 
@@ -643,9 +643,11 @@ namespace EasyAssetStreaming {
                 return;
             }
 
+            bool didWork = false;
+
             long now = CurrentTimestamp();
-            Textures.CheckBudget(now);
-            AudioClips.CheckBudget(now);
+            didWork |= Textures.CheckBudget(now);
+            didWork |= AudioClips.CheckBudget(now);
 
             // update the delayed queue
             for(int i = s_LoadState.DelayedQueue.Count - 1; i >= 0; i--) {
@@ -671,6 +673,7 @@ namespace EasyAssetStreaming {
                 if ((stateInfo.Status & (AssetStatus.PendingUnload | AssetStatus.Unloaded)) != 0) {
                     UnloadSingle(id, now, 0);
                     s_LoadState.Count--;
+                    didWork = true;
                     continue;
                 }
 
@@ -699,6 +702,8 @@ namespace EasyAssetStreaming {
                         break;
                     }
                 }
+
+                didWork = true;
             }
 
             // update the unload queue
@@ -710,9 +715,15 @@ namespace EasyAssetStreaming {
                     UnloadSingle(id, s_UnloadState.StartTS, s_UnloadState.MinAge);
                 }
 
+                didWork = true;
+
                 if (s_UnloadState.Queue.Count == 0) {
                     s_UnloadState.Unloading = false;
                 }
+            }
+        
+            if (!didWork) {
+                Textures.ProcessCompressionQueue();
             }
         }
 

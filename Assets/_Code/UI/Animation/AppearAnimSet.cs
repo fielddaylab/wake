@@ -38,17 +38,8 @@ namespace Aqua {
             Play(0);
         }
 
-        public void Play(float delay = 0) {
-            using(Profiling.Sample("appear anim init")) {
-                bool hasClipping = m_ClippingRegion;
-                delay += m_InitialDelay;
-                for(int i = 0; i < m_Anims.Count; i++) {
-                    AppearAnim anim = m_Anims[i];
-                    if (anim.isActiveAndEnabled && (!hasClipping || CanvasExtensions.IsVisible(m_ClippingRegion, (RectTransform) anim.transform))) {
-                        delay += anim.Ping(delay) * m_IntervalScale;
-                    }
-                }
-            }
+        public float Play(float delay = 0) {
+            return AppearAnim.PingGroup(m_Anims, delay + m_InitialDelay, m_IntervalScale, m_ClippingRegion);
         }
 
         [ContextMenu("Find All Children")]

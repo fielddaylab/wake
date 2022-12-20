@@ -219,7 +219,7 @@ namespace EasyAssetStreaming {
             static public MemoryStat MemoryUsage = default;
             static public long MemoryBudget = 0;
 
-            static private List<StreamingAssetHandle> s_TexturePostProcessQueue = new List<StreamingAssetHandle>(8);
+            static private Queue<StreamingAssetHandle> s_TexturePostProcessQueue = new Queue<StreamingAssetHandle>(8);
 
             #endregion // State
 
@@ -373,7 +373,7 @@ namespace EasyAssetStreaming {
                     TextureCompression compression = ResolveCompression(settings.CompressionLevel);
                     texture.LoadImage(source, compression == 0);
                     if (compression > 0) {
-                        s_TexturePostProcessQueue.Add(id);
+                        s_TexturePostProcessQueue.Enqueue(id);
                     }
                 } catch(Exception e) {
                     UnityEngine.Debug.LogException(e);
@@ -413,6 +413,32 @@ namespace EasyAssetStreaming {
                 }
  
                 return settings;
+            }
+
+            static internal void ProcessCompressionQueue() {
+                if (s_TexturePostProcessQueue.Count > 0) {
+                    StreamingAssetHandle handle = s_TexturePostProcessQueue.Dequeue();
+                    if (!IsLoaded(handle)) {
+                        return;
+                    }
+
+                    Texture texture;
+                    if (!TextureMap.TryGetValue(handle, out texture)) {
+                        return;
+                    }
+
+                    Texture2D texture2d = texture as Texture2D;
+                    if (!texture2d) {
+                        return;
+                    }
+
+                    AssetMetaInfo meta = handle.MetaInfo;
+                    TextureSettings settings = Manifest.Entry(meta.AddressHash, meta.Address, StreamingAssetTypeId.Texture).Texture;
+
+                    long mark = Stopwatch.GetTimestamp();
+                    PostApplySettings(texture2d, settings, ResolveCompression(settings.CompressionLevel), true);
+                    UnityEngine.Debug.LogFormat("[Streaming] Applied compression to '{0}' (took {1}ms)", meta.Address, (double) (Stopwatch.GetTimestamp() - mark) / Stopwatch.Frequency * 1000);
+                }
             }
 
             static private void PostApplySettings(Texture2D texture, TextureSettings settings, TextureCompression compression, bool final) {
@@ -523,9 +549,9 @@ namespace EasyAssetStreaming {
 
             static private bool s_OverBudgetFlag;
 
-            static public void CheckBudget(long now) {
+            static public bool CheckBudget(long now) {
                 if (MemoryBudget <= 0) {
-                    return;
+                    return false;
                 }
 
                 long over = MemoryUsage.Current - MemoryBudget;
@@ -538,10 +564,13 @@ namespace EasyAssetStreaming {
                     if (asset) {
                         UnloadSingle(asset, now);
                         s_OverBudgetFlag = false;
+                        return true;
                     }
                 } else {
                     s_OverBudgetFlag = false;
                 }
+
+                return false;
             }
 
             #endregion // Budget

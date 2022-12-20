@@ -378,7 +378,7 @@ public class SchoolChild : MonoBehaviour
 		//foreach(AnimationState state in _model.GetComponent<Animation>()) {
 		//	state.speed = (Random.Range(_spawner._minAnimationSpeed, _spawner._maxAnimationSpeed)*_spawner._schoolSpeed*this._speed)+.1f;}
 
-		fishMaterial.SetFloat("fishWaveSpeed", randomAnimSpeed + this._speed);
+		fishMaterial.SetFloat("fishWaveSpeed", randomAnimSpeed + (this._speed / 2));
 	}
 
 	public void Wander(float delay)

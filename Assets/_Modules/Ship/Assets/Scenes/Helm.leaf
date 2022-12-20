@@ -3,7 +3,7 @@
 // STORY BEAT I
 :: finalJobRadio
 @trigger    SceneStart
-@when       SpecterCount() >= 8 // <- total number of specters
+@when       jobs:final-final.tio.code-received
 @once
 @cutscene
 // Upgrade Victor - instantly the specters unscramble. Sam’s distress call comes through.
@@ -23,7 +23,6 @@ $branch common.ringPhone
         Systems are crashing. Lab’s still out of commission. We’re running out of time. 
         I’m sending you the job. Please, O. If you get this—we need help.
         We need some way to get rid of this thing.
-$call GiveEntity(DeepDeepSea, Silent)
 
 // Start Final Job
 $call SetJob(final-final)

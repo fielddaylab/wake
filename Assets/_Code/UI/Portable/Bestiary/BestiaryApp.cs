@@ -10,6 +10,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using EasyAssetStreaming;
+using System.Collections;
 
 namespace Aqua.Portable {
     public sealed class BestiaryApp : PortableMenuApp {
@@ -20,7 +21,7 @@ namespace Aqua.Portable {
 
         public delegate void PopulateEntryToggleDelegate(PortableBestiaryToggle inToggle, BestiaryDesc inEntry);
         public delegate void PopulateEntryPageDelegate(BestiaryPage inPage, BestiaryDesc inEntry);
-        public delegate void PopulateFactsDelegate(BestiaryPage inPage, BestiaryDesc inEntry, ListSlice<BFBase> inFacts, FinalizeButtonDelegate inFinalizeCallback);
+        public delegate IEnumerator PopulateFactsDelegate(BestiaryPage inPage, BestiaryDesc inEntry, ListSlice<BFBase> inFacts, FinalizeButtonDelegate inFinalizeCallback);
         public delegate void FinalizeButtonDelegate(BFBase inFact, MonoBehaviour inDisplay);
         public delegate void GetEntryListDelegate(BestiaryDescCategory inCategory, List<TaggedBestiaryDesc> outEntries);
 
@@ -59,19 +60,15 @@ namespace Aqua.Portable {
         [NonSerialized] private List<BestiaryFactButton> m_InstantiatedButtons = new List<BestiaryFactButton>();
         [NonSerialized] private Action<BFBase> m_CachedSelectFactDelegate;
         [NonSerialized] private PortableRequest m_Request;
-        [NonSerialized] private bool m_LoadRequest = false;
+        [NonSerialized] private Routine m_EntryPageLoad;
+        [NonSerialized] private float m_LastScroll = 1;
 
         #region Panel
 
-        protected override void OnShowComplete(bool inbInstant) {
-            base.OnShowComplete(inbInstant);
-
-            LoadEntries();
-            LoadEntry(null, false);
-        }
-
         protected override void OnHide(bool inbInstant) {
             Script.WriteVariable("portable:bestiary.currentEntry", null);
+
+            m_LastScroll = m_EntryScroll.verticalNormalizedPosition;
 
             m_InfoPage.Sketch.Clear();
             m_InfoPage.FactPools.FreeAll();
@@ -80,12 +77,35 @@ namespace Aqua.Portable {
 
             m_ListPools.Clear();
             m_EntryToggleGroup.SetAllTogglesOff(false);
-            m_LoadRequest = false;
+
+            if (m_Request.Type != PortableRequestType.SelectFact && m_Request.Type != PortableRequestType.SelectFactSet) {
+                m_Request = default(PortableRequest);
+            }
 
             m_InfoPage.gameObject.SetActive(false);
+            m_EntryPageLoad.Stop();
 
             m_CurrentEntry = null;
             base.OnHide(inbInstant);
+        }
+
+        protected override IEnumerator LoadData() {
+            yield return Routine.Amortize(LoadEntries(), 8);
+
+            float delay = 0.05f;
+            delay = AppearAnim.PingChildren(m_ListObjectRoot, false, delay, 0.1f, m_EntryScroll.viewport);
+            delay = AppearAnim.PingChildren((RectTransform) m_NoSelectionGroup.transform, false, delay, 0.4f);
+
+            switch(m_Request.Type) {
+                case PortableRequestType.ShowBestiary: {
+                    m_EntryPageLoad.Replace(this, LoadEntry(Assets.Bestiary(m_Request.TargetId), true)).Tick();
+                    break;
+                }
+                case PortableRequestType.ShowFact: {
+                    m_EntryPageLoad.Replace(this, LoadEntry(Assets.Fact(m_Request.TargetId).Parent, true)).Tick();
+                    break;
+                }
+            }
         }
 
         #endregion // Panel
@@ -95,13 +115,13 @@ namespace Aqua.Portable {
         private void OnEntryToggled(PortableBestiaryToggle inElement, bool inbOn) {
             if (!inbOn) {
                 if (!m_EntryToggleGroup.AnyTogglesOn())
-                    LoadEntry(null, false);
+                    m_EntryPageLoad.Replace(this, LoadEntry(null, false)).Tick();
                 return;
             }
 
             Services.Events.Dispatch(GameEvents.PortableEntrySelected, (BestiaryDesc)inElement.Data);
 
-            LoadEntry((BestiaryDesc)inElement.Data, false);
+            m_EntryPageLoad.Replace(this, LoadEntry((BestiaryDesc)inElement.Data, false)).Tick();
         }
 
         private void OnFactClicked(BFBase inFact) {
@@ -141,7 +161,7 @@ namespace Aqua.Portable {
         /// <summary>
         /// Loads all organism entries.
         /// </summary>
-        private void LoadEntries() {
+        private IEnumerator LoadEntries() {
             m_ListPools.Clear();
 
             using(PooledList<TaggedBestiaryDesc> entities = PooledList<TaggedBestiaryDesc>.Create()) {
@@ -151,9 +171,12 @@ namespace Aqua.Portable {
                     Save.Bestiary.GetEntities(Handler.Category, entities);
                     entities.Sort((a, b) => BestiaryDesc.SortByEnvironment(a.Entity, b.Entity));
                 }
+
                 StringHash32 mapId = default;
 
                 m_ListPools.PrewarmEntries(entities.Count);
+                m_EntryLayoutGroup.enabled = false;
+                m_EntryScroll.enabled = false;
 
                 foreach (var entry in entities) {
                     if (entry.Entity.HasFlags(BestiaryDescFlags.HideInBestiary)) {
@@ -174,28 +197,35 @@ namespace Aqua.Portable {
                     toggle.Data = entry.Entity;
                     toggle.Callback = m_CachedToggleDelegate ?? (m_CachedToggleDelegate = OnEntryToggled);
                     Handler.PopulateToggle(toggle, entry.Entity);
+                    yield return null;
                 }
             }
 
-            m_EntryLayoutGroup.ForceRebuild();
+            m_EntryLayoutGroup.enabled = true;
+            m_EntryScroll.enabled = true;
+            m_EntryLayoutGroup.ForceRebuild(false);
+
+            yield return null;
+            m_EntryScroll.verticalNormalizedPosition = m_LastScroll;
         }
 
         /// <summary>
         /// Loads an organism entry.
         /// </summary>
-        private void LoadEntry(BestiaryDesc inEntry, bool inbSyncToggles) {
+        private IEnumerator LoadEntry(BestiaryDesc inEntry, bool inbSyncToggles) {
             m_CurrentEntry = inEntry;
 
             if (inEntry == null) {
                 m_InfoPage.gameObject.SetActive(false);
                 m_NoSelectionGroup.SetActive(true);
-                LoadEntryFacts(null);
+                m_InfoPage.FactPools.FreeAll();
+                m_InstantiatedButtons.Clear();
                 m_EntryToggleGroup.SetAllTogglesOff();
                 Script.WriteVariable("portable:bestiary.currentEntry", null);
                 if (inbSyncToggles) {
                     m_EntryScroll.verticalNormalizedPosition = 1;
                 }
-                return;
+                return null;
             }
 
             Script.WriteVariable("portable:bestiary.currentEntry", m_CurrentEntry.Id());
@@ -215,20 +245,21 @@ namespace Aqua.Portable {
 
             m_InfoPage.FactScroll.verticalNormalizedPosition = 1;
             Handler.PopulatePage(m_InfoPage, inEntry);
-            LoadEntryFacts(inEntry);
+            m_InfoPage.FactPools.FreeAll();
+            m_InstantiatedButtons.Clear();
+
+            foreach (var layoutfix in m_InfoPage.LayoutFixes)
+                layoutfix.Rebuild();
+
+            float delay = m_InfoPage.HeaderAnim.Play();
+            return LoadEntryFacts(inEntry, delay);
         }
 
         /// <summary>
         /// Loads facts for the entry.
         /// </summary>
-        private void LoadEntryFacts(BestiaryDesc inEntry) {
-            m_InfoPage.FactPools.FreeAll();
-            m_InstantiatedButtons.Clear();
-
-            if (inEntry == null) {
-                return;
-            }
-
+        private IEnumerator LoadEntryFacts(BestiaryDesc inEntry, float delay) {
+            float original = Time.time;
             using(PooledList<BFBase> facts = PooledList<BFBase>.Create()) {
                 Save.Bestiary.GetFactsForEntity(inEntry.Id(), facts);
                 bool hasNoFacts = m_InfoPage.NoFacts;
@@ -239,16 +270,26 @@ namespace Aqua.Portable {
                     m_InfoPage.HasFacts.SetActive(facts.Count > 0 || !hasNoFacts);
                 }
 
+                m_InfoPage.FactGroup.alpha = 0;
+
                 if (facts.Count > 0 || !hasNoFacts) {
+                    m_InfoPage.FactLayout.enabled = false;
+                    m_InfoPage.FactScroll.enabled = false;
+
                     facts.Sort(BFType.SortByVisualOrder);
-                    Handler.PopulateFacts(m_InfoPage, inEntry, facts, FinalizeFactButton);
+                    yield return Routine.Amortize(Handler.PopulateFacts(m_InfoPage, inEntry, facts, FinalizeFactButton), 8);
+
+                    m_InfoPage.FactLayout.enabled = true;
+                    m_InfoPage.FactScroll.enabled = true;
+
+                    m_InfoPage.FactLayout.ForceRebuild(false);
                 }
             }
 
-            m_InfoPage.FactLayout.ForceRebuild();
+            yield return null;
 
-            foreach (var layoutfix in m_InfoPage.LayoutFixes)
-                layoutfix.Rebuild();
+            m_InfoPage.FactGroup.alpha = 1;
+            AppearAnim.PingChildren(m_InfoPage.FactScroll.content, true, Math.Max(0, delay - (Time.time - original)), 0.1f, m_InfoPage.FactScroll.viewport);
         }
 
         private void FinalizeFactButton(BFBase inFact, MonoBehaviour inDisplay) {
@@ -287,21 +328,9 @@ namespace Aqua.Portable {
 
         public override void HandleRequest(PortableRequest inRequest) {
             switch(inRequest.Type) {
-                case PortableRequestType.ShowBestiary: {
-                    LoadEntry(Assets.Bestiary(inRequest.TargetId), true);
-                    break;
-                }
-
-                case PortableRequestType.ShowFact: {
-                    LoadEntry(Assets.Fact(inRequest.TargetId).Parent, true);
-                    break;
-                }
-
-                case PortableRequestType.SelectFact: {
-                    m_Request = inRequest;
-                    break;
-                }
-
+                case PortableRequestType.ShowBestiary:
+                case PortableRequestType.ShowFact:
+                case PortableRequestType.SelectFact:
                 case PortableRequestType.SelectFactSet: {
                     m_Request = inRequest;
                     break;

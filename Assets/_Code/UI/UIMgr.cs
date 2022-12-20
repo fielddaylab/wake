@@ -269,6 +269,8 @@ namespace Aqua
                 GameObject instantiated = Instantiate(asset);
                 yield return null;
                 DontDestroyOnLoad(instantiated);
+                m_PersistentUIObjects.Capacity = instantiated.transform.childCount;
+                
                 foreach(Transform child in instantiated.transform)
                 {
                     m_PersistentUIObjects.Add(child.gameObject);

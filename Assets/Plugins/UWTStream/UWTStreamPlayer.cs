@@ -9,6 +9,8 @@ namespace BeauUWT
     /// </summary>
     public partial class UWTStreamPlayer : MonoBehaviour
     {
+        static private string CachedStreamingPath;
+
         /// <summary>
         /// Error codes.
         /// </summary>
@@ -213,7 +215,7 @@ namespace BeauUWT
         /// </summary>
         public void SetURLFromStreamingAssets(string inPath)
         {
-            SourceURL = PathToURL(Path.Combine(Application.streamingAssetsPath, inPath));
+            SourceURL = PathToURL(Path.Combine(CachedStreamingPath ?? (CachedStreamingPath = Application.streamingAssetsPath), inPath));
         }
 
         static private string PathToURL(string inFilePath)

@@ -6,6 +6,7 @@ using Aqua.Profile;
 using Aqua.Scripting;
 using BeauRoutine;
 using BeauUtil;
+using BeauUtil.Variants;
 using Leaf.Runtime;
 using ScriptableBake;
 using UnityEngine;
@@ -19,6 +20,9 @@ namespace Aqua.WorldMap
         static public readonly StringHash32 Event_RequestChangeStation = "worldmap:request-change-station"; // StringHash32 stationId
         static public readonly StringHash32 Event_StationChanging = "worldmap:station-changing"; // StringHash32 stationId
 
+        static public readonly TableKeyPair Var_BetweenDreamTravelCount = TableKeyPair.Parse("world:betweenDreamTravelCount");
+        static public readonly TableKeyPair Var_SamConvoActivated = TableKeyPair.Parse("world:final.samConvo.activated");
+
         static public readonly StringHash32 Trigger_WorldMapLeaving = "WorldMapLeave";
 
         [SerializeField] private CanvasGroup m_SceneExitButtonGroup = null;
@@ -31,6 +35,8 @@ namespace Aqua.WorldMap
 
         private Routine m_ExitButtonRoutine;
         private Routine m_ShipOutRoutine;
+
+        static private bool s_DreamLoadFlag;
 
         private void Awake()
         {
@@ -165,10 +171,11 @@ namespace Aqua.WorldMap
             }
 
             s_DreamLoadFlag = false;
-            s_BetweenDreamTravels++;
+            int betweenDreamsTravelCount = Script.ReadVariable(Var_BetweenDreamTravelCount, 0).AsInt();
+            Script.WriteVariable("world:betweenDreamTravelCount", betweenDreamsTravelCount + 1);
 
             // TODO: dream implementation
-            using(var table = TempVarTable.Alloc()) {
+            using (var table = TempVarTable.Alloc()) {
                 table.Set("previousStation", oldStationId);
                 table.Set("nextStation", stationId);
 
@@ -189,13 +196,10 @@ namespace Aqua.WorldMap
 
         #region Dream
 
-        static private bool s_DreamLoadFlag;
-        static private int s_BetweenDreamTravels;
-
         [LeafMember("PrepareDream"), Preserve]
         static private IEnumerator LeafPrepareDream(string mapName) {
             s_DreamLoadFlag = true;
-            s_BetweenDreamTravels = 0; // player has seen dream, so reset tally
+            Script.WriteVariable("world:betweenDreamTravelCount", 0); // player has seen dream, so reset tally
 
             StringHash32 preloadGroup = "Scene/" + mapName;
             bool preloaded = false;
@@ -228,7 +232,7 @@ namespace Aqua.WorldMap
 
         [LeafMember("CurrBetweenDreamTravels"), Preserve]
         static private int LeafCurrBetweenDreamTravels() {
-            return s_BetweenDreamTravels;
+            return Script.ReadVariable(Var_BetweenDreamTravelCount, 0).AsInt();
         }
 
 
@@ -236,16 +240,14 @@ namespace Aqua.WorldMap
 
         #region Sam
 
-        static private bool s_ActivateSamConvoFlag;
-
         [LeafMember("ActivateSamConvo"), Preserve]
         static private void LeafActivateSamConvo() {
-            s_ActivateSamConvoFlag = true;
+            Script.WriteVariable("world:final.samConvo.activated", true);
         }
 
         [LeafMember("IsSamConvoActivated"), Preserve]
         static private bool LeafIsSamConvoActivated() {
-            return s_ActivateSamConvoFlag;
+            return Script.ReadVariable(Var_SamConvoActivated, false).AsBool();
         }
 
         #endregion // Sam

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Aqua;
 using BeauPools;
@@ -67,7 +68,7 @@ namespace Aqua.Portable {
             toggle.Text.Graphic.rectTransform.offsetMin = new Vector2(38, 4);
         }
 
-        static private void PopulateEntryPage(BestiaryPage page, BestiaryDesc entry) {
+        private void PopulateEntryPage(BestiaryPage page, BestiaryDesc entry) {
             if (Save.Science.FullyDecrypted()) {
                 page.ScientificName.SetTextFromString(entry.ScientificName());
                 page.CommonName.SetText(entry.CommonName());
@@ -77,12 +78,6 @@ namespace Aqua.Portable {
                 page.CommonName.SetTextNoParse(Formatting.ScrambleLoc(entry.CommonName()));
                 page.Description.SetTextNoParse(Formatting.ScrambleLoc(entry.Description()));
             }
-            
-            page.Sketch.Display(entry.ImageSet());
-        }
-
-        private void PopulateEntryFacts(BestiaryPage page, BestiaryDesc entry, ListSlice<BFBase> facts, BestiaryApp.FinalizeButtonDelegate finalizeCallback) {
-            bool bState = false, bBehavior = false;
 
             bool encrypt = !Save.Science.FullyDecrypted();
 
@@ -91,6 +86,12 @@ namespace Aqua.Portable {
             } else {
                 m_EncodedMessageText.SetTextNoParse(Formatting.ScrambleLoc(entry.EncodedMessage()));
             }
+            
+            page.Sketch.Display(entry.ImageSet());
+        }
+
+        private IEnumerator PopulateEntryFacts(BestiaryPage page, BestiaryDesc entry, ListSlice<BFBase> facts, BestiaryApp.FinalizeButtonDelegate finalizeCallback) {
+            bool bState = false, bBehavior = false;
 
             m_StateFactHeader.gameObject.SetActive(false);
             m_BehaviorFactHeader.gameObject.SetActive(false);
@@ -123,6 +124,7 @@ namespace Aqua.Portable {
                     entry, page.FactLayout.transform);
 
                 finalizeCallback(fact, factDisplay);
+                yield return null;
             }
         }
     }

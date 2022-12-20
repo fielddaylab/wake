@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using BeauRoutine;
 using BeauUtil;
@@ -97,6 +98,63 @@ namespace Aqua {
             }
             Apply(0);
             return duration;
+        }
+
+        static public float PingGroup(AppearAnim[] anims, float delay, float intervalScale, RectTransform clipping = null) {
+            bool hasClipping = clipping;
+            for(int i = 0; i < anims.Length; i++) {
+                AppearAnim anim = anims[i];
+                if (anim.isActiveAndEnabled && (!hasClipping || CanvasExtensions.IsVisible(clipping, (RectTransform) anim.transform))) {
+                    delay += anim.Ping(delay) * intervalScale;
+                }
+            }
+            return delay;
+        }
+
+        static public float PingGroup(List<AppearAnim> anims, float delay, float intervalScale, RectTransform clipping = null) {
+            bool hasClipping = clipping;
+            for(int i = 0; i < anims.Count; i++) {
+                AppearAnim anim = anims[i];
+                if (anim.isActiveAndEnabled && (!hasClipping || CanvasExtensions.IsVisible(clipping, (RectTransform) anim.transform))) {
+                    delay += anim.Ping(delay) * intervalScale;
+                }
+            }
+            return delay;
+        }
+
+        static public int FindGroup(Transform root, List<AppearAnim> group, bool recursive = false) {
+            int childCount = root.childCount;
+            int animCount = 0;
+            for(int i = 0; i < childCount; i++) {
+                Transform child = root.GetChild(i);
+                AppearAnim anim = child.GetComponent<AppearAnim>();
+                if (anim) {
+                    group.Add(anim);
+                    animCount++;
+                } else if (recursive) {
+                    animCount += FindGroup(child, group, true);
+                }
+            }
+            return animCount;
+        }
+
+        static public float PingChildren(Transform animRoot, bool recursive, float delay, float intervalScale, RectTransform clipping = null) {
+            if (animRoot.gameObject.activeInHierarchy) {
+                bool hasClipping = clipping;
+                int childCount = animRoot.childCount;
+                for(int i = 0; i < childCount; i++) {
+                    Transform child = animRoot.GetChild(i);
+                    AppearAnim anim = child.GetComponent<AppearAnim>();
+                    if (anim) {
+                        if (anim.isActiveAndEnabled && (!hasClipping || CanvasExtensions.IsVisible(clipping, (RectTransform) child))) {
+                            delay += anim.Ping(delay) * intervalScale;
+                        }
+                    } else if (recursive) {
+                        delay = PingChildren(child, true, delay, intervalScale, clipping);
+                    }
+                }
+            }
+            return delay;
         }
     }
 }

@@ -239,9 +239,9 @@ namespace EasyAssetStreaming {
 
             static private bool s_OverBudgetFlag;
 
-            static public void CheckBudget(long now) {
+            static public bool CheckBudget(long now) {
                 if (MemoryBudget <= 0) {
-                    return;
+                    return false;
                 }
 
                 long over = MemoryUsage.Current - MemoryBudget;
@@ -254,10 +254,13 @@ namespace EasyAssetStreaming {
                     if (asset) {
                         UnloadSingle(asset, now);
                         s_OverBudgetFlag = false;
+                        return true;
                     }
                 } else {
                     s_OverBudgetFlag = false;
                 }
+
+                return false;
             }
 
             #endregion // Budget

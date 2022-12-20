@@ -13,19 +13,30 @@
 ::samFinalTrigger
 @trigger PlayerEnterRegion
 @when regionId == "chalDeep00"
+@cutscene
 @once
 
 {@player} Wow. {nameof @guide}, that's the Challenger Deep. Mer's life's work!
 {@guide} Affirmative. This probe contains 10 years of deep-sea data.
 
-$set jobs:final-final.probe-eaten = false
-
 ::firstScanChallengerDeep
 @trigger    ScannedObject
-@when       scanId == "RS-0-Final.probe"
+@when       scanId == "RS-0-Final.probe.passing"
+@cutscene
 {@guide}   I would not recommend activating the probe now, O. 
 {@guide}    The lights are extremely bright and might attract the creature. 
 {@player}   Right. I don't have time to stop, anyway. We need to find Sam! 
+
+::activationScanChallengerDeep
+@trigger    ScannedObject
+@when       scanId == "RS-0-Final.probe.activating"
+{@player}   Here we go! Activating the Challenger Deep.{auto}{wait abs-2}
+$call ChalActivateAnimTrigger-Probe->SetAnimInt("Activate", 1)
+$call ChalActivateAnimTrigger-Probe->PlayAnim("Activate-to-pull")
+$call ChalActivateAnimTrigger-Squid->SetAnimInt("Anim", 3)
+$call ChalActivateAnimTrigger-Squid->PlayAnim("ChalCrush")
+
+
 
 ::guideFlashlightOffTrigger
 @trigger PlayerEnterRegion
@@ -35,15 +46,15 @@ $set jobs:final-final.probe-eaten = false
 
 {@guide}    WARNING: the colossal squid is nearby. 
             Disabling your flashlight to avoid detection.
-// TODO: disable flashlight
-
+$call SetToolAllowed(Flashlight, false)
 
 ::samFinalTrigger2
 @trigger PlayerEnterRegion
 @when regionId == "samRadio"
+@cutscene
 @once
 
-{wait 2}
+{wait 1}
 
 {@player} {nameof @guide}, that's Sam's station! 
 {@sam} O! Is that you?
@@ -69,8 +80,8 @@ $set jobs:final-final.probe-eaten = false
 {@player} Let's do this. 
 {@player} Sam, if you can hear me, I'm turning on the probe to draw the squid away!
 {@player} Just hold on a little longer!
-$call ChalDeepScannable->Deactivate()
-$set jobs:final-final.probe-eaten = true
+$call ChalDeepScannablePassing->Deactivate()
+$call ChalDeepScannableActivating->Activate()
 {wait-abs 2}
 
 
@@ -85,6 +96,7 @@ $call EntranceEffects->Activate()
 {wait 17}
 $call StationEntranceFinal->Activate()
 
+{wait 3}
 {@guide} The Challenger Deep signal has been lost. 
 {@player} Wow. I can't believe it's really gone.
 {@player} ... 

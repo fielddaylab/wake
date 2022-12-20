@@ -14,6 +14,7 @@ namespace Aqua.Portable
 
         [SerializeField, Required] private RectTransform m_AnimationRoot = null;
         [SerializeField, Required] private Toggle m_Toggle = null;
+        [SerializeField, Required] private FlashAnim m_NewFlash = null;
         [SerializeField] private float m_OffscreenX = 80;
         [SerializeField] private TweenSettings m_ShowHideAnim = new TweenSettings(0.2f, Curve.Smooth);
 
@@ -22,7 +23,6 @@ namespace Aqua.Portable
         [NonSerialized] private float m_OnscreenX;
         [NonSerialized] private PortableMenu m_Menu;
         [NonSerialized] private Routine m_NewAnim;
-        [NonSerialized] private RectTransformState m_OriginalAnimState;
 
         public Toggle Toggle { get { return m_Toggle; } }
 
@@ -50,16 +50,12 @@ namespace Aqua.Portable
         protected override void OnEnable()
         {
             base.OnEnable();
-
-            m_OriginalAnimState = RectTransformState.Create(m_AnimationRoot);
         }
 
         protected override void OnDisable()
         {
             m_Toggle.isOn = false;
             m_NewAnim.Stop();
-
-            m_OriginalAnimState.Apply(m_AnimationRoot);
 
             base.OnDisable();
         }
@@ -82,7 +78,6 @@ namespace Aqua.Portable
         private void OnPortableOpened(PortableRequest inRequest)
         {
             m_NewAnim.Stop();
-            m_OriginalAnimState.Apply(m_AnimationRoot);
 
             m_Toggle.SetIsOnWithoutNotify(true);
             m_Toggle.interactable = (inRequest.Flags & PortableRequestFlags.DisableClose) == 0;
@@ -118,8 +113,7 @@ namespace Aqua.Portable
                 yield return null;
             
             Services.Audio.PostEvent("portable.ping.new");
-            yield return m_AnimationRoot.AnchorPosTo(m_AnimationRoot.anchoredPosition.y + 4, 0.3f, Axis.Y).Ease(Curve.CubeOut);
-            yield return m_AnimationRoot.AnchorPosTo(m_OriginalAnimState.AnchoredPos.y, 0.5f, Axis.Y).Ease(Curve.BounceOut);
+            m_NewFlash.Ping();
         }
 
         protected override void InstantTransitionToHide() {

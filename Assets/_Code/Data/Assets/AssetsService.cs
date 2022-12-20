@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -94,8 +95,9 @@ namespace Aqua {
                 foreach(var group in preloadManifest.Groups) {
                     if (group.Paths != null) {
                         // pre-translate to streaming assets url
+                        group.PathUrls = new string[group.Paths.Length];
                         for(int i = 0; i < group.Paths.Length; i++) {
-                            group.Paths[i] = NativePreload.StreamingAssetsURL(group.Paths[i]);
+                            group.PathUrls[i] = NativePreload.StreamingAssetsURL(group.Paths[i]);
                         }
                     }
                     m_PreloadGroupMap.Add(group.Id, group);
@@ -170,8 +172,8 @@ namespace Aqua {
                     }
                 }
             }
-            if (group.Paths != null) {
-                foreach(var path in group.Paths) {
+            if (group.PathUrls != null) {
+                foreach(var path in group.PathUrls) {
                     if (!IsPathLoaded(path)) {
                         return false;
                     }
@@ -195,8 +197,8 @@ namespace Aqua {
                         TryPreloadGroup(include);
                     }
                 }
-                if (group.Paths != null) {
-                    foreach(var path in group.Paths) {
+                if (group.PathUrls != null) {
+                    foreach(var path in group.PathUrls) {
                         TryPreloadPath(path);
                     }
                 }
@@ -225,8 +227,8 @@ namespace Aqua {
                             TryCancelPreloadGroup(include);
                         }
                     }
-                    if (group.Paths != null) {
-                        foreach(var path in group.Paths) {
+                    if (group.PathUrls != null) {
+                        foreach(var path in group.PathUrls) {
                             TryCancelPreloadPath(path);
                         }
                     }
@@ -245,9 +247,9 @@ namespace Aqua {
             refCount++;
             m_PreloadPathRefCountMap[id] = refCount;
             if (refCount == 1) {
-                string extension = Path.GetExtension(path).ToLowerInvariant();
+                string extension = Path.GetExtension(path);
                 NativePreload.ResourceType type = NativePreload.ResourceType.Unknown;
-                if (extension == ".mp3") {
+                if (extension.Equals(".mp3", StringComparison.OrdinalIgnoreCase)) {
                     type = NativePreload.ResourceType.Audio;
                 }
                 NativePreload.Preload(path, type);
@@ -287,6 +289,42 @@ namespace Aqua {
         #endregion // Preload
 
         #region Preload+Streaming
+
+        public void StreamingPreloadGroup(StringHash32 id, List<StreamingAssetHandle> assets) {
+            if (!m_PreloadGroupMap.TryGetValue(id, out PreloadGroup group)) {
+                Log.Error("[AssetsService] Preload group with id '{0}' does not exist", id);
+                return;
+            }
+
+            if (group.Include != null) {
+                foreach(var include in group.Include) {
+                    StreamingPreloadGroup(include, assets);
+                }
+            }
+            if (group.Paths != null) {
+                foreach(var path in group.Paths) {
+                    TryStreamingPreloadPath(path, assets);
+                }
+            }
+            if (group.LowPriority != null) {
+                foreach(var include in group.LowPriority) {
+                    StreamingPreloadGroup(include, assets);
+                }
+            }
+        }
+
+        private void TryStreamingPreloadPath(string path, List<StreamingAssetHandle> assets) {
+            if (!path.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase) && !path.EndsWith(".ogg", StringComparison.OrdinalIgnoreCase)) {
+                assets.Add(Streaming.Texture(path));
+            }
+        }
+
+        public void CancelStreamingPreloadGroup(List<StreamingAssetHandle> assets) {
+            foreach(var assetId in assets) {
+                Streaming.Unload(assetId);
+            }
+            assets.Clear();
+        }
 
         #endregion // Preload+Streaming
     }

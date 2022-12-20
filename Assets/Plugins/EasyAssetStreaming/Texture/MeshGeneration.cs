@@ -36,7 +36,9 @@ namespace EasyAssetStreaming {
             Mesh mesh = ioOverwrite;
             if (mesh == null) {
                 mesh = new Mesh();
+                #if UNITY_EDITOR
                 mesh.name = "Quad" + inTessellation.ToString();
+                #endif // UNITY_EDITOR
             }
 
             if (inTessellation == 0) {

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Aqua;
 using BeauPools;
@@ -74,7 +75,7 @@ namespace Aqua.Portable {
             // TODO: display locations
         }
 
-        private void PopulateEntryFacts(BestiaryPage page, BestiaryDesc entry, ListSlice<BFBase> facts, BestiaryApp.FinalizeButtonDelegate finalizeCallback) {
+        private IEnumerator PopulateEntryFacts(BestiaryPage page, BestiaryDesc entry, ListSlice<BFBase> facts, BestiaryApp.FinalizeButtonDelegate finalizeCallback) {
             bool bState = false, bBehavior = false;
 
             m_StateFactHeader.gameObject.SetActive(false);
@@ -108,6 +109,7 @@ namespace Aqua.Portable {
                     entry, page.FactLayout.transform);
 
                 finalizeCallback(fact, factDisplay);
+                yield return null;
             }
         }
     }

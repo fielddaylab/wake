@@ -52,6 +52,17 @@ namespace Aqua.Portable {
                 Services.Script.RegisterChoiceSelector("fact", RequestFact);
             }
 
+            Func<float> initialDelayFunc = () => {
+                if (IsTransitioning()) {
+                    return m_ToOnAnimSettings.Time;
+                } else {
+                    return 0;
+                }
+            };
+            for(int i = 0; i < m_AppButtons.Length; i++) {
+                m_AppButtons[i].SetInitialDelay(initialDelayFunc);
+            }
+
             Services.UI.Popup.OnShowEvent.AddListener((s) => OnPopupOpened());
             Services.UI.Popup.OnHideCompleteEvent.AddListener((s) => OnPopupClosed());
 
