@@ -88,17 +88,7 @@ $elseif jobs:final-final.upgradeReady, !JobStartedOrComplete(final-final)
 
 $elseif JobInProgress(final-final), JobTaskTop(getUncleHelp)
     // final job, ask uncle for help
-    {@$MerchantId}  Welcome back Ollie!
-    {@player}       Can you restore power to the ship and save {nameof @guide}?
-    {@$MerchantId}  Oh, uh. Well. I may be able to do something about that.
-                    Give me a minute...
-                    {hide-dialog} {fade-out black, 1, wait} {wait 2}
-                    {wait 0.1} {fade-in 1, wait} {wait 1}
-                    $set jobs:final-power-disabled = false
-    {@$MerchantId}  Power should be restored now. Why don't you head to your ship to see if everything is fixed?
-    $set jobs:final-uncleHelped = true
-    $set jobs:final-power-disabled = false
-    $call CheckJobTasks()
+    $branch .restorePower
 $else
     {@$MerchantId} Welcome back, mijita. Need any upgrades for your ship? 
     $choice .action.openShop; Sure, I'll take a look. Thanks, Tío!
@@ -170,6 +160,20 @@ $choice .action.cancel; Not right now.
 {@$MerchantId}  I've found the code to upgrade {nameof guide} and unscramble all the glitches!
                 Head up to your ship to test it out.
 $set    jobs:final-final.tio.code-received = true 
+
+:: restorePower
+@cutscene
+{@$MerchantId}  Welcome back Ollie!
+{@player}       Can you restore power to the ship and save {nameof @guide}?
+{@$MerchantId}  Oh, uh. Well. I may be able to do something about that.
+                Give me a minute...
+                {hide-dialog} {fade-out black, 1, wait} {wait 2}
+                {wait 0.1} {fade-in 1, wait} {wait 1}
+                $set jobs:final-power-disabled = false
+{@$MerchantId}  Power should be restored now. Why don't you head to your ship to see if everything is fixed?
+$set jobs:final-uncleHelped = true
+$set jobs:final-power-disabled = false
+$call CheckJobTasks()
 
 // Idle
 
