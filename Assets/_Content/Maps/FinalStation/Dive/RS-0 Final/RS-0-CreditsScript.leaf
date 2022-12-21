@@ -5,9 +5,14 @@
 @noDelay
 
 {fade-out black, 0}
-
-$call hotbar.guide->Lock()
-$call hotbar.portable->Lock()
-
 {wait 0.5}
 {fade-in 1}
+{wait 3}
+$call Music->PlayBGM()
+
+:: afterDone
+@trigger    CreditsOver
+@triggerPriority Cutscene
+
+{wait 1}
+$call LoadSceneFade("RS-1C-StationInterior")

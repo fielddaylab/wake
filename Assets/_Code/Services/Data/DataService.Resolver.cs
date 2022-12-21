@@ -823,6 +823,12 @@ namespace Aqua
                 return Save.Map.UnlockStation(inStationId);
             }
 
+            [LeafMember("SetCurrentStation"), UnityEngine.Scripting.Preserve]
+            static private bool SetCurrentStation(StringHash32 inStationId)
+            {
+                return Save.Map.SetCurrentStationId(inStationId);
+            }
+
             [LeafMember("LockStation"), UnityEngine.Scripting.Preserve]
             static private bool LockStation(StringHash32 inStationId)
             {

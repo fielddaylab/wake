@@ -105,6 +105,17 @@ namespace Aqua
         {
             var job = Assets.Job(inJobId);
 
+            if (job.HasFlags(JobDescFlags.NoPopup)) {
+                // inventory adjustment
+                Save.Inventory.AdjustItem(ItemIds.Cash, job.CashReward());
+                Save.Inventory.AdjustItem(ItemIds.Exp, job.ExpReward());
+
+                if (!job.JournalId().IsEmpty) {
+                    Save.Inventory.AddJournalEntry(job.JournalId());
+                }
+                return;
+            }
+
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("jobId", inJobId);

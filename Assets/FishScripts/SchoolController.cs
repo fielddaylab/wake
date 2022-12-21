@@ -182,6 +182,7 @@ public class SchoolController : MonoBehaviour, ScriptableBake.IBaked {
     int ScriptableBake.IBaked.Order { get { return 0; } }
 
     bool ScriptableBake.IBaked.Bake(ScriptableBake.BakeFlags flags, ScriptableBake.BakeContext context) {
+        _roamers = new List<SchoolChild>(_childAmount);
         AddFish(_childAmount);
         return true;
     }
