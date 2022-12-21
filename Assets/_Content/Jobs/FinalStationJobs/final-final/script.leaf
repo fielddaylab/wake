@@ -216,7 +216,7 @@ $call ArgueComplete()
 {@drKelp}   If you're going to insist...
             I'm sorry O. I have to make sure you stay safe.
 {hide-dialog} {fade-out black, 1, wait} {wait 2}
-// TODO: hide mother
+$call       Mom->TeleportTo(mom-hidden-pos)
 $set jobs:final-power-disabled = true
 $call GiveJournalEntry("53_FinalJob")
 
