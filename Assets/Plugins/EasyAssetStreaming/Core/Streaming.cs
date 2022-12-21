@@ -77,7 +77,7 @@ namespace EasyAssetStreaming {
             Error_Server,
             Cancelled,
             Error_Unknown,
-            Error_Simulated
+            Error_Simulated,
         }
 
         /// <summary>

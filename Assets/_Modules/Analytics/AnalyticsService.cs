@@ -49,7 +49,7 @@ namespace Aqua
         [NonSerialized] private string m_CurrentTankType = string.Empty;
         [NonSerialized] private string m_CurrentEnvironment = string.Empty;
         [NonSerialized] private List<string> m_CurrentCritters = new List<string>();
-        [NonSerialized] private bool m_StabilizerEnabled = true;
+        [NonSerialized] private bool m_StabilizerEnabled = false;
         [NonSerialized] private bool m_AutoFeederEnabled = false;
         [NonSerialized] private StringHash32 m_CurrentArgumentId = null;
         [NonSerialized] private bool m_Debug;
@@ -112,6 +112,8 @@ namespace Aqua
 
             Services.Script.OnTargetedThreadStarted += GuideHandler;
             SceneHelper.OnSceneLoaded += LogSceneChanged;
+
+            NetworkStats.OnError.Register(OnNetworkError);
 
             m_Log = new OGDLog(new OGDLogConsts() {
                 AppId = m_AppId,
@@ -860,7 +862,7 @@ namespace Aqua
             m_CurrentTankType = string.Empty;
             m_CurrentEnvironment = string.Empty;
             m_CurrentCritters = new List<string>();
-            m_StabilizerEnabled = true;
+            m_StabilizerEnabled = false;
             m_AutoFeederEnabled = false;
         }
 
@@ -916,6 +918,12 @@ namespace Aqua
         }
 
         #endregion // Argumentation
+
+        private void OnNetworkError(string url) {
+            using(var e = m_Log.NewEvent("load_error")) {
+                e.Param("url", url);
+            }
+        }
 
         #endregion // Log Events
 

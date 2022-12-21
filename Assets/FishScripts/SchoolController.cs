@@ -15,9 +15,10 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using System;
+using BeauUtil;
 
-
-public class SchoolController:MonoBehaviour{
+public class SchoolController : MonoBehaviour, ScriptableBake.IBaked {
 	
 	public SchoolChild[] _childPrefab;			// Assign prefab with SchoolChild script attached
 	public bool _groupChildToNewTransform;	// Parents fish transform to school transform
@@ -51,8 +52,8 @@ public class SchoolController:MonoBehaviour{
 	public bool _autoRandomPosition;			// Automaticly positions waypoint based on random values (_randomPositionTimerMin, _randomPositionTimerMax)
 	public float _forcedRandomDelay = 1.5f;		// Random delay added before forcing new waypoint
 	public float _schoolSpeed;					// Value multiplied to child speed
-	public List<SchoolChild> _roamers;
-	public Vector3 _posBuffer;
+	[NonSerialized] public List<SchoolChild> _roamers;
+	[NonSerialized] public Vector3 _posBuffer;
 	public Vector3 _posOffset;
 	
 	///AVOIDANCE
@@ -74,14 +75,14 @@ public class SchoolController:MonoBehaviour{
 	
 	//FRAME SKIP
 	public int _updateDivisor = 1;				//Skip update every N frames (Higher numbers might give choppy results, 3 - 4 on 60fps , 2 - 3 on 30 fps)
-	public float _newDelta;
-	public int _updateCounter;
-	public int _activeChildren;
+	[NonSerialized] public float _newDelta;
+	[NonSerialized] public int _updateCounter;
+	[NonSerialized] public int _activeChildren;
 	
 	public void Start() {
+        _roamers = new List<SchoolChild>(_childAmount);
 		_posBuffer = transform.position + _posOffset;
-		_schoolSpeed = Random.Range(1.0f , _childSpeedMultipler);
-		AddFish(_childAmount);
+		_schoolSpeed = RNG.Instance.NextFloat(1.0f , _childSpeedMultipler);
 		Invoke("AutoRandomWaypointPosition", RandomWaypointTime());
 	}
 	
@@ -113,7 +114,7 @@ public class SchoolController:MonoBehaviour{
 	public void AddFish(int amount){
 		if(_groupChildToNewTransform)InstantiateGroup();	
 		for(int i=0;i<amount;i++){
-			int child = Random.Range(0,_childPrefab.Length);
+			int child = RNG.Instance.Next(0,_childPrefab.Length);
 			SchoolChild obj = (SchoolChild)Instantiate(_childPrefab[child]);		
 		    obj._spawner = this;
 		    _roamers.Add(obj);
@@ -151,15 +152,15 @@ public class SchoolController:MonoBehaviour{
 	
 	//Set waypoint randomly inside box
 	public void SetRandomWaypointPosition() {
-		_schoolSpeed = Random.Range(1.0f , _childSpeedMultipler);
+		_schoolSpeed = RNG.Instance.NextFloat(1.0f , _childSpeedMultipler);
 		Vector3 t = Vector3.zero;
-		t.x = Random.Range(-_positionSphere, _positionSphere) + transform.position.x;
-		t.z = Random.Range(-_positionSphereDepth, _positionSphereDepth) + transform.position.z;
-		t.y = Random.Range(-_positionSphereHeight, _positionSphereHeight) + transform.position.y;
+		t.x = RNG.Instance.NextFloat(-_positionSphere, _positionSphere) + transform.position.x;
+		t.z = RNG.Instance.NextFloat(-_positionSphereDepth, _positionSphereDepth) + transform.position.z;
+		t.y = RNG.Instance.NextFloat(-_positionSphereHeight, _positionSphereHeight) + transform.position.y;
 		_posBuffer = t;	
 		if(_forceChildWaypoints){
 			for(int i = 0; i < _roamers.Count; i++) {
-	  		 	(_roamers[i]).Wander(Random.value*_forcedRandomDelay);
+	  		 	(_roamers[i]).Wander(RNG.Instance.NextFloat()*_forcedRandomDelay);
 			}	
 		}
 	}
@@ -173,9 +174,18 @@ public class SchoolController:MonoBehaviour{
 	}
 	
 	public float RandomWaypointTime(){
-		return Random.Range(_randomPositionTimerMin, _randomPositionTimerMax);
+		return RNG.Instance.NextFloat(_randomPositionTimerMin, _randomPositionTimerMax);
 	}
 	
+    #if UNITY_EDITOR
+
+    int ScriptableBake.IBaked.Order { get { return 0; } }
+
+    bool ScriptableBake.IBaked.Bake(ScriptableBake.BakeFlags flags, ScriptableBake.BakeContext context) {
+        AddFish(_childAmount);
+        return true;
+    }
+
 	public void OnDrawGizmos() {
 		if(!Application.isPlaying && _posBuffer != transform.position+ _posOffset) _posBuffer = transform.position + _posOffset;
 	   	Gizmos.color = Color.blue;
@@ -183,4 +193,6 @@ public class SchoolController:MonoBehaviour{
 	    Gizmos.color = Color.cyan;
 	    Gizmos.DrawWireCube (transform.position, new Vector3((_positionSphere*2)+_spawnSphere*2, (_positionSphereHeight*2)+_spawnSphereHeight*2 ,(_positionSphereDepth*2)+_spawnSphereDepth*2));
 	}
+
+    #endif // UNITY_EDITOR
 }

@@ -101,7 +101,7 @@ namespace Aqua
                 foreach (var obj in AssetDatabase.LoadAllAssetsAtPath(path))
                 {
                     T asset = obj as T;
-                    if (asset)
+                    if (asset && asset.name == inName)
                         return asset;
                 }
             }
