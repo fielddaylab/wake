@@ -218,6 +218,7 @@ $call ArgueComplete()
 {hide-dialog} {fade-out black, 1, wait} {wait 2}
 // TODO: hide mother
 $set jobs:final-power-disabled = true
+$call GiveJournalEntry("53_FinalJob")
 
 :: argueRevisited
 @trigger    TryArgumentation
