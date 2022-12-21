@@ -127,7 +127,7 @@ namespace Aqua
 
         private void JobCompletedPopup(JobDesc inJob)
         {
-            var character = Assets.Character(inJob.PosterId());
+            uint oldExp = Save.Exp;
 
             // inventory adjustment
             Save.Inventory.AdjustItem(ItemIds.Cash, inJob.CashReward());
@@ -137,24 +137,20 @@ namespace Aqua
             {
                 psb.Builder.Append('\n', 2);
 
-                if (inJob.ExpReward() > 0)
-                {
-                    psb.Builder.Append(Loc.Format("ui.popup.jobComplete.expReward", inJob.ExpReward())).Append('\n');
-                }
-
-                if (inJob.CashReward() > 0)
-                {
-                    psb.Builder.Append(Loc.Format("ui.popup.jobComplete.cashReward", inJob.CashReward())).Append('\n');
-                }
-
                 psb.Builder.TrimEnd(StringUtils.DefaultNewLineChars);
 
                 Services.Audio.PostEvent("job.completed");
 
-                Services.UI.Popup.Display(
-                    Loc.Format("ui.popup.jobComplete.header", inJob.NameId()),
-                    psb.Builder.Flush(), character?.DefaultPortrait()
-                );
+                PopupContent content = default(PopupContent);
+                content.Header = Loc.Format("ui.popup.jobComplete.header", inJob.NameId());
+
+                JobCompletePopup completePopup = PopupLibrary.JobComplete;
+                content.CustomModule = completePopup.transform;
+                content.Options = PopupPanel.DefaultOkay;
+                content.Execute = completePopup.Execute;
+                completePopup.Prepare(inJob, oldExp);
+
+                Services.UI.Popup.Present(content, PopupFlags.TopDivider);
             }
         }
 
@@ -229,7 +225,7 @@ namespace Aqua
             uint newLevel = inLevelUp.OriginalLevel + (uint) inLevelUp.LevelAdjustment;
 
             Services.Script.QueueInvoke(() => {
-                Services.Audio.PostEvent("ShopPurchase");
+                Services.Audio.PostEvent("Popup.LevelUp");
                 PopupContent content = default(PopupContent);
                 content.Header = Loc.Format("ui.popup.levelUp.header", newLevel);
                 content.Text = Loc.Format("ui.popup.levelUp.description", newLevel);

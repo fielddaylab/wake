@@ -121,7 +121,9 @@ namespace Aqua {
 
                 if (inContent.Execute != null) {
                     SetInputState(false);
-                    yield return inContent.Execute();
+                    m_RootGroup.blocksRaycasts = false;
+                    yield return inContent.Execute(this, m_Layout);
+                    m_RootGroup.blocksRaycasts = true;
                 }
 
                 SetInputState(true);

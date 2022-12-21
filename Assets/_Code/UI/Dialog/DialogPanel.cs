@@ -705,6 +705,7 @@ namespace Aqua
                 yield break;
             
             m_ButtonContainer.gameObject.SetActive(true);
+            AppearAnim.PingChildren(m_ButtonContainer, false, 0, 0.1f);
             yield return Routine.Race(
                 m_Button == null ? null : m_Button.onClick.WaitForInvoke(),
                 Routine.WaitCondition(() => m_CurrentState.IsCutsceneSkip || m_Input.Device.MousePressed(0) || m_Input.Device.KeyPressed(KeyCode.Space))

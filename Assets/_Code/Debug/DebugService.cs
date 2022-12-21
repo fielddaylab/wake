@@ -58,7 +58,7 @@ namespace Aqua.Debugging
         [NonSerialized] private Vector2 m_CameraCursorPivot;
         [NonSerialized] private bool m_CameraLock;
 
-        [NonSerialized] private uint m_LastKnownStreamingCount;
+        [NonSerialized] private int m_LastKnownNetworkCount;
         [NonSerialized] private long m_LastKnownStreamingMem;
         [NonSerialized] private long m_UnlockAllLastPress;
 
@@ -73,11 +73,11 @@ namespace Aqua.Debugging
 
             if (m_MinimalOn)
             {
-                bool bChanged = Ref.Replace(ref m_LastKnownStreamingCount, Streaming.LoadCount());
+                bool bChanged = Ref.Replace(ref m_LastKnownNetworkCount, NetworkStats.ActiveRequests);
                 bChanged |= Ref.Replace(ref m_LastKnownStreamingMem, Streaming.TextureMemoryUsage().Current);
                 if (bChanged)
                 {
-                    m_TextBuilder.AppendNoAlloc(m_LastKnownStreamingCount).Append(" / ")
+                    m_TextBuilder.AppendNoAlloc(m_LastKnownNetworkCount).Append(" / ")
                         .AppendNoAlloc(m_LastKnownStreamingMem / (1024f * 1024f), 2).Append("MB");
                     m_StreamingDebugText.SetText(m_TextBuilder);
                     m_TextBuilder.Clear();

@@ -14,6 +14,7 @@ namespace Aqua {
 
         [SerializeField] private TMP_Text m_ExpText = null;
         [SerializeField] private Image m_ExpBar = null;
+        [SerializeField] private bool m_AutoRefresh = true;
         
         [Header("Exp Gain")]
         [SerializeField] private TMP_Text m_ExcessExpText = null;
@@ -43,16 +44,21 @@ namespace Aqua {
         }
 
         private void OnEnable() {
-            Services.Events.Register<StringHash32>(GameEvents.InventoryUpdated, OnInventoryChanged)
-                .Register(GameEvents.ScienceLevelUpdated, OnScienceLevelUpdated);
-            if (!Script.IsLoading) {
-                Refresh();
+            if (m_AutoRefresh) {
+                Services.Events.Register<StringHash32>(GameEvents.InventoryUpdated, OnInventoryChanged)
+                    .Register(GameEvents.ScienceLevelUpdated, OnScienceLevelUpdated);
+
+                if (!Script.IsLoading) {
+                    Refresh();
+                }
             }
         }
 
         private void OnDisable() {
-            Services.Events?.Deregister<StringHash32>(GameEvents.InventoryUpdated, OnInventoryChanged)
-                .Deregister(GameEvents.ScienceLevelUpdated, OnScienceLevelUpdated);
+            if (m_AutoRefresh) {
+                Services.Events?.Deregister<StringHash32>(GameEvents.InventoryUpdated, OnInventoryChanged)
+                    .Deregister(GameEvents.ScienceLevelUpdated, OnScienceLevelUpdated);
+            }
         }
 
         private void Refresh() {
@@ -65,13 +71,15 @@ namespace Aqua {
             ScienceLevelProgress progress = ScienceUtils.EvaluateLevel(exp);
 
             if (progress.ToNext > 0) {
-                m_ExpToNextLabel.Graphic.color = scienceTweaks.LevelColor((int) progress.Level);
-                m_ExpToNextLabel.SetTextFromString(
-                    Loc.Format(m_ExpToNextText, progress.ToNext.ToStringLookup(), (progress.Level + 1).ToStringLookup())
-                );
+                if (m_ExpToNextLabel) {
+                    m_ExpToNextLabel.gameObject.SetActive(true);
+                    m_ExpToNextLabel.Graphic.color = scienceTweaks.LevelColor((int) progress.Level);
+                    m_ExpToNextLabel.SetTextFromString(
+                        Loc.Format(m_ExpToNextText, progress.ToNext.ToStringLookup(), (progress.Level + 1).ToStringLookup())
+                    );
+                }
 
                 m_ExpText.SetText(progress.ExpForLevel.ToStringLookup());
-                m_ExcessExpBar.gameObject.SetActive(false);
 
                 float anchorPercent = progress.Percent;
 
@@ -86,6 +94,7 @@ namespace Aqua {
                             m_ExcessExpText.SetText(psb);
                         }
                         m_ExcessExpText.ForceMeshUpdate(true, false);
+                        m_ExcessExpText.gameObject.SetActive(true);
                     } else {
                         m_ExcessExpBar.gameObject.SetActive(false);
                         m_ExcessExpText.gameObject.SetActive(false);
@@ -93,6 +102,7 @@ namespace Aqua {
                 }
                 
                 m_ExpText.ForceMeshUpdate(true, false);
+                m_ExpText.gameObject.SetActive(true);
 
                 float maxWidth = m_ExpBar.rectTransform.rect.width;
                 float barWidth = maxWidth * anchorPercent;
@@ -114,7 +124,9 @@ namespace Aqua {
                     m_ExcessExpText.gameObject.SetActive(false);
                 }
 
-                m_ExpToNextLabel.gameObject.SetActive(false);
+                if (m_ExpToNextLabel) {
+                    m_ExpToNextLabel.gameObject.SetActive(false);
+                }
                 m_ExpText.gameObject.SetActive(false);
             }
 
@@ -133,7 +145,7 @@ namespace Aqua {
         }
 
         public void OnSceneLoad(SceneBinding inScene, object inContext) {
-            if (isActiveAndEnabled) {
+            if (isActiveAndEnabled && m_AutoRefresh) {
                 Refresh();
             }
         }

@@ -50,16 +50,29 @@ namespace Aqua
 
         private void OnStreamingLoadEnd(StreamingAssetHandle id, long size, UnityWebRequest request, Streaming.LoadResult resultType) {
             if (m_Requests.Remove(request)) {
-
+                switch(resultType) {
+                    case Streaming.LoadResult.Error_Network:
+                    case Streaming.LoadResult.Error_Server:
+                    case Streaming.LoadResult.Error_Unknown:
+                        NetworkStats.OnError.Invoke(request.url);
+                        break;
+                }
             }
         }
 
         private void OnOGDRequestSent(UnityWebRequest request, int retryCount) {
+            if (m_Requests.Add(request)) {
 
+            }
         }
 
         private void OnOGDRequestResult(UnityWebRequest request, OGD.Core.Error error) {
-
+            if (m_Requests.Remove(request)) {
+                if (error.Status == OGD.Core.ReturnStatus.Success) {
+                    return;
+                }
+                NetworkStats.OnError.Invoke(request.url);
+            }
         }
 
         public int ActiveRequests {
@@ -73,6 +86,8 @@ namespace Aqua
 
     static public class NetworkStats {
         [ServiceReference] static private NetworkWatcher s_Instance;
+
+        static public readonly CastableEvent<string> OnError = new CastableEvent<string>(2);
 
         static public int ActiveRequests {
             get { return s_Instance.ActiveRequests; }
