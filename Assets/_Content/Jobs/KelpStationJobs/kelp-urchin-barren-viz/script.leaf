@@ -59,7 +59,7 @@ $call UnlockSite(RS-1B)
 @when 		scene:name == "RS-1B", JobTaskTop(getTagged)
 @cutscene
 {@player} 	Ok, here we are. What now?
-{@guide}    According to your task list, you'll need to count all the organisms here. 
+{@guide}    According to your task list in AQOS, you'll need to count all the organisms here. 
 $if !TaggingHasStarted(Urchin)
     {@guide}    Can you find any {pluralnameof Urchin} here?
 $elseif !TaggingHasFinished(Urchin)
