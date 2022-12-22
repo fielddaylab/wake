@@ -23,12 +23,12 @@ $call CheckJobTasks()
 @when       JobTaskTop(reportBack)
 @once
 @cutscene
-{@guide}    Based on this data, predators in the deep consume mainly bioluminescent and lightly colored organisms.
+{@guide}    Based on this data, predators in the deep consume mainly bioluminescent and light-colored organisms.
             Red organisms appear to have natural camouflage.
 {@player}   That's it! The key to saving {nameof @sam}!
             And Mom said that if I figure this out... I could go help.
-{@guide}    That's not exactly what she said--
-{@player}   To the Kelp Station!
+{@guide}    That's not exactly what she said——
+{@player}   Come on, {nameof @guide}. We need to get back to the Station!
 
 // CATCH-ALL GUIDE TEXT
 
@@ -37,14 +37,14 @@ $call CheckJobTasks()
 @when       JobTaskTop(tellMom)
 @boostScore -5
 @cutscene
-{@guide}    You should tell Mom about Sam's predicament.
+{@guide}    You should tell your mother about Sam's predicament.
 
 :: catchExperimentSpecters
 @trigger    RequestPartnerHelp
 @when       JobTaskTop(experimentSpecters)
 @boostScore -5
 @cutscene
-{@guide}    Run experiments using the specter data {nameof @sam} has sent you.
+{@guide}    Run experiments using the data {nameof @sam} has sent you.
 
 :: catchCreateModel
 @trigger    RequestPartnerHelp
@@ -68,22 +68,29 @@ $call GiveFact(ColossalSquid.Eats.GoassamerWorm, Silent)
 @when       JobTaskTop(sneakOut)
 @boostScore -5
 @cutscene
-{@guide}    You've made up your mind that the only way to help {nameof @sam} is to sneak to the ship.
-            So head to the helm.
+{@player}   {nameof @guide}... I need to go save Sam. No matter what Mom says. 
+            Are you with me? 
+{@guide}    Affirmative, O.
+            Let's head back to the Helm. 
 
 :: catchGetUncleHelp
 @trigger    RequestPartnerHelp
 @when       JobTaskTop(getUncleHelp)
 @boostScore -5
 @cutscene
+{@player}   {nameof @guide}? What's going on? 
 {@guide}    [Systems malfunctioning]
+{@player}   {nameof @guide}??
 
 :: catchCheckShip
 @trigger    RequestPartnerHelp
 @when       JobTaskTop(checkShip)
 @boostScore -5
 @cutscene
-{@guide}    Hello again, O. If you return to the ship, you will see the power has been restored.
+{@guide}    Hello again, O. 
+{@player}   {nameof @guide}. You're back!!
+{@guide}    Affirmative, O.
+            If you return to the ship, you will see the power has been restored.
 
 :: catchPerformRescue
 @trigger    RequestPartnerHelp
@@ -98,10 +105,17 @@ $call GiveFact(ColossalSquid.Eats.GoassamerWorm, Silent)
 @trigger    TryArgumentation
 @when       JobTaskTop(tellMom)
 @cutscene
-{@player}   Mom! Sam's in trouble!
-{@drKelp}   That's not for you to worry about. It's concerning, but I'll put a team on it who's more experienced.
-            It's in the {nameof RS-0}. Have you even been to that region?
-            No, so just leave it to the experts. I'm sure Sam will be fine.
+{@player}   Mom, Sam is in danger. I need to go save them!
+{@drKelp}   Mija, I told you. It's too dangerous.
+            I'll put together a more experienced team to check on the Nautilus. It should only take a few days.
+{@player}   We don't have a few days, Mom. Sam needs help now!
+{@drKelp}   Olivia... Sweetie, what's gotten into you?
+            You can't go down there. You don't even know how to help!
+{@player}   Not yet, but I can figure it out.
+            Sam sent me a job.
+{@drKelp}   ....
+{@drKelp}   Fine.
+            <i>If</i> you can figure out how to save Sam, come talk to me again.
 $set jobs:final-told-mom = true
 $call CheckJobTasks()
 
@@ -118,9 +132,9 @@ $endif
 
 
 :: argue.chooseClaimModel
-{@drKelp}    How do you propose we save {nameof @sam}?
-	$choice .argue.paintJob; {nameof @sam} needs a new paint job.
-	$choice .argue.lights; {nameof @sam}'s lights are the problem.
+{@drKelp}    Okay, Olivia. If I let you go down there, how would you help {nameof @sam}?
+	$choice .argue.paintJob; We need to paint {nameof @sam}'s ship a different color. 
+	$choice .argue.lights; We need {nameof @sam} to switch off the bright lights.  
     $if HasFact(DeepDeepSea.Model.Visual)
         $choice .argue.unknownModel; Still working on that.
     $endif
@@ -128,8 +142,8 @@ $endif
 $choose branch
 
 :: argue.unknownModel
-{@player}   Still working on that. We made a model though!
-{@drKelp}   And I love that for you. But just this once, please leave this to the experts.
+{@player}   Still working on that. We made a model, though!
+{@drKelp}   That's not enough, Mija. Just this once, please leave this to the experts.
 
 :: argue.giveUpArgument
 $call ArgueUnload()
@@ -137,21 +151,23 @@ $call ArgueCancelClaim()
 $branch .argue.giveUp
 
 :: argue.giveUp
-{@drKelp}   Please leave this one to the experts, honey.
+{@drKelp}   Please leave this one to the experts, Olivia.
 
 :: argue.paintJob
 $set jobs:final-argue-paint-route = true
-{@drKelp}    What do you mean?
-$choice .argue.darkColor; If {nameof @sam}'s ship is a darker color, it will be harder for the attacker to see.
-$choice .argue.redColor; If {nameof @sam}'s ship is red, it will seem invisible to the attacker.
+{@drKelp}    What do you mean? 
+             I hardly think you could repaint the Nautilus underwater, in the middle of an attack...
+             And what does paint color have to do with anything? 
+$choice .argue.darkColor; If {nameof @sam}'s ship is a darker color, it'll be harder for the attacker to see.
+$choice .argue.redColor; If {nameof @sam}'s ship is red, it will look invisible to the attacker.
 
 :: argue.darkColor
 {@drKelp}   I don't think dark colors matter.
-            Most fish are dark... They all get eaten.
+            Plenty of fish are dark... They all get eaten.
 
 :: argue.lights
-{@drKelp}    Well, it's a bit dark down there for {nameof @sam} to go without a light source.
-$choice .argue.redColor; Don't shut them off, just filter them to red.
+{@drKelp}   Olivia, it's completely dark down there. {nameof @sam} would never make it out without a light source.
+$choice .argue.redColor; Sam wouldn't need to shut the lights off! Just switch them to red.
 
 :: argue.redColor
 {@drKelp}   Red?
@@ -176,7 +192,7 @@ $branch .argue.chooseFactsModel
 
 :: argue.correctFactsModel
 $call ArgueComplete()
-{@drKelp}    I'm not seeing it.
+{@drKelp}    Hmmm. I'm not seeing it.
 $branch .argue.loadArgueEat
 
 :: argue.loadArgueEat
@@ -205,15 +221,20 @@ $branch .argue.chooseFactsEat
 
 :: argue.endArgue
 $call ArgueComplete()
-{@drKelp}   Oh, so appearing red will allow {nameof @sam} to slip out unnoticed.
-            Red light doesn’t reach the depths, so those species wouldn’t reflect any light.
-            They basically become invisible. The same would be true for {nameof @sam}.
-{@drKelp}   I'll pass this information on to the rescue team.
-{@player}   What!? I figured out this information. I'm going.
-{@drKelp}   Absolutely not. I won't lose another child to this foolishness.
-{@player}   I'm leaving.
-{@drKelp}   If you're going to insist...
-            I'm sorry O. I have to make sure you stay safe.
+{@drKelp}   Oh... I think you're right!
+            Red light doesn't reach those depths, so red species don't reflect any light.
+            They basically become invisible.
+            I suppose it's a little too late for a red paint job now. 
+            But if {nameof @sam} switches on their red lights, the creature won't be able to see them.
+            I'll pass on this information to the rescue team.
+{@player}   What?! Mom, we don't have time to organize a rescue team. I need to go now!
+{@drKelp}   Absolutely not, Olivia. 
+            I've already lost one child to this foolishness. 
+            You're not going. End of story. 
+{@player}   You can't stop me, Mom.
+            I need to do this. 
+{@drKelp}   Well, if you're going to insist... 
+            I'm sorry, Mija. I have to make sure you stay safe.  
 {hide-dialog} {fade-out black, 1, wait} {wait 2}
 $call       Mom->TeleportTo(mom-hidden-pos)
 $set jobs:final-power-disabled = true
@@ -224,4 +245,4 @@ $call GiveJournalEntry("53_FinalJob")
 @trigger    TryArgumentation
 @when       ArgueIsComplete(finalArgueEat)
 @cutscene
-{@drKelp}  I've said my final word on the subject, O. You aren't going down there. It is too dangerous.
+{@drKelp}  I'm done talking about this, Olivia. You aren't going down there. It's too dangerous.

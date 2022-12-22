@@ -23,9 +23,9 @@ $call FocusHighlight->Clear()
 {@drKelp} Gracias, Olivia! 
 {@drKelp} I'll get the AquaLab set up for you.
 {@player} Wow... the AquaLab? You're giving me Mer's old ship? 
-{@drKelp} Of course. She would've wanted you to have it.
-{@drKelp} Your data card should give you clearance.
-{@drKelp} Just make sure not to lose your card, or the whole thing will power down. 
+{@drKelp} Of course. Your sister would've wanted you to have it. 
+{@drKelp} The data on your new ID card will give you clearance. 
+{@drKelp} Just make sure not to lose your card, or the whole ship will power down. 
 {@player} Got it. Gracias, Mom. 
 $call GiveJournalEntry("N01_Intro")
 
@@ -37,15 +37,17 @@ $call GiveJournalEntry("N01_Intro")
 @cutscene
 $branch common.ringPhone
 
-{@guide} Greetings! I am {nameof @guide}, your onboard A.I. 
+{@guide} Greetings! I am your onboard A.I.
+{@guide} My name is Version 1 Conscious Terminal Onboard Representative.
+{@guide} But you can call me {nameof @guide}.
 {@guide} What should I call you? 
 {@player} Oh... my name's Olivia Ramirez, but my friends call me O. 
-{@guide} Updating database. 
-{@guide} It appears you have one active job, O. And lots of thrilling data to collect!
-{@guide} First, use your {item-name}Scanner{/item-name} to identify all the species here at the Forested Lagoon. 
+{player} So... what should we do first, {name of @guide}? 
+{@guide} First, we will need to collect some data. My favorite!!! 
+{@guide} Use your {item-name}Scanner{/item-name} to identify all the species here at the Forested Lagoon. 
 $call GiveUpgrade(ROVScanner, Silent)
 $call Player->SetTool(Scanner)
-{@guide}   Click the red targets to ID a new plant or animal. 
+{@guide}   Click the red targets to ID a new plant or animal!
 {hide-dialog}
 {wait 0.5}
 
@@ -75,7 +77,7 @@ $call UnlockRoom("exterior")
 @when 		scene:name == "Helm", !jobs:kelp-welcome.got.scans
 @cutscene
 $if global:nav.shipRoom != "exterior"
-	{@player}   Um... what are we supposed to do , again?
+	{@player}   Um... what are we supposed to do, again?
 	{@guide}	Head out the door and find the sub!
 $else
 	{@player}   Where's the sub again?
@@ -97,7 +99,7 @@ $endif
 @when       scene:name == "RS-1C", !jobs:kelp-welcome.got.scans
 @cutscene
 {@player}   What now?  
-{@guide}    According to your task list in AQOS, you must scan all the species here at Site C.
+{@guide}    According to your task list in AQOS, you must scan all the species here at Site C!
             You appear to be missing some. Better keep looking. 
 
 :: navigation.goBackUp
@@ -108,9 +110,9 @@ $endif
 @once
 $set    jobs:kelp-welcome.got.scans = true
 
-{@guide}   You have scanned all of the local species. Your work is acceptable!
-{@player} Thanks, {nameof @guide}. 
-{@guide}   Now head to the surface and board your new research vessel!
+{@guide} You have scanned all the local species...
+{@guide} And gathered lots of thrilling data! 
+{@guide} Now head to the surface and board your new research vessel.
 $call Surface->Activate()
 
 :: navigation.goBackUp.savePatch
@@ -279,8 +281,10 @@ $endif
 @cutscene
 @once
 
-{@guide}  You've gathered the data you need! Time to head back to the station. 
-{@guide}  You can board your sub from the Helm, or you can open your schematic and use {m}Quick-Travel{/m} to get there faster!
+{@guide}  Hooray! More data!!!
+{@guide}  Adequate work, O. You're ready to report back to the Station.  
+{@player} Okay. How do I get back there, {nameof @guide}?
+{@guide}  You can go to your Helm and board your sub, or you can open your schematic and use {m}Quick-Travel{/m} to get there faster!
 
 // $call   UnlockRoom("office")
 
@@ -418,7 +422,7 @@ $else
 $endif
 
 ::argue.unrelated
-{@drKelp}    Hmm, no, that isn't relevant.
+{@drKelp}    Hmm. No, that isn't relevant.
 $call ArgueRejectIncorrect()
 $goto .argue.chooseFacts
 
@@ -442,8 +446,7 @@ $call CompleteJob()
 {@drKelp}   Your sister used to love this place. I can't think of a better way to honor her. 
 {@player}   What about the other research stations? Do they need help, too?
 {@drKelp}   Hmm. You mean in other ecosystems?
-{@drKelp}    I'm sure they would love your help, Mija.
-{@drKelp}    But for now, I want you closer to home. Just in case. 
+{@drKelp}   For now, I'd rather have you stay closer to home. Just in case. 
 {@player}    In case of what? 
 {@drKelp}    Never mind, Sweetie. Let's get you set up with your next job! 
              Talk to me to view your {map-name}Job Board{/map-name} whenever you're ready.

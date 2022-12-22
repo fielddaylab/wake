@@ -5,11 +5,11 @@
 @cutscene
 
 {@drKelp}  Oh, Olivia. Thank goodness.
-            Arch Oasis at Site B is looking quite... well, barren.
+           I'm not sure if you've noticed, but Arch Oasis at Site B isn't doing well at all. 
            Our funders are talking about pulling the funding for Mer's Refuge.
 {@player}   What?? Why?
 {@drKelp}   Think about how this looks, Olivia. If we can't keep Site B healthy, how can they trust us to create a whole new ecosystem?
-{@drKelp}   Luckily, I think we can fix this.
+{@drKelp}   Thankfully, I think we can fix this.
             Head back to your {h}Modeling Whiteboard{/h}.
            There's one part of the Simulator that you haven't used yet. {nameof @guide} will talk you through it. 
            Good luck, Mija. 
@@ -122,14 +122,14 @@ $if HasFact(Urchin.Reproduce), HasFact(Urchin.Eats.GiantKelp), IsFactFullyUpgrad
     $if HasFact(UrchinBarren.Model.IntroduceOtters)
         {@guide}    You're done with this portion! Head to the {h}Intervene{/h} tab next.
     $else
-        {@guide}    Once you import your facts and save the Visual model, we should be good to make our Intervene model!
+        {@guide}    Once you import your facts and save the Visual model, you'll be ready to make your Intervene model!
     $endif
 $else
     $if !jobs:kelp-save-urchin-barren.sync-failed
         {@guide}    Time to try out your model in the {h}Intervene{/h} tab.
     $else
         {@guide}    Seems like we don't have enough information to complete our model accurately.
-                    Look for {h}question marks{/h} in the  Visual model interface, those point to where we may need more data.
+                    Look for {h}question marks{/h} in the Visual model interface. Those point to where you may need more data.
 
         $if !HasFact(Urchin.Reproduce)
             $branch .suggestReproduce
@@ -261,7 +261,7 @@ $endif
 $goto .argue.checkOtters
 
 ::argue.checkOtters
-{@drKelp}   Ooh. Sounds promising!
+{@drKelp}   Hmm. That sounds promising!
             Do you have a model that shows how otters would help?
 $goto .argue.chooseFactsOtters
 
@@ -294,8 +294,10 @@ $goto .argue.chooseFactsOtters
 {@drKelp} Thank you, Mija. I'll bring this solution to our funders right away.
           {pluralnameof Urchin} eat {pluralnameof GiantKelp}, and {pluralnameof SeaOtter} eat {pluralnameof Urchin}...
           So adding some {pluralnameof SeaOtter} should control the {pluralnameof Urchin} population and give the {critter-name}Kelp{/critter-name} a chance to repopulate!
-          Now we just need to decide which otters to add. Maybe Ofelia and Otis? And Orion could use a change of scenery...
-{@player}  You'll figure it out, Mom. I'm just glad I could help. 
+          Now we just need to decide which otters to add. Maybe Ofelia and Otis? And Ovid could use a change of scenery...
+{@player} Wait a minute... did you say Ovid?? The little guy Mer and I used to play with? 
+{@drKelp} Well, he's a bit bigger now. And he has slowed down in his old age. 
+{@drKelp} But he's still just as cute as ever. 
 $call CompleteJob()
 
 

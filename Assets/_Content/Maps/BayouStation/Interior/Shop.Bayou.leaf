@@ -27,19 +27,19 @@
 @boostScore 100
 @once
 {@$MerchantId}  Hey! You're O, right? I'm SO glad you're here. 
-                {nameof @profBayou} and {nameof @bayouSci} have been driving me crazy.
-                And our comms hub blew up, so I have LITERALLY no one else to talk to.   
+                {nameof @profBayou} and {nameof @bayouSci} have been driving me crazy.  
 {@player}       Ha. My mom would say they need a mental health break. Maybe some ginger-kelp cookies.  
                 How'd you know my name?  
 {@$MerchantId}  Oh... I hope this isn't weird, but I'm a huge fan of your sister.
                 I got to meet her once, at an event for girls in oceanic tech. 
-                She even gave me this necklace! It's a fossil she found while she was tracking whales in Antartica.
-{@player}       Oh, I remember that! She was gone for weeks.  
-                I was scared that Mer wouldn't come home, but Mom said I was being silly. 
-{@$MerchantId}  You must really miss her.
-                I used to have an article about her taped up on my wall. I can try to dig it up, if you want.
-{@player}       That would be amazing. Thank you. 
-{@$MerchantId}  Well... I've probably rambled enough. Wanna take a look at my shop?   
+                She even gave me this necklace!
+{@player}       Ooh... is that an ammonite fossil?
+                Mer and I used to collect those when I was a kid. 
+{@$MerchantId}  You must really miss her. 
+                I used to have an old article about her taped up on my wall. 
+                I can try to dig it up, if you want.
+{@player}       That would be amazing. Thanks, {nameof @$MerchantId}.
+{@$MerchantId}  Well... I've probably fangirled enough. Wanna take a look at my shop?   
 $set jobs:bayou-mechanic.trackBayou = true
 $set jobs:bayou-mechanic.leftBayou = false
 $set jobs:bayou-mechanic.givenArticle = false
@@ -68,15 +68,12 @@ $choice .action.cancel; Not right now.
 {@player}       Nah... I haven't been sleeping the best lately.
 {@$MerchantId}  Ugh. Same here.  
                 I'm almost done rigging up our new comms array.
-{@player}       Wait... you're building the new communications hub alone? Don't you need some help? 
-{@$MerchantId}  Nah. I got this, O.
-                Your sister built an experimental deep-sea probe with long-range comms all by herself. 
+{@player}       Wait... you're building the new comms hub alone? Don't you need some help? 
+{@$MerchantId}  Nah. I got this.
+                Your sister built an experimental deep-sea probe all by herself. 
                 A new comms setup should be a piece of cake. 
-                And that reminds me. I found that article about your sister! 
-                She was amazing. You're so lucky you get to follow in her footsteps.
-{@player}       Oh. I... never really thought about it like that. 
-                Is it okay if I borrow the article?  
-{@$MerchantId}  You keep it, O. It's the least I can do. 
+                And that reminds me. I found that old article about Mer! 
+{@$MerchantId}  She was amazing. You're so lucky you get to follow in her footsteps. 
 $call GiveJournalEntry("N05_MersArticle")
 $set jobs:bayou-mechanic.trackBayou = false
 $set jobs:bayou-mechanic.givenArticle = true
@@ -84,7 +81,7 @@ $set jobs:bayou-mechanic.givenArticle = true
 
 :: action.cancel
 @cutscene
-{@$MerchantId}  Alright,| well you know where to find me!
+{@$MerchantId}  Alright,| well, you know where to find me!
 
 // Generic
 

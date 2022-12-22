@@ -24,23 +24,25 @@
 #ShopHandler(first)
 @boostScore 100
 @once
-{@$MerchantId}  Hey, kid. Welcome to my humble little shop.
-                You're Meredith's sister, aren't ya? She musta been a lot older than you... 
-{@person}       Yeah. Ten years.
-{@$MerchantId}  Ah. Such a shame, what happened to her. 
-                But I'm glad you've got your mom and your uncle to look out for ya.
-                There's nothin' more important than family.  
-{@person}       Yeah. I guess so.  
-                Where's your family? Do you get to see them often?
-{@$MerchantId}  Well.. depends what you mean.
-                I see my Arctic family just about every day.  
-                Juno might seem like a loner, but she's made this place feel like home for a whole lot of us. 
-                Anyhow. Wanna take a look around my shop? 
+{@$MerchantId}  Oh, hi there! Welcome to my humble little shop.
+                You're Meredith's sister, aren't ya? She musta been a lot older than you. 
+{@player}       Yeah. Ten years. 
+{@$MerchantId}  What was that?? You'll have to speak up. I'm a little hard of hearing.
+{@player}       Ten years!
+{@$MerchantId}  Aw, I understand, Ollie. I've shed a lot of tears, too.
+                Anyhow, I'm glad you're here.
+                We're like a family around these parts. 
+{@player}       Really? Juno seems kind of lonely.
+{@$MerchantId}  Eh?
+{@player}       Juno! Seems! Lonely!
+{@$MerchantId}  Sheesh, ya didn't have to shout. 
+                Don't worry about Juno. She loves it here. 
+                Wanna take a look around my shop, Ollie? 
 $choice .action.openShop; Sure, thanks!
 $choice .action.cancel; Not right now.
 
 #ShopHandler(a)
-{@$MerchantId} Welcome back, kid. Wanna take a look around?  
+{@$MerchantId} Welcome back, Ollie. Wanna take a look around?  
 $choice .action.openShop; Sure, thanks!
 $choice .action.cancel; Not right now.
 
@@ -54,7 +56,7 @@ $choice .action.cancel; Not right now.
 
 :: action.cancel
 @cutscene
-{@$MerchantId}  Well, good luck out there, kid. If you ever need anything, just holler. 
+{@$MerchantId}  Well, good luck out there, kid. If you ever need anything, just holler.
 
 // Generic
 
@@ -65,7 +67,7 @@ $choice .action.cancel; Not right now.
 {@$MerchantId}   {random Whoa,|Hey,|Looks like} this would unlock some jobs over at the {nameof $local:hintStation}!
 
 :: lowExp
-{@$MerchantId}   Oh, {random not so fast, kid|sorry, kid}... I can't let you have this. You'll need more {exp}experience{/exp} first. 
+{@$MerchantId}   Oh, {random not so fast, kid|sorry, Ollie}... I can't let you have this. You'll need more {exp}experience{/exp} first. 
 
 :: freeItem
 {@$MerchantId}   So, want the {nameof $local:itemId}? Won't cost you a thing.
@@ -149,7 +151,7 @@ $set    world:shop.boughtFlashlightFrom = "arctic"
                     Oh, that's right. |{nameof @coralMechanic} borrowed the {nameof Flashlight} from your uncle, and then dropped it by the {nameof FinalStation}.
                     Well,| nothin' to do but go fish it up! 
 {@player}           Wait. You want {i}me{/i} to go get it??  
-{@arcticMechanic}   What's the matter, kid? Your sister used to explore the Lower Depths all the time.  
+{@arcticMechanic}   What's the matter, Ollie? Your sister used to explore the Lower Depths all the time.  
 {@player}           But... that's different. My sister was a genius.
 {@arcticMechanic}   Well, I don't know much about that.  
                     But if you want that flashlight, you're gonna have to dive down there and get it. 
