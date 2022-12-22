@@ -96,7 +96,7 @@ namespace Aqua
 
             validated &= ValidateTaskIds(this);
             if (!validated)
-                throw new BakeException("Tasks on {0} were invalid", name);
+                throw new BakeException("Elements on job {0} were invalid", name);
             return true;
         }
 

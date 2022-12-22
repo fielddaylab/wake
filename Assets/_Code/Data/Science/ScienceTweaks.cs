@@ -182,7 +182,7 @@ namespace Aqua {
 
         static public uint LevelForTotalExp(uint exp) {
             int idx = 0;
-            while(idx < s_CumulativeExpPerLevel.Length && exp > s_CumulativeExpPerLevel[idx]) {
+            while(idx < s_CumulativeExpPerLevel.Length && exp >= s_CumulativeExpPerLevel[idx]) {
                 idx++;
             }
             return (uint) (1 + idx);

@@ -10,7 +10,16 @@
 
 $set jobs:final-final.rescueComplete = true
 $call CheckJobTasks()
+$call CompleteJob()
+
+
 {@sam}  O! You did it!
         Let's get out of here!
 
 $call LoadSceneFade("RS-0-Credits")
+
+// Allow travel to all stations again
+$call UnlockStation(ArcticStation)
+$call UnlockStation(BayouStation)
+$call UnlockStation(CoralStation)
+$call UnlockStation(KelpStation)

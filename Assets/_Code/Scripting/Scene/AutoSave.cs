@@ -21,6 +21,8 @@ namespace Aqua.Scripting
 
         private const float AutosaveDelay = 15f;
 
+        [SerializeField, MapId] private StringHash32 m_MapOverride = null;
+
         private void Awake()
         {
             Services.Events.Register(GameEvents.SceneLoaded, OnSceneLoaded, this)
@@ -68,7 +70,7 @@ namespace Aqua.Scripting
                 m_SaveLocation = Services.State.LastEntranceId;
             }
 
-            Save.Map.FullSync();
+            Save.Map.FullSync(m_MapOverride);
             m_InstantAutosave.Stop();
             m_DelayedAutosave.Stop();
             if (CanSave())

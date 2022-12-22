@@ -214,14 +214,14 @@ namespace Aqua.Profile
             }
         }
 
-        public void FullSync()
+        public void FullSync(StringHash32 inMapOverride = default(StringHash32))
         {
-            SyncMapId();
+            SyncMapId(inMapOverride);
         }
 
-        public bool SyncMapId()
+        public bool SyncMapId(StringHash32 inMapOverride = default(StringHash32))
         {
-            StringHash32 mapId = MapDB.LookupCurrentMap();
+            StringHash32 mapId = inMapOverride.IsEmpty ? MapDB.LookupCurrentMap() : inMapOverride;
             if (!mapId.IsEmpty && m_CurrentMapId != mapId)
             {
                 m_CurrentMapId = mapId;

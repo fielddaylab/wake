@@ -15,6 +15,7 @@ namespace Aqua {
     public sealed class PopupLayout : MonoBehaviour {
         
         public delegate void OptionSelectedDelegate(StringHash32 inOptionId);
+        public delegate IEnumerator ExecuteDelegate(PopupPanel inPanel, PopupLayout inLayout);
 
         [Serializable]
         private struct ButtonConfig {
@@ -48,9 +49,11 @@ namespace Aqua {
         [Header("Custom")]
         [SerializeField] private int m_CustomModuleSiblingIndex = 0;
         [SerializeField] private RectTransform m_ExtraBackground = null;
+        [SerializeField] private LayoutElement m_TopDivider = null;
         [SerializeField] private GameObject m_CompressedLayoutContainer = null;
         [SerializeField] private GameObject m_CompressedLayoutRoot = null;
         [SerializeField] private LayoutDecompressor m_LayoutDecompressor = null;
+        [SerializeField] private FlashAnim m_FlashAnim = null;
         
         [Header("Buttons")]
         [SerializeField] private LayoutElement m_DividerGroup = null;
@@ -72,7 +75,7 @@ namespace Aqua {
         [NonSerialized] private BFBase[] m_CachedFactsSet = new BFBase[1];
         [NonSerialized] private BFDiscoveredFlags[] m_CachedFlagsSet = new BFDiscoveredFlags[1];
 
-        [NonSerialized] private RectTransform m_CurrentCustomModule;
+        [NonSerialized] private Transform m_CurrentCustomModule;
         [NonSerialized] private Transform m_OldCustomModuleParent;
         [NonSerialized] private StringHash32 m_CurrentLayoutId;
 
@@ -247,6 +250,9 @@ namespace Aqua {
             if (m_CloseButton) {
                 m_CloseButton.gameObject.SetActive((ioPopupFlags & PopupFlags.ShowCloseButton) != 0);
             }
+            if (m_TopDivider) {
+                m_TopDivider.gameObject.SetActive((ioPopupFlags & PopupFlags.TopDivider) != 0);
+            }
         }
 
         private void ConfigureFacts(ref PopupFacts inFacts) {
@@ -361,13 +367,13 @@ namespace Aqua {
 
         #region Custom Modules
 
-        private void SetCustomModule(RectTransform inCustomModule) {
-            if (m_CurrentCustomModule == inCustomModule) {
+        private void SetCustomModule(Transform inCustomModule) {
+            if (!Services.Valid || m_CurrentCustomModule == inCustomModule) {
                 return;
             }
 
             if (m_CurrentCustomModule) {
-                m_CurrentCustomModule.SetParent(m_OldCustomModuleParent);
+                m_CurrentCustomModule.SetParent(m_OldCustomModuleParent, false);
                 m_CurrentCustomModule.gameObject.SetActive(false);
             }
 
@@ -375,7 +381,7 @@ namespace Aqua {
 
             if (inCustomModule) {
                 m_OldCustomModuleParent = inCustomModule.parent;
-                inCustomModule.SetParent(m_Layout.transform);
+                inCustomModule.SetParent(m_Layout.transform, false);
                 inCustomModule.SetSiblingIndex(m_CustomModuleSiblingIndex);
                 inCustomModule.gameObject.SetActive(true);
             }
@@ -395,6 +401,12 @@ namespace Aqua {
                 layout.SetActive(true);
             } else {
                 m_CompressedLayoutContainer.SetActive(false);
+            }
+        }
+
+        public void Flash() {
+            if (m_FlashAnim) {
+                m_FlashAnim.Ping();
             }
         }
 
@@ -457,10 +469,10 @@ namespace Aqua {
         public Color32? SubheaderColorOverride;
         public Color32? TextColorOverride;
         public StreamedImageSet Image;
-        public RectTransform CustomModule;
+        public Transform CustomModule;
         public StringHash32 CustomLayout;
         public PopupFacts Facts;
-        public Func<IEnumerator> Execute;
+        public PopupLayout.ExecuteDelegate Execute;
         public ListSlice<NamedOption> Options;
     }
 
@@ -490,6 +502,7 @@ namespace Aqua {
         ShowCloseButton = 0x01,
         TallImage = 0x02,
         ImageTextBG = 0x04,
-        ImageBG = 0x08
+        ImageBG = 0x08,
+        TopDivider = 0x10
     }
 }

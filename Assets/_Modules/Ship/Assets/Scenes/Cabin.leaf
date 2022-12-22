@@ -180,7 +180,7 @@ $branch .GetDreamJournal
 
 :: SeventhDream
 @trigger    DreamResponse
-@when       session:fromDream == "Dreams06"
+@when       session:fromDream == "Dream06"
 @cutscene
 @once
 {@player} Oh no. The reef!!
@@ -194,7 +194,7 @@ $branch .GetDreamJournal
 
 :: EighthDream
 @trigger    DreamResponse
-@when       session:fromDream == "Dreams07"
+@when       session:fromDream == "Dream07"
 @cutscene
 @once
 {@guide}   Good morning, O. We have reached our destination.
@@ -202,7 +202,7 @@ $branch .GetDreamJournal
 {@player}  Status update? 
 {@guide}   We are prepared to descend to the Lower Depths.
 {@guide}   Due to the uncertain nature of this mission, I am unable to calculate your odds of survival.
-{@player}  I know, {namoef @guide}. It's worth the risk.   
+{@player}  I know, {nameof @guide}. It's worth the risk.   
 {@player}  Let's go find Sam. 
 $branch .GetDreamJournal
 

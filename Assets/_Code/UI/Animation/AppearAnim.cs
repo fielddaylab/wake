@@ -23,17 +23,22 @@ namespace Aqua {
         [NonSerialized] private CanvasGroup m_CanvasGroup;
         [NonSerialized] private CanvasRenderer m_CanvasRenderer;
 
+        [NonSerialized] private bool m_Awoken = false;
+
         private void Awake() {
-            m_Offset = GetComponent<LayoutOffset>();
-            if (!TryGetComponent(out m_CanvasGroup)) {
-                if (TryGetComponent(out m_CanvasRenderer)) {
-                    m_CanvasRenderer.cullTransparentMesh = true;
+            if (!m_Awoken) {
+                m_Offset = GetComponent<LayoutOffset>();
+                if (!TryGetComponent(out m_CanvasGroup)) {
+                    if (TryGetComponent(out m_CanvasRenderer)) {
+                        m_CanvasRenderer.cullTransparentMesh = true;
+                    }
                 }
+                m_Awoken = true;
             }
         }
 
         private void OnEnable() {
-            Services.Animation.Layout.TryAdd(this, m_TimeLeft);
+            Services.Animation.Layout?.TryAdd(this, m_TimeLeft);
         }
 
         private void OnDisable() {
@@ -51,6 +56,26 @@ namespace Aqua {
 
                 m_Offset.Offset0 = default(Vector2);
 
+                Services.Animation.Layout.Remove(this);
+            }
+        }
+
+        public void Hide() {
+            if (!m_Awoken) {
+                Awake();
+            }
+
+            if (m_CanvasGroup) {
+                m_CanvasGroup.alpha = 0;
+                if (m_DisableRaycasts) {
+                    m_CanvasGroup.blocksRaycasts = false;
+                }
+            } else if (m_CanvasRenderer) {
+                m_CanvasRenderer.SetAlpha(0);
+            }
+
+            if (m_TimeLeft > 0) {
+                m_TimeLeft = 0;
                 Services.Animation.Layout.Remove(this);
             }
         }

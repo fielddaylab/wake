@@ -93,7 +93,7 @@ $call Specter->Scan(3)
 {@guide}	Data inconclusive, O.
 $call GiveJournalEntry("S02")
 
-:: specterTrigger.3
+:: specterTrigger.3 // Dinnerjelly
 @trigger    PlayerSpecter
 @when       specterIndex = 2
 @cutscene
@@ -107,7 +107,7 @@ $call Specter->Scan(3)
 {@player}	I don't understand. Why does Sam keep sending me these ghosts?
             Why haven't they contacted us? 
 {@guide}	I'm sorry, O. The data is inconclusive.
-$call GiveJournalEntry("S03")
+$call GiveJournalEntry("S07") // dinnerJelly
 
 :: specterTrigger.4
 @trigger    PlayerSpecter
@@ -137,7 +137,7 @@ $call Specter->Scan(4)
             I just hope she'll listen.
 $call GiveJournalEntry("S05")
 
-:: specterTrigger.6
+:: specterTrigger.6 //flapjack
 @trigger    PlayerSpecter
 @when       specterIndex = 5
 @cutscene
@@ -151,9 +151,9 @@ $call Specter->Scan(4)
 {@player}	Yeah. Well, she also told me Mer wanted to spend her whole life studying the otters...
             Turns out that wasn't true either.
             Next time I'm home, I'll talk to Tío. Maybe he can help. 
-$call GiveJournalEntry("S06")
+$call GiveJournalEntry("S03") // flapjack
 
-:: specterTrigger.7
+:: specterTrigger.7 // goassamer
 @trigger    PlayerSpecter
 @when       specterIndex = 6
 @cutscene
@@ -167,7 +167,7 @@ $call Specter->Scan(5)
 {@guide}	Processing... processing...
             I'm sorry, O.| The Nautilus is still unreachable.
 {hide-dialog}{wait 1}
-$call GiveJournalEntry("S07")
+$call GiveJournalEntry("S06") //goassamer worm
 
 :: specterTrigger.8
 @trigger    PlayerSpecter
