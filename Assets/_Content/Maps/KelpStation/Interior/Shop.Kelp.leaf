@@ -160,6 +160,10 @@ $choice .action.cancel; Not right now.
 {@$MerchantId}  I've found the code to upgrade {nameof guide} and unscramble all the glitches!
                 Head up to your ship to test it out.
 $set    jobs:final-final.tio.code-received = true 
+//prevent player from traveling to non-deep sea stations
+$call LockStation(ArcticStation)
+$call LockStation(BayouStation)
+$call LockStation(CoralStation)
 
 :: restorePower
 @cutscene
@@ -174,6 +178,7 @@ $set    jobs:final-final.tio.code-received = true
 $set jobs:final-uncleHelped = true
 $set jobs:final-power-disabled = false
 $call CheckJobTasks()
+
 
 // Idle
 
