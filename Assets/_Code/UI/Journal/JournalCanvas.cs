@@ -91,6 +91,11 @@ namespace Aqua {
         [NonSerialized] private bool m_DeleteQueued;
         [NonSerialized] private bool m_HiddenTriggerQueued;
 
+        static public bool Visible() {
+            JournalCanvas c = Services.UI.FindPanel<JournalCanvas>();
+            return c != null && (c.IsTransitioning() || c.IsShowing());
+        }
+
         private JournalCanvas() {
             m_Decompressor.NewRoot = (string name, CompressedPrefabFlags flags, CompressedComponentTypes componentTypes, GameObject parent) => {
                 GameObject go = null;
@@ -313,6 +318,8 @@ namespace Aqua {
 
             LoadList();
             FilterList(0);
+
+            Services.Events.Queue(GameEvents.JournalOpen);
         }
 
         protected override void OnShowComplete(bool inbInstant) {
@@ -350,6 +357,7 @@ namespace Aqua {
 
             if (Services.Script != null && m_HiddenTriggerQueued) {
                 Services.Script.TriggerResponse(GameTriggers.JournalHidden);
+                Services.Events.Queue(GameEvents.JournalClosed);
             }
 
             if (m_DeleteQueued) {

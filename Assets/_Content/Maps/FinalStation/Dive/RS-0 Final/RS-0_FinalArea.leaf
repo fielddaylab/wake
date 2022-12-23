@@ -44,9 +44,9 @@ $call ChalActivateAnimTrigger-Squid->PlayAnim("ChalCrush")
 @once
 @chatter
 
+$call SetToolAllowed(Flashlight, false)
 {@guide}    WARNING: the colossal squid is nearby. 
             Disabling your flashlight to avoid detection.
-$call SetToolAllowed(Flashlight, false)
 
 ::samFinalTrigger2
 @trigger PlayerEnterRegion
@@ -82,7 +82,7 @@ $call SetToolAllowed(Flashlight, false)
 {@player} Just hold on a little longer!
 $call ChalDeepScannablePassing->Deactivate()
 $call ChalDeepScannableActivating->Activate()
-{hide-dialogue}
+{hide-dialog}
 {wait-abs 2}
 
 

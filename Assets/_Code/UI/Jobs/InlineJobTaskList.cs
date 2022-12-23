@@ -84,6 +84,8 @@ namespace Aqua
                 .Register(GameEvents.CutsceneEnd, OnCutsceneEnd, this)
                 .Register(GameEvents.PopupOpened, OnCutsceneStart, this)
                 .Register(GameEvents.PopupClosed, OnCutsceneEnd, this)
+                .Register(GameEvents.JournalOpen, OnCutsceneStart, this)
+                .Register(GameEvents.JournalClosed, OnCutsceneEnd, this)
                 .Register(GameEvents.PortableOpened, OnPortableOpened, this);
 
             m_TaskDisplays.Initialize(null, null, 0);

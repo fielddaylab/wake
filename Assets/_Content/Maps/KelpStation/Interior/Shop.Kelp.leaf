@@ -165,6 +165,7 @@ $choice .action.cancel; Not right now.
 {@$MerchantId}  Don't thank me yet, mijita. First you'd better see if it worked. 
                 Take a look at the anomalies in AQOS, or check with your mom to see the job board. 
 $set    jobs:final-final.tio.code-received = true 
+$set    player:specterDecrypt = true
 //prevent player from traveling to non-deep sea stations
 $call LockStation(ArcticStation)
 $call LockStation(BayouStation)

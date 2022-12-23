@@ -70,6 +70,9 @@ namespace Aqua
         static public readonly StringHash32 ContextDisplay = "context:displayed"; // no args
         static public readonly StringHash32 ContextHide = "context:hide"; // no args
 
+        static public readonly StringHash32 JournalOpen = "journal:opened";
+        static public readonly StringHash32 JournalClosed = "journal:opened";
+
         static public readonly StringHash32 JobUnload = "job:unload"; // StringHash32 jobId
         static public readonly StringHash32 JobPreload = "job:preload"; // StringHash32 jobId
 

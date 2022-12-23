@@ -39,12 +39,12 @@ namespace Aqua {
 
         [LeafMember("ScriptBlocking"), Preserve]
         static public bool ShouldBlock() {
-            return !Services.Valid || Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.UI.IsLetterboxed() || StateUtil.IsLoading;
+            return !Services.Valid || Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || JournalCanvas.Visible() || Services.UI.IsLetterboxed() || StateUtil.IsLoading;
         }
 
         [LeafMember("ScriptBlockingIgnoreLetterbox"), Preserve]
         static public bool ShouldBlockIgnoreLetterbox() {
-            return Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || StateUtil.IsLoading;
+            return Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying()  || JournalCanvas.Visible() || StateUtil.IsLoading;
         }
 
         [MethodImpl(256)]
@@ -98,7 +98,7 @@ namespace Aqua {
         static public Future<StringHash32> PopupNewSpecter(BestiaryDesc entity, string descriptionOverride = null, ListSlice<BFBase> extraFacts = default) {
             string header = Loc.Format("ui.popup.newBestiary.specter.header", Formatting.ScrambleLoc(entity.CommonName()));
             string text = Loc.Format("ui.popup.newBestiary.specter.description", Formatting.ScrambleLoc(entity.EncodedMessage()));
-            return Services.UI.Popup.Present(header, text, entity.EncodedIcon(), PopupFlags.TallImage);
+            return Services.UI.Popup.Present(header, text, entity.EncodedIcon(), PopupFlags.TallImage, PopupPanel.DefaultAddToBestiary);
         }
 
         static public Future<StringHash32> PopupNewFact(BFBase fact, BestiaryDesc entity = null, string textOverride = null) {

@@ -4,6 +4,7 @@ using Aqua.Debugging;
 using BeauData;
 using BeauUtil;
 using BeauUtil.Debugger;
+using BeauUtil.Variants;
 using EasyBugReporter;
 using LogMask = Aqua.Debugging.LogMask;
 
@@ -11,6 +12,8 @@ namespace Aqua.Profile
 {
     public class ScienceData : IProfileChunk, ISerializedVersion, ISerializedCallbacks
     {
+        static private readonly TableKeyPair Var_FullyDecrypted = TableKeyPair.Parse("player:specterDecrypt");
+
         private List<SiteSurveyData> m_SiteData = new List<SiteSurveyData>();
         private List<ArgueData> m_ArgueData = new List<ArgueData>();
         private HashSet<StringHash32> m_CompletedArgues = Collections.NewSet<StringHash32>(40);
@@ -165,7 +168,7 @@ namespace Aqua.Profile
         }
 
         public bool FullyDecrypted() {
-            return m_SpecterCount >= ScienceUtils.MaxSpecters();
+            return m_SpecterCount >= ScienceUtils.MaxSpecters() && Script.ReadVariable(Var_FullyDecrypted).AsBool();
         }
 
         public bool IsSpecterQueued(StringHash32 mapId) {

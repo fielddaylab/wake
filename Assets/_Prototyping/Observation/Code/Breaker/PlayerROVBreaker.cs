@@ -268,11 +268,13 @@ namespace ProtoAqua.Observation {
                 if (!Script.ShouldBlock()) {
                     Services.Script.TriggerResponse(Trigger_OnRecharge);
                 }
-                Services.Audio.PostEvent("ROV.Breaker.Recharged");
-                m_RechargingBlink.SetColor(AQColors.BrightBlue);
-                // TODO: Broadcast breaker recharge completed
-                m_Phase = Phase.Ready;
-                m_UI.SetPhase(m_Phase);
+                if (m_UI) {
+                    Services.Audio.PostEvent("ROV.Breaker.Recharged");
+                    m_RechargingBlink.SetColor(AQColors.BrightBlue);
+                    // TODO: Broadcast breaker recharge completed
+                    m_Phase = Phase.Ready;
+                    m_UI.SetPhase(m_Phase);
+                }
             }
         }
 
