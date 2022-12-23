@@ -29,6 +29,7 @@ namespace ProtoAqua.Observation {
                     region = Instantiate(RegionPrefab, scan.transform.parent);
                     region.TrackTransform = scan.SafeTrackedTransform;
                     region.ColliderPosition.Source = region.TrackTransform;
+                    context.QueueAdditionalBake(region.gameObject);
                 }
 
                 region.AutoConfigure();

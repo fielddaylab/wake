@@ -24,13 +24,15 @@ public class GuideCursorFollow : WorldInput
     void Start() {
         m_LookPlane = new Plane(Vector3.back, v1ctorHead.position + Vector3.back * m_PlaneOffset);
 
-        if (!string.IsNullOrEmpty(m_DisableConditions) && Services.Data.CheckConditions(m_DisableConditions)) {
-            // guide should not get enabled
-            m_Disabled = true;   
-            return;
-        }
-
-        Device.OnUpdate += UpdateInput;
+        Script.OnSceneLoad(() => {
+            if (!string.IsNullOrEmpty(m_DisableConditions) && Services.Data.CheckConditions(m_DisableConditions)) {
+                // guide should not get enabled
+                m_Disabled = true;
+                enabled = false;   
+            } else {
+                Device.OnUpdate += UpdateInput;
+            }
+        });
     }
 
     void Update() {

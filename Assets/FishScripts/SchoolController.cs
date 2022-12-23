@@ -184,6 +184,9 @@ public class SchoolController : MonoBehaviour, ScriptableBake.IBaked {
     bool ScriptableBake.IBaked.Bake(ScriptableBake.BakeFlags flags, ScriptableBake.BakeContext context) {
         _roamers = new List<SchoolChild>(_childAmount);
         AddFish(_childAmount);
+        foreach(var roamer in _roamers) {
+            context.QueueAdditionalBake(roamer.gameObject);
+        }
         return true;
     }
 
