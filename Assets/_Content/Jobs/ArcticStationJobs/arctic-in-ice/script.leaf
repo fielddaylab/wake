@@ -8,11 +8,11 @@ $set jobs:arctic-in-ice.triedScan = false
 
 {@profArctic} It's been the weirdest thing.
               I've noticed cod out there, just sort of hanging around the ice shelf.
-{@player}     So?
-{@profArctic} There are never cod by the ice shelf!
+{@player}     So... what's weird about that? 
+{@profArctic} There are never cod by the ice shelf.
                I know every inch of this place. Something must've changed.
               I need you to figure out what the cod are up to out there. 
-{@player}   Okay. Any idea where I should start?
+{@player}   Sure. Any idea where I should start?
 $if JobTaskTop(scanAlgae)
     {@profArctic} I'd suggest heading out to the ice shelf and seeing what you can find.   
                   Maybe something's luring the cod in. 
@@ -129,14 +129,14 @@ $set jobs:arctic-in-ice.triedScan = true
 {@player} Wow. There's a ton of {nameof IceAlgae} out here, {nameof @guide}.
           Maybe the algae drew the cod in toward the ice shelf!
 {@guide}  Ah! So cod are known to eat {nameof IceAlgae}?
-{@player} I... have no idea. But that's what the Observation Tank is for.
+{@player} I... have no idea. Guess we better head to the Observation Tank.
 
 :: observedEatRules
 @trigger    JobTasksUpdated
 @when       JobTaskTop(reportback)
 @once
 @cutscene
-{@player} I think this explains what the cod are doing out there.
+{@player} {nameof @guide}, I think this explains what the cod are doing out there!
 {@guide}  Yes. Time to report back to {nameof @profArctic}!
 
 :: helpScanWithoutMicroscope
@@ -260,11 +260,14 @@ $branch .argue.popQuery
 
 :: argue.correctPop
 $call ArgueComplete()
-{@profArctic}  Nice work, Ollie!
+{@profArctic}  Nice work, Ollie. 
                That's definitely enough algae to draw them in.
                Hmmm. I wonder if the Salmon interact with the Cod, too...
-               This could really help with that salmon summering model I've been stuck on!
-{@player}   Ooh, sounds intriguing... anything I can help with?
-{@profArctic} Seriously, Ollie, I think your help is my good luck charm.
-              Check the job board soon. I'll make sure it's updated! 
+               This could really help with that salmon summering model I've been stuck on.
+{@player}      Ooh, sounds intriguing. Can I help? 
+{@profArctic}  Well... I usually like to work on the summering model myself. 
+               But I trust you, Ollie. 
+               Just make sure to be meticulous. 
+               The facts affecting the salmon are so complex——we can't afford to miss anything. 
+              Check the job board soon. I'll make sure it's updated. 
 $call CompleteJob()

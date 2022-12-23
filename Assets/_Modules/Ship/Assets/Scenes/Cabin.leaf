@@ -16,10 +16,12 @@ $endif
 
 :: TrunkSequence
 @cutscene
-{@player}   Mer's old trunk! I was hoping it would be here.
-{@guide}    Would you like me to scan its contents, O?
+{@player}   Wait a second... {nameof @guide}, is that my sister's old trunk?
+{@guide}    Affirmative, O.
+{@player}   Wow. She used to keep so many notes and sketches in there!
+{@guide}    Would you like me to digitally scan its contents, O?
 {@player}   Oh... no thanks, {nameof @guide}. 
-            I'd like to look through it by myself. 
+            I think I'd like to look through it on my own. 
 $set world:cabin.first-visit-complete = true
 
 :: TrunkAfterJournal
@@ -41,11 +43,10 @@ $branch .TrunkSequence
 
 $branch common.ringPhone
 
-{@player} Tío? Are you there? 
-{@kelpMechanic} Hola, mijita! 
-{@kelpMechanic} 
-{@player} I just found out Mer was working on an upgrade for {nameof @guide}.
-{@player} It could help to unscramble all these glitchy messages from Sam.
+{@player} Tío, this is O. Do you copy?  
+{@kelpMechanic} Hola, mijita! ¿Qué pasa?
+{@player} Tío, I just found out Mer was working on an upgrade for {nameof @guide}.
+{@player} It could help to unscramble all those glitchy messages from Sam.
 {@kelpMechanic} Hmm. I remember Mer talking about an upgrade.  
 {@kelpMechanic} Not sure if she ever finished it. 
 {@kelpMechanic} She called it something to do with a cephalopod... a nautilus, or maybe an orthoceras...?
@@ -97,12 +98,9 @@ $endif //
 @cutscene
 @once
 {@guide}    Good morning, O! We have arrived at the next ecosystem. 
-{@player}   Whoa. {nameof @guide}....
-{@player}   I'm awake, right?
-{@guide}    Affirmative, O. 
             My sensors indicate you are experiencing stress. 
-{@player}   Oh... it's no big deal. Just a weird dream.
-            Come on, {nameof @guide}. Let's get out there and explore! 
+{@player}   Yeah. I just had the weirdest dream. 
+            Just give me a second... I need to write this down. 
 $branch .GetDreamJournal
 
 :: SecondDream
@@ -114,8 +112,8 @@ $branch .GetDreamJournal
             We have arrived at a new ecosystem, full of fascinating data to collect!
             O? 
 {@player}   Phew... Mer's trunk is still there.
-{@guide}    Were you concerned that it had been lost?
-{@player}   Oh... no. Not really.
+{@guide}    Were you worried that it had been lost?
+{@player}   Well... no. Not really.
             Just had another weird dream. 
 $branch .GetDreamJournal
 
@@ -131,8 +129,7 @@ $branch .GetDreamJournal
 {@player}   Though I've never had so many weird ones in a row. 
 {@guide}    Perhaps you could ask your mother--
 {@player}   No. Don't tell her about this, {nameof @guide}.
-           If Mom knew I was having nightmares, she'd want me to stay home all the time. 
-           Besides... they're just dreams. No big deal.  
+            She already worries about me too much. 
 $branch .GetDreamJournal
 
 :: FourthDream
@@ -154,12 +151,12 @@ $branch .GetDreamJournal
 @cutscene
 @once
 {@guide} O? What has happened? 
-{@guide} I heard you shouting. Your tone indicated what humans call "panic."
-{@player} I'm fine, {nameof @guide}. 
+{@guide} I heard you shouting. 
+{@player} I'm okay, {nameof @guide}. 
           Any luck unscrambling those messages from Sam? 
 {@guide}  I'm afraid not. The encryption is like nothing I've ever seen. 
-{@player} Ugh. I'm so worried. 
-          I wonder if Mom would send a team down to check on Sam... just in case. 
+{@player} Okay. Just keep trying, {nameof @guide}.
+{@guide} Affirmative, O. 
 $branch .GetDreamJournal
 
 :: SixthDream
@@ -172,7 +169,6 @@ $branch .GetDreamJournal
 {@player} Yeah. 
           I can't stop thinking about Mer. 
           And Sam.
-          And just... everything. 
 {@guide}  Hmmm. When I'm in idle mode, I like to do quadratic reformulations of nonlinear binary optimization problems. 
           Perhaps that might help you.
 {@player} Um... yeah, maybe. Thanks, V.  

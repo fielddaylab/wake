@@ -42,8 +42,8 @@ $call GiveJournalEntry("N24_TioVictor")
 @trigger    JournalHidden
 @when       JobStartedOrComplete(kelp-shop-welcome), jobs:kelp-mechanic.initiated-first-convo
 @once
-{@$MerchantId}  Anyway, now that you and {nameof @guide} will be traveling outside the Kelp Forest, you'll need some upgrades. 
-                Since you're a level 1 scientist, you'll need to stick to the basics for now. 
+{@$MerchantId}  Now that you and {nameof @guide} will be traveling outside the Kelp Forest, you'll need some upgrades. 
+                You still only have Level 1 clearance, so you'll need to stick to the basics for now. 
                 Want to take a look? 
 $set jobs:kelp-mechanic.givenJournal = false
 $choice .action.openShop; Sure! 
@@ -66,7 +66,7 @@ $if jobs:bayou-mechanic.givenArticle, !jobs:kelp-mechanic.givenJournal
     {@$MerchantId} Lo siento, Ollie. It's not my place to say.
                    For now, let's focus on work, okay?            
 
-    // He tells you Mer created Victor. Get Mer’s journal page that shows Victor 1.0 version.
+    
     $set jobs:kelp-mechanic.givenJournal = true
 $elseif HasJournalEntry("S04"), !jobs:specter6-comms.kelp.discussed
     // STORY BEAT G
@@ -81,10 +81,10 @@ $elseif HasJournalEntry("S04"), !jobs:specter6-comms.kelp.discussed
     $set jobs:specter6-comms.kelp.discussed = true
 $elseif jobs:final-final.upgradeReady, !JobStartedOrComplete(final-final)
     // final job unlocked after seeing 8th specter
-    {@$MerchantId}  So, mijita. Ready to upgrade {nameof @guide} and rescue {nameof @sam}? Or did you just want to shop for tools?
-    $choice .discussUpgrade; Tell me about the upgrade!
-    $choice .action.openShop; Shop for tools
-    $choice .action.cancel; Actually, never mind. 
+    {@$MerchantId} So, mijita. Ready to upgrade {nameof @guide} and rescue {nameof @sam}? 
+    $choice .discussUpgrade; Yes! Tell me about the upgrade. 
+    $choice .action.openShop; I'm not ready yet. I'd like to look around the shop. 
+    $choice .action.cancel; Actually, I'll come back later. 
 
 $elseif JobInProgress(final-final), JobTaskTop(getUncleHelp)
     // final job, ask uncle for help
@@ -157,8 +157,13 @@ $choice .action.cancel; Not right now.
 
 :: discussUpgrade
 @cutscene
-{@$MerchantId}  I've found the code to upgrade {nameof guide} and unscramble all the glitches!
-                Head up to your ship to test it out.
+{@$MerchantId}  The Ammonite Upgrade should unscramble all of Sam's messages!
+                I'm uploading it to your data card now. 
+                I've also linked the upgrade to our job board here...
+                Which means any jobs that Sam tries to send out should be able to reach us.
+{@player}       Thank you so much, Tío.
+{@$MerchantId}  Don't thank me yet, mijita. First you'd better see if it worked. 
+                Take a look at the anomalies in AQOS, or check with your mom to see the job board. 
 $set    jobs:final-final.tio.code-received = true 
 //prevent player from traveling to non-deep sea stations
 $call LockStation(ArcticStation)
@@ -167,14 +172,32 @@ $call LockStation(CoralStation)
 
 :: restorePower
 @cutscene
-{@$MerchantId}  Welcome back Ollie!
-{@player}       Can you restore power to the ship and save {nameof @guide}?
-{@$MerchantId}  Oh, uh. Well. I may be able to do something about that.
-                Give me a minute...
+{@player}       Tío... I need your help.
+                Mom stole my card. The AquaLab is dead in the water.
+                How could she do this?? She doesn't even care if Sam lives or dies!
+{@$MerchantId}  This isn't about Sam, mijita. 
+                It's about Meredith. 
+{@player}       I don't understand. What does Mer have to do with this?
+{@$MerchantId}  Your sister's death... it wasn't an equipment malfunction. 
+                She was on her way back from placing the Challenger Deep...
+                And she came upon a whale caught in a fishing net. 
+                Mer couldn't let it die. She swam out to cut it free. 
+{@player}       That sounds like Mer. She loved whales so much.
+{@$MerchantId}  Yes. But... Ollie, the whale didn't know any better. It panicked. Called out for help. 
+                We're not sure exactly what happened.
+                But your sister never made it back from the Lower Depths.
+{@player}       Oh no. Poor Mer.  
+                That's why Mom doesn't want me going down there. 
+{@$MerchantId}   Your mother doesn't want to lose you.
+                But... you're an adult now, Ollie.
+                And your best friend needs you.
                 {hide-dialog} {fade-out black, 1, wait} {wait 2}
                 {wait 0.1} {fade-in 1, wait} {wait 1}
                 $set jobs:final-power-disabled = false
-{@$MerchantId}  Power should be restored now. Why don't you head to your ship to see if everything is fixed?
+{@$MerchantId}  I've transferred {nameof @guide}'s upgrade to Mer's old data card.
+                Take it up to your ship.
+                This should get you where you need to go. 
+{@player}       Thank you, Tío. Wish me luck. 
 $set jobs:final-uncleHelped = true
 $set jobs:final-power-disabled = false
 $call CheckJobTasks()

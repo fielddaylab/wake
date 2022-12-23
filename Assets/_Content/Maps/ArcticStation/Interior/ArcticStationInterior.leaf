@@ -19,8 +19,7 @@ $call       ActivateSamConvo()
 {@profArctic}   Professor Whalen here used to work with your sister. You look just like her. 
 {@player}       Wait... for real? You taught my sister?
 {@arcticSci}    Taught her? No. Mer was a prodigy. I could barely keep up.
-{@arcticSci}    She used to leave her notes scattered all around this place. 
-                I'll see if I can dig any of them up. 
+{@arcticSci}    She used to leave her notes scattered all around this place. I'll see if I can find any of them.
 {@player}       Wow. That would be amazing! 
                 Have you lived out here all this time, Professor? 
 {@arcticSci}    No. I'm only here for one task... seeking out a Bowhead Whale that I've lost track of. 
@@ -37,10 +36,9 @@ $set jobs:arctic-job3-journal.received = false
 @cutscene
 $if CompletedJobCount(ArcticStation, 1)
     // STORY BEAT B
-    {@arcticSci}   Oh, I almost forgot, Ollie. I found an old page of your sister's notes!
-    {@arcticSci} She thought whale echolocation was the key to creating a whole new form of technology...
-    {@arcticSci} Messages carried by soundwaves, sent across long distances. 
-    {@player}   Huh... whales? Mom never mentioned that.
+    {@arcticSci}   Oh, one more thing, Ollie. I found an old page of your sister's notes!
+    {@arcticSci} She thought whale echolocation was the key to a whole new form of communication tech.
+    {@player}   Hmm... whales? Mom never mentioned that.
     {@arcticSci} Well, it was a slow process. But the more your sister learned about whales, the more she wanted to protect them.
     {@player}   Wow. Thank you, {nameof @arcticSci}!
     {@arcticSci} Of course. Anything for Meredith's sister.
