@@ -5,6 +5,7 @@
         "RS-Arctic": true,
         "RS-Bayou": true,
         "RS-Coral": true,
+        "RS-0-Station": true,
         "RS-Kelp": true,
         "RS-1C": true,
         "KelpStation": true
@@ -542,6 +543,9 @@
                 {
                     "id": "Exp",
                     "amount": 5
+                },
+                {
+                    "id": "RS-4Z"
                 }
             ]
         },
@@ -560,9 +564,6 @@
                 },
                 {
                     "id": "StressTank"
-                },
-                {
-                    "id": "Flashlight"
                 },
                 {
                     "id": "Microscope"
@@ -715,6 +716,9 @@
                 {
                     "id": "Exp",
                     "amount": 5
+                },
+                {
+                    "id": "RS-4Z"
                 }
             ]
         },
@@ -826,9 +830,6 @@
             "requires": [
                 {
                     "id": "ArcticStation"
-                },
-                {
-                    "id": "Flashlight"
                 }
             ],
             "results": [
@@ -839,6 +840,9 @@
                 {
                     "id": "Exp",
                     "amount": 5
+                },
+                {
+                    "id": "RS-4X"
                 }
             ]
         },
@@ -990,8 +994,8 @@
         "displaced-reef": {
             "type": "job",
             "difficulty": {
-                "total": 5,
-                "max": 3
+                "total": 2,
+                "max": 2
             },
             "requires": [
                 {
@@ -1254,32 +1258,6 @@
                     "id": "RS-3P"
                 }
             ]
-        },
-        "bayou-test-model": {
-            "type": "job",
-            "difficulty": {
-                "total": 0,
-                "max": 0
-            },
-            "requires": [
-                {
-                    "id": "BayouStation"
-                }
-            ],
-            "results": [
-                {
-                    "id": "Cash",
-                    "amount": 100
-                },
-                {
-                    "id": "Exp",
-                    "amount": 5
-                },
-                {
-                    "id": "RS-3P"
-                }
-            ],
-            "unlockType": "manual"
         },
         "turtle-danger": {
             "type": "job",
@@ -2414,6 +2392,33 @@
             "type": "map",
             "unlockType": "manual"
         },
+        "RS-0-Cave": {
+            "type": "map",
+            "disableTraversal": true,
+            "requires": [
+                {
+                    "id": "RS-0"
+                }
+            ]
+        },
+        "RS-0-Credits": {
+            "type": "map",
+            "disableTraversal": true,
+            "requires": [
+                {
+                    "id": "FinalStation"
+                }
+            ]
+        },
+        "RS-0-Final": {
+            "type": "map",
+            "disableTraversal": true,
+            "requires": [
+                {
+                    "id": "RS-0"
+                }
+            ]
+        },
         "RS-0": {
             "type": "map",
             "disableTraversal": true,
@@ -2422,6 +2427,9 @@
                     "id": "FinalStation"
                 }
             ]
+        },
+        "RS-0-Station": {
+            "type": "map"
         },
         "FinalStation": {
             "type": "map",

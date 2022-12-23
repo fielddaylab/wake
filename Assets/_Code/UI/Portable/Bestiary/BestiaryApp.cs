@@ -34,6 +34,7 @@ namespace Aqua.Portable {
             public PopulateEntryToggleDelegate PopulateToggle;
             public PopulateEntryPageDelegate PopulatePage;
             public PopulateFactsDelegate PopulateFacts;
+            public Action OnClearFacts;
         }
 
         #region Inspector
@@ -74,6 +75,7 @@ namespace Aqua.Portable {
             m_InfoPage.FactPools.FreeAll();
             m_InstantiatedButtons.Clear();
             m_NoSelectionGroup.gameObject.SetActive(true);
+            Handler.OnClearFacts?.Invoke();
 
             m_ListPools.Clear();
             m_EntryToggleGroup.SetAllTogglesOff(false);
@@ -225,6 +227,7 @@ namespace Aqua.Portable {
                 if (inbSyncToggles) {
                     m_EntryScroll.verticalNormalizedPosition = 1;
                 }
+                Handler.OnClearFacts?.Invoke();
                 return null;
             }
 

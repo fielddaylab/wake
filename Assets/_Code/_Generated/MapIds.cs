@@ -18,7 +18,11 @@ static public class MapIds
 	static public readonly StringHash32 RS_2S = new StringHash32(0x83E485BA);
 	static public readonly StringHash32 RS_2V = new StringHash32(0x80E48101);
 	static public readonly StringHash32 CoralStation = new StringHash32(0x2A325B0E);
+	static public readonly StringHash32 RS_0_Cave = new StringHash32(0x01D95A6B);
+	static public readonly StringHash32 RS_0_Credits = new StringHash32(0x4F4B64F0);
+	static public readonly StringHash32 RS_0_Final = new StringHash32(0x172C609A);
 	static public readonly StringHash32 RS_0 = new StringHash32(0x8C3A5CA7);
+	static public readonly StringHash32 RS_0_Station = new StringHash32(0x7EFBD862);
 	static public readonly StringHash32 FinalStation = new StringHash32(0x4A8645B5);
 	static public readonly StringHash32 RS_Kelp = new StringHash32(0x29495811);
 	static public readonly StringHash32 RS_1A = new StringHash32(0x81DDC6CF);

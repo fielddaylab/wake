@@ -38,7 +38,11 @@ static public class GameScenes
 	static public readonly StringHash32 Helm_ArcticLayer = new StringHash32(0x1586FF31);
 	static public readonly StringHash32 RS_4Z_StationInterior = new StringHash32(0x9291DD74);
 	static public readonly StringHash32 FinalStation = new StringHash32(0x668CAB16);
-	static public readonly StringHash32 RS_0 = new StringHash32(0x42727D7D);
+	static public readonly StringHash32 RS_0_Cave = new StringHash32(0x3781EF5F);
+	static public readonly StringHash32 RS_0Anglerfish = new StringHash32(0xE8BD5D7C);
+	static public readonly StringHash32 RS_0_Final = new StringHash32(0x0CE56B5F);
+	static public readonly StringHash32 RS_0_StationInterior = new StringHash32(0xABE9D72A);
+	static public readonly StringHash32 RS_0_Credits = new StringHash32(0x129B0BF1);
 	static public readonly StringHash32 Helm_FinalLayer = new StringHash32(0x79898E37);
 	static public readonly StringHash32 Dreams00 = new StringHash32(0x9985E57E);
 	static public readonly StringHash32 Dream01 = new StringHash32(0xC85B93CF);

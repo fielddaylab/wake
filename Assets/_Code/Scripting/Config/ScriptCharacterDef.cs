@@ -46,6 +46,9 @@ namespace Aqua
         [SerializeField] private SerializedHash32 m_DefaultTypeSFX = null;
         [SerializeField, Range(0.1f, 2f)] private float m_TextToSpeechPitch = 1;
 
+        [Header("Job Giver")]
+        [SerializeField] private TextId[] m_JobGiverQuotes = null;
+
         #endregion // Inspector
 
         [LeafLookup("Name")] public TextId NameId() { return m_NameId; }
@@ -74,6 +77,10 @@ namespace Aqua
         
         public StringHash32 DefaultTypeSfx() { return m_DefaultTypeSFX; }
         public float TTSPitch() { return m_TextToSpeechPitch; }
+
+        public ListSlice<TextId> JobCompleteQuotes() {
+            return m_JobGiverQuotes;
+        }
 
         public bool HasFlags(ScriptActorTypeFlags inFlags)
         {

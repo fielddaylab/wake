@@ -34,6 +34,7 @@ namespace Aqua
         [SerializeField] private Color m_WaterColor = ColorBank.Blue;
 
         [SerializeField] internal Sprite m_Icon = null;
+        [SerializeField] private Sprite m_EncodedIcon = null;
         [SerializeField, StreamingPath("png,jpg,jpeg,webm,mp4")] private string m_SketchPath = null;
         [SerializeField] private Color m_Color = ColorBank.White;
 
@@ -82,6 +83,7 @@ namespace Aqua
         public bool HasAllFlags(BestiaryDescFlags inFlags) { return (m_Flags & inFlags) == inFlags; }
 
         public Sprite Icon() { return m_Icon; }
+        public Sprite EncodedIcon() { return m_EncodedIcon; }
 
         public uint HistoricalRecordDuration()
         {

@@ -93,6 +93,7 @@ namespace Aqua
                 var propData = Assets.Property(m_CachedPropertyId);
                 float value = inEnvironment.GetEnvironment()[m_CachedPropertyId];
                 float anchorX = propData.RemapValue(value);
+                anchorX = m_AliveRange.AdjustValue(anchorX);
 
                 Vector2 anchorMin = m_EnvironmentValueMarker.anchorMin,
                     anchorMax = m_EnvironmentValueMarker.anchorMax;

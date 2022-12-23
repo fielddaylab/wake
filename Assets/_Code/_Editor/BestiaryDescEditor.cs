@@ -27,6 +27,7 @@ namespace Aqua.Editor {
         private SerializedProperty m_FactsProperty;
         private SerializedProperty m_WaterColorProperty;
         private SerializedProperty m_IconProperty;
+        private SerializedProperty m_EncodedIconProperty;
         private SerializedProperty m_SketchPathProperty;
         private SerializedProperty m_ColorProperty;
         private SerializedProperty m_SortingOrderProperty;
@@ -63,6 +64,7 @@ namespace Aqua.Editor {
             m_FactsProperty = serializedObject.FindProperty("m_Facts");
             m_WaterColorProperty = serializedObject.FindProperty("m_WaterColor");
             m_IconProperty = serializedObject.FindProperty("m_Icon");
+            m_EncodedIconProperty = serializedObject.FindProperty("m_EncodedIcon");
             m_SketchPathProperty = serializedObject.FindProperty("m_SketchPath");
             m_ColorProperty = serializedObject.FindProperty("m_Color");
             m_SortingOrderProperty = serializedObject.FindProperty("m_SortingOrder");
@@ -113,6 +115,8 @@ namespace Aqua.Editor {
         }
 
         private void RenderCritterSettings() {
+            bool isSpecter = !m_FlagsProperty.hasMultipleDifferentValues && (m_FlagsProperty.intValue & (int) BestiaryDescFlags.IsSpecter) != 0;
+
             EditorGUILayout.PropertyField(m_SortingOrderProperty, TempContent("Sorting Order", "Visual sorting order within the station"));
 
             if (Section("Organism", ref m_CategoryExpanded)) {
@@ -125,13 +129,16 @@ namespace Aqua.Editor {
                 EditorGUILayout.PropertyField(m_PluralCommonNameIdProperty);
                 EditorGUILayout.PropertyField(m_DescriptionIdProperty);
 
-                if (!m_FlagsProperty.hasMultipleDifferentValues && (m_FlagsProperty.intValue & (int) BestiaryDescFlags.IsSpecter) != 0) {
+                if (isSpecter) {
                     EditorGUILayout.PropertyField(m_EncodedMessageIdProperty);
                 }
             }
 
             if (Section("Assets", ref m_AssetsExpanded)) {
                 EditorGUILayout.PropertyField(m_IconProperty);
+                if (isSpecter) {
+                    EditorGUILayout.PropertyField(m_EncodedIconProperty);
+                }
                 EditorGUILayout.PropertyField(m_SketchPathProperty);
                 EditorGUILayout.PropertyField(m_ColorProperty);
             }

@@ -18,6 +18,7 @@ namespace Aqua
         [Header("Quote")]
         [SerializeField] private LocText m_JobGiverQuote = null;
         [SerializeField] private AppearAnim m_JobGiverQuoteAnim = null;
+        [SerializeField] private TextId[] m_GenericJobGiverQuotes = null;
 
         [Header("Earnings")]
         [SerializeField] private AppearAnim m_EarnedAnim = null;
@@ -39,11 +40,16 @@ namespace Aqua
         }
 
         public void Prepare(JobDesc job, uint oldExp) {
-            m_JobGiverPortrait.sprite = Assets.Character(job.PosterId()).DefaultPortrait();
+            ScriptCharacterDef poster = Assets.Character(job.PosterId());
+            m_JobGiverPortrait.sprite = poster.DefaultPortrait();
             m_JobGiverPortraitAnim.Hide();
 
             m_JobGiverQuoteAnim.Hide();
-            // todo: randomize quotes?
+            ListSlice<TextId> quotes = poster.JobCompleteQuotes();
+            if (quotes.Length == 0) {
+                quotes = m_GenericJobGiverQuotes;
+            }
+            m_JobGiverQuote.SetText(quotes[RNG.Instance.Next(quotes.Length)]);
 
             m_EarnedAnim.Hide();
             m_EarnCoinCount.SetText("+" + job.CashReward().ToStringLookup());
@@ -58,9 +64,9 @@ namespace Aqua
         }
 
         public IEnumerator Execute(PopupPanel panel, PopupLayout layout) {
-            m_JobGiverPortraitAnim.Ping(0.1f);
-            m_JobGiverQuoteAnim.Ping(0.5f);
-            yield return 2;
+            m_JobGiverPortraitAnim.Ping(0.3f);
+            m_JobGiverQuoteAnim.Ping(0.8f);
+            yield return 2.2f;
             m_EarnedAnim.Ping();
             yield return 0.5f;
             m_EarnCoinAnim.Ping();

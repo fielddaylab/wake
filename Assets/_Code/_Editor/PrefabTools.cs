@@ -30,11 +30,14 @@ namespace Aqua.Editor
         {
             foreach(var obj in Selection.gameObjects)
             {
-                var cameraData = obj.GetComponent<UniversalAdditionalCameraData>();
-                if (cameraData != null)
+                var cameraDatas = obj.GetComponents<UniversalAdditionalCameraData>();
+                if (cameraDatas.Length > 1)
                 {
-                    cameraData.hideFlags = HideFlags.HideAndDontSave;
-                    GameObject.DestroyImmediate(cameraData);
+                    for(int i = 1; i < cameraDatas.Length; i++) {
+                        UniversalAdditionalCameraData data = cameraDatas[i];
+                        data.hideFlags = HideFlags.HideAndDontSave;
+                        GameObject.DestroyImmediate(data);
+                    }
                 }
             }
         }

@@ -185,14 +185,20 @@ namespace Aqua.Editor
                             writer.Write(" (");
                             writer.Write(EditorUtility.FormatBytes(sceneStats.AssetSize));
                             writer.Write(")\n");
-                            foreach(var kv in sceneStats.UseCount) {
-                                AssetMeta meta = GetMeta(kv.Key, statDB.Metadata);
+
+                            IdWithRefCount[] rootRefs = ArrayUtils.MapFrom(sceneStats.UseCount, (kv) => new IdWithRefCount(kv, statDB.Metadata));
+                            Array.Sort(rootRefs, (a, b) => {
+                                return (int) (b.Size - a.Size);
+                            });
+
+                            foreach(var kv in rootRefs) {
+                                AssetMeta meta = GetMeta(kv.Id, statDB.Metadata);
                                 writer.Write(" - ");
                                 writer.Write(meta.Path);
                                 writer.Write(" (");
                                 writer.Write(EditorUtility.FormatBytes(meta.Size));
                                 writer.Write(") - Referenced ");
-                                writer.Write(kv.Value);
+                                writer.Write(kv.Count);
                                 writer.Write(" time(s)");
                                 writer.Write("\n");
                             }

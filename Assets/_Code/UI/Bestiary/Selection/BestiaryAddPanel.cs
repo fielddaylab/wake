@@ -32,7 +32,6 @@ namespace Aqua
         [SerializeField, AutoEnum] private BestiaryDescFlags m_IgnoreFlags = 0;
         [SerializeField] private ToggleGroup m_ToggleGroup = null;
         [SerializeField] private ScrollRect m_ScrollLayout = null;
-        [SerializeField] private CanvasGroup m_ContentLoadGroup = null;
         [SerializeField] private BestiaryButtonPool m_ButtonPool = null;
         [SerializeField] private RectTransformPool m_EmptySlotPool = null;
         [SerializeField] private int m_MinIcons = 30;

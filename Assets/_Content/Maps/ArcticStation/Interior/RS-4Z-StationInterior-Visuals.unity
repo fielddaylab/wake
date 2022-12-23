@@ -56,8 +56,8 @@ LightmapSettings:
   m_LightmapEditorSettings:
     serializedVersion: 12
     m_Resolution: 2
-    m_BakeResolution: 20
-    m_AtlasSize: 256
+    m_BakeResolution: 16
+    m_AtlasSize: 128
     m_AO: 0
     m_AOMaxDistance: 1
     m_CompAOExponent: 1
@@ -98,7 +98,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 112000000, guid: f9fa0275b32f9664a93bda28db26a4ae,
+  m_LightingDataAsset: {fileID: 112000002, guid: f9fa0275b32f9664a93bda28db26a4ae,
     type: 2}
   m_UseShadowmask: 0
 --- !u!196 &4
@@ -1847,6 +1847,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: f82caad5759a5dd47a92bf6cb34cf5c2,
         type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: f82caad5759a5dd47a92bf6cb34cf5c2,
+        type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 8cd042a9e1defb54382412561b758256, type: 2}
@@ -1909,7 +1914,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 4294967295
+  m_StaticEditorFlags: 4294967294
   m_IsActive: 1
 --- !u!4 &441639380
 Transform:
@@ -2028,7 +2033,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 4294967295
+  m_StaticEditorFlags: 4294967294
   m_IsActive: 1
 --- !u!154 &482623076
 TerrainCollider:
@@ -10609,6 +10614,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 5c344087a426c874db02710bc48dd0c1,
         type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 5c344087a426c874db02710bc48dd0c1,
+        type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 8cd042a9e1defb54382412561b758256, type: 2}
@@ -10715,6 +10725,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 191.071
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: d2e0e4a8440339a48bb0b553d0e92e8a,
+        type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: d2e0e4a8440339a48bb0b553d0e92e8a,
         type: 3}
@@ -12599,8 +12614,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 855131390749405241, guid: 6c7ae19324744e949a163b20766c94c3,
-        type: 3}
+      objectReference: {fileID: 4300000, guid: 22582e95110cd15448e8f0d252ad2f45, type: 2}
     - target: {fileID: 919132149155446097, guid: 51beaaa727065364c9c72d09c242d042,
         type: 3}
       propertyPath: m_Name

@@ -296,7 +296,7 @@ namespace EasyAssetStreaming {
         protected override void OnEnable() {
             #if UNITY_EDITOR
             if (!Application.IsPlaying(this)) {
-                if (EditorApplication.isPlayingOrWillChangePlaymode) {
+                if (EditorApplication.isPlayingOrWillChangePlaymode || BuildPipeline.isBuildingPlayer) {
                     return;
                 }
                 

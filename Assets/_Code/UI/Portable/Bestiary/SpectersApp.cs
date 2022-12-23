@@ -51,18 +51,19 @@ namespace Aqua.Portable {
         }
 
         static private void PopulateEntryToggle(PortableBestiaryToggle toggle, BestiaryDesc entry) {
-            toggle.Icon.sprite = entry.Icon();
             toggle.Icon.gameObject.SetActive(true);
 
             if (Save.Science.FullyDecrypted()) {
                 toggle.Cursor.TooltipId = entry.CommonName();
                 toggle.Cursor.TooltipOverride = null;
                 toggle.Text.SetText(entry.CommonName());
+                toggle.Icon.sprite = entry.Icon();
             } else {
                 string commonNameScrambled = Formatting.ScrambleLoc(entry.CommonName());
                 toggle.Cursor.TooltipId = null;
                 toggle.Cursor.TooltipOverride = commonNameScrambled;
                 toggle.Text.SetTextNoParse(commonNameScrambled);
+                toggle.Icon.sprite = entry.EncodedIcon();
             }
 
             toggle.Text.Graphic.rectTransform.offsetMin = new Vector2(38, 4);
@@ -83,11 +84,11 @@ namespace Aqua.Portable {
 
             if (!encrypt) {
                 m_EncodedMessageText.SetText(entry.EncodedMessage());
+                page.Sketch.Display(entry.ImageSet());
             } else {
                 m_EncodedMessageText.SetTextNoParse(Formatting.ScrambleLoc(entry.EncodedMessage()));
+                page.Sketch.Display(entry.EncodedIcon());
             }
-            
-            page.Sketch.Display(entry.ImageSet());
         }
 
         private IEnumerator PopulateEntryFacts(BestiaryPage page, BestiaryDesc entry, ListSlice<BFBase> facts, BestiaryApp.FinalizeButtonDelegate finalizeCallback) {
