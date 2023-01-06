@@ -34,23 +34,22 @@
 $choice .action.openShop; Sure! 
 $choice .action.cancel; Not right now.
 
-// TODO: this handler evaluates to true, even when it's not. Disabling until it's fixed.
-// // second time player arrives in the station and has talked to mechanic previously
-// #ShopHandler(world:coral.leftStation == true)
-// @boostScore 50
-//@once
-//{@coralMechanic}    Hey, O! Welcome back.  
- //                   You convince the Professor to get rid of those Lionfish yet?
-//{@player}           Well... not yet.
-  //                  They are a little creepy, but I don't know much about them. 
-//{@coralMechanic}    Come on, O. You're my last hope! 
-  //                  You've seen how {nameof @profCoral} works... slow and steady. Emphasis on the <i>slow</i>.
-    //                If we don't take care of the Lionfish problem soon, it'll be too late.
-//{@player}           I——I'll do my best. 
-//{@coralMechanic}    I knew I could count on you. 
- //                   In the meantime... I guess you'd like to take a look around my shop? 
-//$choice .action.openShop; Sure!
-//$choice .action.cancel; Not right now.
+// second time player arrives in the station and has talked to mechanic previously
+#ShopHandler(secondTimeAtStation, world:coral.leftStation == true)
+@boostScore 50
+@once
+{@coralMechanic}    Hey, O! Welcome back.  
+                   You convince the Professor to get rid of those Lionfish yet?
+{@player}           Well... not yet.
+                   They are a little creepy, but I don't know much about them. 
+{@coralMechanic}    Come on, O. You're my last hope! 
+                   You've seen how {nameof @profCoral} works... slow and steady. Emphasis on the <i>slow</i>.
+                   If we don't take care of the Lionfish problem soon, it'll be too late.
+{@player}           I——I'll do my best. 
+{@coralMechanic}    I knew I could count on you. 
+                   In the meantime... I guess you'd like to take a look around my shop? 
+$choice .action.openShop; Sure!
+$choice .action.cancel; Not right now.
 
 
 // Default case:
@@ -73,6 +72,17 @@ $choice .action.cancel; Not right now.
                 Anyway. Wanna look around the shop?  
 $choice .action.openShop; Sure!
 $choice .action.cancel; Not right now.
+
+#ShopHandler(postFinalJob, JobCompleted(final-final))
+@once
+{@$MerchantId} O! I am absolutely FREAKING out.
+{@$MerchantId} Is it true that you went to the Lower Depths and rescued the crew of the Nautilus?
+{@$MerchantId} Alone?? 
+{@player} Um... yeah, I guess so. 
+{@player} My friend Sam sent me all the data, it wasn't a big deal—
+{@$MerchantId} Not a big deal?? O, you're basically famous! 
+{@$MerchantId} Next time you go on some crazy life-or-death mission, rope me in, okay? I'm your girl.
+{@player} Totally.
 
 // 50% chance to occur after completing at least one job at coral station
 #ShopHandler(noGoLionfish, Chance(0.5), !JobCompleted(coral-hunting-lions), CompletedJobCount(CoralStation, 1))

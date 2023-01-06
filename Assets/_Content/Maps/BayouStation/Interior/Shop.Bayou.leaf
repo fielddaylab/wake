@@ -60,7 +60,7 @@ $choice .action.cancel; Not right now!
 $choice .action.openShop; Sure!
 $choice .action.cancel; Not right now.
 
-#ShopHandler(jobs:bayou-mechanic.trackBayou, jobs:bayou-mechanic.leftBayou)
+#ShopHandler(merArticle, jobs:bayou-mechanic.trackBayou, jobs:bayou-mechanic.leftBayou)
 @boostScore 10
 @once
 // STORY BEAT D
@@ -77,6 +77,18 @@ $choice .action.cancel; Not right now.
 $call GiveJournalEntry("N05_MersArticle")
 $set jobs:bayou-mechanic.trackBayou = false
 $set jobs:bayou-mechanic.givenArticle = true
+
+#ShopHandler(postFinalJob, JobCompleted(final-final))
+@once
+{@$MerchantId} O! I was hoping you'd stop by.
+{@$MerchantId} You okay? I heard about what happened.
+{@$MerchantId} It must've been so hard to lose the Challenger Deep... I know how much your sister's work meant to you. 
+{@player} Thanks, {nameof @bayouMechanic}. It's weird... but I'm actually feeling okay.  
+{@$MerchantId} Oh. Well, in that case...
+{@$MerchantId} You were AMAZING! 
+{@$MerchantId} Literally EVERYBODY's talking about it, O. Even {nameof @profBayou} was impressed!
+{@player} Wow. Seriously?? 
+{@$MerchantId} Yep. You're basically a legend. 
 
 
 :: action.cancel

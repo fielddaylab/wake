@@ -64,6 +64,20 @@ $else
     $choice .action.cancel.currentJob; Never mind. Thanks, Mom.
 $endif
 
+#NoJobHandler(postFinalJob, JobCompleted(final-final))
+@once
+{@$JobGiverId} Oh, Mija. You're back! 
+{@$JobGiverId} Thank goodness you're okay.
+{@$JobGiverId} I heard that your uncle powered your ship back up...
+{@$JobGiverId} Even after I tried to stop you. 
+{@player} Mom, don't be mad at Tío. This was my choice.
+{@player} I had to save Sam. I'm not a kid anymore. And if you want to put me on probation again– 
+{@$JobGiverId} No, Sweetie. I was going to say...
+{@$JobGiverId} You were amazing. I'm so proud of you.  
+{@$JobGiverId} I didn't want to lose you. But obviously you can handle more than I realized.
+{@player} ....Oh.
+{@player} Thanks, Mom. You too. 
+
 :: JobHandlerShopStart
 @trigger    Talk 
 @who        $JobGiverId 
