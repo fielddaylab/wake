@@ -68,7 +68,7 @@ $if jobs:bayou-mechanic.givenArticle, !jobs:kelp-mechanic.givenJournal
 
     
     $set jobs:kelp-mechanic.givenJournal = true
-$elseif HasJournalEntry("S04"), !jobs:specter6-comms.kelp.discussed
+$elseif HasJournalEntry("S04"), !jobs:specter6-comms.kelp.discussed, jobs:final-final.tioUpgradeCallComplete
     // STORY BEAT G
     {@player}  Tío, I'm so worried about Sam. I'm still getting those weird, glitchy messages. 
                Any luck finding that upgrade for {nameof @guide}?
@@ -94,6 +94,18 @@ $else
     $choice .action.openShop; Sure, I'll take a look. Thanks, Tío!
     $choice .action.cancel; Nah. I'm good for now. 
 $endif
+
+#ShopHandler(postFinalJob, JobCompleted(final-final))
+@once
+{@$MerchantId} Ollie. Welcome back!
+{@$MerchantId} Everyone's talking about how you rescued the Nautilus. 
+{@$MerchantId} I knew you could do it, mijita.
+{@player} Thanks, Tío.
+{@player} Mom wasn't too upset, was she?
+{@$MerchantId} Well...  she stress-baked three trays of cinnamon kelp rolls when she found out.
+{@$MerchantId} But I could tell she was proud of you.
+{@$MerchantId} Just... maybe don't sneak out for a few days, okay?
+{@player} Yeah. Probably a good idea. 
 
 #ShopHandler(gotFlashlightAssignedHere, world:shop.boughtFlashlightFrom == "kelp", HasUpgrade("Flashlight"))
 @once

@@ -10,15 +10,24 @@
 // Generic
 
 #NoJobHandler(a)
-$if CompletedJobCount(ArcticStation, 3), !jobs:arctic-job3-journal.received
-    $branch .mersArticle
-$elseif jobs:specter6-comms.kelp.discussed, !jobs:specter6-comms.arctic.discussed
+$if jobs:specter6-comms.kelp.discussed, !jobs:specter6-comms.arctic.discussed
     $branch .commsDiscussion
 $else
     {@$JobGiverId}  Hey, want to see the {h}Job Board{/h}?
     $choice .action.openJobBoard; Sure!
     $choice .action.cancel; No thanks.
 $endif
+
+#NoJobHandler(postFinalJob, JobCompleted(final-final))
+@once
+{@$JobGiverId} Ollie! We heard what happened with the Challenger Deep. 
+{@$JobGiverId} Thank goodness you were there!
+{@player} Thanks, {nameof @profArctic}. 
+{@player} I just wish I could've saved the probe, too. 
+{@$JobGiverId} You had to make a tough decision, Ollie. 
+{@$JobGiverId} And you got everyone out of there alive.
+{@$JobGiverId} Even Mer couldn't have done better than that. 
+
 
 #WrongStationJobHandler(a)
 {@$JobGiverId}  Hmm, it looks like you've taken a job with someone else.
@@ -53,16 +62,6 @@ $choice .action.cancel.currentJob; Nope.
 :: action.cancel.currentJob
 @cutscene
 {@$JobGiverId}  Just let me know when you're ready then.
-
-:: mersArticle
-// STORY BEAT C
-    {@arcticSci}   Oh, if you've got a moment, Ollie... 
-                    I found another of Meredith's old journal pages, from ten years ago!
-                    She mentioned you. Thought you'd like to have it. 
-    {@player}       Wow. This must've been from right before she died. 
-                    Thank you, {nameof @arcticSci}.
-    $call GiveJournalEntry("N05_MersArticle")
-    $set jobs:arctic-job3-journal.received = true
 
 :: commsDiscussion
     // STORY BEAT H
