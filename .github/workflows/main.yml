@@ -85,15 +85,15 @@ jobs:
         name: aqualab-webgl_${{ env.VERSION }}
         path: build/WebGL/WebGL
 
-    # If this succeeded, and we're on the staging branch, then we can merge staging into production
-    - name: Merge into production
-      if: github.ref == 'ref/heads/staging'
-      uses: devmasx/merge-branch@master
-      with:
-        type: now
-        from_branch: hotfix
-        target_branch: staging
-        github_token: ${{ github.token }}
+    # # If this succeeded, and we're on the staging branch, then we can merge staging into production
+    # - name: Merge into production
+    #   if: github.ref == 'ref/heads/staging'
+    #   uses: devmasx/merge-branch@master
+    #   with:
+    #     type: now
+    #     from_branch: hotfix
+    #     target_branch: staging
+    #     github_token: ${{ github.token }}
     
     - name: Upload to web server via rsync
       uses: burnett01/rsync-deployments@5.2
