@@ -59,28 +59,5 @@ namespace Aqua {
         }
 
         #endregion // Behavior
-
-        #if UNITY_EDITOR
-
-        public override bool Bake(BakeFlags flags, BakeContext context)
-        {
-            bool bChanged = false;
-            if (OnlyWhenStressed)
-            {
-                var pair = FindPairedFact<BFGrow>();
-                if (pair != null)
-                {
-                    float compare = Amount - pair.Amount;
-                    bChanged |= Ref.Replace(ref PairId, pair.Id);
-                }
-            }
-            else
-            {
-                bChanged |= Ref.Replace(ref PairId, null);
-            }
-            return bChanged;
-        }
-
-        #endif // UNITY_EDITOR
     }
 }

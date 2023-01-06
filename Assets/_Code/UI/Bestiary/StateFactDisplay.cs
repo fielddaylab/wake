@@ -28,7 +28,7 @@ namespace Aqua
 
         private WaterPropertyId m_CachedPropertyId;
 
-        public void Populate(BFState inFact, BestiaryDesc inEnvironment = null)
+        public void Populate(BFState inFact, BFDiscoveredFlags inFlags, BestiaryDesc inEnvironment = null)
         {
             m_CachedPropertyId = inFact.Property;
 
@@ -41,9 +41,27 @@ namespace Aqua
             m_Icon.sprite = inFact.Icon;
 
             string labelFormat = Loc.Format("properties.tolerance.format", propData.LabelId());
-            m_Label.SetTextFromString(labelFormat);
+            if ((inFlags & BFDiscoveredFlags.IsEncrypted) != 0) {
+                m_Label.SetTextNoParse(Formatting.Scramble(labelFormat));
+            } else {
+                m_Label.SetTextFromString(labelFormat);
+            }
 
             ActorStateTransitionRange range = inFact.Range;
+
+            if ((inFlags & BFDiscoveredFlags.IsEncrypted) != 0) {
+                uint randSeed = inFact.Id.HashValue;
+                RandomizeRange(ref randSeed, ref range.AliveMin, ref range.AliveMax);
+                RandomizeRange(ref randSeed, ref range.StressedMin, ref range.StressedMax);
+
+                if (range.AliveMax < range.AliveMin) {
+                    Ref.Swap(ref range.AliveMin, ref range.AliveMax);
+                }
+
+                if (range.StressedMax < range.StressedMin) {
+                    Ref.Swap(ref range.StressedMin, ref range.StressedMax);
+                }
+            }
 
             if (inFact.HasDeath)
             {
@@ -75,6 +93,7 @@ namespace Aqua
                 var propData = Assets.Property(m_CachedPropertyId);
                 float value = inEnvironment.GetEnvironment()[m_CachedPropertyId];
                 float anchorX = propData.RemapValue(value);
+                anchorX = m_AliveRange.AdjustValue(anchorX);
 
                 Vector2 anchorMin = m_EnvironmentValueMarker.anchorMin,
                     anchorMax = m_EnvironmentValueMarker.anchorMax;
@@ -86,6 +105,18 @@ namespace Aqua
 
                 m_EnvironmentValueMarker.gameObject.SetActive(true);
             }
+        }
+
+        static private void RandomizeRange(ref uint seed, ref float min, ref float max) {
+            float avg = (max + min) / 2;
+            float dMin = min - avg;
+            float dMax = max - avg;
+
+            dMin *= Formatting.PseudoRandom(ref seed, 0.5f, 2f);
+            dMax *= Formatting.PseudoRandom(ref seed, 0.5f, 2f);
+
+            min = avg + dMin;
+            max = avg + dMax;
         }
 
         void IPoolAllocHandler.OnAlloc() { }

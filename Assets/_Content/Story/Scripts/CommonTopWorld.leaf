@@ -1,0 +1,34 @@
+#basePath   commonTopWorld
+
+:: SamIntroConvo
+@trigger    SceneStart
+@when       IsSamConvoActivated()
+@once
+@cutscene
+
+$branch common.ringPhone
+{@guide} O, we are receiving a call from the Nautilus.
+{@player} That must be my friend Sam. Put them through! 
+{@sam} O! I was hoping I'd be able to reach you.
+{@sam} Heard you're the new captain of the AquaLab!
+{@player} Yep. I'm a level 1 scientist now. No big deal. 
+{@player} How's the mission? Any sign of Challenger Deep? 
+{@sam} Not yet, but we're close. 
+{@sam} It's super eerie down here... I can see why your sister loved it. 
+{@sam} Ex says we're about to hit a dead zone, so I might lose you in a second...
+{@sam} ....
+{@player} Sam?
+{@sam} ....getting some weird readings on the scanner....
+{@player} Sam? Hello?
+{@player} Sam???
+{@guide} Transmission lost.
+$set world:initial-sam-convo.completed = true
+$call GiveJournalEntry("N02_LosingConnection")
+
+
+:: closeJournalContinue
+@trigger    JournalHidden
+@once
+@cutscene
+
+// Potentially additional dialogue here

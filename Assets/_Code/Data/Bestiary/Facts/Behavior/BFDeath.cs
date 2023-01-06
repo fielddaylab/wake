@@ -25,14 +25,5 @@ namespace Aqua {
         }
 
         #endregion // Behavior
-
-        #if UNITY_EDITOR
-
-        public override bool Bake(BakeFlags flags, BakeContext context)
-        {
-            return false;
-        }
-
-        #endif // UNITY_EDITOR
     }
 }

@@ -223,7 +223,7 @@ namespace ProtoAqua.ExperimentV2
                 if (obj.Category() != BestiaryDescCategory.Critter)
                     continue;
 
-                if (obj.HasFlags(BestiaryDescFlags.DoNotUseInExperimentation))
+                if (obj.HasFlags(BestiaryDescFlags.DoNotUseInExperimentation | /*BestiaryDescFlags.IsSpecter |*/ BestiaryDescFlags.Human))
                     continue;
 
                 ActorDefinition def = FindOrCreateDefinition(obj);

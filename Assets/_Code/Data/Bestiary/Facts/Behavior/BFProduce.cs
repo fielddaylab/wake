@@ -47,7 +47,7 @@ namespace Aqua {
 
             BFDetails details;
             details.Header = Loc.Find(DetailsHeader);
-            details.Image = property.ImageSet();
+            details.Image = null;
 
             if (fact.OnlyWhenStressed)
             {
@@ -77,34 +77,5 @@ namespace Aqua {
         }
 
         #endregion // Behavior
-
-        #if UNITY_EDITOR
-
-        protected override bool IsPair(BFBehavior inOther)
-        {
-            BFProduce produce = inOther as BFProduce;
-            return produce != null && produce.Property == Property;
-        }
-
-        public override bool Bake(BakeFlags flags, BakeContext context)
-        {
-            bool bChanged = false;
-            if (OnlyWhenStressed)
-            {
-                var pair = FindPairedFact<BFProduce>();
-                if (pair != null)
-                {
-                    float compare = Amount - pair.Amount;
-                    bChanged |= Ref.Replace(ref PairId, pair.Id);
-                }
-            }
-            else
-            {
-                bChanged |= Ref.Replace(ref PairId, null);
-            }
-            return bChanged;
-        }
-
-        #endif // UNITY_EDITOR
     }
 }

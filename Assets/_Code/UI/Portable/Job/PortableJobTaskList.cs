@@ -36,7 +36,7 @@ namespace Aqua
     
         #region Tasks
 
-        public void LoadTasks(JobDesc inJob, JobsData inData)
+        public IEnumerator LoadTasks(JobDesc inJob, JobsData inData)
         {
             m_TaskDisplays.Reset();
 
@@ -56,6 +56,7 @@ namespace Aqua
                 {
                     AllocTaskDisplay(activeTask, false, firstJob ? m_TopOutlineColor : m_ActiveOutlineColor);
                     firstJob = false;
+                    yield return null;
                 }
 
                 m_TopArrow.gameObject.SetActive(!firstJob);
@@ -65,15 +66,10 @@ namespace Aqua
                 foreach(var completedTask in completedTasks)
                 {
                     AllocTaskDisplay(completedTask, true, m_CompletedOutlineColor);
+                    yield return null;
                 }
             }
 
-            m_Group.alpha = 0;
-            Routine.Start(this, ScrollRebuildHack());
-        }
-
-        private IEnumerator ScrollRebuildHack()
-        {
             yield return null;
 
             m_ScrollView.ForceRebuild();
@@ -81,14 +77,21 @@ namespace Aqua
             m_Group.alpha = 1;
         }
 
+        public void AnimateTasks(float delay) {
+            foreach(var obj in m_TaskDisplays.ActiveObjects) {
+                if (!m_ScrollView.IsVisible(obj.Root)) {
+                    break;
+                }
+
+                delay += obj.Appear.Ping(delay) * 0.1f;
+            }
+        }
+
         private JobTaskDisplay AllocTaskDisplay(JobTask inTask, bool inbComplete, Color inOutlineColor)
         {
             JobTaskDisplay taskDisplay = m_TaskDisplays.Alloc();
             taskDisplay.Populate(inTask, inbComplete);
             taskDisplay.Outline.color = inOutlineColor;
-
-            LayoutRebuilder.ForceRebuildLayoutImmediate(taskDisplay.Root);
-
             return taskDisplay;
         }
 

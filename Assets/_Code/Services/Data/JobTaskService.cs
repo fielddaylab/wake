@@ -60,6 +60,7 @@ namespace Aqua
                 .Register(GameEvents.CutsceneEnd, OnCutsceneEnd, this)
                 .Register(GameEvents.ProfileLoaded, OnProfileLoaded, this)
                 .Register(GameEvents.PopupClosed, OnCutsceneEnd, this)
+                .Register(GameEvents.JournalClosed, OnCutsceneEnd, this)
                 .Register(Event_ForceReprocess, OnForceReprocess, this);
 
             RegisterDelayedTaskEvent(events, GameEvents.SceneLoaded, TaskEventMask.SceneLoad);

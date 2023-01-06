@@ -10,10 +10,10 @@
               What's this rumor about you seeing something under the ice?
 {@player}     It's not a rumor. There's a whole ecosystem down there!
 {@profArctic} That's highly implausible. 
-              How has no one noticed it before? How would an ecosystem survive under such conditions? 
-{@player}   I... I don't know. 
-            But there's life down there, under the ice. You have to believe me!
-{@profArctic} I do believe you, Ollie. That's why I was hoping you'd check it out for me.
+              How has no one noticed it before? How could life survive under such extreme conditions? 
+{@player}   I... I'm not sure. 
+            But I know what I saw. You have to believe me.
+{@profArctic} I do believe you, Ollie. That's why I'm sending you to check it out. 
 $if !HasUpgrade("Engine")
     {@profArctic} Sounds like the current swept you through, so you'll need an upgraded engine.
     {@profArctic} And Ollie... be careful. It's not unusual for newcomers to get a little overwhelmed out here.   
@@ -59,8 +59,8 @@ $endif
 @when 		JobTaskTop(reportBack)
 @once
 @cutscene
-{@player}   Wow. {nameof @guide}, this is amazing!
-            A whole ecosystem that no one even knew was here.
+{@player}   Wow. {nameof @guide}, this is amazing! 
+            A whole ecosystem that no one even knew was here.     
             We have so much new data to bring to {nameof @profArctic}!
 {@guide}    Yes. And you didn't get lost and die, which is also a positive outcome! 
 {@player}   That's the spirit, V. 
@@ -137,13 +137,17 @@ $goto .argue.showClaim
 // END
 :: argue.complete
 $call ArgueComplete()
-{@profArctic}   Wow! Looks like you're living up to your sister's name. 
+{@profArctic}   Well, it looks like you're living up to your sister's name. 
                 Amazing work, Ollie. 
 {@player}       Wait... that's it? We have so much more to learn!
                 How are all those critters surviving without sunlight to power a food supply? What do they eat? Is there light?
-{@profArctic}   Well, that's up to you to find out. This is your project.
+{@profArctic}   That's up to you to find out. This is your project.
 {@player}       Whoa. Really?
-{@profArctic}   Absolutely. 
-                I'll update the job board. Let me know when you're ready to dive in.
+{@profArctic}   Sure. I'll update the job board. 
+                Let me know when you're ready to dive in.
+{@player}       Don't you want to see it, too? You could come with me.
+{@profArctic}   Thanks, Ollie, but I'll take my sub down later.
+                I prefer to do things on my own. 
+
              
 $call CompleteJob()

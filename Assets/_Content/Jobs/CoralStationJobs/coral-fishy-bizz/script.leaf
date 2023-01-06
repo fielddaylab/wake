@@ -12,6 +12,7 @@
 			  Start by heading outside and gathering data about the Grouper and the Fishers.
 			  Then figure out how much Grouper can be harvested sustainably. 
 {@player}	  I'm on it! I'll let you know what I find out. 
+$set jobs:coral-fishy-bizz.sync-failed = false
 
 :: helpGoOutside
 @trigger    RequestPartnerHelp
@@ -43,7 +44,7 @@
 @when 		scene:name == "RS-2V", HasEntity(Fishers), HasFact(RedGrouper.Reproduce), HasFact(ReefEdge.PopulationHistory.Fishers), !JobTaskCompleted(getScans)
 @cutscene
 {@guide} 	Sufficient work, O!
-			Time to head back to the Meredith and run your experiment.
+			Time to head back to the AquaLab and run your experiment.
 
 :: helpAtSiteV
 @trigger    RequestPartnerHelp
@@ -77,7 +78,7 @@ $endif
 @boostScore 2
 @cutscene
 {@player} 	What should I do now, {nameof @guide}?
-{@guide}	You've obtained all the data you need at Site V. Time to head back to the Meredith!
+{@guide}	You've obtained all the data you need at Site V. Time to head back to the AquaLab!
 
 
 :: backAtShip
@@ -147,6 +148,60 @@ $endif
 @cutscene
 {@player} 	What should I do now?
 {@guide}	Report back to {nameof @profCoral}!
+
+
+// MODELING SUGGESTIONS
+
+:: triggerSyncFailure
+@trigger    SimulationSyncError
+@when       !jobs:coral-fishy-bizz.sync-failed
+@once
+$set jobs:coral-fishy-bizz.sync-failed = true
+
+:: helpModelSync.Visual
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(getModel), scene:name == "Modeling", modeling:phase == "visual"
+@cutscene
+$branch .modelSuggestions
+
+:: helpModelSync.Sync
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(getModel), scene:name == "Modeling", modeling:phase == "sync"
+@cutscene
+$branch .modelSuggestions
+
+:: modelSuggestions
+$if HasFact(Fishers.Eats.RedGrouper), IsFactFullyUpgraded(Fishers.Eats.RedGrouper), HasFact(RedGrouper.Reproduce)
+    $if HasFact(ReefEdge.Model.GrouperConcept)
+        {@guide}    You're done with this portion! Head to the {h}Describe{/h} tab next.
+    $else
+        {@guide}    Once you import your facts and save the Visual model, we should be good to make our Describe model!
+    $endif
+$else
+    $if !jobs:coral-fishy-bizz.sync-failed
+        {@guide}    Time to try out your model in the {h}Describe{/h} tab.
+    $else
+        {@guide}    Seems like we don't have enough information to complete our model accurately.
+                    Look for {h}question marks{/h} in the  Visual model interface, those point to where we may need more data.
+		$if !HasFact(Fishers.Eats.RedGrouper)
+			$branch .suggestObserve
+		$elseif !IsFactFullyUpgraded(Fishers.Eats.RedGrouper)
+			$branch .suggestMeasure
+		$elseif !HasFact(RedGrouper.Reproduce)
+			$branch .suggestReproduce
+		$endif
+    $endif
+$endif
+
+:: suggestReproduce
+{@guide}    Did you get all the reproduction rates?
+
+:: suggestObserve
+{@guide}    Are you sure you have observed all the interactions here?
+
+:: suggestMeasure
+{@guide}    You may need to measure the rates of interactions.
+
 
 // CATCH-ALL GUIDE TEXT
 

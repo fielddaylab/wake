@@ -57,6 +57,7 @@ namespace Aqua
             [ServiceReference, UnityEngine.Scripting.Preserve] static public AmbientTransformService AmbientTransforms { get; private set; }
             [ServiceReference, UnityEngine.Scripting.Preserve] static public AmbientRendererService AmbientRenderers { get; private set; }
             [ServiceReference, UnityEngine.Scripting.Preserve] static public SpriteAnimatorService Sprites { get; private set; }
+            [ServiceReference, UnityEngine.Scripting.Preserve] static public LayoutAnimService Layout { get; private set; }
         }
     
         #endregion // Accessors

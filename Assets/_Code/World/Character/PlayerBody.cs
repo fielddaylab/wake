@@ -10,7 +10,7 @@ namespace Aqua.Character
 {
     public abstract class PlayerBody : CharacterBody, IBaked
     {
-        private readonly HashSet<StringHash32> m_CurrentRegionIds = new HashSet<StringHash32>();
+        private readonly HashSet<StringHash32> m_CurrentRegionIds = Collections.NewSet<StringHash32>(3);
         [NonSerialized] protected PlayerBodyStatus m_BodyStatus;
         [SerializeField, HideInInspector] private SpawnCtrl m_SpawnCtrl;
 

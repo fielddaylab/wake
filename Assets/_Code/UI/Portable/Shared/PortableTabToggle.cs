@@ -1,3 +1,4 @@
+using System;
 using BeauRoutine.Extensions;
 using BeauUtil;
 using TMPro;
@@ -15,10 +16,16 @@ namespace Aqua.Portable {
 
         #endregion // Inspector
 
+        [NonSerialized] private Func<float> m_InitialDelay;
+
         public PortableAppId Id() { return m_Id; }
 
         public Toggle Toggle { get { return m_Toggle; } }
         public PortableMenuApp App { get { return m_App; } }
+
+        public void SetInitialDelay(Func<float> delayFunc) {
+            m_InitialDelay = delayFunc;
+        }
 
         private void Awake() {
             m_Toggle.onValueChanged.AddListener(OnToggleValue);
@@ -38,7 +45,7 @@ namespace Aqua.Portable {
                 return;
 
             if (inbValue) {
-                m_App.Show();
+                m_App.Show(m_InitialDelay());
             } else {
                 m_App.Hide();
             }

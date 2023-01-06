@@ -649,7 +649,7 @@ namespace Aqua
             m_OptionGroup.blocksRaycasts = false;
             yield return Routine.ForParallel(
                 0, optionsToShow,
-                (i) => m_OptionButtons[i].AnimateOn(i * 0.02f)
+                (i) => m_OptionButtons[i].AnimateOn(i * 0.04f)
             );
             m_OptionGroup.blocksRaycasts = true;
 
@@ -660,7 +660,7 @@ namespace Aqua
 
             yield return Routine.ForParallel(
                 0, optionsToShow,
-                (i) => m_OptionButtons[i].AnimateOff(i * 0.02f)
+                (i) => m_OptionButtons[i].AnimateOff(0.05f + i * 0.04f)
             );
 
             m_OptionContainer.gameObject.SetActive(false);
@@ -705,6 +705,7 @@ namespace Aqua
                 yield break;
             
             m_ButtonContainer.gameObject.SetActive(true);
+            AppearAnim.PingChildren(m_ButtonContainer, false, 0, 0.1f);
             yield return Routine.Race(
                 m_Button == null ? null : m_Button.onClick.WaitForInvoke(),
                 Routine.WaitCondition(() => m_CurrentState.IsCutsceneSkip || m_Input.Device.MousePressed(0) || m_Input.Device.KeyPressed(KeyCode.Space))

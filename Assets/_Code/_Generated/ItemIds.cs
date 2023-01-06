@@ -12,6 +12,7 @@ static public class ItemIds
 	static public readonly StringHash32 WaterStabilizer = new StringHash32(0xC3EF968D);
 	static public readonly StringHash32 Engine = new StringHash32(0xDB61155B);
 	static public readonly StringHash32 Flashlight = new StringHash32(0xD184FA33);
+	static public readonly StringHash32 FlashlightCoordinates = new StringHash32(0xF173DFF2);
 	static public readonly StringHash32 Hull = new StringHash32(0xEED0C4D6);
 	static public readonly StringHash32 Icebreaker = new StringHash32(0x38F974D4);
 	static public readonly StringHash32 Microscope = new StringHash32(0x12AA1E11);

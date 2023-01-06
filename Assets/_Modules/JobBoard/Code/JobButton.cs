@@ -33,7 +33,7 @@ namespace Aqua.JobBoard
 
         #endregion // Inspector
 
-        [NonSerialized] private Transform m_Transform;
+        [NonSerialized] private RectTransform m_Transform;
         [NonSerialized] private Action<JobButton> m_OnSelected;
         [NonSerialized] private JobDesc m_Job;
         [NonSerialized] private JobStatusFlags m_Status;
@@ -42,7 +42,7 @@ namespace Aqua.JobBoard
         public JobDesc Job { get { return m_Job; } }
         public JobStatusFlags Status { get { return m_Status; } }
         public JobProgressCategory Group { get { return m_Group; } }
-        public Transform Transform { get { return this.CacheComponent(ref m_Transform); } }
+        public RectTransform Transform { get { return this.CacheComponent(ref m_Transform); } }
 
         private void Awake()
         {
@@ -113,6 +113,8 @@ namespace Aqua.JobBoard
                             break;
                         }
                 }
+                
+                m_Toggle.GetComponent<ClickPopAnim>().Ping();
                 return true;
             }
 

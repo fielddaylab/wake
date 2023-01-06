@@ -140,6 +140,7 @@ namespace EasyAssetStreaming {
                 string url = id.MetaInfo.ResolvedAddress;
                 var request = id.LoadInfo.Loader = new UnityWebRequest(url, UnityWebRequest.kHttpVerbGET);
                 request.downloadHandler = new DownloadHandlerAudioClip(url, GetAudioTypeForURL(url));
+                InvokeLoadBegin(id, request, id.LoadInfo.RetryCount);
                 var sent = request.SendWebRequest();
                 sent.completed += (_) => {
                     HandleAudioUWRFinished(id);
@@ -196,8 +197,11 @@ namespace EasyAssetStreaming {
                 }
 
                 UnityWebRequest request = loadInfo.Loader;
+                bool failed = DownloadFailed(request);
 
-                if (request.isNetworkError || request.isHttpError) {
+                InvokeLoadResult(id, request, StreamingHelper.ResultType(request, failed));
+
+                if (failed) {
                     if (loadInfo.RetryCount < RetryLimit && StreamingHelper.ShouldRetry(request)) {
                         UnityEngine.Debug.LogWarningFormat("[Streaming] Retrying audio load '{0}' from '{1}': {2}", id.MetaInfo.Address, id.MetaInfo.ResolvedAddress, loadInfo.Loader.error);
                         loadInfo.RetryCount++;
@@ -235,9 +239,9 @@ namespace EasyAssetStreaming {
 
             static private bool s_OverBudgetFlag;
 
-            static public void CheckBudget(long now) {
+            static public bool CheckBudget(long now) {
                 if (MemoryBudget <= 0) {
-                    return;
+                    return false;
                 }
 
                 long over = MemoryUsage.Current - MemoryBudget;
@@ -250,10 +254,13 @@ namespace EasyAssetStreaming {
                     if (asset) {
                         UnloadSingle(asset, now);
                         s_OverBudgetFlag = false;
+                        return true;
                     }
                 } else {
                     s_OverBudgetFlag = false;
                 }
+
+                return false;
             }
 
             #endregion // Budget
@@ -264,32 +271,30 @@ namespace EasyAssetStreaming {
 
             static internal AudioType GetAudioTypeForURL(string inURL)
             {
-                string extension = System.IO.Path.GetExtension(inURL);
-
-                if (extension.Equals(".mp3", StringComparison.OrdinalIgnoreCase))
+                if (inURL.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase))
                     return AudioType.MPEG;
-                if (extension.Equals(".ogg", StringComparison.OrdinalIgnoreCase))
+                if (inURL.EndsWith(".ogg", StringComparison.OrdinalIgnoreCase))
                     return AudioType.OGGVORBIS;
-                if (extension.Equals(".wav", StringComparison.OrdinalIgnoreCase))
+                if (inURL.EndsWith(".wav", StringComparison.OrdinalIgnoreCase))
                     return AudioType.WAV;
 
-                if (extension.Equals(".acc", StringComparison.OrdinalIgnoreCase))
+                if (inURL.EndsWith(".acc", StringComparison.OrdinalIgnoreCase))
                     return AudioType.ACC;
-                if (extension.Equals(".aiff", StringComparison.OrdinalIgnoreCase))
+                if (inURL.EndsWith(".aiff", StringComparison.OrdinalIgnoreCase))
                     return AudioType.AIFF;
-                if (extension.Equals(".it", StringComparison.OrdinalIgnoreCase))
+                if (inURL.EndsWith(".it", StringComparison.OrdinalIgnoreCase))
                     return AudioType.IT;
-                if (extension.Equals(".mod", StringComparison.OrdinalIgnoreCase))
+                if (inURL.EndsWith(".mod", StringComparison.OrdinalIgnoreCase))
                     return AudioType.MOD;
-                if (extension.Equals(".mp2", StringComparison.OrdinalIgnoreCase))
+                if (inURL.EndsWith(".mp2", StringComparison.OrdinalIgnoreCase))
                     return AudioType.MPEG;
-                if (extension.Equals(".s3m", StringComparison.OrdinalIgnoreCase))
+                if (inURL.EndsWith(".s3m", StringComparison.OrdinalIgnoreCase))
                     return AudioType.S3M;
-                if (extension.Equals(".xm", StringComparison.OrdinalIgnoreCase))
+                if (inURL.EndsWith(".xm", StringComparison.OrdinalIgnoreCase))
                     return AudioType.XM;
-                if (extension.Equals(".xma", StringComparison.OrdinalIgnoreCase))
+                if (inURL.EndsWith(".xma", StringComparison.OrdinalIgnoreCase))
                     return AudioType.XMA;
-                if (extension.Equals(".vag", StringComparison.OrdinalIgnoreCase))
+                if (inURL.EndsWith(".vag", StringComparison.OrdinalIgnoreCase))
                     return AudioType.VAG;
 
                 #if UNITY_IOS && !UNITY_EDITOR

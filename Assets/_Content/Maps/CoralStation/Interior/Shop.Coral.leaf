@@ -16,50 +16,99 @@
 
 // Intros
 
+// first time player talks to mechanic
 #ShopHandler(first)
 @boostScore 100
 @once
-$if world:coral.mechanic.toldToReturn
-    {@coralMechanic} Hey there, O!
-                     You talk {nameof @profCoral} into getting rid of those Lionfish yet?
-    {@player} Um... not exactly. 
-    {@coralMechanic} Ugh. I swear, nobody listens to me around here.
-                     Those things are pure, spiny evil. 
-                     And not just because I'm deathly allergic.
-    {@player}       Oh, yikes... that sounds awful.
-    {@coralMechanic} Awww. It's sweet that you care, O. 
-                     Wanna take a look around? 
-    
-    $choice .action.openShop; Sure!
-    $choice .action.cancel; Maybe later. 
-$else
-    {@coralMechanic}  Hey, O! Welcome back.
-                      I'm glad the Lionfish drama didn't send you packing...
-                      I'm pretty fun to be around when I'm not on a vendetta against venomous monsters. 
-    {@player}   I mean... vendettas are pretty fun, too.
-    {@coralMechanic} Aww, O. Where have you been all my life? 
-    {@player}   The Kelp Forest, mostly.
-    {@coralMechanic} Ha. I've heard it's nice there. 
-                     Wanna take another look around? 
-    $choice .action.openShop; Sure! 
-    $choice .action.cancel; Not right now.
-$endif
+{@coralMechanic}  O, you're back! Glad all the Lionfish drama didn't scare you off.
+                  I'm fun to hang out with when I'm not on a vendetta against venomous monsters.
+{@player}         Yeah... I don't get it.
+                  You're allergic to Lionfish, but you still work around them.
+                  Isn't that... you know... terrifying? 
+{@coralMechanic}  Ha. I like to live dangerously.
+                  I feel like you might know something about that.
+{@player}         Me?? 
+{@coralMechanic}  I heard that you and your friend crashed a sub a few months ago.
+                  Don't worry. Anything like that happens again, just pay me a visit. I can fix anything.
+                 Wanna take a look around my shop? 
+$choice .action.openShop; Sure! 
+$choice .action.cancel; Not right now.
 
+// TODO: this handler evaluates to true, even when it's not. Disabling until it's fixed.
+// // second time player arrives in the station and has talked to mechanic previously
+// #ShopHandler(world:coral.leftStation == true)
+// @boostScore 50
+//@once
+//{@coralMechanic}    Hey, O! Welcome back.  
+ //                   You convince the Professor to get rid of those Lionfish yet?
+//{@player}           Well... not yet.
+  //                  They are a little creepy, but I don't know much about them. 
+//{@coralMechanic}    Come on, O. You're my last hope! 
+  //                  You've seen how {nameof @profCoral} works... slow and steady. Emphasis on the <i>slow</i>.
+    //                If we don't take care of the Lionfish problem soon, it'll be too late.
+//{@player}           I——I'll do my best. 
+//{@coralMechanic}    I knew I could count on you. 
+ //                   In the meantime... I guess you'd like to take a look around my shop? 
+//$choice .action.openShop; Sure!
+//$choice .action.cancel; Not right now.
+
+
+// Default case:
 #ShopHandler(a)
-$if JobCompleted(coral-hunting-lions)
-    {@$MerchantId} O!! You did it!
-    {@player} Um... what... ?
-    {@$MerchantId} The Lionfish. You figured it out!
-                    I {i}knew{/i} those things were rotten.
-                    Guess I better put back that ignition coil I borrowed from {nameof @profCoral}'s engine...
-$else
-    {@$MerchantId} Hey, O! Nice to see you again.
-                   So, you're a bigshot scientist... what's going on with those Lionfish?
-    {@player}      Not too much, yet.
-    {@$MerchantId} Ugh. I swear, he's never going to listen.
-                   I might need to take drastic measures...
-$endif
-{@$MerchantId} Anyway. Wanna look around the shop?  
+{@$MerchantId}  Hey, O! Nice to see you again.
+                Wanna look around the shop?  
+$choice .action.openShop; Sure!
+$choice .action.cancel; Not right now.
+
+// After Hunting Lions job completed
+#ShopHandler(gotLionfish, JobCompleted(coral-hunting-lions))
+@once
+{@$MerchantId} O!! You did it! You're my hero!!
+{@player} Um... what... ?
+{@$MerchantId} The Lionfish. You figured it out!
+               I {i}knew{/i} those things were bad news. 
+                Guess I better put back that ignition coil I borrowed from {nameof @profCoral}'s engine...
+{@player} Wait. That was you??
+{@$MerchantId}  Shhh. It was for a good cause. 
+                Anyway. Wanna look around the shop?  
+$choice .action.openShop; Sure!
+$choice .action.cancel; Not right now.
+
+// 50% chance to occur after completing at least one job at coral station
+#ShopHandler(noGoLionfish, Chance(0.5), !JobCompleted(coral-hunting-lions), CompletedJobCount(CoralStation, 1))
+@once
+{@$MerchantId} Hey, O! It's always nice to see you.  
+               So... did you and the professor figure out what's going on with those Lionfish yet? 
+{@player}      Not yet. Sorry, {nameof @$MerchantId}.
+               Sounds like he's got a lot of other stuff going on. 
+{@$MerchantId} Ugh. I swear, Professor Slow-and-Steady is never going to listen.
+               I might need to take matters into my own hands... 
+{@$MerchantId} Ahem. Anyhow... wanna take a look around my shop, O?  
+$choice .action.openShop; Sure!
+$choice .action.cancel; Not right now.
+
+#ShopHandler(gotFlashlightAssignedHere, world:shop.boughtFlashlightFrom == "coral", HasUpgrade("Flashlight"))
+@once
+{@$MerchantId}  O! Thank you for retrieving that {nameof Flashlight} for me!
+{@$MerchantId}  It's beautiful down there, isn't it? 
+{@player}       Yeah. Though you could've warned me about all those Anglerfish...
+{@$MerchantId}  Ha. Warned you? Where's the fun in that?
+                I can tell you're like me. Never one to shy away from adventure.
+                Wanna take a look around my shop, while you're here?
+$choice .action.openShop; Sure!
+$choice .action.cancel; Not right now.
+
+#ShopHandler(gotFlashlight, world:shop.boughtFlashlightFrom != "coral", HasUpgrade("Flashlight"))
+@once
+{@$MerchantId}  Hey O! Good to see you again.
+                Whoa... is that the {nameof Flashlight} I lost in the Lower Depths??
+{@player}       Yep. My uncle sent me down to get it.
+{@$MerchantId}  Ooh. Thank you, O! 
+                Beautiful down there, isn't it? 
+{@player}       Yeah. Though all those Anglerfish were pretty terrifying...
+{@$MerchantId}  Ha! Tell me about it. 
+                Nothing like the thrill of hundreds of deep-sea predators to make you feel alive.
+                Anyway. Wanna take a look around my shop?
 $choice .action.openShop; Sure!
 $choice .action.cancel; Not right now.
 
@@ -70,99 +119,119 @@ $choice .action.cancel; Not right now.
 // Generic
 
 :: unlockHintHere
-{@$MerchantId}   {random Oh hey,|You'll be happy to know that|And I can tell you that} this would unlock a {h}Job{/h} right here.
+{@$MerchantId}   {random Ooh,|Hey,} looks like this would unlock a {h}Job{/h} here!
 
 :: unlockHintSomewhere
-{@$MerchantId}   {random Whoa,|Hey,|As a bonus,} this would unlock some jobs over at the {nameof $local:hintStation}!
+{@$MerchantId}   {random Ooh,|Hey,|Just a tip for ya...} looks like this would unlock some jobs over at the {nameof $local:hintStation}!
 
 :: lowExp
-{@$MerchantId}   Oh, {random hang on|I'm sorry}... I can't let you have this just yet. You'll need {exp}{$local:needExp}{/exp} more before I can trust you with it.
+{@$MerchantId}   {random Oh... whoops.|Huh... scratch that.} You don't have enough {exp}experience{/exp} for this one yet.
 
 :: freeItem
 {@$MerchantId}   So, want the {nameof $local:itemId}? Won't cost you anything.
 
 :: costItem
 {@$MerchantId}   So, want to buy the {nameof $local:itemId}? \
-                {random It'll|That'll} be {cash}{$local:cashCost}{/cash}!
+                 {random It'll|That'll} be {cash}{$local:cashCost}{/cash}!
 
 :: cancel
-{@$MerchantId}   Eh, suit yourself!
+{@$MerchantId}   {random No hay problema.|No worries, O.} Come back soon!  
 
 :: notEnoughCash
-{@$MerchantId}   Ah, you don't have enough cash.
+{@$MerchantId}   {random Oh... not enough cash. You'll have to come back for this one later.|Huh... looks like you'll need more cash for this one.|I reeeally like you, O, but I still gotta follow the rules. You'll need more cash for this one.}
 
 :: purchased
-{@$MerchantId}   {random Good choice!|Good call.|Sweet!}
+{@$MerchantId}   {random Awesome!|Good choice.|Sweet!}
 
 // Idle
 
 #OpenHandler(a)
-{@$MerchantId}  Take a look through my stock!
+{@$MerchantId}  Sooo... wanna take a look? 
 
 #OpenHandler(b)
-{@$MerchantId}  Any of these look interesting?
+{@$MerchantId}  Are you gonna shop, or just hang out here all day? Not that I'm complaining...
 
 #CloseHandler(a)
-{@$MerchantId}  Thanks for stopping by!
+{@$MerchantId}  Thanks for stopping by, O!
 
 #CloseHandler(purchased, shop:purchaseCount)
 @boostScore 10
-{@$MerchantId}  Thank you!
+{@$MerchantId}  Thanks, O! See you around. 
 
 #CloseHandler(notEnoughCash, shop:notEnoughCount)
-{@$MerchantId}  Come back with some more {pluralnameof Cash} next time!
+{@$MerchantId}  Come back when you've got some more {pluralnameof Cash}! 
 
 #CloseHandler(notEnoughExp, shop:needsExpCount)
-{@$MerchantId}  Come back when you've got more {pluralnameof Exp}!
+{@$MerchantId}  Come back when you've got more {exp}experience{/exp}!
 
 #OpenExplorationHandler(a)
-{@$MerchantId}  Need any exploration tools?
+{@$MerchantId}  Wanna check out these sweet exploration tools?
 
 #OpenExplorationHandler(b)
-{@$MerchantId}  Anything for your sub?
+{@$MerchantId}  Need any upgrades for your sub? 
 
 #OpenScienceHandler(a)
 {@$MerchantId}  Any science-y things you want?
 
 #OpenScienceHandler(b)
-{@$MerchantId}  Need anything for your science?
+{@$MerchantId}  You're a bigshot scientist, right? I've got all kinds of science-y stuff here. 
 
 // Exploration
 
 #ItemHandler(ROVTagger)
-{@$MerchantId}  The {nameof ROVTagger}!| 
-                It'll show up at the top of your view.
-                If you switch it on and move close to a species you've already scanned, the {nameof ROVTagger} will {h}count{/h} it.
-                Count enough of them and it'll do the rest and give you a population estimate.
-{@guide}    That's very convenient. We should definitely get this.
+{@$MerchantId}  The {nameof ROVTagger}!| Perfect for science types like you.
+                It'll show up at the top of your screen when you're in your sub.
+                If you switch it on and move close to a species you've already scanned, the {nameof ROVTagger} will {h}count{/h} all the nearby organisms. 
+                Count enough of them, and it'll give you a population estimate.
+{@player}     Ooh. That sounds super helpful! 
 $set    jobs:common-dive.seen.tagger-intro = true
 $EvaluateItemPurchase()
 
-#OverrideItemHandler(Flashlight, flashlight.first)
+#OverrideItemHandler(FlashlightCoordinates, flashlight.first)
 @boostScore 100
 @once
 {@$MerchantId}  The {nameof Flashlight}!
-                Use this one for dark spaces, deep sea, yadda yadda...
-                I mean, you're a brilliant scientist. I'm sure you know what a flashlight is. 
+                Use this one to see in the deep sea, great for dark areas, yadda yadda...
+                I mean, you're a brilliant scientist. I'm sure you know what a flashlight is.
+$set local:postPurchaseBranch = "interior.shop.coral.PostFlashlight"
 $EvaluateItemPurchase()
 
-#ItemHandler(Flashlight)
+#ItemHandler(FlashlightCoordinates)
 {@$MerchantId}  That's the {nameof Flashlight}!
-                 Always a good idea. Needs no introduction. 
+                 Always a good idea. Especially for adventurous types like you. 
+$set local:postPurchaseBranch = "interior.shop.coral.PostFlashlight"
 $EvaluateItemPurchase()
+
+:: PostFlashlight
+$set    world:flashlightQuest = true
+$set    world:shop.boughtFlashlightFrom = "coral"
+{@coralMechanic}    ...oh no. {fast}Oh shoot, I forgot.{/fast}
+{@player}           Forgot what? 
+{@coralMechanic}    Ha.| Funny story.| I borrowed the {nameof Flashlight} from your uncle.
+                    And then{wait 0.5} {fast}I accidentally dropped it at {nameof FinalStation}.{/fast}
+{@player}           {nameof FinalStation}?
+                    I think my friend's mission started out there! 
+{@coralMechanic}    Ooh, you know the place? 
+{@player}           Well... I've never actually been there.
+{@coralMechanic}    Tell ya what, O. Go grab the {nameof Flashlight} for me, and it's yours. Easy peasy. 
+
+$call UnlockSite(RS-0)
+$call UnlockStation(FinalStation)
+$call ShowPopup(map.unlock.finalStation.header, map.unlock.finalStation.desc)
 
 #ItemHandler(ProbeHacker)
 {@$MerchantId}  The {nameof ProbeHacker}! 
-                Super useful for scientist types like you. 
                 It allows you to read data from any {h}probes{/h} you find out there.
-                Essential for getting historical data off of them.
+                Essential if you want to take on more complicated jobs.
+                Plus, it's pretty fun to use.                 
 $EvaluateItemPurchase()
 
 #ItemHandler(Microscope)
 {@$MerchantId}  That's the {nameof Microscope}!
-                There are tiny creatures out there that you can't be seen with the naked eye...
+                There are tiny creatures out there that you can't be seen with the naked eye.
+                The microscope allows you to——
                 Oh, who am I kidding. You know what a microscope is.
-               Some jobs will require you to scan microscopic organisms, so the {nameof Microscope} will definitely come in handy. 
+                For some jobs, you'll need to scan microscopic organisms, so the {nameof Microscope} will definitely come in handy. 
 $EvaluateItemPurchase()
 
 // Navigation
@@ -170,53 +239,64 @@ $EvaluateItemPurchase()
 #ItemHandler(PropGuard)
 {@$MerchantId}  The {nameof PropGuard}!
                 Super important. Keeps your propeller from getting tangled up in thick vegetation.
+                A must for adventurous types like you. 
 $EvaluateItemPurchase()
 
 #ItemHandler(Engine)
 {@$MerchantId}  That's the {nameof Engine}!
                 It boosts the power of the sub's engine, so it can move against strong currents.
-                I usually tell people to be careful with it...
-                But I've got a feeling you're a bit of a daredevil. 
+                I usually tell people to be careful with this one...
+                But I've got a feeling you can handle it.  
 $EvaluateItemPurchase()
 
 #ItemHandler(Hull)
-{@$MerchantId}  Are you looking to go {h}deep{/h}? 
-                Um, in the ocean, I Mean?
-                Then the {nameof Hull} might be helpful!
-                With this plating, your sub will be able to withstand much more pressure.
+{@$MerchantId}  Ooh, this one would be perfect for you, O!
+                The {nameof Hull} allows your sub to withstand more pressure. 
+                Essential if you want to go on a deep-sea joyride. 
 $EvaluateItemPurchase()
 
 #ItemHandler(Icebreaker)
 {@$MerchantId}  That's the {nameof Icebreaker}!
-                It's able to shatter ice by emitting a strong localized electrical field.
+                It shatters ice by emitting a strong, localized electric field. 
+                Also useful for breaking the ice at parties... 
+                Though you seem like you wouldn't have too much trouble with that. 
 $EvaluateItemPurchase()
 
 // Experimentation
 
 #ItemHandler(StressTank)
-{@$MerchantId}   The {nameof StressTank} can be used to measure the stress ranges of different creatures.
+{@$MerchantId}   Oh, I've heard this one is great!
+                 The {nameof StressTank} can be used to measure the stress ranges of different creatures.
+                 Could be useful for figuring out how to drive those Lionfish outta town...
+                 You know. Just an idea. 
 $EvaluateItemPurchase()
 
 #ItemHandler(MeasurementTank)
-{@$MerchantId}  The {nameof MeasurementTank} can be used to measure various rates for different creatures.
-                Really handy if you need some eating rates, or reproduction, or respiration.
+{@$MerchantId}  Ooh, the {nameof MeasurementTank}!
+                If you want to make a name for yourself, you'll need one of these. 
+                It'll allow you to get eating, respiration, and reproduction rates for different organisms. 
 $EvaluateItemPurchase()
 
 // Modeling
 
 #ItemHandler(VisualModel)
-{@$MerchantId}  The {nameof VisualModel} can be used at your {map-name}Modeling Station{/map-name}.
-                It is used to create visualizations of the different connections between species.
-{@guide}    Hmmm. I feel like this could come in handy later...
-            I think we should purchase this item.
+{@$MerchantId}  The {nameof VisualModel}! I love playing with this one.
+                Use it to visualize the connections between different species. 
+{@player}       Ooh, this could definitely come in handy.
+                Maybe I should buy this one now... 
 $EvaluateItemPurchase()
 
 #ItemHandler(PredictionModel)
-{@$MerchantId}  The {nameof PredictionModel} can be used at the {map-name}Modeling Station{/map-name}.
-            It is used to create predictions for creatures in different ecosystems.
+{@$MerchantId}  The {nameof PredictionModel}! 
+                A snazzy tool for your {map-name}Modeling Station{/map-name}.
+                Use it to make predictions about creatures in different ecosystems. 
+                Super useful for science-nerd types like you. 
 $EvaluateItemPurchase()
 
 #ItemHandler(InterveneModel)
-{@$MerchantId}  The {nameof InterveneModel} can be used at the {map-name}Modeling Station{/map-name}.
-            It is used to model the outcomes of potential interventions for different ecosystems.
+{@$MerchantId}  The {nameof InterveneModel} would make a great addition to your {map-name}Modeling Station{/map-name}!
+                Use it to model the outcomes of different possible interventions. 
+                Crucial if you ever want to add something to an ecosystem....
+                Or, you know. Take something away.
+                *cough*LIONFISH*cough*
 $EvaluateItemPurchase()

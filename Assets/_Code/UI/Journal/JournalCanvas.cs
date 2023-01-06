@@ -6,6 +6,7 @@ using Aqua.Journal;
 using BeauPools;
 using BeauRoutine;
 using BeauUtil;
+using BeauUtil.UI;
 using EasyAssetStreaming;
 using TMPro;
 using UnityEngine;
@@ -88,6 +89,12 @@ namespace Aqua {
         private Routine m_NewEntryRoutine;
         [NonSerialized] private bool m_InScene;
         [NonSerialized] private bool m_DeleteQueued;
+        [NonSerialized] private bool m_HiddenTriggerQueued;
+
+        static public bool Visible() {
+            JournalCanvas c = Services.UI.FindPanel<JournalCanvas>();
+            return c != null && (c.IsTransitioning() || c.IsShowing());
+        }
 
         private JournalCanvas() {
             m_Decompressor.NewRoot = (string name, CompressedPrefabFlags flags, CompressedComponentTypes componentTypes, GameObject parent) => {
@@ -311,6 +318,8 @@ namespace Aqua {
 
             LoadList();
             FilterList(0);
+
+            Services.Events.Queue(GameEvents.JournalOpen);
         }
 
         protected override void OnShowComplete(bool inbInstant) {
@@ -330,6 +339,8 @@ namespace Aqua {
             if (!m_InScene && !inbInstant) {
                 m_DeleteQueued = true;
             }
+
+            m_HiddenTriggerQueued = !inbInstant;
         }
 
         protected override void OnHideComplete(bool inbInstant) {
@@ -343,6 +354,11 @@ namespace Aqua {
             m_RightPage.DisableMasking();
             m_CurrentSection = -1;
             m_NewEntryRoutine.Stop();
+
+            if (Services.Script != null && m_HiddenTriggerQueued) {
+                Services.Script.TriggerResponse(GameTriggers.JournalHidden);
+                Services.Events.Queue(GameEvents.JournalClosed);
+            }
 
             if (m_DeleteQueued) {
                 Async.InvokeAsync(() => Destroy(this.Canvas.gameObject));

@@ -41,6 +41,8 @@ namespace OGD {
             public override string ToString() {
                 return string.Format("{0}({1})", Status, Msg);
             }
+
+            static public readonly Error Success = default(Error);
         }
 
         static internal ReturnStatus ParseStatus(string status) {
@@ -73,12 +75,17 @@ namespace OGD {
         }
 
         public delegate void DefaultErrorHandlerDelegate(Error err);
+        public delegate void RequestNotificationDelegate(UnityWebRequest request, int retryStatus);
+        public delegate void RequestNotificationErrorDelegate(UnityWebRequest request, Error err);
         
-        internal delegate void ResponseProcessorDelegate<TResponse>(TResponse response, object userData);
+        internal delegate Error ResponseProcessorDelegate<TResponse>(TResponse response, object userData);
         internal delegate void RequestErrorHandlerDelegate(Error err, object userData);
 
         static private string s_ServerAddress = string.Empty;
         static private string s_GameId = string.Empty;
+
+        static private readonly StringBuilder[] s_BuilderPool = new StringBuilder[4];
+        static private int s_BuilderPoolCount = 0;
 
         /// <summary>
         /// Configures the server address and game id.
@@ -94,6 +101,16 @@ namespace OGD {
         static public string GameId() {
             return s_GameId;
         }
+
+        /// <summary>
+        /// Event dispatched when a request is sent.
+        /// </summary>
+        static public event RequestNotificationDelegate OnRequestSent;
+
+        /// <summary>
+        /// Event dispatched when a request is processed.
+        /// </summary>
+        static public event RequestNotificationErrorDelegate OnRequestResponse;
 
         #region Constructing a Query
 
@@ -121,7 +138,7 @@ namespace OGD {
 
         static internal void QueryArg(ref Query builder, string key, string data) {
             if (builder.ArgsBuilder == null) {
-                builder.ArgsBuilder = new StringBuilder();
+                builder.ArgsBuilder = AllocStringBuilder();
             }
 
             if (builder.ArgCount++ > 0) {
@@ -164,6 +181,7 @@ namespace OGD {
             public ResponseProcessorDelegate<TResponse> Handler;
             public RequestErrorHandlerDelegate ErrorHandler;
             public object UserData;
+            public int RetryCount;
 
             public void Dispose() {
                 var request = this;
@@ -174,34 +192,37 @@ namespace OGD {
         /// <summary>
         /// Submits a query as a GET request.
         /// </summary>
-        static internal Request<T> Get<T>(Query query, ResponseProcessorDelegate<T> handler, RequestErrorHandlerDelegate errorHandler, object userData) {
-            return SendRequest<T>(query, UnityWebRequest.kHttpVerbGET, handler, errorHandler, userData);
+        static internal Request<T> Get<T>(Query query, ResponseProcessorDelegate<T> handler, RequestErrorHandlerDelegate errorHandler, object userData, int retryCount = 0) {
+            return SendRequest<T>(query, UnityWebRequest.kHttpVerbGET, handler, errorHandler, userData, retryCount);
         }
 
         /// <summary>
         /// Submits a query as a PUT request.
         /// </summary>
-        static internal Request<T> Put<T>(Query query, ResponseProcessorDelegate<T> handler, RequestErrorHandlerDelegate errorHandler, object userData) {
-            return SendRequest<T>(query, UnityWebRequest.kHttpVerbPUT, handler, errorHandler, userData);
+        static internal Request<T> Put<T>(Query query, ResponseProcessorDelegate<T> handler, RequestErrorHandlerDelegate errorHandler, object userData, int retryCount = 0) {
+            return SendRequest<T>(query, UnityWebRequest.kHttpVerbPUT, handler, errorHandler, userData, retryCount);
         }
 
         /// <summary>
         /// Submits a query as a POST request.
         /// </summary>
-        static internal Request<T> Post<T>(Query query, ResponseProcessorDelegate<T> handler, RequestErrorHandlerDelegate errorHandler, object userData) {
-            return SendRequest<T>(query, UnityWebRequest.kHttpVerbPOST, handler, errorHandler, userData);
+        static internal Request<T> Post<T>(Query query, ResponseProcessorDelegate<T> handler, RequestErrorHandlerDelegate errorHandler, object userData, int retryCount = 0) {
+            return SendRequest<T>(query, UnityWebRequest.kHttpVerbPOST, handler, errorHandler, userData, retryCount);
         }
 
-        static private Request<T> SendRequest<T>(Query query, string method, ResponseProcessorDelegate<T> handler, RequestErrorHandlerDelegate errorHandler, object userData) {
-            string fullPath = s_ServerAddress + query.API;
+        static private Request<T> SendRequest<T>(Query query, string method, ResponseProcessorDelegate<T> handler, RequestErrorHandlerDelegate errorHandler, object userData, int retryCount) {
+            StringBuilder pathBuilder = AllocStringBuilder();
+            pathBuilder.Append(s_ServerAddress).Append(query.API);
             if (query.ArgsBuilder != null && query.ArgsBuilder.Length > 0) {
-                fullPath += query.ArgsBuilder.ToString();
-                query.ArgsBuilder.Length = 0;
+                pathBuilder.Append(query.ArgsBuilder.ToString());
             }
 
             Request<T> request = new Request<T>();
-            UnityWebRequest uwr = new UnityWebRequest(fullPath, method);
+            UnityWebRequest uwr = new UnityWebRequest(pathBuilder.ToString(), method);
             uwr.downloadHandler = new DownloadHandlerBuffer();
+
+            FreeStringBuilder(query.ArgsBuilder);
+            FreeStringBuilder(pathBuilder);
             
             request.WebRequest = uwr;
             request.Handler = handler;
@@ -210,6 +231,10 @@ namespace OGD {
 
             AsyncOperation sent = uwr.SendWebRequest();
             sent.completed += (a) => HandleUWRCompleted(uwr, request);
+
+            if (OnRequestSent != null) {
+                OnRequestSent(uwr, request.RetryCount);
+            }
 
             return request;
         }
@@ -248,22 +273,81 @@ namespace OGD {
             using(uwr)
             {
                 if (uwr.isHttpError || uwr.isNetworkError) {
-                    if (errorHandler != null)
-                        errorHandler(new Error(ReturnStatus.Error_Network, uwr.error), userData);
+                    InvokeErrorResponse(uwr, new Error(ReturnStatus.Error_Network, uwr.error), userData, errorHandler);
                 } else {
                     try {
                         T response = JsonUtility.FromJson<T>(uwr.downloadHandler.text);
-                        if (handler != null)
-                            handler(response, userData);
+                        if (handler != null) {
+                            Error e = handler(response, userData);
+                            if (e.Status != ReturnStatus.Success) {
+                                InvokeErrorResponse(uwr, e, userData, errorHandler);
+                            } else {
+                                InvokeSuccessResponse(uwr, e);
+                            }
+                        } else {
+                            InvokeSuccessResponse(uwr, null);
+                        }
                     }
                     catch(Exception e) {
-                        if (errorHandler != null)
-                            errorHandler(new Error(ReturnStatus.Error_Exception, e.ToString()), userData);
+                        InvokeErrorResponse(uwr, new Error(ReturnStatus.Error_Exception, e.ToString()), userData, errorHandler);
                     }
                 }
             }
         }
 
+        static private void InvokeErrorResponse(UnityWebRequest request, Error error, object userData, RequestErrorHandlerDelegate errorHandler) {
+            if (errorHandler != null) {
+                errorHandler(error, userData);
+            }
+            if (OnRequestResponse != null) {
+                OnRequestResponse(request, error);
+            }
+        }
+
+        static private void InvokeErrorResponse(UnityWebRequest request, Error error, DefaultErrorHandlerDelegate errorHandler) {
+            if (errorHandler != null) {
+                errorHandler(error);
+            }
+            if (OnRequestResponse != null) {
+                OnRequestResponse(request, error);
+            }
+        }
+
+        static private void InvokeSuccessResponse(UnityWebRequest request, string responseString) {
+            if (OnRequestResponse != null) {
+                OnRequestResponse(request, new Error(ReturnStatus.Success, responseString));
+            }
+        }
+
+        static private void InvokeSuccessResponse(UnityWebRequest request, Error error) {
+            if (OnRequestResponse != null) {
+                OnRequestResponse(request, error);
+            }
+        }
+
         #endregion // Sending Request
+    
+        #region StringBuilder Pool
+
+        static private StringBuilder AllocStringBuilder() {
+            if (s_BuilderPoolCount > 0) {
+                StringBuilder builder = s_BuilderPool[--s_BuilderPoolCount];
+                s_BuilderPool[s_BuilderPoolCount] = null;
+                return builder;
+            } else {
+                return new StringBuilder(128);
+            }
+        }
+
+        static private void FreeStringBuilder(StringBuilder builder) {
+            if (builder != null) {
+                builder.Length = 0;
+                if (s_BuilderPoolCount < s_BuilderPool.Length) {
+                    s_BuilderPool[s_BuilderPoolCount++] = builder;
+                }
+            }
+        }
+
+        #endregion // StringBuilder Pool
     }
 }

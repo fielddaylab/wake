@@ -18,6 +18,8 @@ GameObject:
   - component: {fileID: 941380613977429609}
   - component: {fileID: 2625470576937458151}
   - component: {fileID: 4428192909070903161}
+  - component: {fileID: 1344616719887828397}
+  - component: {fileID: 2695528842057007145}
   m_Layer: 5
   m_Name: OptionButton
   m_TagString: Untagged
@@ -60,7 +62,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Id:
     m_Source: hotbar.options
-    m_Hash: 3862953309
+    m_HashValue: 3862953309
+  m_IsPersistent: 0
+  m_StartDisabled: 0
 --- !u!114 &6962069660404683264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -123,6 +127,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_KeyCode: 27
+  m_KeyCodeAlt: 0
   m_ButtonDisplay: {fileID: 0}
 --- !u!114 &941380613977429609
 MonoBehaviour:
@@ -138,7 +143,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TooltipId:
     m_Source: ui.option.tooltip
-    m_Hash: 2616254151
+    m_HashValue: 2616254151
   TooltipOverride: 
   Cursor: 1
 --- !u!114 &2625470576937458151
@@ -203,6 +208,32 @@ MonoBehaviour:
   m_Toggle: {fileID: 2625470576937458151}
   m_OnObject: {fileID: 0}
   m_Invert: 0
+--- !u!114 &1344616719887828397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 403321102130430852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee012376a32f0314ead77f5ad3a9b360, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Offset0: {x: 0, y: 0}
+  m_Offset1: {x: 0, y: 0}
+--- !u!114 &2695528842057007145
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 403321102130430852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b65daf6ebab4aca41a9a0c35e749ef1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1388614182448481739
 GameObject:
   m_ObjectHideFlags: 0

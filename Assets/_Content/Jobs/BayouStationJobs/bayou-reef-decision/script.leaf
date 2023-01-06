@@ -12,10 +12,105 @@
 {@player}      Wait... me?? 
                I mean, I thought YOU would handle the actual decision-making...
 {@profBayou}   You've proven yourself. I'd like your input.
-               If the ERC Industries Rig goes, all the coral out there--and all the species that depend on coral--go with it.
+               If the ERC Industries Rig goes, all the {nameof ElkhornCoral} and {pluralnameof SeaPearl} out there--and all the species that depend on them--go with it.
                I need you to predict how removing the rig would affect the turtles. 
                Then report back and give me your professional recommendation.
 {@player}      Okay. Got it, Professor. 
+$set jobs:bayou-reef-decision.intervene-failed = false
+
+
+// MODELING SUGGESTIONS
+
+:: triggerSyncFailure
+@trigger    SimulationInterveneError
+@when       !jobs:bayou-reef-decision.intervene-failed
+@once
+$set jobs:bayou-reef-decision.intervene-failed = true
+
+:: helpModelSync.Visual
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(interventionDecision), scene:name == "Modeling", modeling:phase == "visual"
+@cutscene
+$branch .modelSuggestions
+
+:: helpModelSync.Sync
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(interventionDecision), scene:name == "Modeling", modeling:phase == "sync"
+@cutscene
+$branch .modelSuggestions
+
+:: helpModelIntervene
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(interventionDecision), scene:name == "Modeling", modeling:phase == "intervene"
+@cutscene
+$branch .modelSuggestions
+
+:: modelSuggestions
+$if HasFact(LoggerheadTurtle.Reproduce), HasFact(LoggerheadTurtle.Eats.Cyanobacteria), HasFact(LoggerheadTurtle.Eats.AngelFish), HasFact(LoggerheadTurtle.Eats.MoonJelly), IsFactFullyUpgraded(LoggerheadTurtle.Eats.MoonJelly), HasFact(RedGrouper.Reproduce), HasFact(RedGrouper.Eats.AngelFish), IsFactFullyUpgraded(LoggerheadTurtle.Eats.AngelFish), HasFact(RedGrouper.Eats.Cyanobacteria), IsFactFullyUpgraded(RedGrouper.Eats.Cyanobacteria), HasFact(AngelFish.Reproduce.Stressed), HasFact(AngelFish.Eats.SeaPearl.Stressed), IsFactFullyUpgraded(AngelFish.Eats.SeaPearl.Stressed), HasFact(Cyanobacteria.Reproduce), HasFact(SeaPearl.Reproduce.Stressed), HasFact(SeaPearl.Reproduce), HasFact(MoonJelly.Reproduce), HasFact(ElkhornCoral.Reproduce), HasFact(ElkhornCoral.Reproduce.Stressed)
+    {@guide}    Once you import your facts and save the Visual model, we should be good to make our Intervene model!
+$else
+    $if !jobs:hide-n-seek.intervene-failed
+        {@guide}    Time to try out your model in the {h}Intervene{/h} tab.
+    $else
+        {@guide}    Seems like we don't have enough information to complete our model accurately.
+                    Look for {h}question marks{/h} in the Visual model interface, those point to where we may need more data.
+        $if !HasFact(LoggerheadTurtle.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(LoggerheadTurtle.Eats.Cyanobacteria)
+            $branch .suggestTurtleEat
+        $elseif !HasFact(LoggerheadTurtle.Eats.AngelFish)
+            $branch .suggestTurtleEat
+        $elseif !HasFact(LoggerheadTurtle.Eats.MoonJelly)
+            $branch .suggestTurtleEat
+        $elseif !IsFactFullyUpgraded(LoggerheadTurtle.Eats.MoonJelly)
+            $branch .suggestTurtleEat
+        $elseif !HasFact(RedGrouper.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(RedGrouper.Eats.AngelFish)
+            $branch .suggestGrouperEat
+        $elseif !IsFactFullyUpgraded(RedGrouper.Eats.AngelFish)
+            $branch .suggestGrouperEat
+        $elseif !HasFact(RedGrouper.Eats.Cyanobacteria)
+            $branch .suggestGrouperEat
+        $elseif !IsFactFullyUpgraded(RedGrouper.Eats.Cyanobacteria)
+            $branch .suggestGrouperEat
+        $elseif !HasFact(AngelFish.Reproduce.Stressed)
+            $branch .suggestReproduce
+        $elseif !HasFact(AngelFish.Eats.SeaPearl.Stressed)
+            $branch .suggestAngelEat
+        $elseif !IsFactFullyUpgraded(AngelFish.Eats.SeaPearl.Stressed)
+            $branch .suggestAngelEat
+        $elseif !HasFact(Cyanobacteria.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(SeaPearl.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(SeaPearl.Reproduce.Stressed)
+            $branch .suggestReproduce
+        $elseif !HasFact(MoonJelly.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(ElkhornCoral.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(ElkhornCoral.Reproduce.Stressed)
+            $branch .suggestReproduce
+        $endif
+    $endif
+$endif
+
+:: suggestReproduce
+{@guide}    Did you get all the reproduction rates?
+
+:: suggestMeasure
+{@guide}    Using the {h}Measurement Tank{/h} to find the rates of unmeasured behaviors may help us here.
+
+:: suggestTurtleEat
+{@guide}    Maybe look into what {nameof LoggerheadTurtle} eats?
+
+:: suggestGrouperEat
+{@guide}    Maybe look into what {nameof RedGrouper} eats?
+
+:: suggestAngelEat
+{@guide}    Maybe look into what {nameof AngelFish} eats?
+
 
 // CATCH-ALL GUIDE TEXT
 
@@ -41,6 +136,7 @@
 {@guide}   Answer: inconclusive.
 {@player}  You're not going to tell me what to do, are you, {nameof @guide}?
 {@guide}  I'm afraid not, O. You are required to make this decision yourself. 
+$call GiveJournalEntry("N23_ReefRemoval")
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
@@ -105,7 +201,7 @@ $call ArgueComplete()
               Either way, the turtle populations will remain stable... but it seems that other organisms will be affected. 
               I'd like to go with your recommendation, Ollie.
 {@player}     Mine? ¿¿En serio??
-              But.. I'm only a junior scientist.
+              But.. I'm still pretty new at this. 
 {@profBayou}  You're also incredibly thoughtful, and you used your data to make the best choice you could.
               I wasn't sure you'd have the courage to make a recommendation. I'm impressed. 
 {@bayouSci}   Well, well. The professor saying something nice? 

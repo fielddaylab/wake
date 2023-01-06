@@ -4,6 +4,7 @@ using Aqua.Debugging;
 using BeauData;
 using BeauUtil;
 using BeauUtil.Debugger;
+using BeauUtil.Variants;
 using EasyBugReporter;
 using LogMask = Aqua.Debugging.LogMask;
 
@@ -11,10 +12,17 @@ namespace Aqua.Profile
 {
     public class ScienceData : IProfileChunk, ISerializedVersion, ISerializedCallbacks
     {
+        static private readonly TableKeyPair Var_FullyDecrypted = TableKeyPair.Parse("player:specterDecrypt");
+
         private List<SiteSurveyData> m_SiteData = new List<SiteSurveyData>();
         private List<ArgueData> m_ArgueData = new List<ArgueData>();
-        private HashSet<StringHash32> m_CompletedArgues = new HashSet<StringHash32>();
-        private uint m_CurrentLevel = 0;
+        private HashSet<StringHash32> m_CompletedArgues = Collections.NewSet<StringHash32>(40);
+        private uint m_CurrentLevel = 1;
+
+        // specter/decryption stuff
+        private uint m_SpecterCount = 0;
+        private int m_SpecterQueued = 0;
+        private StringHash32 m_SpecterSiteOverride = null;
 
         private bool m_HasChanges;
 
@@ -126,7 +134,66 @@ namespace Aqua.Profile
             return false;
         }
 
+        public bool SetCurrentLevelWithoutNotify(uint inNextLevel)
+        {
+            if (m_CurrentLevel != inNextLevel)
+            {
+                DebugService.Log(LogMask.DataService, "[ScienceData] Player level changed from {0} to {1}", m_CurrentLevel, inNextLevel);
+                m_CurrentLevel = inNextLevel;
+                m_HasChanges = true;
+                return true;
+            }
+
+            return false;
+        }
+
         #endregion // Leveling
+
+        #region Specters
+
+        public uint SpecterCount() { return m_SpecterCount; }
+        public bool SetSpecterCount(uint inSpecterCount)
+        {
+            if (m_SpecterCount != inSpecterCount)
+            {
+                DebugService.Log(LogMask.DataService, "[ScienceData] Player decrypt level changed to {0}", inSpecterCount);
+
+                Services.Events.Queue(GameEvents.DecryptLevelUpdated, inSpecterCount);
+                m_SpecterCount = inSpecterCount;
+                m_HasChanges = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool FullyDecrypted() {
+            return m_SpecterCount >= ScienceUtils.MaxSpecters() && Script.ReadVariable(Var_FullyDecrypted).AsBool();
+        }
+
+        public bool IsSpecterQueued(StringHash32 mapId) {
+            return m_SpecterQueued > 0 && (m_SpecterSiteOverride.IsEmpty || m_SpecterSiteOverride == mapId);
+        }
+
+        public bool IsSpecterQueuedExact(StringHash32 mapId) {
+            return m_SpecterQueued > 0 && m_SpecterSiteOverride == mapId;
+        }
+
+        public void QueueSpecter(StringHash32 mapIdOverride = default(StringHash32)) {
+            m_SpecterQueued++;
+            m_SpecterSiteOverride = mapIdOverride;
+            m_HasChanges = true;
+        }
+
+        public void DequeueSpecter() {
+            if (m_SpecterQueued > 0) {
+                m_SpecterQueued--;
+                m_SpecterSiteOverride = null;
+                m_HasChanges = true;
+            }
+        }
+
+        #endregion // Specters
 
         #region IProfileChunk
 
@@ -135,7 +202,8 @@ namespace Aqua.Profile
         // v3: remove experiment data
         // v4: add claim data
         // v5: added level
-        ushort ISerializedVersion.Version { get { return 5; } }
+        // v6: added specter fields
+        ushort ISerializedVersion.Version { get { return 6; } }
 
         public bool HasChanges()
         {
@@ -176,6 +244,13 @@ namespace Aqua.Profile
             if (ioSerializer.ObjectVersion >= 5)
             {
                 ioSerializer.Serialize("level", ref m_CurrentLevel);
+            }
+
+            if (ioSerializer.ObjectVersion >= 6)
+            {
+                ioSerializer.Serialize("decrypt", ref m_SpecterCount);
+                ioSerializer.Serialize("spectersQueued", ref m_SpecterQueued);
+                ioSerializer.UInt32Proxy("spectersQueueOverride", ref m_SpecterSiteOverride);
             }
         }
 

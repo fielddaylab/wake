@@ -60,6 +60,20 @@ var NativePreloadLib = {
 
             NPCache.preloadLinksLoaded.add(url);
             console.error("[NativePreload] Error when loading", url);
+        },
+
+        /**
+         * @param {string} path 
+         * @param {string} ext
+         * @return {string}
+         */
+        ChangeExtension: function(path, ext) {
+            const idx = path.lastIndexOf(".");
+            if (idx >= 0) {
+                return path.substring(0, idx) + ext;
+            } else {
+                return path + ext;
+            }
         }
     },
 
@@ -78,9 +92,21 @@ var NativePreloadLib = {
             var preloadElement;
             if (resourceType == 1) { // audio loads via audio
                 preloadElement = new Audio();
-                preloadElement.src = urlStr;
+
+                var oggSource = document.createElement("source");
+                oggSource.src = NPCache.ChangeExtension(urlStr, ".ogg");
+                oggSource.type = "audio/ogg";
+
+                var mp3Source = document.createElement("source");
+                mp3Source.src = NPCache.ChangeExtension(urlStr, ".mp3");
+                mp3Source.type = "audio/mpeg";
+                
+                preloadElement.appendChild(oggSource);
+                preloadElement.appendChild(mp3Source);
+
                 preloadElement.autoplay = false;
                 preloadElement.crossOrigin = NPCache.preloadCrossOriginSetting;
+                preloadElement.load();
             } else { // everything else loads via link
                 preloadElement = document.createElement("link");
                 preloadElement.href = urlStr;

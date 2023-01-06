@@ -6,11 +6,16 @@ using UnityEngine.UI;
 using Aqua;
 using BeauUtil;
 using EasyAssetStreaming;
+using AquaAudio;
 
 namespace ProtoAqua.Observation
 {
     public class ScannerDisplay : SharedPanel
     {
+        private const float LoopStartingVolume = 0.5f;
+        private const float LoopStartingPitch = 0.5f;
+        private const float LoopFadeTime = 0.1f;
+
         #region Inspector
 
         [Header("Scanner")]
@@ -32,6 +37,8 @@ namespace ProtoAqua.Observation
         [NonSerialized] private ScanData m_CurrentScanData;
         [NonSerialized] private Routine m_BounceRoutine;
         [NonSerialized] private Routine m_TypeRoutine;
+        [NonSerialized] private AudioHandle m_ScanLoop;
+        [NonSerialized] private bool m_IsInProgress;
 
         [NonSerialized] private Color m_DefaultBackgroundColor;
         [NonSerialized] private Color m_DefaultHeaderColor;
@@ -52,11 +59,12 @@ namespace ProtoAqua.Observation
 
         public void ShowProgress(float inProgress)
         {
+            bool wasShowing = m_RootTransform.gameObject.activeSelf;
             Show();
 
             m_CurrentScanData = null;
 
-            if (m_RootTransform.gameObject.activeSelf)
+            if (wasShowing && !m_IsInProgress)
             {
                 m_BounceRoutine.Replace(this, BounceAnim());
             }
@@ -74,12 +82,27 @@ namespace ProtoAqua.Observation
                 LayoutRebuilder.MarkLayoutForRebuild(m_RootTransform);
             }
 
+            if (!m_IsInProgress)
+            {
+                m_IsInProgress = true;
+                m_ScanLoop = Services.Audio.PostEvent("ROV.Scanner.Loop");
+                m_ScanLoop.SetVolume(LoopStartingVolume).SetVolume(1, LoopFadeTime);
+                m_ScanLoop.SetPitch(LoopStartingPitch).SetPitch(1, LoopFadeTime);
+            }
+
             m_ScanProgressBar.fillAmount = inProgress;
         }
 
         public void ShowScan(ScanData inData, ScanResult inResult)
         {
             Show();
+
+            if (m_IsInProgress)
+            {
+                m_IsInProgress = false;
+                m_ScanLoop.SetPitch(LoopStartingPitch, LoopFadeTime);
+                m_ScanLoop.Stop(LoopFadeTime);
+            }
 
             var mgr = ScanSystem.Find<ScanSystem>();
             var config = mgr.GetConfig(inData == null ? 0 : inData.Flags());
@@ -128,7 +151,7 @@ namespace ProtoAqua.Observation
 
                     m_DescriptionText.Graphic.maxVisibleCharacters = 0;
 
-                    m_TypeRoutine.Replace(this, TypeOut());
+                    m_TypeRoutine.Replace(this, TypeOut(inData.TypingDuration()));
                 }
 
                 BestiaryDesc bestiary = Assets.Bestiary(inData.BestiaryId());
@@ -213,9 +236,9 @@ namespace ProtoAqua.Observation
             return m_RootTransform.AnchorPosTo(-15, 0.1f, Axis.Y).Ease(Curve.BackOut).From().ForceOnCancel();
         }
 
-        private IEnumerator TypeOut()
+        private IEnumerator TypeOut(float inTypingDurationMultiplier)
         {
-            return Tween.Int(0, m_DescriptionText.Metrics.VisibleCharCount, (c) => m_DescriptionText.Graphic.maxVisibleCharacters = c, 0.8f);
+            return Tween.Int(0, m_DescriptionText.Metrics.VisibleCharCount, (c) => m_DescriptionText.Graphic.maxVisibleCharacters = c, 0.8f * inTypingDurationMultiplier);
         }
 
         #endregion // Animations
@@ -227,6 +250,13 @@ namespace ProtoAqua.Observation
             m_TypeRoutine.Stop();
             m_CurrentScanData = null;
             m_BounceRoutine.Stop();
+
+            if (m_IsInProgress)
+            {
+                m_IsInProgress = false;
+                m_ScanLoop.SetPitch(LoopStartingPitch, LoopFadeTime);
+                m_ScanLoop.Stop(LoopFadeTime);
+            }
         }
 
         protected override void OnHideComplete(bool inbInstant)

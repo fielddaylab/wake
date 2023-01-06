@@ -120,7 +120,7 @@ namespace ProtoAqua.Observation {
                 }
             }
 
-            Services.UI.FindPanel<TaggingUI>().Populate(m_SceneManifest, m_TagCounts);
+            Services.UI.FindPanel<TaggingUI>()?.Populate(m_SceneManifest, m_TagCounts);
             return null;
         }
 
@@ -278,7 +278,7 @@ namespace ProtoAqua.Observation {
 
             if (m_TagCounts[idx] < manifest.Required) {
                 Services.Audio.PostEvent("ROV.Tagger.Tagged");
-                Services.UI.FindPanel<TaggingUI>().Populate(m_SceneManifest, m_TagCounts);
+                Services.UI.FindPanel<TaggingUI>()?.Populate(m_SceneManifest, m_TagCounts);
                 return true;
             }
 
@@ -289,7 +289,7 @@ namespace ProtoAqua.Observation {
             Services.Events.Queue(GameEvents.SiteDataUpdated, m_SiteData.MapId);
             MarkAllAsTagged(manifest.Id);
 
-            Services.UI.FindPanel<TaggingUI>().Populate(m_SceneManifest, m_TagCounts);
+            Services.UI.FindPanel<TaggingUI>()?.Populate(m_SceneManifest, m_TagCounts);
 
             BFPopulation population = BestiaryUtils.FindPopulationRule(m_EnvironmentType, manifest.Id);
             if (population != null) {

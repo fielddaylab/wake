@@ -212,48 +212,6 @@ Report back with your prediction
 :: coral-fishy-bizz.argue.claimLabel
 We need to significantly reduce the number of Fishers in this area.
 
-:: bayou-save-our-shrimp.name
-SOS: Save Our Shrimp
-
-:: bayou-save-our-shrimp.desc
-Why is the shrimp catch going down?
-
-:: bayou-save-our-shrimp.task.getScans
-Gather environment data + Shrimp population
-
-:: bayou-save-our-shrimp.task.reportBack
-Report about the Shrimp populations.
-
-:: bayou-shrimp-tastrophe.name
-Shrimp-Tastrophe!
-
-:: bayou-shrimp-tastrophe.desc
-The oxygen levels seemed pretty low.  What implications might that have concerning the shrimp situation?
-
-:: bayou-shrimp-tastrophe.task.measureOxygen
-See if there's a significant relationship between shrimp and oxygen levels.
-
-:: bayou-shrimp-tastrophe.task.reportBack
-Report back about the shrimp oxygen consumption.
-
-:: bayou-oxygen-tracking.name
-Oxygen tracking
-
-:: bayou-oxygen-tracking.desc
-See if your new tools can help you figure out the lack of oxygen in the Trawling Bay!
-
-:: bayou-oxygen-tracking.task.scanNewCritters
-See if there's anything new to find in the Trawling Bay.
-
-:: bayou-oxygen-tracking.task.measureOxygenUsage
-See how these new species would each affect oxygen levels.
-
-:: bayou-oxygen-tracking.task.createModel
-Model your findings to see who might've had the biggest effect over the oxygen levels.
-
-:: bayou-oxygen-tracking.task.reportBack
-Report back with the model.
-
 :: coral-turtle-population.name
 Turtle Population
 
@@ -844,7 +802,7 @@ Disappearing Act
 Whale falls are rare! We should use this opportunity to learn more about how organisms interact with them. What is causing the whale's decay?
 
 :: arctic-disappearing-act.task.reportBack
-Report your findings back to {nameof @profArctic}
+Report your findings back to {nameof @arcticSci}
 
 :: arctic-disappearing-act.task.scanCritters
 Scan all critters feasting on the whale fall in {h}Site W{/h}
@@ -1344,4 +1302,181 @@ Observe whether {nameof StaghornCoral} and {nameof Lionfish} interact
 
 :: arctic-endangered-seals.task.scanProb
 Obtain historical data from the new population probe at {nameof RS-4Y}
+
+:: bayou-shrimp-yields.name
+Shrimp Yields
+
+:: bayou-shrimp-yields.desc
+The Shrimpers are catching less and less shrimp in {fullnameof RS-3P}. Can you verify the populations there?
+
+:: bayou-shrimp-yields.task.countShrimp
+Scan and count the populations of White Shrimp in {fullnameof RS-3P}
+
+:: bayou-shrimp-yields.task.histProbe
+Collect historic population data from the {nameof RS-3P}
+
+:: bayou-shrimp-yields.task.reportBack
+Report back
+
+:: bayou-shrimp-yields.argue.claimLabelAccurate
+The reports of declining shrimp are accurate
+
+:: bayou-shrimp-yields.argue.claimLabelInaccurate
+The reports of declining shrimp are not accurate
+
+:: bayou-blue-waters.name
+Blue Waters
+
+:: bayou-blue-waters.desc
+The fishermen gave reports of the water being clear blue not too long ago. Now it's green. What in {fullnameof RS-3P} is causing this?
+
+:: bayou-blue-waters.task.findGreen
+Scan Site P for something that could be turning the water green
+
+:: bayou-blue-waters.task.stressCyano
+FInd {nameof Cyanobacteria} stress ranges
+
+:: bayou-blue-waters.task.measureEffect
+Measure {nameof Cyanobacteria}'s effect on its environment when stressed and unstressed
+
+:: bayou-blue-waters.task.measureReproduce
+Measure the reproduce rates of {nameof Cyanobacteria} when stressed and unstressed
+
+:: bayou-blue-waters.task.reportBack
+Report back
+
+:: bayou-blue-waters.argue.claimLabelPop
+Present the {nameof Cyanobacteria} populations at the {nameof RS-3P}
+
+:: bayou-blue-waters.argue.claimLabelExtra
+Present environment and reproduce rules for {nameof Cyanobacteria}
+
+:: bayou-dirty-detritus.name
+Dirty Detritus
+
+:: bayou-dirty-detritus.desc
+We've been tracking the Detritus. There's a lot of it, and we're measuring more every day. How does Detritus fit in with the ecosystem?
+
+:: bayou-dirty-detritus.task.countDetritus
+Count the amount of Detritus in the {nameof RS-3P}
+
+:: bayou-dirty-detritus.task.eatDetritus
+Determine if any organisms eat {nameof Detritus}
+
+:: bayou-dirty-detritus.task.growDetritus
+Measure the growth rate of {nameof Detritus}
+
+:: bayou-dirty-detritus.task.reportBack
+Report back
+
+:: bayou-dirty-detritus.task.scanNew
+Scan any unscanned organisms in the {nameof RS-3P}
+
+:: bayou-dirty-detritus.argue.claimLabelHistory
+Present the historical populations of {nameof RS-3P} organisms and {nameof Detritus}
+
+:: bayou-dirty-detritus.argue.claimLabelFinal
+Present an organism that eats {nameof Detritus}
+
+:: bayou-oxygen-tracking.name
+Oxygen Tracking
+
+:: bayou-oxygen-tracking.desc
+We're recording steadily decreasing oxygen levels in the water in the {nameof RS-3P}. Where is the oxygen going?
+
+:: bayou-oxygen-tracking.task.scanAll
+Scan anything there is still to scan in the {nameof RS-3P}
+
+:: bayou-oxygen-tracking.task.measureCritters
+Measure how {nameof DecomposingBacteria}, {nameof WhiteShrimp}, and {nameof Cyanobacteria} affect their environment
+
+:: bayou-oxygen-tracking.task.makeVisual
+Make a visual model that shows how oxygen flows between organisms in the {nameof RS-3P}
+
+:: bayou-oxygen-tracking.task.makeDescribe
+Make a descriptive model that shows organism populations in relation to each other
+
+:: bayou-oxygen-tracking.task.reportBack
+Report back
+
+:: bayou-oxygen-tracking.argue.claimLabelModel
+Present your visual model of the oxygen flow in the {nameof RS-3P}
+
+:: bayou-oxygen-tracking.argue.claimLabelFinal
+Present which organisms in the {nameof RS-3P} consume oxygen
+
+:: bayou-shrimp-tastrophe.name
+Shrimp-Tastrophe
+
+:: bayou-shrimp-tastrophe.desc
+The fishers are all over me for an explanation about why shrimp populations are low. We need to present them with a model that shows what happened!
+
+:: bayou-shrimp-tastrophe.task.createModel
+Create a {h}Descriptive Model{/h} that explains why shrimp populations are decreasing
+
+:: bayou-shrimp-tastrophe.task.reportBack
+Present your model to {nameof profBayou} and explain what it means
+
+:: bayou-shrimp-tastrophe.argue.claimLabelShrimpOxygen
+Present facts connecting shrimp to oxygen levels in the {nameof RS-3P}
+
+:: bayou-shrimp-tastrophe.argue.claimLabelBacteriaOxygen
+Present another organism in the {nameof RS-3P} that consumes oxygen besides shrimp
+
+:: bayou-shrimp-tastrophe.argue.claimLabelCyanoLight
+Present an organism that affects the light levels in the {nameof RS-3P}
+
+:: bayou-shrimp-tastrophe.argue.claimLabelLightShrimpOxygen
+Present facts connecting shrimp to light levels in the {nameof RS-3P}
+
+:: bayou-shrimp-tastrophe.argue.claimLabelModel
+Present your Descriptive Model of the {nameof RS-3P}
+
+:: bayou-blue-waters.task.countGreen
+Count the {nameof Cyanobacteria} populations in the {nameof RS-3P}
+
+:: final-final.name
+A Call For Help
+
+:: final-final.task.reportBack
+Report back
+
+:: final-final.task.tellMom
+Tell your mom that Sam needs help!
+
+:: final-final.task.sneakOut
+Return to the ship in secret
+
+:: final-final.task.getUncleHelp
+See if {nameof @kelpMechanic} can restore power to the ship
+
+:: final-final.task.returnToShip
+Return to the ship
+
+:: final-final.task.returnToShop
+Return to your uncle in the shop
+
+:: final-final.task.experiment
+Report back
+
+:: final-final.task.createModel
+Create a visual model of the interactions in the {nameof RS-0} based on specter data
+
+:: final-final.task.checkShip
+See if the power is restored
+
+:: final-final.desc
+O, it's Sam. I really hope you're getting this. The creature is attacking and our oxygen's running low. We need you to figure out if there's any way to get rid of this thing. 
+
+:: final-final.task.experimentSpecters
+Perform experiments to understand how creatures interact in the {nameof RS-0}.
+
+:: final-final.argue.claimLabelModel
+Present your model of interactions in the {nameof RS-0}
+
+:: final-final.argue.claimLabelEat
+Show that none of the creatures {nameof ColossalSquid} eats are red
+
+:: final-final.task.performRescue
+Go to the Lower Depths and rescue {nameof @sam}
 

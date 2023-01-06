@@ -14,13 +14,18 @@ namespace Aqua
         
         #endregion // Inspector
 
-        private void Awake()
-        {
-            if (!string.IsNullOrEmpty(m_Condition))
+        private void Awake() {
+            if (string.IsNullOrEmpty(m_Condition)) {
                 return;
-            
-            if (Services.Data.CheckConditions(m_Condition))
+            }
+
+            Script.OnSceneLoad(Check);
+        }
+
+        private void Check() {
+            if (Services.Data.CheckConditions(m_Condition)) {
                 gameObject.SetActive(false);
+            }
         }
     }
 }

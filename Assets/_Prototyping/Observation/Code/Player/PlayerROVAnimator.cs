@@ -17,6 +17,11 @@ namespace ProtoAqua.Observation
         [SerializeField] private float m_NormalRotationLerp = 4;
         [SerializeField] private Vector3 m_RotationAdjust = new Vector3(0, -90, 0);
 
+        [Header("Hull")]
+        [SerializeField, Required] private MeshRenderer m_HullRenderer = null;
+        [SerializeField, Required] private Material[] m_DefaultHullMaterials = null;
+        [SerializeField, Required] private Material[] m_UpgradedHullMaterials = null;
+
         [Header("Propeller")]
         [SerializeField] private Transform m_Propeller = null;
         [SerializeField] private ParticleSystem m_MovementParticles = null;
@@ -48,6 +53,16 @@ namespace ProtoAqua.Observation
 
         private void Awake() {
             m_PropellerSpeed = m_AmbientPropellerSpeed;
+        }
+
+        public void ApplyUpgradeMask(PlayerROV.PassiveUpgrades upgrades) {
+            Material[] hullMaterials;
+            if ((upgrades & PlayerROV.PassiveUpgrades.Hull) != 0) {
+                hullMaterials = m_UpgradedHullMaterials;
+            } else {
+                hullMaterials = m_DefaultHullMaterials;
+            }
+            m_HullRenderer.sharedMaterials = hullMaterials;
         }
 
         public void Process(InputState state) {

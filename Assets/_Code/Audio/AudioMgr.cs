@@ -15,7 +15,8 @@ using BeauUWT;
 
 namespace AquaAudio
 {
-    public class AudioMgr : ServiceBehaviour, ILoadable
+    [DefaultExecutionOrder(99999)]
+    public class AudioMgr : ServiceBehaviour
     {
         public const int BusCount = (int) AudioBusId.LENGTH;
         private const int MaxSampleTracks = 48;
@@ -31,6 +32,7 @@ namespace AquaAudio
 
         #region Inspector
 
+        [SerializeField] private AudioListener m_Listener;
         [SerializeField] private AudioPackage m_DefaultPackage = null;
         [SerializeField] private SamplePool m_SamplePlayers = null;
         [SerializeField] private StreamPool m_StreamPlayers = null;
@@ -38,38 +40,30 @@ namespace AquaAudio
 
         #endregion // Inspector
 
-        private readonly HashSet<AudioPackage> m_LoadedPackages = new HashSet<AudioPackage>();
-        private readonly Dictionary<StringHash32, AudioEvent> m_EventLookup = new Dictionary<StringHash32, AudioEvent>();
+        private readonly HashSet<AudioPackage> m_LoadedPackages = Collections.NewSet<AudioPackage>(8);
+        private readonly Dictionary<StringHash32, AudioEvent> m_EventLookup = new Dictionary<StringHash32, AudioEvent>(128);
 
         private readonly FixedPool<AudioTrackState> m_TrackPool = new FixedPool<AudioTrackState>(MaxTracks, Pool.DefaultConstructor<AudioTrackState>());
         private readonly RingBuffer<AudioTrackState> m_ActiveSamples = new RingBuffer<AudioTrackState>(MaxSampleTracks, RingBufferMode.Fixed);
         private readonly RingBuffer<AudioTrackState> m_ActiveStreams = new RingBuffer<AudioTrackState>(MaxStreamTracks, RingBufferMode.Fixed);
 
+        private readonly RingBuffer<IAudioVolume> m_Volumes = new RingBuffer<IAudioVolume>(16, RingBufferMode.Expand);
+
         private System.Random m_Random;
         private AudioPropertyBlock m_MasterProperties;
         private AudioPropertyBlock m_MixerProperties;
         private AudioPropertyBlock m_DebugProperties;
-        private ushort m_Id;
+        [NonSerialized] private ushort m_Id;
+
+        [NonSerialized] private Transform m_ListenerTransform;
 
         private AudioPropertyBlock[] m_BusMixes;
 
         private AudioHandle m_BGM;
-        private float m_FadeMultiplier = 1;
+        [NonSerialized] private float m_FadeMultiplier = 1;
         private Routine m_FadeMultiplierRoutine;
 
         #region IService
-
-        protected override void Shutdown()
-        {
-            DestroyPool();
-
-            m_LoadedPackages.Clear();
-            m_EventLookup.Clear();
-
-            SceneHelper.OnSceneLoaded -= OnGlobalSceneLoaded;
-
-            AudioSettings.OnAudioConfigurationChanged -= OnAudioSettingsChanged;
-        }
 
         protected override void Initialize()
         {
@@ -77,6 +71,8 @@ namespace AquaAudio
             m_MasterProperties = AudioPropertyBlock.Default;
             m_MixerProperties = AudioPropertyBlock.Default;
             m_DebugProperties = AudioPropertyBlock.Default;
+
+            m_ListenerTransform = m_Listener.transform;
 
             m_BusMixes = new AudioPropertyBlock[BusCount - 1];
             for(int i = 0; i < m_BusMixes.Length; ++i)
@@ -90,16 +86,34 @@ namespace AquaAudio
             AudioSettings.OnAudioConfigurationChanged += OnAudioSettingsChanged;
         }
 
+        protected override void Shutdown()
+        {
+            DestroyPool();
+
+            m_LoadedPackages.Clear();
+            m_EventLookup.Clear();
+
+            SceneHelper.OnSceneLoaded -= OnGlobalSceneLoaded;
+
+            AudioSettings.OnAudioConfigurationChanged -= OnAudioSettingsChanged;
+        }
+
         #endregion // IService
 
         #region Unity Events
 
         private void LateUpdate()
         {
-            UnsafeUpdate();
+            Vector3 listenerPos = UpdateListener(false);
+            Vector3 avatarPos = listenerPos;
+            if (Services.State.Player) {
+                avatarPos = Services.State.Player.Kinematics.Transform.position;
+            }
+            UpdateVolumes(listenerPos, avatarPos);
+            UnsafeUpdate(listenerPos);
         }
 
-        private unsafe void UnsafeUpdate()
+        private unsafe void UnsafeUpdate(Vector3 listenerPos)
         {
             AudioPropertyBlock masterProperties = m_MasterProperties;
             AudioPropertyBlock.Combine(masterProperties, m_MixerProperties, ref masterProperties);
@@ -125,7 +139,7 @@ namespace AquaAudio
             for(int i = count - 1; i >= 0; i--)
             {
                 track = m_ActiveStreams[i];
-                if (!AudioTrackState.UpdatePlayback(track, ref properties[(int) track.Bus], deltaTime, currentTime))
+                if (!AudioTrackState.UpdatePlayback(track, ref properties[(int) track.Bus], deltaTime, currentTime, listenerPos))
                 {
                     FreePlayer(track);
                     m_ActiveStreams.FastRemoveAt(i);
@@ -136,11 +150,39 @@ namespace AquaAudio
             for(int i = count - 1; i >= 0; i--)
             {
                 track = m_ActiveSamples[i];
-                if (!AudioTrackState.UpdatePlayback(track, ref properties[(int) track.Bus], deltaTime, currentTime))
+                if (!AudioTrackState.UpdatePlayback(track, ref properties[(int) track.Bus], deltaTime, currentTime, listenerPos))
                 {
                     FreePlayer(track);
                     m_ActiveSamples.FastRemoveAt(i);
                 }
+            }
+        }
+
+        private Vector3 UpdateListener(bool snap) {
+            if (!snap && Script.IsLoading) {
+                return m_ListenerTransform.position;
+            }
+
+            Vector3 target = Services.Camera.FocusPosition;
+            if (snap) {
+                m_ListenerTransform.position = target;
+                return target;
+            } else {
+                Vector3 current = m_ListenerTransform.position;
+                Vector3 now = Vector3.Lerp(current, target, TweenUtil.Lerp(50));
+                m_ListenerTransform.position = now;
+                return now;
+            }
+        }
+
+        private void UpdateVolumes(Vector3 listenerPos, Vector3 avatarPos) {
+            IAudioVolume vol;
+            for(int i = 0, len = m_Volumes.Count; i < len; i++) {
+                vol = m_Volumes[i];
+                if (Frame.Interval(10, i)) {
+                    vol.UpdateCache();
+                }
+                vol.UpdateFromListener(listenerPos, avatarPos);
             }
         }
 
@@ -204,6 +246,10 @@ namespace AquaAudio
         public void StopAll()
         {
             foreach(var player in m_SamplePlayers.ActiveObjects)
+            {
+                player.Stop();
+            }
+            foreach(var player in m_StreamPlayers.ActiveObjects)
             {
                 player.Stop();
             }
@@ -521,7 +567,7 @@ namespace AquaAudio
             m_Id = 0;
         }
 
-        bool ILoadable.IsLoading() {
+        public bool IsLoadingStreams() {
             for(int i = 0; i < m_ActiveStreams.Count; i++) {
                 var stream = m_ActiveStreams[i].Stream;
                 if (!stream.IsReady() && stream.GetError() == UWTStreamPlayer.ErrorCode.NoError) {
@@ -566,15 +612,40 @@ namespace AquaAudio
                     GameObject.Destroy(listener);
                 }
             }
+
+            UpdateListener(true);
         }
 
         #endregion // Callbacks
+
+        #region Volumes
+
+        public void RegisterVolume(IAudioVolume volume) {
+            m_Volumes.PushBack(volume);
+            volume.UpdateCache();
+        }
+
+        public void DeregisterVolume(IAudioVolume volume) {
+            m_Volumes.FastRemove(volume);
+        }
+
+        #endregion // Volumes
 
         #region Leaf
 
         [LeafMember("AudioOneShot"), Preserve]
         static private void LeafOneShot(StringHash32 id) {
             Services.Audio.PostEvent(id);
+        }
+
+        [LeafMember("AudioSetBGM"), Preserve]
+        static private void LeafSetBGM(StringHash32 id) {
+            Services.Audio.SetMusic(id);
+        }
+
+        [LeafMember("AudioStopAll"), Preserve]
+        static private void LeafStopAll() {
+            Services.Audio.StopAll();
         }
 
         #endregion // Leaf

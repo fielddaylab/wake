@@ -11,6 +11,8 @@
 
 // MACROS
 
+#include "Headers/Common.leaf"
+
 // Defines a default item handler header
 #macro ItemHandler(itemId, ...conditions) \
 :: item.$itemId \
@@ -126,12 +128,12 @@ $endif
 // Checks if the player has enough experience points
 // to afford this the current local:itemId item
 :: eval.checkLevel
-$if player:exp >= local:expCost
+$if player:expLevel >= local:requiredLevel
     $return
 $endif
 
-$set    local:needExp = local:expCost
-$set    local:needExp - player:exp
+$set    local:needLevel = local:requiredLevel
+$set    local:needLevel - player:expLevel
 
 $set    shop:lastFailure = local:itemId
 $set    shop:lastFailureReason = "exp"
@@ -177,6 +179,8 @@ $call ShopPlayPurchaseAnimation()
 
 $call AudioOneShot(ShopPurchase)
 $call PurchaseItem($local:itemId)
+
+$Invoke(local:postPurchaseBranch)
 
 :: eval.purchase.cantAfford
 $set    shop:lastFailure = local:itemId

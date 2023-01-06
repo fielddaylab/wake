@@ -85,6 +85,7 @@ namespace ScriptableBake {
                 context.FogStartDistance = RenderSettings.fogStartDistance;
                 context.FogEndDistance = RenderSettings.fogEndDistance;
             }
+            context.m_Flags = flags;
             return Process(bakeComponents, "scene: " + scene.name, flags, context, null);
         }
 
@@ -246,6 +247,24 @@ namespace ScriptableBake {
                     FlattenHierarchyRecursive(child, parent, destroyInactive, ref siblingIndex);
                 }
             }
+        }
+
+        static private List<Component> s_CachedComponentList;
+
+        /// <summary>
+        /// Returns if the given Transform is a leaf node in its transform hierarchy,
+        /// and has no non-transform components.
+        /// </summary>
+        static public bool IsEmptyLeaf(Transform transform) {
+            if (transform.childCount > 0) {
+                return false;
+            }
+
+            List<Component> tempList = s_CachedComponentList ?? (s_CachedComponentList = new List<Component>(4));
+            transform.gameObject.GetComponents<Component>(tempList);
+            int count = tempList.Count;
+            tempList.Clear();
+            return count == 1; // transform is included, so must be more than 1
         }
 
         #endregion // Hierarchy
@@ -431,9 +450,10 @@ namespace ScriptableBake {
 
             if (context == null) {
                 context = new BakeContext();
+                context.m_Flags = flags;
             }
 
-            baked.Sort((a, b) => a.Order.CompareTo(b.Order));
+            baked.Sort(SortByOrder);
 
             if (bVerbose) {
                 Debug.LogFormat("[Bake] Found {0} bakeable objects in {1}", baked.Count, source);
@@ -487,6 +507,17 @@ namespace ScriptableBake {
                             bError = true;
                         }
                         yield return null;
+                        int old = baked.Count;
+                        if (context.DequeueAdditionalBakes(baked)) {
+                            if (OnPreBake != null) {
+                                for(int j = old; j < baked.Count; j++) {
+                                    OnPreBake(baked[j]);
+                                    yield return null;
+                                }
+                            }
+
+                            baked.Sort(i + 1, baked.Count - i - 1, SortByOrder_Comparer.Instance);
+                        }
                     }
 
                     if (OnPostBake != null) {
@@ -512,7 +543,16 @@ namespace ScriptableBake {
             }
         }
 
-        #endif // UNITY_EDITOR
+        static private readonly Comparison<IBaked> SortByOrder = (a, b) => a.Order.CompareTo(b.Order);
+        private class SortByOrder_Comparer : IComparer<IBaked> {
+            static public readonly SortByOrder_Comparer Instance = new SortByOrder_Comparer();
+            public int Compare(IBaked x, IBaked y)
+            {
+                return x.Order.CompareTo(y.Order);
+            }
+        }
+
+#endif // UNITY_EDITOR
     }
 
     /// <summary>
@@ -596,7 +636,9 @@ namespace ScriptableBake {
         /// </summary>
         public float FogEndDistance;
 
+        internal BakeFlags m_Flags;
         private Dictionary<string, object> m_ValueCache;
+        internal List<IBaked> m_AdditionalBakeQueue; 
 
         /// <summary>
         /// Returns if a value with the given id is cached.
@@ -624,6 +666,34 @@ namespace ScriptableBake {
                 throw new KeyNotFoundException("no key with id " + id);
             }
             return (T) val;
+        }
+
+        /// <summary>
+        /// Queues up an additional bake.
+        /// </summary>
+        public void QueueAdditionalBake(GameObject root) {
+            bool bIgnoreDisabled = (m_Flags & BakeFlags.IgnoreDisabledObjects) != 0;
+
+            if (bIgnoreDisabled && !root.activeSelf) {
+                return;
+            }
+
+            List<IBaked> bakeComponents = new List<IBaked>(4);
+            root.GetComponentsInChildren<IBaked>(!bIgnoreDisabled, bakeComponents);
+            if (m_AdditionalBakeQueue == null) {
+                m_AdditionalBakeQueue = new List<IBaked>(8);
+            }
+            m_AdditionalBakeQueue.AddRange(bakeComponents);
+        }
+
+        internal bool DequeueAdditionalBakes(List<IBaked> dest) {
+            if (m_AdditionalBakeQueue != null && m_AdditionalBakeQueue.Count > 0) {
+                dest.AddRange(m_AdditionalBakeQueue);
+                m_AdditionalBakeQueue.Clear();
+                return true;
+            }
+
+            return false;
         }
     }
 }

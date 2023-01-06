@@ -9,6 +9,8 @@ namespace BeauUWT
     /// </summary>
     public partial class UWTStreamPlayer : MonoBehaviour
     {
+        static private string CachedStreamingPath;
+
         /// <summary>
         /// Error codes.
         /// </summary>
@@ -23,6 +25,10 @@ namespace BeauUWT
 
             UnknownError = 255
         }
+
+        private const ulong HiResScale = 0x100000;
+        private const double HiResScale_Double = (double) HiResScale;
+        private const double HiResScaleInv = 1.0 / HiResScale_Double;
 
         #region Inspector
 
@@ -139,7 +145,7 @@ namespace BeauUWT
         /// <summary>
         /// Playback position in samples.
         /// </summary>
-        public int HighResTime
+        public ulong HighResTime
         {
             get { return GetHiResTime(); }
             set { SetHiResTime(value); }
@@ -209,7 +215,7 @@ namespace BeauUWT
         /// </summary>
         public void SetURLFromStreamingAssets(string inPath)
         {
-            SourceURL = PathToURL(Path.Combine(Application.streamingAssetsPath, inPath));
+            SourceURL = PathToURL(Path.Combine(CachedStreamingPath ?? (CachedStreamingPath = Application.streamingAssetsPath), inPath));
         }
 
         static private string PathToURL(string inFilePath)

@@ -111,7 +111,8 @@ namespace Aqua.Portable
         Job,
         Tech,
         Options,
-        Journal,
+        Specter,
+        Level,
 
         [Hidden]
         NULL = 255

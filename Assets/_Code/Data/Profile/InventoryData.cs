@@ -11,8 +11,8 @@ namespace Aqua.Profile
     public class InventoryData : IProfileChunk, ISerializedVersion, ISerializedCallbacks
     {
         private RingBuffer<PlayerInv> m_Items = new RingBuffer<PlayerInv>();
-        private HashSet<StringHash32> m_ScannerIds = new HashSet<StringHash32>();
-        private HashSet<StringHash32> m_UpgradeIds = new HashSet<StringHash32>();
+        private HashSet<StringHash32> m_ScannerIds = Collections.NewSet<StringHash32>(64);
+        private HashSet<StringHash32> m_UpgradeIds = Collections.NewSet<StringHash32>(20);
         private List<StringHash32> m_JournalIds = new List<StringHash32>();
 
         private uint m_Cash;
@@ -387,6 +387,10 @@ namespace Aqua.Profile
             }
 
             return false;
+        }
+
+        public int UpgradeCount() {
+            return m_UpgradeIds.Count;
         }
 
         #endregion // Upgrades

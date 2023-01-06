@@ -99,7 +99,8 @@ namespace Aqua.Cameras
         [NonSerialized] private bool m_Paused;
         [NonSerialized] private bool m_CacheDirty;
 
-        [NonSerialized] private Vector3 m_LastGameplayPlaneCenter;
+        [NonSerialized] private Vector3 m_CameraFocusCenter;
+        [NonSerialized] private Vector3 m_LastCameraForward;
         [NonSerialized] private float m_LastGameplayPlaneDistance;
         [NonSerialized] private Matrix4x4 m_LastCameraMatrix;
         [NonSerialized] private Matrix4x4 m_LastCameraMatrixInv;
@@ -126,7 +127,7 @@ namespace Aqua.Cameras
         public float Zoom { get { return m_FOVPlane.Zoom; } }
         public float AspectRatio { get { return m_Camera.aspect; } }
 
-        public Vector3 FocusPosition { get { return m_LastGameplayPlaneCenter; }}
+        public Vector3 FocusPosition { get { return m_CameraFocusCenter; }}
 
         public CameraMode Mode { get { return m_Mode; } }
 
@@ -315,9 +316,6 @@ namespace Aqua.Cameras
             ApplyCameraState(current, m_PositionRoot, m_Camera, m_FOVPlane, m_FOVMode, CameraPoseProperties.Position, m_Axis);
         }
 
-        private static readonly Matrix4x4 View2NDC = Matrix4x4.Translate(-Vector3.one) * Matrix4x4.Scale(Vector3.one * 2);
-        private static readonly Vector3 CenterViewportPos = new Vector3(0.5f, 0.5f, 0);
-
         private void UpdateCachedPlanes()
         {
             Vector3 cameraForwardVector = m_PositionRoot.forward;
@@ -334,11 +332,21 @@ namespace Aqua.Cameras
 
             Ray r = new Ray(m_PositionRoot.position, cameraForwardVector);
             p.Raycast(r, out float planeCastDist);
-            m_LastGameplayPlaneCenter = r.GetPoint(planeCastDist);
+            m_CameraFocusCenter = r.GetPoint(planeCastDist);
             m_LastGameplayPlaneDistance = planeCastDist;
 
+            m_LastCameraForward = m_Camera.transform.forward;
             m_LastCameraMatrix = m_Camera.transform.worldToLocalMatrix;
             m_LastCameraMatrixInv = m_Camera.transform.localToWorldMatrix;
+
+            // HACK:    This lets us get the focus point for audio closer to the ship in 3d scenes
+            //          without completely losing the effects of other hints
+            if (m_Axis == Axis.XYZ && m_Mode == CameraMode.Hinted && m_TargetStack.Count > 0) {
+                Transform anchor = m_TargetStack[m_TargetStack.Count - 1].Anchor;
+                if (anchor != null) {
+                    m_CameraFocusCenter = Vector3.Lerp(m_CameraFocusCenter, anchor.position, 0.25f);
+                }
+            }
         }
 
         #endregion // Update
@@ -1334,12 +1342,12 @@ namespace Aqua.Cameras
         /// <summary>
         /// Casts from a screen position to a world position on the current camera plane.
         /// </summary>
-        public Vector3 ScreenToGameplayPosition(Vector2 inScreenPos)
+        public Vector3 ScreenToGameplayPosition(Vector2 inScreenPos, float inZOffset = 0)
         {
             Vector3 screenPos = inScreenPos;
             screenPos.z = 1;
 
-            Plane p = new Plane(-m_Camera.transform.forward, m_FOVPlane.Target.position);
+            Plane p = new Plane(-m_Camera.transform.forward, m_FOVPlane.Target.position + new Vector3(0, 0, inZOffset));
             Ray r = m_Camera.ScreenPointToRay(screenPos);
 
             float dist;
@@ -1411,6 +1419,37 @@ namespace Aqua.Cameras
 
         #region Render Regions
 
+        private void UpdateCameraRenderResolution() {
+            if (!m_RenderScale) {
+                return;
+            }
+
+            float currentHeight = Screen.height;
+            switch(Save.Options.Performance.Resolution) {
+                case Option.OptionsPerformance.ResolutionMode.Minimum: {
+                    m_RenderScale.Mode = CameraRenderScale.ScaleMode.PixelHeight;
+                    m_RenderScale.PixelHeight = (int) DesiredHeight;
+                    break;
+                }
+                case Option.OptionsPerformance.ResolutionMode.Moderate: {
+                    float scaleForMin = DesiredHeight / currentHeight;
+                    m_RenderScale.Mode = CameraRenderScale.ScaleMode.Scale;
+                    if (scaleForMin < 1) {
+                        float newScale = 1 - ((1 - scaleForMin) * 0.5f);
+                        m_RenderScale.Scale = newScale;
+                    } else {
+                        m_RenderScale.Scale = 1;
+                    }
+                    break;
+                }
+                case Option.OptionsPerformance.ResolutionMode.High: {
+                    m_RenderScale.Mode = CameraRenderScale.ScaleMode.Scale;
+                    m_RenderScale.Scale = 1;
+                    break;
+                }
+            }
+        }
+
         private void UpdateCameraRenderRegion() {
             float aspect = DesiredWidth / DesiredHeight;
             float scrW = Screen.width, scrH = Screen.height;
@@ -1437,6 +1476,7 @@ namespace Aqua.Cameras
         }
 
         private void OnCameraPreRender(ScriptableRenderContext ctx, Camera[] cameras) {
+            UpdateCameraRenderResolution();
             UpdateCameraRenderRegion();
 
             foreach(var camera in cameras) {

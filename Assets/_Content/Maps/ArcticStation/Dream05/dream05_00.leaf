@@ -1,0 +1,24 @@
+#basePath Dream05
+::merTrigger1
+@trigger PlayerEnterRegion
+@when regionId == "merConvo1"
+@once
+
+{wait 1}
+
+{@mer}
+Hey O! {auto}{wait-abs 2}
+
+
+{@player} 
+Mer?! Wait up! {auto} {wait-abs 3}
+
+::merTrigger2
+@trigger PlayerEnterRegion
+@when regionId == "merConvo2"
+@once
+
+{@player}
+MER?! {auto}{wait-abs 2}
+
+

@@ -16,7 +16,9 @@ namespace Aqua.Ship
             ViewNode node = GetComponent<ViewNode>();
 
             node.OnEnter = () => {
-                m_JournalCanvas.Show();
+                if (!Services.Script.IsCutscene()) {
+                    m_JournalCanvas.Show();
+                }
             };
             node.OnExit = () => {
                 m_JournalCanvas.Hide();

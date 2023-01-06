@@ -40,7 +40,7 @@ namespace Aqua.Modeling {
             PopupContent content = default;
             content.Header = Loc.Find(m_DivergenceHeader);
             content.Text = Loc.Find(sign < 0 ? m_LessText : m_MoreText);
-            Panel.Present(content, PopupFlags.ShowCloseButton);
+            Panel.Present(ref content, PopupFlags.ShowCloseButton);
         }
     }
 }

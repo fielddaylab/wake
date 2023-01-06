@@ -41,7 +41,7 @@ namespace Aqua.Editor {
             public int RequiredExp;
             public List<IdentifierData> RequiredJobs = new List<IdentifierData>();
             public List<IdentifierData> RequiredUpgrades = new List<IdentifierData>();
-            public List<IdentifierData> Tasks = new List<IdentifierData>();
+            public List<TaskData> Tasks = new List<TaskData>();
 
             internal bool Included;
 
@@ -86,9 +86,18 @@ namespace Aqua.Editor {
 
             internal bool Included;
 
-            public void Serialize(Serializer ioSerializer) {
+            public virtual void Serialize(Serializer ioSerializer) {
                 ioSerializer.Serialize("id", ref Id);
                 ioSerializer.Object("date", ref Date);
+            }
+        }
+
+        private class TaskData : IdentifierData {
+            public JobDesc.JobTaskCategory Category;
+
+            public override void Serialize(Serializer ioSerializer) {
+                base.Serialize(ioSerializer);
+                ioSerializer.Enum("category", ref Category, JobDesc.JobTaskCategory.Unknown, FieldOptions.Optional);
             }
         }
 
@@ -162,9 +171,9 @@ namespace Aqua.Editor {
                 }
 
                 foreach (var taskId in job.EditorTaskIds()) {
-                    IdentifierData taskData = jobData.Tasks.Find((t) => t.Id == taskId);
+                    TaskData taskData = jobData.Tasks.Find((t) => t.Id == taskId);
                     if (taskData == null) {
-                        taskData = new IdentifierData();
+                        taskData = new TaskData();
                         taskData.Id = taskId;
                         taskData.Date.Added = nowTS;
                         taskData.Date.Updated = nowTS;
@@ -172,6 +181,7 @@ namespace Aqua.Editor {
                         Log.Msg("[DBExport] New job '{0}' task '{1}' found", jobName, taskId);
                     }
 
+                    taskData.Category = job.EditorTaskCategory(taskId);
                     taskData.Included = true;
                 }
 
@@ -237,11 +247,11 @@ namespace Aqua.Editor {
                         }
                     }
                 }
-
-                Serializer.WriteFile(db, ExportPath, OutputOptions.PrettyPrint, Serializer.Format.JSON);
-                Log.Msg("[DBExport] Exported database to '{0}'", ExportPath);
-                EditorUtility.OpenWithDefaultApp(ExportPath);
             }
+
+            Serializer.WriteFile(db, ExportPath, OutputOptions.PrettyPrint, Serializer.Format.JSON);
+            Log.Msg("[DBExport] Exported database to '{0}'", ExportPath);
+            EditorUtility.OpenWithDefaultApp(ExportPath);
         }
     }
 }

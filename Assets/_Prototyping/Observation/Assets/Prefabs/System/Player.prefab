@@ -127,7 +127,7 @@ MonoBehaviour:
   m_Graphic: {fileID: 0}
   m_Visible: 1
   m_Colors:
-    Main: {r: 1, g: 1, b: 1, a: 0.5019608}
+    Main: {r: 0.6627451, g: 0.87843144, b: 0.86666673, a: 0.5019608}
     Emissive: {r: 1, g: 1, b: 1, a: 1}
     CustomA: {r: 1, g: 1, b: 1, a: 1}
     CustomB: {r: 1, g: 1, b: 1, a: 1}
@@ -250,6 +250,13 @@ MonoBehaviour:
   m_PitchMultiplier: 0.2
   m_NormalRotationLerp: 4
   m_RotationAdjust: {x: 0, y: -90, z: 0}
+  m_HullRenderer: {fileID: 3037062614016178744}
+  m_DefaultHullMaterials:
+  - {fileID: 2100000, guid: cffd8b18244914148a9ed99a13c6a50b, type: 2}
+  - {fileID: 2100000, guid: 443c7127b2a0c42e784e1c0cb46170e0, type: 2}
+  m_UpgradedHullMaterials:
+  - {fileID: 2100000, guid: cffd8b18244914148a9ed99a13c6a50b, type: 2}
+  - {fileID: 2100000, guid: 443c7127b2a0c42e784e1c0cb46170e0, type: 2}
   m_Propeller: {fileID: 7141869161308388534}
   m_MovementParticles: {fileID: 235604464634233989}
   m_BoostParticles: {fileID: 6850600166361600090}
@@ -338,7 +345,7 @@ MonoBehaviour:
   m_Graphic: {fileID: 0}
   m_Visible: 1
   m_Colors:
-    Main: {r: 0.6627451, g: 0.87843144, b: 0.86666673, a: 1}
+    Main: {r: 1, g: 1, b: 1, a: 1}
     Emissive: {r: 1, g: 1, b: 1, a: 1}
     CustomA: {r: 1, g: 1, b: 1, a: 1}
     CustomB: {r: 1, g: 1, b: 1, a: 1}
@@ -5424,11 +5431,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Id: 0
   m_Collider: {fileID: 5431761910544628158}
-  m_TrackOccupants: 0
+  m_TrackOccupants: 1
   m_FilterEventMask: 3
   m_LayerMaskFilter:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 0
   m_CompareTagFilters: []
   m_NameFilter: 
 --- !u!1 &3185802861060404782
@@ -15115,25 +15122,6 @@ MonoBehaviour:
   - {fileID: 8207610499462195644}
   m_ToHide: []
   m_ContinuousCheck: 1
---- !u!114 &5712988109327817928
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3541285245387152365}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59b1ae7c1b60dfe439d0b41c7a228e9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ItemName:
-    m_Source: PropGuard
-    m_HashValue: 3940469741
-  m_ToShow:
-  - {fileID: 1635238410670910312}
-  m_ToHide: []
-  m_ContinuousCheck: 1
 --- !u!114 &7444779043853123444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15483,7 +15471,7 @@ MonoBehaviour:
   m_Graphic: {fileID: 0}
   m_Visible: 1
   m_Colors:
-    Main: {r: 1, g: 1, b: 1, a: 0.5019608}
+    Main: {r: 0.6627451, g: 0.87843144, b: 0.86666673, a: 0.5019608}
     Emissive: {r: 1, g: 1, b: 1, a: 1}
     CustomA: {r: 1, g: 1, b: 1, a: 1}
     CustomB: {r: 1, g: 1, b: 1, a: 1}
@@ -25139,6 +25127,7 @@ MonoBehaviour:
   m_CameraForwardLookWeight: 0.5
   m_CameraForwardLookNoMove: 0.5
   m_CameraZoomTool: 1.2
+  m_DreamMode: 0
 --- !u!114 &7135260869252477137
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35012,6 +35001,21 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8938662502210433663, guid: 50987916e0ff54dfa930343d17c99aa8,
+        type: 3}
+      propertyPath: m_SortingLayer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8938662502210433663, guid: 50987916e0ff54dfa930343d17c99aa8,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8938662502210433663, guid: 50987916e0ff54dfa930343d17c99aa8,
+        type: 3}
+      propertyPath: m_SortingLayerID
+      value: 1779977885
+      objectReference: {fileID: 0}
     - target: {fileID: 8938662502348154002, guid: 50987916e0ff54dfa930343d17c99aa8,
         type: 3}
       propertyPath: m_RootOrder
@@ -35207,6 +35211,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a0e4c755d67564c39982c8fa45f32e55, type: 3}
+--- !u!23 &3037062614016178744 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: a0e4c755d67564c39982c8fa45f32e55,
+    type: 3}
+  m_PrefabInstance: {fileID: 4459766475069007548}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4210580360822669655 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a0e4c755d67564c39982c8fa45f32e55,

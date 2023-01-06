@@ -12,8 +12,6 @@ namespace BeauUWT
     {
         public const bool IsNative = true;
 
-        private const int HiResScale = 0x10000;
-
         [NonSerialized] private uint m_WebHandle;
         [NonSerialized] private Coroutine m_LoadCoroutine;
         static private bool s_Initialized;
@@ -112,14 +110,14 @@ namespace BeauUWT
                 UWTStreamSetPosition(m_WebHandle, inTime);
         }
 
-        private int GetHiResTime()
+        private ulong GetHiResTime()
         {
-            return (int) (GetTime() * HiResScale);
+            return (ulong) (GetTime() * HiResScale_Double);
         }
 
-        private void SetHiResTime(int inTime)
+        private void SetHiResTime(ulong inTime)
         {
-            SetTime((float) inTime / HiResScale);
+            SetTime((float) (inTime * HiResScaleInv));
         }
 
         private void UpdateVolume(float inVolume)

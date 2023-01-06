@@ -1,0 +1,258 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
+  m_Name: bayou-dirty-detritus
+  m_EditorClassIdentifier: 
+  m_Category: 0
+  m_Flags: 0
+  m_NameId:
+    m_Source: jobs.bayou-dirty-detritus.name
+    m_HashValue: 184489086
+  m_PosterId:
+    m_HashValue: 4040268820
+  m_DescId:
+    m_Source: jobs.bayou-dirty-detritus.desc
+    m_HashValue: 1328356216
+  m_DescShortId:
+    m_Source: 
+    m_HashValue: 0
+  m_ExperimentDifficulty: 3
+  m_ModelingDifficulty: 0
+  m_ArgumentationDifficulty: 3
+  m_PrerequisiteJobs:
+  - {fileID: 11400000, guid: 8acfdaeebd5778b40a8f0524a812d03b, type: 2}
+  m_PrereqConditions: 
+  m_PrereqBestiaryEntry:
+    m_HashValue: 0
+  m_PrereqScanId:
+    m_Source: 
+    m_HashValue: 0
+  m_PrereqUpgrades:
+  - m_HashValue: 3188184158
+  - m_HashValue: 3082617054
+  m_PrereqExp: 0
+  m_StationId:
+    m_HashValue: 2992071853
+  m_DiveSiteIds:
+  - m_HashValue: 3168968926
+  m_Tasks:
+  - Id:
+      m_Source: scanNew
+      m_HashValue: 730217158
+    LabelId:
+      m_Source: jobs.bayou-dirty-detritus.task.scanNew
+      m_HashValue: 2649751307
+    Category: 2
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: Cyanobacteria
+        m_HashValue: 3623197764
+      ConditionString: true
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      ConditionString: true
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: WhiteShrimp
+        m_HashValue: 3187223953
+      ConditionString: true
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: DecomposingBacteria
+        m_HashValue: 3751261742
+      ConditionString: true
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: countDetritus
+      m_HashValue: 511720072
+    LabelId:
+      m_Source: jobs.bayou-dirty-detritus.task.countDetritus
+      m_HashValue: 823452073
+    Category: 2
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: P_DeadZone.Population.Detritus
+        m_HashValue: 3754834277
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: eatDetritus
+      m_HashValue: 372645617
+    LabelId:
+      m_Source: jobs.bayou-dirty-detritus.task.eatDetritus
+      m_HashValue: 3826345904
+    Category: 3
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: DecomposingBacteria.Eats.Detritus
+        m_HashValue: 3753277651
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: countDetritus
+      m_HashValue: 511720072
+    - m_Source: scanNew
+      m_HashValue: 730217158
+  - Id:
+      m_Source: growDetritus
+      m_HashValue: 1552323166
+    LabelId:
+      m_Source: jobs.bayou-dirty-detritus.task.growDetritus
+      m_HashValue: 3391774869
+    Category: 3
+    Steps:
+    - Type: 6
+      Target:
+        m_Source: DecomposingBacteria.Eats.Detritus
+        m_HashValue: 3753277651
+      ConditionString: jobs:bayou-dirty-detritus.triedMeasureDetritusReproduce
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: countDetritus
+      m_HashValue: 511720072
+    - m_Source: scanNew
+      m_HashValue: 730217158
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    LabelId:
+      m_Source: jobs.bayou-dirty-detritus.task.reportBack
+      m_HashValue: 2766880759
+    Category: 5
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: true
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: eatDetritus
+      m_HashValue: 372645617
+    - m_Source: growDetritus
+      m_HashValue: 1552323166
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: scanNew
+      m_HashValue: 730217158
+    IdString: scanNew
+    Index: 0
+    LabelId:
+      m_Source: jobs.bayou-dirty-detritus.task.scanNew
+      m_HashValue: 2649751307
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: Cyanobacteria
+        m_HashValue: 3623197764
+      ConditionString: true
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: Detritus
+        m_HashValue: 4251495377
+      ConditionString: true
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: WhiteShrimp
+        m_HashValue: 3187223953
+      ConditionString: true
+      Amount: 0
+    - Type: 0
+      Target:
+        m_Source: DecomposingBacteria
+        m_HashValue: 3751261742
+      ConditionString: true
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: countDetritus
+      m_HashValue: 511720072
+    IdString: countDetritus
+    Index: 1
+    LabelId:
+      m_Source: jobs.bayou-dirty-detritus.task.countDetritus
+      m_HashValue: 823452073
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: P_DeadZone.Population.Detritus
+        m_HashValue: 3754834277
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: eatDetritus
+      m_HashValue: 372645617
+    IdString: eatDetritus
+    Index: 2
+    LabelId:
+      m_Source: jobs.bayou-dirty-detritus.task.eatDetritus
+      m_HashValue: 3826345904
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: DecomposingBacteria.Eats.Detritus
+        m_HashValue: 3753277651
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 01000000
+  - Id:
+      m_Source: growDetritus
+      m_HashValue: 1552323166
+    IdString: growDetritus
+    Index: 3
+    LabelId:
+      m_Source: jobs.bayou-dirty-detritus.task.growDetritus
+      m_HashValue: 3391774869
+    Steps:
+    - Type: 6
+      Target:
+        m_Source: DecomposingBacteria.Eats.Detritus
+        m_HashValue: 3753277651
+      ConditionString: jobs:bayou-dirty-detritus.triedMeasureDetritusReproduce
+      Amount: 0
+    PrerequisiteTaskIndices: 01000000
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    IdString: reportBack
+    Index: 4
+    LabelId:
+      m_Source: jobs.bayou-dirty-detritus.task.reportBack
+      m_HashValue: 2766880759
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: true
+      Amount: 0
+    PrerequisiteTaskIndices: 02000300
+  m_CashReward: 50
+  m_ExpReward: 10
+  m_JournalId:
+    m_HashValue: 632576607
+  m_Scripting: {fileID: -1942890987711236906, guid: 9f2732cdcfea74345bf0a03a348d329d,
+    type: 3}
+  m_ExtraAssets: []

@@ -1,14 +1,16 @@
 {
+    "startWith": {
+        "Cash": 100,
+        "Helm": true,
+        "RS-Arctic": true,
+        "RS-Bayou": true,
+        "RS-Coral": true,
+        "RS-0-Station": true,
+        "RS-Kelp": true,
+        "RS-1C": true,
+        "KelpStation": true
+    },
     "nodes": {
-        "FancyStatue": {
-            "unlockType": "manual",
-            "type": "item",
-            "requires": [
-                {
-                    "id": "Shop"
-                }
-            ]
-        },
         "Cash": {
             "type": "currency",
             "isToken": true
@@ -22,6 +24,10 @@
             "requires": [
                 {
                     "id": "Shop"
+                },
+                {
+                    "id": "Exp",
+                    "amount": 0
                 },
                 {
                     "id": "MeasurementTank"
@@ -42,7 +48,7 @@
                 },
                 {
                     "id": "Exp",
-                    "amount": 40
+                    "amount": 75
                 }
             ],
             "results": [
@@ -70,12 +76,12 @@
                 },
                 {
                     "id": "Cash",
-                    "amount": 200,
+                    "amount": 150,
                     "consume": true
                 },
                 {
                     "id": "Exp",
-                    "amount": 35
+                    "amount": 25
                 }
             ]
         },
@@ -84,6 +90,10 @@
             "requires": [
                 {
                     "id": "Shop"
+                },
+                {
+                    "id": "Exp",
+                    "amount": 0
                 },
                 {
                     "id": "MeasurementTank"
@@ -104,7 +114,7 @@
                 },
                 {
                     "id": "Exp",
-                    "amount": 50
+                    "amount": 25
                 }
             ]
         },
@@ -115,13 +125,29 @@
                     "id": "Shop"
                 },
                 {
+                    "id": "FlashlightCoordinates"
+                }
+            ]
+        },
+        "FlashlightCoordinates": {
+            "type": "item",
+            "requires": [
+                {
+                    "id": "Shop"
+                },
+                {
                     "id": "Cash",
-                    "amount": 200,
+                    "amount": 150,
                     "consume": true
                 },
                 {
                     "id": "Exp",
-                    "amount": 50
+                    "amount": 25
+                }
+            ],
+            "results": [
+                {
+                    "id": "FinalStation"
                 }
             ]
         },
@@ -138,7 +164,7 @@
                 },
                 {
                     "id": "Exp",
-                    "amount": 50
+                    "amount": 75
                 }
             ]
         },
@@ -155,7 +181,7 @@
                 },
                 {
                     "id": "Exp",
-                    "amount": 50
+                    "amount": 75
                 }
             ]
         },
@@ -172,7 +198,7 @@
                 },
                 {
                     "id": "Exp",
-                    "amount": 50
+                    "amount": 75
                 }
             ]
         },
@@ -189,7 +215,7 @@
                 },
                 {
                     "id": "Exp",
-                    "amount": 35
+                    "amount": 25
                 },
                 {
                     "id": "ROVScanner"
@@ -209,7 +235,7 @@
                 },
                 {
                     "id": "Exp",
-                    "amount": 35
+                    "amount": 25
                 }
             ]
         },
@@ -229,8 +255,12 @@
                 },
                 {
                     "id": "Cash",
-                    "amount": 5,
+                    "amount": 10,
                     "consume": true
+                },
+                {
+                    "id": "Exp",
+                    "amount": 0
                 },
                 {
                     "id": "ROVScanner"
@@ -245,12 +275,12 @@
                 },
                 {
                     "id": "Cash",
-                    "amount": 200,
+                    "amount": 300,
                     "consume": true
                 },
                 {
                     "id": "Exp",
-                    "amount": 60
+                    "amount": 75
                 }
             ]
         },
@@ -267,7 +297,7 @@
                 },
                 {
                     "id": "Exp",
-                    "amount": 50
+                    "amount": 25
                 }
             ],
             "results": [
@@ -285,6 +315,10 @@
             "requires": [
                 {
                     "id": "Shop"
+                },
+                {
+                    "id": "Exp",
+                    "amount": 0
                 }
             ]
         },
@@ -296,8 +330,12 @@
                 },
                 {
                     "id": "Cash",
-                    "amount": 5,
+                    "amount": 10,
                     "consume": true
+                },
+                {
+                    "id": "Exp",
+                    "amount": 0
                 }
             ]
         },
@@ -308,6 +346,10 @@
                     "id": "Shop"
                 },
                 {
+                    "id": "Exp",
+                    "amount": 0
+                },
+                {
                     "id": "VisualModel"
                 }
             ],
@@ -315,6 +357,10 @@
         },
         "above-n-below": {
             "type": "job",
+            "difficulty": {
+                "total": 4,
+                "max": 2
+            },
             "requires": [
                 {
                     "id": "ArcticStation"
@@ -326,7 +372,7 @@
             "results": [
                 {
                     "id": "Cash",
-                    "amount": 100
+                    "amount": 50
                 },
                 {
                     "id": "Exp",
@@ -335,11 +381,14 @@
                 {
                     "id": "RS-4Y"
                 }
-            ],
-            "unlockType": "manual"
+            ]
         },
         "arctic-cause-of-death": {
             "type": "job",
+            "difficulty": {
+                "total": 6,
+                "max": 5
+            },
             "requires": [
                 {
                     "id": "ArcticStation"
@@ -382,6 +431,10 @@
         },
         "arctic-disappearing-act": {
             "type": "job",
+            "difficulty": {
+                "total": 5,
+                "max": 2
+            },
             "requires": [
                 {
                     "id": "ArcticStation"
@@ -410,8 +463,61 @@
                 }
             ]
         },
+        "arctic-endangered-seals": {
+            "type": "job",
+            "difficulty": {
+                "total": 13,
+                "max": 5
+            },
+            "requires": [
+                {
+                    "id": "ArcticStation"
+                },
+                {
+                    "id": "above-n-below"
+                },
+                {
+                    "id": "ObservationTank"
+                },
+                {
+                    "id": "ROVTagger"
+                },
+                {
+                    "id": "ROVScanner"
+                },
+                {
+                    "id": "PredictionModel"
+                },
+                {
+                    "id": "MeasurementTank"
+                },
+                {
+                    "id": "Microscope"
+                },
+                {
+                    "id": "ProbeHacker"
+                }
+            ],
+            "results": [
+                {
+                    "id": "Cash",
+                    "amount": 200
+                },
+                {
+                    "id": "Exp",
+                    "amount": 10
+                },
+                {
+                    "id": "RS-4Y"
+                }
+            ]
+        },
         "arctic-in-ice": {
             "type": "job",
+            "difficulty": {
+                "total": 3,
+                "max": 2
+            },
             "requires": [
                 {
                     "id": "ArcticStation"
@@ -437,11 +543,18 @@
                 {
                     "id": "Exp",
                     "amount": 5
+                },
+                {
+                    "id": "RS-4Z"
                 }
             ]
         },
         "arctic-isolated-instance": {
             "type": "job",
+            "difficulty": {
+                "total": 8,
+                "max": 5
+            },
             "requires": [
                 {
                     "id": "ArcticStation"
@@ -451,9 +564,6 @@
                 },
                 {
                     "id": "StressTank"
-                },
-                {
-                    "id": "Flashlight"
                 },
                 {
                     "id": "Microscope"
@@ -481,6 +591,10 @@
         },
         "arctic-missing-whale": {
             "type": "job",
+            "difficulty": {
+                "total": 2,
+                "max": 2
+            },
             "requires": [
                 {
                     "id": "ArcticStation"
@@ -492,7 +606,7 @@
             "results": [
                 {
                     "id": "Cash",
-                    "amount": 100
+                    "amount": 150
                 },
                 {
                     "id": "Exp",
@@ -508,6 +622,10 @@
         },
         "arctic-picky-eaters": {
             "type": "job",
+            "difficulty": {
+                "total": 7,
+                "max": 4
+            },
             "requires": [
                 {
                     "id": "ArcticStation"
@@ -535,6 +653,10 @@
         },
         "arctic-salmon-competition": {
             "type": "job",
+            "difficulty": {
+                "total": 8,
+                "max": 4
+            },
             "requires": [
                 {
                     "id": "ArcticStation"
@@ -553,6 +675,9 @@
                 },
                 {
                     "id": "MeasurementTank"
+                },
+                {
+                    "id": "ProbeHacker"
                 }
             ],
             "results": [
@@ -564,11 +689,14 @@
                     "id": "Exp",
                     "amount": 5
                 }
-            ],
-            "unlockType": "manual"
+            ]
         },
         "arctic-salmon-monitoring": {
             "type": "job",
+            "difficulty": {
+                "total": 1,
+                "max": 1
+            },
             "requires": [
                 {
                     "id": "ArcticStation"
@@ -588,11 +716,18 @@
                 {
                     "id": "Exp",
                     "amount": 5
+                },
+                {
+                    "id": "RS-4Z"
                 }
             ]
         },
         "arctic-seal-habitats": {
             "type": "job",
+            "difficulty": {
+                "total": 2,
+                "max": 2
+            },
             "requires": [
                 {
                     "id": "ArcticStation"
@@ -616,11 +751,14 @@
                     "id": "Exp",
                     "amount": 5
                 }
-            ],
-            "unlockType": "manual"
+            ]
         },
         "arctic-stationary-survival": {
             "type": "job",
+            "difficulty": {
+                "total": 4,
+                "max": 2
+            },
             "requires": [
                 {
                     "id": "ArcticStation"
@@ -654,6 +792,10 @@
         },
         "arctic-time-of-death": {
             "type": "job",
+            "difficulty": {
+                "total": 5,
+                "max": 5
+            },
             "requires": [
                 {
                     "id": "ArcticStation"
@@ -681,12 +823,13 @@
         },
         "arctic-underneath": {
             "type": "job",
+            "difficulty": {
+                "total": 1,
+                "max": 1
+            },
             "requires": [
                 {
                     "id": "ArcticStation"
-                },
-                {
-                    "id": "Flashlight"
                 }
             ],
             "results": [
@@ -697,36 +840,18 @@
                 {
                     "id": "Exp",
                     "amount": 5
+                },
+                {
+                    "id": "RS-4X"
                 }
             ]
         },
-        "arctic-whale-csi": {
-            "type": "job",
-            "requires": [
-                {
-                    "id": "ArcticStation"
-                }
-            ],
-            "results": [
-                {
-                    "id": "Cash",
-                    "amount": 100
-                },
-                {
-                    "id": "Exp",
-                    "amount": 5
-                },
-                {
-                    "id": "RS-4W"
-                },
-                {
-                    "id": "Microscope"
-                }
-            ],
-            "unlockType": "manual"
-        },
         "bayou-alt-energy": {
             "type": "job",
+            "difficulty": {
+                "total": 5,
+                "max": 3
+            },
             "requires": [
                 {
                     "id": "BayouStation"
@@ -742,9 +867,49 @@
                 },
                 {
                     "id": "Hull"
+                }
+            ],
+            "results": [
+                {
+                    "id": "Cash",
+                    "amount": 200
                 },
                 {
-                    "id": "ObservationTank"
+                    "id": "Exp",
+                    "amount": 10
+                },
+                {
+                    "id": "RS-3N"
+                }
+            ]
+        },
+        "bayou-blue-waters": {
+            "type": "job",
+            "difficulty": {
+                "total": 6,
+                "max": 5
+            },
+            "requires": [
+                {
+                    "id": "BayouStation"
+                },
+                {
+                    "id": "bayou-shrimp-yields"
+                },
+                {
+                    "id": "ROVScanner"
+                },
+                {
+                    "id": "ROVTagger"
+                },
+                {
+                    "id": "Microscope"
+                },
+                {
+                    "id": "StressTank"
+                },
+                {
+                    "id": "MeasurementTank"
                 }
             ],
             "results": [
@@ -754,15 +919,19 @@
                 },
                 {
                     "id": "Exp",
-                    "amount": 5
+                    "amount": 10
                 },
                 {
-                    "id": "RS-3N"
+                    "id": "RS-3P"
                 }
             ]
         },
         "bayou-boom-cause": {
             "type": "job",
+            "difficulty": {
+                "total": 3,
+                "max": 3
+            },
             "requires": [
                 {
                     "id": "BayouStation"
@@ -788,8 +957,46 @@
                 }
             ]
         },
+        "bayou-dirty-detritus": {
+            "type": "job",
+            "difficulty": {
+                "total": 6,
+                "max": 3
+            },
+            "requires": [
+                {
+                    "id": "BayouStation"
+                },
+                {
+                    "id": "bayou-blue-waters"
+                },
+                {
+                    "id": "ROVScanner"
+                },
+                {
+                    "id": "ROVTagger"
+                }
+            ],
+            "results": [
+                {
+                    "id": "Cash",
+                    "amount": 50
+                },
+                {
+                    "id": "Exp",
+                    "amount": 10
+                },
+                {
+                    "id": "RS-3P"
+                }
+            ]
+        },
         "displaced-reef": {
             "type": "job",
+            "difficulty": {
+                "total": 2,
+                "max": 2
+            },
             "requires": [
                 {
                     "id": "BayouStation"
@@ -798,7 +1005,7 @@
             "results": [
                 {
                     "id": "Cash",
-                    "amount": 100
+                    "amount": 150
                 },
                 {
                     "id": "Exp",
@@ -811,6 +1018,10 @@
         },
         "bayou-hide-n-seek": {
             "type": "job",
+            "difficulty": {
+                "total": 10,
+                "max": 4
+            },
             "requires": [
                 {
                     "id": "BayouStation"
@@ -844,6 +1055,10 @@
         },
         "bayou-methanogen": {
             "type": "job",
+            "difficulty": {
+                "total": 7,
+                "max": 4
+            },
             "requires": [
                 {
                     "id": "BayouStation"
@@ -864,11 +1079,11 @@
             "results": [
                 {
                     "id": "Cash",
-                    "amount": 100
+                    "amount": 150
                 },
                 {
                     "id": "Exp",
-                    "amount": 5
+                    "amount": 10
                 },
                 {
                     "id": "RS-3N"
@@ -877,12 +1092,43 @@
         },
         "bayou-oxygen-tracking": {
             "type": "job",
+            "difficulty": {
+                "total": 10,
+                "max": 4
+            },
             "requires": [
                 {
                     "id": "BayouStation"
                 },
                 {
-                    "id": "bayou-shrimp-tastrophe"
+                    "id": "bayou-shrimp-yields"
+                },
+                {
+                    "id": "ROVScanner"
+                },
+                {
+                    "id": "ROVTagger"
+                },
+                {
+                    "id": "VisualModel"
+                },
+                {
+                    "id": "SyncModel"
+                },
+                {
+                    "id": "ObservationTank"
+                },
+                {
+                    "id": "MeasurementTank"
+                },
+                {
+                    "id": "Microscope"
+                },
+                {
+                    "id": "WaterModeling"
+                },
+                {
+                    "id": "ProbeHacker"
                 }
             ],
             "results": [
@@ -892,7 +1138,7 @@
                 },
                 {
                     "id": "Exp",
-                    "amount": 5
+                    "amount": 10
                 },
                 {
                     "id": "RS-3P"
@@ -901,6 +1147,10 @@
         },
         "bayou-reef-decision": {
             "type": "job",
+            "difficulty": {
+                "total": 5,
+                "max": 4
+            },
             "requires": [
                 {
                     "id": "BayouStation"
@@ -918,89 +1168,103 @@
             "results": [
                 {
                     "id": "Cash",
-                    "amount": 100
+                    "amount": 250
                 },
                 {
                     "id": "Exp",
-                    "amount": 5
+                    "amount": 15
                 },
                 {
                     "id": "RS-3O"
                 }
             ]
         },
-        "bayou-save-our-shrimp": {
-            "type": "job",
-            "requires": [
-                {
-                    "id": "BayouStation"
-                },
-                {
-                    "id": "bayou-save-our-shrimp"
-                }
-            ],
-            "results": [
-                {
-                    "id": "Cash",
-                    "amount": 100
-                },
-                {
-                    "id": "Exp",
-                    "amount": 5
-                },
-                {
-                    "id": "RS-3P"
-                }
-            ]
-        },
         "bayou-shrimp-tastrophe": {
             "type": "job",
+            "difficulty": {
+                "total": 15,
+                "max": 5
+            },
             "requires": [
                 {
                     "id": "BayouStation"
                 },
                 {
-                    "id": "bayou-save-our-shrimp"
-                }
-            ],
-            "results": [
-                {
-                    "id": "Cash",
-                    "amount": 100
+                    "id": "bayou-dirty-detritus"
                 },
                 {
-                    "id": "Exp",
-                    "amount": 5
+                    "id": "bayou-oxygen-tracking"
                 },
                 {
-                    "id": "RS-3P"
+                    "id": "ROVScanner"
+                },
+                {
+                    "id": "ROVTagger"
+                },
+                {
+                    "id": "VisualModel"
+                },
+                {
+                    "id": "SyncModel"
+                },
+                {
+                    "id": "ObservationTank"
                 },
                 {
                     "id": "MeasurementTank"
                 }
+            ],
+            "results": [
+                {
+                    "id": "Cash",
+                    "amount": 250
+                },
+                {
+                    "id": "Exp",
+                    "amount": 15
+                },
+                {
+                    "id": "RS-3P"
+                }
             ]
         },
-        "bayou-test-model": {
+        "bayou-shrimp-yields": {
             "type": "job",
+            "difficulty": {
+                "total": 3,
+                "max": 3
+            },
             "requires": [
                 {
                     "id": "BayouStation"
+                },
+                {
+                    "id": "ROVScanner"
+                },
+                {
+                    "id": "ROVTagger"
                 }
             ],
             "results": [
                 {
                     "id": "Cash",
-                    "amount": 100
+                    "amount": 50
                 },
                 {
                     "id": "Exp",
                     "amount": 5
+                },
+                {
+                    "id": "RS-3P"
                 }
-            ],
-            "unlockType": "manual"
+            ]
         },
         "turtle-danger": {
             "type": "job",
+            "difficulty": {
+                "total": 6,
+                "max": 4
+            },
             "requires": [
                 {
                     "id": "BayouStation"
@@ -1028,6 +1292,10 @@
         },
         "turtle-danger2": {
             "type": "job",
+            "difficulty": {
+                "total": 8,
+                "max": 4
+            },
             "requires": [
                 {
                     "id": "BayouStation"
@@ -1073,6 +1341,10 @@
         },
         "coral-casting-shade": {
             "type": "job",
+            "difficulty": {
+                "total": 7,
+                "max": 3
+            },
             "requires": [
                 {
                     "id": "CoralStation"
@@ -1118,6 +1390,10 @@
         },
         "coral-eat-seaweed": {
             "type": "job",
+            "difficulty": {
+                "total": 4,
+                "max": 2
+            },
             "requires": [
                 {
                     "id": "CoralStation"
@@ -1142,6 +1418,10 @@
         },
         "coral-fake-fix": {
             "type": "job",
+            "difficulty": {
+                "total": 4,
+                "max": 4
+            },
             "requires": [
                 {
                     "id": "CoralStation"
@@ -1175,6 +1455,10 @@
         },
         "coral-fishy-bizz": {
             "type": "job",
+            "difficulty": {
+                "total": 7,
+                "max": 4
+            },
             "requires": [
                 {
                     "id": "CoralStation"
@@ -1208,6 +1492,10 @@
         },
         "coral-hunting-lions": {
             "type": "job",
+            "difficulty": {
+                "total": 15,
+                "max": 5
+            },
             "requires": [
                 {
                     "id": "CoralStation"
@@ -1243,20 +1531,23 @@
             "results": [
                 {
                     "id": "Cash",
-                    "amount": 100
+                    "amount": 250
                 },
                 {
                     "id": "Exp",
-                    "amount": 10
+                    "amount": 15
                 },
                 {
                     "id": "RS-2S"
                 }
-            ],
-            "unlockType": "manual"
+            ]
         },
         "coral-lionfish-conspiracy": {
             "type": "job",
+            "difficulty": {
+                "total": 4,
+                "max": 3
+            },
             "requires": [
                 {
                     "id": "CoralStation"
@@ -1284,6 +1575,10 @@
         },
         "coral-much-algae": {
             "type": "job",
+            "difficulty": {
+                "total": 9,
+                "max": 3
+            },
             "requires": [
                 {
                     "id": "CoralStation"
@@ -1317,6 +1612,10 @@
         },
         "coral-ocean-plastics": {
             "type": "job",
+            "difficulty": {
+                "total": 3,
+                "max": 2
+            },
             "requires": [
                 {
                     "id": "CoralStation"
@@ -1350,6 +1649,10 @@
         },
         "coral-stressed": {
             "type": "job",
+            "difficulty": {
+                "total": 6,
+                "max": 4
+            },
             "requires": [
                 {
                     "id": "CoralStation"
@@ -1383,6 +1686,10 @@
         },
         "coral-tang-checkup": {
             "type": "job",
+            "difficulty": {
+                "total": 8,
+                "max": 3
+            },
             "requires": [
                 {
                     "id": "CoralStation"
@@ -1403,20 +1710,23 @@
             "results": [
                 {
                     "id": "Cash",
-                    "amount": 100
+                    "amount": 150
                 },
                 {
                     "id": "Exp",
-                    "amount": 5
+                    "amount": 10
                 },
                 {
                     "id": "RS-2S"
                 }
-            ],
-            "unlockType": "manual"
+            ]
         },
         "coral-turtle-population": {
             "type": "job",
+            "difficulty": {
+                "total": 1,
+                "max": 1
+            },
             "requires": [
                 {
                     "id": "CoralStation"
@@ -1438,6 +1748,10 @@
         },
         "coral-turtle-stability": {
             "type": "job",
+            "difficulty": {
+                "total": 3,
+                "max": 1
+            },
             "requires": [
                 {
                     "id": "CoralStation"
@@ -1460,33 +1774,30 @@
                 }
             ]
         },
-        "coral-urchin-friends": {
+        "final-final": {
             "type": "job",
+            "difficulty": {
+                "total": 6,
+                "max": 4
+            },
             "requires": [
                 {
-                    "id": "CoralStation"
-                },
-                {
-                    "id": "coral-urchin-friends"
+                    "id": "FinalStation"
                 }
             ],
             "results": [
                 {
-                    "id": "Cash",
-                    "amount": 100
-                },
-                {
-                    "id": "Exp",
-                    "amount": 5
-                },
-                {
-                    "id": "RS-2R"
+                    "id": "RS-0"
                 }
             ],
             "unlockType": "manual"
         },
         "kelp-bull-kelp-forest": {
             "type": "job",
+            "difficulty": {
+                "total": 2,
+                "max": 1
+            },
             "requires": [
                 {
                     "id": "KelpStation"
@@ -1517,6 +1828,10 @@
         },
         "kelp-energy": {
             "type": "job",
+            "difficulty": {
+                "total": 2,
+                "max": 1
+            },
             "requires": [
                 {
                     "id": "KelpStation"
@@ -1538,9 +1853,16 @@
         },
         "kelp-mussel-fest": {
             "type": "job",
+            "difficulty": {
+                "total": 4,
+                "max": 2
+            },
             "requires": [
                 {
                     "id": "KelpStation"
+                },
+                {
+                    "id": "kelp-welcome"
                 },
                 {
                     "id": "StressTank"
@@ -1571,6 +1893,10 @@
         },
         "kelp-musselfest-solution": {
             "type": "job",
+            "difficulty": {
+                "total": 5,
+                "max": 3
+            },
             "requires": [
                 {
                     "id": "KelpStation"
@@ -1598,6 +1924,10 @@
         },
         "kelp-refuge-failure": {
             "type": "job",
+            "difficulty": {
+                "total": 10,
+                "max": 4
+            },
             "requires": [
                 {
                     "id": "KelpStation"
@@ -1631,6 +1961,10 @@
         },
         "kelp-refuge-failure-simulation": {
             "type": "job",
+            "difficulty": {
+                "total": 5,
+                "max": 4
+            },
             "requires": [
                 {
                     "id": "KelpStation"
@@ -1645,7 +1979,7 @@
             "results": [
                 {
                     "id": "Cash",
-                    "amount": 100
+                    "amount": 150
                 },
                 {
                     "id": "Exp",
@@ -1658,6 +1992,10 @@
         },
         "kelp-save-urchin-barren": {
             "type": "job",
+            "difficulty": {
+                "total": 6,
+                "max": 4
+            },
             "requires": [
                 {
                     "id": "KelpStation"
@@ -1672,11 +2010,11 @@
             "results": [
                 {
                     "id": "Cash",
-                    "amount": 100
+                    "amount": 150
                 },
                 {
                     "id": "Exp",
-                    "amount": 5
+                    "amount": 10
                 },
                 {
                     "id": "RS-1B"
@@ -1685,6 +2023,10 @@
         },
         "kelp-shop-welcome": {
             "type": "job",
+            "difficulty": {
+                "total": 0,
+                "max": 0
+            },
             "requires": [
                 {
                     "id": "KelpStation"
@@ -1722,9 +2064,16 @@
         },
         "kelp-start-refuge": {
             "type": "job",
+            "difficulty": {
+                "total": 6,
+                "max": 4
+            },
             "requires": [
                 {
                     "id": "KelpStation"
+                },
+                {
+                    "id": "kelp-welcome"
                 },
                 {
                     "id": "StressTank"
@@ -1739,7 +2088,7 @@
             "results": [
                 {
                     "id": "Cash",
-                    "amount": 100
+                    "amount": 150
                 },
                 {
                     "id": "Exp",
@@ -1752,6 +2101,10 @@
         },
         "kelp-urchin-barren-predict": {
             "type": "job",
+            "difficulty": {
+                "total": 4,
+                "max": 3
+            },
             "requires": [
                 {
                     "id": "KelpStation"
@@ -1779,9 +2132,16 @@
         },
         "kelp-urchin-barren-viz": {
             "type": "job",
+            "difficulty": {
+                "total": 2,
+                "max": 1
+            },
             "requires": [
                 {
                     "id": "KelpStation"
+                },
+                {
+                    "id": "kelp-welcome"
                 },
                 {
                     "id": "ProbeHacker"
@@ -1812,9 +2172,16 @@
         },
         "kelp-urchin-farm": {
             "type": "job",
+            "difficulty": {
+                "total": 7,
+                "max": 4
+            },
             "requires": [
                 {
                     "id": "KelpStation"
+                },
+                {
+                    "id": "kelp-welcome"
                 },
                 {
                     "id": "MeasurementTank"
@@ -1829,16 +2196,20 @@
             "results": [
                 {
                     "id": "Cash",
-                    "amount": 100
+                    "amount": 150
                 },
                 {
                     "id": "Exp",
-                    "amount": 5
+                    "amount": 10
                 }
             ]
         },
         "kelp-welcome": {
             "type": "job",
+            "difficulty": {
+                "total": 2,
+                "max": 1
+            },
             "requires": [
                 {
                     "id": "KelpStation"
@@ -1895,15 +2266,6 @@
             "unlockType": "manual",
             "disableTraversal": true
         },
-        "JobBoard": {
-            "type": "map",
-            "disableTraversal": true
-        },
-        "Shop": {
-            "type": "map",
-            "unlockType": "manual",
-            "disableTraversal": true
-        },
         "RS-Arctic": {
             "type": "map"
         },
@@ -1928,15 +2290,6 @@
                 },
                 {
                     "id": "Engine"
-                }
-            ]
-        },
-        "RS-4Y-Ice River": {
-            "type": "map",
-            "disableTraversal": true,
-            "requires": [
-                {
-                    "id": "ArcticStation"
                 }
             ]
         },
@@ -2017,15 +2370,6 @@
                 }
             ]
         },
-        "RS-2R-2": {
-            "type": "map",
-            "disableTraversal": true,
-            "requires": [
-                {
-                    "id": "CoralStation"
-                }
-            ]
-        },
         "RS-2S": {
             "type": "map",
             "disableTraversal": true,
@@ -2048,9 +2392,32 @@
             "type": "map",
             "unlockType": "manual"
         },
-        "FinalStation": {
+        "RS-0-Cave": {
             "type": "map",
-            "unlockType": "manual"
+            "disableTraversal": true,
+            "requires": [
+                {
+                    "id": "RS-0"
+                }
+            ]
+        },
+        "RS-0-Credits": {
+            "type": "map",
+            "disableTraversal": true,
+            "requires": [
+                {
+                    "id": "FinalStation"
+                }
+            ]
+        },
+        "RS-0-Final": {
+            "type": "map",
+            "disableTraversal": true,
+            "requires": [
+                {
+                    "id": "RS-0"
+                }
+            ]
         },
         "RS-0": {
             "type": "map",
@@ -2060,6 +2427,13 @@
                     "id": "FinalStation"
                 }
             ]
+        },
+        "RS-0-Station": {
+            "type": "map"
+        },
+        "FinalStation": {
+            "type": "map",
+            "unlockType": "manual"
         },
         "RS-Kelp": {
             "type": "map"
@@ -2086,17 +2460,5 @@
         "KelpStation": {
             "type": "map"
         }
-    },
-    "startWith": {
-        "Cash": 100,
-        "Exp": 10,
-        "Helm": true,
-        "JobBoard": true,
-        "RS-Arctic": true,
-        "RS-Bayou": true,
-        "RS-Coral": true,
-        "RS-Kelp": true,
-        "RS-1C": true,
-        "KelpStation": true
     }
 }

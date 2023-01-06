@@ -22,6 +22,7 @@ namespace Aqua.Entity {
         #region Inspector
 
         [SerializeField] private float m_CameraRadius = 8;
+        [SerializeField] private LayerMask m_DefaultUpdates = GameLayers.Audio_Mask;
 
         #endregion // Inspector
 
@@ -31,10 +32,15 @@ namespace Aqua.Entity {
         private readonly EntityActivationSet<Visual2DTransform, UpdateArgs> m_UpdateSet;
 
         private Visual2DSystem() {
-            m_UpdateSet = new EntityActivationSet<Visual2DTransform, UpdateArgs>();
+            m_UpdateSet = new EntityActivationSet<Visual2DTransform, UpdateArgs>(1024);
             m_UpdateSet.SetStatus = SetStatus;
             m_UpdateSet.UpdateAwake = UpdateTransform;
             m_UpdateSet.UpdateActive = UpdateActive;
+        }
+
+        protected override void Awake() {
+            base.Awake();
+            m_UpdateMask = m_DefaultUpdates;
         }
 
         private UpdateAwakeResult UpdateTransform(Visual2DTransform transform, in UpdateArgs updateArgs) {
@@ -48,6 +54,10 @@ namespace Aqua.Entity {
             if (transform.CustomPosition != null) {
                 position = transform.CustomPosition(transform, transform.LastKnownPosition, m_PositionCast, out scale);
             } else {
+                if (transform.Source == null) {
+                    Log.Error("[Visual2DSystem] Visual2DTransform '{0}' (path '{1}') has no source!", transform.name, UnityHelper.FullPath(transform.gameObject));
+                    return UpdateAwakeResult.Skip;
+                }
                 position = CameraService.CastToPlane(m_PositionCast, transform.Source, out scale);
             }
             
@@ -59,6 +69,9 @@ namespace Aqua.Entity {
                 return UpdateAwakeResult.Active;
             } else {
                 transform.OffscreenTickDelay = Math.Min((int) distOffset / 30, 60);
+                if (transform.IsDynamic) {
+                    transform.OffscreenTickDelay /= 4;
+                }
                 return UpdateAwakeResult.Inactive;
             }
         }

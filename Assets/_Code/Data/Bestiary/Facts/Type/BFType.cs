@@ -100,7 +100,7 @@ namespace Aqua {
         }
 
         static public BFDiscoveredFlags DefaultDiscoveredFlags(BFBase inFact) {
-            if (inFact.Parent.HasFlags(BestiaryDescFlags.Human))
+            if (inFact.Parent.HasFlags(BestiaryDescFlags.Human | BestiaryDescFlags.IsSpecter))
                 return BFDiscoveredFlags.All;
             return s_DefaultDiscoveredFlags[(int)inFact.Type];
         }
@@ -130,13 +130,6 @@ namespace Aqua {
                 return ((BFBehavior)inFact).OnlyWhenStressed;
             }
             return false;
-        }
-
-        static public StringHash32 PairId(BFBase inFact) {
-            if (IsBehavior(inFact)) {
-                return ((BFBehavior)inFact).PairId;
-            }
-            return null;
         }
 
         /// <summary>
@@ -226,11 +219,6 @@ namespace Aqua {
         }
 
         [MethodImpl(256)]
-        static public bool HasPair(BFDiscoveredFlags flags) {
-            return (flags & BFDiscoveredFlags.HasPair) == BFDiscoveredFlags.HasPair;
-        }
-
-        [MethodImpl(256)]
         static public bool HasAll(BFDiscoveredFlags flags) {
             return (flags & BFDiscoveredFlags.All) == BFDiscoveredFlags.All;
         }
@@ -275,7 +263,11 @@ namespace Aqua {
             BFBehavior behavior = inFact as BFBehavior;
             if (behavior != null && behavior.AutoGive)
                 return BFMode.Always;
-            return s_ModeDelegates[(int)inFact.Type]?.Invoke(inFact) ?? BFMode.Player;
+            BFMode mode = s_ModeDelegates[(int)inFact.Type]?.Invoke(inFact) ?? BFMode.Player;
+            if (mode == BFMode.Player && inFact.Parent.HasFlags(BestiaryDescFlags.IsSpecter)) {
+                // mode = BFMode.Always;
+            }
+            return mode;
         }
 
         static internal Type ResolveSystemType(BFTypeId inType) {

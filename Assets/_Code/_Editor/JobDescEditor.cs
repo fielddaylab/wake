@@ -267,8 +267,10 @@ namespace Aqua.Editor
 
                     SerializedProperty idProperty = taskAsProperty.FindPropertyRelative("Id");
                     SerializedProperty labelProperty = taskAsProperty.FindPropertyRelative("LabelId");
+                    SerializedProperty categoryProperty = taskAsProperty.FindPropertyRelative("Category");
                     EditorGUILayout.PropertyField(idProperty);
                     EditorGUILayout.PropertyField(labelProperty);
+                    EditorGUILayout.PropertyField(categoryProperty);
 
                     EditorGUILayout.Space();
 

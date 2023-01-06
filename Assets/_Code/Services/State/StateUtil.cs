@@ -2,13 +2,15 @@ using System.Collections;
 using Aqua.Scripting;
 using BeauRoutine;
 using BeauUtil;
+using Leaf.Runtime;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Aqua {
     static public class StateUtil {
         private const SceneLoadFlags LoadFlags = SceneLoadFlags.DoNotDispatchPreUnload;
 
-        private const float FadeDuration = 0.25f;
+        private const float DefaultFadeDuration = 0.25f;
         private const float PauseDuration = 0.15f;
         private const string DefaultBackScene = "Helm";
 
@@ -19,22 +21,22 @@ namespace Aqua {
             get { return s_IsLoading || (Services.Valid && Services.State.IsLoadingScene()); }
         }
 
-        static public IEnumerator LoadSceneWithFader(string inSceneName, StringHash32 inEntrance = default(StringHash32), object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default) {
+        static public IEnumerator LoadSceneWithFader(string inSceneName, StringHash32 inEntrance = default(StringHash32), object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default, float inFadeDuration = DefaultFadeDuration) {
             inFlags |= LoadFlags;
 
-            if (!BeforeLoad(inFlags)) {
+            if (!BeforeLoad(inFlags, inFadeDuration)) {
                 return null;
             }
 
-            return Services.UI.ScreenFaders.FadeTransition(Color.black, FadeDuration, PauseDuration,
-                () => Sequence.Create(Services.State.LoadScene(inSceneName, inEntrance, inContext, inFlags)).Then(AfterLoad)
+            return Services.UI.ScreenFaders.FadeTransition(Color.black, inFadeDuration, PauseDuration,
+                () => Sequence.Create(Services.State.LoadScene(inSceneName, inEntrance, inContext, inFlags)).Then(() => AfterLoad(inFadeDuration))
             );
         }
 
         static public IEnumerator LoadSceneWithWipe(string inSceneName, StringHash32 inEntrance = default(StringHash32), object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default) {
             inFlags |= LoadFlags;
 
-            if (!BeforeLoad(inFlags)) {
+            if (!BeforeLoad(inFlags, DefaultFadeDuration)) {
                 return null;
             }
 
@@ -43,10 +45,10 @@ namespace Aqua {
             );
         }
 
-        static public IEnumerator LoadMapWithWipe(StringHash32 inMapId, StringHash32 inEntrance = default(StringHash32), object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default) {
+        static public IEnumerator LoadMapWithWipe(StringHash32 inMapId, StringHash32 inEntrance = default(StringHash32), object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default, float inFadeDuration = DefaultFadeDuration) {
             inFlags |= LoadFlags;
 
-            if (!BeforeLoad(inFlags)) {
+            if (!BeforeLoad(inFlags, inFadeDuration)) {
                 return null;
             }
 
@@ -57,19 +59,19 @@ namespace Aqua {
             }
 
             return Services.UI.ScreenFaders.WipeTransition(PauseDuration,
-                () => Sequence.Create(Services.State.LoadSceneFromMap(inMapId, inEntrance, inContext, inFlags)).Then(AfterLoad)
+                () => Sequence.Create(Services.State.LoadSceneFromMap(inMapId, inEntrance, inContext, inFlags)).Then(() => AfterLoad(inFadeDuration))
             );
         }
 
-        static public IEnumerator LoadPreviousSceneWithFader(StringHash32 inEntrance = default(StringHash32), object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default) {
+        static public IEnumerator LoadPreviousSceneWithFader(StringHash32 inEntrance = default(StringHash32), object inContext = null, SceneLoadFlags inFlags = SceneLoadFlags.Default, float inFadeDuration = DefaultFadeDuration) {
             inFlags |= LoadFlags;
 
-            if (!BeforeLoad(inFlags)) {
+            if (!BeforeLoad(inFlags, inFadeDuration)) {
                 return null;
             }
 
-            return Services.UI.ScreenFaders.FadeTransition(Color.black, FadeDuration, PauseDuration,
-                () => Sequence.Create(Services.State.LoadPreviousScene(DefaultBackScene, inEntrance, inContext, inFlags)).Then(AfterLoad)
+            return Services.UI.ScreenFaders.FadeTransition(Color.black, inFadeDuration, PauseDuration,
+                () => Sequence.Create(Services.State.LoadPreviousScene(DefaultBackScene, inEntrance, inContext, inFlags)).Then(() => AfterLoad(inFadeDuration))
             );
         }
 
@@ -84,7 +86,7 @@ namespace Aqua {
 
             inFlags |= LoadFlags;
 
-            if (!BeforeLoad(inFlags)) {
+            if (!BeforeLoad(inFlags, DefaultFadeDuration)) {
                 return null;
             }
 
@@ -98,7 +100,7 @@ namespace Aqua {
             );
         }
 
-        static private bool BeforeLoad(SceneLoadFlags inFlags) {
+        static private bool BeforeLoad(SceneLoadFlags inFlags, float inFadeDuration) {
             if (IsLoading)
                 return false;
 
@@ -113,7 +115,7 @@ namespace Aqua {
                 AutoSave.Suppress();
             }
             Services.Input.PauseAll();
-            Services.Audio.FadeOut(FadeDuration);
+            Services.Audio.FadeOut(inFadeDuration);
             Services.Script.KillLowPriorityThreads(TriggerPriority.Cutscene, true);
             Services.Events.Dispatch(GameEvents.SceneWillUnload);
             s_IsLoading = true;
@@ -124,13 +126,17 @@ namespace Aqua {
             s_IsLoading = false;
         }
 
-        static private void AfterLoad() {
+        static private void AfterLoad(float inFadeDuration) {
             if ((s_LastFlags & SceneLoadFlags.Cutscene) != 0) {
                 Services.UI.HideLetterbox();
             }
-            Services.Audio.FadeIn(FadeDuration);
+            Services.Audio.FadeIn(inFadeDuration);
             Services.Input.ResumeAll();
             s_IsLoading = false;
+        }
+
+        static private void AfterLoad() {
+            AfterLoad(DefaultFadeDuration);
         }
     }
 }

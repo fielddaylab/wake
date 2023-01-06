@@ -12,6 +12,7 @@ namespace Aqua
         #region Inspector
 
         [SerializeField] private KeyCode m_KeyCode = KeyCode.Space;
+        [SerializeField] private KeyCode m_KeyCodeAlt = KeyCode.None;
         [SerializeField] private ButtonDisplay m_ButtonDisplay = null;
 
         #endregion // Inspector
@@ -64,7 +65,7 @@ namespace Aqua
 
         void IInputHandler.HandleInput(DeviceInput inInput)
         {
-            if (inInput.KeyPressed(m_KeyCode))
+            if (inInput.KeyPressed(m_KeyCode) || inInput.KeyPressed(m_KeyCodeAlt))
             {
                 if (Services.Input.ExecuteClick(gameObject))
                 {

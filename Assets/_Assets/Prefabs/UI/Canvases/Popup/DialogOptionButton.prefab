@@ -19,6 +19,8 @@ GameObject:
   - component: {fileID: 6995297675396985540}
   - component: {fileID: 4694967829137304994}
   - component: {fileID: 8229187217449792827}
+  - component: {fileID: 7710415182812700889}
+  - component: {fileID: 4610030665114970574}
   m_Layer: 5
   m_Name: DialogOptionButton
   m_TagString: Untagged
@@ -145,7 +147,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 220795665991819881}
+  m_TargetGraphic: {fileID: 8229187217449792827}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
@@ -161,17 +163,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 755b1d8d959b1ba48af06f274427a96f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Transform: {fileID: 7928869446058497749}
+  m_Offset: {fileID: 7710415182812700889}
   m_Group: {fileID: 8285771638237838604}
   m_Text: {fileID: 36898856415018087}
   m_Button: {fileID: 6943464433970573473}
   m_ToOnOffset: {x: 32, y: 0}
   m_ToOnTween:
-    Time: 0.1
+    Time: 0.15
     Curve: 6
   m_ToOffOffset: {x: -32, y: 0}
   m_ToOffTween:
-    Time: 0.1
+    Time: 0.15
     Curve: 2
 --- !u!225 &8285771638237838604
 CanvasGroup:
@@ -243,6 +245,32 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+--- !u!114 &7710415182812700889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800706802525946150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee012376a32f0314ead77f5ad3a9b360, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Offset0: {x: 0, y: 0}
+  m_Offset1: {x: 0, y: 0}
+--- !u!114 &4610030665114970574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800706802525946150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b65daf6ebab4aca41a9a0c35e749ef1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4996439179647954526
 GameObject:
   m_ObjectHideFlags: 0
@@ -253,8 +281,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3744897620951660810}
   - component: {fileID: 5397311314272453890}
-  - component: {fileID: 220795665991819881}
   - component: {fileID: 1110613240452202668}
+  - component: {fileID: 3972699204836197410}
   m_Layer: 5
   m_Name: BG
   m_TagString: Untagged
@@ -289,35 +317,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4996439179647954526}
   m_CullTransparentMesh: 0
---- !u!114 &220795665991819881
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4996439179647954526}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.19215688, b: 0.20392159, a: 1}
-  m_RaycastTarget: 0
-  m_Maskable: 0
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 2514285dbbe219d45939af2ca6f15a5d, type: 3}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 3
 --- !u!114 &1110613240452202668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -338,6 +337,29 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &3972699204836197410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4996439179647954526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3cce1025f282c247b38ed00ee6ddc0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0.19215688, b: 0.20392159, a: 1}
+  m_RaycastTarget: 0
+  m_Maskable: 0
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_CornerRadius: 6
+  m_Resolution: 3
+  m_Outline: 0
+  m_Thickness: 1
 --- !u!1 &5491364871192615813
 GameObject:
   m_ObjectHideFlags: 0

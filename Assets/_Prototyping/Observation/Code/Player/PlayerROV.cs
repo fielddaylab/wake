@@ -10,6 +10,7 @@ using Aqua.Character;
 using Leaf.Runtime;
 using System.Collections;
 using BeauUtil.Variants;
+using UnityEngine.Scripting;
 
 namespace ProtoAqua.Observation
 {
@@ -19,9 +20,15 @@ namespace ProtoAqua.Observation
 
         static public readonly StringHash32 Event_RequestToolToggle = "PlayerROV::RequestToolToggle"; // ToolState
         static public readonly StringHash32 Event_RequestToolSwitch = "PlayerROV::RequestToolSwitch"; // tool id
-        static public readonly StringHash32 Event_ToolSwitched = "PlayerROV::ToolSwitched"; // tool id
+        static public readonly StringHash32 Event_ToolSwitched = "PlayerROV::ToolSwitched"; // ToolState
+        static public readonly StringHash32 Event_ToolPermissions = "PlayerROV::ToolPermissions"; // ToolState
+
+        static public readonly StringHash32 Trigger_ToolActivated = "ToolActivated";
+        static public readonly StringHash32 Trigger_ToolDeactivated = "ToolDeactivated";
 
         #region Types
+
+        static private readonly string[] ToolIdToString = Enum.GetNames(typeof(ToolId));
 
         public struct ToolState
         {
@@ -46,9 +53,21 @@ namespace ProtoAqua.Observation
         }
 
         [Flags]
-        private enum PassiveUpgradeMask {
+        public enum PassiveUpgrades {
             Engine = 0x01,
-            PropGuard = 0x02
+            PropGuard = 0x02,
+            Hull = 0x04
+        }
+
+        static public bool ToolIsPassive(ToolId id) {
+            switch(id) {
+                case ToolId.Flashlight:
+                case ToolId.Microscope:
+                    return true;
+
+                default:
+                    return false;
+            }
         }
 
         static public StringHash32 ToolIdToItemId(ToolId id) {
@@ -74,8 +93,8 @@ namespace ProtoAqua.Observation
             bool IsEnabled();
             void Enable(PlayerBody inBody);
             void Disable();
-            bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody);
-            void UpdateActive(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody);
+            bool UpdateTool(float inDeltaTime, in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody);
+            void UpdateActive(float inDeltaTime, in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody);
             bool HasTarget();
             PlayerROVAnimationFlags AnimFlags();
             float MoveSpeedMultiplier();
@@ -96,8 +115,8 @@ namespace ProtoAqua.Observation
             public bool HasTarget() { return false; }
             public PlayerROVAnimationFlags AnimFlags() { return 0; }
             public float MoveSpeedMultiplier() { return 1; }
-            public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) { return false; }
-            public void UpdateActive(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) { }
+            public bool UpdateTool(float inDeltaTime, in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) { return false; }
+            public void UpdateActive(float inDeltaTime, in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) { }
         }
 
         #endregion // Types
@@ -126,6 +145,9 @@ namespace ProtoAqua.Observation
         [SerializeField] private float m_CameraForwardLookWeight = 0.5f;
         [SerializeField] private float m_CameraForwardLookNoMove = 1;
         [SerializeField] private float m_CameraZoomTool = 1.1f;
+
+        [Header("Additional Settings")]
+        [SerializeField] private bool m_DreamMode = false;
         
         #endregion // Inspector
 
@@ -139,7 +161,7 @@ namespace ProtoAqua.Observation
         [NonSerialized] private uint m_CameraDriftHint;
         [NonSerialized] private ITool m_CurrentTool;
         [NonSerialized] private ToolId m_CurrentToolId = ToolId.NONE;
-        [NonSerialized] private PassiveUpgradeMask m_UpgradeMask = 0;
+        [NonSerialized] private PassiveUpgrades m_UpgradeMask = 0;
         [NonSerialized] private Routine m_StunRoutine;
         [NonSerialized] private int m_EngineRegionCount;
         [NonSerialized] private int m_SlowRegionCount;
@@ -176,6 +198,7 @@ namespace ProtoAqua.Observation
 
             UpdateUpgradeMask();
 
+            ApplyPassiveUpgrades();
             SwitchTool(lastToolId, true);
 
             SetToolState(ToolId.Flashlight, Script.ReadVariable(Var_LastFlashlightState).AsBool(), true);
@@ -201,7 +224,7 @@ namespace ProtoAqua.Observation
                 status |= PlayerBodyStatus.Stunned;
             }
             if (m_EngineRegionCount > 0) {
-                if ((m_UpgradeMask & PassiveUpgradeMask.Engine) != 0) {
+                if ((m_UpgradeMask & PassiveUpgrades.Engine) != 0) {
                     status |= PlayerBodyStatus.PowerEngineEngaged;
                 } else {
                     status |= PlayerBodyStatus.DraggedByCurrent;
@@ -215,12 +238,12 @@ namespace ProtoAqua.Observation
 
             m_Input.GenerateInput(m_Transform, lockOn, status, out m_LastInputData);
 
-            if (m_Moving || !UpdateTool())
+            if (m_Moving || !UpdateTool(inDeltaTime))
             {
                 UpdateMove(inDeltaTime);
             }
 
-            m_CurrentTool.UpdateActive(m_LastInputData, m_Kinematics.State.Velocity, this);
+            m_CurrentTool.UpdateActive(inDeltaTime, m_LastInputData, m_Kinematics.State.Velocity, this);
         }
 
         private void LateUpdate()
@@ -295,9 +318,9 @@ namespace ProtoAqua.Observation
             return null;
         }
 
-        private bool UpdateTool()
+        private bool UpdateTool(float inDeltaTime)
         {
-            if (m_CurrentTool.UpdateTool(m_LastInputData, m_Kinematics.State.Velocity, this))
+            if (m_CurrentTool.UpdateTool(inDeltaTime, m_LastInputData, m_Kinematics.State.Velocity, this))
             {
                 SetEngineState(false);
                 return true;
@@ -322,7 +345,7 @@ namespace ProtoAqua.Observation
             {
                 float dist = m_LastInputData.MoveVector.magnitude;
                 float moveMultiplier = m_CurrentTool.MoveSpeedMultiplier();
-                if (m_Microscope.IsEnabled()) {
+                if (m_Microscope && m_Microscope.IsEnabled()) {
                     moveMultiplier *= m_Microscope.MoveSpeedMultiplier();
                 }
                 
@@ -360,7 +383,6 @@ namespace ProtoAqua.Observation
                 m_EngineSound.SetVolume(0).SetVolume(1, 0.25f);
 
                 m_Kinematics.Config.Drag = m_DragEngineOn;
-                Services.UI?.FindPanel<ScannerDisplay>()?.Hide();
             }
             else
             {
@@ -375,14 +397,24 @@ namespace ProtoAqua.Observation
             if (!inbForce && m_CurrentToolId == inTool)
                 return false;
 
-            if (m_CurrentTool != null && m_Input.IsInputEnabled)
+            if (m_CurrentTool != null && m_Input.IsInputEnabled) {
                 m_CurrentTool.Disable();
+                
+                var tempTable = TempVarTable.Alloc();
+                tempTable.Set("toolId", ToolIdToString[(int) m_CurrentToolId]);
+                Services.Script.QueueTriggerResponse(Trigger_ToolDeactivated, 0, tempTable);
+            }
 
             m_CurrentToolId = inTool;
             m_CurrentTool = GetTool(inTool);
 
-            if (m_CurrentTool != null && m_Input.IsInputEnabled)
+            if (m_CurrentTool != null && m_Input.IsInputEnabled) {
                 m_CurrentTool.Enable(this);
+
+                var tempTable = TempVarTable.Alloc();
+                tempTable.Set("toolId", ToolIdToString[(int) m_CurrentToolId]);
+                Services.Script.QueueTriggerResponse(Trigger_ToolActivated, 0, tempTable);
+            }
 
             Services.Events.Dispatch(Event_ToolSwitched, new ToolState(inTool, true));
             return true;
@@ -391,6 +423,10 @@ namespace ProtoAqua.Observation
         private bool SetToolState(ToolId inTool, bool state, bool inbForce)
         {
             var tool = GetTool(inTool);
+            if (!(UnityEngine.Object)tool) {
+                return false;
+            }
+
             if (!inbForce && tool.IsEnabled() == state) {
                 return false;
             }
@@ -405,6 +441,15 @@ namespace ProtoAqua.Observation
             }
 
             Services.Events.Dispatch(Event_ToolSwitched, new ToolState(inTool, state));
+            
+            var tempTable = TempVarTable.Alloc();
+            tempTable.Set("toolId", ToolIdToString[(int) inTool]);
+            if (state) {
+                Services.Script.QueueTriggerResponse(Trigger_ToolActivated, -500, tempTable);
+            } else {
+                Services.Script.QueueTriggerResponse(Trigger_ToolDeactivated, -500, tempTable);
+            }
+
             return true;
         }
 
@@ -433,6 +478,10 @@ namespace ProtoAqua.Observation
         private void OnInventoryUpdated(StringHash32 inItemId)
         {
             UpdateUpgradeMask();
+            ApplyPassiveUpgrades();
+
+            if (inItemId == ItemIds.Flashlight)
+                SetToolState(ToolId.Flashlight, true, false);
 
             if (m_CurrentToolId != ToolId.NONE)
                 return;
@@ -443,19 +492,32 @@ namespace ProtoAqua.Observation
                 SwitchTool(ToolId.Tagger, false);
             else if (inItemId == ItemIds.Icebreaker)
                 SwitchTool(ToolId.Breaker, false);
-            else if (inItemId == ItemIds.Flashlight)
-                SetToolState(ToolId.Flashlight, true, false);
         }
 
         private void UpdateUpgradeMask() {
-            PassiveUpgradeMask upgrades = 0;
-            if (Save.Inventory.HasUpgrade(ItemIds.Engine)) {
-                upgrades |= PassiveUpgradeMask.Engine;
-            }
-            if (Save.Inventory.HasUpgrade(ItemIds.PropGuard)) {
-                upgrades |= PassiveUpgradeMask.PropGuard;
+            PassiveUpgrades upgrades = 0;
+            if (!m_DreamMode) {
+                if (Save.Inventory.HasUpgrade(ItemIds.Engine)) {
+                    upgrades |= PassiveUpgrades.Engine;
+                }
+                if (Save.Inventory.HasUpgrade(ItemIds.PropGuard)) {
+                    upgrades |= PassiveUpgrades.PropGuard;
+                }
+                if (Save.Inventory.HasUpgrade(ItemIds.Hull)) {
+                    upgrades |= PassiveUpgrades.Hull;
+                }
             }
             m_UpgradeMask = upgrades;
+        }
+
+        private void ApplyPassiveUpgrades() {
+            if ((m_UpgradeMask & PassiveUpgrades.Engine) != 0) {
+                m_Kinematics.ScaledForceMultiplier = 0.1f;
+            } else {
+                m_Kinematics.ScaledForceMultiplier = 1;
+            }
+
+            m_Animator.ApplyUpgradeMask(m_UpgradeMask);
         }
 
         // TODO: Implement
@@ -493,6 +555,40 @@ namespace ProtoAqua.Observation
         private void LeafSetTool(ToolId inToolId)
         {
             SwitchTool(inToolId, false);
+        }
+
+        [LeafMember("ToggleToolOn"), UnityEngine.Scripting.Preserve]
+        private void LeafToggleToolOn(ToolId inToolId)
+        {
+            SetToolState(inToolId, true, false);
+        }
+
+        [LeafMember("IsToolActive"), Preserve]
+        static private bool LeafIsToolActive(ToolId inToolId)
+        {
+            PlayerROV rov = Services.State.Player as PlayerROV;
+            if (rov == null)
+                return false;
+
+            return rov.GetTool(inToolId).IsEnabled();
+        }
+
+        [LeafMember("SetToolAllowed"), Preserve]
+        static private void LeafSetToolAllowed(ToolId inToolId, bool allowed) {
+            PlayerROV rov = Services.State.Player as PlayerROV;
+            if (rov == null) {
+                return;
+            }
+
+            var tool = rov.GetTool(inToolId);
+            if (!allowed && tool.IsEnabled()) {
+                tool.Disable();
+                if (!ToolIsPassive(inToolId)) {
+                    rov.SwitchTool(ToolId.Scanner, false);
+                }
+            }
+
+            Services.Events.Dispatch(Event_ToolPermissions, new ToolState(inToolId, allowed));
         }
 
         #endregion // Leaf

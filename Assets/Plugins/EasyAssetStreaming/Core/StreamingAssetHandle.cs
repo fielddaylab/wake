@@ -55,7 +55,6 @@ namespace EasyAssetStreaming {
         /// <summary>
         /// If the asset handle is empty.
         /// </summary>
-        /// <value></value>
         public bool IsEmpty {
             get { return Id == 0; }
         }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +8,7 @@ using BeauPools;
 using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Debugger;
+using BeauUtil.UI;
 using EasyAssetStreaming;
 using NativeUtils;
 using TMPro;
@@ -42,6 +44,9 @@ namespace Aqua {
         [Header("Preload")]
         [SerializeField, Required] private TextAsset[] m_PreloadGroupFiles = null;
 
+        [Header("Sprites")]
+        [SerializeField, Required] private Sprite m_DefaultSquare = null;
+
         #endregion // Inspector
 
         public ActDB Acts { get { return m_Acts; } }
@@ -60,12 +65,14 @@ namespace Aqua {
         public Material DefaultSpriteMaterial { get { return m_DefaultSpriteMaterial; } }
         public Material OverlaySpriteMaterial { get { return m_OverlaySpriteMaterial; } }
 
-        private Dictionary<StringHash32, PreloadGroup> m_PreloadGroupMap = new Dictionary<StringHash32, PreloadGroup>();
-        private Dictionary<StringHash32, int> m_PreloadPathRefCountMap = new Dictionary<StringHash32, int>();
+        private Dictionary<StringHash32, PreloadGroup> m_PreloadGroupMap = new Dictionary<StringHash32, PreloadGroup>(32);
+        private Dictionary<StringHash32, int> m_PreloadPathRefCountMap = new Dictionary<StringHash32, int>(64);
         private Unsafe.ArenaHandle m_DecompressionBuffer;
 
         protected override void Initialize() {
             base.Initialize();
+
+            SharedCanvasResources.DefaultWhiteSprite = m_DefaultSquare;
 
             m_Acts.Initialize();
             m_Jobs.Initialize();
@@ -88,8 +95,9 @@ namespace Aqua {
                 foreach(var group in preloadManifest.Groups) {
                     if (group.Paths != null) {
                         // pre-translate to streaming assets url
+                        group.PathUrls = new string[group.Paths.Length];
                         for(int i = 0; i < group.Paths.Length; i++) {
-                            group.Paths[i] = NativePreload.StreamingAssetsURL(group.Paths[i]);
+                            group.PathUrls[i] = NativePreload.StreamingAssetsURL(group.Paths[i]);
                         }
                     }
                     m_PreloadGroupMap.Add(group.Id, group);
@@ -125,11 +133,11 @@ namespace Aqua {
     
         #region Preload
 
-        public void PreloadGroup(StringHash32 groupId) {
+        public bool PreloadGroup(StringHash32 groupId) {
             if (groupId.IsEmpty) {
-                return;
+                return false;
             }
-            TryPreloadGroup(groupId);
+            return TryPreloadGroup(groupId);
         }
 
         public bool PreloadGroupIsPrimaryLoaded(StringHash32 groupId) {
@@ -164,8 +172,8 @@ namespace Aqua {
                     }
                 }
             }
-            if (group.Paths != null) {
-                foreach(var path in group.Paths) {
+            if (group.PathUrls != null) {
+                foreach(var path in group.PathUrls) {
                     if (!IsPathLoaded(path)) {
                         return false;
                     }
@@ -175,10 +183,10 @@ namespace Aqua {
             return true;
         }
 
-        private void TryPreloadGroup(StringHash32 id) {
+        private bool TryPreloadGroup(StringHash32 id) {
             if (!m_PreloadGroupMap.TryGetValue(id, out PreloadGroup group)) {
                 Log.Error("[AssetsService] Preload group with id '{0}' does not exist", id);
-                return;
+                return false;
             }
 
             group.RefCount++;
@@ -189,8 +197,8 @@ namespace Aqua {
                         TryPreloadGroup(include);
                     }
                 }
-                if (group.Paths != null) {
-                    foreach(var path in group.Paths) {
+                if (group.PathUrls != null) {
+                    foreach(var path in group.PathUrls) {
                         TryPreloadPath(path);
                     }
                 }
@@ -200,6 +208,8 @@ namespace Aqua {
                     }
                 }
             }
+
+            return true;
         }
 
         private void TryCancelPreloadGroup(StringHash32 id) {
@@ -217,8 +227,8 @@ namespace Aqua {
                             TryCancelPreloadGroup(include);
                         }
                     }
-                    if (group.Paths != null) {
-                        foreach(var path in group.Paths) {
+                    if (group.PathUrls != null) {
+                        foreach(var path in group.PathUrls) {
                             TryCancelPreloadPath(path);
                         }
                     }
@@ -237,9 +247,9 @@ namespace Aqua {
             refCount++;
             m_PreloadPathRefCountMap[id] = refCount;
             if (refCount == 1) {
-                string extension = Path.GetExtension(path).ToLowerInvariant();
+                string extension = Path.GetExtension(path);
                 NativePreload.ResourceType type = NativePreload.ResourceType.Unknown;
-                if (extension == ".mp3") {
+                if (extension.Equals(".mp3", StringComparison.OrdinalIgnoreCase)) {
                     type = NativePreload.ResourceType.Audio;
                 }
                 NativePreload.Preload(path, type);
@@ -277,5 +287,45 @@ namespace Aqua {
         }
 
         #endregion // Preload
+
+        #region Preload+Streaming
+
+        public void StreamingPreloadGroup(StringHash32 id, List<StreamingAssetHandle> assets) {
+            if (!m_PreloadGroupMap.TryGetValue(id, out PreloadGroup group)) {
+                Log.Error("[AssetsService] Preload group with id '{0}' does not exist", id);
+                return;
+            }
+
+            if (group.Include != null) {
+                foreach(var include in group.Include) {
+                    StreamingPreloadGroup(include, assets);
+                }
+            }
+            if (group.Paths != null) {
+                foreach(var path in group.Paths) {
+                    TryStreamingPreloadPath(path, assets);
+                }
+            }
+            if (group.LowPriority != null) {
+                foreach(var include in group.LowPriority) {
+                    StreamingPreloadGroup(include, assets);
+                }
+            }
+        }
+
+        private void TryStreamingPreloadPath(string path, List<StreamingAssetHandle> assets) {
+            if (!path.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase) && !path.EndsWith(".ogg", StringComparison.OrdinalIgnoreCase)) {
+                assets.Add(Streaming.Texture(path));
+            }
+        }
+
+        public void CancelStreamingPreloadGroup(List<StreamingAssetHandle> assets) {
+            foreach(var assetId in assets) {
+                Streaming.Unload(assetId);
+            }
+            assets.Clear();
+        }
+
+        #endregion // Preload+Streaming
     }
 }

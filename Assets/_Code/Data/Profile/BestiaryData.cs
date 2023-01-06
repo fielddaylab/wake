@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using BeauData;
 using BeauPools;
 using BeauUtil;
@@ -34,11 +35,19 @@ namespace Aqua.Profile
             }
         }
 
+        [Flags]
+        public enum TabFlags {
+            Critters = 0x01,
+            Environments = 0x02,
+            Specters = 0x04
+        }
+
         #endregion // Types
 
-        private HashSet<StringHash32> m_ObservedEntities = new HashSet<StringHash32>();
-        private HashSet<StringHash32> m_ObservedFacts = new HashSet<StringHash32>();
+        private HashSet<StringHash32> m_ObservedEntities = Collections.NewSet<StringHash32>(80);
+        private HashSet<StringHash32> m_ObservedFacts = Collections.NewSet<StringHash32>(512);
         private RingBuffer<FactData> m_FactMetas = new RingBuffer<FactData>();
+        private TabFlags m_UnlockedTabs = 0;
 
         [NonSerialized] private bool m_HasChanges = false;
 
@@ -56,6 +65,7 @@ namespace Aqua.Profile
             if (m_ObservedEntities.Add(inEntityId))
             {
                 m_HasChanges = true;
+                m_UnlockedTabs |= GetTab(inEntityId);
                 Services.Events.Queue(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Entity, inEntityId));
                 return true;
             }
@@ -135,6 +145,23 @@ namespace Aqua.Profile
             return false;
         }
 
+        [MethodImpl(256)]
+        static private TabFlags GetTab(StringHash32 inEntityId)
+        {
+            return GetTab(Assets.Bestiary(inEntityId));
+        }
+
+        static private TabFlags GetTab(BestiaryDesc inEntity)
+        {
+            if (inEntity.HasFlags(BestiaryDescFlags.IsSpecter)) {
+                return TabFlags.Specters;
+            } else if (inEntity.Category() == BestiaryDescCategory.Critter) {
+                return TabFlags.Critters;
+            } else {
+                return TabFlags.Environments;
+            }
+        }
+
         #endregion // Observed Entities
 
         #region Facts
@@ -163,6 +190,7 @@ namespace Aqua.Profile
                 if (inbIncludeEntity)
                 {
                     m_ObservedEntities.Add(parentId);
+                    m_UnlockedTabs |= GetTab(fact.Parent);
                     bVisible = true;
                 }
                 else
@@ -254,12 +282,11 @@ namespace Aqua.Profile
 
             BFBase fact = Assets.Fact(inFactId);
             BFDiscoveredFlags flags = BFType.DefaultDiscoveredFlags(fact);
-            StringHash32 pair = BFType.PairId(fact);
             int metaIdx = m_FactMetas.BinarySearch(inFactId);
             if (metaIdx >= 0)
                 flags |= m_FactMetas[metaIdx].Flags;
-            if (!pair.IsEmpty && (m_ObservedFacts.Contains(pair) || Services.Assets.Bestiary.IsAutoFact(pair)))
-                flags |= BFDiscoveredFlags.HasPair;
+            if (fact.Parent.HasFlags(BestiaryDescFlags.IsSpecter) && !Save.Science.FullyDecrypted())
+                flags |= BFDiscoveredFlags.IsEncrypted;
             return flags;
         }
 
@@ -269,12 +296,9 @@ namespace Aqua.Profile
                 return BFDiscoveredFlags.None;
 
             BFDiscoveredFlags flags = BFType.DefaultDiscoveredFlags(inFact);
-            StringHash32 pair = BFType.PairId(inFact);
             int metaIdx = m_FactMetas.BinarySearch(inFact.Id);
             if (metaIdx >= 0)
                 flags |= m_FactMetas[metaIdx].Flags;
-            if (!pair.IsEmpty && (m_ObservedFacts.Contains(pair) || Services.Assets.Bestiary.IsAutoFact(pair)))
-                flags |= BFDiscoveredFlags.HasPair;
             return flags;
         }
 
@@ -360,12 +384,28 @@ namespace Aqua.Profile
             return (GetDiscoveredFlags(inFactId) & BFDiscoveredFlags.All) == BFDiscoveredFlags.All;
         }
 
+        public bool HasFact(Predicate<BFBase> inPredicate)
+        {
+            foreach(var fact in m_ObservedFacts)
+            {
+                if (inPredicate(Assets.Fact(fact)))
+                    return true;
+            }
+
+            return false;
+        }
+
         #endregion // Facts
+
+        public bool HasTab(TabFlags tab) {
+            return (m_UnlockedTabs & tab) != 0;
+        }
 
         #region IProfileChunk
 
         // v3: added metas
         // v4: removed graphed
+        // v5: added tabs
         ushort ISerializedVersion.Version { get { return 4; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
@@ -380,6 +420,10 @@ namespace Aqua.Profile
             if (ioSerializer.ObjectVersion >= 3)
             {
                 ioSerializer.ObjectArray("factMetas", ref m_FactMetas);
+            }
+            if (ioSerializer.ObjectVersion >= 5)
+            {
+                ioSerializer.Enum("unlockedTabs", ref m_UnlockedTabs);
             }
         }
 
@@ -424,6 +468,12 @@ namespace Aqua.Profile
 
                 return false;
             });
+
+            if (m_UnlockedTabs == 0 && m_ObservedEntities.Count > 0) {
+                foreach(var entId in m_ObservedEntities) {
+                    m_UnlockedTabs |= GetTab(entId);
+                }
+            }
         }
 
         public bool HasChanges()
@@ -459,6 +509,7 @@ namespace Aqua.Profile
             Assert.True(Services.Assets.Bestiary.HasId(inEntityId), "Entity with id '{0}' does not exist", inEntityId);
             if (m_ObservedEntities.Add(inEntityId))
             {
+                m_UnlockedTabs |= GetTab(inEntityId);
                 m_HasChanges = true;
                 return true;
             }
@@ -481,6 +532,7 @@ namespace Aqua.Profile
                 if (inbIncludeEntity)
                 {
                     m_ObservedEntities.Add(parentId);
+                    m_UnlockedTabs |= GetTab(fact.Parent);
                 }
                 return true;
             }
@@ -493,7 +545,7 @@ namespace Aqua.Profile
             if (inFlags <= 0)
                 return false;
             
-            RegisterFact(inFactId);
+            DebugRegisterFactNoEvent(inFactId);
             BFBase fact = Assets.Fact(inFactId);
 
             BFDiscoveredFlags existingFlags = BFType.DefaultDiscoveredFlags(fact);

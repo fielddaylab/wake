@@ -20,6 +20,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using UnityEngine.Scripting;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -60,6 +61,7 @@ namespace EasyAssetStreaming {
 
         #endregion // Inspector
 
+        [NonSerialized] private StreamingHelper.AwakeTracker m_Awake;
         [NonSerialized] private StreamingAssetHandle m_AssetHandle;
         [NonSerialized] private Texture m_LoadedTexture;
         [NonSerialized] private Mesh m_MeshInstance;
@@ -279,10 +281,14 @@ namespace EasyAssetStreaming {
 
         #region Unity Events
 
+        private void Awake() {
+            m_Awake.OnNaturalAwake();
+        }
+
         private void OnEnable() {
             #if UNITY_EDITOR
             if (!Application.IsPlaying(this)) {
-                if (EditorApplication.isPlayingOrWillChangePlaymode) {
+                if (EditorApplication.isPlayingOrWillChangePlaymode || BuildPipeline.isBuildingPlayer) {
                     return;
                 }
 
@@ -302,7 +308,9 @@ namespace EasyAssetStreaming {
             if (m_ClippedUVs == default) {
                 m_ClippedUVs = m_UVRect;
             }
-            Refresh();
+            if (!m_Awake.IsForcing()) {
+                Refresh();
+            }
         }
 
         private void OnDisable() {
@@ -313,6 +321,13 @@ namespace EasyAssetStreaming {
             Unload();
         }
 
+        [Preserve]
+        private void OnDidApplyAnimationProperties() {
+            if (isActiveAndEnabled) {
+                Refresh();
+            }
+        }
+
         #endregion // Unity Events
 
         #region Resources
@@ -321,6 +336,7 @@ namespace EasyAssetStreaming {
         /// Prefetches
         /// </summary>
         public void Preload() {
+            m_Awake.AwakeIfNotAwoken(this);
             LoadTexture();
             if (m_MainTexturePropertyId == 0) {
                 LoadMaterial();
@@ -551,22 +567,24 @@ namespace EasyAssetStreaming {
             m_ColorGroup = GetComponent<ColorGroup>();
             #endif // USING_BEAUUTIL
 
-            EditorApplication.delayCall += () => {
-                if (!this) {
-                    return;
-                }
+            if (this.isActiveAndEnabled) {
+                EditorApplication.delayCall += () => {
+                    if (!this || !this.isActiveAndEnabled) {
+                        return;
+                    }
 
-                if (!m_Material) {
-                    m_Material = AssetDatabase.GetBuiltinExtraResource<Material>("Sprites-Default.mat");
-                }
+                    if (!m_Material) {
+                        m_Material = AssetDatabase.GetBuiltinExtraResource<Material>("Sprites-Default.mat");
+                    }
 
-                LoadMaterial();
-                LoadTexture();
-                ApplySorting();
-                Resize(m_AutoSize);
-                LoadMesh();
-                ApplyVisible();
-            };
+                    LoadMaterial();
+                    LoadTexture();
+                    ApplySorting();
+                    Resize(m_AutoSize);
+                    LoadMesh();
+                    ApplyVisible();
+                };
+            }
         }
 
         #endif // UNITY_EDITOR

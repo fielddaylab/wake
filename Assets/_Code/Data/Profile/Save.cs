@@ -94,11 +94,11 @@ namespace Aqua {
         }
 
         static public uint Cash {
-            [MethodImpl(256)] get { return Inventory.ItemCount(ItemIds.Cash); }
+            [MethodImpl(256)] get { return Inventory.Cash(); }
         }
 
         static public uint Exp {
-            [MethodImpl(256)] get { return Inventory.ItemCount(ItemIds.Exp); }
+            [MethodImpl(256)] get { return Inventory.Exp(); }
         }
 
         static public uint ExpLevel {

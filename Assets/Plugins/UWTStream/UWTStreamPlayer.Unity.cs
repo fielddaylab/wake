@@ -143,7 +143,7 @@ namespace BeauUWT
 
         private float GetTime()
         {
-            if (m_UnitySource)
+            if (!object.ReferenceEquals(m_UnitySource, null))
                 return m_UnitySource.time;
             return 0;
         }
@@ -158,23 +158,23 @@ namespace BeauUWT
             EnsureSource().time = inTime;
         }
 
-        private int GetHiResTime()
+        private ulong GetHiResTime()
         {
-            if (m_UnitySource)
-                return (int) (m_UnitySource.time * 1000);
+            if (!object.ReferenceEquals(m_UnitySource, null))
+                return (ulong) (m_UnitySource.time * HiResScale_Double);
             return 0;
         }
 
-        private void SetHiResTime(int inTime)
+        private void SetHiResTime(ulong inTime)
         {
             if (m_PlayRequested)
             {
-                m_QueuedTime = inTime / 1000f;
+                m_QueuedTime = (float) (inTime * HiResScaleInv);
                 m_QueuedTimeMode = TimeMode.Seconds;
             }
             if (m_StreamingClip)
             {
-                EnsureSource().time = inTime / 1000f;
+                EnsureSource().time = (float) (inTime * HiResScaleInv);
             }
         }
 
@@ -255,7 +255,7 @@ namespace BeauUWT
 
             Debug.LogFormat("[UWTStream] Downloading from {0}", m_StreamURL);
 
-            m_WebRequest = UnityWebRequest.Get(m_StreamURL);
+            m_WebRequest = new UnityWebRequest(new Uri(m_StreamURL), UnityWebRequest.kHttpVerbGET);
             m_WebRequest.useHttpContinue = false;
             
             m_WebRequest.downloadHandler = m_AudioClipDownloadHandler = new DownloadHandlerAudioClip(m_StreamURL, GetAudioTypeForURL(m_StreamURL));

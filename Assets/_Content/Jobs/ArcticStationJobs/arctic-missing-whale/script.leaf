@@ -89,7 +89,7 @@ $endif
 @when 		HasEntity(WhaleTracker), HasEntity(Detritus), !HasFact(W_WhaleFall.Population.Detritus) 
 @cutscene
 {@player}   Okay, {nameof @guide}. What now?
-{@guide}	You'll need to scan more of the detritus in order to complete your task. 
+{@guide}	You'll need to count the detritus in order to complete your task.
 
 :: gotScans
 @trigger    JobTasksUpdated
@@ -99,7 +99,8 @@ $endif
 {@player}   Looks like we've got all we need.
 {@guide}    Yes! A windfall of data. 
 {@player}   And some bad news for {nameof @arcticSci}.
-            I guess we better go tell him. At least now he'll know where she is. 
+            I guess we better go tell him. At least now he'll know where she is.
+$call GiveJournalEntry("N03_AfterWhaleFall")
 
 :: helpBackToShip
 @trigger    RequestPartnerHelp
@@ -161,6 +162,9 @@ $if ArgueSetClaim(Claim, jobs.arctic-missing-whale.argue.claimLabel)
 $endif
 {@arcticSci}   Have you found Linda?
 $choice .argue.showClaim; Yes... but I'm sorry. It's not good news.
+$if jobs:arctic-whalefall.num-attempts >= 2
+    $choice .argue.sweptAway; No idea -- I keep getting swept away!
+$endif
 $choice .argue.cantFind; No, sorry. No sign of her yet. 
 $choose branch
 
@@ -205,12 +209,22 @@ $goto .argue.showClaim
 {@arcticSci}   Alas. I had a feeling this would happen.
                 We may never track her down. I hope nothing bad has happened to her...
 
+:: argue.sweptAway
+{@arcticSci}    Ah, yes. Perhaps we should have warned you about the currents in some places.
+$if HasUpgrade(Engine)
+    {@arcticSci}    But it seems you've acquired a stronger {h}Engine{/h}! You shouldn't be swept away any more.
+                    Good luck out there.
+$else
+    {@arcticSci}    Until you have a stronger {h}Engine{/h}, it may be wise to switch to a new job for now.
+                    You can always come back to this job later!
+$endif
+
 // END
 :: argue.complete
 $call ArgueComplete()
 {@arcticSci}   Oh. Well, then. 
                 Well. That's unfortunate.
-{@player}       I'm so sorry, Professor. I know you've been studyihng Linda for a long time. 
+{@player}       I'm so sorry, Professor. I know you've been studying Linda for a long time. 
 {@arcticSci}   Oh, don't be sorry, Ollie. I'm grateful to you. Now we know where she is.
                 Though I do wonder how she died.
                 If you ever want to help out again, perhaps we could get to the bottom of this together.

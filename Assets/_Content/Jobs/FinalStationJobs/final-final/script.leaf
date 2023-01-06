@@ -1,0 +1,248 @@
+# basePath job.final-final
+
+// SEQUENCE
+
+:: sneakToShip
+@trigger    SceneStart
+@when       JobTaskTop(sneakOut), scene:name == "Helm"
+@once
+@cutscene
+$set jobs:final-snuckOut = true
+$call CheckJobTasks()
+
+:: returnToShip
+@trigger    SceneStart
+@when       JobTaskTop(checkShip), scene:name == "Helm"
+@once
+@cutscene
+$set jobs:final-checkShipRestored = true
+$call CheckJobTasks()
+
+:: modelCompleted
+@trigger    JobTasksUpdated
+@when       JobTaskTop(reportBack)
+@once
+@cutscene
+{@guide}    Based on this data, predators in the deep consume mainly bioluminescent and light-colored organisms.
+            Red organisms appear to have natural camouflage.
+{@player}   That's it! The key to saving {nameof @sam}!
+            And Mom said that if I figure this out... I could go help.
+{@guide}    That's not exactly what she said——
+{@player}   Come on, {nameof @guide}. We need to get back to the Station!
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchTellMom
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(tellMom)
+@boostScore -5
+@cutscene
+{@guide}    You should tell your mother about Sam's predicament.
+
+:: catchExperimentSpecters
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(experimentSpecters)
+@boostScore -5
+@cutscene
+{@guide}    Run experiments using the data {nameof @sam} has sent you.
+
+:: catchCreateModel
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(createModel)
+@boostScore -5
+@cutscene
+{@guide}    Create a visual model of the interactions in the {nameof RS-0}.
+$call GiveFact(ColossalSquid.Eats.AnglerFish, Silent)
+$call GiveFact(ColossalSquid.Eats.ViperFish, Silent)
+$call GiveFact(ColossalSquid.Eats.GoassamerWorm, Silent)
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(reportBack)
+@boostScore -5
+@cutscene
+{@guide}    Try to persuade your mom that {nameof @sam} can be rescued.
+
+:: catchSneakOut
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(sneakOut)
+@boostScore -5
+@cutscene
+{@player}   {nameof @guide}... I need to go save Sam. No matter what Mom says. 
+            Are you with me? 
+{@guide}    Affirmative, O.
+            Let's head back to the Helm. 
+
+:: catchGetUncleHelp
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(getUncleHelp)
+@boostScore -5
+@cutscene
+{@player}   {nameof @guide}? What's going on? 
+{@guide}    [Systems malfunctioning]
+{@player}   {nameof @guide}??
+
+:: catchCheckShip
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(checkShip)
+@boostScore -5
+@cutscene
+{@guide}    Hello again, O. 
+{@player}   {nameof @guide}. You're back!!
+{@guide}    Affirmative, O.
+            If you return to the ship, you will see the power has been restored.
+
+:: catchPerformRescue
+@trigger    RequestPartnerHelp
+@when       JobTaskTop(performRescue)
+@boostScore -5
+@cutscene
+{@guide}    Travel to the Lower Depths and rescue {nameof @sam}!
+
+// ARGUMENTATION
+
+:: tryTellMom
+@trigger    TryArgumentation
+@when       JobTaskTop(tellMom)
+@cutscene
+{@player}   Mom, Sam is in danger. I need to go save them!
+{@drKelp}   Mija, I told you. It's too dangerous.
+            I'll put together a more experienced team to check on the Nautilus. It should only take a few days.
+{@player}   We don't have a few days, Mom. Sam needs help now!
+{@drKelp}   Olivia... Sweetie, what's gotten into you?
+            You can't go down there. You don't even know how to help!
+{@player}   Not yet, but I can figure it out.
+            Sam sent me a job.
+{@drKelp}   ....
+{@drKelp}   Fine.
+            <i>If</i> you can figure out how to save Sam, come talk to me again.
+$set jobs:final-told-mom = true
+$call CheckJobTasks()
+
+:: argueBegin
+@trigger    TryArgumentation
+@when       !ArgueIsComplete(finalArgueEat), JobTaskCompleted(tellMom)
+@cutscene
+$set jobs:final-argue-paint-route = false
+$if ArgueIsComplete(finalArgueModel)
+    $branch .argue.loadArgueEat
+$else
+    $branch .argue.chooseClaimModel
+$endif
+
+
+:: argue.chooseClaimModel
+{@drKelp}    Okay, Olivia. If I let you go down there, how would you help {nameof @sam}?
+	$choice .argue.paintJob; We need to paint {nameof @sam}'s ship a different color. 
+	$choice .argue.lights; We need {nameof @sam} to switch off the bright lights.  
+    $if HasFact(DeepDeepSea.Model.Visual)
+        $choice .argue.unknownModel; Still working on that.
+    $endif
+    $choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unknownModel
+{@player}   Still working on that. We made a model, though!
+{@drKelp}   That's not enough, Mija. Just this once, please leave this to the experts.
+
+:: argue.giveUpArgument
+$call ArgueUnload()
+$call ArgueCancelClaim()
+$branch .argue.giveUp
+
+:: argue.giveUp
+{@drKelp}   Please leave this one to the experts, Olivia.
+
+:: argue.paintJob
+$set jobs:final-argue-paint-route = true
+{@drKelp}    What do you mean? 
+             I hardly think you could repaint the Nautilus underwater, in the middle of an attack...
+             And what does paint color have to do with anything? 
+$choice .argue.darkColor; If {nameof @sam}'s ship is a darker color, it'll be harder for the attacker to see.
+$choice .argue.redColor; If {nameof @sam}'s ship is red, it will look invisible to the attacker.
+
+:: argue.darkColor
+{@drKelp}   I don't think dark colors matter.
+            Plenty of fish are dark... They all get eaten.
+
+:: argue.lights
+{@drKelp}   Olivia, it's completely dark down there. {nameof @sam} would never make it out without a light source.
+$choice .argue.redColor; Sam wouldn't need to shut the lights off! Just switch them to red.
+
+:: argue.redColor
+{@drKelp}   Red?
+$call ArgueLoad(finalArgueModel)
+$if ArgueSetClaim(finalArgueModelClaim, jobs.final-final.argue.claimLabelModel)
+    $call ArgueFactSlot(DeepDeepSea.Model.Visual)
+$endif
+$call ArgueDisplayClaim()
+$branch .argue.chooseFactsModel
+
+:: argue.chooseFactsModel
+{@drKelp}   What's so special about red?
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.correctFactsModel
+		$answer incorrect, .argue.incorrectFactsModel
+$choice .argue.giveUpArgument; Let me get back to you
+
+:: argue.incorrectFactsModel
+{@drKelp}   Are you sure this is what you wanted to show me?
+            You're not making sense. I really wish you'd drop this subject.
+$branch .argue.chooseFactsModel
+
+:: argue.correctFactsModel
+$call ArgueComplete()
+{@drKelp}    Hmmm. I'm not seeing it.
+$branch .argue.loadArgueEat
+
+:: argue.loadArgueEat
+$call ArgueLoad(finalArgueEat)
+$if ArgueSetClaim(finalArgueEatClaim, jobs.final-final.argue.claimLabelEat)
+    $call ArgueFactSlot(ColossalSquid.Eats.ViperFish)
+    $call ArgueFactSlot(ColossalSquid.Eats.AnglerFish)
+    $call ArgueFactSlot(ColossalSquid.Eats.GoassamerWorm) // typo in Goassamer asset
+$endif
+$call ArgueDisplayClaim()
+$branch .argue.chooseFactsEat
+
+:: argue.chooseFactsEat
+{@drKelp}    How does the color red make a difference to the attacker?
+$choice #argueFactSet; Present facts from AQOS
+		$answer correct, .argue.endArgue
+		$answer incorrect, .argue.incorrectFactsEat
+$choice .argue.giveUpArgument; Let me get back to you
+
+:: argue.incorrectFactsEat
+{@drKelp}   Are you sure this is what you wanted to show me?
+            You're not making sense. I really wish you'd drop this subject.
+$branch .argue.chooseFactsEat
+
+// End
+
+:: argue.endArgue
+$call ArgueComplete()
+{@drKelp}   Oh... I think you're right!
+            Red light doesn't reach those depths, so red species don't reflect any light.
+            They basically become invisible.
+            I suppose it's a little too late for a red paint job now. 
+            But if {nameof @sam} switches on their red lights, the creature won't be able to see them.
+            I'll pass on this information to the rescue team.
+{@player}   What?! Mom, we don't have time to organize a rescue team. I need to go now!
+{@drKelp}   Absolutely not, Olivia. 
+            I've already lost one child to this foolishness. 
+            You're not going. End of story. 
+{@player}   You can't stop me, Mom.
+            I need to do this. 
+{@drKelp}   Well, if you're going to insist... 
+            I'm sorry, Mija. I have to make sure you stay safe.  
+{hide-dialog} {fade-out black, 1, wait} {wait 2}
+$call       Mom->TeleportTo(mom-hidden-pos)
+$set jobs:final-power-disabled = true
+$set jobs:final-mom-hidden = true
+$call GiveJournalEntry("53_FinalJob")
+
+:: argueRevisited
+@trigger    TryArgumentation
+@when       ArgueIsComplete(finalArgueEat)
+@cutscene
+{@drKelp}  I'm done talking about this, Olivia. You aren't going down there. It's too dangerous.

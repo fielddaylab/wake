@@ -1,0 +1,19 @@
+#basePath Dream06
+::convoTrigger1
+@trigger PlayerEnterRegion
+@when regionId == "scientistConvo"
+@once
+
+
+{@profBayou}
+If you remove that reef, all that life will be destroyed! {auto}{wait-abs 2.5}
+
+{@bayouSci}
+It NEEDS to go! {auto}{wait-abs 2.5}
+
+{@profBayou}
+THINK OF THE CONSEQUENCES! {auto}{wait-abs 2.5}
+
+{@player} 
+ENOUGH ALREADY! I'm going to save the reef! {auto}{wait-abs 4}
+

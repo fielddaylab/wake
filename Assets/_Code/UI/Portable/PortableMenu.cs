@@ -11,6 +11,7 @@ using UnityEngine.UI;
 using EasyAssetStreaming;
 using Leaf.Runtime;
 using UnityEngine.Scripting;
+using Aqua.Profile;
 
 namespace Aqua.Portable {
     public class PortableMenu : SharedPanel {
@@ -51,6 +52,17 @@ namespace Aqua.Portable {
                 Services.Script.RegisterChoiceSelector("fact", RequestFact);
             }
 
+            Func<float> initialDelayFunc = () => {
+                if (IsTransitioning()) {
+                    return m_ToOnAnimSettings.Time;
+                } else {
+                    return 0;
+                }
+            };
+            for(int i = 0; i < m_AppButtons.Length; i++) {
+                m_AppButtons[i].SetInitialDelay(initialDelayFunc);
+            }
+
             Services.UI.Popup.OnShowEvent.AddListener((s) => OnPopupOpened());
             Services.UI.Popup.OnHideCompleteEvent.AddListener((s) => OnPopupClosed());
 
@@ -83,6 +95,7 @@ namespace Aqua.Portable {
                 if (m_Request.Type == PortableRequestType.SelectFact || m_Request.Type == PortableRequestType.SelectFactSet) {
                     GetAppButton(PortableAppId.Organisms).App.HandleRequest(m_Request);
                     GetAppButton(PortableAppId.Environments).App.HandleRequest(m_Request);
+                    GetAppButton(PortableAppId.Specter).App.HandleRequest(m_Request);
                 }
             } else {
                 requestTab = GetAppButton(PortableAppId.Job);
@@ -93,6 +106,30 @@ namespace Aqua.Portable {
             requestTab.App.HandleRequest(m_Request);
 
             Services.Events.Dispatch(GameEvents.PortableOpened, m_Request);
+        }
+
+        private void UpdateAvailableTabs() {
+            for (int i = 0; i < m_AppButtons.Length; ++i) {
+                var button = m_AppButtons[i];
+                switch(button.Id()) {
+                    case PortableAppId.Organisms: {
+                        button.gameObject.SetActive(Save.Bestiary.HasTab(BestiaryData.TabFlags.Critters));
+                        break;
+                    }
+                    case PortableAppId.Environments: {
+                        button.gameObject.SetActive(Save.Bestiary.HasTab(BestiaryData.TabFlags.Environments));
+                        break;
+                    }
+                    case PortableAppId.Specter: {
+                        button.gameObject.SetActive(Save.Bestiary.HasTab(BestiaryData.TabFlags.Specters));
+                        break;
+                    }
+                    case PortableAppId.Tech: {
+                        button.gameObject.SetActive(Save.Inventory.UpgradeCount() > 0);
+                        break;
+                    }
+                }
+            }
         }
 
         private PortableTabToggle GetAppButton(PortableAppId inId) {
@@ -182,6 +219,7 @@ namespace Aqua.Portable {
             }
 
             HandleRequest();
+            UpdateAvailableTabs();
 
             yield return Routine.Combine(
                 m_RootTransform.AnchorPosTo(m_ActiveOnPosition, m_ToOnAnimSettings, Axis.X),
@@ -195,6 +233,7 @@ namespace Aqua.Portable {
             m_RootTransform.SetAnchorPos(m_ActiveOnPosition, Axis.X);
             m_RootTransform.gameObject.SetActive(true);
             HandleRequest();
+            UpdateAvailableTabs();
         }
 
         protected override IEnumerator TransitionToHide() {

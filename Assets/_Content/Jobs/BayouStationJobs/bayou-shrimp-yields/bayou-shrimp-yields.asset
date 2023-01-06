@@ -1,0 +1,130 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d5366410c3b734aba3b50d85438bdd, type: 3}
+  m_Name: bayou-shrimp-yields
+  m_EditorClassIdentifier: 
+  m_Category: 0
+  m_Flags: 0
+  m_NameId:
+    m_Source: jobs.bayou-shrimp-yields.name
+    m_HashValue: 2137672003
+  m_PosterId:
+    m_HashValue: 4040268820
+  m_DescId:
+    m_Source: jobs.bayou-shrimp-yields.desc
+    m_HashValue: 3872748465
+  m_DescShortId:
+    m_Source: 
+    m_HashValue: 0
+  m_ExperimentDifficulty: 0
+  m_ModelingDifficulty: 0
+  m_ArgumentationDifficulty: 3
+  m_PrerequisiteJobs: []
+  m_PrereqConditions: 
+  m_PrereqBestiaryEntry:
+    m_HashValue: 0
+  m_PrereqScanId:
+    m_Source: 
+    m_HashValue: 0
+  m_PrereqUpgrades:
+  - m_HashValue: 3188184158
+  - m_HashValue: 3082617054
+  m_PrereqExp: 0
+  m_StationId:
+    m_HashValue: 2992071853
+  m_DiveSiteIds:
+  - m_HashValue: 3168968926
+  m_Tasks:
+  - Id:
+      m_Source: countShrimp
+      m_HashValue: 3862329527
+    LabelId:
+      m_Source: jobs.bayou-shrimp-yields.task.countShrimp
+      m_HashValue: 3287213555
+    Category: 2
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: WhiteShrimp
+        m_HashValue: 3187223953
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: P_DeadZone.Population.WhiteShrimp
+        m_HashValue: 136046965
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds: []
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    LabelId:
+      m_Source: jobs.bayou-shrimp-yields.task.reportBack
+      m_HashValue: 2543870728
+    Category: 5
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: countShrimp
+      m_HashValue: 3862329527
+  m_OptimizedTaskList:
+  - Id:
+      m_Source: countShrimp
+      m_HashValue: 3862329527
+    IdString: countShrimp
+    Index: 0
+    LabelId:
+      m_Source: jobs.bayou-shrimp-yields.task.countShrimp
+      m_HashValue: 3287213555
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: WhiteShrimp
+        m_HashValue: 3187223953
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: P_DeadZone.Population.WhiteShrimp
+        m_HashValue: 136046965
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    IdString: reportBack
+    Index: 1
+    LabelId:
+      m_Source: jobs.bayou-shrimp-yields.task.reportBack
+      m_HashValue: 2543870728
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIndices: 0000
+  m_CashReward: 50
+  m_ExpReward: 5
+  m_JournalId:
+    m_HashValue: 3919273551
+  m_Scripting: {fileID: -1942890987711236906, guid: f9d1cb134006abe44a27906706a88bc7,
+    type: 3}
+  m_ExtraAssets: []

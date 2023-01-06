@@ -59,6 +59,7 @@ namespace Aqua
         [NonSerialized] private int m_PauseAllCounter = 0;
         [NonSerialized] private int m_ForceClick = 0;
         [NonSerialized] private RingBuffer<long> m_LastClickTimes = new RingBuffer<long>(2, RingBufferMode.Overwrite);
+        [NonSerialized] private RingBuffer<KeyCode> m_LastKeyPresses = new RingBuffer<KeyCode>(16, RingBufferMode.Overwrite);
 
         [NonSerialized] private readonly List<PriorityRecord> m_PriorityStack = new List<PriorityRecord>(8);
         [NonSerialized] private readonly List<FlagsRecord> m_FlagsStack = new List<FlagsRecord>(8);
@@ -218,7 +219,10 @@ namespace Aqua
             if (rectTransform && !rectTransform.IsPointerInteractable())
                 return false;
             
-            return ExecuteEvents.Execute(inRoot, m_InputModule.GetPointerEventData(), ExecuteEvents.pointerClickHandler);
+            ++m_ForceClick;
+            bool bSuccess = ExecuteEvents.Execute(inRoot, m_InputModule.GetPointerEventData(), ExecuteEvents.pointerClickHandler);
+            --m_ForceClick;
+            return bSuccess;
         }
 
         public bool ForceClick(GameObject inRoot)
@@ -309,6 +313,15 @@ namespace Aqua
             handler.OnNativePointerDown(ExecuteEvents.ValidateEventData<PointerEventData>(evtData));
         };
 
+        private void OnGUI() {
+            Event e = Event.current;
+            if (e.type != EventType.KeyDown) {
+                return;
+            }
+
+            m_LastKeyPresses.PushBack(e.keyCode);
+        }
+
         #endregion // Unity Events
 
         #region Service
@@ -322,6 +335,8 @@ namespace Aqua
 
             NativeInput.Initialize();
             NativeInput.OnMouseDown += OnNativeMouseDown;
+
+            useGUILayout = false;
         }
 
         protected override void OnDestroy()
@@ -335,5 +350,11 @@ namespace Aqua
         }
 
         #endregion // Service
+
+        #region Cheats
+
+        
+
+        #endregion // Cheats
     }
 }

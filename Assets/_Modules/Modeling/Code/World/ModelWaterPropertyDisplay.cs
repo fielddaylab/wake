@@ -1,4 +1,5 @@
 using System;
+using BeauUtil.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,7 +11,7 @@ namespace Aqua.Modeling {
         public CanvasGroup CanvasGroup;
 
         [SerializeField] private Graphic m_Background = null;
-        [SerializeField] private Image m_Meter = null;
+        [SerializeField] private EllipseGraphic m_Meter = null;
         [SerializeField] private Image m_Icon = null;
 
         #endregion // Inspector
@@ -38,7 +39,7 @@ namespace Aqua.Modeling {
 
         public void SetValue(float value) {
             Value = value;
-            m_Meter.fillAmount = Property.RemapValue(value);
+            m_Meter.ArcFill = Property.RemapValue(value);
         }
     }
 }

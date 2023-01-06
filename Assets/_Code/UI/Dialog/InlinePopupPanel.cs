@@ -33,8 +33,8 @@ namespace Aqua {
 
         #region Display
 
-        public void Present(PopupContent inContent, PopupFlags inPopupFlags) {
-            m_Layout.Configure(inContent, inPopupFlags);
+        public void Present(ref PopupContent inContent, PopupFlags inPopupFlags) {
+            m_Layout.Configure(ref inContent, inPopupFlags);
             ShowOrBounce();
             SetInputState(true);
         }
@@ -42,6 +42,7 @@ namespace Aqua {
         private void ShowOrBounce() {
             if (IsShowing()) {
                 m_BoxAnim.Replace(this, BounceAnim());
+                m_Layout.PlayAnim();
             } else {
                 Show();
             }
@@ -58,6 +59,7 @@ namespace Aqua {
         private IEnumerator BounceAnim() {
             m_RootGroup.alpha = 0.5f;
             m_RootTransform.SetScale(0.5f);
+            m_Layout.PlayAnim();
             yield return Routine.Combine(
                 m_RootTransform.ScaleTo(1, 0.2f).ForceOnCancel().Ease(Curve.BackOut),
                 m_RootGroup.FadeTo(1, 0.2f)
@@ -72,6 +74,8 @@ namespace Aqua {
             m_RootGroup.alpha = durationMultiplier < 1 ? 0.5f : 0;
             m_RootTransform.SetScale(durationMultiplier < 1 ? 0.75f : 0.5f);
             m_RootTransform.gameObject.SetActive(true);
+
+            m_Layout.PlayAnim(0.15f);
 
             yield return Routine.Combine(
                 m_RootGroup.FadeTo(1, 0.2f * durationMultiplier),

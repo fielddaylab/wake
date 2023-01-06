@@ -22,6 +22,10 @@ namespace Aqua
         {
             FindAllFacts();
 
+            if ((m_Flags & BestiaryDescFlags.IsSpecter) != 0) {
+                m_Flags |= BestiaryDescFlags.DoNotUseInExperimentation;
+            }
+
             foreach(var fact in m_Facts)
             {
                 Assert.NotNull(fact, "Null fact on BestiaryDesc '{0}'", name);
@@ -84,12 +88,16 @@ namespace Aqua
                 case BestiaryDescCategory.Critter:
                     {
                         m_StateTransitions.Reset();
+                        m_FirstStressFactId = null;
                         foreach(var fact in m_Facts)
                         {
                             if (fact.Type == BFTypeId.State)
                             {
                                 BFState state = (BFState) fact;
                                 m_StateTransitions[state.Property] = state.Range;
+                                if (m_FirstStressFactId.IsEmpty) {
+                                    m_FirstStressFactId = fact.Id;
+                                }
                             }
                         }
                         break;
@@ -181,6 +189,7 @@ namespace Aqua
             ValidationUtils.StripDebugInfo(ref m_CommonNameId);
             ValidationUtils.StripDebugInfo(ref m_PluralCommonNameId);
             ValidationUtils.StripDebugInfo(ref m_DescriptionId);
+            ValidationUtils.StripDebugInfo(ref m_EncodedMessageId);
         }
 
         #endif // UNITY_EDITOR

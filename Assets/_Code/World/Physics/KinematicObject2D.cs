@@ -30,6 +30,8 @@ namespace Aqua
         [NonSerialized] public Vector2 AccumulatedForce;
         [NonSerialized] public float AdditionalDrag;
 
+        [NonSerialized] public float ScaledForceMultiplier = 1;
+
         [NonSerialized] public float AdditionalDragMultiplier = 1;
         [NonSerialized] public float AccumulatedForceMultiplier = 1;
 

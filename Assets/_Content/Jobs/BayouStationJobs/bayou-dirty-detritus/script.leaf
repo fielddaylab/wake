@@ -1,0 +1,188 @@
+# basePath job.bayou-dirty-detritus
+
+// INTRO
+
+:: start
+@trigger    JobStarted
+@cutscene
+{@bayouSci}    We are increasingly curious about how the ecosystem manages detritus now that the amount of it in the {nameof RS-3P} is rising.
+                Please study how this substance is increasing and what eats it, if anything.
+
+:: detritusCounted
+@trigger    JobTaskCompleted(countDetritus)
+@once
+@cutscene
+{@guide}    Time to run some experiments using {nameof Detritus}.
+
+
+:: tryMeasureDetritusReproduce
+@trigger	ExperimentStarted
+@when		tankType == "Measurement"
+@cutscene
+$if ExperimentHasCritter("Detritus"), !ExperimentHasCritter("Cyanobacteria"), !ExperimentHasCritter("DecomposingBacteria"), !ExperimentHasCritter("WhiteShrimp")
+	$set jobs:bayou-dirty-detritus.triedMeasureDetritusReproduce = true
+$endif
+$call CheckJobTasks()
+
+:: discussDetritusReproduce
+@trigger	ExperimentFinished
+@when		tankType == "Measurement", JobTaskCompleted(growDetritus)
+@once
+@cutscene
+{@player}   Well, {nameof Detritus} doesn't grow on its own. I suppose that makes sense, since it's just dead matter.
+{@guide}    Yes. It appears {nameof Detritus} only comes from organisms dying out.
+
+// WHEN detritus shown not to reproduce: 
+
+:: eatRuleObtained
+@trigger    JobTaskCompleted
+@when       taskId == "eatDetritus"
+@once
+@cutscene
+{@guide}    So the {nameof DecomposingBacteria} are enjoying this increase in detritus. I am certain {nameof @bayouSci} will be interested to know about this.
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchScanNew
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanNew)
+@boostScore -5
+@cutscene
+$if scene:name == "RS-3P"
+    {@guide}    Scan anything we haven't identified yet in this site.
+$else
+    {@guide}    Head to the {nameof RS-3P} and scan anything we haven't identified yet.
+$endif
+
+
+:: catchCountDetritus
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(countDetritus)
+@boostScore -5
+@cutscene
+$if scene:name == "RS-3P"
+    {@guide}    Count the {nameof Detritus} that exists here.
+$else
+    {@guide}    Head to the {nameof RS-3P} and count the {nameof Detritus}.   
+$endif
+ 
+
+:: catchEatDetritus
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(eatDetritus)
+@boostScore -5
+@cutscene
+{@guide}    Run experiments in the {nameof ObservationTank} to see if any organisms from the {nameof RS-3P} eat {nameof Detritus}.
+
+:: catchGrowDetritus
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(growDetritus)
+@boostScore -5
+@cutscene
+{@guide}    Let's place {nameof Detritus} in the {nameof MeasurementTank} and check if it reproduces somehow.
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@guide}    Head back to {nameof @bayouSci} in the research station.
+
+// ARGUMENTATION
+
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(dirtyDetritusArgueFinal)
+@cutscene
+$if ArgueIsComplete(dirtyDetritusArgueHistory)
+    {@bayouSci}    Previously we discussed the cyclical nature of the population histories in the {nameof RS-3P}.
+    $branch .argue.beginFinal
+$else
+    $call ArgueLoad(dirtyDetritusArgueHistory) 
+    {@bayouSci}    Why is there so much {nameof Detritus} in the {nameof RS-3P}?
+    $choice .argue.detritusReproduce; Detritus is reproducing on its own.
+    $choice .argue.organismsDying; Organisms are dying out.
+    $choice .argue.giveUpArgueless; Let me get back to you.
+    $choose branch
+$endif
+
+// History
+
+:: argue.detritusReproduce
+{@bayouSci}    Detritus is dead matter. It doesn't reproduce.
+$goto .argue.intro
+
+:: argue.organismsDying
+{@bayouSci}    Can you show me the population histories for {nameof Detritus} and all organisms in the {nameof RS-3P}?
+$if ArgueSetClaim(ClaimHistory, jobs.bayou-dirty-detritus.argue.claimLabelHistory)
+    $call ArgueFactSlot(P_DeadZone.PopulationHistory.Cyanobacteria)
+    $call ArgueFactSlot(P_DeadZone.PopulationHistory.WhiteShrimp)
+    $call ArgueFactSlot(P_DeadZone.PopulationHistory.DecomposingBacteria)
+    $call ArgueFactSlot(P_DeadZone.PopulationHistory.Detritus)
+$endif
+$branch .argue.showClaimHistory
+
+:: argue.showClaimHistory
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.completeHistory
+    $answer incorrect, .argue.unrelatedHistory
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedHistory
+$call ArgueRejectIncorrect()
+{@bayouSci}     Not quite what I'm looking for, O. 
+$branch .argue.showClaimHistory
+
+:: argue.completeHistory
+$call ArgueCancelClaim()
+$call ArgueComplete()
+{@bayouSci}    Oh. Interesting. All of these have been cycling over the past 12 years.
+{@player}   What does that mean?
+{@bayouSci}    It means the populations rise and fall, rise and fall, over and over again.
+                If I look at the most recent history... yes.
+                The {nameof WhiteShrimp} and {nameof Cyanobacteria} are currently declining, while {nameof Detritus} and {nameof DecomposingBacteria} are on the rise.
+                So in your previous job regarding the green-colored water, we established that there is a lot of {nameof Cyanobacteria}.
+                But now we know that the {nameof Cyanobacteria} are also dying in large numbers.
+$branch .argue.beginFinal
+
+// Final
+
+:: argue.beginFinal
+ $call ArgueLoad(dirtyDetritusArgueFinal) 
+$if ArgueSetClaim(ClaimFinal, jobs.bayou-dirty-detritus.argue.claimLabelFinal)
+    $call ArgueFactSlot(DecomposingBacteria.Eats.Detritus) 
+$endif
+$branch .argue.showClaimFinal
+
+:: argue.showClaimFinal
+{@bayouSci}    Did you find anything that eats {nameof Detritus}?
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.completeFinal
+    $answer incorrect, .argue.unrelatedFinal
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.unrelatedFinal
+$call ArgueRejectIncorrect()
+{@bayouSci}     Not quite what I'm looking for, O. 
+$branch .argue.showClaimFinal
+
+// Shared
+
+:: argue.giveUpArgueless
+{@bayouSci} Okay, then. But don't take too long. A lot of people are waiting for us to act.
+
+:: argue.giveUp
+{@bayouSci} Okay, then. But don't take too long. A lot of people are waiting for us to act.
+$call ArgueClearFacts()
+$call ArgueCancelClaim()
+
+// End
+:: argue.completeFinal
+$call ArgueComplete()
+{@bayouSci}    Okay, interesting. The {nameof DecomposingBacteria} must be loving all this {nameof Detritus}.
+                Unfortunately we still haven't uncovered why the shrimp are dying, but I suspect we are closing in on an explanation.
+$call CompleteJob()

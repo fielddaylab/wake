@@ -31,6 +31,7 @@ namespace Aqua.WorldMap
         #endregion // Inspector
 
         [NonSerialized] private bool m_Selected;
+        [NonSerialized] private bool m_InputEventsRegistered;
         private Routine m_HighlightColorRoutine;
         private Routine m_PulseRoutine;
 
@@ -53,10 +54,13 @@ namespace Aqua.WorldMap
         {
             m_Label.SetText(inMap.ShortLabelId());
             m_CursorHint.TooltipId = inMap.LabelId();
-            m_Input.onClick.AddListener(OnClick);
 
-            m_Input.onPointerEnter.AddListener(OnPointerEnter);
-            m_Input.onPointerExit.AddListener(OnPointerExit);
+            if (!m_InputEventsRegistered) {
+                m_Input.onClick.AddListener(OnClick);
+                m_Input.onPointerEnter.AddListener(OnPointerEnter);
+                m_Input.onPointerExit.AddListener(OnPointerExit);
+                m_InputEventsRegistered = true;
+            }
 
             m_Input.enabled = !inbCurrent;
             m_Region.Collider.enabled = !inbCurrent;
@@ -73,6 +77,8 @@ namespace Aqua.WorldMap
             } else if (!inbSeen) {
                 m_PulseRoutine.Replace(this, Pulse(m_NotVisitedPulse, 2, 1, 1));
             }
+
+            gameObject.SetActive(true);
         }
 
         private void OnClick(PointerEventData unused)

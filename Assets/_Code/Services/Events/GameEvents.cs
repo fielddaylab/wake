@@ -12,6 +12,7 @@ namespace Aqua
         static public readonly StringHash32 ProfileStarted = "profile:started"; // no args
         
         static public readonly StringHash32 ProfileSaveBegin = "profile:save-begin"; // no args
+        static public readonly StringHash32 ProfileSaveError = "profile:save-error"; // no args
         static public readonly StringHash32 ProfileSaveCompleted = "profile:save-completed"; // no args
 
         static public readonly StringHash32 ProfileAutosaveHint = "profile:autosave-hint"; // AutoSave.Mode mode
@@ -49,6 +50,8 @@ namespace Aqua
         static public readonly StringHash32 SiteDataUpdated = "site-data:updated"; // StringHash32 siteId
         static public readonly StringHash32 ArgueDataUpdated = "argue:updated"; // StringHash32 argumentationId
         static public readonly StringHash32 ScienceLevelUpdated = "science:level-updated"; // ScienceLevelUp
+        static public readonly StringHash32 DecryptLevelUpdated = "science:decrypt-level-updated"; // uint level
+        static public readonly StringHash32 MapsUpdated = "maps:updated";
 
         static public readonly StringHash32 VariableSet = "data:variable-set"; // TableKeyPair variableId
 
@@ -66,6 +69,9 @@ namespace Aqua
 
         static public readonly StringHash32 ContextDisplay = "context:displayed"; // no args
         static public readonly StringHash32 ContextHide = "context:hide"; // no args
+
+        static public readonly StringHash32 JournalOpen = "journal:opened";
+        static public readonly StringHash32 JournalClosed = "journal:opened";
 
         static public readonly StringHash32 JobUnload = "job:unload"; // StringHash32 jobId
         static public readonly StringHash32 JobPreload = "job:preload"; // StringHash32 jobId

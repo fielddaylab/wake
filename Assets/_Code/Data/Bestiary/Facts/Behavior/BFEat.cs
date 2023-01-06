@@ -131,34 +131,5 @@ namespace Aqua {
         }
 
         #endregion // Behavior
-
-        #if UNITY_EDITOR
-
-        protected override bool IsPair(BFBehavior inOther)
-        {
-            BFEat eat = inOther as BFEat;
-            return eat != null && eat.Critter == Critter;
-        }
-
-        public override bool Bake(BakeFlags flags, BakeContext context)
-        {
-            bool bChanged = false;
-            if (OnlyWhenStressed)
-            {
-                var pair = FindPairedFact<BFEat>();
-                if (pair != null)
-                {
-                    float compare = Amount - pair.Amount;
-                    bChanged |= Ref.Replace(ref PairId, pair.Id);
-                }
-            }
-            else
-            {
-                bChanged |= Ref.Replace(ref PairId, null);
-            }
-            return bChanged;
-        }
-
-        #endif // UNITY_EDITOR
     }
 }

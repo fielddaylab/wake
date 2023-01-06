@@ -15,6 +15,8 @@ namespace Aqua
         [Hidden]
         None = 0,
         [Hidden]
-        HasPair = 0x04
+        HasPair = 0x04,
+        [Hidden]
+        IsEncrypted = 0x80
     }
 }

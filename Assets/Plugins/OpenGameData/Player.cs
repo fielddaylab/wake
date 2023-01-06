@@ -19,12 +19,14 @@ namespace OGD {
                 var status = Core.ParseStatus(response.status);
                 if (status == Core.ReturnStatus.Success) {
                     onNewId?.Invoke(response.val[0]);
+                    return Core.Error.Success;;
                 } else {
-                    onError?.Invoke(new Core.Error(status, response.msg));
+                    Core.Error error = new Core.Error(status, response.msg);
+                    onError?.Invoke(error);
+                    return error;
                 }
             }, (error, data) => {
                 s_CurrentNewIdRequest = null;
-
                 onError?.Invoke(error);
             }, null);
         }
@@ -45,8 +47,11 @@ namespace OGD {
                 var status = Core.ParseStatus(response.status);
                 if (status == Core.ReturnStatus.Success) {
                     onSuccess?.Invoke();
+                    return Core.Error.Success;
                 } else {
-                    onError?.Invoke(new Core.Error(status, response.msg));
+                    Core.Error error = new Core.Error(status, response.msg);
+                    onError?.Invoke(error);
+                    return error;
                 }
             }, (error, data) => {
                 s_CurrentClaimIdRequest = null;

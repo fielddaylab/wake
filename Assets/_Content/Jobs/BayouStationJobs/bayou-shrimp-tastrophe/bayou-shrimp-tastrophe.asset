@@ -18,25 +18,32 @@ MonoBehaviour:
     m_Source: jobs.bayou-shrimp-tastrophe.name
     m_HashValue: 1754888247
   m_PosterId:
-    m_HashValue: 3347434154
+    m_HashValue: 4040268820
   m_DescId:
     m_Source: jobs.bayou-shrimp-tastrophe.desc
     m_HashValue: 2151916189
   m_DescShortId:
     m_Source: 
     m_HashValue: 0
-  m_ExperimentDifficulty: 0
-  m_ModelingDifficulty: 0
-  m_ArgumentationDifficulty: 0
+  m_ExperimentDifficulty: 5
+  m_ModelingDifficulty: 5
+  m_ArgumentationDifficulty: 5
   m_PrerequisiteJobs:
-  - {fileID: 11400000, guid: 96b1b9c071225af41b1253f8bdf64df9, type: 2}
+  - {fileID: 11400000, guid: 808e0a43fd4260d41999b349971923c1, type: 2}
+  - {fileID: 11400000, guid: ca05634b21b52494c964c2b75240d241, type: 2}
   m_PrereqConditions: 
   m_PrereqBestiaryEntry:
     m_HashValue: 0
   m_PrereqScanId:
     m_Source: 
     m_HashValue: 0
-  m_PrereqUpgrades: []
+  m_PrereqUpgrades:
+  - m_HashValue: 3188184158
+  - m_HashValue: 3082617054
+  - m_HashValue: 1203385870
+  - m_HashValue: 2834804279
+  - m_HashValue: 165582993
+  - m_HashValue: 283353415
   m_PrereqExp: 0
   m_StationId:
     m_HashValue: 2992071853
@@ -44,16 +51,17 @@ MonoBehaviour:
   - m_HashValue: 3168968926
   m_Tasks:
   - Id:
-      m_Source: measureOxygen
-      m_HashValue: 790372975
+      m_Source: createModel
+      m_HashValue: 2425868018
     LabelId:
-      m_Source: jobs.bayou-shrimp-tastrophe.task.measureOxygen
-      m_HashValue: 1293816719
+      m_Source: jobs.bayou-shrimp-tastrophe.task.createModel
+      m_HashValue: 1297064466
+    Category: 4
     Steps:
     - Type: 1
       Target:
-        m_Source: WhiteShrimp.Consume.Oxygen
-        m_HashValue: 1860796753
+        m_Source: P_DeadZone.Model.Shrimptastrophe.Sync
+        m_HashValue: 1077424775
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIds: []
@@ -63,6 +71,7 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.bayou-shrimp-tastrophe.task.reportBack
       m_HashValue: 2059161252
+    Category: 5
     Steps:
     - Type: 10
       Target:
@@ -70,21 +79,23 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds: []
+    PrerequisiteTaskIds:
+    - m_Source: createModel
+      m_HashValue: 2425868018
   m_OptimizedTaskList:
   - Id:
-      m_Source: measureOxygen
-      m_HashValue: 790372975
-    IdString: measureOxygen
+      m_Source: createModel
+      m_HashValue: 2425868018
+    IdString: createModel
     Index: 0
     LabelId:
-      m_Source: jobs.bayou-shrimp-tastrophe.task.measureOxygen
-      m_HashValue: 1293816719
+      m_Source: jobs.bayou-shrimp-tastrophe.task.createModel
+      m_HashValue: 1297064466
     Steps:
     - Type: 1
       Target:
-        m_Source: WhiteShrimp.Consume.Oxygen
-        m_HashValue: 1860796753
+        m_Source: P_DeadZone.Model.Shrimptastrophe.Sync
+        m_HashValue: 1077424775
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 
@@ -103,11 +114,12 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 
-  m_CashReward: 100
-  m_ExpReward: 5
+    PrerequisiteTaskIndices: 0000
+  m_CashReward: 250
+  m_ExpReward: 15
   m_JournalId:
-    m_HashValue: 0
-  m_Scripting: {fileID: -1942890987711236906, guid: f87db79ec3246fa4bbb3f425430793bd,
+    m_HashValue: 3594967599
+  m_Scripting: {fileID: -1942890987711236906, guid: 70befd111a6140342a822b391ce4229e,
     type: 3}
-  m_ExtraAssets: []
+  m_ExtraAssets:
+  - {fileID: 11400000, guid: e01bbbf6cf5450348b6041c7ac7e5680, type: 2}

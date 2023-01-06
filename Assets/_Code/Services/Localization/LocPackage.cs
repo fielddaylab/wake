@@ -14,7 +14,7 @@ namespace Aqua
     public class LocPackage : ScriptableDataBlockPackage<LocNode>
     {
         private readonly Dictionary<StringHash32, string> m_Nodes = new Dictionary<StringHash32, string>(512);
-        private readonly HashSet<StringHash32> m_IdsWithEvents = new HashSet<StringHash32>();
+        private readonly HashSet<StringHash32> m_IdsWithEvents = Collections.NewSet<StringHash32>(128);
 
         [BlockMeta("basePath"), Preserve] private string m_RootPath = string.Empty;
 

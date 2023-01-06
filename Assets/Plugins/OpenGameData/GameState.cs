@@ -15,7 +15,7 @@ namespace OGD {
         /// <summary>
         /// Requests the latest state for the given player id.
         /// </summary>
-        static public IDisposable RequestLatestState(string playerId, Action<string> onSuccess, Core.DefaultErrorHandlerDelegate onError) {
+        static public IDisposable RequestLatestState(string playerId, Action<string> onSuccess, Core.DefaultErrorHandlerDelegate onError, int retryCount) {
             Core.CancelRequest(ref s_CurrentRequestGameState);
 
             Core.Query query = Core.NewQuery("/player/{0}/game/{1}/state", playerId, Core.GameId());
@@ -25,20 +25,23 @@ namespace OGD {
                 var status = Core.ParseStatus(response.status);
                 if (status == Core.ReturnStatus.Success && response.val != null && response.val.Length > 0) {
                     onSuccess?.Invoke(response.val[0]);
+                    return Core.Error.Success;
                 } else {
-                    onError?.Invoke(new Core.Error(status, response.msg));
+                    Core.Error error = new Core.Error(status, response.msg);
+                    onError?.Invoke(error);
+                    return error;
                 }
             }, (error, data) => {
                 s_CurrentRequestGameState = null;
 
                 onError?.Invoke(error);
-            }, null);
+            }, null, retryCount);
         }
 
         /// <summary>
         /// Pushes the state for the given player id.
         /// </summary>
-        static public IDisposable PushState(string playerId, string state, Action onSuccess, Core.DefaultErrorHandlerDelegate onError) {
+        static public IDisposable PushState(string playerId, string state, Action onSuccess, Core.DefaultErrorHandlerDelegate onError, int retryCount) {
             Core.CancelRequest(ref s_CurrentPostGameState);
 
             Core.Query query = Core.NewQuery("/player/{0}/game/{1}/state", playerId, Core.GameId());
@@ -50,14 +53,17 @@ namespace OGD {
                 var status = Core.ParseStatus(response.status);
                 if (status == Core.ReturnStatus.Success) {
                     onSuccess?.Invoke();
+                    return Core.Error.Success;
                 } else {
-                    onError?.Invoke(new Core.Error(status, response.msg));
+                    Core.Error error = new Core.Error(status, response.msg);
+                    onError?.Invoke(error);
+                    return error;
                 }
             }, (error, data) => {
                 s_CurrentPostGameState = null;
 
                 onError?.Invoke(error);
-            }, null);
+            }, null, retryCount);
         }
     }
 }

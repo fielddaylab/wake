@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Aqua.Compression;
 using Aqua.Scripting;
 using BeauData;
 using BeauPools;
@@ -19,6 +20,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace Aqua
 {
+    [DefaultExecutionOrder(10000)]
     public class UIMgr : ServiceBehaviour, IDebuggable
     {
         #region Inspector
@@ -29,6 +31,7 @@ namespace Aqua
         [SerializeField, Required] private DialogPanel m_DialogPanel = null;
         [SerializeField, Required] private PopupPanel m_PopupPanel = null;
         [SerializeField, Required] private DialogPanel[] m_DialogStyles = null;
+        [SerializeField, Required] private LayoutPrefabPackage m_GenericLayouts = null;
 
         [Header("Overlays")]
         [SerializeField, Required] private LetterboxDisplay m_Letterbox = null;
@@ -63,6 +66,8 @@ namespace Aqua
 
         private Routine m_PersistentUILoad;
         private Routine m_JournalLoad;
+
+        public Camera Camera { get { return m_UICamera; } }
 
         #region Loading Screen
 
@@ -109,6 +114,10 @@ namespace Aqua
             }
 
             return panel;
+        }
+
+        public LayoutPrefabPackage CompressedLayouts {
+            get { return m_GenericLayouts; }
         }
 
         #endregion // Dialog
@@ -260,6 +269,8 @@ namespace Aqua
                 GameObject instantiated = Instantiate(asset);
                 yield return null;
                 DontDestroyOnLoad(instantiated);
+                m_PersistentUIObjects.Capacity = instantiated.transform.childCount;
+                
                 foreach(Transform child in instantiated.transform)
                 {
                     m_PersistentUIObjects.Add(child.gameObject);
@@ -369,8 +380,12 @@ namespace Aqua
             Vector2 cursorPos = m_Cursor.Process();
             m_Tooltip.Process(cursorPos);
 
-            m_UIUpdates.ForEach((o) => o.OnUIUpdate());
+            m_UIUpdates.ForEach(UpdateUpdater);
         }
+
+        static private readonly Action<IUpdaterUI> UpdateUpdater = (o) => {
+            o.OnUIUpdate();
+        };
 
         public void BindCamera(Camera inCamera)
         {
@@ -430,7 +445,7 @@ namespace Aqua
                 m_DialogStyleMap.Add(panel.StyleId(), panel);
             }
 
-            m_SharedPanels = new Dictionary<Type, SharedPanel>(16);
+            m_SharedPanels = new Dictionary<Type, SharedPanel>(16, ReferenceEqualityComparer<Type>.Default);
             m_CursorHintMgr = new CursorHintMgr(m_Cursor, m_Tooltip);
             SceneHelper.OnSceneUnload += CleanupFromScene;
 

@@ -36,7 +36,7 @@ namespace Aqua {
             
             BFDetails details;
             details.Header = Loc.Find("fact.waterChem.header");
-            details.Image = desc.ImageSet();
+            details.Image = null;
             details.Description = Loc.Format(desc.EnvironmentFactFormat(), BestiaryUtils.LocationLabel(fact.Parent), desc.FormatValue(fact.Value));
 
             return details;

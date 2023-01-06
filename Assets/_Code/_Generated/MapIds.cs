@@ -5,7 +5,6 @@ static public class MapIds
 	static public readonly StringHash32 RS_Arctic = new StringHash32(0x3F157625);
 	static public readonly StringHash32 RS_4W = new StringHash32(0x7FD574E4);
 	static public readonly StringHash32 RS_4X = new StringHash32(0x76D566B9);
-	static public readonly StringHash32 RS_4Y_IceRiver = new StringHash32(0xA4508F06);
 	static public readonly StringHash32 RS_4Y = new StringHash32(0x75D56526);
 	static public readonly StringHash32 RS_4Z = new StringHash32(0x74D56393);
 	static public readonly StringHash32 ArcticStation = new StringHash32(0x4D557C1B);
@@ -16,12 +15,15 @@ static public class MapIds
 	static public readonly StringHash32 BayouStation = new StringHash32(0xB25764AD);
 	static public readonly StringHash32 RS_Coral = new StringHash32(0xCA2F89EA);
 	static public readonly StringHash32 RS_2R = new StringHash32(0x84E4874D);
-	static public readonly StringHash32 RS_2R_2 = new StringHash32(0xAAFF3056);
 	static public readonly StringHash32 RS_2S = new StringHash32(0x83E485BA);
 	static public readonly StringHash32 RS_2V = new StringHash32(0x80E48101);
 	static public readonly StringHash32 CoralStation = new StringHash32(0x2A325B0E);
-	static public readonly StringHash32 FinalStation = new StringHash32(0x4A8645B5);
+	static public readonly StringHash32 RS_0_Cave = new StringHash32(0x01D95A6B);
+	static public readonly StringHash32 RS_0_Credits = new StringHash32(0x4F4B64F0);
+	static public readonly StringHash32 RS_0_Final = new StringHash32(0x172C609A);
 	static public readonly StringHash32 RS_0 = new StringHash32(0x8C3A5CA7);
+	static public readonly StringHash32 RS_0_Station = new StringHash32(0x7EFBD862);
+	static public readonly StringHash32 FinalStation = new StringHash32(0x4A8645B5);
 	static public readonly StringHash32 RS_Kelp = new StringHash32(0x29495811);
 	static public readonly StringHash32 RS_1A = new StringHash32(0x81DDC6CF);
 	static public readonly StringHash32 RS_1B = new StringHash32(0x82DDC862);

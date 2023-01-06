@@ -1,0 +1,118 @@
+# basePath StationTransition
+
+// There will be at least DreamSpacing world travels before another dream will trigger
+// (e.x. X = 1 means a dream can trigger at earliest on the second world travel after a dream)
+#const      DreamSpacing =  1
+#const      DreamOverrideJobThreshold =  20
+
+:: bayouMechanicArticleTracking
+@trigger    TravelingToStation
+@once
+@chatter
+$set jobs:bayou-mechanic.leftBayou = true
+
+:: KelpDream1
+@trigger    PlayerDream
+@when       previousStation == "KelpStation"
+@boostScore 100
+@once
+$call   PrepareDream(Dreams00)
+
+:: ArcticDream1
+@trigger    PlayerDream
+@when       previousStation == "ArcticStation", LocationVisited("RS-4W"), world:RS-4W.seenWhalefall
+$if !HasJournalEntry("Dream01_WhaleFall")
+    $if CurrBetweenDreamTravels() > $DreamSpacing
+        // trigger dream after at least 2 world travels
+        $call   PrepareDream(Dream01)
+    $elseif AnyJobsCompleted() >= $DreamOverrideJobThreshold
+        // trigger dream if completed 20+ jobs
+        $call   PrepareDream(Dream01)
+    $else
+        // player must travel more before dream
+    $endif
+$endif
+
+:: CoralDream1
+@trigger    PlayerDream
+@when       previousStation == "CoralStation", LocationVisited("RS-2S")
+$if !HasJournalEntry("Dream02_Coral")
+    $if CurrBetweenDreamTravels() > $DreamSpacing
+        // trigger dream after at least 2 world travels
+        $call   PrepareDream(Dream02)
+    $elseif AnyJobsCompleted() >= $DreamOverrideJobThreshold
+        // trigger dream if completed 20+ jobs
+        $call   PrepareDream(Dream02)
+    $else
+        // player must travel more before dream
+    $endif
+$endif
+
+:: BayouDream1
+@trigger    PlayerDream
+@when       previousStation == "BayouStation", LocationVisited("RS-3P")
+$if !HasJournalEntry("Dream03_DeadZone")
+    $if CurrBetweenDreamTravels() > $DreamSpacing
+        // trigger dream after at least 2 world travels
+        $call   PrepareDream(Dream03)
+    $elseif AnyJobsCompleted() >= $DreamOverrideJobThreshold
+        // trigger dream if completed 20+ jobs
+        $call   PrepareDream(Dream03)
+    $else
+        // player must travel more before dream
+    $endif
+$endif
+
+:: KelpDream2
+@trigger    PlayerDream
+@when       previousStation == "KelpStation", LocationVisited("RS-1B")
+$if !HasJournalEntry("Dream04_Kelp2Barren")
+    $if CurrBetweenDreamTravels() > $DreamSpacing
+        // trigger dream after at least 2 world travels
+        $call   PrepareDream(Dream04)
+    $elseif AnyJobsCompleted() >= $DreamOverrideJobThreshold
+        // trigger dream if completed 20+ jobs
+        $call   PrepareDream(Dream04)
+    $else
+        // player must travel more before dream
+    $endif
+$endif
+
+:: ArcticDream2
+@trigger    PlayerDream
+@when       previousStation == "ArcticStation", LocationVisited("RS-4Y"), world:RS-4Y.seenIceRiver
+$if !HasJournalEntry("Dream05_Arctic2")
+    $if CurrBetweenDreamTravels() > $DreamSpacing
+        // trigger dream after at least 2 world travels
+        $call   PrepareDream(Dream05)
+    $elseif AnyJobsCompleted() >= $DreamOverrideJobThreshold
+        // trigger dream if completed 20+ jobs
+        $call   PrepareDream(Dream05)
+    $else
+        // player must travel more before dream
+    $endif
+$endif
+
+:: BayouDream2
+@trigger    PlayerDream
+@when       previousStation == "BayouStation", LocationVisited("RS-3N"), HasEntity("Tubeworm")
+$if !HasJournalEntry("Dream06_Rig")
+    $if CurrBetweenDreamTravels() > $DreamSpacing
+        // trigger dream after at least 2 world travels
+        $call   PrepareDream(Dream06)
+    $elseif AnyJobsCompleted() >= $DreamOverrideJobThreshold
+        // trigger dream if completed 20+ jobs
+        $call   PrepareDream(Dream06)
+    $else
+        // player must travel more before dream
+    $endif
+$endif
+
+:: FinalDream
+@trigger    PlayerDream
+@when       nextStation == "FinalStation", player:currentJob == "final-final", JobTaskTop(performRescue) // in final sequence
+@once
+// prevent return to Kelp Station
+$call LockStation(KelpStation)
+
+$call       PrepareDream(Dream07)

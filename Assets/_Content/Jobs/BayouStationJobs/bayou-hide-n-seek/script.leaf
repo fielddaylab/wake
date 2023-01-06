@@ -14,8 +14,100 @@
 {@bayouSci}     I need you to search {h}Site O{/h} for any missing organisms.
                Then build a higher-accuracy model and report back here. 
 {@player}      I'm on it. 
+$set jobs:hide-n-seek.sync-failed = false
+
+
+// MODELING SUGGESTIONS
+
+:: triggerSyncFailure
+@trigger    SimulationSyncError
+@when       !jobs:hide-n-seek.sync-failed
+@once
+$set jobs:hide-n-seek.sync-failed = true
+
+:: helpModelSync.Visual
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(jellyPrediction), scene:name == "Modeling", modeling:phase == "visual"
+@cutscene
+$branch .modelSuggestions
+
+:: helpModelSync.Sync
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(jellyPrediction), scene:name == "Modeling", modeling:phase == "sync"
+@cutscene
+$branch .modelSuggestions
+
+:: modelSuggestions
+$if HasFact(LoggerheadTurtle.Reproduce), HasFact(LoggerheadTurtle.Eats.Cyanobacteria), HasFact(LoggerheadTurtle.Eats.AngelFish), HasFact(LoggerheadTurtle.Eats.MoonJelly), IsFactFullyUpgraded(LoggerheadTurtle.Eats.MoonJelly), HasFact(RedGrouper.Reproduce), HasFact(RedGrouper.Eats.AngelFish), IsFactFullyUpgraded(LoggerheadTurtle.Eats.AngelFish), HasFact(RedGrouper.Eats.Cyanobacteria), IsFactFullyUpgraded(RedGrouper.Eats.Cyanobacteria), HasFact(AngelFish.Reproduce.Stressed), HasFact(AngelFish.Eats.SeaPearl.Stressed), IsFactFullyUpgraded(AngelFish.Eats.SeaPearl.Stressed), HasFact(Cyanobacteria.Reproduce), HasFact(SeaPearl.Reproduce.Stressed), HasFact(MoonJelly.Reproduce), HasFact(ElkhornCoral.Reproduce), HasFact(ElkhornCoral.Reproduce.Stressed)
+    $if HasFact(O_OilRig.turtleDangerJellies.Model.Visual)
+        {@guide}    You're done with this portion! Head to the {h}Describe{/h} tab next.
+    $else
+        {@guide}    Once you import your facts and save the Visual model, we should be good to make our Describe model!
+    $endif
+$else
+    $if !jobs:hide-n-seek.sync-failed
+        {@guide}    Time to try out your model in the {h}Describe{/h} tab.
+    $else
+        {@guide}    Seems like we don't have enough information to complete our model accurately.
+                    Look for {h}question marks{/h} in the  Visual model interface, those point to where we may need more data.
+        $if !HasFact(LoggerheadTurtle.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(LoggerheadTurtle.Eats.Cyanobacteria)
+            $branch .suggestTurtleEat
+        $elseif !HasFact(LoggerheadTurtle.Eats.AngelFish)
+            $branch .suggestTurtleEat
+        $elseif !HasFact(LoggerheadTurtle.Eats.MoonJelly)
+            $branch .suggestTurtleEat
+        $elseif !IsFactFullyUpgraded(LoggerheadTurtle.Eats.MoonJelly)
+            $branch .suggestTurtleEat
+        $elseif !HasFact(RedGrouper.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(RedGrouper.Eats.AngelFish)
+            $branch .suggestGrouperEat
+        $elseif !IsFactFullyUpgraded(RedGrouper.Eats.AngelFish)
+            $branch .suggestGrouperEat
+        $elseif !HasFact(RedGrouper.Eats.Cyanobacteria)
+            $branch .suggestGrouperEat
+        $elseif !IsFactFullyUpgraded(RedGrouper.Eats.Cyanobacteria)
+            $branch .suggestGrouperEat
+        $elseif !HasFact(AngelFish.Reproduce.Stressed)
+            $branch .suggestReproduce
+        $elseif !HasFact(AngelFish.Eats.SeaPearl.Stressed)
+            $branch .suggestAngelEat
+        $elseif !IsFactFullyUpgraded(AngelFish.Eats.SeaPearl.Stressed)
+            $branch .suggestAngelEat
+        $elseif !HasFact(Cyanobacteria.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(SeaPearl.Reproduce.Stressed)
+            $branch .suggestReproduce
+        $elseif !HasFact(MoonJelly.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(ElkhornCoral.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(ElkhornCoral.Reproduce.Stressed)
+            $branch .suggestReproduce
+        $endif
+    $endif
+$endif
+
+:: suggestReproduce
+{@guide}    Did you get all the reproduction rates?
+
+:: suggestMeasure
+{@guide}    Using the {h}Measurement Tank{/h} to find the rates of unmeasured behaviors may help us here.
+
+:: suggestTurtleEat
+{@guide}    Maybe look into what {nameof LoggerheadTurtle} eats?
+
+:: suggestGrouperEat
+{@guide}    Maybe look into what {nameof RedGrouper} eats?
+
+:: suggestAngelEat
+{@guide}    Maybe look into what {nameof AngelFish} eats?
+
 
 // CATCH-ALL GUIDE TEXT
+
 :: catchJellyScan
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(jellyScan)
@@ -70,75 +162,6 @@
 {@player}   Okay. What's next?
 {@guide}    You must report back to {nameof profBayou} with your findings!
 
-:: catchVisualize
-@trigger    RequestPartnerHelp
-@when       scene:name == "Modeling",modeling:phase == "visual"   
-@cutscene
-{@player}   Do you have any idea what I'm missing, {nameof @guide}?
-$if HasEntity(AngelFish),HasEntity(Cyanobacteria),HasEntity(ElkhornCoral),HasEntity(MoonJelly),HasEntity(SeaPearl),HasEntity(RedGrouper),HasEntity(LoggerheadTurtle)
-    //Player has all required critters
-    $if HasFact(MoonJelly.Reproduce),HasFact(LoggerheadTurtle.Reproduce),HasFact(Cyanobacteria.Reproduce),HasFact(AngelFish.Reproduce.Stressed),HasFact(ElkhornCoral.Reproduce),HasFact(RedGrouper.Reproduce)
-        //Has all reproduce facts
-
-        $if HasFact(LoggerheadTurtle.Eats.MoonJelly),HasFact(LoggerheadTurtle.Eats.Cyanobacteria),HasFact(RedGrouper.Eats.Cyanobacteria)
-            //Has all eat facts
-            {@guide}    You have all of the rules you need. Now make sure you have gathered all the rates. 
-        $else
-            {@guide}    Hmm... you seem to be missing some consumption rules. I suggests returning to your Observation Tank. 
-        $endif
-    $else
-        //Missing at least 1 reproduction fact
-        {@guide}  You seem to be missing at least one reproduction rate. 
-                  You'll need to gather more data with your Measurement Tank. 
-                  Make sure to obtain both the stressed and unstressed rates!
-    $endif
-$else
-    //Player is missing at least 1 critter
-    {@guide}    You are still missing some organisms, O. 
-    $if !HasEntity(AngelFish)
-        {@guide}    Have you scanned any of the Angelfish?
-    $else
-        $if !HasEntity(Cyanobacteria)
-            {@guide}    Have you scanned the Cyanobacteria?
-        $else
-            $if !HasEntity(ElkhornCoral)
-                {@guide}    Have you scanned the Elkhorn Coral?
-            $else
-                $if !HasEntity(SeaPearl)
-                    {@guide}    Have you scanned any Sea Pearls yet?
-                $else
-                    $if !HasEntity(LoggerheadTurtle)
-                        {@guide}    Have you scanned the Loggerhead Turtles?
-                    $else
-                        $if !HasEntity(RedGrouper)
-                            {@guide}    Have you scanned any Red Grouper?
-                        $else                 
-                            $if !HasEntity(MoonJelly)
-                                {@guide}    Have you scanned the Moon Jellies?
-                            $endif
-                        $endif
-                    $endif
-                $endif
-            $endif
-        $endif
-    $endif
-$endif
-
-:: catchDescribe
-@trigger    RequestPartnerHelp
-@when       scene:name == "Modeling",modeling:phase == "sync"   
-@cutscene
-{@player}   Hmm. {nameof @guide}, can I have some help?
-{@guide}    Certainly, O. Processing...
-$if HasFact(AngelFish.PH.Stressed),HasFact(Cyanobacteria.PH.Stressed),HasFact(ElkhornCoral.PH.Stressed),HasFact(SeaPearl.PH.Stressed),HasFact(LoggerheadTurtle.PH.Stressed)
-    //player most likely has all stress ranges 
-    {@guide}    You need to measure the rate of all the interactions on the graph.
-    {@guide}    Dotted lines mean you haven't measured that fact yet. 
-    {@guide}    If you see any dotted lines, I suggest returning to your Measurement Tank.     
-$else
-    {@guide}    Did you obtain all of the stress ranges for the organisms in the graph?
-    {@guide}    Without those ranges, your model won't match the historical data with the accuracy that {nameof @profBayou} needs.
-$endif
 
 // ARGUMENTATION
 
