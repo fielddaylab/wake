@@ -345,7 +345,7 @@ public class SchoolChild : MonoBehaviour
 		angle = (angle > 180) ? angle - 360 : angle;
 		Quaternion rx = _cacheTransform.rotation;
 		Vector3 rxea = rx.eulerAngles;
-		rxea.x = ClampAngle(angle, -50.0f, 50.0f);
+		rxea.x = ClampAngle(angle, -25.0f, 25.0f);
 		rx.eulerAngles = rxea;
 		_cacheTransform.rotation = rx;
 	}
