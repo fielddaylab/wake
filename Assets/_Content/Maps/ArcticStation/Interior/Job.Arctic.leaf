@@ -18,6 +18,37 @@ $else
     $choice .action.cancel; No thanks.
 $endif
 
+#NoJobHandler(earlyConvo, CompletedJobCount(ArcticStation, 2))
+@once
+{@$JobGiverId} Oh, hey Ollie. Nice to see you.
+{@player} Thanks, {nameof @$JobGiverId}.
+{@player} You doing okay? Seems like it gets kind of quiet out here...
+{@$JobGiverId} Yes. Extremely. 
+{@$JobGiverId} Nice, isn't it? 
+{@$JobGiverId} I was just finishing up a game of chess with {nameof @arcticMechanic}. 
+{@$JobGiverId} Poor guy... I'm sure he'll beat me one of these days.
+$call GiveJournalEntry("N26_JunoAlone")
+
+:: ContinueAfterSamArticle
+@trigger    JournalHidden
+@when       HasJournalEntry("N26_JunoAlone")
+@once
+{@$JobGiverId} Anyway, what can I do for you, Ollie? 
+$choice .action.openJobBoard; Job board!
+$choice .action.cancel; Nothing for now.
+
+#NoJobHandler(afterSamArticle, HasJournalEntry("N33_SamArticle"))
+@once
+{@$JobGiverId} Hey, Ollie! I was just chatting with your mom.
+{@player} Wait... you know my mom? 
+{@$JobGiverId} Sure. I've got colleagues all over. 
+{@$JobGiverId} Is it true that you've got a friend on the Challenger Deep mission? 
+{@player} Yeah. My best friend {nameof @sam}.
+{@$JobGiverId} My friend {nameof @ex} is on that mission, too! She was out here a few months ago, studying snow algae.
+{@$JobGiverId} She's amazing. Your friend {nameof @sam} is in good company. 
+$call GiveJournalEntry("N31_SnowAlgae")
+
+
 #NoJobHandler(postFinalJob, JobCompleted(final-final))
 @once
 {@$JobGiverId} Ollie! We heard what happened with the Challenger Deep. 
