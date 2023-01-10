@@ -1,5 +1,5 @@
 using UnityEngine;
-using AquaAudio;
+using System.Runtime.InteropServices;
 
 namespace Aqua.Option
 {
@@ -54,6 +54,16 @@ namespace Aqua.Option
 
         private void OnFullscreenChanged(bool fullscreen) {
             Screen.fullScreen = fullscreen;
+            #if UNITY_WEBGL && !UNITY_EDITOR
+            NativeFullscreen_SetFullscreen(fullscreen);
+            #endif // UNITY_WEBGL && !UNITY_EDITOR
         }
+        
+        #if UNITY_WEBGL
+
+        [DllImport("__Internal")]
+        static private extern void NativeFullscreen_SetFullscreen(bool fullscreen);
+
+        #endif // UNITY_WEBGL
     }
 }
