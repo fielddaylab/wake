@@ -4,7 +4,12 @@ var NativeWebInputLib = {
         /**
          * @type {Function}
          */
-        nativeClickCallback: null,
+        nativeMouseDownCallback: null,
+
+        /**
+         * @type {Function}
+         */
+        nativeMouseUpCallback: null,
 
         /**
          * @type {Function}
@@ -27,12 +32,25 @@ var NativeWebInputLib = {
          * Invokes the native click callback.
          * @param {MouseEvent} m 
          */
-        InvokeClickCallbackFromMouse: function(m) {
-            if (m.button == 0 && NWICache.nativeClickCallback) {
+        InvokeMouseDownCallbackFromMouse: function(m) {
+            if (m.button == 0 && NWICache.nativeMouseDownCallback) {
                 var element = m.currentTarget;
                 var x = m.offsetX / element.clientWidth;
                 var y = 1 - (m.offsetY / element.clientHeight);
-                dynCall_vff(NWICache.nativeClickCallback, x, y);
+                dynCall_vff(NWICache.nativeMouseDownCallback, x, y);
+            }
+        },
+
+        /**
+         * Invokes the native click callback.
+         * @param {MouseEvent} m 
+         */
+        InvokeMouseUpCallbackFromMouse: function(m) {
+            if (m.button == 0 && NWICache.nativeMouseUpCallback) {
+                var element = m.currentTarget;
+                var x = m.offsetX / element.clientWidth;
+                var y = 1 - (m.offsetY / element.clientHeight);
+                dynCall_vff(NWICache.nativeMouseUpCallback, x, y);
             }
         },
 
@@ -40,14 +58,29 @@ var NativeWebInputLib = {
          * Invokes the native click callback.
          * @param {TouchEvent} m 
          */
-         InvokeClickCallbackFromTouch: function(m) {
-            if (NWICache.nativeClickCallback) {
+         InvokeMouseDownCallbackFromTouch: function(m) {
+            if (NWICache.nativeMouseDownCallback) {
                 /** @type {HTMLCanvasElement} */
                 var element = m.currentTarget;
                 var touch = m.targetTouches[0];
                 var x = (touch.clientX - element.clientLeft) / element.clientWidth;
                 var y = 1 - ((touch.clientY - element.clientTop) / element.clientHeight);
-                dynCall_vff(NWICache.nativeClickCallback, x, y);
+                dynCall_vff(NWICache.nativeMouseDownCallback, x, y);
+            }
+        },
+
+        /**
+         * Invokes the native click callback.
+         * @param {TouchEvent} m 
+         */
+        InvokeMouseUpCallbackFromTouch: function(m) {
+            if (NWICache.nativeMouseUpCallback) {
+                /** @type {HTMLCanvasElement} */
+                var element = m.currentTarget;
+                var touch = m.targetTouches[0];
+                var x = (touch.clientX - element.clientLeft) / element.clientWidth;
+                var y = 1 - ((touch.clientY - element.clientTop) / element.clientHeight);
+                dynCall_vff(NWICache.nativeMouseUpCallback, x, y);
             }
         },
 
@@ -67,15 +100,19 @@ var NativeWebInputLib = {
 
     /**
      * Registers the native click callback.
-     * @param {Function} callback 
+     * @param {Function} callbackDown
+     * @param {Function} callbackUp
      */
-    NativeWebInput_RegisterClick: function(callback) {
-        NWICache.nativeClickCallback = callback;
+    NativeWebInput_RegisterClick: function(callbackDown, callbackUp) {
+        NWICache.nativeMouseDownCallback = callbackDown;
+        NWICache.nativeMouseUpCallback = callbackUp;
 
         var canvasElement = document.getElementById("#canvas");
         if (canvasElement) {
-            canvasElement.addEventListener("mousedown", NWICache.InvokeClickCallbackFromMouse);
-            canvasElement.addEventListener("touchstart", NWICache.InvokeClickCallbackFromTouch);
+            canvasElement.addEventListener("mousedown", NWICache.InvokeMouseDownCallbackFromMouse);
+            canvasElement.addEventListener("mouseup", NWICache.InvokeMouseUpCallbackFromMouse);
+            canvasElement.addEventListener("touchstart", NWICache.InvokeMouseDownCallbackFromTouch);
+            canvasElement.addEventListener("touchend", NWICache.InvokeMouseUpCallbackFromTouch);
         }
     },
 
@@ -83,12 +120,15 @@ var NativeWebInputLib = {
      * Deregisters the native click callback.
      */
     NativeWebInput_DeregisterClick: function() {
-        NWICache.nativeClickCallback = null;
+        NWICache.nativeMouseDownCallback = null;
+        NWICache.nativeMouseUpCallback = null;
 
         var canvasElement = document.getElementById("#canvas");
         if (canvasElement) {
-            canvasElement.removeEventListener("mousedown", NWICache.InvokeClickCallbackFromMouse);
-            canvasElement.removeEventListener("touchstart", NWICache.InvokeClickCallbackFromTouch);
+            canvasElement.removeEventListener("mousedown", NWICache.InvokeMouseDownCallbackFromMouse);
+            canvasElement.removeEventListener("mouseup", NWICache.InvokeMouseUpCallbackFromMouse);
+            canvasElement.removeEventListener("touchstart", NWICache.InvokeMouseDownCallbackFromTouch);
+            canvasElement.removeEventListener("touchend", NWICache.InvokeMouseUpCallbackFromTouch);
         }
     },
 

@@ -36,6 +36,7 @@ namespace Aqua {
         [Header("Shaders")]
         [SerializeField, Required] private Material m_DefaultSpriteMaterial = null;
         [SerializeField, Required] private Material m_OverlaySpriteMaterial = null;
+        [SerializeField, Required] private Material m_SubtractCanvasMaterial = null;
 
         [Header("Streaming")]
         [SerializeField, Range(1, 32)] private float m_StreamedTextureMem = 8;
@@ -64,6 +65,8 @@ namespace Aqua {
 
         public Material DefaultSpriteMaterial { get { return m_DefaultSpriteMaterial; } }
         public Material OverlaySpriteMaterial { get { return m_OverlaySpriteMaterial; } }
+
+        public Material SubtractCanvasMaterial { get { return m_SubtractCanvasMaterial; } }
 
         private Dictionary<StringHash32, PreloadGroup> m_PreloadGroupMap = new Dictionary<StringHash32, PreloadGroup>(32);
         private Dictionary<StringHash32, int> m_PreloadPathRefCountMap = new Dictionary<StringHash32, int>(64);

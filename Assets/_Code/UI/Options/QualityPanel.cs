@@ -1,5 +1,5 @@
 using UnityEngine;
-using AquaAudio;
+using System.Runtime.InteropServices;
 
 namespace Aqua.Option
 {
@@ -9,6 +9,7 @@ namespace Aqua.Option
 
         [SerializeField] private ToggleOptionBar m_QualityLevel = null;
         [SerializeField] private ToggleOptionBar m_ResolutionLevel = null;
+        [SerializeField] private CheckboxOption m_FullscreenToggle = null;
 
         #endregion // Inspector
 
@@ -26,6 +27,9 @@ namespace Aqua.Option
                 .AddOption("options.quality.resolution.moderate.label", "options.quality.resolution.moderate.tooltip", OptionsPerformance.ResolutionMode.Moderate)
                 .AddOption("options.quality.resolution.high.label", "options.quality.resolution.high.tooltip", OptionsPerformance.ResolutionMode.High)
                 .Build();
+
+            m_FullscreenToggle.Initialize("options.quality.fullscreen.label",
+                "options.quality.fullscreen.tooltip", OnFullscreenChanged);
         }
 
         public override void Load(OptionsData inOptions)
@@ -34,6 +38,8 @@ namespace Aqua.Option
             
             m_QualityLevel.Sync(inOptions.Performance.Framerate);
             m_ResolutionLevel.Sync(inOptions.Performance.Resolution);
+
+            m_FullscreenToggle.Sync(Screen.fullScreen);
         }
 
         private void OnQualityLevelChanged(OptionsPerformance.FramerateMode inFramerate)
@@ -45,5 +51,19 @@ namespace Aqua.Option
         {
             Data.Performance.Resolution = inResolution;
         }
+
+        private void OnFullscreenChanged(bool fullscreen) {
+            Screen.fullScreen = fullscreen;
+            #if UNITY_WEBGL && !UNITY_EDITOR
+            NativeFullscreen_SetFullscreen(fullscreen);
+            #endif // UNITY_WEBGL && !UNITY_EDITOR
+        }
+        
+        #if UNITY_WEBGL
+
+        [DllImport("__Internal")]
+        static private extern void NativeFullscreen_SetFullscreen(bool fullscreen);
+
+        #endif // UNITY_WEBGL
     }
 }

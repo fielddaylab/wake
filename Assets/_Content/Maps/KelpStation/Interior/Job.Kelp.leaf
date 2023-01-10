@@ -27,6 +27,37 @@ $else
     $choice .action.cancel; No thanks.
 $endif
 
+#NoJobHandler(postFinalJob, JobCompleted(final-final))
+@once
+{@$JobGiverId} Oh, Mija. You're back! 
+{@$JobGiverId} Thank goodness you're okay.
+{@$JobGiverId} I heard that your uncle powered your ship back up...
+{@$JobGiverId} Even after I tried to stop you. 
+{@player} Mom, don't be mad at Tío. This was my choice.
+{@player} I had to save Sam. I'm not a kid anymore. And if you want to put me on probation again– 
+{@$JobGiverId} No, Sweetie. I was going to say...
+{@$JobGiverId} You were amazing. I'm so proud of you.  
+{@$JobGiverId} I didn't want to lose you. But obviously you can handle more than I realized.
+{@player} ....Oh.
+{@player} Thanks, Mom. You too. 
+
+#NoJobHandler(articleAfterTransmission, HasJournalEntry("N02_LosingConnection"))
+@once
+{@$JobGiverId} Olivia, welcome back!
+{@$JobGiverId} Have you seen this? 
+{@$JobGiverId} The Oceanic Times did a profile on your friend! 
+{@player} Wow... really? 
+{@$JobGiverId} Here, take a look! Such a nice photo of them. 
+$call GiveJournalEntry("N33_SamArticle")
+
+:: ContinueAfterSamArticle
+@trigger    JournalHidden
+@when       HasJournalEntry("N33_SamArticle")
+@once
+{@$JobGiverId} Aw, Mija... don't look so sad.
+{@$JobGiverId} I know you wanted to go on that mission, too.
+{@$JobGiverId} But you're doing such an amazing job here. I'm so grateful for your help!
+
 #WrongStationJobHandler(a)
 $if JobInProgress(final-final)
     // Final job case: Player talks to mom, but job is set in deep deep sea

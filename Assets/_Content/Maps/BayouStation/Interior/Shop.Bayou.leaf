@@ -40,8 +40,6 @@
                 I can try to dig it up, if you want.
 {@player}       That would be amazing. Thanks, {nameof @$MerchantId}.
 {@$MerchantId}  Well... I've probably fangirled enough. Wanna take a look at my shop?   
-$set jobs:bayou-mechanic.trackBayou = true
-$set jobs:bayou-mechanic.leftBayou = false
 $set jobs:bayou-mechanic.givenArticle = false
 $choice .action.openShop; Sure!
 $choice .action.cancel; Not right now!
@@ -60,7 +58,24 @@ $choice .action.cancel; Not right now!
 $choice .action.openShop; Sure!
 $choice .action.cancel; Not right now.
 
-#ShopHandler(jobs:bayou-mechanic.trackBayou, jobs:bayou-mechanic.leftBayou)
+#ShopHandler(mackBackstory, CompletedJobCount(BayouStation, 2))
+@boostScore 10
+@once
+{@$MerchantId} Hey, O! Wanna hang out for a while? 
+{@$MerchantId} I'm still fixing up the comms. 
+{@$MerchantId} Wish those two would stop bickering... I can see why {nameof @mack} left.
+{@player} {nameof @mack}?
+{@$MerchantId} Oh, she was the mechanic here before me.
+{@$MerchantId} She's awesome, but she got fed up of all the fighting.  
+{@$MerchantId} Took off a couple weeks ago to join the Nautilus crew. 
+{@player} Wait... really? My friend {nameof @sam} is on the Nautilus! 
+{@$MerchantId} Ooh, that's awesome! 
+{@$MerchantId} {nameof @sam} must be super adventurous. That mission is definitely not for the faint of heart. 
+{@$MerchantId} Wish I was there, too...
+{@$MerchantId} But, ya know. Somebody's gotta build a new comms array. Lucky me. 
+$call GiveJournalEntry("N30_BayouMechanic")
+
+#ShopHandler(merArticle, HasJournalEntry("N30_BayouMechanic"), CompletedJobCount(BayouStation, 3))
 @boostScore 10
 @once
 // STORY BEAT D
@@ -75,8 +90,18 @@ $choice .action.cancel; Not right now.
                 And that reminds me. I found that old article about Mer! 
 {@$MerchantId}  She was amazing. You're so lucky you get to follow in her footsteps. 
 $call GiveJournalEntry("N05_MersArticle")
-$set jobs:bayou-mechanic.trackBayou = false
-$set jobs:bayou-mechanic.givenArticle = true
+
+#ShopHandler(postFinalJob, JobCompleted(final-final))
+@once
+{@$MerchantId} O! I was hoping you'd stop by.
+{@$MerchantId} You okay? I heard about what happened.
+{@$MerchantId} It must've been so hard to lose the Challenger Deep... I know how much your sister's work meant to you. 
+{@player} Thanks, {nameof @bayouMechanic}. It's weird... but I'm actually feeling okay.  
+{@$MerchantId} Oh. Well, in that case...
+{@$MerchantId} You were AMAZING! 
+{@$MerchantId} Literally EVERYBODY's talking about it, O. Even {nameof @profBayou} was impressed!
+{@player} Wow. Seriously?? 
+{@$MerchantId} Yep. You're basically a legend. 
 
 
 :: action.cancel

@@ -24,6 +24,8 @@ namespace Aqua
 
         public IEnumerator Show(Color inColor, float inDuration)
         {
+            m_Graphic.material = GetMaterialForColor(ref inColor);
+
             if (inDuration <= 0)
             {
                 m_FadeRoutine.Stop();
@@ -67,6 +69,17 @@ namespace Aqua
             yield return m_Graphic.FadeTo(0, inDuration);
             if (inbAutoFree)
                 m_Pool.Free(this);
+        }
+
+        static private Material GetMaterialForColor(ref Color ioColor) {
+            // if (ioColor.r == 0 && ioColor.g == 0 && ioColor.b == 0) {
+            //     ioColor.r = 1 - ioColor.r;
+            //     ioColor.g = 1 - ioColor.g;
+            //     ioColor.b = 1 - ioColor.b;
+            //     return Services.Assets.SubtractCanvasMaterial;
+            // }
+
+            return null;
         }
 
         #endregion // Animations

@@ -12,13 +12,20 @@ $set jobs:final-final.rescueComplete = true
 $call CheckJobTasks()
 $call CompleteJob()
 
+{@sam} O! You did it! 
+{@sam} How did you get past the squid??
+{@player} It's... a long story. I'm just glad you're okay.
+{@ex} You're O? I've heard SO much about you!
+{@ex} {nameof @sam} said you're one of the most brilliant people they've ever met... just needed a little dose of confidence. 
+{@ex} Looks like you got it, huh?
+{@mack} Ahem. This is very sweet and all....
+{@mack} But can we take this little chat to the surface? 
+{@player} Yeah. Let's get out of here... before that thing comes back. 
+
+$call LoadSceneFade("RS-0-Credits")
+
 // Allow travel to all stations again
 $call UnlockStation(ArcticStation)
 $call UnlockStation(BayouStation)
 $call UnlockStation(CoralStation)
 $call UnlockStation(KelpStation)
-
-{@sam}  O! You did it!
-        Let's get out of here!
-
-$call LoadSceneFade("RS-0-Credits")

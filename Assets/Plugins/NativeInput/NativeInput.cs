@@ -20,7 +20,7 @@ namespace NativeUtils
         #if USE_JSLIB
 
         [DllImport("__Internal")]
-        static private extern void NativeWebInput_RegisterClick(PositionCallback callback);
+        static private extern void NativeWebInput_RegisterClick(PositionCallback callbackDown, PositionCallback callbackUp);
 
         [DllImport("__Internal")]
         static private extern void NativeWebInput_DeregisterClick();
@@ -28,9 +28,16 @@ namespace NativeUtils
         #endif // USE_JSLIB
 
         [MonoPInvokeCallback(typeof(PositionCallback)), Preserve]
-        static private void BridgeClickCallback(float x, float y) {
+        static private void BridgeClickDownCallback(float x, float y) {
             if (OnMouseDown != null) {
                 OnMouseDown(x, y);
+            }
+        }
+
+        [MonoPInvokeCallback(typeof(PositionCallback)), Preserve]
+        static private void BridgeClickUpCallback(float x, float y) {
+            if (OnMouseUp != null) {
+                OnMouseUp(x, y);
             }
         }
 
@@ -42,11 +49,12 @@ namespace NativeUtils
         }
 
         static public event PositionCallback OnMouseDown;
+        static public event PositionCallback OnMouseUp;
         static public event KeyCallback OnKeyDown;
 
         static public void Initialize() {
             #if USE_JSLIB
-            NativeWebInput_RegisterClick(BridgeClickCallback);
+            NativeWebInput_RegisterClick(BridgeClickDownCallback, BridgeClickUpCallback);
             #else
             if (s_InstantiatedCallback == null) {
                 GameObject go = new GameObject("[NativeWebInputMock]");
@@ -80,7 +88,10 @@ namespace NativeUtils
             private void LateUpdate() {
                 if (Input.GetMouseButtonDown(0)) {
                     Vector2 mousePos = Input.mousePosition;
-                    BridgeClickCallback(mousePos.x / Screen.width, mousePos.y / Screen.height);
+                    BridgeClickDownCallback(mousePos.x / Screen.width, mousePos.y / Screen.height);
+                } else if (Input.GetMouseButtonUp(0)) {
+                    Vector2 mousePos = Input.mousePosition;
+                    BridgeClickUpCallback(mousePos.x / Screen.width, mousePos.y / Screen.height);
                 }
             }
 
