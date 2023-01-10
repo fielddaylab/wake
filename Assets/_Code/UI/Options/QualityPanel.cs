@@ -9,6 +9,7 @@ namespace Aqua.Option
 
         [SerializeField] private ToggleOptionBar m_QualityLevel = null;
         [SerializeField] private ToggleOptionBar m_ResolutionLevel = null;
+        [SerializeField] private CheckboxOption m_FullscreenToggle = null;
 
         #endregion // Inspector
 
@@ -26,6 +27,9 @@ namespace Aqua.Option
                 .AddOption("options.quality.resolution.moderate.label", "options.quality.resolution.moderate.tooltip", OptionsPerformance.ResolutionMode.Moderate)
                 .AddOption("options.quality.resolution.high.label", "options.quality.resolution.high.tooltip", OptionsPerformance.ResolutionMode.High)
                 .Build();
+
+            m_FullscreenToggle.Initialize("options.quality.fullscreen.label",
+                "options.quality.fullscreen.tooltip", OnFullscreenChanged);
         }
 
         public override void Load(OptionsData inOptions)
@@ -34,6 +38,8 @@ namespace Aqua.Option
             
             m_QualityLevel.Sync(inOptions.Performance.Framerate);
             m_ResolutionLevel.Sync(inOptions.Performance.Resolution);
+
+            m_FullscreenToggle.Sync(Screen.fullScreen);
         }
 
         private void OnQualityLevelChanged(OptionsPerformance.FramerateMode inFramerate)
@@ -44,6 +50,10 @@ namespace Aqua.Option
         private void OnResolutionLevelChanged(OptionsPerformance.ResolutionMode inResolution)
         {
             Data.Performance.Resolution = inResolution;
+        }
+
+        private void OnFullscreenChanged(bool fullscreen) {
+            Screen.fullScreen = fullscreen;
         }
     }
 }

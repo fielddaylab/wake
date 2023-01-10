@@ -10,7 +10,6 @@ namespace Aqua.Option
 
         [SerializeField] private LocText m_Label = null;
         
-        [Header("Mute`")]
         [SerializeField] private Toggle m_Checkbox = null;
         [SerializeField] private CursorInteractionHint m_Hint = null;
         

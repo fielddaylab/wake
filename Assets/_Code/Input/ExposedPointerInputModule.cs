@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using BeauData;
-using BeauPools;
 using BeauUtil;
 using Aqua;
 using UnityEngine;
@@ -53,6 +52,13 @@ namespace Aqua
             }
 
             return false;
+        }
+
+        public void FindNativeClick(float x, float y, PointerEventData data) {
+            data.position = new Vector2(x * Screen.width, y * Screen.height);
+            eventSystem.RaycastAll(data, m_RaycastResultCache);
+            data.pointerCurrentRaycast = FindFirstRaycast(m_RaycastResultCache);
+            m_RaycastResultCache.Clear();
         }
 
         public bool IsEditingText()
