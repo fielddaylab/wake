@@ -572,7 +572,7 @@ namespace Aqua.Profile
             }
             writer.Header("Journal Ids");
             foreach(var journalId in m_JournalIds) {
-                writer.Text(journalId.ToDebugString());
+                writer.Text(Assets.NameOf(journalId));
             }
         }
 

@@ -107,12 +107,19 @@ namespace Aqua
 
             LoadBootParamsSecondPass();
             Async.InvokeAsync(RetrieveExpensiveSystemResources);
+
+            CrashHandler.Register();
+            CrashHandler.OnCrash += OnCrash;
+            #if !UNITY_EDITOR
+            CrashHandler.Enabled = true;
+            #endif // !UNITY_EDITOR
         }
 
         private void OnDestroy()
         {
             if (m_HasPersisted)
             {
+                CrashHandler.Deregister();
                 Services.Shutdown();
             }
         }
@@ -200,6 +207,14 @@ namespace Aqua
     
         static private void RetrieveExpensiveSystemResources() {
             Char.IsWhiteSpace('0');
+        }
+
+        static private void OnCrash(Exception e) {
+            Time.timeScale = 0;
+            Routine.Settings.Paused = true;
+            Services.Audio.DebugMix.Pause = true;
+            Services.Pause.Pause();
+            Services.Input.PushFlags(0);
         }
     }
 }

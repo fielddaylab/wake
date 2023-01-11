@@ -34,7 +34,7 @@ namespace EasyBugReporter {
             writer.BeginSection("World");
 
             foreach(var obj in GameObject.FindObjectsOfType<GameObject>()) {
-                obj.GetComponentsInChildren<IDumpSource>(true, tempUnityReporters);
+                obj.GetComponents<IDumpSource>(tempUnityReporters);
                 foreach(var reporter in tempUnityReporters) {
                     unityReporters.Add(reporter);
                 }
