@@ -920,6 +920,9 @@ namespace Aqua
         #endregion // Argumentation
 
         private void OnNetworkError(string url) {
+            if (url.Length > 480) {
+                url = url.Substring(0, 477) + "...";
+            }
             using(var e = m_Log.NewEvent("load_error")) {
                 e.Param("url", url);
             }
