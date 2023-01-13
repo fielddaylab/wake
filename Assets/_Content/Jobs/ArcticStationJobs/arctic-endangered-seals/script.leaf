@@ -27,7 +27,7 @@ $set jobs:arctic-endangered-seals.sync-failed = false
 @trigger    JobTaskCompleted
 @when       taskId == "modelPredict"
 @cutscene
-{@guide}    All right, back to {nameof arcticSci}!
+{@guide}    All right, back to {nameof @arcticSci}!
 
 
 // MODEL SUGGESTIONS
@@ -139,7 +139,7 @@ $endif
 @when 		JobTaskActive(reportBack)
 @boostScore -5
 @cutscene
-{@guide}    Head back to the station to let {nameof arcticSci} what you discovered!
+{@guide}    Head back to the station to let {nameof @arcticSci} what you discovered!
 
 
 // ARGUMENTATION
