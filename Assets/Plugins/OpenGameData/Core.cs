@@ -26,20 +26,27 @@ namespace OGD {
 
         public struct Error {
             public readonly ReturnStatus Status;
+            public readonly int HttpCode;
             public readonly string Msg;
 
-            public Error(ReturnStatus status, string msg) {
+            public Error(ReturnStatus status, string msg, int httpCode = 0) {
                 Status = status;
                 Msg = msg;
+                HttpCode = httpCode;
             }
 
-            public Error(string msg) {
+            public Error(string msg, int httpCode = 0) {
                 Status = ReturnStatus.Unknown;
                 Msg = msg;
+                HttpCode = httpCode;
             }
 
             public override string ToString() {
-                return string.Format("{0}({1})", Status, Msg);
+                if (HttpCode > 0) {
+                    return string.Format("{0}[{1}]({2})", Status, HttpCode, Msg);
+                } else {
+                    return string.Format("{0}({1})", Status, Msg);
+                }
             }
 
             static public readonly Error Success = default(Error);
@@ -118,6 +125,9 @@ namespace OGD {
             public string API;
             public StringBuilder ArgsBuilder;
             public int ArgCount;
+
+            public byte[] Body;
+            public string BodyContentType;
         }
 
         static internal Query NewQuery(string api) {
@@ -125,6 +135,8 @@ namespace OGD {
             query.API = api;
             query.ArgsBuilder = null;
             query.ArgCount = 0;
+            query.Body = null;
+            query.BodyContentType = null;
             return query;
         }
 
@@ -133,6 +145,8 @@ namespace OGD {
             query.API = string.Format(apiFormat, args);
             query.ArgsBuilder = null;
             query.ArgCount = 0;
+            query.Body = null;
+            query.BodyContentType = null;
             return query;
         }
 
@@ -166,6 +180,16 @@ namespace OGD {
             builder.ArgsBuilder.Append(EscapeURI(key))
                 .Append('=')
                 .Append(data);
+        }
+
+        static internal void QueryBody(ref Query builder, byte[] data, string contentType = "application/octet-stream") {
+            builder.Body = data;
+            builder.BodyContentType = contentType;
+        }
+
+        static internal void QueryBody(ref Query builder, string data, string contentType = "text/plain") {
+            builder.Body = Encoding.UTF8.GetBytes(data);
+            builder.BodyContentType = contentType;
         }
 
         static private string EscapeURI(string data) {
@@ -221,6 +245,12 @@ namespace OGD {
             UnityWebRequest uwr = new UnityWebRequest(pathBuilder.ToString(), method);
             uwr.downloadHandler = new DownloadHandlerBuffer();
 
+            if (query.Body != null) {
+                UploadHandlerRaw upload = new UploadHandlerRaw(query.Body);
+                upload.contentType = query.BodyContentType;
+                uwr.uploadHandler = upload;
+            }
+
             FreeStringBuilder(query.ArgsBuilder);
             FreeStringBuilder(pathBuilder);
             
@@ -273,7 +303,7 @@ namespace OGD {
             using(uwr)
             {
                 if (uwr.isHttpError || uwr.isNetworkError) {
-                    InvokeErrorResponse(uwr, new Error(ReturnStatus.Error_Network, uwr.error), userData, errorHandler);
+                    InvokeErrorResponse(uwr, new Error(ReturnStatus.Error_Network, uwr.error, (int) uwr.responseCode), userData, errorHandler);
                 } else {
                     try {
                         T response = JsonUtility.FromJson<T>(uwr.downloadHandler.text);
