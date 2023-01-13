@@ -45,7 +45,7 @@ namespace OGD {
             Core.CancelRequest(ref s_CurrentPostGameState);
 
             Core.Query query = Core.NewQuery("/player/{0}/game/{1}/state", playerId, Core.GameId());
-            Core.QueryArg(ref query, "state", state);
+            Core.QueryBody(ref query, state, "text/plain");
 
             return s_CurrentPostGameState = Core.Post<Core.DefaultResponse>(query, (response, data) => {
                 s_CurrentPostGameState = null;
