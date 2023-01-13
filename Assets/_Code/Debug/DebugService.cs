@@ -438,13 +438,6 @@ namespace Aqua.Debugging
             RootDebugMenu();
             #endif // DEVELOPMENT
 
-            DumpSourceCollection src = new DumpSourceCollection();
-            src.Add(new ScreenshotContext());
-            src.Add(new LogContext(EasyBugReporter.LogTypeMask.Development | EasyBugReporter.LogTypeMask.Log));
-            src.Add(new UnityContext());
-            src.Add(new SystemInfoContext());
-            BugReporter.DefaultSources = src;
-
             // BugReporter.OnExceptionOrAssert((s) => {
             //     BugReporter.DumpContextToMemory(DumpFormat.Text, (d) => {
             //         UnityEngine.Debug.LogError(d.Contents);
@@ -467,6 +460,8 @@ namespace Aqua.Debugging
         IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
         {
             DMInfo loggingMenu = new DMInfo("Logging");
+            loggingMenu.AddToggle("Enable Crash Handler", () => CrashHandler.Enabled, (b) => CrashHandler.Enabled = b);
+            loggingMenu.AddDivider();
             RegisterLogToggle(loggingMenu, LogMask.Input);
             RegisterLogToggle(loggingMenu, LogMask.Physics);
             RegisterLogToggle(loggingMenu, LogMask.Scripting);

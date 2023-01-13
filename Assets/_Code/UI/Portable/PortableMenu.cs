@@ -204,7 +204,7 @@ namespace Aqua.Portable {
             m_Canvas.enabled = false;
             m_Input.Override = false;
 
-            Streaming.UnloadUnusedAsync(15);
+            Streaming.UnloadUnusedAsync(30);
 
             base.OnHideComplete(inbInstant);
         }

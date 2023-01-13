@@ -47,7 +47,7 @@ $endif
 {@guide} Yes. It is, as humans might say, perplexing.
 {@player} Something else must be eating them.
 $if !JobTaskCompleted(determineStress)
-	{@guide} According to my data, {nameof profArctic} had one other theory.
+	{@guide} According to my data, {nameof @profArctic} had one other theory.
 	{@player} Oh yeah... we still need to figure out if Site Z is stressing the sponges!
 			  Maybe the Stress Tank will help us solve this. 
 $else
@@ -94,11 +94,11 @@ $branch .predatorComplete
 
 :: predatorComplete
 $if !JobTaskCompleted(determineStress)
-	{@guide} According to my data, {nameof profArctic} had one other theory.
+	{@guide} According to my data, {nameof @profArctic} had one other theory.
 	{@player} Oh yeah... we still need to figure out if Site Z is stressing the sponges!
 			  Maybe the Stress Tank will help us solve this. 
 $else
-	{@guide}	Sounds like it's time to show {nameof profArctic} what you've found!
+	{@guide}	Sounds like it's time to show {nameof @profArctic} what you've found!
 $endif
 
 // STRESS THEORY
@@ -111,7 +111,7 @@ $endif
 {@player} Okay. We've got the stress ranges for the Glass Sponges!
 		I'll just need to compare them with the conditions at Site Z, to see if they're relevant.
 		What now, {nameof @guide}?
-{@guide} You have investigated both of {nameof profArctic}'s theories.
+{@guide} You have investigated both of {nameof @profArctic}'s theories.
 		 I think you're ready to report back!
 
 :: stressDeterminedFirst
@@ -120,7 +120,7 @@ $endif
 @once
 @cutscene
 {@guide}  Adequate work, O! You'll just need to compare those results with the conditions at Site Z to see if they are relevant.
-		 According to my data, {nameof profArctic} had another theory about why the Glass Sponges are missing.
+		 According to my data, {nameof @profArctic} had another theory about why the Glass Sponges are missing.
 {@player}  Oh yeah... something might be eating them!
 		  Let's look into that next. 
 
@@ -164,7 +164,7 @@ $call CheckJobTasks()
 @when		JobTaskTop(checkPredator), !jobs:arctic-isolated-instance.checkedCrab
 @boostScore -5
 @cutscene
-{@player} What now, {nameof guide}?
+{@player} What now, {nameof @guide}?
 {@guide}  You need to find out if any predators from Site Z eat Glass Sponges.
 		  I would suggest placing them together in your {h}Observation Tank{/h}. 
 

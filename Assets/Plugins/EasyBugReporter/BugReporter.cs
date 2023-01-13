@@ -61,12 +61,9 @@ namespace EasyBugReporter {
                 DestroyHook();
             }
 
-            private void LateUpdate() {
-                UpdateDumpWork();
-            }
-
             private IEnumerator EndOfFrameLoop() {
                 while(true) {
+                    UpdateDumpWork();
                     yield return EndOfFrame;
                     DispatchEndOfFrame();
                 }
@@ -264,7 +261,7 @@ namespace EasyBugReporter {
             workItem.Writer = writer;
             workItem.OnCompleted = onCompleted;
             workItem.Progress = DumpWorkPhase.Freeze;
-            workItem.Title = string.IsNullOrEmpty(title) ? Application.productName : title;
+            workItem.Title = string.IsNullOrEmpty(title) ? Application.productName.Replace(':', '-').Replace('/', '-') : title;
             workItem.Timestamp = default;
             workItem.Flags = GetPlatformFlags(flags);
             workItem.TargetPath = GetPlatformPath(workItem.Title, workItem.Flags, format);
@@ -399,17 +396,17 @@ namespace EasyBugReporter {
             switch (Application.platform) {
                 case RuntimePlatform.Android:
                 case RuntimePlatform.WebGLPlayer:
-                    return path;
+                    return Uri.EscapeUriString(path);
 
                 case RuntimePlatform.WSAPlayerARM:
                 case RuntimePlatform.WSAPlayerX64:
                 case RuntimePlatform.WSAPlayerX86:
                 case RuntimePlatform.WindowsEditor:
                 case RuntimePlatform.WindowsPlayer:
-                    return "file:///" + path;
+                    return "file:///" + Uri.EscapeUriString(path);
 
                 default:
-                    return "file://" + path;
+                    return "file://" + Uri.EscapeUriString(path);
             }
         }
 
