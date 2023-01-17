@@ -130,6 +130,10 @@ namespace Aqua.Entity {
         }
 
         static public void Activate(int mask) {
+            if (!Services.Valid) {
+                return;
+            }
+            
             Services.State.FindManager<Visual2DSystem>().AddMask(mask);
         }
 

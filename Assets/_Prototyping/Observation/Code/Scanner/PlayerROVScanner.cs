@@ -189,7 +189,7 @@ namespace ProtoAqua.Observation
                 if (inbOnGamePlane)
                     outWorld = m_TargetScannable.Collider.transform.position;
                 else
-                    outWorld = m_TargetScannable.transform.position;
+                    outWorld = m_TargetScannable.TrackTransform.position;
 
                 outCursor = m_TargetScannable.Click.transform.position;
             }
