@@ -21,12 +21,12 @@ public class SchoolChild : MonoBehaviour
 	public Transform _model;        //transform of fish model
 
 	[NonSerialized] private float _targetSpeed;             //Fish target speed
-	public Transform _scanner;              //Scanner object used for push, this rotates to check for collisions
+	// public Transform _scanner;              //Scanner object used for push, this rotates to check for collisions
 
     [NonSerialized] private Vector3 _wayPoint;
-    [NonSerialized] private bool _scan = true;
-    [NonSerialized] private float _rotateCounterR;          //Used to increase avoidance speed over time
-	[NonSerialized] private float _rotateCounterL;
+    // [NonSerialized] private bool _scan = true;
+    // [NonSerialized] private float _rotateCounterR;          //Used to increase avoidance speed over time
+	// [NonSerialized] private float _rotateCounterL;
 	[NonSerialized] private float tParam = 0.0f;                //
 	[NonSerialized] private Material fishMaterial;   //Material with wave speed parameter
 
@@ -129,20 +129,20 @@ public class SchoolChild : MonoBehaviour
 	private void LocateRequiredChildren()
 	{
 		if (_model == null) _model = this.gameObject.transform.GetChild(0);
-		if (_scanner == null && _spawner._avoidance)
-		{
-			_scanner = new GameObject().transform;
-			_scanner.parent = this.transform;
-			_scanner.localRotation = Quaternion.identity;
-			_scanner.localPosition = Vector3.zero;
-#if UNITY_EDITOR
-			if (!_sWarning)
-			{
-				Debug.Log("No scanner assigned: creating... (Increase instantiate performance by manually creating a scanner object)");
-				_sWarning = true;
-			}
-#endif
-		}
+// 		if (_scanner == null && _spawner._avoidance)
+// 		{
+// 			_scanner = new GameObject().transform;
+// 			_scanner.parent = this.transform;
+// 			_scanner.localRotation = Quaternion.identity;
+// 			_scanner.localPosition = Vector3.zero;
+// #if UNITY_EDITOR
+// 			if (!_sWarning)
+// 			{
+// 				Debug.Log("No scanner assigned: creating... (Increase instantiate performance by manually creating a scanner object)");
+// 				_sWarning = true;
+// 			}
+// #endif
+// 		}
 
 		fishMaterial = _model.GetComponent<Renderer>().material;
 	}

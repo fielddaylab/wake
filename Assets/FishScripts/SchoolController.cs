@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System;
 using BeauUtil;
 
+[DefaultExecutionOrder(-1)]
 public class SchoolController : MonoBehaviour, ScriptableBake.IBaked {
 	
 	public SchoolChild[] _childPrefab;			// Assign prefab with SchoolChild script attached
@@ -79,7 +80,7 @@ public class SchoolController : MonoBehaviour, ScriptableBake.IBaked {
 	[NonSerialized] public int _updateCounter;
 	[NonSerialized] public int _activeChildren;
 	
-	public void Start() {
+	public void Awake() {
 		_posBuffer = transform.position + _posOffset;
 		_schoolSpeed = RNG.Instance.NextFloat(1.0f , _childSpeedMultipler);
 		Invoke("AutoRandomWaypointPosition", RandomWaypointTime());
