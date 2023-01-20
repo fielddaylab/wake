@@ -110,7 +110,7 @@ namespace Aqua
             Async.InvokeAsync(RetrieveExpensiveSystemResources);
 
             CrashHandler.Register();
-            CrashHandler.OnCrash += OnCrash;
+            CrashHandler.DisplayCrash += OnCrash;
             #if !UNITY_EDITOR
             CrashHandler.Enabled = true;
             #endif // !UNITY_EDITOR
@@ -210,7 +210,7 @@ namespace Aqua
             Char.IsWhiteSpace('0');
         }
 
-        static private void OnCrash(Exception e, out string context) {
+        static private void OnCrash(Exception e, string error, out string context) {
             Time.timeScale = 0;
             Routine.Settings.Paused = true;
             Services.Audio.DebugMix.Pause = true;
