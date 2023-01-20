@@ -286,7 +286,7 @@ $set    world:shop.boughtFlashlightFrom = "kelp"
                 Okay. New plan, mijita. Go retrieve it, and you can keep it.
 {@player}       {nameof FinalStation}... isn't that near where Sam's mission started out?
 {@kelpMechanic} Yes, I think so.
-                But don't worry, Mijita. You won't need to go {i}too{/i} deep.
+                But don't worry, Mijita. You won't need to go <i>too</i> deep.
                 Just keep an eye out for monsters down there. 
 
 $call UnlockSite(RS-0)
@@ -349,7 +349,7 @@ $EvaluateItemPurchase()
 {@$MerchantId}   This is the {nameof StressTank}!
                  Use it to measure the stress ranges of different organisms. 
                 Really helpful if you want to understand the conditions that different creatures need to thrive.
-{@player}       Awww. I hope it doesn't stress them out {i}too{/i} much...
+{@player}       Awww. I hope it doesn't stress them out <i>too</i> much...
 {@$MerchantId}  Don't worry. The tank is designed to stop making adjustments before any creatures end up harmed. 
 $EvaluateItemPurchase()
 
@@ -363,13 +363,13 @@ $EvaluateItemPurchase()
 
 #ItemHandler(VisualModel)
 {@$MerchantId}  The {nameof VisualModel}! Every scientist needs one of these. 
-                Perfect for your {map-name}Modeling Station{/map-name}!
+                Perfect for your {map-name}Modeling Lab{/map-name}!
                 Use it to create visual models and understand the interactions between species.
 {@player}       Ooh, this definitely sounds useful.       
 $EvaluateItemPurchase()
 
 #ItemHandler(PredictionModel)
-{@$MerchantId}  The {nameof PredictionModel} is an essential tool for your {map-name}Modeling Station{/map-name}!
+{@$MerchantId}  The {nameof PredictionModel} is an essential tool for your {map-name}Modeling Lab{/map-name}!
                 Once you've got enough data, you can use it to make predictions. 
                 Super useful if you want to understand what might happen in an ecosystem.
 $EvaluateItemPurchase()
