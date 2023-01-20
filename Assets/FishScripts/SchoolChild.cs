@@ -5,6 +5,7 @@
 
 using System;
 using BeauUtil;
+using BeauUtil.Debugger;
 using UnityEngine;
 
 
@@ -28,7 +29,7 @@ public class SchoolChild : MonoBehaviour
     // [NonSerialized] private float _rotateCounterR;          //Used to increase avoidance speed over time
 	// [NonSerialized] private float _rotateCounterL;
 	[NonSerialized] private float tParam = 0.0f;                //
-	[NonSerialized] private Material fishMaterial;   //Material with wave speed parameter
+	[NonSerialized] private Renderer fishRenderer;   //Renderer with material with wave speed parameter
 
     [NonSerialized] private bool _instantiated;         //Has this been instantiated
 	[NonSerialized] private int _updateSeed = -1;
@@ -43,12 +44,17 @@ public class SchoolChild : MonoBehaviour
 #endif
 
     static private int AnimParam_FishAnimSpeed;
+    static private MaterialPropertyBlock s_PropertyBlock;
 	static int _updateNextSeed = 0; //When using frameskip seed will prevent calculations for all fish to be on the same frame
 
 	public void Start()
 	{
         if (AnimParam_FishAnimSpeed == 0) {
             AnimParam_FishAnimSpeed = Shader.PropertyToID("fishWaveSpeed");
+        }
+
+        if (s_PropertyBlock == null) {
+            s_PropertyBlock = new MaterialPropertyBlock();
         }
 
 		//Check if there is a controller attached
@@ -114,7 +120,9 @@ public class SchoolChild : MonoBehaviour
 	private void OnDisable()
 	{
 		CancelInvoke();
-		_spawner._activeChildren--;
+        if (_instantiated) {
+		    _spawner._activeChildren--;
+        }
 	}
 
 	private void OnEnable()
@@ -144,7 +152,7 @@ public class SchoolChild : MonoBehaviour
 // #endif
 // 		}
 
-		fishMaterial = _model.GetComponent<Renderer>().material;
+		fishRenderer = _model.GetComponent<Renderer>();
 	}
 
 	private void SkewModelForLessUniformedMovement()
@@ -382,7 +390,9 @@ public class SchoolChild : MonoBehaviour
 		//foreach(AnimationState state in _model.GetComponent<Animation>()) {
 		//	state.speed = (RNG.Instance.NextFloat(_spawner._minAnimationSpeed, _spawner._maxAnimationSpeed)*_spawner._schoolSpeed*this._speed)+.1f;}
 
-		fishMaterial.SetFloat(AnimParam_FishAnimSpeed, randomAnimSpeed + (this._speed / 2));
+        fishRenderer.GetPropertyBlock(s_PropertyBlock);
+        s_PropertyBlock.SetFloat(AnimParam_FishAnimSpeed, randomAnimSpeed + (this._speed / 2));
+		fishRenderer.SetPropertyBlock(s_PropertyBlock);
 	}
 
 	public void Wander(float delay)

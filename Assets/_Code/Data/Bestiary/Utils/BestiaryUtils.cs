@@ -401,14 +401,6 @@ namespace Aqua
         }
 
         /// <summary>
-        /// Formats a property amount adjustment.
-        /// </summary>
-        static public string FormatPropertyAdjust(float inAmount, WaterPropertyId inPropertyId)
-        {
-            return BestiaryUtils.Property(inPropertyId).FormatValueAdjust(inAmount);
-        }
-
-        /// <summary>
         /// Formats a percentage.
         /// </summary>
         static public string FormatPercentage(float inAmount)

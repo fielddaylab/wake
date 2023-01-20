@@ -76,7 +76,7 @@ namespace ProtoAqua.Observation {
 
             if (m_Active) {
                 if (m_Phase != Phase.Charging) {
-                    Services.Audio.PostEvent("ROV.Breaker.Off");
+                    // Services.Audio.PostEvent("ROV.Breaker.Off");
                 }
                 m_ExecuteRoutine.Stop();
                 Cancel();
@@ -95,7 +95,7 @@ namespace ProtoAqua.Observation {
             
             if (!m_Active) {
                 m_Active = true;
-                Services.Audio.PostEvent("ROV.Breaker.On");
+                // Services.Audio.PostEvent("ROV.Breaker.On");
                 m_BreakListener.enabled = false;
                 m_UI.Enable(inBody.transform);
             }

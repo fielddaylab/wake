@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using BeauPools;
 using BeauUtil;
 using EasyAssetStreaming;
 using Leaf;
@@ -23,11 +24,8 @@ namespace Aqua
         [SerializeField] private ColorPalette4 m_Palette = new ColorPalette4(ColorBank.White, ColorBank.Gray);
 
         [Header("Text")]
-        [SerializeField] private string m_Format = "{0}";
-        [SerializeField] private float m_DisplayScale = 1;
-        [SerializeField] private string m_AdjustFormat = "{0}";
-        [SerializeField] private float m_AdjustDisplayScale = 1;
-        [SerializeField] private bool m_ScientificNotation = false;
+        [SerializeField] private string m_Units = "";
+        [SerializeField] private int m_SignificantDigits = 1;
 
         [Header("Facts")]
         [SerializeField] private TextId m_EnvironmentFactFormat = default;
@@ -63,17 +61,28 @@ namespace Aqua
         
         public string FormatValue(float inValue)
         {
-            return string.IsNullOrEmpty(m_Format) ? (inValue * m_DisplayScale).ToString() : string.Format(m_Format, inValue * m_DisplayScale);
-        }
+            double value = inValue;
+            int exponent = 0;
+            if (value > 1000) {
+                while(value >= 10) {
+                    value /= 10;
+                    exponent++;
+                }
+            } else if (value < 0.1) {
+                while(value < 0.95) {
+                    value *= 10;
+                    exponent--;
+                }
+            }
 
-        public string FormatValueAdjust(float inValue)
-        {
-            return string.IsNullOrEmpty(m_AdjustFormat) ? (inValue * m_AdjustDisplayScale).ToString() : string.Format(m_AdjustFormat, inValue * m_AdjustDisplayScale);
-        }
-
-        public float DisplayValue(float inValue)
-        {
-            return inValue * m_DisplayScale;
+            using(PooledStringBuilder psb = PooledStringBuilder.Create()) {
+                psb.Builder.AppendNoAlloc(value, m_SignificantDigits, 0);
+                if (exponent != 0) {
+                    psb.Builder.Append("e").AppendNoAlloc(exponent);
+                }
+                psb.Builder.Append(m_Units);
+                return psb.Builder.Flush();
+            }
         }
 
         public float MinValue() { return m_MinValue; }
