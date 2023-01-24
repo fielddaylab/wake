@@ -117,7 +117,7 @@ $call GiveJournalEntry("N05_MersArticle")
 {@$MerchantId}   {random Hey,|As a bonus,} this would unlock some jobs over at the {nameof $local:hintStation}!
 
 :: lowExp
-{@$MerchantId}   Oh, {random hang on|sorry}... you don't have enough {exp}experience{/exp} for this one yet. 
+{@$MerchantId}   Oh, {random hang on|sorry}... you don't have a high enough {h}Clearance Level{/h} for this one yet. 
 
 :: freeItem
 {@$MerchantId}   So, want the {nameof $local:itemId}? Free to a good home!
@@ -155,7 +155,7 @@ $call GiveJournalEntry("N05_MersArticle")
                 I'll be here. Probably super caffeinated. 
 
 #CloseHandler(notEnoughExp, shop:needsExpCount)
-{@$MerchantId}  Come back when you've got more {exp}experience{/exp}! 
+{@$MerchantId}  Come back when you've got a higher {h}Clearance Level{/h}! 
                 Or just when you want a break from all the passive-aggressive bickering... that'd work too. 
 
 #OpenExplorationHandler(a)

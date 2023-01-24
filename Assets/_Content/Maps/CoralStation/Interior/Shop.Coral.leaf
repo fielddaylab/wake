@@ -135,7 +135,7 @@ $choice .action.cancel; Not right now.
 {@$MerchantId}   {random Ooh,|Hey,|Just a tip for ya...} looks like this would unlock some jobs over at the {nameof $local:hintStation}!
 
 :: lowExp
-{@$MerchantId}   {random Oh... whoops.|Huh... scratch that.} You don't have enough {exp}experience{/exp} for this one yet.
+{@$MerchantId}   {random Oh... whoops.|Huh... scratch that.} You don't have a high enough {h}Clearance Level{/h} for this one yet.
 
 :: freeItem
 {@$MerchantId}   So, want the {nameof $local:itemId}? Won't cost you anything.
@@ -172,7 +172,7 @@ $choice .action.cancel; Not right now.
 {@$MerchantId}  Come back when you've got some more {pluralnameof Cash}! 
 
 #CloseHandler(notEnoughExp, shop:needsExpCount)
-{@$MerchantId}  Come back when you've got more {exp}experience{/exp}!
+{@$MerchantId}  Come back when you've got a higher {h}Clearance Level{/h}!
 
 #OpenExplorationHandler(a)
 {@$MerchantId}  Wanna check out these sweet exploration tools?

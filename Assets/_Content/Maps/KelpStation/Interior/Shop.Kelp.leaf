@@ -145,7 +145,7 @@ $choice .action.cancel; Not right now.
 {@$MerchantId}   This would unlock some jobs over at the {nameof $local:hintStation}!
 
 :: lowExp
-{@$MerchantId}   Oh, {random hang on|sorry, mijita}... I can't let you have this just yet. You'll need more {exp}experience{/exp} first. 
+{@$MerchantId}   Oh, {random hang on|sorry, mijita}... I can't let you have this just yet. You'll need {h}Clearance Level {$local:requiredLevel}{/h} first.
 
 :: freeItem
 {@$MerchantId}   So, want the {nameof $local:itemId}? Won't cost you anything.
@@ -235,7 +235,7 @@ $call CheckJobTasks()
 {@$MerchantId}  Come back with some more {pluralnameof Cash} next time.
 
 #CloseHandler(notEnoughExp, shop:needsExpCount)
-{@$MerchantId}  Come back when you've got some more {exp}experience{/exp}!
+{@$MerchantId}  Come back when you've got a higher {h}Clearance Level{/h}!
 
 #OpenExplorationHandler(a)
 {@$MerchantId}  Interested in any sub upgrades? 

@@ -92,7 +92,7 @@ public class SchoolController : MonoBehaviour, ScriptableBake.IBaked, IScenePrel
     {
         enabled = true;
         foreach(var child in _roamers) {
-            child.enabled = true;
+            child.Initialize();
         }
         Invoke("AutoRandomWaypointPosition", RandomWaypointTime());
         return null;
@@ -165,15 +165,15 @@ public class SchoolController : MonoBehaviour, ScriptableBake.IBaked, IScenePrel
 	//Set waypoint randomly inside box
 	public void SetRandomWaypointPosition() {
 		_schoolSpeed = RNG.Instance.NextFloat(1.0f , _childSpeedMultipler);
-		Vector3 t = Vector3.zero;
-		t.x = RNG.Instance.NextFloat(-_positionSphere, _positionSphere) + transform.position.x;
-		t.z = RNG.Instance.NextFloat(-_positionSphereDepth, _positionSphereDepth) + transform.position.z;
-		t.y = RNG.Instance.NextFloat(-_positionSphereHeight, _positionSphereHeight) + transform.position.y;
+		Vector3 t = transform.position;
+		t.x += RNG.Instance.NextFloat(-_positionSphere, _positionSphere);
+		t.z += RNG.Instance.NextFloat(-_positionSphereDepth, _positionSphereDepth);
+		t.y += RNG.Instance.NextFloat(-_positionSphereHeight, _positionSphereHeight);
 		_posBuffer = t;	
 		if(_forceChildWaypoints){
 			for(int i = 0; i < _roamers.Count; i++) {
 	  		 	(_roamers[i]).Wander(RNG.Instance.NextFloat()*_forcedRandomDelay);
-			}	
+			}
 		}
 	}
 	
