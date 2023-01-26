@@ -17,19 +17,22 @@ namespace Aqua
 {
     public partial class LocService : ServiceBehaviour, ILoadable
     {
+        static private readonly FourCC DefaultLanguage = FourCC.Parse("EN");
+
         #region Inspector
 
         [SerializeField, Required] private LocManifest m_EnglishManifest;
 
         #endregion // Inspector
 
-        private LocPackage m_LanguagePackage;
+        [NonSerialized] private LocPackage m_LanguagePackage;
 
         private Routine m_LoadRoutine;
         private IPool<TagString> m_TagStringPool;
 
-        private bool m_Loading;
-        private List<LocText> m_ActiveTexts = new List<LocText>(64);
+        [NonSerialized] private bool m_Loading;
+        [NonSerialized] private FourCC m_CurrentLanguage;
+        [NonSerialized] private List<LocText> m_ActiveTexts = new List<LocText>(64);
         
         #region Loading
 
@@ -55,6 +58,7 @@ namespace Aqua
 
             DebugService.Log(LogMask.Loading | LogMask.Localization, "[LocService] Loaded {0} keys ({1})", m_LanguagePackage.Count, manifest.LanguageId.ToString());
 
+            m_CurrentLanguage = manifest.LanguageId;
             m_Loading = false;
             DispatchTextRefresh();
         }
@@ -89,7 +93,10 @@ namespace Aqua
             bool hasEvents;
             if (!m_LanguagePackage.TryGetContent(inKey, out content))
             {
-                Debug.LogErrorFormat("[LocService] Unable to locate entry for '{0}' ({1})", inKey.Source(), inKey.Hash().HashValue);
+                if (inDefault.IsEmpty || m_CurrentLanguage != DefaultLanguage)
+                {
+                    Debug.LogErrorFormat("[LocService] Unable to locate entry for '{0}' ({1})", inKey.Source(), inKey.Hash().HashValue);
+                }
                 content = inDefault.ToString();
                 hasEvents = content.IndexOf('{') >= 0;
             }

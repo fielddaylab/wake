@@ -8,11 +8,14 @@ using System.IO;
 using UnityEngine.Scripting;
 using BeauUtil.Debugger;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace Aqua
 {
     public class LocPackage : ScriptableDataBlockPackage<LocNode>
     {
+        private const int MaxCompressedSize = 1024 * 1024 * 2;
+
         private readonly Dictionary<StringHash32, string> m_Nodes = new Dictionary<StringHash32, string>(512);
         private readonly HashSet<StringHash32> m_IdsWithEvents = Collections.NewSet<StringHash32>(128);
 
@@ -97,6 +100,45 @@ namespace Aqua
             foreach(var kv in inPackage.m_Nodes)
             {
                 yield return new KeyValuePair<StringHash32, string>(kv.Key, kv.Value);
+            }
+        }
+
+        static internal unsafe byte[] Compress(LocPackage[] inPackages)
+        {
+            LocPackage tmpPkg = ScriptableObject.CreateInstance<LocPackage>();
+            byte* buffer = Unsafe.AllocArray<byte>(MaxCompressedSize);
+            byte* head = buffer;
+            int bufferLength = 0;
+            try {
+                foreach(var pkg in inPackages) {
+                    BlockParser.Parse(ref tmpPkg, pkg, Parsing.Block, Generator.Instance);
+                }
+
+                UnsafeExt.Write(&head, &bufferLength, (ushort) tmpPkg.m_Nodes.Count);
+                foreach(var kv in tmpPkg.m_Nodes) {
+                    UnsafeExt.Write(&head, &bufferLength, kv.Key);
+                    string str = kv.Value;
+                    fixed(char* strChars = str) {
+                        byte* lengthMarker = head;
+                        UnsafeExt.Write(&head, &bufferLength, (ushort) str.Length);
+                        ushort byteLength = (ushort) StringUtils.EncodeUFT8(strChars, str.Length, head, MaxCompressedSize - bufferLength);
+                        Unsafe.Copy(lengthMarker, sizeof(ushort), &byteLength, sizeof(ushort));
+                        head += byteLength;
+                        bufferLength += byteLength;
+                    }
+                }
+
+                UnsafeExt.Write(&head, &bufferLength, (ushort) tmpPkg.m_IdsWithEvents.Count);
+                foreach(var v in tmpPkg.m_IdsWithEvents) {
+                    UnsafeExt.Write(&head, &bufferLength, v);
+                }
+
+                byte[] written = new byte[bufferLength];
+                Unsafe.CopyArray(buffer, bufferLength, written);
+                return written;
+            } finally {
+                DestroyImmediate(tmpPkg);
+                Unsafe.Free(buffer);
             }
         }
 
