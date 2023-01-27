@@ -56,7 +56,7 @@ $call UnlockSite(RS-1B)
 
 :: helpAtSiteB.A
 @trigger    RequestPartnerHelp
-@when 		scene:name == "RS-1B", JobTaskTop(getTagged)
+@when 		scene:name == "RS-1B", !JobTaskCompleted(getTagged)
 @cutscene
 {@player} 	Ok, here we are. What now?
 {@guide}    According to your task list in AQOS, you'll need to count all the organisms here. 
@@ -76,13 +76,11 @@ $endif
 @once
 @cutscene
 {@player}	Okay, we've got the current population count.
-            That's a LOT of urchins. 
-            What now, {nameof @guide}?
-{@guide}    Now you must find the {h}Historic Population Probe{/h} and upload its data!
+            That's a LOT of urchins.
 
 :: helpAtSiteB.B
 @trigger    RequestPartnerHelp
-@when 		scene:name == "RS-1B", JobTaskTop(getProbeData)
+@when 		scene:name == "RS-1B", !JobTaskCompleted(getProbeData)
 @cutscene
 
 {@player}   What should I do next?
@@ -98,7 +96,11 @@ $endif
 {@player}   Hmm. Looks like the urchins have been taking over for a while.
             But why?
 {@guide}    I'm not sure, O. 
-            You'll need to head back to your ship and interpret this data. 
+{@guide}    You'll need to head back to your ship and interpret this data.
+$if !JobTaskCompleted(getTagged)
+    // still need to tag
+    {@guide}    But first, let's wrap up counting organism populations here.
+$endif
 
 // TO MODELING
 
