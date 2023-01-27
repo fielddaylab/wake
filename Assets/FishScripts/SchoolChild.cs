@@ -5,6 +5,7 @@
 
 using System;
 using BeauUtil;
+using BeauUtil.Debugger;
 using UnityEngine;
 
 
@@ -17,7 +18,7 @@ public class SchoolChild : MonoBehaviour
 	public float _speed = 10.0f;                //Fish Speed
 
 	[NonSerialized] float _stuckCounter;            //prevents looping around a waypoint
-	float _damping;                 //Turn speed
+	[NonSerialized] float _damping;                 //Turn speed
 	public Transform _model;        //transform of fish model
 
 	[NonSerialized] private float _targetSpeed;             //Fish target speed
@@ -28,7 +29,7 @@ public class SchoolChild : MonoBehaviour
     // [NonSerialized] private float _rotateCounterR;          //Used to increase avoidance speed over time
 	// [NonSerialized] private float _rotateCounterL;
 	[NonSerialized] private float tParam = 0.0f;                //
-	[NonSerialized] private Material fishMaterial;   //Material with wave speed parameter
+	[NonSerialized] private Renderer fishRenderer;   //Renderer with material with wave speed parameter
 
     [NonSerialized] private bool _instantiated;         //Has this been instantiated
 	[NonSerialized] private int _updateSeed = -1;
@@ -43,12 +44,17 @@ public class SchoolChild : MonoBehaviour
 #endif
 
     static private int AnimParam_FishAnimSpeed;
+    static private MaterialPropertyBlock s_PropertyBlock;
 	static int _updateNextSeed = 0; //When using frameskip seed will prevent calculations for all fish to be on the same frame
 
-	public void Start()
+	public void Initialize()
 	{
         if (AnimParam_FishAnimSpeed == 0) {
             AnimParam_FishAnimSpeed = Shader.PropertyToID("fishWaveSpeed");
+        }
+
+        if (s_PropertyBlock == null) {
+            s_PropertyBlock = new MaterialPropertyBlock();
         }
 
 		//Check if there is a controller attached
@@ -68,6 +74,7 @@ public class SchoolChild : MonoBehaviour
 			GetStartPos();
 			FrameSkipSeedInit();
 			_spawner._activeChildren++;
+            this.enabled = true;
 			return;
 		}
 
@@ -114,7 +121,9 @@ public class SchoolChild : MonoBehaviour
 	private void OnDisable()
 	{
 		CancelInvoke();
-		_spawner._activeChildren--;
+        if (_instantiated) {
+		    _spawner._activeChildren--;
+        }
 	}
 
 	private void OnEnable()
@@ -144,7 +153,7 @@ public class SchoolChild : MonoBehaviour
 // #endif
 // 		}
 
-		fishMaterial = _model.GetComponent<Renderer>().material;
+		fishRenderer = _model.GetComponent<Renderer>();
 	}
 
 	private void SkewModelForLessUniformedMovement()
@@ -229,92 +238,6 @@ public class SchoolChild : MonoBehaviour
 	// 	_scanner.Rotate(new Vector3(150 * _spawner._newDelta, 0.0f, 0.0f));
 	// }
 
-	public bool Avoidance()
-	{
-		// //Avoidance () - Returns true if there is an obstacle in the way
-		// if (!_spawner._avoidance)
-		// 	return false;
-		// RaycastHit hit = new RaycastHit();
-		// float d = 0.0f;
-		// Quaternion rx = _cacheTransform.rotation;
-		// Vector3 ex = _cacheTransform.rotation.eulerAngles;
-		// Vector3 cacheForward = _cacheTransform.forward;
-		// Vector3 cacheRight = _cacheTransform.right;
-		// //Up / Down avoidance
-		// if (Physics.Raycast(_cacheTransform.position, -Vector3.up + (cacheForward * .1f), out hit, _spawner._avoidDistance, _spawner._avoidanceMask))
-		// {
-		// 	//Debug.DrawLine(_cacheTransform.position,hit.point);
-		// 	d = (_spawner._avoidDistance - hit.distance) / _spawner._avoidDistance;
-		// 	ex.x -= _spawner._avoidSpeed * d * _spawner._newDelta * (_speed + 1);
-		// 	rx.eulerAngles = ex;
-		// 	_cacheTransform.rotation = rx;
-		// }
-		// if (Physics.Raycast(_cacheTransform.position, Vector3.up + (cacheForward * .1f), out hit, _spawner._avoidDistance, _spawner._avoidanceMask))
-		// {
-		// 	//Debug.DrawLine(_cacheTransform.position,hit.point);
-		// 	d = (_spawner._avoidDistance - hit.distance) / _spawner._avoidDistance;
-		// 	ex.x += _spawner._avoidSpeed * d * _spawner._newDelta * (_speed + 1);
-		// 	rx.eulerAngles = ex;
-		// 	_cacheTransform.rotation = rx;
-		// }
-
-		// //Crash avoidance //Checks for obstacles forward
-		// if (Physics.Raycast(_cacheTransform.position, cacheForward + (cacheRight * RNG.Instance.NextFloat(-.1f, .1f)), out hit, _spawner._stopDistance, _spawner._avoidanceMask))
-		// {
-		// 	//					Debug.DrawLine(_cacheTransform.position,hit.point);
-		// 	d = (_spawner._stopDistance - hit.distance) / _spawner._stopDistance;
-		// 	ex.y -= _spawner._avoidSpeed * d * _spawner._newDelta * (_targetSpeed + 3);
-		// 	rx.eulerAngles = ex;
-		// 	_cacheTransform.rotation = rx;
-		// 	_speed -= d * _spawner._newDelta * _spawner._stopSpeedMultiplier * _speed;
-		// 	if (_speed < 0.01f)
-		// 	{
-		// 		_speed = 0.01f;
-		// 	}
-		// 	return true;
-		// }
-		// else if (Physics.Raycast(_cacheTransform.position, cacheForward + (cacheRight * (_spawner._avoidAngle + _rotateCounterL)), out hit, _spawner._avoidDistance, _spawner._avoidanceMask))
-		// {
-		// 	//				Debug.DrawLine(_cacheTransform.position,hit.point);
-		// 	d = (_spawner._avoidDistance - hit.distance) / _spawner._avoidDistance;
-		// 	_rotateCounterL += .1f;
-		// 	ex.y -= _spawner._avoidSpeed * d * _spawner._newDelta * _rotateCounterL * (_speed + 1);
-		// 	rx.eulerAngles = ex;
-		// 	_cacheTransform.rotation = rx;
-		// 	if (_rotateCounterL > 1.5f)
-		// 		_rotateCounterL = 1.5f;
-		// 	_rotateCounterR = 0.0f;
-		// 	return true;
-		// }
-		// else if (Physics.Raycast(_cacheTransform.position, cacheForward + (cacheRight * -(_spawner._avoidAngle + _rotateCounterR)), out hit, _spawner._avoidDistance, _spawner._avoidanceMask))
-		// {
-		// 	//			Debug.DrawLine(_cacheTransform.position,hit.point);
-		// 	d = (_spawner._avoidDistance - hit.distance) / _spawner._avoidDistance;
-		// 	if (hit.point.y < _cacheTransform.position.y)
-		// 	{
-		// 		ex.y -= _spawner._avoidSpeed * d * _spawner._newDelta * (_speed + 1);
-		// 	}
-		// 	else
-		// 	{
-		// 		ex.x += _spawner._avoidSpeed * d * _spawner._newDelta * (_speed + 1);
-		// 	}
-		// 	_rotateCounterR += .1f;
-		// 	ex.y += _spawner._avoidSpeed * d * _spawner._newDelta * _rotateCounterR * (_speed + 1);
-		// 	rx.eulerAngles = ex;
-		// 	_cacheTransform.rotation = rx;
-		// 	if (_rotateCounterR > 1.5f)
-		// 		_rotateCounterR = 1.5f;
-		// 	_rotateCounterL = 0.0f;
-		// 	return true;
-		// }
-		// else
-		// {
-		// 	_rotateCounterL = 0.0f;
-		// 	_rotateCounterR = 0.0f;
-		// }
-		return false;
-	}
-
 	public void ForwardMovement()
 	{
 		_cacheTransform.position += _cacheTransform.TransformDirection(Vector3.forward) * _speed * _spawner._newDelta;
@@ -336,10 +259,7 @@ public class SchoolChild : MonoBehaviour
 	{
 		Quaternion rotation = Quaternion.identity;
 		rotation = Quaternion.LookRotation(_wayPoint - _cacheTransform.position);
-		if (!Avoidance())
-		{
-			_cacheTransform.rotation = Quaternion.Slerp(_cacheTransform.rotation, rotation, _spawner._newDelta * _damping);
-		}
+		_cacheTransform.rotation = Quaternion.Slerp(_cacheTransform.rotation, rotation, _spawner._newDelta * _damping);
 		//Limit rotation up and down to avoid freaky behavior
 		float angle = _cacheTransform.localEulerAngles.x;
 		angle = (angle > 180) ? angle - 360 : angle;
@@ -382,7 +302,9 @@ public class SchoolChild : MonoBehaviour
 		//foreach(AnimationState state in _model.GetComponent<Animation>()) {
 		//	state.speed = (RNG.Instance.NextFloat(_spawner._minAnimationSpeed, _spawner._maxAnimationSpeed)*_spawner._schoolSpeed*this._speed)+.1f;}
 
-		fishMaterial.SetFloat(AnimParam_FishAnimSpeed, randomAnimSpeed + (this._speed / 2));
+        fishRenderer.GetPropertyBlock(s_PropertyBlock);
+        s_PropertyBlock.SetFloat(AnimParam_FishAnimSpeed, randomAnimSpeed + (this._speed / 2));
+		fishRenderer.SetPropertyBlock(s_PropertyBlock);
 	}
 
 	public void Wander(float delay)

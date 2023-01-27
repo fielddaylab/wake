@@ -10,7 +10,7 @@ using Aqua;
 
 namespace ProtoAqua.Observation
 {
-    public class ScanDataPackage : ScriptableDataBlockPackage<ScanData>
+    public class ScanDataPackage : ScriptableDataBlockPackage<ScanData>, IHasLocalizationKeys
     {
         private readonly Dictionary<StringHash32, ScanData> m_Data = new Dictionary<StringHash32, ScanData>(32);
 
@@ -61,14 +61,15 @@ namespace ProtoAqua.Observation
         [ScriptedExtension(1, "scan")]
         private class Importer : ImporterBase<ScanDataPackage> { }
 
-        // static internal IEnumerable<KeyValuePair<StringHash32, string>> ExportStrings(ScanDataPackage inPackage)
-        // {
-        //     inPackage.Parse(Generator.Instance);
-        //     foreach(var data in inPackage)
-        //     {
-        //         data.Header()
-        //     }
-        // }
+        IEnumerable<KeyValuePair<StringHash32, string>> IHasLocalizationKeys.GetStrings()
+        {
+            Parse(Generator.Instance);
+            foreach(var data in this)
+            {
+                yield return data.ExportHeader();
+                yield return data.ExportText();
+            }
+        }
 
         #endif // UNITY_EDITOR
     }

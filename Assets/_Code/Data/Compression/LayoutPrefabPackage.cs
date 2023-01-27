@@ -86,7 +86,7 @@ namespace Aqua.Compression {
                                 Log.Msg("[LayoutPrefabPackage] Compressing '{0}'...", prefab.name);
                                 byte[] uncompressed = (byte[]) compressed.Clone();
                                 compressed = UnsafeExt.Compress(compressed);
-                                Log.Msg("[LayoutPrefabPackage] Compression Ratio: {0}", (float) uncompressed.Length / compressed.Length);
+                                Log.Msg("[LayoutPrefabPackage] Compression Ratio for '{0}': {1}", prefab.name, (float) uncompressed.Length / compressed.Length);
                                 byte[] decompressed;
                                 if (!UnsafeExt.Decompress(compressed, out decompressed)) {
                                     Log.Error("[LayoutPrefabPackage] Compressed data unable to be decompressed!");

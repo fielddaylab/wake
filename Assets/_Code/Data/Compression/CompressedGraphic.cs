@@ -113,12 +113,12 @@ namespace Aqua.Compression {
         [FieldOffset(15)] public byte CharacterSpacing;
         [FieldOffset(16)] public byte WordSpacing;
         [FieldOffset(17)] public byte LineSpacing;
-        [FieldOffset(18)] public byte Wrapping;
-        [FieldOffset(19)] public byte Overflow;
-        [FieldOffset(20)] public byte Margin0;
-        [FieldOffset(21)] public byte Margin1;
-        [FieldOffset(22)] public byte Margin2;
-        [FieldOffset(23)] public byte Margin3;
+        [FieldOffset(18)] public byte Margin0;
+        [FieldOffset(19)] public byte Margin1;
+        [FieldOffset(20)] public byte Margin2;
+        [FieldOffset(21)] public byte Margin3;
+        [FieldOffset(22)] public byte Wrapping;
+        [FieldOffset(23)] public byte Overflow;
 
         static public void Compress(PackageBuilder compressor, TMP_Text text, out CompressedTextMeshPro data) {
             CompressedGraphic.Compress(text, out data.Graphic);
@@ -162,7 +162,7 @@ namespace Aqua.Compression {
 
         static private readonly CompressionRange FontSizeRange = new CompressionRange(0, 512);
         static private readonly CompressionRange SpacingRange = new CompressionRange(-100, 100);
-        static private readonly CompressionRange MarginRange = new CompressionRange(0, 100);
+        static private readonly CompressionRange MarginRange = new CompressionRange(-100, 100);
     }
 
     public struct CompressedLocText {

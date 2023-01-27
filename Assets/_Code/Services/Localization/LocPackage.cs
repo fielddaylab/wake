@@ -8,11 +8,14 @@ using System.IO;
 using UnityEngine.Scripting;
 using BeauUtil.Debugger;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace Aqua
 {
     public class LocPackage : ScriptableDataBlockPackage<LocNode>
     {
+        private const int MaxCompressedSize = 1024 * 1024 * 4;
+
         private readonly Dictionary<StringHash32, string> m_Nodes = new Dictionary<StringHash32, string>(512);
         private readonly HashSet<StringHash32> m_IdsWithEvents = Collections.NewSet<StringHash32>(128);
 
@@ -86,6 +89,58 @@ namespace Aqua
 
         #endregion // Generator
 
+        private unsafe class BinaryReadState
+        {
+            public byte* Buffer;
+            public int Length;
+            public Unsafe.PinnedArrayHandle<byte> Handle;
+
+            internal BinaryReadState(byte[] bytes) {
+                Handle = Unsafe.PinArray(bytes);
+                Buffer = Handle.Address;
+                Length = Handle.Length;
+            }
+        }
+
+        static public IEnumerator ReadFromBinary(LocPackage ioPackage, byte[] inBytes)
+        {
+            var pinned = Unsafe.PinArray<byte>(inBytes);
+            try {
+                ushort nodeCount = ReadNodeCount(ref pinned);
+                while(nodeCount-- > 0) {
+                    ReadNode(ref pinned, ioPackage);
+                    if (nodeCount % 32 == 0) {
+                        yield return null;
+                    }
+                }
+                nodeCount = ReadNodeCount(ref pinned);
+                Collections.Initialize(ioPackage.m_IdsWithEvents, nodeCount);
+                while(nodeCount-- > 0) {
+                    ioPackage.m_IdsWithEvents.Add(ReadNodeId(ref pinned));
+                    if (nodeCount % 64 == 0) {
+                        yield return null;
+                    }
+                }
+            } finally {
+                pinned.Dispose();
+            }
+        }
+
+        static private unsafe ushort ReadNodeCount(ref Unsafe.PinnedArrayHandle<byte> bytes) {
+            return UnsafeExt.Read<ushort>(ref bytes.Address, ref bytes.Length);
+        }
+
+        static private unsafe void ReadNode(ref Unsafe.PinnedArrayHandle<byte> bytes, LocPackage package) {
+            StringHash32 id = ReadNodeId(ref bytes);
+            Log.Msg("Reading '{0}'...", id.ToDebugString());
+            string text = UnsafeExt.ReadString(ref bytes.Address, ref bytes.Length);
+            package.m_Nodes.Add(id, text);
+        }
+
+        static private unsafe StringHash32 ReadNodeId(ref Unsafe.PinnedArrayHandle<byte> bytes) {
+            return UnsafeExt.Read<StringHash32>(ref bytes.Address, ref bytes.Length);
+        }
+
         #if UNITY_EDITOR
 
         [ScriptedExtension(1, "aqloc")]
@@ -97,6 +152,37 @@ namespace Aqua
             foreach(var kv in inPackage.m_Nodes)
             {
                 yield return new KeyValuePair<StringHash32, string>(kv.Key, kv.Value);
+            }
+        }
+
+        static internal unsafe byte[] Compress(LocPackage[] inPackages)
+        {
+            LocPackage tmpPkg = ScriptableObject.CreateInstance<LocPackage>();
+            byte* buffer = Unsafe.AllocArray<byte>(MaxCompressedSize);
+            byte* head = buffer;
+            int bufferLength = 0;
+            try {
+                foreach(var pkg in inPackages) {
+                    BlockParser.Parse(ref tmpPkg, pkg, Parsing.Block, Generator.Instance);
+                }
+
+                UnsafeExt.Write(&head, &bufferLength, (ushort) tmpPkg.m_Nodes.Count);
+                foreach(var kv in tmpPkg.m_Nodes) {
+                    UnsafeExt.Write(&head, &bufferLength, kv.Key);
+                    UnsafeExt.WriteString(&head, &bufferLength, kv.Value);
+                }
+
+                UnsafeExt.Write(&head, &bufferLength, (ushort) tmpPkg.m_IdsWithEvents.Count);
+                foreach(var v in tmpPkg.m_IdsWithEvents) {
+                    UnsafeExt.Write(&head, &bufferLength, v);
+                }
+
+                byte[] written = new byte[bufferLength];
+                Unsafe.CopyArray(buffer, bufferLength, written);
+                return written;
+            } finally {
+                DestroyImmediate(tmpPkg);
+                Unsafe.Free(buffer);
             }
         }
 

@@ -62,7 +62,7 @@ var NativeWebInputLib = {
             if (NWICache.nativeMouseDownCallback) {
                 /** @type {HTMLCanvasElement} */
                 var element = m.currentTarget;
-                var touch = m.targetTouches[0];
+                var touch = m.changedTouches[0];
                 var x = (touch.clientX - element.clientLeft) / element.clientWidth;
                 var y = 1 - ((touch.clientY - element.clientTop) / element.clientHeight);
                 dynCall_vff(NWICache.nativeMouseDownCallback, x, y);
@@ -77,7 +77,7 @@ var NativeWebInputLib = {
             if (NWICache.nativeMouseUpCallback) {
                 /** @type {HTMLCanvasElement} */
                 var element = m.currentTarget;
-                var touch = m.targetTouches[0];
+                var touch = m.changedTouches[0];
                 var x = (touch.clientX - element.clientLeft) / element.clientWidth;
                 var y = 1 - ((touch.clientY - element.clientTop) / element.clientHeight);
                 dynCall_vff(NWICache.nativeMouseUpCallback, x, y);
