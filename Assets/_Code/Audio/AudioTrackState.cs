@@ -75,6 +75,10 @@ namespace AquaAudio
             state.PositionOffset = default(Vector3);
             state.SourceEntity = null;
 
+            #if UNITY_EDITOR
+            samplePlayer.gameObject.name = evt.name;
+            #endif // UNITY_EDITOR
+
             return new AudioHandle(state, id);
         }
 
@@ -98,10 +102,22 @@ namespace AquaAudio
             state.PositionOffset = default(Vector3);
             state.SourceEntity = null;
 
+            #if UNITY_EDITOR
+            streamPlayer.gameObject.name = evt.name;
+            #endif // UNITY_EDITOR
+
             return new AudioHandle(state, id);
         }
 
         static public void Unload(AudioTrackState state) {
+            #if UNITY_EDITOR
+            if (state.Sample) {
+                state.Sample.gameObject.name = "[Unused Sample]";
+            } else if (state.Stream) {
+                state.Stream.gameObject.name = "[Unused Stream]";
+            }
+            #endif // UNITY_EDITOR
+
             state.InstanceId = 0;
             state.Sample = null;
             state.Stream = null;

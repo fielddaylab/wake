@@ -5,6 +5,7 @@ using BeauUtil;
 using ScriptableBake;
 using UnityEngine;
 using System;
+using Aqua.Compression;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -19,7 +20,8 @@ namespace Aqua
 
         public FourCC LanguageId;
         public LocPackage[] Packages;
-        [HideInInspector] public byte[] Compressed = Array.Empty<byte>();
+        public LayoutPrefabPackage JournalLayout;
+        [HideInInspector] public byte[] Binary = Array.Empty<byte>();
 
         #endregion // Inspector
 
@@ -29,19 +31,22 @@ namespace Aqua
 
         bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
-            Compressed = LocPackage.Compress(Packages);
-            if (UnityEditorInternal.InternalEditorUtility.isHumanControllingUs) {
-                Directory.CreateDirectory("Temp/LanguageExport");
-                File.WriteAllBytes("Temp/LanguageExport/" + name + ".bin", Compressed);
+            if (Packages.Length > 0) {
+                Binary = LocPackage.Compress(Packages);
+                if (UnityEditorInternal.InternalEditorUtility.isHumanControllingUs) {
+                    Directory.CreateDirectory("Temp/LanguageExport");
+                    File.WriteAllBytes("Temp/LanguageExport/" + name + ".bin", Binary);
+                }
+                return true;
+            } else {
+                Binary = Array.Empty<byte>();
             }
-            return false;
+            return true;
         }
 
         void IEditorOnlyData.ClearEditorOnlyData()
         {
-            #if !PRESERVE_DEBUG_SYMBOLS && !DEVELOPMENT
             Packages = null;
-            #endif
         }
 
         [CustomEditor(typeof(LocManifest), true)]
@@ -55,11 +60,11 @@ namespace Aqua
 
                 long size = 0;
                 foreach(LocManifest manifest in targets) {
-                    size += manifest.Compressed.Length;
+                    size += manifest.Binary.Length;
                 }
 
                 EditorGUILayout.Space();
-                EditorGUILayout.LabelField("Compressed Size", EditorUtility.FormatBytes(size));
+                EditorGUILayout.LabelField("Binary Size", EditorUtility.FormatBytes(size));
             }
         }
 

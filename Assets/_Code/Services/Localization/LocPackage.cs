@@ -14,7 +14,7 @@ namespace Aqua
 {
     public class LocPackage : ScriptableDataBlockPackage<LocNode>
     {
-        private const int MaxCompressedSize = 1024 * 1024 * 2;
+        private const int MaxCompressedSize = 1024 * 1024 * 4;
 
         private readonly Dictionary<StringHash32, string> m_Nodes = new Dictionary<StringHash32, string>(512);
         private readonly HashSet<StringHash32> m_IdsWithEvents = Collections.NewSet<StringHash32>(128);
@@ -89,6 +89,58 @@ namespace Aqua
 
         #endregion // Generator
 
+        private unsafe class BinaryReadState
+        {
+            public byte* Buffer;
+            public int Length;
+            public Unsafe.PinnedArrayHandle<byte> Handle;
+
+            internal BinaryReadState(byte[] bytes) {
+                Handle = Unsafe.PinArray(bytes);
+                Buffer = Handle.Address;
+                Length = Handle.Length;
+            }
+        }
+
+        static public IEnumerator ReadFromBinary(LocPackage ioPackage, byte[] inBytes)
+        {
+            var pinned = Unsafe.PinArray<byte>(inBytes);
+            try {
+                ushort nodeCount = ReadNodeCount(ref pinned);
+                while(nodeCount-- > 0) {
+                    ReadNode(ref pinned, ioPackage);
+                    if (nodeCount % 32 == 0) {
+                        yield return null;
+                    }
+                }
+                nodeCount = ReadNodeCount(ref pinned);
+                Collections.Initialize(ioPackage.m_IdsWithEvents, nodeCount);
+                while(nodeCount-- > 0) {
+                    ioPackage.m_IdsWithEvents.Add(ReadNodeId(ref pinned));
+                    if (nodeCount % 64 == 0) {
+                        yield return null;
+                    }
+                }
+            } finally {
+                pinned.Dispose();
+            }
+        }
+
+        static private unsafe ushort ReadNodeCount(ref Unsafe.PinnedArrayHandle<byte> bytes) {
+            return UnsafeExt.Read<ushort>(ref bytes.Address, ref bytes.Length);
+        }
+
+        static private unsafe void ReadNode(ref Unsafe.PinnedArrayHandle<byte> bytes, LocPackage package) {
+            StringHash32 id = ReadNodeId(ref bytes);
+            Log.Msg("Reading '{0}'...", id.ToDebugString());
+            string text = UnsafeExt.ReadString(ref bytes.Address, ref bytes.Length);
+            package.m_Nodes.Add(id, text);
+        }
+
+        static private unsafe StringHash32 ReadNodeId(ref Unsafe.PinnedArrayHandle<byte> bytes) {
+            return UnsafeExt.Read<StringHash32>(ref bytes.Address, ref bytes.Length);
+        }
+
         #if UNITY_EDITOR
 
         [ScriptedExtension(1, "aqloc")]
@@ -117,15 +169,7 @@ namespace Aqua
                 UnsafeExt.Write(&head, &bufferLength, (ushort) tmpPkg.m_Nodes.Count);
                 foreach(var kv in tmpPkg.m_Nodes) {
                     UnsafeExt.Write(&head, &bufferLength, kv.Key);
-                    string str = kv.Value;
-                    fixed(char* strChars = str) {
-                        byte* lengthMarker = head;
-                        UnsafeExt.Write(&head, &bufferLength, (ushort) str.Length);
-                        ushort byteLength = (ushort) StringUtils.EncodeUFT8(strChars, str.Length, head, MaxCompressedSize - bufferLength);
-                        Unsafe.Copy(lengthMarker, sizeof(ushort), &byteLength, sizeof(ushort));
-                        head += byteLength;
-                        bufferLength += byteLength;
-                    }
+                    UnsafeExt.WriteString(&head, &bufferLength, kv.Value);
                 }
 
                 UnsafeExt.Write(&head, &bufferLength, (ushort) tmpPkg.m_IdsWithEvents.Count);

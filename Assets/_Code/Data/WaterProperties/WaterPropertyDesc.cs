@@ -62,18 +62,22 @@ namespace Aqua
         public string FormatValue(float inValue)
         {
             double value = inValue;
+            int sign = Math.Sign(inValue);
+            value = Math.Abs(value);
             int exponent = 0;
             if (value > 1000) {
                 while(value >= 10) {
                     value /= 10;
                     exponent++;
                 }
-            } else if (value < 0.1) {
+            } else if (value > 0 && value < 0.1) {
                 while(value < 0.95) {
                     value *= 10;
                     exponent--;
                 }
             }
+
+            value *= sign;
 
             using(PooledStringBuilder psb = PooledStringBuilder.Create()) {
                 psb.Builder.AppendNoAlloc(value, m_SignificantDigits, 0);
