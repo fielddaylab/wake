@@ -104,6 +104,19 @@ $set temp:newObservationTimer = 0
 			Moving the sliders affects the tank conditions.
 			They will auto adjust to make sure the organisms don't get hurt.
 
+:: generic.stress-tank.outro
+@trigger    NewStressResults
+@boostScore 1050
+@once
+@cutscene
+{@guide}	Adequate work, O!
+{@player}	Hmm. Can you remind me what this all means, {nameof @guide}?
+{@guide}	Certainly, O.
+			For each environment variable, the bars show values from low to high.
+{@guide}	The grayed parts show the range where the organism is stressed.
+{@player} 	Got it. So basically... we're getting the ranges of conditions that stress the organism?
+{@guide}	Exactly.
+
 :: generic.measurement-tank.intro
 @trigger	ExperimentTankViewed
 @boostScore 1050 // arbitrarily high number
