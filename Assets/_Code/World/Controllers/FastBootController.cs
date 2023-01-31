@@ -34,7 +34,6 @@ namespace Aqua {
 
         [Header("Loading")]
         public TMP_Text LoadingText;
-        public SpriteRenderer LoadingSpinner;
         public TMP_Text ErrorText;
         
         [Header("Ready")]
@@ -60,10 +59,8 @@ namespace Aqua {
         
         private IEnumerator SwapToPrompt() {
             yield return Routine.Combine(
-                LoadingSpinner.FadeTo(0, 0.2f),
                 LoadingText.FadeTo(0, 0.2f)
             );
-            LoadingSpinner.gameObject.SetActive(false);
             LoadingText.gameObject.SetActive(false);
 
             // ReadyText.gameObject.SetActive(true);

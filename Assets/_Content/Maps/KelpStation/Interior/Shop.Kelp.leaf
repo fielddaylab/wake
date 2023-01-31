@@ -86,7 +86,7 @@ $elseif jobs:final-final.upgradeReady, !JobStartedOrComplete(final-final)
     $choice .action.openShop; I'm not ready yet. I'd like to look around the shop. 
     $choice .action.cancel; Actually, I'll come back later. 
 
-$elseif JobInProgress(final-final), JobTaskTop(getUncleHelp)
+$elseif JobInProgress(final-final), JobTaskTop(getUncleHelp), !jobs:final-uncleHelped
     // final job, ask uncle for help
     $branch .restorePower
 $else
@@ -185,36 +185,56 @@ $call LockStation(CoralStation)
 
 :: restorePower
 @cutscene
+// $call MerCutsceneBGM->Activate()
 {@player}       Tío... I need your help.
-                Mom stole my card. The AquaLab is dead in the water.
-                How could she do this?? She doesn't even care if Sam lives or dies!
-{@$MerchantId}  This isn't about Sam, mijita. 
-                It's about Meredith. 
-{@player}       I don't understand. What does Mer have to do with this?
-{@$MerchantId}  Your sister's death... it wasn't an equipment malfunction. 
-                She was on her way back from placing the Challenger Deep...
-                And she came upon a whale caught in a fishing net. 
+                Mom stole my card.| The AquaLab is dead in the water.
+                How could she do this??{wait 0.5} She doesn't even care| if Sam lives or dies!
+{@$MerchantId}  This| isn't about Sam, mijita.
+                It's about Meredith.
+{@player}       I don't understand.| What does |Mer| have to do with this?
+// $call BGM->SetVolume(0, 1)
+$call BGM->SetVolume(0, 8)
+{@$MerchantId}  Your sister's death...{wait 1} it| wasn't an equipment malfunction.
+$branch  .restorePowerCamera1
+// $call MerCutsceneBGM->PlayBGM()
+{@$MerchantId}  She was on her way back from placing the Challenger Deep...
+                And she came upon a whale| caught in a fishing net. 
                 Mer couldn't let it die. She swam out to cut it free. 
-{@player}       That sounds like Mer. She loved whales so much.
-{@$MerchantId}  Yes. But... Ollie, the whale didn't know any better. It panicked. Called out for help. 
+{@player}       That sounds like Mer. She| loved| whales so much.
+{@$MerchantId}  Yes.| But...{wait 1} Ollie, the whale didn't know any better.{wait 0.5} It panicked.{wait 0.5} Called out for help. 
                 We're not sure exactly what happened.
-                But your sister never made it back from the Lower Depths.
-{@player}       Oh no. Poor Mer.  
-                That's why Mom doesn't want me going down there. 
+                But{wait 0.5} your sister never made it back from the Lower Depths.
+$branch  .restorePowerCamera2
+{@player}       {slow}Oh{wait 0.5} no.{wait 1} Poor Mer.{/slow}
+                That's why{wait 0.5} Mom| doesn't want me going down there. 
 {@$MerchantId}   Your mother doesn't want to lose you.
-                But... you're an adult now, Ollie.
+                But...{wait 1} you're an adult now, Ollie.
+$branch  .restorePowerCamera3
                 And your best friend needs you.
-                {hide-dialog} {fade-out black, 1, wait} {wait 2}
+                {hide-dialog} {wait 1} {fade-out black, 1, wait} {wait 2}
+$call CameraSnapToPose("ShopSubCam")
                 {wait 0.1} {fade-in 1, wait} {wait 1}
                 $set jobs:final-power-disabled = false
 {@$MerchantId}  I've transferred {nameof @guide}'s upgrade to Mer's old data card.
                 Take it up to your ship.
                 This should get you where you need to go. 
-{@player}       Thank you, Tío. Wish me luck. 
+{@player}       Thank you,| Tío.{wait 1} Wish me luck.
 $set jobs:final-uncleHelped = true
 $set jobs:final-power-disabled = false
 $call CheckJobTasks()
 
+:: restorePowerCamera1
+{hide-dialog} {wait 1}
+$call CameraSnapToPose("MerDeathCamA")
+{wait 0.5}
+
+:: restorePowerCamera2
+{hide-dialog} {wait 1}
+$call CameraSnapToPose("MerDeathCamB")
+{wait 1}
+
+:: restorePowerCamera3
+$call CameraSnapToPose("MerDeathCamC")
 
 // Idle
 

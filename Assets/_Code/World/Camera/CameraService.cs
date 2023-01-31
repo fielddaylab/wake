@@ -1158,7 +1158,7 @@ namespace Aqua.Cameras
 
             Assert.NotNull(inPose);
 
-            CameraState newState = new CameraState(inPose.transform.position, inPose.transform.rotation, inPose.Height, inPose.Zoom, m_Camera.fieldOfView);
+            CameraState newState = new CameraState(inPose.transform.position, inPose.transform.rotation, inPose.Height, inPose.Zoom, inPose.FieldOfView);
             if (!m_FOVPlane.IsReferenceNull() && inPose.Target != null)
                 m_FOVPlane.Target = inPose.Target;
 
@@ -1663,13 +1663,13 @@ namespace Aqua.Cameras
         }
 
         [LeafMember("CameraMoveToPose"), UnityEngine.Scripting.Preserve]
-        static private IEnumerator LeafModeToPose(ScriptObject inPose, float inDuration, Curve inCurve = Curve.Smooth)
+        static private IEnumerator LeafMoveToPose(ScriptObject inPose, float inDuration, Curve inCurve = Curve.Smooth)
         {
             Assert.NotNull(inPose, "Cannot pass null pose");
             CameraPose pose = inPose.GetComponent<CameraPose>();
             if (pose != null)
             {
-                return Services.Camera.MoveToPose(pose, inDuration, inCurve);
+                return Services.Camera.MoveToPose(pose, inDuration, inCurve, pose.Properties);
             }
             else
             {

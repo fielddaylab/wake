@@ -15,7 +15,7 @@ $call hotbar.guide->Lock()
 $call hotbar.portable->Lock()
 $call StationEntrance->Deactivate()
 $call Player->TeleportTo(IntroSpawn)
-$call CameraSnapToTarget()
+$call CameraSnapToPose("IntroCameraPoseA")
 {wait 0.5}
 
 $set world:intro.completed = false
@@ -23,6 +23,7 @@ $set jobs:num-specters-seen = 0
 {@player} Wow... this place looks so different at night. 
 {@player} Tío, are you still there? 
 {fade-in 3}
+$fork   .introCameraPan
 {@kelpMechanic} Sí, mijita. I can hear you on the comms.
 {@kelpMechanic} Keep exploring. Your driver's test is almost done. 
 {@kelpMechanic} A few more seconds, and the computer will be able to calculate your score. 
@@ -30,7 +31,11 @@ $set jobs:num-specters-seen = 0
 {@player} Just... don't tell Mom I'm out here, okay?
 {@kelpMechanic} No promises, Ollie. 
 {hide-dialog}
+$join
 $start .tutorialMove
+
+:: introCameraPan
+$call CameraRecenterOnTarget(4)
 
 // Intro tutorial
 
@@ -41,7 +46,13 @@ $start .tutorialMove
 {style center}
     Use the {h}Mouse{/h} or the {h}[W][A][S][D]{/h} keys to move your Sub
 {hide-dialog}{fade-in 0.5, wait}
-{/cutscene}
+{/cutscene} {release-dialog}
+$call CameraSetMode(Hinted)
+
+:: tutorialMoveCompleted
+@trigger    PlayerExitRegion
+@when       regionId == "IntroMovement"
+@once
 $CutsceneDelayed(8, .intro-part2)
 
 :: intro-part2
@@ -51,8 +62,14 @@ $CutsceneDelayed(8, .intro-part2)
 {@player}Mom, I can explain——
 {@drKelp} Sweetie, what were you thinking?? Taking the sub out at night, after last time? 
 {@drKelp}Come back to the {m}Station{/m} immediately.
-{@drKelp}And be careful!
+{hide-dialog}{fade-out black, 0.5, wait}
+$call CameraSnapToPose("StationCameraPose")
 $call StationEntrance->Activate()
+{fade-in 0.5, wait}{wait 1}
+{@drKelp}And be careful!
+{hide-dialog}
+$call CameraRecenterOnTarget(2)
+$call CameraSetMode(Hinted)
 
 // Intro
 

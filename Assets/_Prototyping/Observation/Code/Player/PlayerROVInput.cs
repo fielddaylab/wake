@@ -42,17 +42,25 @@ namespace ProtoAqua.Observation
             m_MouseFilter.Process(Device, inPlayerTransform, inLockOn, null, out outInputData.Mouse);
             m_KeyboardFilter.Process(Device, out outInputData.Keyboard);
 
+            bool bAllowMove = (inStatus & PlayerBodyStatus.DisableMovement) == 0;
+            bool bAllowTools = (inStatus & PlayerBodyStatus.DisableTools) == 0;
+            
             bool bAllowInput = (inStatus & PlayerBodyStatus.Stunned) == 0;
             bool bAllowMouse = bAllowInput && !Services.Input.IsPointerOverUI();
 
-            outInputData.UseHold = bAllowMouse && Device.MouseDown(0);
-            outInputData.UsePress = bAllowMouse && Device.MousePressed(0);
+            outInputData.UseHold = bAllowTools && bAllowMouse && Device.MouseDown(0);
+            outInputData.UsePress = bAllowTools && bAllowMouse && Device.MousePressed(0);
 
-            outInputData.UseAltPress = Device.KeyPressed(KeyCode.Space);
-            outInputData.UseAltHold = Device.KeyDown(KeyCode.Space);
+            outInputData.UseAltPress = bAllowTools && Device.KeyPressed(KeyCode.Space);
+            outInputData.UseAltHold = bAllowTools && Device.KeyDown(KeyCode.Space);
 
-            outInputData.Move = outInputData.UseHold || outInputData.Keyboard.KeyDown;
-            outInputData.MoveVector = outInputData.Keyboard.KeyDown ? outInputData.Keyboard.NormalizedOffset : outInputData.Mouse.NormalizedOffset;
+            if (bAllowMove) {
+                outInputData.Move = outInputData.UseHold || outInputData.Keyboard.KeyDown;
+                outInputData.MoveVector = outInputData.Keyboard.KeyDown ? outInputData.Keyboard.NormalizedOffset : outInputData.Mouse.NormalizedOffset;
+            } else {
+                outInputData.Move = false;
+                outInputData.MoveVector = default(Vector2);
+            }
         }
 
         #endregion // Input Generation

@@ -126,6 +126,7 @@ namespace Aqua.WorldMap
         {
             Services.UI.ShowLetterbox();
             Script.WriteVariable("session:fromDream", null);
+            Script.WriteVariable("session:traveling", true);
 
             yield return 0.2f;
 

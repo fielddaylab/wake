@@ -242,6 +242,139 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 96ad8e0c3aa2517488b27f20f2837508, type: 3}
+--- !u!1 &358736772
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 358736775}
+  - component: {fileID: 358736774}
+  - component: {fileID: 358736773}
+  m_Layer: 0
+  m_Name: MerCutsceneMusic
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &358736773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 358736772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ebe9a610c1ca0743a3a95f706918ea3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EventId: StationInterior.BGM.MerCutscene
+  m_Crossfade: 1
+  m_StopOnDisable: 1
+  m_PlayOnLoad: 0
+--- !u!114 &358736774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 358736772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced02461c9fab16498d5d024212b8a9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Id:
+    m_Source: MerCutsceneBGM
+    m_HashValue: 4139731427
+  m_IsPersistent: 0
+  m_StartDisabled: 1
+--- !u!4 &358736775
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 358736772}
+  m_LocalRotation: {x: 0.02859487, y: 0.66669095, z: -0.025611697, w: 0.7443451}
+  m_LocalPosition: {x: -5.28, y: 28.46, z: 3.87}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 4.4, y: 83.7, z: 0}
+--- !u!1 &365591073
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 365591076}
+  - component: {fileID: 365591075}
+  - component: {fileID: 365591074}
+  m_Layer: 0
+  m_Name: MerDeath_CameraC
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &365591074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 365591073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced02461c9fab16498d5d024212b8a9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Id:
+    m_Source: MerDeathCamC
+    m_HashValue: 3549880203
+  m_IsPersistent: 0
+  m_StartDisabled: 0
+--- !u!114 &365591075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 365591073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f63a8cc9003b5504dbb86e6318d93ea8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Mode: 1
+  Target: {fileID: 0}
+  Height: 24
+  Zoom: 1
+  AudioListenerZOffset: 0
+  FieldOfView: 5.6
+  Properties: 31
+--- !u!4 &365591076
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 365591073}
+  m_LocalRotation: {x: 0.02859487, y: 0.66669095, z: -0.025611697, w: 0.7443451}
+  m_LocalPosition: {x: -5.28, y: 28.46, z: 3.87}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 4.4, y: 83.7, z: 0}
 --- !u!1001 &1294972275
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1217,7 +1350,7 @@ PrefabInstance:
     - target: {fileID: 5038975841851502130, guid: 7949e63ad14a1ae4984a762342f72d2a,
         type: 3}
       propertyPath: m_UVRect.height
-      value: 0.4071875
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5187708762231680878, guid: 7949e63ad14a1ae4984a762342f72d2a,
         type: 3}
@@ -1367,7 +1500,7 @@ PrefabInstance:
     - target: {fileID: 5550121025032543692, guid: 7949e63ad14a1ae4984a762342f72d2a,
         type: 3}
       propertyPath: m_UVRect.height
-      value: 0.4857031
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5809536809527703571, guid: 7949e63ad14a1ae4984a762342f72d2a,
         type: 3}
@@ -1542,7 +1675,7 @@ PrefabInstance:
     - target: {fileID: 6316061887271422164, guid: 7949e63ad14a1ae4984a762342f72d2a,
         type: 3}
       propertyPath: m_UVRect.height
-      value: 0.4071875
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6362667193436236628, guid: 7949e63ad14a1ae4984a762342f72d2a,
         type: 3}
@@ -1917,7 +2050,7 @@ PrefabInstance:
     - target: {fileID: 8365294959788378738, guid: 7949e63ad14a1ae4984a762342f72d2a,
         type: 3}
       propertyPath: m_UVRect.height
-      value: 0.4857031
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8410253810086308110, guid: 7949e63ad14a1ae4984a762342f72d2a,
         type: 3}
@@ -2057,6 +2190,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1294972275}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &1294972277 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5490044791353971447, guid: 7949e63ad14a1ae4984a762342f72d2a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1294972275}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1333303104
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2107,7 +2246,7 @@ PrefabInstance:
     - target: {fileID: 135610757503113115, guid: 8f1e2c565011e574a84c68c08e196f22,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: 80.6
       objectReference: {fileID: 0}
     - target: {fileID: 135610757503113115, guid: 8f1e2c565011e574a84c68c08e196f22,
         type: 3}
@@ -2149,6 +2288,11 @@ PrefabInstance:
       propertyPath: m_Target
       value: 
       objectReference: {fileID: 1294972276}
+    - target: {fileID: 3270666167615676216, guid: 8f1e2c565011e574a84c68c08e196f22,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5984451757274729170, guid: 8f1e2c565011e574a84c68c08e196f22,
         type: 3}
       propertyPath: m_Cameras.Array.size
@@ -2161,6 +2305,74 @@ PrefabInstance:
       objectReference: {fileID: 1888816503}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f1e2c565011e574a84c68c08e196f22, type: 3}
+--- !u!1 &1344360438
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1344360441}
+  - component: {fileID: 1344360440}
+  - component: {fileID: 1344360439}
+  m_Layer: 0
+  m_Name: MerDeath_CameraB
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1344360439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1344360438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced02461c9fab16498d5d024212b8a9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Id:
+    m_Source: MerDeathCamB
+    m_HashValue: 3533102584
+  m_IsPersistent: 0
+  m_StartDisabled: 0
+--- !u!114 &1344360440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1344360438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f63a8cc9003b5504dbb86e6318d93ea8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Mode: 1
+  Target: {fileID: 0}
+  Height: 24
+  Zoom: 1
+  AudioListenerZOffset: 0
+  FieldOfView: 15
+  Properties: 31
+--- !u!4 &1344360441
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1344360438}
+  m_LocalRotation: {x: 0.02859487, y: 0.66669095, z: -0.025611697, w: 0.7443451}
+  m_LocalPosition: {x: -9.75, y: 27.57, z: 0.34}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 4.4, y: 83.7, z: 0}
 --- !u!1 &1530519643
 GameObject:
   m_ObjectHideFlags: 0
@@ -2271,6 +2483,74 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1713071746
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1713071749}
+  - component: {fileID: 1713071748}
+  - component: {fileID: 1713071747}
+  m_Layer: 0
+  m_Name: MerDeath_CameraA
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1713071747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1713071746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced02461c9fab16498d5d024212b8a9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Id:
+    m_Source: MerDeathCamA
+    m_HashValue: 3583435441
+  m_IsPersistent: 0
+  m_StartDisabled: 0
+--- !u!114 &1713071748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1713071746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f63a8cc9003b5504dbb86e6318d93ea8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Mode: 0
+  Target: {fileID: 1294972277}
+  Height: 6
+  Zoom: 1
+  AudioListenerZOffset: 0
+  FieldOfView: 8.659574
+  Properties: 31
+--- !u!4 &1713071749
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1713071746}
+  m_LocalRotation: {x: 0.02473237, y: 0.32748964, z: -0.008575596, w: 0.9444921}
+  m_LocalPosition: {x: -14.72, y: 26.34, z: -20.76}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 80.6, y: 0, z: 0}
 --- !u!20 &1888816503 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 1449927699948198980, guid: 96ad8e0c3aa2517488b27f20f2837508,
