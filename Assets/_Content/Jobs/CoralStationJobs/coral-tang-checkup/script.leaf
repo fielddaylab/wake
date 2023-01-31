@@ -281,17 +281,54 @@ $endif
 
 :: argue.intro
 @trigger    TryArgumentation
-@when		!ArgueIsComplete(checkUpArgue)
+@when		!ArgueIsComplete(checkUpArgueFinal)
 @cutscene
-$call ArgueLoad(checkUpArgue)
 {@profCoral}  Let's work through this, step by step.
 			  What's going on with the {nameof BlueTang}?
 $if JobTaskTop(report)
-	$choice .argue.transition; The Ick are making them stressed!
+	$choice .argue.ickStressing; The Ick are making them stressed!
 $endif
 $choice .argue.giveUp; I'm still not sure...
 
+// Present Ick stresses Blue Tang
+
+::argue.ickStressing
+@cutscene
+$if ArgueIsComplete(CheckUpArgueIckStressing)
+	{@profCoral}	Oh, that's right. You already showed me that.
+	$branch .argue.transition
+$else
+	$call ArgueLoad(CheckUpArgueIckStressing)
+	{@profCoral}  How do you know?
+	$if ArgueSetClaim(checkUpClaimIckStressing, jobs.coral-check-up.argue.claimLabelIckStressing)
+			$call ArgueFactSlot(Ick.Stresses.BlueTang)
+	$endif
+	$call ArgueDisplayClaim()
+	$branch .argue.presentFactsIckStressing
+$endif
+
+:: argue.presentFactsIckStressing
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.completeIckStressing
+    $answer incorrect, .argue.incorrectIckStressing
+$choice .argue.giveUp; Let me get back to you.
+
+:: argue.incorrectIckStressing
+{@profCoral}	I'm not seeing how that shows {nameof Ick} stresses {nameof BlueTang}.
+				Do you want to try something else?
+$call ArgueRejectIncorrect()
+{@profCoral}	Why do you say the {nameof Ick} are stressing the {nameof BlueTang}?
+$branch .argue.presentFactsIckStressing
+
+:: argue.completeIckStressing
+$call ArgueComplete()
+$call ArgueHideClaim()
+$branch .argue.transition
+
+// Present model
+
 :: argue.transition
+$call ArgueLoad(checkUpArgueFinal)
 {@profCoral}	I was afraid that might be the case.
 				Did adding {nameof Ick} fix your model?
 $if ArgueSetClaim(checkUpClaim, jobs.coral-check-up.argue.claimLabel)
