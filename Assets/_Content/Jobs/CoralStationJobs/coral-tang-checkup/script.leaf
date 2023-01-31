@@ -9,27 +9,37 @@
 			 I wondered if you could collect data to improve the model's accuracy.
 {@player}	Sure, Professor. I'd love to help. 
 $set jobs:coral-tang-checkup.grantedData = false
+$set jobs:coral-tang-checkup.microHintGiven = false
 $set jobs:coral-tang-checkup.sync-failed = false
-$if JobTaskCompleted(observeIck)
+$if JobTaskTop(findStress)
+	{@profCoral} First, you'll need to obtain the stress ranges for the {nameof BlueTang}.
+                 I'd suggest heading to your {h}Stress Tank{/h}.
+$endif
+$if JobTaskCompleted(findStress), !jobs:coral-tang-checkup.microHintGiven
+	$branch .microHintContents
+$endif
+$if JobTaskCompleted(countIck), !jobs:coral-tang-checkup.grantedData
 	{@profCoral} I noticed that you already measured the stress ranges of the Blue Tang.
 				 I used your data to measure their eating and reproduction rates under stress. I'll send you the data. 
 	$branch .grantStressedData
-$elseif JobTaskTop(findStress)
-	{@profCoral} First, you'll need to obtain the stress ranges for the {nameof BlueTang}.
-                 I'd suggest heading to your {h}Stress Tank{/h}.
 $endif
 {@profCoral} Thank you, Ollie! Let me know what you find out. 
 
 :: switchToJob
 @trigger    JobSwitched
-@when		JobTaskCompleted(countIck), !jobs:coral-tang-checkup.grantedData
 @cutscene
-$branch common.ringPhone
-{@profCoral}	Welcome back to the job! 
-			    I noticed that you submitted the stress ranges of the Blue Tang...
-				So I went ahead and measured their eating and reproduction rates when stressed. 
-				I'll send you the data now.
-$branch .grantStressedData
+$if JobTaskCompleted(findStress), !jobs:coral-tang-checkup.microHintGiven
+	$branch common.ringPhone
+	{@profCoral}	Welcome back to the job! 
+	$branch .microHintContents
+$endif
+$if JobTaskCompleted(countIck), !jobs:coral-tang-checkup.grantedData
+	$branch common.ringPhone
+	{@profCoral}	Welcome back to the job! 
+	{@profCoral} I noticed that you already measured the stress ranges of the Blue Tang.
+				 I used your data to measure their eating and reproduction rates under stress. I'll send you the data. 
+	$branch .grantStressedData
+$endif
 
 :: grantStressedData
 $call UpgradeFact(Ick.Stresses.BlueTang)
@@ -43,46 +53,69 @@ $set jobs:coral-tang-checkup.grantedData = true
 {@player} Awesome! 
 
 :: microHint
-@trigger	JobTasksUpdated
-@when		JobTaskTop(findMicro)
+@trigger	JobTaskCompleted
+@when		taskId == "findStress", !jobs:coral-tang-checkup.microHintGiven
 @once
 @cutscene
 $branch common.ringPhone
 
 {@profCoral}	Forgive the intrusion, Ollie.
-			    I received some of your data from {nameof @guide}'s latest upload. 
-				According to the stress ranges you've measured, the environmental conditions at {h}Site S{/h} are well within the Blue Tang's comfortable range. 
+$branch .microHintContents
+
+:: microHintContents
+{@profCoral}	I was looking through some of your data from {nameof @guide}'s previous upload.
+				According to the {nameof BlueTang} stress ranges you've measured, the environmental conditions at {h}Site S{/h} are well within the {nameof BlueTang}'s comfortable range. 
 {@player}       So... something else is stressing the tang?
 				I wonder what it could be...
 {@profCoral}	I have an idea: {h}Microorganisms{/h}. 
-				I'd suggest returning to Site S and scanning for any microorganisms you might have missed. 
+				I'd suggest returning to Site S and scanning for any microorganisms you might have missed.
+$set jobs:coral-tang-checkup.microHintGiven = true
+$if HasEntity(Ick)
+	{@player}	I did notice some {nameof Ick} out there previously...
+	$if !HasFact(Ick.Stresses.BlueTang)
+		{@player}	That's probably what was stressing the {nameof BlueTang}!
+		$if !HasFact(LionfishInvasion.Population.Ick)
+			{@player}	I'll go and get counts of them.
+		$endif
+	$else
+		{@player}	That's what was stressing the {nameof BlueTang}!
+	$endif
+$endif
+
+$if JobTaskCompleted(countIck), !jobs:coral-tang-checkup.grantedData
+	{@profCoral}	Also, I used the stress data you gathered to measure {nameof BlueTang} eating and reproduction rates under stress. I'll send you the data. 
+	$branch .grantStressedData
+$endif
 
 :: scanIck
 @trigger	JobTaskCompleted
-@when		HasEntity(Ick)
+@when		taskId == "findMicro", scene:name == "RS-2S"
 @once
 @cutscene
-{@player}	This must be what's stressing the Tang!  
-			Hm... better get a population count. 
+{@player}	This must be what's stressing the {nameof BlueTang}! 
+			Hm... better get a population count.
 
 :: countIck
 @trigger	JobTaskCompleted
-@when		JobTaskTop(observeIck)
+@when		taskId == "countIck", scene:name == "RS-2S"
 @once
 @cutscene
 {@player}	Ugh. This place is just crawling with {nameof Ick}. 
 {@guide} 	Yes. I'd suggest using your {item}Observation tank{/item} to see how the {nameof Ick} is affecting the Tang.
 
+
 :: measureIck
 @trigger	JobTaskCompleted
-@when		JobTaskTop(reviseModels)
+@when		taskId == "observeIck", scene:name == "ExperimentV2"
 @once
 @cutscene
 {@guide}	Adequate work, O!
 		    Now you know that {nameof Ick} stresses {nameof BlueTang}.
 			You can use the reproduction and eating rates of the stressed Tang to improve your model.
-			{nameof @profCoral} has sent us the relevant data!
-$branch .grantStressedData
+$if !jobs:coral-tang-checkup.grantedData
+	{@guide}	{nameof @profCoral} has sent us the relevant data!
+	$branch .grantStressedData
+$endif
 
 :: helpMeasure1
 @trigger    RequestPartnerHelp
