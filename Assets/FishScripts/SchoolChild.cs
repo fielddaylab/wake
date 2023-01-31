@@ -86,7 +86,7 @@ public class SchoolChild : MonoBehaviour
 	public void Update()
 	{
 		//Skip frames
-		if (_spawner._updateDivisor <= 1 || _spawner._updateCounter == _updateSeed)
+		if (Time.timeScale > 0 && (_spawner._updateDivisor <= 1 || _spawner._updateCounter == _updateSeed))
 		{
 			CheckForDistanceToWaypoint();
 			RotationBasedOnWaypointOrAvoidance();
@@ -303,7 +303,7 @@ public class SchoolChild : MonoBehaviour
 		//	state.speed = (RNG.Instance.NextFloat(_spawner._minAnimationSpeed, _spawner._maxAnimationSpeed)*_spawner._schoolSpeed*this._speed)+.1f;}
 
         fishRenderer.GetPropertyBlock(s_PropertyBlock);
-        s_PropertyBlock.SetFloat(AnimParam_FishAnimSpeed, randomAnimSpeed + (this._speed / 2));
+        s_PropertyBlock.SetFloat(AnimParam_FishAnimSpeed, randomAnimSpeed);
 		fishRenderer.SetPropertyBlock(s_PropertyBlock);
 	}
 

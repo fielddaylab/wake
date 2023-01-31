@@ -9,7 +9,7 @@ $set session:traveling = false
 @function   SceneStart
 @when       !session:fromDream
 @cutscene
-$if !session:traveling = true
+$if session:traveling
     $call   CabinBGM->PlayBGM()
     $if CurrStation() == "KelpStation"
         {@guide}    Good morning. We have arrived at the Kelp Station.
