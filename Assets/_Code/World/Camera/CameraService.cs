@@ -1476,6 +1476,12 @@ namespace Aqua.Cameras
         }
 
         private void OnCameraPreRender(ScriptableRenderContext ctx, Camera[] cameras) {
+            #if UNITY_EDITOR
+            if (m_ScreenshotMode) {
+                return;
+            }
+            #endif // UNITY_EDITOR
+
             UpdateCameraRenderResolution();
             UpdateCameraRenderRegion();
 
@@ -1721,6 +1727,60 @@ namespace Aqua.Cameras
         }
 
         #endif // DEVELOPMENT
+
+        #if UNITY_EDITOR
+
+        [NonSerialized] private bool m_ScreenshotMode = false;
+
+        internal byte[] TakeScreenshot() {
+            Camera cam = Camera.main;
+            if (cam) {
+                m_ScreenshotMode = true;
+
+                CameraRenderScale renderScale = cam.GetComponent<CameraRenderScale>();
+
+                RenderTextureDescriptor descriptor = new RenderTextureDescriptor(1024 * 4, 660 * 4, RenderTextureFormat.Default, 8, 0);
+                RenderTexture tempTex = RenderTexture.GetTemporary(descriptor);
+                RenderTexture prevCamTarget = cam.targetTexture;
+                Rect prevCamRect = cam.rect;
+                Texture2D png = new Texture2D(tempTex.width, tempTex.height, TextureFormat.RGB24, 0, false);
+                RenderTexture prevTarget = RenderTexture.active;
+
+                float prevScale = 1;
+                CameraRenderScale.ScaleMode prevScaleMode = default;
+                if (renderScale != null) {
+                    prevScale = renderScale.Scale;
+                    prevScaleMode = renderScale.Mode;
+
+                    renderScale.Scale = 1;
+                    renderScale.Mode = CameraRenderScale.ScaleMode.Scale;
+                }
+                cam.rect = new Rect(0, 0, 1, 1);
+                
+                try {
+                    cam.targetTexture = tempTex;
+                    cam.Render();
+                    RenderTexture.active = tempTex;
+                    png.ReadPixels(new Rect(0, 0, tempTex.width, tempTex.height), 0, 0, false);
+                    return png.EncodeToPNG();
+                } finally {
+                    m_ScreenshotMode = false;
+                    if (renderScale != null) {
+                        renderScale.Scale = prevScale;
+                        renderScale.Mode = prevScaleMode;
+                    }
+                    RenderTexture.active = prevTarget;
+                    cam.targetTexture = prevCamTarget;
+                    cam.rect = prevCamRect;
+                    RenderTexture.ReleaseTemporary(tempTex);
+                    DestroyImmediate(png);
+                }
+            }
+
+            return null;
+        }
+
+        #endif // UNITY_EDITOR
 
         #endregion // Debug
     }

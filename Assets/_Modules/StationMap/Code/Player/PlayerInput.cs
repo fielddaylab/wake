@@ -30,13 +30,24 @@ namespace Aqua.StationMap
             this.CacheComponent(ref m_Transform);
         }
 
-        public void GenerateInput(out Input outInput)
+        public void GenerateInput(Transform inPlayerPosition, PlayerBodyStatus inStatus, out Input outInput)
         {
-            Plane p = new Plane(Vector3.back, m_Transform.position);
+            if (!IsInputEnabled) {
+                outInput = default(Input);
+                return;
+            }
+
+            Plane p = new Plane(Vector3.back, inPlayerPosition.position);
             m_Movement.Process(Device, m_Transform, null, p, out outInput.Mouse);
             m_MovementKey.Process(Device, out outInput.Keyboard);
-            outInput.Move = (Device.MouseDown(0) && !Services.Input.IsPointerOverUI()) || outInput.Keyboard.KeyDown;
-            outInput.MovementVector = outInput.Keyboard.KeyDown ? outInput.Keyboard.NormalizedOffset : outInput.Mouse.NormalizedOffset;
+
+            if ((inStatus & PlayerBodyStatus.DisableMovement) == 0) {
+                outInput.Move = (Device.MouseDown(0) && !Services.Input.IsPointerOverUI()) || outInput.Keyboard.KeyDown;
+                outInput.MovementVector = outInput.Keyboard.KeyDown ? outInput.Keyboard.NormalizedOffset : outInput.Mouse.NormalizedOffset;
+            } else {
+                outInput.Move = false;
+                outInput.MovementVector = default(Vector2);
+            }
         }
     }
 }

@@ -51,9 +51,26 @@ namespace Aqua.Character
         #region Leaf
 
         [LeafMember("PlayerInRegion"), Preserve]
-        static private bool PlayerInRegion(StringHash32 inId)
-        {
+        static private bool PlayerInRegion(StringHash32 inId) {
             return Script.CurrentPlayer?.InRegion(inId) ?? false;
+        }
+
+        [LeafMember("SetMovementEnabled")]
+        public void SetMovementEnabled(bool enabled) {
+            if (enabled) {
+                m_BodyStatus &= ~PlayerBodyStatus.DisableMovement;
+            } else {
+                m_BodyStatus |= PlayerBodyStatus.DisableMovement;
+            }
+        }
+
+        [LeafMember("SetToolsEnabled")]
+        public void SetToolsEnabled(bool enabled) {
+            if (enabled) {
+                m_BodyStatus &= ~PlayerBodyStatus.DisableTools;
+            } else {
+                m_BodyStatus |= PlayerBodyStatus.DisableTools;
+            }
         }
 
         #endregion // Leaf
@@ -87,6 +104,8 @@ namespace Aqua.Character
         PowerEngineEngaged = 0x04,
         DraggedByCurrent = 0x08,
         DisableMovement = 0x10,
-        DisableTools = 0x20
+        DisableTools = 0x20,
+
+        TempMask = Stunned | Slowed | PowerEngineEngaged | DraggedByCurrent
     }
 }

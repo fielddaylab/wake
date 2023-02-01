@@ -17,6 +17,7 @@ using EasyAssetStreaming;
 using EasyBugReporter;
 using BeauUtil.Variants;
 using System.Text;
+using System.IO;
 
 namespace Aqua.Debugging
 {
@@ -215,6 +216,23 @@ namespace Aqua.Debugging
                     m_DebugCamera.SetCamera(Services.Camera.Current, Services.Camera.RootTransform);
                 }
             }
+
+            #if UNITY_EDITOR
+
+            if (m_Input.KeyDown(KeyCode.LeftShift) && m_Input.KeyPressed(KeyCode.Return))
+            {
+                DeviceInput.BlockAll();
+
+                byte[] screenshot = Services.Camera.TakeScreenshot();
+                if (screenshot != null) {
+                    Directory.CreateDirectory("Screenshots");
+                    string fileName = string.Format("{0} {1}.png", DateTime.Now.ToString("dd-MM-yyyy-HHmmss"), SceneHelper.ActiveScene().Name);
+                    File.WriteAllBytes("Screenshots/" + fileName, screenshot);
+                    Debug.LogFormat("[DebugService] Wrote screenshot '{0}' to Screenshots folder", fileName);
+                }
+            }
+
+            #endif // UNITY_EDITOR
 
             if (m_DebugCamera.Camera())
             {

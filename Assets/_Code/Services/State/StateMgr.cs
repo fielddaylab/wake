@@ -432,6 +432,8 @@ namespace Aqua
                 }
             }
 
+            Services.Script.TryCallFunctions(GameTriggers.ScenePreload);
+
             using(PooledList<IStreamingComponent> allStreamingComponents = PooledList<IStreamingComponent>.Create())
             {
                 inScene.Scene.GetAllComponents<IStreamingComponent>(true, allStreamingComponents);

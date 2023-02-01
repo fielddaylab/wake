@@ -34,9 +34,7 @@ public class SchoolChild : MonoBehaviour
     [NonSerialized] private bool _instantiated;         //Has this been instantiated
 	[NonSerialized] private int _updateSeed = -1;
     [NonSerialized] private float randomAnimSpeed;
-	
-    [HideInInspector]
-	private  Transform _cacheTransform;
+	[NonSerialized] private  Transform _cacheTransform;
 	
 
 #if UNITY_EDITOR
@@ -260,6 +258,7 @@ public class SchoolChild : MonoBehaviour
 		Quaternion rotation = Quaternion.identity;
 		rotation = Quaternion.LookRotation(_wayPoint - _cacheTransform.position);
 		_cacheTransform.rotation = Quaternion.Slerp(_cacheTransform.rotation, rotation, _spawner._newDelta * _damping);
+
 		//Limit rotation up and down to avoid freaky behavior
 		float angle = _cacheTransform.localEulerAngles.x;
 		angle = (angle > 180) ? angle - 360 : angle;
@@ -267,6 +266,7 @@ public class SchoolChild : MonoBehaviour
 		Vector3 rxea = rx.eulerAngles;
 		rxea.x = ClampAngle(angle, -25.0f, 25.0f);
 		rx.eulerAngles = rxea;
+        
 		_cacheTransform.rotation = rx;
 	}
 
