@@ -215,9 +215,11 @@ namespace EasyAssetStreaming {
 
             #region State
 
-            static public readonly Dictionary<StreamingAssetHandle, Texture> TextureMap = new Dictionary<StreamingAssetHandle, Texture>();
+            static public readonly Dictionary<StreamingAssetHandle, Texture> TextureMap = new Dictionary<StreamingAssetHandle, Texture>(16);
             static public MemoryStat MemoryUsage = default;
             static public long MemoryBudget = 0;
+
+            static private Queue<StreamingAssetHandle> s_TexturePostProcessQueue = new Queue<StreamingAssetHandle>(8);
 
             #endregion // State
 
@@ -270,6 +272,8 @@ namespace EasyAssetStreaming {
                 string url = id.MetaInfo.ResolvedAddress;
                 var request = id.LoadInfo.Loader = new UnityWebRequest(url, UnityWebRequest.kHttpVerbGET);
                 request.downloadHandler = new DownloadHandlerBuffer();
+                request.timeout = TimeOutSecs;
+                InvokeLoadBegin(id, request, id.LoadInfo.RetryCount);
                 var sent = request.SendWebRequest();
                 sent.completed += (_) => {
                     HandleTextureUWRFinished(id);
@@ -343,7 +347,10 @@ namespace EasyAssetStreaming {
 
                 UnityWebRequest request = loadInfo.Loader;
 
-                if (request.isNetworkError || request.isHttpError) {
+                bool failed = DownloadFailed(request);
+                InvokeLoadResult(id, request, StreamingHelper.ResultType(request, failed));
+
+                if (failed) {
                     if (loadInfo.RetryCount < RetryLimit && StreamingHelper.ShouldRetry(request)) {
                         UnityEngine.Debug.LogWarningFormat("[Streaming] Retrying texture load '{0}' from '{1}': {2}", id.MetaInfo.Address, id.MetaInfo.ResolvedAddress, loadInfo.Loader.error);
                         loadInfo.RetryCount++;
@@ -365,7 +372,9 @@ namespace EasyAssetStreaming {
                     var settings = ApplySettings(id, texture);
                     TextureCompression compression = ResolveCompression(settings.CompressionLevel);
                     texture.LoadImage(source, compression == 0);
-                    PostApplySettings(texture, settings, compression, true);
+                    if (compression > 0) {
+                        s_TexturePostProcessQueue.Enqueue(id);
+                    }
                 } catch(Exception e) {
                     UnityEngine.Debug.LogException(e);
                     OnTextureDownloadFail(id, e.ToString());
@@ -404,6 +413,32 @@ namespace EasyAssetStreaming {
                 }
  
                 return settings;
+            }
+
+            static internal void ProcessCompressionQueue() {
+                if (s_TexturePostProcessQueue.Count > 0) {
+                    StreamingAssetHandle handle = s_TexturePostProcessQueue.Dequeue();
+                    if (!IsLoaded(handle)) {
+                        return;
+                    }
+
+                    Texture texture;
+                    if (!TextureMap.TryGetValue(handle, out texture)) {
+                        return;
+                    }
+
+                    Texture2D texture2d = texture as Texture2D;
+                    if (!texture2d) {
+                        return;
+                    }
+
+                    AssetMetaInfo meta = handle.MetaInfo;
+                    TextureSettings settings = Manifest.Entry(meta.AddressHash, meta.Address, StreamingAssetTypeId.Texture).Texture;
+
+                    long mark = Stopwatch.GetTimestamp();
+                    PostApplySettings(texture2d, settings, ResolveCompression(settings.CompressionLevel), true);
+                    UnityEngine.Debug.LogFormat("[Streaming] Applied compression to '{0}' (took {1}ms)", meta.Address, (double) (Stopwatch.GetTimestamp() - mark) / Stopwatch.Frequency * 1000);
+                }
             }
 
             static private void PostApplySettings(Texture2D texture, TextureSettings settings, TextureCompression compression, bool final) {
@@ -514,9 +549,9 @@ namespace EasyAssetStreaming {
 
             static private bool s_OverBudgetFlag;
 
-            static public void CheckBudget(long now) {
+            static public bool CheckBudget(long now) {
                 if (MemoryBudget <= 0) {
-                    return;
+                    return false;
                 }
 
                 long over = MemoryUsage.Current - MemoryBudget;
@@ -529,10 +564,13 @@ namespace EasyAssetStreaming {
                     if (asset) {
                         UnloadSingle(asset, now);
                         s_OverBudgetFlag = false;
+                        return true;
                     }
                 } else {
                     s_OverBudgetFlag = false;
                 }
+
+                return false;
             }
 
             #endregion // Budget

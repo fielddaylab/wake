@@ -2,6 +2,7 @@
 #define USE_JSLIB
 #endif // !UNITY_EDITOR && UNITY_WEBGL
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -22,7 +23,7 @@ namespace NativeUtils {
 
         #else
 
-        static private readonly HashSet<string> s_DebugPreloadedURLS = new HashSet<string>();
+        static private readonly HashSet<string> s_DebugPreloadedURLS = new HashSet<string>(StringComparer.Ordinal);
 
         #endif // USE_JSLIB
 

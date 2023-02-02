@@ -35,8 +35,9 @@ namespace EasyAssetStreaming {
 
             PendingUnload = 0x02,
             PendingLoad = 0x04,
-            Loaded = 0x08,
-            Error = 0x10,
+            Loading = 0x08,
+            Loaded = 0x10,
+            Error = 0x20,
         }
 
         // invariant information
@@ -151,6 +152,9 @@ namespace EasyAssetStreaming {
 
                     if (loadInfo.Loader != null) {
                         loadInfo.Loader.Dispose();
+                        if (OnLoadResult != null) {
+                            InvokeLoadResult(new StreamingAssetHandle((uint) i, m_Slots[i].Generation), loadInfo.Loader, LoadResult.Cancelled);
+                        }
                     }
 
                     if (callbackInfo.List != null) {

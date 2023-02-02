@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using BeauUtil;
+using BeauUtil.UI;
 using EasyAssetStreaming;
 using TMPro;
 using UnityEngine;

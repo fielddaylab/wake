@@ -48,6 +48,7 @@ namespace EasyAssetStreaming {
 
         #endregion // Inspector
 
+        [NonSerialized] private StreamingHelper.AwakeTracker m_Awake;
         [NonSerialized] private StreamingAssetHandle m_AssetHandle;
         [NonSerialized] private Texture m_LoadedTexture;
         [NonSerialized] private Rect m_ClippedUVs;
@@ -288,10 +289,14 @@ namespace EasyAssetStreaming {
 
         #region Unity Events
 
+        protected override void Awake() {
+            m_Awake.OnNaturalAwake();
+        }
+
         protected override void OnEnable() {
             #if UNITY_EDITOR
             if (!Application.IsPlaying(this)) {
-                if (EditorApplication.isPlayingOrWillChangePlaymode) {
+                if (EditorApplication.isPlayingOrWillChangePlaymode || BuildPipeline.isBuildingPlayer) {
                     return;
                 }
                 
@@ -322,10 +327,12 @@ namespace EasyAssetStreaming {
                 m_AppliedPivot = m_RawImage.rectTransform.pivot;
             }
 
-            LoadTexture();
-            LoadClipping();
-            LoadAnchors();
-            ApplyVisible();
+            if (!m_Awake.IsForcing()) {
+                LoadTexture();
+                LoadClipping();
+                LoadAnchors();
+                ApplyVisible();
+            }
         }
 
         protected override void OnDisable() {
@@ -340,6 +347,14 @@ namespace EasyAssetStreaming {
         protected override void OnRectTransformDimensionsChange() {
             Resize(m_AutoSize);
         }
+
+        protected override void OnDidApplyAnimationProperties() {
+            if (isActiveAndEnabled) {
+                LoadClipping();
+                LoadAnchors();
+                ApplyVisible();
+            }
+        } 
 
         #if UNITY_EDITOR
 
@@ -369,6 +384,7 @@ namespace EasyAssetStreaming {
         /// Prefetches
         /// </summary>
         public void Preload() {
+            m_Awake.AwakeIfNotAwoken(this);
             LoadTexture();
             LoadClipping();
             LoadAnchors();
@@ -489,17 +505,19 @@ namespace EasyAssetStreaming {
             m_ColorGroup = GetComponent<ColorGroup>();
             #endif // USING_BEAUUTIL
 
-            EditorApplication.delayCall += () => {
-                if (!this) {
-                    return;
-                }
+            if (this.isActiveAndEnabled) {
+                EditorApplication.delayCall += () => {
+                    if (!this || !this.isActiveAndEnabled) {
+                        return;
+                    }
 
-                LoadTexture();
-                Resize(m_AutoSize);
-                LoadClipping();
-                LoadAnchors();
-                ApplyVisible();
-            };
+                    LoadTexture();
+                    Resize(m_AutoSize);
+                    LoadClipping();
+                    LoadAnchors();
+                    ApplyVisible();
+                };
+            }
         }
 
         #endif // UNITY_EDITOR

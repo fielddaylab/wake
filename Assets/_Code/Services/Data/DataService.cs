@@ -288,7 +288,7 @@ namespace Aqua
         private IEnumerator TryLoadProfileFromServerRoutine(Future<SaveData> ioFuture, string inUserCode)
         {
             using(var future = Future.Create<string>())
-            using(var request = OGD.GameState.RequestLatestState(inUserCode, future.Complete, (r) => future.Fail(r)))
+            using(var request = OGD.GameState.RequestLatestState(inUserCode, future.Complete, (r) => future.Fail(r), 0))
             {
                 yield return future;
 
@@ -430,7 +430,7 @@ namespace Aqua
             }
 
             using(var future = Future.Create())
-            using(var saveRequest = OGD.GameState.PushState(m_ProfileName, saveData, future.Complete, (r) => future.Fail(r)))
+            using(var saveRequest = OGD.GameState.PushState(m_ProfileName, saveData, future.Complete, (r) => future.Fail(r), 0))
             {
                 yield return future;
 
@@ -559,10 +559,11 @@ namespace Aqua
             if (!IsDebugProfile())
             {
                 int attempts = (int) (m_SaveRetryCount + 1);
+                int count = 0;
                 while(attempts > 0)
                 {
                     using(var future = Future.Create())
-                    using(var saveRequest = OGD.GameState.PushState(m_ProfileName, saveData, future.Complete, (r) => future.Fail(r)))
+                    using(var saveRequest = OGD.GameState.PushState(m_ProfileName, saveData, future.Complete, (r) => future.Fail(r), count))
                     {
                         yield return future;
 
@@ -574,6 +575,7 @@ namespace Aqua
                         else
                         {
                             attempts--;
+                            count++;
                             Log.Warn("[DataService] Failed to save to server: {0}", future.GetFailure().Object);
                             if (attempts > 0)
                             {

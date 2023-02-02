@@ -6,6 +6,7 @@ using Aqua.Journal;
 using BeauPools;
 using BeauRoutine;
 using BeauUtil;
+using BeauUtil.UI;
 using EasyAssetStreaming;
 using TMPro;
 using UnityEngine;

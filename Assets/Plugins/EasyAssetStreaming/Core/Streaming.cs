@@ -27,7 +27,8 @@ namespace EasyAssetStreaming {
 
         private const int RetryLimit = 10;
         private const float RetryDelayBase = 1f;
-        private const float RetryDelayExtra = 0.1f;
+        private const float RetryDelayExtra = 0.05f;
+        private const int TimeOutSecs = 8;
 
         #endregion // Consts
 
@@ -66,6 +67,29 @@ namespace EasyAssetStreaming {
             public long Max;
         }
 
+        /// <summary>
+        /// What kind of result/error was encountered.
+        /// </summary>
+        public enum LoadResult {
+            Success_Download,
+            Success_Cached,
+            Error_Network,
+            Error_Server,
+            Cancelled,
+            Error_Unknown,
+            Error_Simulated,
+        }
+
+        /// <summary>
+        /// Delegate for reporting errors.
+        /// </summary>
+        public delegate void LoadBeginDelegate(StreamingAssetHandle id, long size, UnityWebRequest request, int retryStatus);
+
+        /// <summary>
+        /// Delegate for reporting errors.
+        /// </summary>
+        public delegate void LoadResultDelegate(StreamingAssetHandle id, long size, UnityWebRequest request, LoadResult resultType);
+
         #endregion // Types
 
         #region State
@@ -92,6 +116,15 @@ namespace EasyAssetStreaming {
         static private bool s_UpdateEnabled = true;
         static private bool s_TickInitialized;
         static private GameObject s_UpdateHookGO;
+
+        // Simulated conditions
+
+        #if DEVELOPMENT
+
+        static private float s_SimulatedFailureRate = 0;
+        static private float s_SimulatedDelay = 0;
+
+        #endif // DEVELOPMENT
 
         #endregion // State
 
@@ -131,7 +164,7 @@ namespace EasyAssetStreaming {
         /// Returns the status of the asset with the given streaming id.
         /// </summary>
         static public AssetStatus Status(StreamingAssetHandle id) {
-            if (!s_Cache.IsValid(id)) {
+            if (s_Cache == null || !s_Cache.IsValid(id)) {
                 return AssetStatus.Invalid;
             }
 
@@ -190,6 +223,63 @@ namespace EasyAssetStreaming {
 
         #endregion // Resolve
 
+        #region Errors
+
+        /// <summary>
+        /// Event dispatched when a load has completed/failed.
+        /// </summary>
+        static public event LoadBeginDelegate OnLoadBegin;
+
+        /// <summary>
+        /// Event dispatched when a load has completed/failed.
+        /// </summary>
+        static public event LoadResultDelegate OnLoadResult;
+
+        /// <summary>
+        /// Retries loading previously-errored assets.
+        /// </summary>
+        static public int RetryErrored() {
+            int errorCount = 0;
+            foreach(var id in s_Cache.ByAddressHash.Values) {
+                ref AssetStatus status = ref s_Cache.StateInfo[id.Index].Status;
+                if (status == AssetStatus.Error) {
+                    status = AssetStatus.PendingLoad;
+                    s_Cache.LoadInfo[id.Index].RetryCount = 0;
+                    QueueLoad(id);
+                    errorCount++;
+                }
+            }
+            return errorCount;
+        }
+
+        /// <summary>
+        /// Returns the number of assets with loading failures.
+        /// </summary>
+        static public int ErrorCount() {
+            int errorCount = 0;
+            foreach(var id in s_Cache.ByAddressHash.Values) {
+                ref AssetStatus status = ref s_Cache.StateInfo[id.Index].Status;
+                if (status == AssetStatus.Error) {
+                    errorCount++;
+                }
+            }
+            return errorCount;
+        }
+
+        static private void InvokeLoadBegin(StreamingAssetHandle id, UnityWebRequest request, int retryCount) {
+            if (OnLoadBegin != null) {
+                OnLoadBegin(id, Manifest.Entry(id).Size, request, retryCount);
+            }
+        }
+
+        static private void InvokeLoadResult(StreamingAssetHandle id, UnityWebRequest request, LoadResult result) {
+            if (OnLoadResult != null) {
+                OnLoadResult(id, Manifest.Entry(id).Size, request, result);
+            }
+        }
+
+        #endregion // Errors
+
         #region Queues
 
         static private void QueueLoad(StreamingAssetHandle id) {
@@ -207,7 +297,7 @@ namespace EasyAssetStreaming {
             s_LoadState.Count++;
             
             ref AssetStatus status = ref s_Cache.StateInfo[id.Index].Status;
-            status = (status | AssetStatus.PendingLoad) & ~AssetStatus.PendingUnload;
+            status = (status | AssetStatus.PendingLoad) & ~(AssetStatus.PendingUnload | AssetStatus.Loading);
         }
 
         static private void DecrementLoadCounter() {
@@ -413,6 +503,7 @@ namespace EasyAssetStreaming {
 
             if (loadInfo.Loader != null) {
                 loadInfo.Loader.Dispose();
+                InvokeLoadResult(id, loadInfo.Loader, LoadResult.Cancelled);
                 loadInfo.Loader = null;
             }
 
@@ -552,9 +643,11 @@ namespace EasyAssetStreaming {
                 return;
             }
 
+            bool didWork = false;
+
             long now = CurrentTimestamp();
-            Textures.CheckBudget(now);
-            AudioClips.CheckBudget(now);
+            didWork |= Textures.CheckBudget(now);
+            didWork |= AudioClips.CheckBudget(now);
 
             // update the delayed queue
             for(int i = s_LoadState.DelayedQueue.Count - 1; i >= 0; i--) {
@@ -575,11 +668,22 @@ namespace EasyAssetStreaming {
                 }
                 
                 ref AssetStateInfo stateInfo = ref s_Cache.StateInfo[id.Index];
+                
+                // if unloading or unloaded then ignore
                 if ((stateInfo.Status & (AssetStatus.PendingUnload | AssetStatus.Unloaded)) != 0) {
                     UnloadSingle(id, now, 0);
                     s_LoadState.Count--;
+                    didWork = true;
                     continue;
                 }
+
+                // if already loading then ignore
+                if ((stateInfo.Status & AssetStatus.Loading) != 0) {
+                    s_LoadState.Count--;
+                    continue;
+                }
+
+                stateInfo.Status |= AssetStatus.Loading;
 
                 AssetMetaInfo metaInfo = s_Cache.MetaInfo[id.Index];
                 UnityEngine.Debug.LogFormat("[Streaming] Beginning download of '{0}'", metaInfo.Address);
@@ -598,6 +702,8 @@ namespace EasyAssetStreaming {
                         break;
                     }
                 }
+
+                didWork = true;
             }
 
             // update the unload queue
@@ -609,9 +715,15 @@ namespace EasyAssetStreaming {
                     UnloadSingle(id, s_UnloadState.StartTS, s_UnloadState.MinAge);
                 }
 
+                didWork = true;
+
                 if (s_UnloadState.Queue.Count == 0) {
                     s_UnloadState.Unloading = false;
                 }
+            }
+        
+            if (!didWork) {
+                Textures.ProcessCompressionQueue();
             }
         }
 
@@ -642,6 +754,15 @@ namespace EasyAssetStreaming {
             if (memUsage.Max < memUsage.Current) {
                 memUsage.Max = memUsage.Current;
             }
+        }
+
+        [MethodImpl(256)]
+        static private bool DownloadFailed(UnityWebRequest request) {
+            #if DEVELOPMENT
+            return request.isNetworkError || request.isHttpError || UnityEngine.Random.value < s_SimulatedFailureRate;
+            #else
+            return request.isNetworkError || request.isHttpError;
+            #endif // DEVELOPMENT
         }
 
         #endregion // Utilities

@@ -360,7 +360,7 @@ namespace Aqua
                 method = method.Substring(indirectIndex + 2);
             }
 
-            object result;
+            NonBoxedValue result;
             if (target.IsEmpty)
             {
                 m_LeafCache.TryStaticInvoke(method, args, null, out result);
