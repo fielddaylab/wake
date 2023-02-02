@@ -87,6 +87,9 @@ namespace Aqua
             m_TagEventParser.AddEvent("trigger-response", ScriptEvents.Global.TriggerResponse).WithStringData();
             m_TagEventParser.AddEvent("style", ScriptEvents.Global.BoxStyle).WithStringHashData();
 
+            // Text-Only Events
+            m_TagEventParser.AddEvent("un", ScriptEvents.Global.Unscramble);
+
             // Dialog-Specific Events
             m_TagEventParser.AddEvent("auto", ScriptEvents.Dialog.Auto);
             m_TagEventParser.AddEvent("clear", ScriptEvents.Dialog.Clear);
@@ -325,7 +328,8 @@ namespace Aqua
                 .Register(ScriptEvents.Global.EnableObject, EventEnableObject)
                 .Register(ScriptEvents.Global.DisableObject, EventDisableObject)
                 .Register(ScriptEvents.Global.BlockInput, () => Services.Input.PauseAll())
-                .Register(ScriptEvents.Global.UnblockInput, () => Services.Input.ResumeAll());
+                .Register(ScriptEvents.Global.UnblockInput, () => Services.Input.ResumeAll())
+                .Register(ScriptEvents.Global.Unscramble, () => {});
 
             m_SkippedEvents = Collections.NewSet<StringHash32>(18);
             m_SkippedEvents.Add(ScriptEvents.Global.CutsceneOn);

@@ -21,6 +21,8 @@ namespace Aqua
             "pg", "var", "var-i", "var-f", "var-b", "var-s", "switch-var", "slow", "reallySlow"
         };
 
+        static public readonly TagString WorkingTag = new TagString();
+
         static public Color HexColor(string inColorString)
         {
             Assert.True(inColorString.Length == 7 && inColorString[0] == '#');

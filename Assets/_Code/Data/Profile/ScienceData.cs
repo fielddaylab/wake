@@ -168,7 +168,7 @@ namespace Aqua.Profile
         }
 
         public bool FullyDecrypted() {
-            return m_SpecterCount >= ScienceUtils.MaxSpecters() && Script.ReadVariable(Var_FullyDecrypted).AsBool();
+            return Script.ReadVariable(Var_FullyDecrypted).AsBool();
         }
 
         public bool IsSpecterQueued(StringHash32 mapId) {

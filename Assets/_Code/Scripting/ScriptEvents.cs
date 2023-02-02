@@ -28,6 +28,7 @@ namespace Aqua.Scripting
             static public readonly StringHash32 ScreenWipeOut = "wipe-out";
             static public readonly StringHash32 ShowDialog = "show-dialog";
             static public readonly StringHash32 StopBGM = "bgm-stop";
+            static public readonly StringHash32 Unscramble = "unscramble";
             static public readonly StringHash32 VolumeBGM = "bgm-volume";
             static public readonly StringHash32 WaitAbsolute = "wait-abs";
         }

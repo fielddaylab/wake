@@ -43,7 +43,7 @@ $call GiveJournalEntry("N24_TioVictor")
 @when       JobStartedOrComplete(kelp-shop-welcome), jobs:kelp-mechanic.initiated-first-convo
 @once
 {@$MerchantId}  Now that you and {nameof @guide} will be traveling outside the Kelp Forest, you'll need some upgrades. 
-                You still only have Level 1 clearance, so you'll need to stick to the basics for now. 
+                You still only have {h}Level 1 clearance{/h}, so you'll need to stick to the basics for now. 
                 Want to take a look? 
 $set jobs:kelp-mechanic.givenJournal = false
 $choice .action.openShop; Sure! 
@@ -169,7 +169,7 @@ $choice .action.cancel; Not right now.
 
 :: discussUpgrade
 @cutscene
-{@$MerchantId}  The Ammonite Upgrade should unscramble all of Sam's messages!
+{@$MerchantId}  The {h}Ammonite Upgrade{/h} should unscramble all of Sam's messages!
                 I'm uploading it to your data card now. 
                 I've also linked the upgrade to our job board here...
                 Which means any jobs that Sam tries to send out should be able to reach us.
