@@ -321,7 +321,7 @@ namespace Aqua.Cameras
             Vector3 cameraForwardVector = m_PositionRoot.forward;
             Plane p;
 
-            if (m_FOVPlane)
+            if (m_FOVPlane && m_FOVPlane.Target)
             {
                 p = new Plane(-cameraForwardVector, m_FOVPlane.Target.position);
             }
