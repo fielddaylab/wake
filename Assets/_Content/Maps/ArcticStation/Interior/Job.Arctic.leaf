@@ -46,7 +46,8 @@ $choice .action.cancel; Nothing for now.
 {@player} Yeah. My best friend {nameof @sam}.
 {@$JobGiverId} My friend {nameof @ex} is on that mission, too! She was out here a few months ago, studying snow algae.
 {@$JobGiverId} She's amazing. Your friend {nameof @sam} is in good company. 
-$call GiveJournalEntry("N31_SnowAlgae")
+$call GiveJournalEntry("N31_SnowAlgae", Silent)
+$call GiveJournalEntry("N28_Connected")
 
 
 #NoJobHandler(postFinalJob, JobCompleted(final-final))
