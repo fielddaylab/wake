@@ -65,7 +65,6 @@ $if jobs:bayou-mechanic.givenArticle, !jobs:kelp-mechanic.givenJournal
                   Mom said it was an equipment malfunction, but if Mer was such a tech genius... 
     {@$MerchantId} Lo siento, Ollie. It's not my place to say.
                    For now, let's focus on work, okay?            
-
     
     $set jobs:kelp-mechanic.givenJournal = true
 $elseif HasJournalEntry("S04"), !jobs:specter6-comms.kelp.discussed, jobs:final-final.tioUpgradeCallComplete
@@ -79,7 +78,7 @@ $elseif HasJournalEntry("S04"), !jobs:specter6-comms.kelp.discussed, jobs:final-
     {@$MerchantId} Of course, Ollie. I'll ring you on the comms as soon as I find something, okay?
     {@$MerchantId} Gracias, Tío. 
     $set jobs:specter6-comms.kelp.discussed = true
-$elseif jobs:final-final.upgradeReady, !JobStartedOrComplete(final-final)
+$elseif jobs:final-final.upgradeReady, !jobs:final-final.tio.code-received
     // final job unlocked after seeing 8th specter
     {@$MerchantId} So, mijita. Ready to upgrade {nameof @guide} and rescue {nameof @sam}? 
     $choice .discussUpgrade; Yes! Tell me about the upgrade. 
