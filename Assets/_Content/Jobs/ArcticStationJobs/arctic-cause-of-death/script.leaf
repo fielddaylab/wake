@@ -87,11 +87,8 @@ $endif
 @when   JobTaskTop(reportBack)
 @cutscene
 {@player}   Okay, V. What now? 
-$if scene:name != "RS-4Z-StationInterior"
 {@guide}    It's time to report back to {nameof @arcticSci}!
-$else
-{@guide}    Be sure to review your data and the hypotheses of {nameof @arcticSci} before presenting your findings.
-$endif
+            Be sure to review your data and the hypotheses of {nameof @arcticSci} before presenting your findings.
 
 ::giveWhaleEat
 @trigger    JobTasksUpdated
@@ -126,6 +123,14 @@ $call GiveFact(BowheadWhale.Light.Stressed)
 $call GiveFact(BowheadWhale.PH.Stressed)
 $call GiveFact(BowheadWhale.Temperature.Stressed)
 $set jobs:arctic-cause-of-death.grantedStress = true
+
+:: reflectionTime
+@trigger    JobTasksUpdated
+@when       JobTaskTop(reportBack)
+@once
+@cutscene
+{@guide}    It seems you now have gathered enough data to make an educated decision about whether Linda died due to lack of food or poor water conditions.
+            When you think you know which hypothesis is correct, report back to {nameof @arcticSci}.
 
 // CATCH-ALL GUIDE TEXT
 
@@ -181,7 +186,7 @@ $choose branch
 
 :: argue.foodClaim
 {@arcticSci}    Hmmm. Okay, let's take it step by step.
-                What possible food sources for {nameof BowheadWhale} are at {nameof RS-4W}?
+                What do {pluralnameof BowheadWhale} eat at {nameof RS-4W}?
 $call ArgueLoad(foodCauseDeath)
 $if ArgueSetClaim(Claim, jobs.arctic-cause-of-death.argue.claimLabel1) 
 	$call ArgueFactSlot(BowheadWhale.Eats.IceAlgae) 

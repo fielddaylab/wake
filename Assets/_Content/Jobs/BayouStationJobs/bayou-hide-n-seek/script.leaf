@@ -5,14 +5,19 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@profBayou}   Okay, Ollie. Let's jump right in.   
-               I need a new model that will allow me to predict the future health of the turtles here at {h}Site O{/h}.
+{@profBayou}    Okay, Ollie. Let's jump right in.   
+                I need a new model that will allow me to predict the future health of the turtles here at {h}Site O{/h}.
 {@player}      Wait... what about the model I already built?
-{@profBayou}   As per our last conversation, it wasn't accurate enough. 
+{@profBayou}    As per our last conversation, it wasn't accurate enough. 
                 You must've missed an organism.
-{@bayouSci}     Aw, don't look so down, Ollie. You wouldn't believe how many times I've missed stuff!
-{@bayouSci}     I need you to search {h}Site O{/h} for any missing organisms.
-               Then build a higher-accuracy model and report back here. 
+$if HasEntity(MoonJelly)
+    {@player}       You know, I did find a {nameof MoonJelly} since then. Maybe that was the missing piece!
+    {@profBayou}    If so, that should make your task easier. Collect data on this new organism and update the model.
+$else
+    {@bayouSci}     Aw, don't look so down, Ollie. You wouldn't believe how many times I've missed stuff!
+    {@profBayou}    I need you to search {h}Site O{/h} for any missing organisms.
+                    Then build a higher-accuracy model and report back here. 
+$endif
 {@player}      I'm on it. 
 $set jobs:hide-n-seek.sync-failed = false
 
