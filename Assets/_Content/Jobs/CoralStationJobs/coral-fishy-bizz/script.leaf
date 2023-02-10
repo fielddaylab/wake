@@ -296,13 +296,14 @@ $call ArgueComplete()
 $call CompleteJob()
 
 :: argue.incorrectFacts
-$if ArgueIsFactSubmitted(Model.TurtleVisual)
+$if ArgueIsFactSubmitted(ReefEdge.Model.TurtleVisual)
 	{@profCoral} I see how that might be related, but it's not quite what I need.  
 			    Do you have a model to show how many fishers we can support? 
+$elseif ArgueIsFactSubmitted(ReefEdge.Model.GrouperReproduction)
+	{@profCoral}	Yes, that's definitely the problem -- but do you have a model that shows how much we have to decrease fishing?
 $else
 	{@profCoral} Hmmm... that's not helpful here, Ollie. Do you have anything else? 
 $endif
-
 $call ArgueRejectIncorrect()
 $goto .argue.defendClaim
 

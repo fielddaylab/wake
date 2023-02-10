@@ -3,20 +3,25 @@
 :: ClearDreamState
 @function   SceneLeave
 $set session:fromDream = null
+$set session:traveling = false
 
 :: StartAudio.NoDream
 @function   SceneStart
 @when       !session:fromDream
+@cutscene
 $call   CabinBGM->PlayBGM()
-$if CurrStation() == "KelpStation"
-    {@guide}    Good morning. We have arrived at the Kelp Station.
-$elseif CurrStation() == "ArcticStation"
-    {@guide}    Good morning. We have arrived at the Arctic Station.
-$elseif CurrStation() == "CoralStation"
-    {@guide}    Good morning. We have arrived at the Coral Station.
-$else // Bayou
-    {@guide}    Good morning. We have arrived at the Bayou Station.
+$if session:traveling
+    $if CurrStation() == "KelpStation"
+        {@guide}    Good morning. We have arrived at the Kelp Station.
+    $elseif CurrStation() == "ArcticStation"
+        {@guide}    Good morning. We have arrived at the Arctic Station.
+    $elseif CurrStation() == "CoralStation"
+        {@guide}    Good morning. We have arrived at the Coral Station.
+    $else // Bayou
+        {@guide}    Good morning. We have arrived at the Bayou Station.
+    $endif
 $endif
+
 $if !world:cabin.first-visit-complete
     $branch .TrunkSequence
 $elseif HasJournalEntry("N18_BayouNecklace"), !jobs:final-final.tioUpgradeCallComplete

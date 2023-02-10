@@ -106,18 +106,11 @@ $set jobs:coral-stressed.gotScans = true
 {@guide}	Select the Stress Tank. Then add the Coral and see if you can find what's causing its condition. 
 
 :: experimentEnd
-@trigger    ExperimentFinished //NewStressResults
-@when 		HasFact(StaghornCoral.Light.Stressed)
+@trigger    JobTaskCompleted
+@when 		taskId == "stressCoral"
 @once
 @cutscene
-{@guide}  Adequate work, O!
-{@player} Hmm. Can you remind me what this all means, {nameof @guide}?
-{@guide} Certainly, O.
-		 For each environment variable, the bars show values from low to high.
-{@guide}  The grayed parts show the range where the organism is stressed.
-{@player} 	Got it. So basically... we're getting the ranges of conditions that stress the Coral?
-{@guide}	Exactly. 
-			It appears that the Staghorn Coral is stressed if the temperature is too hot or cold...
+{@guide}	It appears that the Staghorn Coral is stressed if the temperature is too hot or cold...
 			Or if the light levels are too low.
 			Time to report this information to {nameof @profCoral}!
 

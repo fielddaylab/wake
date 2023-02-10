@@ -4,7 +4,7 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@profArctic} Thank you, Ollie! No one ever offers to help with the salmon counts. 
+{@profArctic} Thank you, Ollie! No one ever offers to help with the salmon estimates. 
 {@player}  But... I don't get it. 
 		   It looks like you already counted the current salmon populations.
 {@profArctic}  Sure, once. That means it's time to count again.
@@ -24,7 +24,7 @@
 {@player} I can't believe {nameof @profArctic} does this by herself every time.
 		  She must really care about the salmon! 
 	  	What should we do next, {nameof @guide}?
-{@guide}  You need to add your counts to the researchers' records at the station!
+{@guide}  You need to add your estimates to the researchers' records at the station!
 
 // CATCH-ALL GUIDE TEXT
 
@@ -71,7 +71,7 @@ $choice .argue.giveUp; Let me get back to you
 
 :: argue.correctFacts
 $call ArgueComplete()
-{@profArctic}  Oh, this is great! Looks like the counts are accurate.
+{@profArctic}  Oh, this is great! Looks like the estimates are accurate.
 			   I like to keep a close eye on our salmon populations here. 
 {@player} I totally get it. My mom is the same way with the Kelp and Otters back home.
 		  Do you need any more help?

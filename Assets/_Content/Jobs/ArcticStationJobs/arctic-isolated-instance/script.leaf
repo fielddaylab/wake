@@ -265,7 +265,7 @@ $if ArgueIsComplete(argueIsolatedInstanceGroundworkStress)
 			        The light levels seem fine. Something else must be going on.
 	$branch .argue.groundwork.main-question
 $else
-	{@profArctic}	Hmm. That could be it. Do you have evidence about the current light levels at Site Z?
+	{@profArctic}	What information do you have related to the current light levels at Site Z?
 	$call ArgueLoad(argueIsolatedInstanceGroundworkStress)
 	$if ArgueSetClaim(IsolatedInstanceGroundworkStressClaim, jobs.arctic-isolated-instance.argue.claimLabelStress)
 		$call ArgueFactSlot(GlassSponge.Light.Stressed)
@@ -284,7 +284,7 @@ $choose branch
 
 :: argue.groundwork.lightComplete
 $call ArgueComplete()
-{@profArctic}	Actually, these light levels seem fine. It seems like something else is going on.
+{@profArctic}	From what you've shown me, these light levels seem fine. So something else must be going on.
 $if ArgueIsComplete(argueIsolatedInstanceGroundworkPredator)
 	$branch .argue.groundwork.bothComplete
 $else
@@ -303,11 +303,11 @@ $if ArgueIsComplete(argueIsolatedInstanceGroundworkPredator)
 	{@profArctic}  I thought we already talked about this, Ollie. There are no predators that eat Glass Sponges in Site Z.
 	$branch .argue.groundwork.main-question
 $else
-	{@profArctic}	Hmmm. Have you observed this?
+	{@profArctic}	What have you observed regarding this?
 	$call ArgueLoad(argueIsolatedInstanceGroundworkPredator)
 
 	$if JobTaskTop(discussFindings)
-		$choice .argue.groundwork.predatorComplete; Actually, none of the Site Z predators ate the sponges.
+		$choice .argue.groundwork.predatorComplete; None of the Site Z predators ate the sponges.
 		$choice .argue.giveUpArgument; Let me get back to you.
 	$else
 		$choice .argue.giveUpArgument; Still working on it!
@@ -392,7 +392,7 @@ $call ArgueCancelClaim()
 :: argue.final.complete
 $call ArgueComplete()
 {@profArctic} So the Cushion Stars eat all the Glass Sponges at Site Y, before they can make it here to Site Z.
-			  This was a tricky one! I'm impressed by your persistance. 
+			  This was a tricky one! I'm impressed by your persistence. 
 {@player}	  Ha. My mom would call it stubbornness. 
 {@profArctic}  Well, whatever you want to call it, your sister was the same way. 
 			   I'll pass on what we learned to my colleagues in Norway——they're studying Cushion Stars, too.

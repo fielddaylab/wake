@@ -54,6 +54,23 @@ $choice .action.cancel; Not right now.
 $choice .action.openShop; Sure, thanks!
 $choice .action.cancel; Not right now.
 
+#ShopHandler(afterChess, CompletedJobCount(ArcticStation, 3))
+@once
+{@$MerchantId}  Hey, I heard you played chess with Juno! How'd it go?
+{@player}       Um... let's just say I could use more practice.
+                She's way above my level.
+$call GiveJournalEntry("N29_Chess")
+
+:: ContinueAfterChessJournal
+@trigger    JournalHidden
+@when       HasJournalEntry("N29_Chess")
+@once
+@cutscene
+{@$MerchantId}  Eh, don't take it too hard. Not a one of us is anywhere near Juno's level.
+{@$MerchantId}  Well, want to look at the shop? We haven't got any chess strategy books in stock, but...
+$choice .action.openShop; Sure, thanks!
+$choice .action.cancel; Not right now.
+
 :: action.cancel
 @cutscene
 {@$MerchantId}  Well, good luck out there, kid. If you ever need anything, just holler.

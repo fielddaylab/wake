@@ -9,6 +9,7 @@
 {@guide}    Whoa. That's a big skeleton.
             I am both fascinated| and horrified.
             Why| does it look so hairy?
+$call CheckJobTasks()
 
 :: WhaleFallPulledAlong
 @trigger    PlayerEnterRegion
@@ -20,8 +21,9 @@
 
 :: RememberNearWhalefall
 @function   PlayerEnterRegion
-@when       regionId == "NearWhaleFall"
+@when       regionId == "NearWhaleFall", !world:RS-4W.seenWhalefall
 $set    world:RS-4W.seenWhalefall = true
+$call CheckJobTasks()
 
 // {@guide}    Do you| get the sense we're getting pulled in?
 // {hide-dialog} {wait 1}

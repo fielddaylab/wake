@@ -36,6 +36,7 @@ namespace AquaAudio
         public Vector3 PositionOffset;
         public IActiveEntity SourceEntity;
         public AudioCallback OnLoop;
+        public AudioHandleGroup Group;
 
         public AudioPropertyBlock EventProperties;
         public AudioPropertyBlock LocalProperties;
@@ -74,6 +75,7 @@ namespace AquaAudio
             state.PositionSource = null;
             state.PositionOffset = default(Vector3);
             state.SourceEntity = null;
+            state.Group = null;
 
             #if UNITY_EDITOR
             samplePlayer.gameObject.name = evt.name;
@@ -101,6 +103,7 @@ namespace AquaAudio
             state.PositionSource = null;
             state.PositionOffset = default(Vector3);
             state.SourceEntity = null;
+            state.Group = null;
 
             #if UNITY_EDITOR
             streamPlayer.gameObject.name = evt.name;
@@ -124,6 +127,7 @@ namespace AquaAudio
             state.Position = null;
             state.Event = null;
             state.OnLoop = null;
+            state.Group = null;
             state.PositionSource = null;
             state.PositionOffset = default(Vector3);
             state.SourceEntity = null;
@@ -308,6 +312,9 @@ namespace AquaAudio
             state.LastKnownProperties = parentSettings;
             AudioPropertyBlock.Combine(state.LastKnownProperties, state.EventProperties, ref state.LastKnownProperties);
             AudioPropertyBlock.Combine(state.LastKnownProperties, state.LocalProperties, ref state.LastKnownProperties);
+            if (state.Group != null) {
+                AudioPropertyBlock.Combine(state.LastKnownProperties, state.Group.Properties, ref state.LastKnownProperties);
+            }
 
             if (state.SourceEntity != null && state.SourceEntity.ActiveStatus != EntityActiveStatus.AwakeAndActive) {
                 state.LastKnownProperties.Mute = true;

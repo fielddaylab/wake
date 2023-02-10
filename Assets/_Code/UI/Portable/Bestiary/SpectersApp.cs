@@ -7,6 +7,7 @@ using BeauRoutine;
 using BeauRoutine.Extensions;
 using BeauUtil;
 using BeauUtil.Debugger;
+using BeauUtil.Tags;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,6 +28,7 @@ namespace Aqua.Portable {
         #endregion // Inspector
         
         [NonSerialized] private List<TMP_Text> m_CachedFactTextList = new List<TMP_Text>();
+        private Routine m_EncodedTypeRoutine;
 
         private void Awake() {
             GetComponent<BestiaryApp>().Handler = new BestiaryApp.DisplayHandler() {
@@ -36,6 +38,10 @@ namespace Aqua.Portable {
                 PopulatePage = PopulateEntryPage,
                 PopulateFacts = PopulateEntryFacts,
             };
+        }
+
+        private void OnDisable() {
+            m_EncodedTypeRoutine.Stop();
         }
 
         static private void GetEntries(BestiaryDescCategory category, List<TaggedBestiaryDesc> entries) {
@@ -86,9 +92,17 @@ namespace Aqua.Portable {
                 m_EncodedMessageText.SetText(entry.EncodedMessage());
                 page.Sketch.Display(entry.ImageSet());
             } else {
-                m_EncodedMessageText.SetTextNoParse(Formatting.ScrambleLoc(entry.EncodedMessage()));
+                m_EncodedMessageText.SetTextNoParse(Formatting.ScrambleLocTagged(entry.EncodedMessage(),"<color=yellow>"));
                 page.Sketch.Display(entry.EncodedIcon());
             }
+
+            m_EncodedMessageText.Graphic.maxVisibleCharacters = 0;
+            m_EncodedTypeRoutine.Replace(this, TypeOutEncodedMessage());
+        }
+
+        private IEnumerator TypeOutEncodedMessage() {
+            yield return  null;
+            yield return Tween.Int(0, m_EncodedMessageText.Graphic.textInfo.characterCount, (c) => m_EncodedMessageText.Graphic.maxVisibleCharacters = c, 1);
         }
 
         private IEnumerator PopulateEntryFacts(BestiaryPage page, BestiaryDesc entry, ListSlice<BFBase> facts, BestiaryApp.FinalizeButtonDelegate finalizeCallback) {

@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -424,7 +424,6 @@ GameObject:
   - component: {fileID: 1129224062}
   - component: {fileID: 1129224061}
   - component: {fileID: 1129224060}
-  - component: {fileID: 1129224065}
   - component: {fileID: 1129224066}
   m_Layer: 5
   m_Name: Canvas
@@ -528,31 +527,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1129224065
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1129224059}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 091fef52bc7859c4d84d6de8d73b46e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Priority: 950
-  m_Flags: 512
-  m_AutoPush: 0
-  m_Override: 0
-  m_OverrideState: 1
-  m_OnInputEnabled:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnInputDisabled:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Raycasters:
-  - {fileID: 1129224061}
 --- !u!114 &1129224066
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -948,6 +922,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e9812f19443613c47a242f8e645657cb, type: 3}
+--- !u!1 &2344451850352450926 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2344451850702855850, guid: e9812f19443613c47a242f8e645657cb,
+    type: 3}
+  m_PrefabInstance: {fileID: 2344451850352450925}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2839819657165446930
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -955,6 +935,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1129224064}
     m_Modifications:
+    - target: {fileID: 501383023806097220, guid: 8413a057634121f479b0a35f96a1125c,
+        type: 3}
+      propertyPath: m_OnObject
+      value: 
+      objectReference: {fileID: 2344451850352450926}
     - target: {fileID: 685301860702057685, guid: 8413a057634121f479b0a35f96a1125c,
         type: 3}
       propertyPath: m_Enabled
@@ -1200,6 +1185,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6007614530220349296, guid: 8413a057634121f479b0a35f96a1125c,
+        type: 3}
+      propertyPath: m_Graphic
+      value: 
+      objectReference: {fileID: 2839819657165446933}
     - target: {fileID: 6070617991350385814, guid: 8413a057634121f479b0a35f96a1125c,
         type: 3}
       propertyPath: m_OnObject
@@ -1290,6 +1280,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: 101.752495
       objectReference: {fileID: 0}
+    - target: {fileID: 8934581817792556843, guid: 8413a057634121f479b0a35f96a1125c,
+        type: 3}
+      propertyPath: m_ColorGroup
+      value: 
+      objectReference: {fileID: 2839819657165446932}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8413a057634121f479b0a35f96a1125c, type: 3}
 --- !u!225 &2839819657165446931 stripped
@@ -1298,6 +1293,30 @@ CanvasGroup:
     type: 3}
   m_PrefabInstance: {fileID: 2839819657165446930}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2839819657165446932 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 880746703371102513, guid: 8413a057634121f479b0a35f96a1125c,
+    type: 3}
+  m_PrefabInstance: {fileID: 2839819657165446930}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fdcd5fe145e0e946adb817017857a02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2839819657165446933 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7716459358247742754, guid: 8413a057634121f479b0a35f96a1125c,
+    type: 3}
+  m_PrefabInstance: {fileID: 2839819657165446930}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c2fbe93b62a4ea4480404eef6d5ae33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &4540496804613943579
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1493,7 +1512,7 @@ PrefabInstance:
     - target: {fileID: 6543468640636713976, guid: 96ad8e0c3aa2517488b27f20f2837508,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -48.00003
+      value: -48.00006
       objectReference: {fileID: 0}
     - target: {fileID: 6545464125582749428, guid: 96ad8e0c3aa2517488b27f20f2837508,
         type: 3}

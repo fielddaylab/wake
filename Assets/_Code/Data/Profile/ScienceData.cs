@@ -12,7 +12,7 @@ namespace Aqua.Profile
 {
     public class ScienceData : IProfileChunk, ISerializedVersion, ISerializedCallbacks
     {
-        static private readonly TableKeyPair Var_FullyDecrypted = TableKeyPair.Parse("player:specterDecrypt");
+        static internal readonly TableKeyPair Var_FullyDecrypted = TableKeyPair.Parse("player:specterDecrypt");
 
         private List<SiteSurveyData> m_SiteData = new List<SiteSurveyData>();
         private List<ArgueData> m_ArgueData = new List<ArgueData>();
@@ -168,7 +168,7 @@ namespace Aqua.Profile
         }
 
         public bool FullyDecrypted() {
-            return m_SpecterCount >= ScienceUtils.MaxSpecters() && Script.ReadVariable(Var_FullyDecrypted).AsBool();
+            return Script.ReadVariable(Var_FullyDecrypted).AsBool();
         }
 
         public bool IsSpecterQueued(StringHash32 mapId) {

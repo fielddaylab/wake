@@ -7,6 +7,7 @@ using Aqua.View;
 using BeauPools;
 using BeauRoutine;
 using BeauUtil;
+using BeauUtil.Tags;
 using BeauUtil.Variants;
 using Leaf;
 using Leaf.Runtime;
@@ -97,7 +98,7 @@ namespace Aqua {
 
         static public Future<StringHash32> PopupNewSpecter(BestiaryDesc entity, string descriptionOverride = null, ListSlice<BFBase> extraFacts = default) {
             string header = Loc.Format("ui.popup.newBestiary.specter.header", Formatting.ScrambleLoc(entity.CommonName()));
-            string text = Loc.Format("ui.popup.newBestiary.specter.description", Formatting.ScrambleLoc(entity.EncodedMessage()));
+            string text = Loc.Format("ui.popup.newBestiary.specter.description", Formatting.ScrambleLocTagged(entity.EncodedMessage(), "<color=yellow>"));
             return Services.UI.Popup.Present(header, text, entity.EncodedIcon(), PopupFlags.TallImage, PopupPanel.DefaultAddToBestiary);
         }
 

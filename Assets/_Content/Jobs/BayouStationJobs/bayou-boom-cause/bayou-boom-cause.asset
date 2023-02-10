@@ -18,7 +18,7 @@ MonoBehaviour:
     m_Source: jobs.bayou-boom-cause.name
     m_HashValue: 668937392
   m_PosterId:
-    m_HashValue: 3347434154
+    m_HashValue: 4040268820
   m_DescId:
     m_Source: jobs.bayou-boom-cause.desc
     m_HashValue: 204369382
@@ -60,23 +60,6 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
-      m_Source: methaneTag
-      m_HashValue: 622412797
-    LabelId:
-      m_Source: jobs.bayou-boom-cause.task.methaneTag
-      m_HashValue: 2353647372
-    Category: 2
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: N_ThermalVent.Population.Methane
-        m_HashValue: 923264553
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: methaneScan
-      m_HashValue: 320743886
-  - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
     LabelId:
@@ -93,6 +76,23 @@ MonoBehaviour:
     PrerequisiteTaskIds:
     - m_Source: methaneTag
       m_HashValue: 622412797
+  - Id:
+      m_Source: methaneTag
+      m_HashValue: 622412797
+    LabelId:
+      m_Source: jobs.bayou-boom-cause.task.methaneTag
+      m_HashValue: 2353647372
+    Category: 2
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: N_ThermalVent.Population.Methane
+        m_HashValue: 923264553
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: methaneScan
+      m_HashValue: 320743886
   m_OptimizedTaskList:
   - Id:
       m_Source: methaneScan
@@ -145,7 +145,7 @@ MonoBehaviour:
   m_CashReward: 100
   m_ExpReward: 5
   m_JournalId:
-    m_HashValue: 0
+    m_HashValue: 1285599505
   m_Scripting: {fileID: -1942890987711236906, guid: 68feacf01d49c9e45b49a7f12cbe7123,
     type: 3}
   m_ExtraAssets: []

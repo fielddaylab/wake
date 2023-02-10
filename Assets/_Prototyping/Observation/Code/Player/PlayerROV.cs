@@ -219,7 +219,7 @@ namespace ProtoAqua.Observation
         {
             Vector3? lockOn = GetLockOn();
 
-            PlayerBodyStatus status = PlayerBodyStatus.Normal;
+            PlayerBodyStatus status = m_BodyStatus & ~PlayerBodyStatus.TempMask;
             if (m_StunRoutine) {
                 status |= PlayerBodyStatus.Stunned;
             }

@@ -72,10 +72,11 @@ $goto .argue.showZombieWormsWrong
 :: argue.stage2
 $if ArgueSetClaim(Claim, jobs.arctic-time-of-death.argue.claimLabel2) 
 		$call ArgueFactSlot(W_WhaleFall.Population.ZombieWorm)
+        $call ArgueFactSlot(W_WhaleFall.Population.SnowCrab)
         $call ArgueFactSlot(W_WhaleFall.Model.Stages)
 $endif
-{@arcticSci}   Hmmm. What did you observe to indicate Stage 2?
-                Include the whalefall stages model and any relevant data you found. 
+{@arcticSci}    Hmmm. What did you observe to indicate Stage 2?
+                Include the whalefall stages model and any relevant data you found.
 $goto .argue.showZombieWorms
 
 :: argue.stage3
@@ -140,7 +141,14 @@ $call ArgueCancelClaim()
 $call ArgueUnload()
 
 :: argue.unrelated2
-$if ArgueIsFactSubmitted(W_WhaleFall.Population.ZombieWorm)
+$if ArgueIsFactSubmitted(W_WhaleFall.Model.Stages), ArgueIsFactSubmitted(W_WhaleFall.Population.ZombieWorm), ArgueIsFactSubmitted(W_WhaleFall.Population.Hagfish)
+    // submitted model and zombie worms and one scavenger (hagfish)
+    $branch .argue.complete
+$elseif ArgueIsFactSubmitted(W_WhaleFall.Model.Stages), ArgueIsFactSubmitted(W_WhaleFall.Population.ZombieWorm), ArgueIsFactSubmitted(W_WhaleFall.Population.BristleWorm)
+    // submitted model and zombie worms and one scavenger (bristle worm)
+    $branch .argue.complete
+$elseif ArgueIsFactSubmitted(W_WhaleFall.Population.ZombieWorm), !ArgueIsFactSubmitted(W_WhaleFall.Model.Stages)
+    // submitted zombie worms but no model
     $call ArgueRejectIncorrect()
     {@arcticSci}   This data seems plausible... but can you connect your evidence with the model I gave you? 
     $branch .argue.showZombieWorms
@@ -149,8 +157,18 @@ $else
         $branch .argue.unrelatedDetritus2
     $else
         $call ArgueRejectIncorrect()
-        {@arcticSci}   Did you notice any zombie worms at the whalefall site? 
-                        The worms seem to be a good indication of the whalefall's stage of decay.
+        $if ArgueIsFactSubmitted(W_WhaleFall.Population.ZombieWorm), ArgueIsFactSubmitted(W_WhaleFall.Model.Stages)
+            // missing a scavenger
+            {@arcticSci}    And scavengers? Did you notice any of them at the whalefall site? 
+                            {pluralnameof ZombieWorm} by themselves would point to stage 3.
+        $elseif !ArgueIsFactSubmitted(W_WhaleFall.Population.ZombieWorm)
+            // missing zombie worms
+            {@arcticSci}    Did you notice any zombie worms at the whalefall site? 
+                            The worms seem to be a good indication of the whalefall's stage of decay.
+        $else 
+            // missing model of stages
+            {@arcticSci}    Could you show me the stages model I gave you so we can compare?
+        $endif
         $goto .argue.showZombieWorms
     $endif
 $endif
@@ -158,7 +176,7 @@ $endif
 
 :: argue.unrelatedDetritus2
 $call ArgueRejectIncorrect()
-{@arcticSci}   Yes, the whalefall does create a lot of detritius... but I'm not sure how much that will help us.
+{@arcticSci}   Yes, the whalefall does create a lot of detritus... but I'm not sure how much that will help us.
                 You might have better luck by looking at other species.
                 How do the species' populations compare with the model I gave you? 
 $goto .argue.showZombieWorms
@@ -168,7 +186,7 @@ $goto .argue.showZombieWorms
 
 :: argue.complete
 $call ArgueComplete()
-{@arcticSci}   Ah, yes! Zombie worms can only live on the whale detritis after its bones are exposed. 
+{@arcticSci}   Ah, yes! Zombie worms can only live on the whale detritus after its bones are exposed. And there are plenty of scavengers.
                 Thank you, Ollie. 
 {@player}       Of course. I'm glad you'll finally be able to move on.
 {@arcticSci}   Move on?? Oh dear, no. Not with this beautiful new ecosystem right below us!

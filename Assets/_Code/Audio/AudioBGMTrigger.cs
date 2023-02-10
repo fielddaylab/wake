@@ -20,7 +20,12 @@ namespace AquaAudio
 
         private void OnEnable()
         {
-            if (string.IsNullOrEmpty(m_EventId))
+            Async.InvokeAsync(BeginLoading);
+        }
+
+        private void BeginLoading()
+        {
+            if (!this || !isActiveAndEnabled || string.IsNullOrEmpty(m_EventId))
                 return;
 
             if (Services.Audio.CurrentMusic().EventId() == m_EventId)
