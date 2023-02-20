@@ -111,11 +111,11 @@ $endif //
 @when       session:fromDream == "Dreams00"
 @cutscene
 @once
-$if CurrStation() == KelpStation
+$if CurrStation() == "KelpStation"
     {@guide}    Good morning, O! We have arrived at the Kelp Station.
-$elseif CurrStation()  == ArcticStation
+$elseif CurrStation()  == "ArcticStation"
     {@guide}    Good morning, O! We have arrived at the Arctic Station.
-$elseif CurrStation()  == CoralStation
+$elseif CurrStation()  == "CoralStation"
     {@guide}    Good morning, O! We have arrived at the Coral Station.
 $else // Bayou
     {@guide}    Good morning, O! We have arrived at the Bayou Station. 
@@ -216,11 +216,11 @@ $branch .GetDreamJournal
 @cutscene
 @once
 {@guide}   Good morning, O. We have reached our destination.
-$if CurrStation() == KelpStation
+$if CurrStation() == "KelpStation"
     {@guide}    The Kelp Station awaits.
-$elseif CurrStation() == ArcticStation
+$elseif CurrStation() == "ArcticStation"
     {@guide}    The Arctic Station awaits.
-$elseif CurrStation() == CoralStation
+$elseif CurrStation() == "CoralStation"
     {@guide}    The Coral Station awaits.
 $else // Bayou
     {@guide}    The Bayou Station awaits.

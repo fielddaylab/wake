@@ -45,12 +45,17 @@ $call GiveJournalEntry("N24_TioVictor")
 {@$MerchantId}  Now that you and {nameof @guide} will be traveling outside the Kelp Forest, you'll need some upgrades. 
                 You still only have {h}Level 1 clearance{/h}, so you'll need to stick to the basics for now. 
                 Want to take a look? 
-$set jobs:kelp-mechanic.givenJournal = false
 $choice .action.openShop; Sure! 
 $choice .action.cancel; No thanks. I'll come back later.  
 
 #ShopHandler(a)
-$if jobs:bayou-mechanic.givenArticle, !jobs:kelp-mechanic.givenJournal
+{@$MerchantId} Welcome back, mijita. Need any upgrades for your ship? 
+$choice .action.openShop; Sure, I'll take a look. Thanks, Tío!
+$choice .action.cancel; Nah. I'm good for now. 
+
+#ShopHandler(thoughtfulMer, HasJournalEntry("N05_MersArticle"))
+@boostScore 50
+@once
     // STORY BEAT E
     {@$MerchantId} You look thoughtful, mijita. Is something bothering you?
     {@player}   Well... maybe a little bit.
@@ -65,9 +70,10 @@ $if jobs:bayou-mechanic.givenArticle, !jobs:kelp-mechanic.givenJournal
                   Mom said it was an equipment malfunction, but if Mer was such a tech genius... 
     {@$MerchantId} Lo siento, Ollie. It's not my place to say.
                    For now, let's focus on work, okay?            
-    
-    $set jobs:kelp-mechanic.givenJournal = true
-$elseif HasJournalEntry("S04"), !jobs:specter6-comms.kelp.discussed, jobs:final-final.tioUpgradeCallComplete
+
+#ShopHandler(glitchyMessages, HasJournalEntry("S04"), jobs:final-final.tioUpgradeCallComplete)
+@once
+@boostScore 50
     // STORY BEAT G
     {@player}  Tío, I'm so worried about Sam. I'm still getting those weird, glitchy messages. 
                Any luck finding that upgrade for {nameof @guide}?
@@ -76,26 +82,60 @@ $elseif HasJournalEntry("S04"), !jobs:specter6-comms.kelp.discussed, jobs:final-
                    If there is an upgrade, it might take a while to track down.
     {@player}      Please keep looking. 
     {@$MerchantId} Of course, Ollie. I'll ring you on the comms as soon as I find something, okay?
-    {@$MerchantId} Gracias, Tío. 
-    $set jobs:specter6-comms.kelp.discussed = true
-$elseif jobs:final-final.upgradeReady, !jobs:final-final.tio.code-received
+    {@$MerchantId} Gracias, Tío.
+
+#ShopHandler(askForUpgrade, jobs:final-final.upgradeReady, !jobs:final-final.tio.code-received)
+@boostScore 1000
     // final job unlocked after seeing 8th specter
     {@$MerchantId} So, mijita. Ready to upgrade {nameof @guide} and rescue {nameof @sam}? 
     $choice .discussUpgrade; Yes! Tell me about the upgrade. 
     $choice .action.openShop; I'm not ready yet. I'd like to look around the shop. 
     $choice .action.cancel; Actually, I'll come back later. 
 
-$elseif JobInProgress(final-final), JobTaskTop(getUncleHelp), !jobs:final-uncleHelped
-    // final job, ask uncle for help
-    $branch .restorePower
-$else
-    {@$MerchantId} Welcome back, mijita. Need any upgrades for your ship? 
-    $choice .action.openShop; Sure, I'll take a look. Thanks, Tío!
-    $choice .action.cancel; Nah. I'm good for now. 
-$endif
+#ShopHandler(restorePower, JobInProgress(final-final), JobTaskTop(getUncleHelp), !jobs:final-uncleHelped)
+@once
+@boostScore 50
+// $call MerCutsceneBGM->Activate()
+{@player}       Tío... I need your help.
+                Mom stole my card.| The AquaLab is dead in the water.
+                How could she do this??{wait 0.5} She doesn't even care| if Sam lives or dies!
+{@$MerchantId}  This| isn't about Sam, mijita.
+                It's about Meredith.
+{@player}       I don't understand.| What does |Mer| have to do with this?
+// $call BGM->SetVolume(0, 1)
+$call BGM->SetVolume(0, 8)
+{@$MerchantId}  Your sister's death...{wait 1} it| wasn't an equipment malfunction.
+$branch  .restorePowerCamera1
+// $call MerCutsceneBGM->PlayBGM()
+{@$MerchantId}  She was on her way back from placing the Challenger Deep...
+                And she came upon a whale| caught in a fishing net. 
+                Mer couldn't let it die. She swam out to cut it free. 
+{@player}       That sounds like Mer. She| loved| whales so much.
+{@$MerchantId}  Yes.| But...{wait 1} Ollie, the whale didn't know any better.{wait 0.5} It panicked.{wait 0.5} Called out for help. 
+                We're not sure exactly what happened.
+                But{wait 0.5} your sister never made it back from the Lower Depths.
+$branch  .restorePowerCamera2
+{@player}       {slow}Oh{wait 0.5} no.{wait 1} Poor Mer.{/slow}
+                That's why{wait 0.5} Mom| doesn't want me going down there. 
+{@$MerchantId}   Your mother doesn't want to lose you.
+                But...{wait 1} you're an adult now, Ollie.
+$branch  .restorePowerCamera3
+                And your best friend needs you.
+                {hide-dialog} {wait 1} {fade-out black, 1, wait} {wait 2}
+$call CameraSnapToPose("ShopSubCam")
+                {wait 0.1} {fade-in 1, wait} {wait 1}
+                $set jobs:final-power-disabled = false
+{@$MerchantId}  I've transferred {nameof @guide}'s upgrade to Mer's old data card.
+                Take it up to your ship.
+                This should get you where you need to go. 
+{@player}       Thank you,| Tío.{wait 1} Wish me luck.
+$set jobs:final-uncleHelped = true
+$set jobs:final-power-disabled = false
+$call CheckJobTasks()
 
 #ShopHandler(postFinalJob, JobCompleted(final-final))
 @once
+@boostScore 50
 {@$MerchantId} Ollie. Welcome back!
 {@$MerchantId} Everyone's talking about how you rescued the Nautilus. 
 {@$MerchantId} I knew you could do it, mijita.
@@ -175,52 +215,12 @@ $choice .action.cancel; Not right now.
 {@player}       Thank you so much, Tío.
 {@$MerchantId}  Don't thank me yet, mijita. First you'd better see if it worked. 
                 Take a look at the anomalies in AQOS, or check with your mom to see the job board. 
-$set    jobs:final-final.tio.code-received = true 
 $set    player:specterDecrypt = true
+$set jobs:final-final.tio.code-received = true
 //prevent player from traveling to non-deep sea stations
 $call LockStation(ArcticStation)
 $call LockStation(BayouStation)
 $call LockStation(CoralStation)
-
-:: restorePower
-@cutscene
-// $call MerCutsceneBGM->Activate()
-{@player}       Tío... I need your help.
-                Mom stole my card.| The AquaLab is dead in the water.
-                How could she do this??{wait 0.5} She doesn't even care| if Sam lives or dies!
-{@$MerchantId}  This| isn't about Sam, mijita.
-                It's about Meredith.
-{@player}       I don't understand.| What does |Mer| have to do with this?
-// $call BGM->SetVolume(0, 1)
-$call BGM->SetVolume(0, 8)
-{@$MerchantId}  Your sister's death...{wait 1} it| wasn't an equipment malfunction.
-$branch  .restorePowerCamera1
-// $call MerCutsceneBGM->PlayBGM()
-{@$MerchantId}  She was on her way back from placing the Challenger Deep...
-                And she came upon a whale| caught in a fishing net. 
-                Mer couldn't let it die. She swam out to cut it free. 
-{@player}       That sounds like Mer. She| loved| whales so much.
-{@$MerchantId}  Yes.| But...{wait 1} Ollie, the whale didn't know any better.{wait 0.5} It panicked.{wait 0.5} Called out for help. 
-                We're not sure exactly what happened.
-                But{wait 0.5} your sister never made it back from the Lower Depths.
-$branch  .restorePowerCamera2
-{@player}       {slow}Oh{wait 0.5} no.{wait 1} Poor Mer.{/slow}
-                That's why{wait 0.5} Mom| doesn't want me going down there. 
-{@$MerchantId}   Your mother doesn't want to lose you.
-                But...{wait 1} you're an adult now, Ollie.
-$branch  .restorePowerCamera3
-                And your best friend needs you.
-                {hide-dialog} {wait 1} {fade-out black, 1, wait} {wait 2}
-$call CameraSnapToPose("ShopSubCam")
-                {wait 0.1} {fade-in 1, wait} {wait 1}
-                $set jobs:final-power-disabled = false
-{@$MerchantId}  I've transferred {nameof @guide}'s upgrade to Mer's old data card.
-                Take it up to your ship.
-                This should get you where you need to go. 
-{@player}       Thank you,| Tío.{wait 1} Wish me luck.
-$set jobs:final-uncleHelped = true
-$set jobs:final-power-disabled = false
-$call CheckJobTasks()
 
 :: restorePowerCamera1
 {hide-dialog} {wait 1}

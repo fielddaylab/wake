@@ -1,4 +1,9 @@
-#basePath Dream05
+#basePath Dream07
+
+:: start
+@function   SceneStart
+$call Player->SetSilentMovement(true)
+
 ::mer07Trigger
 @trigger PlayerEnterRegion
 @when regionId == "mer07_a"
@@ -10,7 +15,6 @@
 Mer? {auto} {wait-abs 2}
 Can you hear me? {auto} {wait-abs 3}
 
-
 ::mer07Trigger2
 @trigger PlayerEnterRegion
 @when regionId == "mer07_b"
@@ -19,9 +23,4 @@ Can you hear me? {auto} {wait-abs 3}
 {wait 1}
 
 {@player} 
-Mer, don't do that! It's too dangerous! {auto} {wait-abs 2}
-
-
-
-
-
+Mer, don't do that!| It's too dangerous! {auto} {wait-abs 2}

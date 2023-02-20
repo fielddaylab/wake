@@ -40,6 +40,7 @@ namespace Aqua
             inOptions.Audio.Master.Apply(ref audio.BusMix(AudioBusId.Master));
             inOptions.Audio.Music.Apply(ref audio.BusMix(AudioBusId.Music));
             inOptions.Audio.SFX.Apply(ref audio.BusMix(AudioBusId.SFX));
+            inOptions.Audio.SFX.Apply(ref audio.BusMix(AudioBusId.Cinematic));
             inOptions.Audio.SFX.Apply(ref audio.BusMix(AudioBusId.Ambient));
             inOptions.Audio.Voice.Apply(ref audio.BusMix(AudioBusId.Voice));
 

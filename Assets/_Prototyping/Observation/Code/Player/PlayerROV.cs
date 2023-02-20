@@ -165,6 +165,7 @@ namespace ProtoAqua.Observation
         [NonSerialized] private Routine m_StunRoutine;
         [NonSerialized] private int m_EngineRegionCount;
         [NonSerialized] private int m_SlowRegionCount;
+        [NonSerialized] private float m_MouseLookScale = 1;
 
         private void Start()
         {
@@ -258,7 +259,11 @@ namespace ProtoAqua.Observation
 
             if (m_EngineSound.Exists())
             {
-                m_EngineSound.SetPitch(Mathf.Clamp01(m_Kinematics.State.Velocity.magnitude / m_Kinematics.Config.MaxSpeed));
+                if ((BodyStatus & PlayerBodyStatus.SilentMovement) != 0) {
+                    m_EngineSound.Stop(0.25f);
+                } else {
+                    m_EngineSound.SetPitch(Mathf.Clamp01(m_Kinematics.State.Velocity.magnitude / m_Kinematics.Config.MaxSpeed));
+                }
             }
 
             velocityHintData.WeightOffset = (m_Moving ? 1f : 0.2f) * m_CameraForwardLookWeight;
@@ -281,7 +286,7 @@ namespace ProtoAqua.Observation
             if (m_LastInputData.Mouse.Target.HasValue)
             {
                 mouseHintData.Offset = m_LastInputData.Mouse.ClampedOffset;
-                mouseHintData.WeightOffset = m_CameraForwardLookWeight;
+                mouseHintData.WeightOffset = m_CameraForwardLookWeight * m_MouseLookScale;
                 mouseHintData.Zoom = m_CurrentTool.HasTarget() ? m_CameraZoomTool : 1f;
             }
             else
@@ -377,7 +382,7 @@ namespace ProtoAqua.Observation
                 return;
 
             m_Moving = inbOn;
-            if (inbOn)
+            if (inbOn && (BodyStatus & PlayerBodyStatus.SilentMovement) == 0)
             {
                 m_EngineSound = Services.Audio.PostEvent("rov_engine_loop");
                 m_EngineSound.SetVolume(0).SetVolume(1, 0.25f);
@@ -571,6 +576,11 @@ namespace ProtoAqua.Observation
                 return false;
 
             return rov.GetTool(inToolId).IsEnabled();
+        }
+
+        [LeafMember("SetMouseLookScale"), Preserve]
+        public void SetMouseLookScale(float scale) {
+            m_MouseLookScale = scale;
         }
 
         [LeafMember("SetToolAllowed"), Preserve]

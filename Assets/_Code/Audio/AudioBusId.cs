@@ -16,6 +16,7 @@ namespace AquaAudio
         Music,
         Ambient,
         Voice,
+        Cinematic,
 
         [Hidden]
         LENGTH
