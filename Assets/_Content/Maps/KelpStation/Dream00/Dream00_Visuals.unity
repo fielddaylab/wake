@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -1405,7 +1405,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_EventId: Dream00_PlantGrowth
   m_CrossfadeDuration: 0
+  m_FadeOutDuration: 0.1
   m_PlayOnAwake: 0
+  m_Location: {fileID: 0}
 --- !u!114 &1034082366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2165,7 +2167,7 @@ PrefabInstance:
     - target: {fileID: 2735217097670052693, guid: 36705a1279e1ad6409ef9432f796fafd,
         type: 3}
       propertyPath: ForceDirection.y
-      value: 1
+      value: 1.3
       objectReference: {fileID: 0}
     - target: {fileID: 2735217097670052694, guid: 36705a1279e1ad6409ef9432f796fafd,
         type: 3}
