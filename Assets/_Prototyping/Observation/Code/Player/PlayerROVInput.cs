@@ -2,17 +2,26 @@ using UnityEngine;
 using Aqua;
 using Aqua.StationMap;
 using Aqua.Character;
+using System;
 
 namespace ProtoAqua.Observation
 {
     public class PlayerROVInput : WorldInput
     {
+        public enum DashType
+        {
+            None,
+            Primary,
+            Secondary
+        }
+
         public struct InputData
         {
             public MouseDistanceInputFilter.Output Mouse;
             public DirectionKeysInputFilter.Output Keyboard;
 
             public bool Move;
+            public DashType Dash;
             public Vector2 MoveVector;
 
             public bool UsePress;
@@ -26,15 +35,25 @@ namespace ProtoAqua.Observation
 
         [SerializeField] private MouseDistanceInputFilter m_MouseFilter = default;
         [SerializeField] private DirectionKeysInputFilter m_KeyboardFilter = default;
+        
+        [Header("Dash")]
+        [SerializeField] private float m_DashTapRequiredWindow = 0.6f;
+        [SerializeField] private int m_DashTapRequiredCount = 3;
+        [SerializeField] private float m_DashTapRequiredAccuracy = 0.8f;
 
         #endregion // Inspector
 
+        [NonSerialized] private float m_DashTapWindow = 0;
+        [NonSerialized] private Vector2 m_MoveTapLastVector = default(Vector2);
+        [NonSerialized] private int m_DashTapCounter = 0;
+
         #region Input Generation
 
-        public void GenerateInput(Transform inPlayerTransform, Vector3? inLockOn, PlayerBodyStatus inStatus, out InputData outInputData)
+        public void GenerateInput(Transform inPlayerTransform, Vector3? inLockOn, PlayerBodyStatus inStatus, float inDeltaTime, InputData inLastInputData, out InputData outInputData)
         {
             if (!IsInputEnabled)
             {
+                ClearDash();
                 outInputData = default(InputData);
                 return;
             }
@@ -57,12 +76,64 @@ namespace ProtoAqua.Observation
             if (bAllowMove) {
                 outInputData.Move = outInputData.UseHold || outInputData.Keyboard.KeyDown;
                 outInputData.MoveVector = outInputData.Keyboard.KeyDown ? outInputData.Keyboard.NormalizedOffset : outInputData.Mouse.NormalizedOffset;
+
+                if (!inLastInputData.Move && outInputData.Move) {
+                    outInputData.Dash = TryDash(outInputData.MoveVector);
+                } else {
+                    outInputData.Dash = DashType.None;
+                }
             } else {
                 outInputData.Move = false;
+                outInputData.Dash = DashType.None;
                 outInputData.MoveVector = default(Vector2);
+                ClearDash();
+            }
+
+            // decrement dash window
+            if (m_DashTapWindow > 0) {
+                m_DashTapWindow -= inDeltaTime;
+                if (m_DashTapWindow <= 0) {
+                    m_DashTapCounter = 0;
+                }
             }
         }
 
         #endregion // Input Generation
+
+        #region Dash
+
+        public void ClearDash() {
+            m_DashTapCounter = 0;
+            m_DashTapWindow = 0;
+            m_MoveTapLastVector = default(Vector2);
+        }
+
+        private DashType TryDash(Vector2 moveVec) {
+            m_DashTapWindow = m_DashTapRequiredWindow;
+
+            Vector2 lastMoveVec = m_MoveTapLastVector;
+            m_MoveTapLastVector = moveVec;
+
+            if (m_DashTapWindow > 0) {
+                // must tap/move in around the same direction as before
+                float accuracy = Vector2.Dot(lastMoveVec, moveVec);
+                if (accuracy >= m_DashTapRequiredAccuracy) {
+                    m_DashTapCounter++;
+
+                    // can repeatedly dash but window is smaller
+                    if (m_DashTapCounter >= m_DashTapRequiredCount) {
+                        m_DashTapWindow *= 0.7f;
+                        return m_DashTapCounter == m_DashTapRequiredCount ? DashType.Primary : DashType.Secondary;
+                    }
+
+                    return DashType.None;
+                }
+            }
+
+            m_DashTapCounter = 1;
+            return DashType.None;
+        }
+
+        #endregion // Dash
     }
 }

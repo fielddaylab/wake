@@ -16,6 +16,16 @@ namespace Aqua.Editor {
             return string.Format("{0}new BeauUtil.StringHash32(0x{1});", prelude, hashValue);
         };
 
+        static private Regex TableKeyPairFormat = new Regex("(static (?:public|private) readonly TableKeyPair (?:\\S+) = )TableKeyPair\\.Parse\\(\"(.*):(.*)\"\\);");
+        static private MatchEvaluator TableKeyPairConstReplace = (m) => {
+            string tableKeyString = m.Groups[2].Value;
+            string valueKeyString = m.Groups[3].Value;
+            string prelude = m.Groups[1].Value;
+            string tableHashValue = new StringHash32(tableKeyString).HashValue.ToString("X8");
+            string valueHashValue = new StringHash32(valueKeyString).HashValue.ToString("X8");
+            return string.Format("{0}new BeauUtil.Variants.TableKeyPair(new StringHash32(0x{1}), new StringHash32(0x{2}));", prelude, tableHashValue, valueHashValue);
+        };
+
         static private Regex PostAudioConstFormat = new Regex("(Services\\.Audio\\.PostEvent\\()\"(\\S+)\"");
         static private MatchEvaluator PostAudioConstReplace = (m) => {
             string hashString = m.Groups[2].Value;
@@ -28,6 +38,7 @@ namespace Aqua.Editor {
         static public string ProcessFileText(string fileText)
         {
             fileText = HashFormat.Replace(fileText, HashConstReplace);
+            fileText = TableKeyPairFormat.Replace(fileText, TableKeyPairConstReplace);
             return PostAudioConstFormat.Replace(fileText, PostAudioConstReplace);
         }
 

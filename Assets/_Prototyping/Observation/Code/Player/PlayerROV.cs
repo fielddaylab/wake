@@ -136,8 +136,12 @@ namespace ProtoAqua.Observation
         [Header("Movement Params")]
 
         [SerializeField] private MovementFromOffset m_MovementParams = default(MovementFromOffset);
+        [SerializeField] private MovementFromOffset m_MovementPowerParams = default(MovementFromOffset);
         [SerializeField] private float m_DragEngineOn = 1;
+        [SerializeField] private float m_DragEngineDash = 1;
         [SerializeField] private float m_DragEngineOff = 2;
+        [SerializeField] private float m_DashSpeed = 15;
+        [SerializeField] private float m_DashDuration = 0.5f;
 
         [Header("Camera Params")]
 
@@ -159,13 +163,17 @@ namespace ProtoAqua.Observation
         [NonSerialized] private uint m_VelocityHint;
         [NonSerialized] private uint m_MouseHint;
         [NonSerialized] private uint m_CameraDriftHint;
+        
         [NonSerialized] private ITool m_CurrentTool;
         [NonSerialized] private ToolId m_CurrentToolId = ToolId.NONE;
         [NonSerialized] private PassiveUpgrades m_UpgradeMask = 0;
         [NonSerialized] private Routine m_StunRoutine;
+
         [NonSerialized] private int m_EngineRegionCount;
         [NonSerialized] private int m_SlowRegionCount;
         [NonSerialized] private float m_MouseLookScale = 1;
+        [NonSerialized] private float m_DashLeft = 0;
+        [NonSerialized] private Vector2 m_InitialDashVector;
 
         private void Start()
         {
@@ -185,28 +193,11 @@ namespace ProtoAqua.Observation
             m_Input.OnInputDisabled.AddListener(OnInputDisabled);
             m_Input.OnInputEnabled.AddListener(OnInputEnabled);
 
+            m_Kinematics.OnContact.Register(OnContacts);
+
             m_CurrentTool = NullTool.Instance;
 
             WorldUtils.ListenForLayerMask(m_TriggerCollider, GameLayers.PlayerTrigger_Mask, OnEnterTrigger, OnExitTrigger);
-        }
-
-        void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
-        {
-            ToolId lastToolId = ToolId.NONE;
-            if (Save.Inventory.HasUpgrade(ItemIds.ROVScanner)) {
-                lastToolId = ToolId.Scanner;
-            }
-
-            UpdateUpgradeMask();
-
-            ApplyPassiveUpgrades();
-            SwitchTool(lastToolId, true);
-
-            SetToolState(ToolId.Flashlight, Script.ReadVariable(Var_LastFlashlightState).AsBool(), true);
-            SetToolState(ToolId.Microscope, false, true);
-
-            if (m_Input.IsInputEnabled)
-                OnInputEnabled();
         }
 
         private void OnDestroy()
@@ -235,15 +226,21 @@ namespace ProtoAqua.Observation
                 status |= PlayerBodyStatus.Slowed;
             }
 
+            if (m_DashLeft > 0) {
+                m_DashLeft -= inDeltaTime;
+                status |= PlayerBodyStatus.PowerEngineEngaged | PlayerBodyStatus.Dashing;
+            }
+
             m_BodyStatus = status;
 
-            m_Input.GenerateInput(m_Transform, lockOn, status, out m_LastInputData);
+            m_Input.GenerateInput(m_Transform, lockOn, status, inDeltaTime, m_LastInputData, out m_LastInputData);
 
             if (m_Moving || !UpdateTool(inDeltaTime))
             {
                 UpdateMove(inDeltaTime);
             }
 
+            UpdateKinematicConfig();
             m_CurrentTool.UpdateActive(inDeltaTime, m_LastInputData, m_Kinematics.State.Velocity, this);
         }
 
@@ -306,8 +303,147 @@ namespace ProtoAqua.Observation
             animState.NormalizedLook = m_LastInputData.Mouse.NormalizedOffset;
             m_CurrentTool.GetTargetPosition(false, out animState.LookTarget, out var _);
             animState.NormalizedMove = m_LastInputData.MoveVector;
+            if (m_DashLeft > 0) {
+                animState.NormalizedMove = m_InitialDashVector;
+            }
             animState.Status = m_BodyStatus;
             m_Animator.Process(animState);
+        }
+
+        #region Movement
+
+        private void UpdateMove(float inDeltaTime)
+        {
+            if (m_LastInputData.Dash > 0 && (m_UpgradeMask & PassiveUpgrades.Engine) != 0 && !(m_Microscope && m_Microscope.IsEnabled()))
+            {
+                m_InitialDashVector = m_LastInputData.MoveVector.normalized;
+                m_Kinematics.State.Velocity += m_InitialDashVector * m_DashSpeed;
+                
+                if ((BodyStatus & PlayerBodyStatus.SilentMovement) == 0) {
+                    if (m_LastInputData.Dash == PlayerROVInput.DashType.Primary) {
+                        Services.Audio.PostEvent("ROV.Engine.Dash");
+                    } else {
+                        Services.Audio.PostEvent("ROV.Engine.SecondaryDash");
+                    }
+                }
+                m_DashLeft = m_DashDuration;
+                Log.Msg("[PlayerROV] Dash activated");
+                SetEngineState(true);
+                return;
+            }
+
+            if (m_DashLeft > 0)
+            {
+                SetEngineState(true);
+                return;
+            }
+            
+            if (m_LastInputData.Move)
+            {
+                float dist = m_LastInputData.MoveVector.magnitude;
+                float moveMultiplier = m_CurrentTool.MoveSpeedMultiplier();
+                if (m_Microscope && m_Microscope.IsEnabled()) {
+                    moveMultiplier *= m_Microscope.MoveSpeedMultiplier();
+                }
+                
+                SetEngineState(dist > 0);
+                if (dist > 0)
+                {
+                    GetMoveParams().Apply(m_LastInputData.MoveVector, m_Kinematics, inDeltaTime, moveMultiplier);
+                }
+                return;
+            }
+            
+            SetEngineState(false);
+        }
+
+        private MovementFromOffset GetMoveParams() {
+            if ((m_UpgradeMask & PassiveUpgrades.Engine) != 0) {
+                return m_MovementPowerParams;
+            } else {
+                return m_MovementParams;
+            }
+        }
+
+        private void UpdateKinematicConfig() {
+            if (m_Moving) {
+                m_Kinematics.enabled = true;
+                m_Kinematics.Config.Drag = m_DashLeft > 0 ? m_DragEngineDash : m_DragEngineOn;
+            } else {
+                m_Kinematics.Config.Drag = m_DragEngineOff;
+                m_Kinematics.enabled = m_Input.IsInputEnabled;
+            }
+        }
+
+        private void SetEngineState(bool inbOn, bool inbForce = false)
+        {
+            if (!inbForce && m_Moving == inbOn)
+                return;
+
+            m_Moving = inbOn;
+            if (inbOn)
+            {
+                if ((BodyStatus & PlayerBodyStatus.SilentMovement) == 0) {
+                    m_EngineSound = Services.Audio.PostEvent("rov_engine_loop");
+                    m_EngineSound.SetVolume(0).SetVolume(1, 0.25f);
+                }
+            }
+            else
+            {
+                m_EngineSound.Stop(0.25f);
+            }
+        }
+    
+        #endregion // Movement
+
+        #region Collisions
+
+        private unsafe void OnContacts() {
+            int contactCount = m_Kinematics.ContactCount;
+            PhysicsContact* contacts = m_Kinematics.Contacts;
+            PhysicsContact contact;
+
+            bool impacted = false;
+            bool slid = false;
+            for(int i = 0; i < contactCount; i++) {
+                contact = contacts[i];
+                if (contact.Impact > 4 && !impacted) {
+                    Log.Msg("[PlayerROV] Impacted wall, reducing velocity");
+                    impacted = true;
+                    if (contact.Impact > 8) {
+                        Services.Camera.AddShake(contact.State.Velocity.normalized * 0.15f, new Vector2(0.15f, 0.15f), 0.5f);
+                        m_Kinematics.State.Velocity *= 0.25f;
+                        m_DashLeft *= 0.25f;
+                        m_Input.ClearDash();
+                        // TODO: Play impact noise
+                        // TODO: Play impact effect
+                    } else {
+                        m_Kinematics.State.Velocity *= 0.5f;
+                        m_DashLeft *= 0.5f;
+                        // TODO: Play impact noise
+                        // TODO: Play impact effect
+                    }
+                } else if (contact.Impact > 1f && contact.Impact < 3 && !slid) {
+                    slid = true;
+                    Log.Msg("[PlayerROV] Sliding on wall, reducing velocity");
+                    m_Kinematics.State.Velocity *= 0.7f;
+                }
+            }
+        }
+
+        #endregion // Collisions
+
+        #region Tools
+
+        private bool UpdateTool(float inDeltaTime)
+        {
+            if (m_CurrentTool.UpdateTool(inDeltaTime, m_LastInputData, m_Kinematics.State.Velocity, this))
+            {
+                SetEngineState(false);
+                return true;
+            }
+
+            return false;
         }
 
         private Vector3? GetLockOn()
@@ -323,80 +459,6 @@ namespace ProtoAqua.Observation
             return null;
         }
 
-        private bool UpdateTool(float inDeltaTime)
-        {
-            if (m_CurrentTool.UpdateTool(inDeltaTime, m_LastInputData, m_Kinematics.State.Velocity, this))
-            {
-                SetEngineState(false);
-                return true;
-            }
-
-            return false;
-        }
-
-        private void OnInputEnabled()
-        {
-            m_CurrentTool.Enable(this);
-        }
-
-        private void OnInputDisabled()
-        {
-            m_CurrentTool.Disable();
-        }
-
-        private void UpdateMove(float inDeltaTime)
-        {
-            if (m_LastInputData.Move)
-            {
-                float dist = m_LastInputData.MoveVector.magnitude;
-                float moveMultiplier = m_CurrentTool.MoveSpeedMultiplier();
-                if (m_Microscope && m_Microscope.IsEnabled()) {
-                    moveMultiplier *= m_Microscope.MoveSpeedMultiplier();
-                }
-                
-                if (dist > 0)
-                {
-                    SetEngineState(true);
-                    m_MovementParams.Apply(m_LastInputData.MoveVector, m_Kinematics, inDeltaTime, moveMultiplier);
-                }
-                else
-                {
-                    SetEngineState(false);
-                }
-            }
-            else
-            {
-                SetEngineState(false);
-            }
-
-            if (!m_Moving && !m_Input.IsInputEnabled) {
-                m_Kinematics.enabled = false;
-            } else {
-                m_Kinematics.enabled = true;
-            }
-        }
-
-        private void SetEngineState(bool inbOn, bool inbForce = false)
-        {
-            if (!inbForce && m_Moving == inbOn)
-                return;
-
-            m_Moving = inbOn;
-            if (inbOn && (BodyStatus & PlayerBodyStatus.SilentMovement) == 0)
-            {
-                m_EngineSound = Services.Audio.PostEvent("rov_engine_loop");
-                m_EngineSound.SetVolume(0).SetVolume(1, 0.25f);
-
-                m_Kinematics.Config.Drag = m_DragEngineOn;
-            }
-            else
-            {
-                m_EngineSound.Stop(0.25f);
-
-                m_Kinematics.Config.Drag = m_DragEngineOff;
-            }
-        }
-    
         private bool SwitchTool(ToolId inTool, bool inbForce)
         {
             if (!inbForce && m_CurrentToolId == inTool)
@@ -525,11 +587,20 @@ namespace ProtoAqua.Observation
             m_Animator.ApplyUpgradeMask(m_UpgradeMask);
         }
 
-        // TODO: Implement
-        // private IEnumerator StunRoutine()
-        // {
-            
-        // }
+        #endregion // Tools
+
+        #region Callbacks
+
+        private void OnInputEnabled()
+        {
+            m_CurrentTool.Enable(this);
+        }
+
+        private void OnInputDisabled()
+        {
+            m_CurrentTool.Disable();
+            m_DashLeft = 0;
+        }
 
         private void OnEnterTrigger(Collider2D other) {
             if (other.CompareTag(GameTags.WaterCurrent)) {
@@ -547,12 +618,37 @@ namespace ProtoAqua.Observation
             }
         }
 
+        #endregion // Callbacks
+
         public override void TeleportTo(Vector3 inPosition, FacingId inFacing = FacingId.Invalid)
         {
             base.TeleportTo(inPosition);
 
             m_Animator.HandleTeleport(inFacing);
         }
+
+        #region ISceneLoadHandler
+
+        void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
+        {
+            ToolId lastToolId = ToolId.NONE;
+            if (Save.Inventory.HasUpgrade(ItemIds.ROVScanner)) {
+                lastToolId = ToolId.Scanner;
+            }
+
+            UpdateUpgradeMask();
+
+            ApplyPassiveUpgrades();
+            SwitchTool(lastToolId, true);
+
+            SetToolState(ToolId.Flashlight, Script.ReadVariable(Var_LastFlashlightState).AsBool(), true);
+            SetToolState(ToolId.Microscope, false, true);
+
+            if (m_Input.IsInputEnabled)
+                OnInputEnabled();
+        }
+
+        #endregion // ISceneLoadHandler
 
         #region Leaf
 

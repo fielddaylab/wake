@@ -14,7 +14,7 @@ namespace Aqua {
     {
         #region Inspector
 
-        [SerializeField] private BoxCollider2D[] m_Colliders = null;
+        [SerializeField, PrefabModeOnly] private BoxCollider2D[] m_Colliders = null;
         [SerializeField] private float m_EdgeThickness = 1;
         [SerializeField] private bool m_IsTrigger = false;
 

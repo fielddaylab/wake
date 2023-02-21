@@ -113,11 +113,12 @@ namespace Aqua.Character
         Slowed = 0x02,
         PowerEngineEngaged = 0x04,
         DraggedByCurrent = 0x08,
+        Dashing = 0x10,
 
-        DisableMovement = 0x10,
-        DisableTools = 0x20,
-        SilentMovement = 0x40,
+        DisableMovement = 0x1000,
+        DisableTools = 0x2000,
+        SilentMovement = 0x4000,
 
-        TempMask = Stunned | Slowed | PowerEngineEngaged | DraggedByCurrent
+        TempMask = Stunned | Slowed | PowerEngineEngaged | DraggedByCurrent | Dashing
     }
 }
