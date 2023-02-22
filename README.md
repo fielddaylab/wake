@@ -1,5 +1,5 @@
-# Aqualab
-Aqualab is an NSF Funded (DRL #1907384) science practices and life science content learning game produced by Field Day @ University of Wisconsin - Madison, Harvard University and University of Pennslvania.
+# WAKE: Tales from the Aqualab (known simply as AQUALAB during development)
+WAKE is an NSF Funded (DRL #1907384) science practices and life science content learning game produced by Field Day @ University of Wisconsin - Madison, Harvard University and University of Pennslvania.
 
 ## Firebase Telemetry Events
 
