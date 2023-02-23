@@ -93,7 +93,7 @@ namespace ProtoAqua.Observation
             m_ScanProgressBar.fillAmount = inProgress;
         }
 
-        public void ShowScan(ScanData inData, ScanResult inResult)
+        public void ShowScan(ScanData inData, Sprite inImageOverride, ScanResult inResult)
         {
             Show();
 
@@ -154,8 +154,17 @@ namespace ProtoAqua.Observation
                     m_TypeRoutine.Replace(this, TypeOut(inData.TypingDuration()));
                 }
 
-                BestiaryDesc bestiary = Assets.Bestiary(inData.BestiaryId());
-                StreamedImageSet imageSet = new StreamedImageSet(string.IsNullOrEmpty(inData.ImagePath()) ? bestiary?.SketchPath() : null, bestiary?.Icon());
+                StreamedImageSet imageSet;
+                if (inImageOverride != null)
+                {
+                    imageSet = inImageOverride;
+                }
+                else
+                {
+                    BestiaryDesc bestiary = Assets.Bestiary(inData.BestiaryId());
+                    imageSet = new StreamedImageSet(string.IsNullOrEmpty(inData.ImagePath()) ? bestiary?.SketchPath() : null, bestiary?.Icon());
+                }
+                
                 if (imageSet.IsEmpty)
                 {
                     m_ImageDisplay.gameObject.SetActive(false);
