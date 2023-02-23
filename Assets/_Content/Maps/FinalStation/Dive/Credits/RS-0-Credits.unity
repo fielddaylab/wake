@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -668,6 +668,7 @@ MonoBehaviour:
   m_Crossfade: 2
   m_StopOnDisable: 1
   m_PlayOnLoad: 0
+  m_DoNotPreload: 0
 --- !u!114 &130297010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7370,6 +7371,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!4 &1730907957
 Transform:
   m_ObjectHideFlags: 0
@@ -8798,7 +8800,7 @@ MonoBehaviour:
   m_MeshRenderer: {fileID: 2134736693}
   m_ColorGroup: {fileID: 2134736691}
   m_Path: Textures/Title/Logo.png
-  m_Material: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_Material: {fileID: 2100000, guid: dff4cb4f23106f74c838f4e00113079e, type: 2}
   m_Tessellation: 0
   m_Color:
     serializedVersion: 2
@@ -8833,7 +8835,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: dff4cb4f23106f74c838f4e00113079e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

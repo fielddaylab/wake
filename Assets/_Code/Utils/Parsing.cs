@@ -32,6 +32,15 @@ namespace Aqua
             return new Color(colorR / 255f, colorG / 255f, colorB / 255f);
         }
 
+        static public Color HexColor(StringSlice inColorString)
+        {
+            Assert.True(inColorString.Length == 7 && inColorString[0] == '#');
+            byte colorR = (byte) ((HexValue(inColorString[1]) << 4) + HexValue(inColorString[2]));
+            byte colorG = (byte) ((HexValue(inColorString[3]) << 4) + HexValue(inColorString[4]));
+            byte colorB = (byte) ((HexValue(inColorString[5]) << 4) + HexValue(inColorString[6]));
+            return new Color(colorR / 255f, colorG / 255f, colorB / 255f);
+        }
+
         [MethodImpl(256)]
         static private int HexValue(char inCharacter)
         {

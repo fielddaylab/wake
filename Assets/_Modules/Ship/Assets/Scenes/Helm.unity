@@ -14739,7 +14739,6 @@ GameObject:
   - component: {fileID: 468792366}
   - component: {fileID: 468792365}
   - component: {fileID: 468792364}
-  - component: {fileID: 468792363}
   m_Layer: 0
   m_Name: CoverPlate1
   m_TagString: Untagged
@@ -14747,20 +14746,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!64 &468792363
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 468792362}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &468792364
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -15252,7 +15237,6 @@ GameObject:
   - component: {fileID: 712961389}
   - component: {fileID: 712961388}
   - component: {fileID: 712961387}
-  - component: {fileID: 712961386}
   m_Layer: 0
   m_Name: CoverPlate2
   m_TagString: Untagged
@@ -15260,20 +15244,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!64 &712961386
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 712961385}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &712961387
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -15520,6 +15490,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1 &960788964
 GameObject:
   m_ObjectHideFlags: 0
@@ -15677,6 +15648,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 1
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!114 &1062718731
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15690,6 +15662,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Always: 1
+  IgnoreAnimators: 1
 --- !u!1 &1239798692
 GameObject:
   m_ObjectHideFlags: 0
@@ -15701,7 +15674,6 @@ GameObject:
   - component: {fileID: 1239798696}
   - component: {fileID: 1239798695}
   - component: {fileID: 1239798694}
-  - component: {fileID: 1239798693}
   m_Layer: 0
   m_Name: CoverPlate3
   m_TagString: Untagged
@@ -15709,20 +15681,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!64 &1239798693
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1239798692}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &1239798694
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -20791,6 +20749,7 @@ MonoBehaviour:
   m_Crossfade: 0.5
   m_StopOnDisable: 0
   m_PlayOnLoad: 1
+  m_DoNotPreload: 0
 --- !u!1 &1642050739
 GameObject:
   m_ObjectHideFlags: 0
@@ -35311,6 +35270,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!114 &1917034606
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35324,6 +35284,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Always: 1
+  IgnoreAnimators: 1
 --- !u!1 &1976434584
 GameObject:
   m_ObjectHideFlags: 0
@@ -35853,6 +35814,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Always: 1
+  IgnoreAnimators: 1
 --- !u!114 &2026115390
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35868,6 +35830,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 1
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!114 &2026115391
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -45476,7 +45439,7 @@ MonoBehaviour:
   - {fileID: 661781586}
   - {fileID: 1848736339}
   - {fileID: 1848736338}
-  m_ContinuousCheck: 1
+  m_ContinuousCheck: 0
 --- !u!4 &2130178321
 Transform:
   m_ObjectHideFlags: 0
@@ -45522,6 +45485,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!114 &1446896835383900072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -45868,6 +45832,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Always: 1
+  IgnoreAnimators: 1
 --- !u!4 &4047334951143675720
 Transform:
   m_ObjectHideFlags: 0

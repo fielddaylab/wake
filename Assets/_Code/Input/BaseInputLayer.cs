@@ -177,6 +177,9 @@ namespace Aqua
             m_LastKnownState = bDesiredState;
             SyncEnabled(m_LastKnownState);
 
+            if (!Services.Valid)
+                return;
+
             if (bDesiredState)
                 m_OnInputEnabled.Invoke();
             else

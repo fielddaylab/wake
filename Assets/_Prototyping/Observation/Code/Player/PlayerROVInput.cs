@@ -40,6 +40,7 @@ namespace ProtoAqua.Observation
         [SerializeField] private float m_DashTapRequiredWindow = 0.6f;
         [SerializeField] private int m_DashTapRequiredCount = 3;
         [SerializeField] private float m_DashTapRequiredAccuracy = 0.8f;
+        [SerializeField] private bool m_DashAllowChain = true;
 
         #endregion // Inspector
 
@@ -122,8 +123,13 @@ namespace ProtoAqua.Observation
 
                     // can repeatedly dash but window is smaller
                     if (m_DashTapCounter >= m_DashTapRequiredCount) {
-                        m_DashTapWindow *= 0.7f;
-                        return m_DashTapCounter == m_DashTapRequiredCount ? DashType.Primary : DashType.Secondary;
+                        if (!m_DashAllowChain) {
+                            m_DashTapCounter = 0;
+                            m_DashTapWindow = 0;
+                        } else {
+                            m_DashTapWindow *= 0.7f;
+                        }
+                        return m_DashTapCounter > m_DashTapRequiredCount ? DashType.Secondary : DashType.Primary;
                     }
 
                     return DashType.None;

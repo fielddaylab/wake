@@ -19,6 +19,9 @@ namespace ScriptableBake {
         [Tooltip("Whether or not to destroy the GameObject once flattened")]
         public bool DestroyGameObject = false;
 
+        [Tooltip("If true, this will skip all objects that are a child of an Animator")]
+        public bool IgnoreAnimators = true;
+
         #region IBaked
 
         #if UNITY_EDITOR
@@ -28,7 +31,7 @@ namespace ScriptableBake {
         }
 
         bool IBaked.Bake(BakeFlags flags, BakeContext context) {
-            Baking.FlattenHierarchy(transform, DestroyInactiveChildren, Recursive);
+            Baking.FlattenHierarchy(transform, DestroyInactiveChildren, Recursive, IgnoreAnimators);
             Baking.Destroy(DestroyGameObject ? (UnityEngine.Object) gameObject : this);
             return true;
         }

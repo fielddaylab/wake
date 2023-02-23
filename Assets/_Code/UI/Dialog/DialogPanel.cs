@@ -37,6 +37,7 @@ namespace Aqua
             public float Speed;
             public string VisibleText;
             public StringHash32 TypeSFX;
+            public float NextAllowedTypeSFXTimestamp;
 
             public StringHash32 TargetId;
             public ScriptCharacterDef TargetDef;
@@ -70,6 +71,7 @@ namespace Aqua
                 SkipPressed = false;
                 AutoContinue = false;
                 IsCutsceneSkip = false;
+                NextAllowedTypeSFXTimestamp = 0;
             }
         }
 
@@ -677,11 +679,17 @@ namespace Aqua
 
         private void PlayTypingSound()
         {
-            if (m_CurrentState.Silent)
+            if (m_CurrentState.Silent || Time.timeSinceLevelLoad < m_CurrentState.NextAllowedTypeSFXTimestamp)
                 return;
             
             StringHash32 typeSfx = m_CurrentState.TypeSFX.IsEmpty ? m_DefaultTypeSFX.Hash() : m_CurrentState.TypeSFX;
             Services.Audio.PostEvent(typeSfx);
+
+            if (m_CurrentState.TargetDef) {
+                m_CurrentState.NextAllowedTypeSFXTimestamp = Time.timeSinceLevelLoad + m_CurrentState.TargetDef.AdditionalTypingTextDelay;
+            } else {
+                m_CurrentState.NextAllowedTypeSFXTimestamp = Time.timeSinceLevelLoad + 2f / 60;
+            }
         }
 
         private float GetDelay(float inBase)

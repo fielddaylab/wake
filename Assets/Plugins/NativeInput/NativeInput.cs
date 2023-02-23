@@ -60,7 +60,7 @@ namespace NativeUtils
                 GameObject go = new GameObject("[NativeWebInputMock]");
                 go.hideFlags = HideFlags.DontSave;
                 GameObject.DontDestroyOnLoad(go);
-                s_InstantiatedCallback = go.AddComponent<MockCallback>();
+                s_InstantiatedCallback = go.AddComponent<NativeInputMockCallback>();
             }
             #endif // USE_JSLIB
         }
@@ -78,9 +78,9 @@ namespace NativeUtils
 
         #if !USE_JSLIB
 
-        static private MockCallback s_InstantiatedCallback;
+        static private NativeInputMockCallback s_InstantiatedCallback;
 
-        private sealed class MockCallback : MonoBehaviour {
+        private sealed class NativeInputMockCallback : MonoBehaviour {
             private void Awake() {
                 useGUILayout = false;
             }

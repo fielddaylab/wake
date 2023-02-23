@@ -43,6 +43,8 @@ namespace AquaAudio
         private readonly HashSet<AudioPackage> m_LoadedPackages = Collections.NewSet<AudioPackage>(8);
         private readonly Dictionary<StringHash32, AudioEvent> m_EventLookup = new Dictionary<StringHash32, AudioEvent>(128);
 
+        private readonly Dictionary<StringHash32, StringHash32> m_EventRemap = new Dictionary<StringHash32, StringHash32>(32);
+
         private readonly FixedPool<AudioTrackState> m_TrackPool = new FixedPool<AudioTrackState>(MaxTracks, Pool.DefaultConstructor<AudioTrackState>());
         private readonly RingBuffer<AudioTrackState> m_ActiveSamples = new RingBuffer<AudioTrackState>(MaxSampleTracks, RingBufferMode.Fixed);
         private readonly RingBuffer<AudioTrackState> m_ActiveStreams = new RingBuffer<AudioTrackState>(MaxStreamTracks, RingBufferMode.Fixed);
@@ -553,11 +555,33 @@ namespace AquaAudio
         public AudioEvent GetEvent(StringHash32 inId)
         {
             AudioEvent evt;
+            if (m_EventRemap.TryGetValue(inId, out StringHash32 remap)) {
+                inId = remap;
+            }
             m_EventLookup.TryGetValue(inId, out evt);
             return evt;
         }
 
         #endregion // Database
+
+        #region Remapping
+
+        public void RemapEvent(StringHash32 inEventId, StringHash32 inTargetId)
+        {
+            m_EventRemap[inEventId] = inTargetId;
+        }
+
+        public void ClearRemap(StringHash32 inEventId)
+        {
+            m_EventRemap.Remove(inEventId);
+        }
+
+        public void ClearAllRemaps()
+        {
+            m_EventRemap.Clear();
+        }
+
+        #endregion // Remapping
 
         #region Load/Unload
 

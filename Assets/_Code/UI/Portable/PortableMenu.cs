@@ -26,6 +26,11 @@ namespace Aqua.Portable {
         [SerializeField] private float m_OnPosition = 0;
         [SerializeField] private TweenSettings m_ToOffAnimSettings = new TweenSettings(0.2f, Curve.CubeIn);
 
+        [Header("Logo")]
+        [SerializeField] private Mask m_LogoMask = null;
+        [SerializeField] private CanvasGroup m_LogoColorGroup = null;
+        [SerializeField] private Graphic[] m_LogoColorBlocks = null;
+
         [Header("Tabs")]
         [SerializeField, Required] private CanvasGroup m_AppNavigationGroup = null;
         [SerializeField, Required] private ToggleGroup m_AppButtonToggleGroup = null;
@@ -39,6 +44,9 @@ namespace Aqua.Portable {
         [NonSerialized] private PortableRequest m_Request;
         [NonSerialized] private float m_ActiveOnPosition;
         [NonSerialized] private bool? m_InputOverrideSetting;
+
+        [NonSerialized] private int m_LogoColorIndex = -1;
+        [NonSerialized] private Routine m_LogoColorFlash;
 
         #region Unity Events
 
@@ -67,6 +75,15 @@ namespace Aqua.Portable {
             Services.UI.Popup.OnHideCompleteEvent.AddListener((s) => OnPopupClosed());
 
             Services.Events.Register(GameEvents.SceneWillUnload, () => Hide(), this);
+
+            m_Input.OnInputEnabled.AddListener(() => {
+                Services.Secrets.AllowCheats();
+            });
+            m_Input.OnInputDisabled.AddListener(() => {
+                Services.Secrets.DisallowCheats();
+            });
+
+            Services.Secrets.RegisterCheat("aqos_flag", SecretService.CheatType.Repeat, "transrights", AdvanceLogoColoring, IsShowing, ClearLogoColoring);
         }
 
         protected override void OnDestroy() {
@@ -185,7 +202,6 @@ namespace Aqua.Portable {
                 m_InputOverrideSetting = null;
             }
 
-
             m_Request.Dispose();
             m_AppNavigationGroup.interactable = true;
 
@@ -194,6 +210,7 @@ namespace Aqua.Portable {
             }
 
             if (WasShowing()) {
+                Services.Audio?.PostEvent("portable.close");
                 Services.Events?.Dispatch(GameEvents.PortableClosed);
             }
 
@@ -204,6 +221,7 @@ namespace Aqua.Portable {
             m_Canvas.enabled = false;
             m_Input.Override = false;
 
+            ClearLogoColoring();
             Streaming.UnloadUnusedAsync(30);
 
             base.OnHideComplete(inbInstant);
@@ -266,6 +284,49 @@ namespace Aqua.Portable {
         }
 
         #endregion // Handlers
+
+        #region Logo
+
+        static private readonly string LogoColorData = "#5bcff9#f5a8b8#ffffff#f5a8b8#5bcff9|#fdf436#fcfcfc#9d59d2#2c2c2c|#b57edc#ffffff#4a8123|";
+
+        private void ClearLogoColoring() {
+            m_LogoMask.enabled = false;
+            m_LogoColorGroup.gameObject.SetActive(false);
+            m_LogoColorIndex = -1;
+            m_LogoColorFlash.Stop();
+            m_LogoMask.GetComponent<Image>().color = Parsing.HexColor("#00eee1");
+        }
+
+        private void AdvanceLogoColoring() {
+            m_LogoMask.enabled = true;
+            m_LogoMask.GetComponent<Image>().color = Color.black;
+            m_LogoColorGroup.gameObject.SetActive(true);
+            
+            m_LogoColorIndex = (m_LogoColorIndex + 1) % LogoColorData.Length;
+
+            int blocksUsed = 0;
+
+            while(LogoColorData[m_LogoColorIndex] != '|') {
+                StringSlice colorStr = new StringSlice(LogoColorData, m_LogoColorIndex, 7);
+                Color color = Parsing.HexColor(colorStr);
+
+                Graphic block = m_LogoColorBlocks[blocksUsed];
+                block.gameObject.SetActive(true);
+                block.color = color;
+
+                blocksUsed++;
+                m_LogoColorIndex = (m_LogoColorIndex + 7) % LogoColorData.Length;
+            }
+
+            for(int i = blocksUsed; i < m_LogoColorBlocks.Length; i++) {
+                m_LogoColorBlocks[i].gameObject.SetActive(false);
+            }
+
+            m_LogoColorGroup.alpha = 1;
+            m_LogoColorFlash.Replace(this, m_LogoColorGroup.FadeTo(0, 0.15f).YoyoLoop(2));
+        }
+
+        #endregion // Logo
 
         [LeafMember("OpenPortableToApp"), Preserve]
         static public void OpenApp(PortableAppId inId) {

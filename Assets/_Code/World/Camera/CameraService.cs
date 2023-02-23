@@ -92,6 +92,7 @@ namespace Aqua.Cameras
         [NonSerialized] private float m_LastCameraDistance;
         [NonSerialized] private Transform m_PositionRoot;
         [NonSerialized] private Axis m_Axis = Axis.XY;
+        [NonSerialized] private int m_CameraCullingMask;
 
         [NonSerialized] private double m_Time;
         [NonSerialized] private uint m_NextId;
@@ -671,9 +672,24 @@ namespace Aqua.Cameras
 
             m_Camera.transparencySortMode = TransparencySortMode.Orthographic;
             m_LastScreenAspectClip = default(Rect);
+            m_CameraCullingMask = m_Camera.cullingMask & ~GameLayers.UI_Mask;
         }
 
         #endregion // Handlers
+
+        #region Culling Mask
+
+        public void DisableRendering()
+        {
+            m_Camera.cullingMask &= ~m_CameraCullingMask;
+        }
+
+        public void EnableRendering()
+        {
+            m_Camera.cullingMask |= m_CameraCullingMask;
+        }
+
+        #endregion // Culling Mask
 
         #region Hinted
 
