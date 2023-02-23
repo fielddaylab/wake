@@ -47,8 +47,8 @@ namespace Aqua.Cameras
         }
 
         public void ReadData(ref CameraPose.Data data) {
-            data.Position = transform.position;
-            data.Rotation = transform.rotation;
+            data.Position = RootTransform.position;
+            data.Rotation = RootTransform.rotation;
             if (FOVPlane != null) {
                 data.Mode = FOVPlane.enabled ? CameraFOVMode.Plane : CameraFOVMode.Direct;
                 data.Target = FOVPlane.Target;
@@ -62,7 +62,7 @@ namespace Aqua.Cameras
         public void WriteData(in CameraPose.Data data) {
             #if UNITY_EDITOR
             Undo.RecordObject(this, "Writing camera pose data");
-            Undo.RecordObject(transform, "Writing camera pose data");
+            Undo.RecordObject(RootTransform, "Writing camera pose data");
             if (FOVPlane) {
                 Undo.RecordObject(FOVPlane, "Writing camera pose data");
                 EditorUtility.SetDirty(FOVPlane);
@@ -71,7 +71,7 @@ namespace Aqua.Cameras
             EditorUtility.SetDirty(transform);
             #endif // UNITY_EDITOR
 
-            transform.SetPositionAndRotation(data.Position, data.Rotation);
+            RootTransform.SetPositionAndRotation(data.Position, data.Rotation);
             Camera.fieldOfView = data.FOV;
             if (FOVPlane) {
                 FOVPlane.Target = data.Target;

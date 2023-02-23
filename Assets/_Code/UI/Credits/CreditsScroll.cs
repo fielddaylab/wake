@@ -42,6 +42,7 @@ namespace Aqua {
         [SerializeField, Multiline] private string m_Sections = null;
         [SerializeField] private CreditsItem[] m_Items = null;
         [SerializeField] private bool m_Looping = true;
+        [SerializeField] private bool m_AllowFastForward = true;
 
         #endregion // Inspector
 
@@ -92,6 +93,10 @@ namespace Aqua {
         }
 
         private void LateUpdate() {
+            if (!m_AllowFastForward) {
+                return;
+            }
+            
             if (Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0)) {
                 m_Routine.SetTimeScale(3);
             } else {

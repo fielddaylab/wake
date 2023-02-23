@@ -14,6 +14,7 @@ namespace Aqua.Title
     {
         public CameraPose LoadingPose;
         public CameraPose FullPose;
+        public CameraPose CreditsPose;
         public CameraPose[] IntroPosePairs;
         public AmbientTransform WhaleTransform;
         public CameraDrift Drift;

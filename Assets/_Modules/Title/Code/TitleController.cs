@@ -280,6 +280,7 @@ namespace Aqua.Title
 
             m_Config = FindObjectOfType<TitleConfig>();
             m_BuildIdText.SetText(string.Format("Build: {0} ({1})", BuildInfo.Id(), BuildInfo.Date()));
+            m_Menu.LoadConfig(m_Config);
 
             foreach(var card in m_Cards) {
                 card.Group.gameObject.SetActive(false);

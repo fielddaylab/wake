@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using Aqua.Animation;
+using Aqua.Cameras;
 using AquaAudio;
 using BeauPools;
 using BeauRoutine;
+using BeauRoutine.Extensions;
 using BeauUtil;
 using BeauUtil.Debugger;
 using TMPro;
@@ -21,16 +23,20 @@ namespace Aqua.Title
         private enum Page
         {
             Title,
+            Credits,
             New,
             Continue
         }
 
         #region Inspector
 
+        [SerializeField] private CanvasGroup m_FullGroup = null;
+
         [Header("Initial Page")]
         [SerializeField] private CanvasGroup m_InitialGroup = null;
         [SerializeField] private Button m_NewGameButton = null;
         [SerializeField] private Button m_ContinueGameButton = null;
+        [SerializeField] private Button m_CreditsButton = null;
 
         [Header("Profile Page")]
         [SerializeField] private CanvasGroup m_ProfileGroup = null;
@@ -41,8 +47,12 @@ namespace Aqua.Title
         [SerializeField] private Button m_BackButton = null;
         [SerializeField] private GameObject m_LoadingSpinner = null;
 
+        [Header("Credits Page")]
+        [SerializeField] private BasePanel m_CreditsPanel = null;
+
         #endregion // Inspector
 
+        [NonSerialized] private TitleConfig m_TitleConfig = null;
         [NonSerialized] private Page m_CurrentPage = Page.Title;
 
         private void Awake()
@@ -51,6 +61,8 @@ namespace Aqua.Title
             m_ContinueGameButton.onClick.AddListener(OnContinueClick);
             m_BackButton.onClick.AddListener(OnBackClick);
             m_StartButton.onClick.AddListener(OnStartClicked);
+            m_CreditsButton.onClick.AddListener(OnCreditsClick);
+            m_CreditsPanel.OnHideEvent.AddListener(OnCreditsClose);
 
             m_ProfileName.onValueChanged.AddListener(OnProfileNameUpdated);
             m_ProfileName.text = Services.Data.LastProfileName();
@@ -61,7 +73,23 @@ namespace Aqua.Title
             m_LoadingSpinner.SetActive(false);
         }
 
+        public void LoadConfig(TitleConfig config) {
+            m_TitleConfig = config;
+        }
+
         #region Handlers
+
+        private void OnCreditsClick()
+        {
+            LoadPage(Page.Credits);
+        }
+
+        private void OnCreditsClose(BasePanel.TransitionType _)
+        {
+            if (Services.Valid) {
+                LoadPage(Page.Title);
+            }
+        }
 
         private void OnNewClick()
         {
@@ -170,13 +198,26 @@ namespace Aqua.Title
 
         private void LoadPage(Page inPage)
         {
+            Page prevPage = m_CurrentPage;
             m_CurrentPage = inPage;
 
             switch(inPage)
             {
                 case Page.Title:
-                    Routine.Start(this, m_ProfileGroup.Hide(0.2f, false));
-                    Routine.Start(this, m_InitialGroup.Show(0.2f, true));
+                    if (prevPage == Page.Credits) {
+                        m_CreditsPanel.Hide();
+                        Routine.Start(this, m_FullGroup.Show(0.2f, true)).DelayBy(0.6f).ExecuteWhileDisabled();
+                        Services.Camera.MoveToPose(m_TitleConfig.FullPose, 1f, Curve.Smooth, CameraPoseProperties.All);
+                    } else {
+                        Routine.Start(this, m_ProfileGroup.Hide(0.2f, false));
+                        Routine.Start(this, m_InitialGroup.Show(0.2f, true));
+                    }
+                    break;
+
+                case Page.Credits:
+                    Routine.Start(this, m_FullGroup.Hide(0.2f, false)).ExecuteWhileDisabled();
+                    m_CreditsPanel.Show(0.6f);
+                    Services.Camera.MoveToPose(m_TitleConfig.CreditsPose, 1f, Curve.Smooth, CameraPoseProperties.All);
                     break;
 
                 case Page.New:
