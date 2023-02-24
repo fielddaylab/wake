@@ -10,7 +10,7 @@
 // Generic
 
 #NoJobHandler(a)
-$if jobs:num-specters-seen >= 5, !jobs:specter5-worried.discussed
+$if SpecterCount() >= 5, !jobs:specter5-worried.discussed
     // STORY BEAT F
     {@player}   Mom, I'm worried about Sam. They should've contacted me by now.
                 I think something might've gone wrong down there.
