@@ -134,13 +134,22 @@ $endif
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Helm", JobTaskTop(predictSiteB)
 @cutscene
-$if global:nav.shipRoom != "Modeling"
-	{@player} 	Can you remind me where to go, {nameof @guide}?
-	{@guide}	Certainly, O. Head to the {nameof Modeling}.
-$else
-	{@player} 	Okay, {nameof @guide}. What do we do from here? 
-	{@guide}	You must use your {nameof Modeling} to create a Food Web Model!
-$endif
+{@player} 	Can you remind me where to go, {nameof @guide}?
+{@guide}	Certainly, O. Head to the {nameof Modeling}.
+
+:: helpGoToModeling.inModelingFoyer
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ModelingFoyer", JobTaskTop(predictSiteB)
+@cutscene
+{@player} 	Okay, {nameof @guide}. What do we do from here? 
+{@guide}	Let's look at the computer in front of you.
+
+:: helpGoToModeling.inModeling
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Modeling", JobTaskTop(predictSiteB)
+@cutscene
+{@player} 	Okay, {nameof @guide}. What do we do from here? 
+{@guide}	You must use your {nameof Modeling} to create a Food Web Model!
 
 // IN MODELING
 
