@@ -88,12 +88,13 @@ $if JobTaskCompleted(countIck), !jobs:coral-tang-checkup.grantedData
 $endif
 
 :: scanIck
-@trigger	JobTaskCompleted
-@when		taskId == "findMicro", scene:name == "RS-2S"
+@trigger	JobTasksUpdated
+@when		JobTaskTop("countIck"), scene:name == "RS-2S"
 @once
 @cutscene
 {@player}	This must be what's stressing the {nameof BlueTang}! 
 			Hm... better get a population count.
+			Since you will be counting a microscopic organism, you will need to use the {nameof Microscope} and the {nameof ROVTagger} {h}at the same time{/h}.
 
 :: countIck
 @trigger	JobTaskCompleted
@@ -128,7 +129,7 @@ $endif
 @when		JobTaskTop(report)
 @once
 @cutscene
-{@guide}	This model seems much more aligned with what we observed at Site S! 
+{@guide}	This model seems much more aligned with what we observed at Site S!
 			Time to report back to {nameof @profCoral}.
 
 
@@ -231,8 +232,9 @@ $endif
 @when 		JobTaskActive(countIck)
 @boostScore -5
 @cutscene
-{@player} What's our next move, {nameof @guide}?
-{@guide}    Get a population count of the {nameof Ick} microorganism you just found.
+{@player}	What's our next move, {nameof @guide}?
+{@guide}    Get a population count of the {nameof Ick} microorganism at {h}Site S{/h} that you saw on the {nameof BlueTang}.
+			You will need to use both the {nameof Microscope} and the {nameof ROVTagger} for counting microscopic organisms. 
 
 :: catchObserveIck
 @trigger    RequestPartnerHelp
