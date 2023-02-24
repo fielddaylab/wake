@@ -199,6 +199,7 @@ namespace Aqua.Modeling {
                 m_ImportHistoricalText.SetActive(false);
                 m_ImportCompletedText.SetActive(false);
                 m_ImportGroup.SetActive(true);
+                m_ImportGroup.GetComponent<AppearAnim>().Ping();
                 m_State.Display.Status(null);
                 yield return null;
 
@@ -237,6 +238,7 @@ namespace Aqua.Modeling {
 
                 yield return 0.2f;
                 m_ImportCompletedText.SetActive(true);
+                m_ImportCompletedText.GetComponent<AppearAnim>().Ping();
                 yield return 1f;
 
                 m_ImportGroup.SetActive(false);
@@ -250,21 +252,25 @@ namespace Aqua.Modeling {
         private IEnumerator ImportTextSequence(bool hadOrganisms, bool hadTolerances, bool hadBehaviors, bool hadHistorical) {
             if (hadOrganisms) {
                 m_ImportOrganismsText.SetActive(true);
+                m_ImportOrganismsText.GetComponent<AppearAnim>().Ping();
                 yield return 0.3f;
             }
 
             if (hadTolerances) {
                 m_ImportTolerancesText.SetActive(true);
+                m_ImportTolerancesText.GetComponent<AppearAnim>().Ping();
                 yield return 0.3f;
             }
 
             if (hadBehaviors) {
                 m_ImportBehaviorsText.SetActive(true);
+                m_ImportBehaviorsText.GetComponent<AppearAnim>().Ping();
                 yield return 0.3f;
             }
 
             if (hadHistorical) {
                 m_ImportHistoricalText.SetActive(true);
+                m_ImportHistoricalText.GetComponent<AppearAnim>().Ping();
                 yield return 0.3f;
             }
         }
@@ -276,6 +282,7 @@ namespace Aqua.Modeling {
         private void OnFilterExpandContract(bool expanded) {
             UpdateFilterEnabled(expanded ? m_State.Conceptual.GraphedMask : 0, m_FilterBox);
             m_FilterBox.Close.gameObject.SetActive(expanded);
+            m_FilterBox.GetComponent<PopAnim>().Ping();
         }
 
         private void OnFilterStateChanged(ConceptualFilterLine line, bool state) {

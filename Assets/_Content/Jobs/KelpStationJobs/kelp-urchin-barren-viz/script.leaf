@@ -116,7 +116,7 @@ $endif
 @when 		scene:name == "Helm", JobTaskTop(visualSiteB)
 @cutscene
 {@player} 	What now, {nameof @guide}?
-{@guide}	Head to your {map-name}Modeling Whiteboard{/map-name} in the {nameof Modeling}.
+{@guide}	Head to your {nameof Modeling} in the {nameof Modeling}.
 
 :: atShip
 @trigger    SceneStart
@@ -128,7 +128,7 @@ $endif
           Um... not that I was worried, or anything. 
           What now, {nameof @guide}?
 {@guide}  You must create a food web model to help explain the vanishing kelp.
-          Head to your Modeling Whiteboard in the {nameof Modeling}!
+          Head to your {nameof Modeling} in the {nameof Modeling}!
 
 :: helpGoToModeling
 @trigger    RequestPartnerHelp
@@ -139,7 +139,7 @@ $if global:nav.shipRoom != "Modeling"
 	{@guide}	Certainly, O. Head to the {nameof Modeling}.
 $else
 	{@player} 	Okay, {nameof @guide}. What do we do from here? 
-	{@guide}	You must use your {map-name}Modeling Whiteboard{/map-name} to create a Food Web Model!
+	{@guide}	You must use your {nameof Modeling} to create a Food Web Model!
 $endif
 
 // IN MODELING

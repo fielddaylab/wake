@@ -43,6 +43,9 @@ namespace Aqua.Modeling {
         [SerializeField] private TextId m_MissingWaterChemistryLabel = default;
         [SerializeField] private TextId m_MissingPopulationsWaterChemistryLabel = default;
 
+        [Header("Global")]
+        [SerializeField] private Button m_SaveButton = null;
+
         #endregion // Inspector
 
         [NonSerialized] private bool m_IsPredicting;
@@ -84,6 +87,7 @@ namespace Aqua.Modeling {
             m_PredictButton.onClick.AddListener(OnPredictClicked);
             m_InterveneRunButton.onClick.AddListener(OnInterveneRunClicked);
             m_InterveneResetButton.onClick.AddListener(OnInterveneResetClicked);
+            m_SaveButton.onClick.AddListener(OnSaveClicked);
 
             m_InterveneAddPanel.Filter = (b) => m_State.Simulation.CanIntroduceForIntervention(b);
             m_InterveneAddPanel.OnAdded = OnIntervenePanelAdded;
@@ -109,6 +113,7 @@ namespace Aqua.Modeling {
             
             m_InterveneButtonGroup.gameObject.SetActive(false);
             m_InterveneAddToggleGroup.ForceActive(false);
+            m_SaveButton.gameObject.SetActive(false);
 
             m_SyncViewGroup.SetActive(false);
         }
@@ -183,6 +188,7 @@ namespace Aqua.Modeling {
             m_InterveneButtonGroup.gameObject.SetActive(phase == ModelPhases.Intervene);
             m_InterveneAddToggleGroup.SetActive(phase == ModelPhases.Intervene);
             m_SyncViewGroup.SetActive(false);
+            HideSaveButton();
 
             if (phase != ModelPhases.Predict) {
                 m_InterveneAddPanel.ClearSelection();
@@ -255,6 +261,18 @@ namespace Aqua.Modeling {
                     break;
                 }
             }
+        }
+
+        private void TryDisplaySaveButton(StringHash32 modelId) {
+            if (!modelId.IsEmpty && !Save.Bestiary.HasFact(modelId)) {
+                m_SaveButton.gameObject.SetActive(true);
+            } else {
+                m_SaveButton.gameObject.SetActive(false);
+            }
+        }
+
+        private void HideSaveButton() {
+            m_SaveButton.gameObject.SetActive(false);
         }
 
         #endregion // Phases
@@ -344,8 +362,7 @@ namespace Aqua.Modeling {
 
             if (m_ProgressInfo.Scope != null && !m_ProgressInfo.Scope.SyncModelId.IsEmpty) {
                 if (m_ProgressInfo.Scope.MinimumSyncAccuracy <= m_State.LastKnownAccuracy) {
-                    Services.Events.Dispatch(ModelingConsts.Event_Simulation_Complete);
-                    OnSyncAchieved?.Invoke();
+                    TryDisplaySaveButton(m_ProgressInfo.Scope.SyncModelId);
                 } else {
                     OnSyncUnsuccessful?.Invoke();
                 }
@@ -407,7 +424,7 @@ namespace Aqua.Modeling {
             m_GraphFader.SetActive(false);
 
             if (m_ProgressInfo.Scope != null) {
-                OnPredictCompleted?.Invoke();
+                TryDisplaySaveButton(m_ProgressInfo.Scope.PredictModelId);
             }
         }
 
@@ -457,7 +474,7 @@ namespace Aqua.Modeling {
             if (m_ProgressInfo.Scope != null) {
                 if (bSuccess) {
                     Log.Msg("[SimulationUI] Intervention hit target!");
-                    OnInterventionSuccessful?.Invoke();
+                    TryDisplaySaveButton(m_ProgressInfo.Scope.InterveneModelId);
                 } else {
                     OnInterventionUnsuccessful?.Invoke();
                 }
@@ -534,6 +551,28 @@ namespace Aqua.Modeling {
 
         #region Callbacks
 
+        private void OnSaveClicked() {
+            switch(m_State.Phase) {
+                case ModelPhases.Sync: {
+                    Services.Events.Dispatch(ModelingConsts.Event_Simulation_Complete);
+                    OnSyncAchieved?.Invoke();
+                    break;
+                }
+
+                case ModelPhases.Predict: {
+                    OnPredictCompleted?.Invoke();
+                    break;
+                }
+
+                case ModelPhases.Intervene: {
+                    OnInterventionSuccessful?.Invoke();
+                    break;
+                }
+            }
+
+            m_SaveButton.gameObject.SetActive(false);
+        }
+
         private void OnSimulateClicked() {
             m_SimulateButton.gameObject.SetActive(false);
             m_PhaseRoutine.Replace(this, Sync_Attempt());
@@ -571,6 +610,7 @@ namespace Aqua.Modeling {
             m_InterveneAddToggleGroup.SetActive(true);
             m_State.Simulation.ClearIntervention();
             m_PhaseRoutine.Stop();
+            HideSaveButton();
 
             m_Graph.PopulateData(m_State, m_ProgressInfo, SimRenderMask.PredictIntervene);
             m_Graph.RenderData(SimRenderMask.PredictIntervene, true);

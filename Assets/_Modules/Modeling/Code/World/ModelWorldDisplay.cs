@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using BeauPools;
 using BeauRoutine;
 using BeauUtil;
@@ -959,6 +960,7 @@ namespace Aqua.Modeling {
             RecalculateCameraBounds();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static private bool CheckMasks(WorldFilterMask src, WorldFilterMask any, WorldFilterMask all, WorldFilterMask none, WorldFilterMask valid) {
             return (src & none & valid) == 0 && (src & all & valid) == all && (any == 0 || (src & any & valid) != 0);
         }
