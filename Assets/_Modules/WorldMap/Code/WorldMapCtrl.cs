@@ -28,6 +28,9 @@ namespace Aqua.WorldMap
         [SerializeField] private CanvasGroup m_SceneExitButtonGroup = null;
         [SerializeField] private ShipOutPopup m_ShipOutPopup = null;
         [SerializeField, HideInInspector] private StationButton[] m_AllStations;
+        [SerializeField] private GameObject m_LegendGroup = null;
+        [SerializeField] private GameObject m_LegendCurrentLabel = null;
+        [SerializeField] private GameObject m_LegendUnseenLabel = null;
 
         [NonSerialized] private StringHash32 m_CurrentStation;
         [NonSerialized] private StringHash32 m_TargetStation;
@@ -90,6 +93,7 @@ namespace Aqua.WorldMap
             m_CurrentStation = profileData.CurrentStationId();
             m_TargetStation = m_CurrentStation;
             StringHash32 jobStation = Save.CurrentJob.Job?.StationId() ?? StringHash32.Null;
+            int unseenCount = 0;
 
             foreach(var station in m_AllStations)
             {
@@ -111,9 +115,16 @@ namespace Aqua.WorldMap
                     else
                     {
                         station.Show(desc, false, seen, jobStation == id);
+                        if (!seen) {
+                            unseenCount++;
+                        }
                     }
                 }
             }
+
+            m_LegendGroup.SetActive(!jobStation.IsEmpty || unseenCount > 0);
+            m_LegendCurrentLabel.SetActive(!jobStation.IsEmpty);
+            m_LegendUnseenLabel.SetActive(unseenCount > 0);
         }
 
         private void OnShipOutClicked()
@@ -263,6 +274,7 @@ namespace Aqua.WorldMap
             m_CurrentStation = profileData.CurrentStationId();
             m_TargetStation = m_CurrentStation;
             StringHash32 jobStation = Save.CurrentJob.Job?.StationId() ?? StringHash32.Null;
+            int unseenCount = 0;
 
             foreach(var station in m_AllStations)
             {
@@ -284,13 +296,18 @@ namespace Aqua.WorldMap
                     else
                     {
                         station.Show(desc, false, seen, jobStation == id);
+                        if (!seen) {
+                            unseenCount++;
+                        }
                     }
 
                     yield return null;
                 }
             }
 
-            // m_ShipOutButton.gameObject.SetActive(false);
+            m_LegendGroup.SetActive(!jobStation.IsEmpty || unseenCount > 0);
+            m_LegendCurrentLabel.SetActive(!jobStation.IsEmpty);
+            m_LegendUnseenLabel.SetActive(unseenCount > 0);
         }
     
         #endregion // IScene

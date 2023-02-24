@@ -541,7 +541,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    m_DisabledColor: {r: 0.4, g: 0.4, b: 0.4, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -1093,7 +1093,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 234.995, y: 0}
+  m_AnchoredPosition: {x: 234.99, y: 0}
   m_SizeDelta: {x: 0, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8643509317187378148
@@ -2443,7 +2443,7 @@ MonoBehaviour:
     m_Left: 20
     m_Right: 20
     m_Top: 22
-    m_Bottom: 60
+    m_Bottom: 50
   m_ChildAlignment: 1
   m_Spacing: 8
   m_ChildForceExpandWidth: 1
@@ -2653,7 +2653,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 85.005005, y: 0}
+  m_AnchoredPosition: {x: 85.009995, y: 0}
   m_SizeDelta: {x: 0, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6473968437833473120
@@ -2761,10 +2761,19 @@ MonoBehaviour:
   m_StationDesc: {fileID: 2359657316483112560}
   m_HasCurrentJobGroup: {fileID: 7555374660555897281}
   m_StationHeaderImage: {fileID: 5225618940698972231}
+  m_StatsGroup: {fileID: 7647992108441879721}
+  m_AvailableGroup: {fileID: 8710255005332488298}
   m_AvailableCount: {fileID: 4816262527249868203}
   m_CompletedGroup: {fileID: 4023828366745213474}
   m_CompletedCount: {fileID: 3018146436033871449}
   m_ShipOutButton: {fileID: 8837105311053968382}
+  m_ShipOutLabel: {fileID: 3761198717329559941}
+  m_ShipOutActiveLabel:
+    m_Source: ui.worldMap.shipOut
+    m_HashValue: 333197281
+  m_ShipOutInactiveLabel:
+    m_Source: ui.worldMap.shipOutBlocked
+    m_HashValue: 2707190519
   m_ContentsTransform: {fileID: 629202699187093669}
   m_TotalLayout: {fileID: 4979516161567075810}
 --- !u!1001 &6624608793112371042
