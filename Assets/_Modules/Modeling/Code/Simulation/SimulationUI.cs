@@ -354,7 +354,7 @@ namespace Aqua.Modeling {
             m_SyncViewGroup.SetActive(true);
             m_SyncViewNormalToggle.SetIsOnWithoutNotify(true);
 
-            yield return 0.4f;
+            yield return 0.2f;
 
             Services.Data.SetVariable(ModelingConsts.Var_SimulationSync, m_State.LastKnownAccuracy);
 
@@ -423,6 +423,8 @@ namespace Aqua.Modeling {
 
             m_GraphFader.SetActive(false);
 
+            yield return 0.2f;
+
             if (m_ProgressInfo.Scope != null) {
                 TryDisplaySaveButton(m_ProgressInfo.Scope.PredictModelId);
             }
@@ -469,6 +471,8 @@ namespace Aqua.Modeling {
 
             OnAnimationFinished?.Invoke();
 
+            yield return 0.2f;
+
             bool bSuccess = m_State.Simulation.EvaluateInterventionGoals();
 
             if (m_ProgressInfo.Scope != null) {
@@ -476,6 +480,7 @@ namespace Aqua.Modeling {
                     Log.Msg("[SimulationUI] Intervention hit target!");
                     TryDisplaySaveButton(m_ProgressInfo.Scope.InterveneModelId);
                 } else {
+                    Services.Audio.PostEvent("syncDenied");
                     OnInterventionUnsuccessful?.Invoke();
                 }
             }
@@ -603,6 +608,13 @@ namespace Aqua.Modeling {
             m_InterveneRunButton.interactable = false;
             m_InterveneAddToggleGroup.SetActive(false);
             m_PhaseRoutine.Replace(this, Intervene_Attempt());
+        }
+
+        private void OnInterveneErrorClicked() {
+            Services.UI.Popup.Display(
+                // TODO: modify description depending on whether the player is above or below the target
+                Loc.Find("modeling.noIntervenePopup.header"), Loc.Find("modeling.noIntervenePopup.description")
+            );
         }
 
         private void OnInterveneResetClicked() {

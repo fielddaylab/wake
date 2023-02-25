@@ -234,7 +234,10 @@ namespace Aqua
             BindScene(active);
             m_SceneHistory.PushBack(active);
 
-            Services.Camera.DisableRendering();
+            if (active.BuildIndex > 0)
+            {
+                Services.Camera.DisableRendering();
+            }
 
             // if we started from another scene than the boot or title scene
             if (active.BuildIndex < 0 || active.BuildIndex >= GameConsts.GameSceneIndexStart)
@@ -260,7 +263,7 @@ namespace Aqua
             yield return WaitForCleanup();
 
             RecordCurrentMapAsSeen(active);
-            Services.Camera.EnableRendering();
+            // Services.Camera.EnableRendering();
 
             m_SceneLock = false;
 

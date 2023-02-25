@@ -12,12 +12,6 @@
     <script src="%UNITY_WEBGL_LOADER_URL%"></script>
     <script>
         var unityInstance = UnityLoader.instantiate("unityContainer", "%UNITY_WEBGL_BUILD_URL%", { onProgress: UnityProgress });
-        window.addEventListener("DOMContentLoaded", function() {
-            // check for iframe and disable footer
-            if (window.top != window.self) {
-                document.getElementById("unityFooterControls").style.display = "none";
-            }
-        });
     </script>
     <script src="https://cdn.brainpop.com/games/assets/js/cameraProxyDOMCrossDomain.js"></script>
     <script src="https://cdn.brainpop.com/games/assets/js/html2canvas.js"></script>
@@ -42,11 +36,7 @@
 <body>
     <div id="BrainPOPsnapArea">
         <div class="webgl-content">
-            <div id="unityContainer" style="width: %UNITY_WIDTH%px; height: %UNITY_HEIGHT%px"></div>
-            <div class="footer" id="unityFooterControls">
-                <div class="fullscreen" onclick="unityInstance.SetFullscreen(1)"></div>
-                <div class="title">%UNITY_WEB_NAME%</div>
-            </div>
+            <div id="unityContainer"></div>
         </div>
     </div>
     <script>

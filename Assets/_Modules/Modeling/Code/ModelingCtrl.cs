@@ -361,13 +361,7 @@ namespace Aqua.Modeling {
 
         private void OnInterventionUnsuccessful() {
             Services.Events.Dispatch(ModelingConsts.Event_Intervene_Error);
-            Services.UI.Popup.Display(
-                // TODO: modify description depending on whether the player is above or below the target
-                Loc.Find("modeling.noIntervenePopup.header"), Loc.Find("modeling.noIntervenePopup.description")
-            ).OnComplete((_) => {
-                Services.Script.TriggerResponse(ModelingConsts.Trigger_InterveneError);
-            });
-            Services.Audio.PostEvent("syncDenied");
+            Services.Script.TriggerResponse(ModelingConsts.Trigger_InterveneError);
         }
 
         private void OnAnimationStart() {
