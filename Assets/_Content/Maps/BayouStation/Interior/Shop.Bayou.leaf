@@ -40,7 +40,6 @@
                 I can try to dig it up, if you want.
 {@player}       That would be amazing. Thanks, {nameof @$MerchantId}.
 {@$MerchantId}  Well... I've probably fangirled enough. Wanna take a look at my shop?   
-$set jobs:bayou-mechanic.givenArticle = false
 $choice .action.openShop; Sure!
 $choice .action.cancel; Not right now!
 
@@ -117,7 +116,7 @@ $call GiveJournalEntry("N05_MersArticle")
 {@$MerchantId}   {random Hey,|As a bonus,} this would unlock some jobs over at the {nameof $local:hintStation}!
 
 :: lowExp
-{@$MerchantId}   Oh, {random hang on|sorry}... you don't have enough {exp}experience{/exp} for this one yet. 
+{@$MerchantId}   Oh, {random hang on|sorry}... you don't have a high enough {h}Clearance Level{/h} for this one yet. 
 
 :: freeItem
 {@$MerchantId}   So, want the {nameof $local:itemId}? Free to a good home!
@@ -155,7 +154,7 @@ $call GiveJournalEntry("N05_MersArticle")
                 I'll be here. Probably super caffeinated. 
 
 #CloseHandler(notEnoughExp, shop:needsExpCount)
-{@$MerchantId}  Come back when you've got more {exp}experience{/exp}! 
+{@$MerchantId}  Come back when you've got a higher {h}Clearance Level{/h}! 
                 Or just when you want a break from all the passive-aggressive bickering... that'd work too. 
 
 #OpenExplorationHandler(a)
@@ -200,7 +199,7 @@ $EvaluateItemPurchase()
 $set    world:flashlightQuest = true
 $set    world:shop.boughtFlashlightFrom = "bayou"
 {@bayouMechanic}    Let me just... hang on.| Didn't {nameof @coralMechanic} have it last?
-                    Oh yeah. Sorry, O. I think {nameof @coralMechanic} borrowed the {nameof FLashlight} from your uncle... 
+                    Oh yeah. Sorry, O. I think {nameof @coralMechanic} borrowed the {nameof Flashlight} from your uncle... 
                     And then she dropped it near {nameof FinalStation}.
                     I swear, your uncle is a saint. If somebody dropped my high-tech gear, I would NOT be so nice about it.
 {@player}           So... the flashlight's gone?
@@ -271,7 +270,7 @@ $EvaluateItemPurchase()
 // Modeling
 
 #ItemHandler(VisualModel)
-{@$MerchantId}  The {nameof VisualModel} would be super helpful for your {map-name}Modeling Station{/map-name}!
+{@$MerchantId}  The {nameof VisualModel} would be super helpful for your {map-name}Modeling Lab{/map-name}!
                 Use it to visualize the connections beween different species.
 {@player}    Hmm... that definitely sounds useful. 
             I might need to snag this one. 
@@ -280,12 +279,12 @@ $EvaluateItemPurchase()
 #ItemHandler(PredictionModel)
 {@$MerchantId}  The {nameof PredictionModel}! Excellent for seeing the future.
                 Ha. Just kidding.
-                It {i}does{/i} allow you to make useful predictions for creatures in different ecosystems. 
+                It <i>does</i> allow you to make useful predictions for creatures in different ecosystems. 
                 Though it couldn't predict our comms explosion, so... not quite foolproof. 
 $EvaluateItemPurchase()
 
 #ItemHandler(InterveneModel)
-{@$MerchantId}  The {nameof InterveneModel} is essential for your {map-name}Modeling Station{/map-name}!
+{@$MerchantId}  The {nameof InterveneModel} is essential for your {map-name}Modeling Lab{/map-name}!
                 Use it to model how different possible interventions might work out.
                 If you want to try to help some of the struggling ecosystems out there, I would definitely recommend this one. 
 $EvaluateItemPurchase()

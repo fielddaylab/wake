@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Aqua.Compression;
 using Aqua.Debugging;
 using BeauData;
 using BeauPools;
@@ -17,19 +18,23 @@ namespace Aqua
 {
     public partial class LocService : ServiceBehaviour, ILoadable
     {
+        static private readonly FourCC DefaultLanguage = FourCC.Parse("EN");
+
         #region Inspector
 
         [SerializeField, Required] private LocManifest m_EnglishManifest;
 
         #endregion // Inspector
 
-        private LocPackage m_LanguagePackage;
+        [NonSerialized] private LocPackage m_LanguagePackage;
 
         private Routine m_LoadRoutine;
         private IPool<TagString> m_TagStringPool;
 
-        private bool m_Loading;
-        private List<LocText> m_ActiveTexts = new List<LocText>(64);
+        [NonSerialized] private bool m_Loading;
+        [NonSerialized] private FourCC m_CurrentLanguage;
+        [NonSerialized] private LayoutPrefabPackage m_CurrentJournalPackage;
+        [NonSerialized] private List<LocText> m_ActiveTexts = new List<LocText>(64);
         
         #region Loading
 
@@ -48,13 +53,23 @@ namespace Aqua
             }
 
             m_LanguagePackage.Clear();
-            foreach(var file in manifest.Packages) {
-                var parser = BlockParser.ParseAsync(ref m_LanguagePackage, file, Parsing.Block, LocPackage.Generator.Instance);
-                yield return Async.Schedule(parser); 
+            using(Profiling.Time("loading language")) {
+                if (manifest.Packages.Length > 0) {
+                    DebugService.Log(LogMask.Loading | LogMask.Localization, "[LocService] Loading '{0}' from {1} packages", manifest.name, manifest.Packages.Length);
+                    foreach(var file in manifest.Packages) {
+                        var parser = BlockParser.ParseAsync(ref m_LanguagePackage, file, Parsing.Block, LocPackage.Generator.Instance);
+                        yield return Async.Schedule(parser); 
+                    }
+                } else {
+                    DebugService.Log(LogMask.Loading | LogMask.Localization, "[LocService] Loading '{0}' from {1:0.00}kb binary", manifest.name, manifest.Binary.Length / 1024);
+                    yield return Async.Schedule(LocPackage.ReadFromBinary(m_LanguagePackage, manifest.Binary));
+                }
             }
 
             DebugService.Log(LogMask.Loading | LogMask.Localization, "[LocService] Loaded {0} keys ({1})", m_LanguagePackage.Count, manifest.LanguageId.ToString());
 
+            m_CurrentLanguage = manifest.LanguageId;
+            m_CurrentJournalPackage = manifest.JournalLayout;
             m_Loading = false;
             DispatchTextRefresh();
         }
@@ -62,6 +77,14 @@ namespace Aqua
         #endregion // Loading
 
         #region Localization
+
+        public FourCC CurrentLanguageId {
+            get { return m_CurrentLanguage; }
+        }
+
+        public LayoutPrefabPackage CurrentJournalPackage {
+            get { return m_CurrentJournalPackage; }
+        }
 
         /// <summary>
         /// Localizes the given key.
@@ -89,7 +112,10 @@ namespace Aqua
             bool hasEvents;
             if (!m_LanguagePackage.TryGetContent(inKey, out content))
             {
-                Debug.LogErrorFormat("[LocService] Unable to locate entry for '{0}' ({1})", inKey.Source(), inKey.Hash().HashValue);
+                if (inDefault.IsEmpty || m_CurrentLanguage != DefaultLanguage)
+                {
+                    Debug.LogErrorFormat("[LocService] Unable to locate entry for '{0}' ({1})", inKey.Source(), inKey.Hash().HashValue);
+                }
                 content = inDefault.ToString();
                 hasEvents = content.IndexOf('{') >= 0;
             }

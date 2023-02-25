@@ -21,6 +21,7 @@ $set    temp:flashlightQuest = true
 @cutscene
 {@player}   So, she dropped the flashlight here?
 {@guide}    Yes. I predict it is on the sea floor.
+$call GiveEntity(DeepDeepSea)
 
 :: flashlightQuest.helpA
 @trigger    RequestPartnerHelp

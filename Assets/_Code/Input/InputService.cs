@@ -59,12 +59,13 @@ namespace Aqua
         [NonSerialized] private int m_PauseAllCounter = 0;
         [NonSerialized] private int m_ForceClick = 0;
         [NonSerialized] private RingBuffer<long> m_LastClickTimes = new RingBuffer<long>(2, RingBufferMode.Overwrite);
-        [NonSerialized] private RingBuffer<KeyCode> m_LastKeyPresses = new RingBuffer<KeyCode>(16, RingBufferMode.Overwrite);
 
         [NonSerialized] private PointerEventData m_NativeEventData;
 
         [NonSerialized] private readonly List<PriorityRecord> m_PriorityStack = new List<PriorityRecord>(8);
         [NonSerialized] private readonly List<FlagsRecord> m_FlagsStack = new List<FlagsRecord>(8);
+
+        public event Action<KeyCode> OnKeyPressed;
 
         #region Input Layers
 
@@ -340,11 +341,15 @@ namespace Aqua
 
         private void OnGUI() {
             Event e = Event.current;
-            if (e.type != EventType.KeyDown) {
+            if (e.type != EventType.KeyDown || e.keyCode == KeyCode.None) {
                 return;
             }
 
-            m_LastKeyPresses.PushBack(e.keyCode);
+            if (m_PauseAllCounter > 0 || m_InputModule.IsEditingText()) {
+                return;
+            }
+
+            OnKeyPressed?.Invoke(e.keyCode);
         }
 
         #endregion // Unity Events

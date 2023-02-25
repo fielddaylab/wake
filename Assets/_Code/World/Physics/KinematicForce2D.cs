@@ -57,7 +57,7 @@ namespace Aqua {
             if (!Services.Physics.Enabled)
                 return;
 
-            Vector2 force = ForceDirection * ForceMagnitude * Time.fixedDeltaTime;
+            Vector2 force = (transform.rotation * ForceDirection) * (ForceMagnitude * Time.fixedDeltaTime);
             Vector2 forceNormal = force.normalized;
             Vector2 myCenter = Collider.bounds.center;
 

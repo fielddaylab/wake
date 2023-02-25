@@ -262,6 +262,11 @@ namespace UnityEngine
         }
 
         [MethodImpl(256)]
+        static public implicit operator bool(RuntimeObjectHandle x) {
+            return x.Id != 0;
+        }
+
+        [MethodImpl(256)]
         static public implicit operator RuntimeObjectHandle(UnityEngine.Object x) {
             return new RuntimeObjectHandle(x);
         }
@@ -465,6 +470,11 @@ namespace UnityEngine
         [MethodImpl(256)]
         static public explicit operator int(RuntimeObjectHandle<T> x) {
             return x.Id;
+        }
+
+        [MethodImpl(256)]
+        static public implicit operator bool(RuntimeObjectHandle<T> x) {
+            return x.Id != 0;
         }
 
         [MethodImpl(256)]

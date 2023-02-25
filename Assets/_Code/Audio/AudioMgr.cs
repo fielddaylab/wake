@@ -43,15 +43,17 @@ namespace AquaAudio
         private readonly HashSet<AudioPackage> m_LoadedPackages = Collections.NewSet<AudioPackage>(8);
         private readonly Dictionary<StringHash32, AudioEvent> m_EventLookup = new Dictionary<StringHash32, AudioEvent>(128);
 
+        private readonly Dictionary<StringHash32, StringHash32> m_EventRemap = new Dictionary<StringHash32, StringHash32>(32);
+
         private readonly FixedPool<AudioTrackState> m_TrackPool = new FixedPool<AudioTrackState>(MaxTracks, Pool.DefaultConstructor<AudioTrackState>());
         private readonly RingBuffer<AudioTrackState> m_ActiveSamples = new RingBuffer<AudioTrackState>(MaxSampleTracks, RingBufferMode.Fixed);
         private readonly RingBuffer<AudioTrackState> m_ActiveStreams = new RingBuffer<AudioTrackState>(MaxStreamTracks, RingBufferMode.Fixed);
 
         private readonly RingBuffer<IAudioVolume> m_Volumes = new RingBuffer<IAudioVolume>(16, RingBufferMode.Expand);
+        private readonly RingBuffer<AudioMixLayerData> m_MixLayers = new RingBuffer<AudioMixLayerData>(4, RingBufferMode.Expand);
 
         private System.Random m_Random;
         private AudioPropertyBlock m_MasterProperties;
-        private AudioPropertyBlock m_MixerProperties;
         private AudioPropertyBlock m_DebugProperties;
         [NonSerialized] private ushort m_Id;
 
@@ -69,7 +71,6 @@ namespace AquaAudio
         {
             m_Random = new System.Random(Environment.TickCount ^ name.GetHashCode());
             m_MasterProperties = AudioPropertyBlock.Default;
-            m_MixerProperties = AudioPropertyBlock.Default;
             m_DebugProperties = AudioPropertyBlock.Default;
 
             m_ListenerTransform = m_Listener.transform;
@@ -115,15 +116,34 @@ namespace AquaAudio
 
         private unsafe void UnsafeUpdate(Vector3 listenerPos)
         {
+            // mix master, mixer, and debug properties
             AudioPropertyBlock masterProperties = m_MasterProperties;
-            AudioPropertyBlock.Combine(masterProperties, m_MixerProperties, ref masterProperties);
             AudioPropertyBlock.Combine(masterProperties, m_DebugProperties, ref masterProperties);
 
             AudioPropertyBlock* properties = stackalloc AudioPropertyBlock[BusCount];
             properties[0] = masterProperties;
 
+            // mix for each bux
             for(int i = 0; i < m_BusMixes.Length; ++i)
                 AudioPropertyBlock.Combine(masterProperties, m_BusMixes[i], ref properties[1 + i]);
+
+            // additional layer mixes
+            for(int i = 0; i < m_MixLayers.Count; i++) {
+                AudioMixLayerData layer = m_MixLayers[i];
+                if (layer.Factor > 0) {
+                    AudioBusParameterSet volumes = layer.Volume;
+                    AudioBusParameterSet.Adjust(ref volumes, layer.Factor);
+                    for(int busIdx = 0; busIdx < BusCount; busIdx++) {
+                        properties[busIdx].Volume *= volumes[busIdx];
+                    }
+
+                    AudioBusParameterSet pitches = layer.Pitch;
+                    AudioBusParameterSet.Adjust(ref pitches, layer.Factor);
+                    for(int busIdx = 0; busIdx < BusCount; busIdx++) {
+                        properties[busIdx].Pitch *= pitches[busIdx];
+                    }
+                }
+            }
 
             // multiply loading volume
             properties[(int) AudioBusId.SFX].Volume *= m_FadeMultiplier;
@@ -433,11 +453,6 @@ namespace AquaAudio
 
         #region Properties
 
-        public ref AudioPropertyBlock Mix
-        {
-            get { return ref m_MixerProperties; }
-        }
-
         internal ref AudioPropertyBlock DebugMix
         {
             get { return ref m_DebugProperties; }
@@ -540,11 +555,33 @@ namespace AquaAudio
         public AudioEvent GetEvent(StringHash32 inId)
         {
             AudioEvent evt;
+            if (m_EventRemap.TryGetValue(inId, out StringHash32 remap)) {
+                inId = remap;
+            }
             m_EventLookup.TryGetValue(inId, out evt);
             return evt;
         }
 
         #endregion // Database
+
+        #region Remapping
+
+        public void RemapEvent(StringHash32 inEventId, StringHash32 inTargetId)
+        {
+            m_EventRemap[inEventId] = inTargetId;
+        }
+
+        public void ClearRemap(StringHash32 inEventId)
+        {
+            m_EventRemap.Remove(inEventId);
+        }
+
+        public void ClearAllRemaps()
+        {
+            m_EventRemap.Clear();
+        }
+
+        #endregion // Remapping
 
         #region Load/Unload
 
@@ -630,6 +667,18 @@ namespace AquaAudio
         }
 
         #endregion // Volumes
+
+        #region Mix Layers
+
+        public void AddMixLayer(AudioMixLayerData mixLayer) {
+            m_MixLayers.PushBack(mixLayer);
+        }
+
+        public void RemoveMixLayer(AudioMixLayerData mixLayer) {
+            m_MixLayers.FastRemove(mixLayer);
+        }
+
+        #endregion // Mix Layers
 
         #region Leaf
 

@@ -143,6 +143,7 @@ namespace Aqua.JobBoard {
             yield return null;
 
             UpdateUnselectedLabel();
+            DisplayPercentage();
             AnimateButtonsOn();
         }
 
@@ -165,6 +166,7 @@ namespace Aqua.JobBoard {
             if (UpdateButtonStatuses()) {
                 OrderButtons();
                 UpdateUnselectedLabel();
+                DisplayPercentage();
 
                 if (m_SelectedJobButton != null)
                     m_Info.UpdateStatus(m_SelectedJobButton.Job, m_SelectedJobButton.Status);
@@ -257,6 +259,7 @@ namespace Aqua.JobBoard {
             ListHeader header = FindHeader(inGroup, true);
             header.gameObject.SetActive(true);
             header.Transform.SetSiblingIndex(ioSiblingIndex++);
+            header.ListCount = 1;
 
             inButton.Transform.SetSiblingIndex(ioSiblingIndex++);
         }
@@ -270,6 +273,7 @@ namespace Aqua.JobBoard {
             ListHeader header = FindHeader(inGroup, true);
             header.gameObject.SetActive(true);
             header.Transform.SetSiblingIndex(ioSiblingIndex++);
+            header.ListCount = inButtons.Count;
 
             foreach (var button in inButtons) {
                 button.Transform.SetSiblingIndex(ioSiblingIndex++);
@@ -286,7 +290,7 @@ namespace Aqua.JobBoard {
                         break;
 
                     case JobProgressCategory.Completed:
-                        header.SetText("ui.jobBoard.group.completed");
+                        // header.SetText("ui.jobBoard.group.completed");
                         break;
 
                     case JobProgressCategory.Available:
@@ -323,6 +327,19 @@ namespace Aqua.JobBoard {
                 AppearAnim anim = child.GetComponent<AppearAnim>();
                 if (anim && CanvasExtensions.IsVisible(clipping, child)) {
                     delay += anim.Ping(delay) * 0.2f;
+                }
+            }
+        }
+
+        private void DisplayPercentage() {
+            int total = Services.Assets.Jobs.JobsForStation(Save.Map.CurrentStationId()).Length;
+            
+            ListHeader header = FindHeader(JobProgressCategory.Completed, false);
+            if (header && header.gameObject.activeSelf) {
+                int percentage = (int) (100 * header.ListCount / (float) total);
+                using(PooledStringBuilder psb = PooledStringBuilder.Create()) {
+                    psb.Builder.AppendLoc("ui.jobBoard.group.completed").Append(" (").AppendNoAlloc(percentage).Append("%)");
+                    header.SetText(psb.Builder);
                 }
             }
         }

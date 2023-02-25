@@ -68,6 +68,7 @@ namespace Aqua.Shop {
         [SerializeField] private float m_OffscreenPos = 0;
         [SerializeField] private float m_OnscreenPos = 0;
         [SerializeField] private ShopPreview m_Preview = null;
+        [SerializeField] private AppearAnimSet m_AppearSequence = null;
 
         #endregion
 
@@ -165,7 +166,7 @@ namespace Aqua.Shop {
 
         #region Categories
 
-        private void UpdateCategory(ShopCategoryButton category, CategoryId id, StringHash32 triggerId = default) {
+        private void UpdateCategory(ShopCategoryButton category, CategoryId id, StringHash32 triggerId = default, bool animate = true) {
             if (!IsShowing()) {
                 return;
             }
@@ -184,6 +185,11 @@ namespace Aqua.Shop {
 
                 PopulateColumn(m_LeftColumnHeader, category.LeftHeader, m_LeftColumnButtons, category.LeftItems);
                 PopulateColumn(m_RightColumnHeader, category.RightHeader, m_RightColumnButtons, category.RightItems);
+
+                if (animate) {
+                    float delay = IsTransitioning() ? 0.28f : 0;
+                    m_AppearSequence.Play(delay);
+                }
 
                 if (!triggerId.IsEmpty)
                     Services.Script.TriggerResponse(triggerId);

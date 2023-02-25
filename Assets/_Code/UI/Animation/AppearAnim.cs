@@ -17,6 +17,7 @@ namespace Aqua {
         [SerializeField, Range(0.1f, 3)] private float m_AnimDurationScale = 1;
         [SerializeField, Range(0.1f, 3)] private float m_AnimDistanceScale = 1;
         [SerializeField] private bool m_DisableRaycasts = false;
+        [SerializeField] private bool m_PlayOnEnable = false;
 
         [NonSerialized] private float m_TimeLeft;
         [NonSerialized] private LayoutOffset m_Offset;
@@ -38,7 +39,11 @@ namespace Aqua {
         }
 
         private void OnEnable() {
-            Services.Animation.Layout?.TryAdd(this, m_TimeLeft);
+            if (m_PlayOnEnable) {
+                Ping();
+            } else {
+                Services.Animation.Layout?.TryAdd(this, m_TimeLeft);
+            }
         }
 
         private void OnDisable() {

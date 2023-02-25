@@ -42,4 +42,9 @@ namespace Aqua
 
         public const int GameSceneIndexStart = 2;
     }
+
+    static public class GameStats
+    {
+        static public readonly TableKeyPair Dive_TotalTime = TableKeyPair.Parse("player:stats.dive.totalTime");
+    }
 }

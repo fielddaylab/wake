@@ -17,6 +17,7 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using FieldDay;
 using BeauUtil.Debugger;
+using Aqua.Debugging;
 
 namespace Aqua
 {
@@ -113,6 +114,8 @@ namespace Aqua
             Services.Script.OnTargetedThreadStarted += GuideHandler;
             SceneHelper.OnSceneLoaded += LogSceneChanged;
 
+            CrashHandler.OnCrash += OnCrash;
+
             NetworkStats.OnError.Register(OnNetworkError);
 
             m_Log = new OGDLog(new OGDLogConsts() {
@@ -171,6 +174,17 @@ namespace Aqua
             {
                 LogGuideScriptTriggered(nodeId);
             }
+        }
+
+        private void OnCrash(Exception exception, string error) {
+            string text = exception != null ? exception.Message : error;
+            using(var e = m_Log.NewEvent("game_error")) {
+                e.Param("error_message", text);
+                e.Param("scene", SceneHelper.ActiveScene().Name);
+                e.Param("time_since_launch", Time.realtimeSinceStartup, 2);
+                e.Param("job_name", m_CurrentJobName);
+            }
+            m_Log.Flush();
         }
 
         private void LogSceneChanged(SceneBinding scene, object context)

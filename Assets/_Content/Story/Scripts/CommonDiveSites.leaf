@@ -72,7 +72,7 @@ $call Specter->Scan(3)
 {@guide}  Data inconclusive.
 {@player} Wow... it looks like a ghost.
 {@player} Where did it come from?
-{@guide} Sensors indicate that the anomoly was sent by Challenger Deep.
+{@guide} Sensors indicate that the anomaly was sent by Challenger Deep.
 {@player} That's where Sam is! They must've gotten the probe back online!
 {@player} But why would they send this to us? 
 $call GiveJournalEntry("S01")
@@ -180,7 +180,7 @@ $call Specter->Scan(3)
 {@player}   Whoa. {nameof @guide}, what is that? 
             A jellyfish? Some kind of crustacean?
 {@guide}    I don't believe so, O. 
-            The transmission size was too large, so only a portion of the image came through.
+            The transmission size was too large, so only a portion of the image came through.
 {@player}   Yikes. That's not terrifying at all.
 {@player}   So what are we looking at here? 
 {@guide}    It appears that this is only the eye of a much larger creature.
@@ -199,7 +199,7 @@ $branch common.ringPhone
                 Took forever to find... had to dig through all her old boxes.
                 Come talk to me at the Forested Lagoon, and I'll get the upgrade added to your card!
 $set jobs:final-final.upgradeReady = true
-
+$set jobs:final-final.tio.code-received = false
 $call GiveJournalEntry("S08")
 
 // Temp Hack: should unlock all facts for all specters you have automatically

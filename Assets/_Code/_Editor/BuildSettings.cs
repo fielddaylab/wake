@@ -267,6 +267,13 @@ namespace Aqua.Editor {
                 }
                 Debug.LogFormat("[BuildSettings] Building branch '{0}', development mode {1}", branch, EditorUserBuildSettings.development);
                 try {
+                    if (EditorUserBuildSettings.development) {
+                        PlayerSettings.WebGL.exceptionSupport = WebGLExceptionSupport.FullWithStacktrace;
+                        PlayerSettings.WebGL.debugSymbols = true;
+                    } else {
+                        PlayerSettings.WebGL.exceptionSupport = WebGLExceptionSupport.ExplicitlyThrownExceptionsOnly;
+                        PlayerSettings.WebGL.debugSymbols = false;
+                    }
                     using (Profiling.Time("bake assets"))
                     using (Log.DisableMsgStackTrace()) {
                         Baking.BakeAssets(bBatch ? 0 : BakeFlags.Verbose);

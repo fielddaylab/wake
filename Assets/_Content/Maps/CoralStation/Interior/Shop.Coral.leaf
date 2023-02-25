@@ -65,7 +65,7 @@ $choice .action.cancel; Not right now.
 {@$MerchantId} O!! You did it! You're my hero!!
 {@player} Um... what... ?
 {@$MerchantId} The Lionfish. You figured it out!
-               I {i}knew{/i} those things were bad news. 
+               I <i>knew</i> those things were bad news. 
                 Guess I better put back that ignition coil I borrowed from {nameof @profCoral}'s engine...
 {@player} Wait. That was you??
 {@$MerchantId}  Shhh. It was for a good cause. 
@@ -135,7 +135,7 @@ $choice .action.cancel; Not right now.
 {@$MerchantId}   {random Ooh,|Hey,|Just a tip for ya...} looks like this would unlock some jobs over at the {nameof $local:hintStation}!
 
 :: lowExp
-{@$MerchantId}   {random Oh... whoops.|Huh... scratch that.} You don't have enough {exp}experience{/exp} for this one yet.
+{@$MerchantId}   {random Oh... whoops.|Huh... scratch that.} You don't have a high enough {h}Clearance Level{/h} for this one yet.
 
 :: freeItem
 {@$MerchantId}   So, want the {nameof $local:itemId}? Won't cost you anything.
@@ -172,7 +172,7 @@ $choice .action.cancel; Not right now.
 {@$MerchantId}  Come back when you've got some more {pluralnameof Cash}! 
 
 #CloseHandler(notEnoughExp, shop:needsExpCount)
-{@$MerchantId}  Come back when you've got more {exp}experience{/exp}!
+{@$MerchantId}  Come back when you've got a higher {h}Clearance Level{/h}!
 
 #OpenExplorationHandler(a)
 {@$MerchantId}  Wanna check out these sweet exploration tools?
@@ -298,13 +298,13 @@ $EvaluateItemPurchase()
 
 #ItemHandler(PredictionModel)
 {@$MerchantId}  The {nameof PredictionModel}! 
-                A snazzy tool for your {map-name}Modeling Station{/map-name}.
+                A snazzy tool for your {map-name}Modeling Lab{/map-name}.
                 Use it to make predictions about creatures in different ecosystems. 
                 Super useful for science-nerd types like you. 
 $EvaluateItemPurchase()
 
 #ItemHandler(InterveneModel)
-{@$MerchantId}  The {nameof InterveneModel} would make a great addition to your {map-name}Modeling Station{/map-name}!
+{@$MerchantId}  The {nameof InterveneModel} would make a great addition to your {map-name}Modeling Lab{/map-name}!
                 Use it to model the outcomes of different possible interventions. 
                 Crucial if you ever want to add something to an ecosystem....
                 Or, you know. Take something away.

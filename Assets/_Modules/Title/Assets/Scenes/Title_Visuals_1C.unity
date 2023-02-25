@@ -1428,7 +1428,7 @@ Transform:
   - {fileID: 310769103}
   - {fileID: 213198337}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &94758567
 MonoBehaviour:
@@ -1445,6 +1445,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!4 &95874362 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6417196570755996735, guid: 51465912568164fb69790614e1c5ef62,
@@ -3513,7 +3514,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 213198336}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 14.3, y: -2.5, z: 0}
+  m_LocalPosition: {x: 14.3, y: -2.5, z: -29.330008}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 94758566}
@@ -3531,12 +3532,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63a8cc9003b5504dbb86e6318d93ea8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Mode: 0
+  Mode: 1
   Target: {fileID: 753473747}
   Height: 10
   Zoom: 3
   AudioListenerZOffset: 0
-  FieldOfView: 6.936457
+  FieldOfView: 6
   Properties: 31
 --- !u!4 &254554591 stripped
 Transform:
@@ -4067,7 +4068,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 310769102}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.3, y: -8.59, z: 0}
+  m_LocalPosition: {x: -0.3, y: -8.59, z: -25.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 94758566}
@@ -5402,7 +5403,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 383321258}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 16.41, y: -8.5, z: 0}
+  m_LocalPosition: {x: 16.41, y: -8.5, z: -25.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 94758566}
@@ -5576,6 +5577,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!114 &395430792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5589,6 +5591,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Always: 1
+  IgnoreAnimators: 1
 --- !u!4 &395430793
 Transform:
   m_ObjectHideFlags: 0
@@ -5602,7 +5605,7 @@ Transform:
   m_Children:
   - {fileID: 161303951}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &395775228
 PrefabInstance:
@@ -6100,6 +6103,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: HalfMoonFish00 (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 5928327985361077893, guid: 51465912568164fb69790614e1c5ef62,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6417196570755996735, guid: 51465912568164fb69790614e1c5ef62,
         type: 3}
       propertyPath: m_RootOrder
@@ -6264,6 +6272,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: HalfMoonFish00 (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 5928327985361077893, guid: 51465912568164fb69790614e1c5ef62,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6417196570755996735, guid: 51465912568164fb69790614e1c5ef62,
         type: 3}
       propertyPath: m_RootOrder
@@ -6411,7 +6424,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &496252309
 MonoBehaviour:
@@ -6427,6 +6440,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LoadingPose: {fileID: 1405694261}
   FullPose: {fileID: 1499519858}
+  CreditsPose: {fileID: 1812541127}
   IntroPosePairs:
   - {fileID: 1405694261}
   - {fileID: 383321260}
@@ -7908,6 +7922,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!114 &599548571
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7921,6 +7936,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Always: 1
+  IgnoreAnimators: 1
 --- !u!4 &600186765 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8256579402164060393, guid: 42dc1d3632e08454eabce1fbe1d3303c,
@@ -8953,6 +8969,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!4 &713593814 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3874046720498103389, guid: c87e3d9649d5944e190b19542eab844a,
@@ -9198,7 +9215,7 @@ Transform:
   - {fileID: 2272586622789776301}
   - {fileID: 4410201807878574137}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &723580154
 MonoBehaviour:
@@ -9213,6 +9230,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Always: 1
+  IgnoreAnimators: 1
 --- !u!114 &723580155
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9228,6 +9246,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1001 &724843131
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9794,6 +9813,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!114 &762288669
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9807,6 +9827,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Always: 1
+  IgnoreAnimators: 1
 --- !u!4 &772014897 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8256579402164060393, guid: 42dc1d3632e08454eabce1fbe1d3303c,
@@ -11374,6 +11395,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1001 &965223763
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13151,6 +13173,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1001 &1176256586
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13489,7 +13512,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1187326754}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.3, y: 0.57, z: 0}
+  m_LocalPosition: {x: -0.3, y: 0.57, z: -25.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 94758566}
@@ -15338,6 +15361,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!4 &1292514452 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8256579402164060393, guid: 42dc1d3632e08454eabce1fbe1d3303c,
@@ -16379,6 +16403,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!114 &1381467554
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16392,6 +16417,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Always: 1
+  IgnoreAnimators: 1
 --- !u!1001 &1386317160
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16734,7 +16760,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1405694260}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 24.9, y: -8.5, z: 0}
+  m_LocalPosition: {x: 24.9, y: -8.5, z: -25.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 94758566}
@@ -16751,6 +16777,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: HalfMoonFish00 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5928327985361077893, guid: 51465912568164fb69790614e1c5ef62,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6417196570755996735, guid: 51465912568164fb69790614e1c5ef62,
         type: 3}
@@ -17201,7 +17232,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1499519857}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 14.3, y: -2.5, z: 0}
+  m_LocalPosition: {x: 14.3, y: -2.5, z: -25.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -19745,6 +19776,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!4 &1751114903 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1779905283683472286, guid: 443ce3acbd7fb462ba2e8d6dcc967188,
@@ -20619,6 +20651,56 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1809647261}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1812541126
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1812541128}
+  - component: {fileID: 1812541127}
+  m_Layer: 0
+  m_Name: CreditsPose
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1812541127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1812541126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f63a8cc9003b5504dbb86e6318d93ea8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Mode: 1
+  Target: {fileID: 753473747}
+  Height: 10
+  Zoom: 1
+  AudioListenerZOffset: 0
+  FieldOfView: 14
+  Properties: 31
+--- !u!4 &1812541128
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1812541126}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 14.3, y: -2.5, z: -23.970005}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1817904294
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22448,6 +22530,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1001 &1977614587
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22557,7 +22640,7 @@ Transform:
   m_Children:
   - {fileID: 160813494755884001}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1999659155
 PrefabInstance:
@@ -22768,6 +22851,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1001 &2011080909
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -58672,6 +58756,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: HalfMoonFish00 (0)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5928327985361077893, guid: 51465912568164fb69790614e1c5ef62,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6417196570755996735, guid: 51465912568164fb69790614e1c5ef62,
         type: 3}

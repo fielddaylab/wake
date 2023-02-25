@@ -41,12 +41,14 @@ namespace Aqua.Debugging
 
         static public bool Enabled = false;
 
-        public delegate void CrashDisplayDelegate(Exception exception, out string outContext);
+        public delegate void OnCrashDelegate(Exception exception, string error);
+        public delegate void CrashDisplayDelegate(Exception exception, string error, out string outContext);
 
         static private bool s_Registered;
         static private CrashHandler s_Instance;
 
-        static public event CrashDisplayDelegate OnCrash;
+        static public event OnCrashDelegate OnCrash;
+        static public event CrashDisplayDelegate DisplayCrash;
 
         static public void Register() {
             if (s_Registered) {
@@ -107,7 +109,8 @@ namespace Aqua.Debugging
             if (!s_Instance) {
                 s_Instance = Instantiate(Resources.Load<CrashHandler>("CrashHandler"));
                 string context = null;
-                OnCrash?.Invoke(exception, out context);
+                OnCrash?.Invoke(exception, exceptionInfo);
+                DisplayCrash?.Invoke(exception, exceptionInfo, out context);
                 s_Instance.Populate(exception?.Message ?? exceptionInfo, context);
             }
         }

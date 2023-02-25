@@ -14,13 +14,23 @@ namespace AquaAudio
         [SerializeField] private float m_Crossfade = 0.5f;
         [SerializeField] private bool m_StopOnDisable = true;
         [SerializeField] private bool m_PlayOnLoad = true;
+        [SerializeField] private bool m_DoNotPreload = false;
 
         private Routine m_WaitRoutine;
         private AudioHandle m_BGM;
 
         private void OnEnable()
         {
-            if (string.IsNullOrEmpty(m_EventId))
+            if (m_DoNotPreload) {
+                return;
+            }
+            
+            Async.InvokeAsync(BeginLoading);
+        }
+
+        private void BeginLoading()
+        {
+            if (!this || !isActiveAndEnabled || string.IsNullOrEmpty(m_EventId))
                 return;
 
             if (Services.Audio.CurrentMusic().EventId() == m_EventId)

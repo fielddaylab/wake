@@ -38,6 +38,7 @@ namespace AquaAudio {
 
         [NonSerialized] private StringHash32 m_Id;
         [NonSerialized] private RandomDeck<AudioClip> m_ClipDeck;
+        [NonSerialized] private string m_StreamingOverride = null;
 
         #region IKeyValuePair
 
@@ -54,7 +55,7 @@ namespace AquaAudio {
 
         public bool CanPlay() {
             if (m_Mode == PlaybackMode.Stream) {
-                return !string.IsNullOrEmpty(m_StreamingPath);
+                return !string.IsNullOrEmpty(StreamingPath());
             } else {
                 return m_Samples.Length > 0;
             }
@@ -62,7 +63,17 @@ namespace AquaAudio {
 
         public string StreamingPath() {
             Assert.True(m_Mode == PlaybackMode.Stream, "Event '{0}' is not a stream event", name);
-            return m_StreamingPath;
+            return m_StreamingOverride ?? m_StreamingPath;
+        }
+
+        public void OverrideStreamingPath(string path) {
+            Assert.True(m_Mode == PlaybackMode.Stream, "Event '{0}' is not a stream event", name);
+            m_StreamingOverride = path;
+        }
+
+        public void ClearStreamingOverride() {
+            Assert.True(m_Mode == PlaybackMode.Stream, "Event '{0}' is not a stream event", name);
+            m_StreamingOverride = null;
         }
 
         #region Streaming
@@ -70,7 +81,7 @@ namespace AquaAudio {
         public void LoadStream(UWTStreamPlayer inPlayer, System.Random inRandom, out AudioPropertyBlock outProperties, out float outDelay) {
             Assert.True(m_Mode == PlaybackMode.Stream, "Event '{0}' is not a stream event", name);
 
-            inPlayer.SetURLFromStreamingAssets(m_StreamingPath);
+            inPlayer.SetURLFromStreamingAssets(StreamingPath());
             inPlayer.Loop = m_Loop;
 
             outProperties.Volume = m_Volume.Generate(inRandom);
@@ -136,7 +147,7 @@ namespace AquaAudio {
             AudioEvent evt = ValidationUtils.FindAsset<AudioEvent>(eventId);
             if (evt != null) {
                 manifest.Assets.Add(evt);
-                if (evt.Mode() == AudioEvent.PlaybackMode.Stream) {
+                if (evt.Mode() == AudioEvent.PlaybackMode.Stream && !string.IsNullOrEmpty(evt.StreamingPath())) {
                     manifest.Paths.Add(evt.StreamingPath());
                 }
             }

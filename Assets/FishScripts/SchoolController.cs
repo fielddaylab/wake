@@ -17,8 +17,11 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 using BeauUtil;
+using Aqua;
+using System.Collections;
 
-public class SchoolController : MonoBehaviour, ScriptableBake.IBaked {
+[DefaultExecutionOrder(-1)]
+public class SchoolController : MonoBehaviour, ScriptableBake.IBaked, IScenePreloader {
 	
 	public SchoolChild[] _childPrefab;			// Assign prefab with SchoolChild script attached
 	public bool _groupChildToNewTransform;	// Parents fish transform to school transform
@@ -52,7 +55,7 @@ public class SchoolController : MonoBehaviour, ScriptableBake.IBaked {
 	public bool _autoRandomPosition;			// Automaticly positions waypoint based on random values (_randomPositionTimerMin, _randomPositionTimerMax)
 	public float _forcedRandomDelay = 1.5f;		// Random delay added before forcing new waypoint
 	public float _schoolSpeed;					// Value multiplied to child speed
-	[NonSerialized] public List<SchoolChild> _roamers;
+	[HideInInspector] public List<SchoolChild> _roamers;
 	[NonSerialized] public Vector3 _posBuffer;
 	public Vector3 _posOffset;
 	
@@ -79,12 +82,21 @@ public class SchoolController : MonoBehaviour, ScriptableBake.IBaked {
 	[NonSerialized] public int _updateCounter;
 	[NonSerialized] public int _activeChildren;
 	
-	public void Start() {
-        _roamers = new List<SchoolChild>(_childAmount);
+	public void Awake() {
 		_posBuffer = transform.position + _posOffset;
 		_schoolSpeed = RNG.Instance.NextFloat(1.0f , _childSpeedMultipler);
-		Invoke("AutoRandomWaypointPosition", RandomWaypointTime());
+        enabled = false;
 	}
+
+    IEnumerator IScenePreloader.OnPreloadScene(SceneBinding inScene, object inContext)
+    {
+        enabled = true;
+        foreach(var child in _roamers) {
+            child.Initialize();
+        }
+        Invoke("AutoRandomWaypointPosition", RandomWaypointTime());
+        return null;
+    }
 	
 	public void Update() {
 		if(_activeChildren > 0){
@@ -153,15 +165,15 @@ public class SchoolController : MonoBehaviour, ScriptableBake.IBaked {
 	//Set waypoint randomly inside box
 	public void SetRandomWaypointPosition() {
 		_schoolSpeed = RNG.Instance.NextFloat(1.0f , _childSpeedMultipler);
-		Vector3 t = Vector3.zero;
-		t.x = RNG.Instance.NextFloat(-_positionSphere, _positionSphere) + transform.position.x;
-		t.z = RNG.Instance.NextFloat(-_positionSphereDepth, _positionSphereDepth) + transform.position.z;
-		t.y = RNG.Instance.NextFloat(-_positionSphereHeight, _positionSphereHeight) + transform.position.y;
+		Vector3 t = transform.position;
+		t.x += RNG.Instance.NextFloat(-_positionSphere, _positionSphere);
+		t.z += RNG.Instance.NextFloat(-_positionSphereDepth, _positionSphereDepth);
+		t.y += RNG.Instance.NextFloat(-_positionSphereHeight, _positionSphereHeight);
 		_posBuffer = t;	
 		if(_forceChildWaypoints){
 			for(int i = 0; i < _roamers.Count; i++) {
 	  		 	(_roamers[i]).Wander(RNG.Instance.NextFloat()*_forcedRandomDelay);
-			}	
+			}
 		}
 	}
 	
@@ -185,6 +197,7 @@ public class SchoolController : MonoBehaviour, ScriptableBake.IBaked {
         _roamers = new List<SchoolChild>(_childAmount);
         AddFish(_childAmount);
         foreach(var roamer in _roamers) {
+            roamer.enabled = false;
             context.QueueAdditionalBake(roamer.gameObject);
         }
         return true;
@@ -198,5 +211,5 @@ public class SchoolController : MonoBehaviour, ScriptableBake.IBaked {
 	    Gizmos.DrawWireCube (transform.position, new Vector3((_positionSphere*2)+_spawnSphere*2, (_positionSphereHeight*2)+_spawnSphereHeight*2 ,(_positionSphereDepth*2)+_spawnSphereDepth*2));
 	}
 
-    #endif // UNITY_EDITOR
+#endif // UNITY_EDITOR
 }

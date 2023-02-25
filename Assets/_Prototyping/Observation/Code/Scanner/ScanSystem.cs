@@ -318,12 +318,20 @@ namespace ProtoAqua.Observation {
         }
 
         private void EnterRange(ScannableRegion inRegion) {
+            if (inRegion.CurrentIcon != null) {
+                return;
+            }
+
             m_RegionsInRange.PushBack(inRegion);
             RefreshData(inRegion);
             inRegion.Click.Source = inRegion.ColliderPosition.Source;
             inRegion.CanScan = true;
             inRegion.CurrentIcon = m_IconPool.Alloc();
             inRegion.CurrentIcon.Show();
+            inRegion.CurrentIcon.Region = inRegion;
+            #if UNITY_EDITOR
+            inRegion.CurrentIcon.gameObject.name = inRegion.ScanData.Id().ToDebugString();
+            #endif // UNITY_EDITOR
             RefreshIcon(inRegion);
         }
 
@@ -359,13 +367,15 @@ namespace ProtoAqua.Observation {
         }
 
         private void RefreshAllData() {
-            for (int i = m_RegionsInRange.Count - 1; i >= 0; i--)
+            for (int i = m_RegionsInRange.Count - 1; i >= 0; i--) {
                 RefreshData(m_RegionsInRange[i]);
+            }
         }
 
         private void AttemptRefreshAllData() {
-            if (m_Loaded)
+            if (m_Loaded) {
                 RefreshAllData();
+            }
         }
 
         private void RefreshIcon(ScannableRegion inRegion) {

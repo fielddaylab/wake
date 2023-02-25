@@ -13,7 +13,7 @@
 {@drKelp}   Lots of urchins, and not much else. 
 {@drKelp}   I just finished compiling the rates for the eating rules in your model. 
             Now we can use your model to simulate what will happen at Site B if we don't intervene. 
-            Use the {h}Modeling Whiteboard{/h} on your ship to get started.
+            Use the {nameof Modeling} on your ship to get started.
 {@drKelp}   Oh, and let me know if any bull kelp snags on your sub!
 {@drKelp}   I was thinking I could whip up some kelp cookies between my next two meetings. 
 {@player}   Mom! Aren't you busy enough?
@@ -27,7 +27,7 @@ $set jobs:kelp-urchin-barren-predict.sync-failed = false
 @when 	    scene:name != "Modeling", JobTaskTop("predictSiteB"), !jobs:kelp-urchin-barren.upgradedFacts
 @cutscene
 {@player} 	Okay, {nameof @guide}. Where to?
-{@guide}	Head to the surface and use your {h}Modeling Whiteboard{/h}! 
+{@guide}	Head to the surface and use your {nameof Modeling}! 
 
 // IN MODELING
 

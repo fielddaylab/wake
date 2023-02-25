@@ -5,6 +5,7 @@ using Aqua.Option;
 using System.Text;
 using BeauUtil;
 using BeauUtil.Tags;
+using UnityEngine;
 
 namespace AquaAudio
 {
@@ -18,6 +19,15 @@ namespace AquaAudio
             Tooltip,
             Text
         }
+
+        [Serializable]
+        private struct ReplaceRule
+        {
+            public string Find;
+            public string Replace;
+        }
+
+        [SerializeField] private ReplaceRule[] m_ReplaceRules = null;
 
         [NonSerialized] private bool m_PlaybackEnabled = false;
         [NonSerialized] private OptionsAccessibility.TTSMode m_Mode;
@@ -118,7 +128,11 @@ namespace AquaAudio
         private string ProcessText(string inText)
         {
             m_StripRichText.Parse(ref m_StrippedText, inText);
-            return m_StrippedText.VisibleText;
+            string text = m_StrippedText.VisibleText;
+            for(int i = 0; i < m_ReplaceRules.Length; i++) {
+                text = text.Replace(m_ReplaceRules[i].Find, m_ReplaceRules[i].Replace);
+            }
+            return text;
         }
 
         #region Handlers

@@ -6,7 +6,7 @@
 @cutscene
 
 {@profArctic} Thank you, Ollie! 
-              I noticed from the probe data that some other species live in the {m}Ephemeral Impass{/m}.
+              I noticed from the probe data that some other species live in the {m}Ephemeral Impasse{/m}.
               I'm so curious to find out whether they interact with the Ribbon Seals!
               Wish I could figure it out myself... it seems like there's never enough time.
 {@player}     Well, you are running an entire science station in extreme conditions, in what a lot of people would call the middle of nowhere.
@@ -77,6 +77,7 @@ $call ArgueLoad(AboveAndBelowArgue)
 {@profArctic}   Do the seals and bottom-dwelling species interact?
 $choice .argue.yesInteract; Yes
 $choice .argue.noInteract; No
+$choice .argue.giveUpNoClaim; Let me get back to you.
 $choose branch
 
 // Yes
@@ -91,7 +92,7 @@ $branch .argue.showClaimYes
 {@profArctic}   Can I see your model?
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
-    $answer correct, .argue.completeYes
+    $answer correct, .argue.retryYes
     $answer *, .argue.unrelatedYes
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
@@ -101,12 +102,14 @@ $call ArgueRejectIncorrect()
 {@profArctic} Huh. That's interesting, Ollie, but it's not really relevant. 
 $goto .argue.showClaimYes
 
-:: argue.completeYes
-$call ArgueComplete()
+:: argue.retryYes
+$call ArgueRejectIncorrect()
 {@profArctic}   Hmm, I'm not sure I see how based on your model.
-                It looks they only <i>might</i> interact through detritus.
-                Good to know though!
-$call CompleteJob()
+                Want to try again?
+$call ArgueClearFacts()
+$call ArgueCancelClaim()
+$call ArgueUnload(AboveAndBelowArgue)
+$goto .argue.intro
 
 // No
 
@@ -133,6 +136,9 @@ $goto .argue.showClaimNo
 :: argue.giveUp
 {@profArctic} No problem, Ollie. Just let me know when you're ready. 
 $call ArgueCancelClaim()
+
+:: argue.giveUpNoClaim
+{@profArctic} No problem, Ollie. Just let me know when you're ready. 
 
 :: argue.completeNo
 $call ArgueComplete()

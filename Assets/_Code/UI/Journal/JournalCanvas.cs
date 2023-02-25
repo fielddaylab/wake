@@ -68,10 +68,6 @@ namespace Aqua {
 
         [SerializeField] private JournalTab[] m_Tabs = null;
 
-        [Header("Data")]
-
-        [SerializeField] private LayoutPrefabPackage m_EnglishLayouts = null;
-
         #endregion // Inspector
 
         private PrefabDecompressor m_Decompressor;
@@ -123,7 +119,6 @@ namespace Aqua {
         protected override void Awake() {
             base.Awake();
 
-            m_CurrentLayouts = m_EnglishLayouts;
             m_OriginalNavWidth = m_PageNavRect.sizeDelta.x;
 
             m_BackButton.Button.onClick.AddListener(OnBackClicked);
@@ -316,6 +311,7 @@ namespace Aqua {
                 tab.AllowAnimation = false;
             }
 
+            m_CurrentLayouts = Services.Loc.CurrentJournalPackage;
             LoadList();
             FilterList(0);
 

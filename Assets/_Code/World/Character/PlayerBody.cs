@@ -51,9 +51,35 @@ namespace Aqua.Character
         #region Leaf
 
         [LeafMember("PlayerInRegion"), Preserve]
-        static private bool PlayerInRegion(StringHash32 inId)
-        {
+        static private bool PlayerInRegion(StringHash32 inId) {
             return Script.CurrentPlayer?.InRegion(inId) ?? false;
+        }
+
+        [LeafMember("SetMovementEnabled"), Preserve]
+        public void SetMovementEnabled(bool enabled) {
+            if (enabled) {
+                m_BodyStatus &= ~PlayerBodyStatus.DisableMovement;
+            } else {
+                m_BodyStatus |= PlayerBodyStatus.DisableMovement;
+            }
+        }
+
+        [LeafMember("SetToolsEnabled"), Preserve]
+        public void SetToolsEnabled(bool enabled) {
+            if (enabled) {
+                m_BodyStatus &= ~PlayerBodyStatus.DisableTools;
+            } else {
+                m_BodyStatus |= PlayerBodyStatus.DisableTools;
+            }
+        }
+
+        [LeafMember("SetSilentMovement"), Preserve]
+        public void SetSilentMovement(bool silent) {
+            if (silent) {
+                m_BodyStatus |= PlayerBodyStatus.SilentMovement;
+            } else {
+                m_BodyStatus &= ~PlayerBodyStatus.SilentMovement;
+            }
         }
 
         #endregion // Leaf
@@ -82,9 +108,17 @@ namespace Aqua.Character
     [Flags]
     public enum PlayerBodyStatus : uint {
         Normal = 0,
+        
         Stunned = 0x01,
         Slowed = 0x02,
         PowerEngineEngaged = 0x04,
-        DraggedByCurrent = 0x08
+        DraggedByCurrent = 0x08,
+        Dashing = 0x10,
+
+        DisableMovement = 0x1000,
+        DisableTools = 0x2000,
+        SilentMovement = 0x4000,
+
+        TempMask = Stunned | Slowed | PowerEngineEngaged | DraggedByCurrent | Dashing
     }
 }

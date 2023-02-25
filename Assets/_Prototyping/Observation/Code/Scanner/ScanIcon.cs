@@ -5,6 +5,7 @@ using System.Collections;
 using BeauPools;
 using UnityEngine.Rendering;
 using Aqua;
+using BeauUtil;
 
 namespace ProtoAqua.Observation
 {
@@ -18,9 +19,12 @@ namespace ProtoAqua.Observation
         [SerializeField] private SpriteRenderer m_Border = null;
         [SerializeField] private SpriteRenderer m_Icon = null;
         [SerializeField] private SortingGroup m_Sort = null;
+        [Space]
 
         #endregion // Inspector
 
+        [SerializeField, InstanceOnly] public ScannableRegion Region = null;
+        
         [NonSerialized] private float m_FillSize;
         [NonSerialized] private Transform m_FillTransform;
         [NonSerialized] private Transform m_IconTransform;
@@ -149,6 +153,7 @@ namespace ProtoAqua.Observation
             m_SpinRoutine.Stop();
             m_IconTransform.SetRotation(0, Axis.Y, Space.Self);
             m_FillTransform.transform.SetScale(0, Axis.XY);
+            Region = null;
             m_Showing = false;
         }
 

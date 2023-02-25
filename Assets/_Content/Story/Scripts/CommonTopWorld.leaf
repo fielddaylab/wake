@@ -31,4 +31,9 @@ $call GiveJournalEntry("N02_LosingConnection")
 @once
 @cutscene
 
-// Potentially additional dialogue here
+// Potentially additional dialogue 
+
+:: NoPower
+@function   SceneStart
+@when       jobs:final-power-disabled
+$call   Player->SetMovementEnabled(false)

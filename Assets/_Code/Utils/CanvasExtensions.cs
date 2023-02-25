@@ -141,7 +141,7 @@ namespace Aqua {
         }
 
         static public bool IsVisible(RectTransform inParent, RectTransform inTransform, Vector2 inPadding) {
-            RectTransform viewport = inParent;
+            Transform viewport = inParent;
             Assert.True(inTransform.IsChildOf(viewport));
 
             Rect clipping = inParent.rect;
@@ -150,12 +150,12 @@ namespace Aqua {
             Rect transformBox = inTransform.rect;
             Vector2 transformPos = transformBox.position + (Vector2) inTransform.localPosition;
             
-            RectTransform check = inTransform.parent as RectTransform;
+            Transform check = inTransform.parent;
             Vector2 offset;
             while(check && check != viewport) {
                 offset = check.localPosition;
                 transformPos += offset;
-                check = check.parent as RectTransform;
+                check = check.parent;
             }
 
             transformBox.position = transformPos;

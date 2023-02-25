@@ -215,6 +215,32 @@ Produces pale white or pink flowers during spring and summer.
 Blue-colored fish.
 Travels in schools. 
 
+:: blueTangIck
+@scanDuration 2
+@important
+@requires HasUpgrade("Microscope")
+@fallback bestiary.blueTangIckNoMicroscope
+@header Blue Tang
+@bestiary BlueTang
+<i>Paracanthurus hepatus</i>
+
+Blue-colored fish.
+Covered in spots too small to be viewed without magnification.
+
+Recommended viewing with {item-name}Microscope{/item-name}.
+
+:: blueTangIckNoMicroscope
+@scanDuration 2
+@important
+@header Blue Tang
+@bestiary BlueTang
+<i>Paracanthurus hepatus</i>
+
+Blue-colored fish.
+Covered in spots too small to be viewed without magnification.
+
+Spots unable to be viewed with current equipment.
+
 :: plastic
 @scanDuration 2
 @important
@@ -481,7 +507,7 @@ Home of a certain famous clownfish.
 @bestiary Smelt
 <i>Osmeridae</i>
 
-Suprisingly not known for their blacksmithing skills. 
+Surprisingly not known for their blacksmithing skills. 
 
 ::snowCrab
 @scanDuration 2

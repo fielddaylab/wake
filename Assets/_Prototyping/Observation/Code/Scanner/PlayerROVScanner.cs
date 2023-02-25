@@ -189,7 +189,7 @@ namespace ProtoAqua.Observation
                 if (inbOnGamePlane)
                     outWorld = m_TargetScannable.Collider.transform.position;
                 else
-                    outWorld = m_TargetScannable.transform.position;
+                    outWorld = m_TargetScannable.TrackTransform.position;
 
                 outCursor = m_TargetScannable.Click.transform.position;
             }
@@ -269,11 +269,11 @@ namespace ProtoAqua.Observation
             m_TargetScannable.CurrentIcon.SetSpinning(false);
 
             ScanResult result;
+            ScannableRegion region = m_TargetScannable;
 
             using(PooledList<StringHash32> newFactIds = PooledList<StringHash32>.Create())
             using(PooledList<BFBase> newFacts = PooledList<BFBase>.Create())
             {
-                ScannableRegion region = m_TargetScannable;
                 result = m_ScanSystem.RegisterScanned(data, newFactIds, region);
                 region.OnScanComplete?.Invoke(result);
                 
@@ -288,7 +288,7 @@ namespace ProtoAqua.Observation
                     {
                         Services.Audio.PostEvent("scan_bestiary");
                         var bestiary = Assets.Bestiary(data.BestiaryId());
-                        Script.PopupNewEntity(bestiary, data.Text(), newFacts);
+                        Script.PopupNewEntity(bestiary, data.Text(), newFacts, region.ScanImageOverride);
                     }
                     else if ((result & ScanResult.NewFacts) != 0)
                     {
@@ -309,7 +309,7 @@ namespace ProtoAqua.Observation
             if ((data.Flags() & ScanDataFlags.DoNotShow) == 0 && (result & PopupResultMask) == 0 && !Services.Script.IsCutscene())
             {
                 m_ScanFreeze = data.FreezeDisplay();
-                m_ScanDisplay.ShowScan(data, result);
+                m_ScanDisplay.ShowScan(data, region.ScanImageOverride, result);
             }
             else
             {

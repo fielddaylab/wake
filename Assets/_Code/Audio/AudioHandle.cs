@@ -195,6 +195,18 @@ namespace AquaAudio {
 
         #endregion // Positions
 
+        #region Groups
+
+        #endregion // Group
+        
+        public AudioHandle SetGroup(AudioHandleGroup group) {
+            var track = GetTrack();
+            if (!object.ReferenceEquals(track, null)) {
+                track.Group = group;
+            }
+            return this;
+        }
+
         #region Overrides
 
         public override bool Equals(object other) {
@@ -238,5 +250,12 @@ namespace AquaAudio {
         }
 
         #endregion // Sync
+    }
+
+    /// <summary>
+    /// Custom grouping of handles.
+    /// </summary>
+    public class AudioHandleGroup {
+        public AudioPropertyBlock Properties = AudioPropertyBlock.Default;
     }
 }

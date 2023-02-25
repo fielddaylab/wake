@@ -72,18 +72,6 @@ $call UnlockSite("RS-1C")
 $call UnlockRoom("nav")
 $call UnlockRoom("exterior")
 
-:: helpGoOutsideToSubShip
-@trigger    RequestPartnerHelp
-@when 		scene:name == "Helm", !jobs:kelp-welcome.got.scans
-@cutscene
-$if global:nav.shipRoom != "exterior"
-	{@player}   Um... what are we supposed to do, again?
-	{@guide}	Head out the door and find the sub!
-$else
-	{@player}   Where's the sub again?
-	{@guide}	Bright yellow. Says "sub" on it. You literally can't miss it.
-$endif
-
 // AT STATION
 
 :: helpGoToSiteC 

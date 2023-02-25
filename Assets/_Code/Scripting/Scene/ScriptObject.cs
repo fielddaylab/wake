@@ -61,6 +61,12 @@ namespace Aqua
             gameObject.SetActive(!gameObject.activeSelf);
         }
 
+        [LeafMember("Unload"), Preserve]
+        private void Unload()
+        {
+            Destroy(gameObject);
+        }
+
         #endregion // Leaf
 
         #region Events

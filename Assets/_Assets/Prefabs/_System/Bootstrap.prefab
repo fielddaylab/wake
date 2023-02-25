@@ -235,6 +235,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Always: 0
+  IgnoreAnimators: 1
 --- !u!1 &5442631026839326357
 GameObject:
   m_ObjectHideFlags: 0
@@ -257,6 +258,7 @@ GameObject:
   - component: {fileID: 7690253913131561610}
   - component: {fileID: 5811573768499641974}
   - component: {fileID: 937076743335086129}
+  - component: {fileID: 4099024164301625260}
   m_Layer: 0
   m_Name: GameplayServices
   m_TagString: Untagged
@@ -377,7 +379,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9bd42a697812e944afb0f60243107b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_MaxHandledContacts: 64
 --- !u!114 &592689159037923038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -438,6 +439,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f89f59bdbc587f45beb898e045bdf44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4099024164301625260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5442631026839326357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55fd7376bf040644b96a520d555e0033, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &6707031283120621058
@@ -704,6 +717,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5d8719cde6524b4caa1dd7c65634560, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_ReplaceRules:
+  - Find: V1ct0r
+    Replace: Victor
 --- !u!114 &4003739714995472645
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -20,12 +20,17 @@ namespace Aqua.WorldMap {
         [SerializeField] private StreamingUGUITexture m_StationHeaderImage = null;
         
         [Header("Stats")]
+        [SerializeField] private GameObject m_StatsGroup = null;
+        [SerializeField] private GameObject m_AvailableGroup = null;
         [SerializeField] private TMP_Text m_AvailableCount = null;
         [SerializeField] private GameObject m_CompletedGroup = null;
         [SerializeField] private TMP_Text m_CompletedCount = null;
 
         [Header("Controls")]
         [SerializeField] private Button m_ShipOutButton = null;
+        [SerializeField] private LocText m_ShipOutLabel = null;
+        [SerializeField] private TextId m_ShipOutActiveLabel = null;
+        [SerializeField] private TextId m_ShipOutInactiveLabel = null;
 
         [Header("Animation")]
         [SerializeField] private RectTransform m_ContentsTransform = null;
@@ -49,9 +54,25 @@ namespace Aqua.WorldMap {
             m_StationName.SetText(station.LabelId());
             m_StationDesc.SetText(station.StationDescId());
             m_StationHeaderImage.Path = station.HeaderImagePath();
-            m_AvailableCount.SetText(((int) summary.Available).ToStringLookup());
-            m_CompletedCount.SetText(((int) summary.Completed).ToStringLookup());
-            m_CompletedGroup.SetActive(summary.Completed > 0);
+
+            if (station.Id() == MapIds.FinalStation) {
+                m_StatsGroup.SetActive(false);
+            } else {
+                int availableCount = summary.Available + summary.InProgress;
+                if (summary.HasActive) {
+                    availableCount--;
+                }
+
+                m_AvailableCount.SetText(availableCount.ToStringLookup());
+                m_CompletedCount.SetText(((int) summary.Completed).ToStringLookup());
+                m_CompletedGroup.SetActive(summary.Completed > 0);
+                m_AvailableGroup.SetActive(true);
+                m_StatsGroup.SetActive(true);
+            }
+
+            bool atStation = Save.Current.Map.CurrentStationId() == station.Id();
+            m_ShipOutButton.interactable = !atStation;
+            m_ShipOutLabel.SetText(atStation ? m_ShipOutInactiveLabel : m_ShipOutActiveLabel);
         }
 
         protected override void OnHideComplete(bool inbInstant) {

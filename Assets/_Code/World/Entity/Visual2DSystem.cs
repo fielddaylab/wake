@@ -68,7 +68,7 @@ namespace Aqua.Entity {
             if (distOffset <= 0) {
                 return UpdateAwakeResult.Active;
             } else {
-                transform.OffscreenTickDelay = Math.Min((int) distOffset / 30, 60);
+                transform.OffscreenTickDelay = Math.Min((int) (distOffset / 30), 60);
                 if (transform.IsDynamic) {
                     transform.OffscreenTickDelay /= 4;
                 }
@@ -130,6 +130,10 @@ namespace Aqua.Entity {
         }
 
         static public void Activate(int mask) {
+            if (!Services.Valid) {
+                return;
+            }
+            
             Services.State.FindManager<Visual2DSystem>().AddMask(mask);
         }
 

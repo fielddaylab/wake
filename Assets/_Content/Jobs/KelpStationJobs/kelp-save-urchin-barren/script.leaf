@@ -10,7 +10,7 @@
 {@player}   What?? Why?
 {@drKelp}   Think about how this looks, Olivia. If we can't keep Site B healthy, how can they trust us to create a whole new ecosystem?
 {@drKelp}   Thankfully, I think we can fix this.
-            Head back to your {h}Modeling Whiteboard{/h}.
+            Head back to your {h}Modeling Lab{/h}.
            There's one part of the Simulator that you haven't used yet. {nameof @guide} will talk you through it. 
            Good luck, Mija. 
 $set jobs:kelp-save-urchin-barren.sync-failed = false
@@ -21,11 +21,6 @@ $set jobs:kelp-save-urchin-barren.sync-failed = false
 @cutscene
 {@player} 	Where should we start, {nameof @guide}?
 {@guide}	Head to the {nameof Modeling}!
-$if global:nav.shipRoom == "modeling"
-    {@guide}    Head to the {h}Modeling Whiteboard{/h}.
-$else
-    {@guide}    Head over to the {nameof Modeling}.
-$endif
 
 // in modeling
 
@@ -35,7 +30,7 @@ $endif
 @cutscene
 
 {@player}  Okay, {nameof @guide}. We need a plan to repair Cliffside Oasis.
-           Mom said the {h}Modeling Whiteboard{/h} could help.
+           Mom said the {nameof Modeling} could help.
 {@guide}   Ah, yes! One of my favorite predictive modeling functions!
 {@player}  Ooookay... 
 {@guide}   You need to use your modeling tool to simulate an {h}intervention{/h} and predict what would happen!

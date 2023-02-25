@@ -234,6 +234,11 @@ namespace Aqua
             BindScene(active);
             m_SceneHistory.PushBack(active);
 
+            if (active.BuildIndex > 0)
+            {
+                Services.Camera.DisableRendering();
+            }
+
             // if we started from another scene than the boot or title scene
             if (active.BuildIndex < 0 || active.BuildIndex >= GameConsts.GameSceneIndexStart)
             {
@@ -258,6 +263,7 @@ namespace Aqua
             yield return WaitForCleanup();
 
             RecordCurrentMapAsSeen(active);
+            Services.Camera.EnableRendering();
 
             m_SceneLock = false;
 
@@ -353,6 +359,7 @@ namespace Aqua
                 yield return null;
 
             BindScene(inNextScene);
+            Services.Camera.DisableRendering();
             yield return WaitForServiceLoading();
 
             if ((inFlags & SceneLoadFlags.DoNotModifyHistory) == 0)
@@ -371,6 +378,7 @@ namespace Aqua
             yield return WaitForCleanup();
 
             RecordCurrentMapAsSeen(inNextScene);
+            Services.Camera.EnableRendering();
 
             m_SceneLock = false;
 
@@ -431,6 +439,8 @@ namespace Aqua
                     yield return Routine.ForEachParallelChunked(allPreloaders.ToArray(), (p) => p.OnPreloadScene(inScene, inContext), 8);
                 }
             }
+
+            Services.Script.TryCallFunctions(GameTriggers.ScenePreload);
 
             using(PooledList<IStreamingComponent> allStreamingComponents = PooledList<IStreamingComponent>.Create())
             {

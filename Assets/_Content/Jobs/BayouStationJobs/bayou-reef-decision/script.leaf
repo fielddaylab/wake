@@ -39,12 +39,6 @@ $branch .modelSuggestions
 @cutscene
 $branch .modelSuggestions
 
-:: helpModelIntervene
-@trigger    RequestPartnerHelp
-@when 		JobTaskActive(interventionDecision), scene:name == "Modeling", modeling:phase == "intervene"
-@cutscene
-$branch .modelSuggestions
-
 :: modelSuggestions
 $if HasFact(LoggerheadTurtle.Reproduce), HasFact(LoggerheadTurtle.Eats.Cyanobacteria), HasFact(LoggerheadTurtle.Eats.AngelFish), HasFact(LoggerheadTurtle.Eats.MoonJelly), IsFactFullyUpgraded(LoggerheadTurtle.Eats.MoonJelly), HasFact(RedGrouper.Reproduce), HasFact(RedGrouper.Eats.AngelFish), IsFactFullyUpgraded(LoggerheadTurtle.Eats.AngelFish), HasFact(RedGrouper.Eats.Cyanobacteria), IsFactFullyUpgraded(RedGrouper.Eats.Cyanobacteria), HasFact(AngelFish.Reproduce.Stressed), HasFact(AngelFish.Eats.SeaPearl.Stressed), IsFactFullyUpgraded(AngelFish.Eats.SeaPearl.Stressed), HasFact(Cyanobacteria.Reproduce), HasFact(SeaPearl.Reproduce.Stressed), HasFact(SeaPearl.Reproduce), HasFact(MoonJelly.Reproduce), HasFact(ElkhornCoral.Reproduce), HasFact(ElkhornCoral.Reproduce.Stressed)
     {@guide}    Once you import your facts and save the Visual model, we should be good to make our Intervene model!
@@ -120,7 +114,17 @@ $endif
 @boostScore -5
 @cutscene
 {@player}  Okay, {nameof @guide}. What now? 
-{@guide}   You need to create an Intervention Model using facts about the artificial reef.
+{@guide}   You need to create an Intervention Model using facts about the artificial reef to see what would happen if the rig were removed.
+$if scene:name == "Modeling", modeling:phase != "intervene"
+    {@guide}   So in the Intervene tab, try removing a species that depends on the rig and see if it affects anything.
+$elseif scene:name == "Modeling", modeling:phase == "intervene"
+    {@guide}   So try removing a species that depends on the rig and see if it affects anything.
+$elseif scene:name == "ModelingFoyer"
+    {@guide}   Open up the monitor to work on your model.
+$else
+    {@guide}   Head to the Modeling Lab to work on your model.
+$endif
+
 
 :: RigDecisionTime
 @trigger  JobTasksUpdated

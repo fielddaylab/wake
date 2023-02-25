@@ -36,7 +36,7 @@ namespace Aqua {
 
             yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
             yield return BFFragment.CreateLocVerb(ProduceVerb);
-            yield return BFFragment.CreateAmount(BestiaryUtils.FormatPropertyAdjust(fact.Amount, fact.Property));
+            yield return BFFragment.CreateAmount(BestiaryUtils.FormatProperty(fact.Amount, fact.Property));
             yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).ShortLabelId());
         }
 
@@ -51,11 +51,17 @@ namespace Aqua {
 
             if (fact.OnlyWhenStressed)
             {
-                details.Description = Loc.Format(ProduceSentenceStressed, inFact.Parent.CommonName(), BestiaryUtils.FormatPropertyAdjust(fact.Amount, fact.Property), BestiaryUtils.Property(fact.Property).LabelId());
+                details.Description = Loc.Format(ProduceSentenceStressed,
+                    inFact.Parent.CommonName(),
+                    BestiaryUtils.FormatProperty(fact.Amount, fact.Property),
+                    BestiaryUtils.Property(fact.Property).LabelId());
             }
             else
             {
-                details.Description = Loc.Format(ProduceSentence, inFact.Parent.CommonName(), BestiaryUtils.FormatPropertyAdjust(fact.Amount, fact.Property), BestiaryUtils.Property(fact.Property).LabelId());
+                details.Description = Loc.Format(ProduceSentence,
+                    inFact.Parent.CommonName(),
+                    BestiaryUtils.FormatProperty(fact.Amount, fact.Property),
+                    BestiaryUtils.Property(fact.Property).LabelId());
             }
 
             return details;

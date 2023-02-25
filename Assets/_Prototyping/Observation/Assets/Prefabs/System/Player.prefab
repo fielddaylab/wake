@@ -25121,8 +25121,15 @@ MonoBehaviour:
     MaxSpeed: 5.5
     SpeedCurve: 0
     Acceleration: 5.5
+  m_MovementPowerParams:
+    MaxSpeed: 6.5
+    SpeedCurve: 0
+    Acceleration: 8
   m_DragEngineOn: 1
+  m_DragEngineDash: 0.25
   m_DragEngineOff: 2.35
+  m_DashSpeed: 10
+  m_DashDuration: 0.5
   m_CameraForwardLook: 2
   m_CameraForwardLookWeight: 0.5
   m_CameraForwardLookNoMove: 0.5
@@ -25148,7 +25155,7 @@ MonoBehaviour:
     Gravity: {x: 0, y: 0}
     Drag: 2
     Friction: {x: 0.15, y: 0.2}
-    MaxSpeed: 8
+    MaxSpeed: 10
   Body: {fileID: 4239190790123161061}
   Collider: {fileID: 298231632779024927}
   SolidMask:
@@ -25181,6 +25188,10 @@ MonoBehaviour:
     MinDistance: 0.2
     MaxDistance: 4.5
     DistanceCurve: 0
+  m_DashTapRequiredWindow: 0.7
+  m_DashTapRequiredCount: 3
+  m_DashTapRequiredAccuracy: 0.8
+  m_DashAllowChain: 0
 --- !u!50 &4239190790123161061
 Rigidbody2D:
   serializedVersion: 4
