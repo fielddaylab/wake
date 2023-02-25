@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine.UI;
+using System.Text;
 
 namespace Aqua.JobBoard
 {
@@ -18,6 +19,7 @@ namespace Aqua.JobBoard
         #endregion // Inspector
 
         [NonSerialized] private Transform m_Transform;
+        [NonSerialized] public int ListCount;
 
         public Transform Transform { get { return this.CacheComponent(ref m_Transform); } }
 
@@ -26,6 +28,14 @@ namespace Aqua.JobBoard
             if (!text.IsEmpty)
             {
                 m_Label.SetText(text);
+            }
+        }
+
+        public void SetText(StringBuilder text)
+        {
+            if (text.Length > 0)
+            {
+                m_Label.SetTextNoParse(text);
             }
         }
     }
