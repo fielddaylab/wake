@@ -36,6 +36,7 @@ namespace Aqua.Portable {
         [Header("Categories")]
         [SerializeField] private TechCategoryButton m_ExplorationCategory = null;
         [SerializeField] private TechCategoryButton m_ScienceCategory = null;
+        [SerializeField] private AppearAnimSet m_CategoryApparAnim = null;
 
         [Header("Left Column")]
         [SerializeField] private LayoutGroup m_LeftColumnLayout = null;
@@ -109,10 +110,12 @@ namespace Aqua.Portable {
         #region Page Display
 
         private void ClearAll(){
-            m_ExplorationCategory.Toggle.isOn = m_ScienceCategory.Toggle.isOn = false;
-            m_CurrentCategory = CategoryId.NONE;
-            UpdateCategory(m_ExplorationCategory, CategoryId.Exploration);
-            UpdateCategory(m_ScienceCategory, CategoryId.Exploration);
+            m_ScienceCategory.Toggle.SetIsOnWithoutNotify(false);
+            m_ExplorationCategory.Toggle.SetIsOnWithoutNotify(true);
+
+            m_CurrentCategory = CategoryId.Exploration;
+            UpdateCategory(m_ExplorationCategory, CategoryId.Exploration, false);
+            UpdateCategory(m_ScienceCategory, CategoryId.Exploration, false);
 
             m_SelectedItem = null;
             RefreshButtons();
@@ -135,7 +138,7 @@ namespace Aqua.Portable {
 
         #region Categories
 
-        private void UpdateCategory(TechCategoryButton category, CategoryId id) {
+        private void UpdateCategory(TechCategoryButton category, CategoryId id, bool animate = true) {
             if (!IsShowing()) return;
     
             if (!category.Toggle.isOn) {
@@ -148,11 +151,15 @@ namespace Aqua.Portable {
             if (category.Group.Activate()) {
                 PopulateColumn(m_LeftColumnHeader, category.LeftHeader, m_LeftColumnButtons, category.LeftItems);
                 PopulateColumn(m_RightColumnHeader, category.RightHeader, m_RightColumnButtons, category.RightItems);
-            }
 
-            m_LeftColumnLayout.ForceRebuild();
-            m_RightColumnLayout.ForceRebuild();
-            m_ItemDescriptionLayout.SetActive(false);
+                m_LeftColumnLayout.ForceRebuild();
+                m_RightColumnLayout.ForceRebuild();
+                m_ItemDescriptionLayout.SetActive(false);
+
+                if (animate) {
+                    m_CategoryApparAnim.Play();
+                }
+            }
         }
 
         private void PopulateColumn(LocText header, TextId headerId, PortableUpgradeButton[] buttons, StringHash32[] itemIds) {
@@ -186,6 +193,8 @@ namespace Aqua.Portable {
             button.Title.SetText(item.NameTextId());
             button.Icon.sprite = item.Icon();
             button.Cursor.TooltipId = item.NameTextId();
+            button.Outline.Color = m_BaseOutlineColor;
+            button.gameObject.SetActive(true);
 
             UpdateButtonState(button);
         }
@@ -193,6 +202,7 @@ namespace Aqua.Portable {
         // updates the info section of the tab to display item info
         private void UpdateInfoSection(PortableUpgradeButton selected) {
             m_ItemDescriptionLayout.SetActive(true);
+            m_ItemDescriptionLayout.GetComponent<AppearAnimSet>().Play();
             m_ItemDescription.SetText(selected.CachedItem.DescriptionTextId());
             m_LargeItemIcon.sprite = selected.Icon.sprite;
         }

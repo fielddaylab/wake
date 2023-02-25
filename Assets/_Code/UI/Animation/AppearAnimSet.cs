@@ -17,6 +17,9 @@ namespace Aqua {
         [SerializeField] private float m_InitialDelay = 0;
         [SerializeField] private bool m_PlayOnEnable = true;
         [SerializeField] private RectTransform m_ClippingRegion = null;
+        
+        [Header("Chaining")]
+        [SerializeField] private AppearAnimSet m_NextSet = null;
 
         private readonly Action m_PlayDelegate;
 
@@ -39,7 +42,11 @@ namespace Aqua {
         }
 
         public float Play(float delay = 0) {
-            return AppearAnim.PingGroup(m_Anims, delay + m_InitialDelay, m_IntervalScale, m_ClippingRegion);
+            float totalDelay = AppearAnim.PingGroup(m_Anims, delay + m_InitialDelay, m_IntervalScale, m_ClippingRegion);
+            if (m_NextSet) {
+                totalDelay = m_NextSet.Play(totalDelay);
+            }
+            return totalDelay;
         }
 
         [ContextMenu("Find All Children")]

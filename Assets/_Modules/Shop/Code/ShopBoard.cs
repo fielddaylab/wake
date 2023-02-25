@@ -187,8 +187,7 @@ namespace Aqua.Shop {
                 PopulateColumn(m_RightColumnHeader, category.RightHeader, m_RightColumnButtons, category.RightItems);
 
                 if (animate) {
-                    float delay = IsTransitioning() ? 0.28f : 0;
-                    m_AppearSequence.Play(delay);
+                    m_AppearSequence.Play(0);
                 }
 
                 if (!triggerId.IsEmpty)
@@ -315,8 +314,8 @@ namespace Aqua.Shop {
             m_ExplorationCategory.Toggle.SetIsOnWithoutNotify(true);
             m_ScienceCategory.Toggle.SetIsOnWithoutNotify(false);
             Async.InvokeAsync(() => {
-                UpdateCategory(m_ExplorationCategory, CategoryId.Exploration);
-                UpdateCategory(m_ScienceCategory, CategoryId.Science);
+                UpdateCategory(m_ExplorationCategory, CategoryId.Exploration, null, false);
+                UpdateCategory(m_ScienceCategory, CategoryId.Science, null, false);
 
                 Services.Script.TriggerResponse(ShopConsts.Trigger_OpenMenu);
             });
