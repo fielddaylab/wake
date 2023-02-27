@@ -26,14 +26,15 @@ namespace Aqua.Modeling {
         #endregion // Inspector
 
         public Action<GraphDivergencePoint> OnDivergenceClicked;
+        public Action OnDiscrepancyClicked;
 
         private readonly List<SimGraphBlock> m_AllocatedBlocks = new List<SimGraphBlock>();
         private readonly Dictionary<StringHash32, SimGraphBlock> m_AllocatedBlockMap = new Dictionary<StringHash32, SimGraphBlock>();
         private readonly SimGraphBlock[] m_AllocatedWaterMap = new SimGraphBlock[(int) WaterProperties.TrackedMax];
 
         [NonSerialized] private SimGraphBlock m_InterventionBlock;
-        private List<GraphTargetRegion> m_InterveneRegions;
-        private static List<float> m_FinalBlockYs;
+        [NonSerialized] private List<GraphTargetRegion> m_InterveneRegions = new List<GraphTargetRegion>(2);
+        private static readonly List<float> s_FinalBlockYs = new List<float>(8);
         private readonly GenerateStressPointsDelegate StressPointCallback;
         private readonly GenerateDivergenceDelegate DivergenceCallback;
 
@@ -99,6 +100,12 @@ namespace Aqua.Modeling {
                 i.OnClick = callbackInvoker;
             });
             m_DivergenceIcons.Prewarm();
+
+            UnityEngine.Events.UnityAction targetDiscrepancyCallback = () => OnDiscrepancyClicked?.Invoke();
+            m_Targets.TryInitialize(null, null, 0);
+            m_Targets.Config.RegisterOnConstruct((_, i) => {
+                i.Discrepancy.Click.onClick.AddListener(targetDiscrepancyCallback);
+            });
         }
 
         private void OnDestroy() {
@@ -189,8 +196,8 @@ namespace Aqua.Modeling {
                     obj.Discrepancy.gameObject.SetActive(false);
                 }
             }
-            m_InterveneRegions = new List<GraphTargetRegion>();
-            m_FinalBlockYs = new List<float>();
+            m_InterveneRegions.Clear();
+            s_FinalBlockYs.Clear();
         }
 
         #region Retrieving Blocks
@@ -397,7 +404,7 @@ namespace Aqua.Modeling {
                         if (block.Predict.PointCount != 0) {
                             float newY = block.IconPin.position.y +
                                 block.Predict.Points[block.Predict.PointCount - 1].y / blocks.Length;
-                            m_FinalBlockYs.Add(newY);
+                            s_FinalBlockYs.Add(newY);
                         }
                     }
 
@@ -595,7 +602,7 @@ namespace Aqua.Modeling {
                 region.Discrepancy.Layout.SetPosition(new Vector3(0, 0, 0), Axis.XY, Space.Self);
                 
                 Vector3 upperPos = new Vector3(region.Layout.position.x, region.Layout.position.y, 1);
-                Vector3 lowerPos = new Vector3(region.Layout.position.x, m_FinalBlockYs[i], 1);
+                Vector3 lowerPos = new Vector3(region.Layout.position.x, s_FinalBlockYs[i], 1);
 
                 if (upperPos.y < lowerPos.y) {
                     Vector3 tempPos = upperPos;

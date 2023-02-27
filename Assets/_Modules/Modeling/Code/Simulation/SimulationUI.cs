@@ -37,6 +37,7 @@ namespace Aqua.Modeling {
         [SerializeField] private BestiaryAddPanel m_InterveneAddPanel = null;
         [SerializeField] private Button m_InterveneResetButton = null;
         [SerializeField] private Button m_InterveneRunButton = null;
+        [SerializeField] private InlinePopupPanel m_IntervenePopup = null;
 
         [Header("Settings")]
         [SerializeField] private TextId m_MissingPopulationsLabel = default;
@@ -105,6 +106,12 @@ namespace Aqua.Modeling {
 
             m_Graph.OnDivergenceClicked = (p) => {
                 m_SyncDivergencePopup.DisplayDivergence(p.Sign);
+            };
+            m_Graph.OnDiscrepancyClicked = () => {
+                PopupContent content = default;
+                content.Header = Loc.Find("modeling.noIntervenePopup.header");
+                content.Text = Loc.Find("modeling.noIntervenePopup.description");
+                m_IntervenePopup.Present(ref content, PopupFlags.ShowCloseButton);
             };
         }
 
@@ -196,6 +203,7 @@ namespace Aqua.Modeling {
             }
 
             m_SyncDivergencePopup.Panel.InstantHide();
+            m_IntervenePopup.InstantHide();
 
             m_PhaseRoutine.Stop();
             switch(phase) {
@@ -623,6 +631,7 @@ namespace Aqua.Modeling {
             m_State.Simulation.ClearIntervention();
             m_PhaseRoutine.Stop();
             HideSaveButton();
+            m_IntervenePopup.Hide();
 
             m_Graph.PopulateData(m_State, m_ProgressInfo, SimRenderMask.PredictIntervene);
             m_Graph.RenderData(SimRenderMask.PredictIntervene, true);
