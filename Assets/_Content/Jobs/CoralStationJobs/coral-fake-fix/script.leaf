@@ -57,7 +57,9 @@
 @cutscene
 {@guide} Acceptable work, O!
 		 You've gathered enough data to report back to {nameof @profCoral}.
-{@player}  Good. All these spears and dead fish are creeping me out. 
+$if HasFact(Fishers.Eats.Lionfish)
+	{@player}  Good. That spear with the dead fish was starting to creep me out. 
+$endif
 
 :: helpSurface
 @trigger	RequestPartnerHelp

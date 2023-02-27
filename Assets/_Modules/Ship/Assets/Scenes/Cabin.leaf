@@ -20,7 +20,7 @@ $if session:traveling
     $elseif CurrStation() == "BayouStation"
         {@guide}    Good morning. We have arrived at the Bayou Station.
     $else // Final
-        {@guide}    Good morning. We have arrived at the Deep Sea Station.
+        {@guide}    Good morning. We have arrived at {nameof RS-0}.
     $endif
 $endif
 
@@ -122,7 +122,7 @@ $elseif CurrStation()  == "CoralStation"
 $elseif CurrStation() == "BayouStation"
     {@guide}    Good morning. We have arrived at the Bayou Station.
 $else // Final
-    {@guide}    Good morning. We have arrived at the Deep Sea Station.
+    {@guide}    Good morning. We have arrived at {nameof RS-0}.
 $endif
             My sensors indicate you are experiencing stress. 
 {@player}   Yeah. I just had the weirdest dream. 
@@ -229,7 +229,7 @@ $elseif CurrStation() == "CoralStation"
 $elseif CurrStation() == "BayouStation"
     {@guide}    Good morning. We have arrived at the Bayou Station.
 $else // Final
-    {@guide}    Good morning. We have arrived at the Deep Sea Station.
+    {@guide}    Good morning. We have arrived at {nameof RS-0}.
 $endif
 {@player}  Thanks, {nameof @guide}. 
 {@player}  Status update? 

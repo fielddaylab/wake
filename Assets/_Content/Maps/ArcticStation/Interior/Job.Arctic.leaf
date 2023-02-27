@@ -32,6 +32,7 @@ $call GiveJournalEntry("N26_JunoAlone")
 :: ContinueAfterSamArticle
 @trigger    JournalHidden
 @when       HasJournalEntry("N26_JunoAlone")
+@cutscene
 @once
 {@$JobGiverId} Anyway, what can I do for you, Ollie? 
 $choice .action.openJobBoard; Job board!
