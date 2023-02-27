@@ -32,6 +32,14 @@ namespace Aqua.Option
                 "options.quality.fullscreen.tooltip", OnFullscreenChanged);
         }
 
+        private void OnEnable() {
+            Services.Camera.OnFullscreenChanged.Register(OnFullscreenUpdated);
+        }
+
+        private void OnDisable() {
+            Services.Camera.OnFullscreenChanged.Deregister(OnFullscreenUpdated);
+        }
+
         public override void Load(OptionsData inOptions)
         {
             base.Load(inOptions);
@@ -57,6 +65,10 @@ namespace Aqua.Option
             #if UNITY_WEBGL && !UNITY_EDITOR
             NativeFullscreen_SetFullscreen(fullscreen);
             #endif // UNITY_WEBGL && !UNITY_EDITOR
+        }
+
+        private void OnFullscreenUpdated(bool fullscreen) {
+            m_FullscreenToggle.Sync(fullscreen);
         }
         
         #if UNITY_WEBGL

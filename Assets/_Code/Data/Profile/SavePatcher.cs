@@ -1,3 +1,7 @@
+// #if (UNITY_EDITOR && !IGNORE_UNITY_EDITOR) || DEVELOPMENT_BUILD
+// #define DEVELOPMENT
+// #endif
+
 using System.Collections.Generic;
 using BeauUtil;
 using BeauUtil.Tags;
@@ -9,9 +13,33 @@ namespace Aqua.Profile {
         // 2: ???
         // 3: fix for softlock in first job
         // 4: exp->levels, adjusting starting exp
-        public const uint CurrentVersion = 4;
+        // 5: story
+        public const uint CurrentVersion = 5;
+
+        private const uint ValidVersionThreshold = 5;
+
+        public enum SaveType {
+            Player,
+            Bookmark
+        }
 
         static private Dictionary<StringHash32, StringHash32> s_RenameSet = new Dictionary<StringHash32, StringHash32>(32);
+
+        static public bool IsValid(SaveData ioData, SaveType inType) {
+            #if DEVELOPMENT
+            return true;
+            #else
+            switch(inType) {
+                case SaveType.Player: {
+                    return ioData.Version >= ValidVersionThreshold;
+                }
+
+                default: {
+                    return true;
+                }
+            }
+            #endif // DEVELOPMENT
+        }
 
         static public bool TryPatch(SaveData ioData) {
             if (ioData.Version == CurrentVersion)
