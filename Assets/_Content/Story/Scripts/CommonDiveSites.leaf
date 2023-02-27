@@ -16,6 +16,7 @@ $set    player:noProbeHacker.triedToScan = true
 $set    player:noProbeHacker.triedToScan = true
 {@guide}    Looks like we'll need some new equipment if we're going to scan these probes.
 
+
 // intro scripts
 
 :: generic.tagger.intro
@@ -55,3 +56,173 @@ $set    jobs:common-dive.seen.probe-intro = true
 {@guide}	Your new {nameof Microscope} allows you to scan and tag microscopic species!
             You can click to activate your {nameof Microscope} at the top of your task bar or by pressing the [5] on your keyboard.
 $set    jobs:common-dive.seen.micro-intro = true
+
+
+// Specters
+
+:: specterTrigger.1
+@trigger    PlayerSpecter
+@when       specterIndex = 0
+@cutscene
+// first specter
+{wait 1}
+$call Specter->Spawn()
+{@player}	Whoa! {nameof @guide}, what is that thing?? 
+$call Specter->Scan(3)
+{@guide}  Data inconclusive.
+{@player} Wow... it looks like a ghost.
+{@player} Where did it come from?
+{@guide} Sensors indicate that the anomaly was sent by Challenger Deep.
+{@player} That's where Sam is! They must've gotten the probe back online!
+{@player} But why would they send this to us? 
+$call GiveJournalEntry("S01")
+
+:: specterTrigger.2
+@trigger    PlayerSpecter
+@when       specterIndex = 1
+@cutscene
+// second specter
+{wait 1}
+$call Specter->Spawn()
+{@player}	Wow... another one of those glitchy ghost species!
+            Can you pinpoint its origin, {nameof @guide}?
+$call Specter->Scan(3)
+{@guide}	Certainly, O. The specter originated at Challenger Deep.
+{@player}	That must be Sam again!
+            But... why did they send us this... this ghost thing? 
+{@guide}	Data inconclusive, O.
+$call GiveJournalEntry("S02")
+
+:: specterTrigger.3 // Dinnerjelly
+@trigger    PlayerSpecter
+@when       specterIndex = 2
+@cutscene
+// third specter
+{wait 1}
+$call Specter->Spawn()
+{@player}   Wow. Another one.
+            Are you able to get the source location, {nameof @guide}?
+$call Specter->Scan(3)
+{@guide}	Affirmative, O. Point of origin: the Challenger Deep probe.
+{@player}	I don't understand. Why does Sam keep sending me these ghosts?
+            Why haven't they contacted us? 
+{@guide}	I'm sorry, O. The data is inconclusive.
+$call GiveJournalEntry("S07") // dinnerJelly
+
+:: specterTrigger.4
+@trigger    PlayerSpecter
+@when       specterIndex = 3
+@cutscene
+// fourth specter
+{wait 1}
+$call Specter->Spawn()
+$call Specter->Scan(4)
+{@player}	Oh no. Another ghost.
+{@player}   {nameof @guide}, can you try contacting Sam on the Nautilus?
+{@guide}	Apologies, O. I cannot get a message through.
+$call GiveJournalEntry("S04")
+
+:: specterTrigger.5
+@trigger    PlayerSpecter
+@when       specterIndex = 4
+@cutscene
+// fifth specter
+{wait 1}
+$call Specter->Spawn()
+$call Specter->Scan(4)
+{@player}	Another ghost from Sam.
+            Something must be wrong {nameof @guide}.
+{@guide}	Yes. At this point, the probability of Sam returning safely on their own are 21.4%.
+{@player}   I need to go home and tell Mom.
+            I just hope she'll listen.
+$call GiveJournalEntry("S05")
+
+:: specterTrigger.6 //flapjack
+@trigger    PlayerSpecter
+@when       specterIndex = 5
+@cutscene
+// sixth specter
+{wait 1}
+$call Specter->Spawn()
+$call Specter->Scan(4)
+{@player}	Another ghost.
+            I think Sam needs our help, {nameof @guide}. 
+{@guide}	Your mother suggested that Sam is fine. 
+{@player}	Yeah. Well, she also told me Mer wanted to spend her whole life studying the otters...
+            Turns out that wasn't true either.
+            Next time I'm home, I'll talk to Tío. Maybe he can help. 
+$call GiveJournalEntry("S03") // flapjack
+
+:: specterTrigger.7 // goassamer
+@trigger    PlayerSpecter
+@when       specterIndex = 6
+@cutscene
+// seventh specter
+{wait 1}
+$call Specter->Spawn()
+$call Specter->Scan(5)
+{@player}	Ugh. I don't know what to do, {nameof @guide}.
+            We need to unscramble all this data!
+            Can you try contacting the Nautilus? 
+{@guide}	Processing... processing...
+            I'm sorry, O.| The Nautilus is still unreachable.
+{hide-dialog}{wait 1}
+$call GiveJournalEntry("S06") //goassamer worm
+
+:: specterTrigger.8
+@trigger    PlayerSpecter
+@when       specterIndex = 7
+@cutscene
+// eighth specter
+{wait 1}
+$call Specter->Spawn()
+$call Specter->Scan(3)
+{@player}   Whoa. {nameof @guide}, what is that? 
+            A jellyfish? Some kind of crustacean?
+{@guide}    I don't believe so, O. 
+            The transmission size was too large, so only a portion of the image came through.
+{@player}   Yikes. That's not terrifying at all.
+{@player}   So what are we looking at here? 
+{@guide}    It appears that this is only the eye of a much larger creature.
+{@player}   Whoa. An eye?!  
+            {nameof @guide}, what are we going to do? Sam is down there with a monster!
+
+// Tio tells you to return ASAP
+$branch common.ringPhone
+
+{@kelpMechanic} Mijita, it's me. Are you there? 
+{@player} Tío! <i>Please</i> tell me you've got good news!
+{@kelpMechanic} Sí, mijita. I found the Ammonite upgrade for {nameof @guide}!
+{@player}       Yes! Thank you, Tío!
+{@kelpMechanic} De nada, Ollie.
+                Mer had stored the upgrade on an old data card of hers.
+                Took forever to find... had to dig through all her old boxes.
+                Come talk to me at the Forested Lagoon, and I'll get the upgrade added to your card!
+$set jobs:final-final.upgradeReady = true
+$set jobs:final-final.tio.code-received = false
+$call GiveJournalEntry("S08")
+
+// Temp Hack: should unlock all facts for all specters you have automatically
+$call GiveFact(ColossalSquid.Eats.ViperFish, Silent)
+$call GiveFact(ColossalSquid.Eats.AnglerFish, Silent)
+$call GiveFact(ColossalSquid.Eats.GoassamerWorm, Silent)
+
+$call GiveFact(DinnerJelly.Eats.AnglerFish, Silent)
+$call GiveFact(DinnerJelly.Eats.BloodJelly, Silent)
+$call GiveFact(DinnerJelly.Eats.FlapjackOcto, Silent)
+$call GiveFact(DinnerJelly.Eats.GoassamerWorm, Silent)
+$call GiveFact(DinnerJelly.Eats.MysidShrimp, Silent)
+$call GiveFact(DinnerJelly.Eats.ViperFish, Silent)
+
+$call GiveFact(AnglerFish.Eats.GoassamerWorm, Silent)
+$call GiveFact(AnglerFish.Eats.ArcticCopepod, Silent)
+
+$call GiveFact(FlapjackOcto.Eats.GoassamerWorm, Silent)
+
+$call GiveFact(BloodJelly.Eats.GoassamerWorm, Silent)
+
+$call GiveFact(GoassamerWorm.Eats.Detritus, Silent)
+
+$call GiveFact(MysidShrimp.Eats.Detritus, Silent)
+
+$call GiveFact(ViperFish.Eats.GoassamerWorm, Silent)

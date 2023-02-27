@@ -50,14 +50,9 @@ namespace ProtoAqua.ExperimentV2
         [Required] public CanvasGroup InterfaceFader = null;
 
         [Header("Water")]
-        [Required] public Transform WaterRenderer;
-        [Required] public ParticleSystem WaterAmbientParticles;
         [Required] public BoxCollider2D WaterTrigger;
         [Required] public BoxCollider WaterCollider3D;
         [Required] public Transform WaterTransform3D;
-        [Required] public ColorGroup WaterColor;
-        [Required] public ParticleSystem WaterDrainParticles;
-        public float StartingWaterHeight = 1;
         [HideInInspector] public Rect WaterRect;
 
         [Header("Caustics")]
@@ -83,9 +78,7 @@ namespace ProtoAqua.ExperimentV2
 
         [NonSerialized] public GuideBody Guide;
         
-        [NonSerialized] public Color DefaultWaterColor;
         [NonSerialized] public TankWaterSystem WaterSystem;
-        [NonSerialized] public float WaterFillProportion;
         [NonSerialized] public AudioHandle WaterAudioLoop;
 
         [NonSerialized] public ExperimentScreen CurrentScreen;
@@ -154,12 +147,8 @@ namespace ProtoAqua.ExperimentV2
 
         #region Sequences
 
-        static public IEnumerator DrainTankSequence(SelectableTank tank) {
-            yield return tank.WaterSystem.DrainWaterOverTime(tank, 1.5f);
-        }
-
         static public IEnumerator FillTankSequence(SelectableTank tank) {
-            yield return tank.WaterSystem.RequestFill(tank);
+            yield return tank.WaterSystem.RequestFill(tank, 3f);
             yield return 0.2f;
         }
 

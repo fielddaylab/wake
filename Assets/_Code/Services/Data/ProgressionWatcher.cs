@@ -6,12 +6,15 @@ using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Services;
 using Leaf;
+using UnityEngine;
 
 namespace Aqua
 {
     [ServiceDependency(typeof(DataService), typeof(AssetsService), typeof(EventService))]
     internal partial class ProgressionWatcher : ServiceBehaviour
     {
+        [SerializeField] private GameObject m_LevelUpPopup;
+
         [NonSerialized] private LeafAsset m_JobScript;
         [NonSerialized] private LeafAsset m_ActScript;
 
@@ -102,6 +105,17 @@ namespace Aqua
         {
             var job = Assets.Job(inJobId);
 
+            if (job.HasFlags(JobDescFlags.NoPopup)) {
+                // inventory adjustment
+                Save.Inventory.AdjustItem(ItemIds.Cash, job.CashReward());
+                Save.Inventory.AdjustItem(ItemIds.Exp, job.ExpReward());
+
+                if (!job.JournalId().IsEmpty) {
+                    Save.Inventory.AddJournalEntry(job.JournalId());
+                }
+                return;
+            }
+
             using(var table = TempVarTable.Alloc())
             {
                 table.Set("jobId", inJobId);
@@ -124,7 +138,7 @@ namespace Aqua
 
         private void JobCompletedPopup(JobDesc inJob)
         {
-            var character = Assets.Character(inJob.PosterId());
+            uint oldExp = Save.Exp;
 
             // inventory adjustment
             Save.Inventory.AdjustItem(ItemIds.Cash, inJob.CashReward());
@@ -134,24 +148,20 @@ namespace Aqua
             {
                 psb.Builder.Append('\n', 2);
 
-                if (inJob.ExpReward() > 0)
-                {
-                    psb.Builder.Append(Loc.Format("ui.popup.jobComplete.expReward", inJob.ExpReward())).Append('\n');
-                }
-
-                if (inJob.CashReward() > 0)
-                {
-                    psb.Builder.Append(Loc.Format("ui.popup.jobComplete.cashReward", inJob.CashReward())).Append('\n');
-                }
-
                 psb.Builder.TrimEnd(StringUtils.DefaultNewLineChars);
 
                 Services.Audio.PostEvent("job.completed");
 
-                Services.UI.Popup.Display(
-                    Loc.Format("ui.popup.jobComplete.header", inJob.NameId()),
-                    psb.Builder.Flush(), character?.DefaultPortrait()
-                );
+                PopupContent content = default(PopupContent);
+                content.Header = Loc.Format("ui.popup.jobComplete.header", inJob.NameId());
+
+                JobCompletePopup completePopup = PopupLibrary.JobComplete;
+                content.CustomModule = completePopup.transform;
+                content.Options = PopupPanel.DefaultOkay;
+                content.Execute = completePopup.Execute;
+                completePopup.Prepare(inJob, oldExp);
+
+                Services.UI.Popup.Present(content, PopupFlags.TopDivider);
             }
         }
 
@@ -212,10 +222,9 @@ namespace Aqua
 
             if (inItemId == ItemIds.Exp)
             {
-                // ScienceUtils.AttemptLevelUp(Save.Current, out var _);
+                ScienceUtils.AttemptLevelUp(Save.Current, out var _);
                 Services.Script.QueueTriggerResponse(GameTriggers.PlayerExpUp, -5);
             }
-
         }
 
         private void OnScienceLevelUpdated(ScienceLevelUp inLevelUp)
@@ -224,18 +233,16 @@ namespace Aqua
                 return;
 
             var scienceTweaks = Services.Tweaks.Get<ScienceTweaks>();
-            int cashAdjust = scienceTweaks.CashPerLevel() * inLevelUp.LevelAdjustment;
             uint newLevel = inLevelUp.OriginalLevel + (uint) inLevelUp.LevelAdjustment;
 
             Services.Script.QueueInvoke(() => {
-                Save.Inventory.AdjustItem(ItemIds.Cash, cashAdjust);
-                Services.Audio.PostEvent("ShopPurchase");
-                Services.UI.Popup.DisplayWithClose(
-                    Loc.Format("ui.popup.levelUp.header", newLevel),
-                    Loc.Format("ui.popup.levelUp.description", inLevelUp.OriginalLevel + 1, newLevel + 1, cashAdjust),
-                null, PopupFlags.ShowCloseButton
-                ).OnComplete((_) => {
-                    Services.Script.TriggerResponse(GameTriggers.PlayerLevelUp);
+                Services.Audio.PostEvent("Popup.LevelUp");
+                PopupContent content = default(PopupContent);
+                content.Header = Loc.Format("ui.popup.levelUp.header", newLevel);
+                content.Text = Loc.Format("ui.popup.levelUp.description", newLevel);
+                content.CustomLayout = scienceTweaks.LevelBadgeLayout((int) newLevel).FastConcat("_NoLanyard");
+                Services.UI.Popup.Present(content, PopupFlags.ShowCloseButton).OnComplete((_) => {
+                    Services.Script.QueueTriggerResponse(GameTriggers.PlayerLevelUp, -1);
                 });
             }, -1);
         }

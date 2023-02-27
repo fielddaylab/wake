@@ -11,6 +11,9 @@ GameObject:
   - component: {fileID: 8049465781603423098}
   - component: {fileID: 106885285607861271}
   - component: {fileID: 3781816213522636961}
+  - component: {fileID: 6919411050240830191}
+  - component: {fileID: 3010590652683070670}
+  - component: {fileID: 2659224363015840537}
   m_Layer: 0
   m_Name: ToggleBar
   m_TagString: Untagged
@@ -68,6 +71,47 @@ MonoBehaviour:
   m_Hint: {fileID: 2469269152409492527}
   m_ToggleGroup: {fileID: 106885285607861271}
   m_ToggleLayout: {fileID: 5491699581068818434}
+--- !u!114 &6919411050240830191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1207067703915050801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee012376a32f0314ead77f5ad3a9b360, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Offset0: {x: 0, y: 0}
+  m_Offset1: {x: 0, y: 0}
+--- !u!114 &3010590652683070670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1207067703915050801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1ca01ad1ca751d45803abc50cc992ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AnimDurationScale: 1
+  m_AnimDistanceScale: 1
+  m_DisableRaycasts: 0
+--- !u!225 &2659224363015840537
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1207067703915050801}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &5325164600724994855
 GameObject:
   m_ObjectHideFlags: 0
@@ -286,7 +330,9 @@ MonoBehaviour:
   m_Text: {fileID: 2997656876974513074}
   m_DefaultText:
     m_Source: 
-    m_Hash: 0
+    m_HashValue: 0
+  m_Prefix: 
+  m_Postfix: 
 --- !u!114 &1131605545500868720
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -321,7 +367,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TooltipId:
     m_Source: 
-    m_Hash: 0
+    m_HashValue: 0
   TooltipOverride: 
   Cursor: 1
 --- !u!1001 &3147797958690053592

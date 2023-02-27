@@ -5,28 +5,19 @@ using Aqua;
 using Aqua.Character;
 
 namespace ProtoAqua.Upgrades {
-    [RequireComponent(typeof(KinematicRepulsor2D))]
+    [RequireComponent(typeof(KinematicForce2D))]
     public class WaterCurrentRegion : ScriptComponent
     {
-        [Required] public KinematicRepulsor2D Force;
-        public float Multiplier = 0.3f;
+        [Required] public KinematicForce2D Force;
 
         private void Awake() {
-            Script.OnSceneLoad(Load);
-        }
-
-        private void Load() {
-            bool hasEngine = Save.Inventory.HasUpgrade(ItemIds.Engine);
-            if (hasEngine) {
-                Force.ResistBoost = Force.ResistBoost * Multiplier;
-                Force.ForceMagnitude = Force.ForceMagnitude * Multiplier;
-            }
+            Force.IsScalable = true;
         }
 
         #if UNITY_EDITOR
 
         private void Reset() {
-            Force = GetComponent<KinematicRepulsor2D>();
+            Force = GetComponent<KinematicForce2D>();
         }
 
         #endif // UNITY_EDITOR

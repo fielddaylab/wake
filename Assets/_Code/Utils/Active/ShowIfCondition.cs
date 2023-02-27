@@ -63,10 +63,12 @@ namespace Aqua
 
             m_Initialized = true;
             m_LastState = inbState;
-            foreach(var obj in m_ToShow)
+            foreach(var obj in m_ToShow) {
                 obj.SetActive(inbState);
-            foreach(var obj in m_ToHide)
+            }
+            foreach (var obj in m_ToHide) {
                 obj.SetActive(!inbState);
+            }
         }
     }
 }

@@ -5,6 +5,7 @@ using BeauPools;
 using System;
 using BeauUtil.Debugger;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace Aqua
 {
@@ -37,11 +38,12 @@ namespace Aqua
         #endregion // Inspector
 
         [NonSerialized] private bool m_ConfiguredPools;
-        [NonSerialized] private Dictionary<MonoBehaviour, BFShapeId> m_PoolSources = new Dictionary<MonoBehaviour, BFShapeId>(64);
+        [NonSerialized] private Dictionary<int, BFShapeId> m_PoolSources = Collections.NewDictionary<int, BFShapeId>(64);
 
         private void Awake()
         {
             ConfigurePoolTransforms();
+            InitializeAllPools();
         }
 
         private void OnDisable()
@@ -68,6 +70,36 @@ namespace Aqua
             m_ConfiguredPools = true;
         }
 
+        private void InitializeAllPools() {
+            if (m_BehaviorFacts.Prefab != null) {
+                m_BehaviorFacts.TryInitialize();
+            }
+
+            if (m_ModelFacts.Prefab != null) {
+                m_ModelFacts.TryInitialize();
+            }
+
+            if (m_StateFacts.Prefab != null) {
+                m_StateFacts.TryInitialize();
+            }
+
+            if (m_PropertyFacts.Prefab != null) {
+                m_PropertyFacts.TryInitialize();
+            }
+
+            if (m_PropertyHistoryFacts.Prefab != null) {
+                m_PropertyHistoryFacts.TryInitialize();
+            }
+
+            if (m_PopulationFacts.Prefab != null) {
+                m_PopulationFacts.TryInitialize();
+            }
+
+            if (m_PopulationHistoryFacts.Prefab != null) {
+                m_PopulationHistoryFacts.TryInitialize();
+            }
+        }
+
         public void FreeAll()
         {
             m_BehaviorFacts.Reset();
@@ -89,42 +121,42 @@ namespace Aqua
                 case BFShapeId.Model: {
                     ModelFactDisplay display = m_ModelFacts.Alloc(inParent);
                     display.Populate((BFModel) inFact);
-                    m_PoolSources.Add(display, BFShapeId.Model);
+                    m_PoolSources.Add(UnityHelper.Id(display), BFShapeId.Model);
                     return display;
                 }
 
                 case BFShapeId.State: {
                     StateFactDisplay display = m_StateFacts.Alloc(inParent);
-                    display.Populate((BFState) inFact);
-                    m_PoolSources.Add(display, BFShapeId.State);
+                    display.Populate((BFState) inFact, inFlags);
+                    m_PoolSources.Add(UnityHelper.Id(display), BFShapeId.State);
                     return display;
                 }
 
                 case BFShapeId.WaterProperty: {
                     WaterPropertyFactDisplay display = m_PropertyFacts.Alloc(inParent);
                     display.Populate((BFWaterProperty) inFact);
-                    m_PoolSources.Add(display, BFShapeId.WaterProperty);
+                    m_PoolSources.Add(UnityHelper.Id(display), BFShapeId.WaterProperty);
                     return display;
                 }
 
                 case BFShapeId.WaterPropertyHistory: {
                     WaterPropertyHistoryFactDisplay display = m_PropertyHistoryFacts.Alloc(inParent);
                     display.Populate((BFWaterPropertyHistory) inFact);
-                    m_PoolSources.Add(display, BFShapeId.WaterPropertyHistory);
+                    m_PoolSources.Add(UnityHelper.Id(display), BFShapeId.WaterPropertyHistory);
                     return display;
                 }
 
                 case BFShapeId.Population: {
                     PopulationFactDisplay display = m_PopulationFacts.Alloc(inParent);
                     display.Populate((BFPopulation) inFact);
-                    m_PoolSources.Add(display, BFShapeId.Population);
+                    m_PoolSources.Add(UnityHelper.Id(display), BFShapeId.Population);
                     return display;
                 }
 
                 case BFShapeId.PopulationHistory: {
                     PopulationHistoryFactDisplay display = m_PopulationHistoryFacts.Alloc(inParent);
                     display.Populate((BFPopulationHistory) inFact);
-                    m_PoolSources.Add(display, BFShapeId.PopulationHistory);
+                    m_PoolSources.Add(UnityHelper.Id(display), BFShapeId.PopulationHistory);
                     return display;
                 }
 
@@ -132,7 +164,7 @@ namespace Aqua
                     BFBehavior behavior = (BFBehavior) inFact;
                     BehaviorFactDisplay display = m_BehaviorFacts.Alloc(inParent);
                     display.Populate(behavior, inFlags, inReference);
-                    m_PoolSources.Add(display, BFShapeId.Behavior);
+                    m_PoolSources.Add(UnityHelper.Id(display), BFShapeId.Behavior);
                     return display;
                 }
 
@@ -155,43 +187,43 @@ namespace Aqua
             switch(inShape) {
                 case BFShapeId.Model: {
                     ModelFactDisplay display = m_ModelFacts.Alloc(inParent);
-                    m_PoolSources.Add(display, BFShapeId.Model);
+                    m_PoolSources.Add(UnityHelper.Id(display), BFShapeId.Model);
                     return display;
                 }
 
                 case BFShapeId.State: {
                     StateFactDisplay display = m_StateFacts.Alloc(inParent);
-                    m_PoolSources.Add(display, BFShapeId.State);
+                    m_PoolSources.Add(UnityHelper.Id(display), BFShapeId.State);
                     return display;
                 }
 
                 case BFShapeId.WaterProperty: {
                     WaterPropertyFactDisplay display = m_PropertyFacts.Alloc(inParent);
-                    m_PoolSources.Add(display, BFShapeId.WaterProperty);
+                    m_PoolSources.Add(UnityHelper.Id(display), BFShapeId.WaterProperty);
                     return display;
                 }
 
                 case BFShapeId.WaterPropertyHistory: {
                     WaterPropertyHistoryFactDisplay display = m_PropertyHistoryFacts.Alloc(inParent);
-                    m_PoolSources.Add(display, BFShapeId.WaterPropertyHistory);
+                    m_PoolSources.Add(UnityHelper.Id(display), BFShapeId.WaterPropertyHistory);
                     return display;
                 }
 
                 case BFShapeId.Population: {
                     PopulationFactDisplay display = m_PopulationFacts.Alloc(inParent);
-                    m_PoolSources.Add(display, BFShapeId.Population);
+                    m_PoolSources.Add(UnityHelper.Id(display), BFShapeId.Population);
                     return display;
                 }
 
                 case BFShapeId.PopulationHistory: {
                     PopulationHistoryFactDisplay display = m_PopulationHistoryFacts.Alloc(inParent);
-                    m_PoolSources.Add(display, BFShapeId.PopulationHistory);
+                    m_PoolSources.Add(UnityHelper.Id(display), BFShapeId.PopulationHistory);
                     return display;
                 }
 
                 case BFShapeId.Behavior: {
                     BehaviorFactDisplay display = m_BehaviorFacts.Alloc(inParent);
-                    m_PoolSources.Add(display, BFShapeId.Behavior);
+                    m_PoolSources.Add(UnityHelper.Id(display), BFShapeId.Behavior);
                     return display;
                 }
 
@@ -204,11 +236,12 @@ namespace Aqua
 
         public void Free(MonoBehaviour inDisplay)
         {
-            if (!m_PoolSources.TryGetValue(inDisplay, out BFShapeId source)) {
+            int id = UnityHelper.Id(inDisplay);
+            if (!m_PoolSources.TryGetValue(id, out BFShapeId source)) {
                 Assert.Fail("Unable to find suitable pool");
             }
 
-            m_PoolSources.Remove(inDisplay);
+            m_PoolSources.Remove(id);
 
             switch(source) {
                 case BFShapeId.Behavior: {
@@ -266,7 +299,7 @@ namespace Aqua
                 }
 
                 case BFShapeId.State: {
-                    ((StateFactDisplay) inBehavior).Populate((BFState) inFact);
+                    ((StateFactDisplay) inBehavior).Populate((BFState) inFact, inFlags);
                     break;
                 }
 

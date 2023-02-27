@@ -1,1 +1,21 @@
 # basePath WorldMap
+
+:: WorldMapLeaving.1
+@trigger    WorldMapLeave
+@cutscene
+@once
+@boostScore 100
+{@guide}    Setting auto-pilot destination for {nameof $local:nextStation}.|.|.|
+$if local:nextStation == "CoralStation"
+            Estimated travel time: 12 hours.
+$else
+            Estimated travel time: 8 hours.
+$endif
+{@player}   Thanks, {nameof @guide}. I'm going to get some sleep.
+
+:: WorldMapLeaving.2
+@trigger    WorldMapLeave
+@cutscene
+{@guide}    Auto-pilot destination set for {nameof $local:nextStation}.
+            We will arrive at our destination tomorrow.
+{@player}   {random Time to get some rest.|Great. My eyes feel heavy anyway.|Great. I could use some shuteye.|Great. I'm going to get some sleep.|Thanks, V. Wake me when we get there.}

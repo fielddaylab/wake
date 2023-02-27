@@ -62,8 +62,8 @@
       "url": "https://package.openupm.com"
     },
     "com.unity.2d.animation": {
-      "version": "3.2.17",
-      "depth": 1,
+      "version": "3.2.18",
+      "depth": 0,
       "source": "registry",
       "dependencies": {
         "com.unity.2d.common": "2.1.2",
@@ -137,14 +137,14 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.mathematics": {
-      "version": "1.1.0",
-      "depth": 2,
+      "version": "1.2.6",
+      "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
     "com.unity.memoryprofiler": {
-      "version": "0.7.0-preview.2",
+      "version": "0.7.1-preview.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -208,6 +208,18 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity.timeline": {
+      "version": "1.2.18",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.modules.director": "1.0.0",
+        "com.unity.modules.animation": "1.0.0",
+        "com.unity.modules.audio": "1.0.0",
+        "com.unity.modules.particlesystem": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.ugui": {
       "version": "1.0.0",
       "depth": 0,
@@ -254,6 +266,15 @@
       "depth": 0,
       "source": "builtin",
       "dependencies": {}
+    },
+    "com.unity.modules.director": {
+      "version": "1.0.0",
+      "depth": 1,
+      "source": "builtin",
+      "dependencies": {
+        "com.unity.modules.audio": "1.0.0",
+        "com.unity.modules.animation": "1.0.0"
+      }
     },
     "com.unity.modules.imageconversion": {
       "version": "1.0.0",
@@ -322,7 +343,7 @@
     },
     "com.unity.modules.uielements": {
       "version": "1.0.0",
-      "depth": 2,
+      "depth": 1,
       "source": "builtin",
       "dependencies": {
         "com.unity.modules.imgui": "1.0.0",

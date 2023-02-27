@@ -37,11 +37,15 @@ namespace Aqua.Modeling {
         [SerializeField] private BestiaryAddPanel m_InterveneAddPanel = null;
         [SerializeField] private Button m_InterveneResetButton = null;
         [SerializeField] private Button m_InterveneRunButton = null;
+        [SerializeField] private InlinePopupPanel m_IntervenePopup = null;
 
         [Header("Settings")]
         [SerializeField] private TextId m_MissingPopulationsLabel = default;
         [SerializeField] private TextId m_MissingWaterChemistryLabel = default;
         [SerializeField] private TextId m_MissingPopulationsWaterChemistryLabel = default;
+
+        [Header("Global")]
+        [SerializeField] private Button m_SaveButton = null;
 
         #endregion // Inspector
 
@@ -84,6 +88,7 @@ namespace Aqua.Modeling {
             m_PredictButton.onClick.AddListener(OnPredictClicked);
             m_InterveneRunButton.onClick.AddListener(OnInterveneRunClicked);
             m_InterveneResetButton.onClick.AddListener(OnInterveneResetClicked);
+            m_SaveButton.onClick.AddListener(OnSaveClicked);
 
             m_InterveneAddPanel.Filter = (b) => m_State.Simulation.CanIntroduceForIntervention(b);
             m_InterveneAddPanel.OnAdded = OnIntervenePanelAdded;
@@ -102,6 +107,12 @@ namespace Aqua.Modeling {
             m_Graph.OnDivergenceClicked = (p) => {
                 m_SyncDivergencePopup.DisplayDivergence(p.Sign);
             };
+            m_Graph.OnDiscrepancyClicked = () => {
+                PopupContent content = default;
+                content.Header = Loc.Find("modeling.noIntervenePopup.header");
+                content.Text = Loc.Find("modeling.noIntervenePopup.description");
+                m_IntervenePopup.Present(ref content, PopupFlags.ShowCloseButton);
+            };
         }
 
         protected override void Start() {
@@ -109,6 +120,7 @@ namespace Aqua.Modeling {
             
             m_InterveneButtonGroup.gameObject.SetActive(false);
             m_InterveneAddToggleGroup.ForceActive(false);
+            m_SaveButton.gameObject.SetActive(false);
 
             m_SyncViewGroup.SetActive(false);
         }
@@ -183,6 +195,7 @@ namespace Aqua.Modeling {
             m_InterveneButtonGroup.gameObject.SetActive(phase == ModelPhases.Intervene);
             m_InterveneAddToggleGroup.SetActive(phase == ModelPhases.Intervene);
             m_SyncViewGroup.SetActive(false);
+            HideSaveButton();
 
             if (phase != ModelPhases.Predict) {
                 m_InterveneAddPanel.ClearSelection();
@@ -190,6 +203,7 @@ namespace Aqua.Modeling {
             }
 
             m_SyncDivergencePopup.Panel.InstantHide();
+            m_IntervenePopup.InstantHide();
 
             m_PhaseRoutine.Stop();
             switch(phase) {
@@ -255,6 +269,18 @@ namespace Aqua.Modeling {
                     break;
                 }
             }
+        }
+
+        private void TryDisplaySaveButton(StringHash32 modelId) {
+            if (!modelId.IsEmpty && !Save.Bestiary.HasFact(modelId)) {
+                m_SaveButton.gameObject.SetActive(true);
+            } else {
+                m_SaveButton.gameObject.SetActive(false);
+            }
+        }
+
+        private void HideSaveButton() {
+            m_SaveButton.gameObject.SetActive(false);
         }
 
         #endregion // Phases
@@ -336,7 +362,7 @@ namespace Aqua.Modeling {
             m_SyncViewGroup.SetActive(true);
             m_SyncViewNormalToggle.SetIsOnWithoutNotify(true);
 
-            yield return 0.4f;
+            yield return 0.2f;
 
             Services.Data.SetVariable(ModelingConsts.Var_SimulationSync, m_State.LastKnownAccuracy);
 
@@ -344,8 +370,7 @@ namespace Aqua.Modeling {
 
             if (m_ProgressInfo.Scope != null && !m_ProgressInfo.Scope.SyncModelId.IsEmpty) {
                 if (m_ProgressInfo.Scope.MinimumSyncAccuracy <= m_State.LastKnownAccuracy) {
-                    Services.Events.Dispatch(ModelingConsts.Event_Simulation_Complete);
-                    OnSyncAchieved?.Invoke();
+                    TryDisplaySaveButton(m_ProgressInfo.Scope.SyncModelId);
                 } else {
                     OnSyncUnsuccessful?.Invoke();
                 }
@@ -406,8 +431,10 @@ namespace Aqua.Modeling {
 
             m_GraphFader.SetActive(false);
 
+            yield return 0.2f;
+
             if (m_ProgressInfo.Scope != null) {
-                OnPredictCompleted?.Invoke();
+                TryDisplaySaveButton(m_ProgressInfo.Scope.PredictModelId);
             }
         }
 
@@ -452,13 +479,16 @@ namespace Aqua.Modeling {
 
             OnAnimationFinished?.Invoke();
 
+            yield return 0.2f;
+
             bool bSuccess = m_State.Simulation.EvaluateInterventionGoals();
 
             if (m_ProgressInfo.Scope != null) {
                 if (bSuccess) {
                     Log.Msg("[SimulationUI] Intervention hit target!");
-                    OnInterventionSuccessful?.Invoke();
+                    TryDisplaySaveButton(m_ProgressInfo.Scope.InterveneModelId);
                 } else {
+                    Services.Audio.PostEvent("syncDenied");
                     OnInterventionUnsuccessful?.Invoke();
                 }
             }
@@ -534,6 +564,28 @@ namespace Aqua.Modeling {
 
         #region Callbacks
 
+        private void OnSaveClicked() {
+            switch(m_State.Phase) {
+                case ModelPhases.Sync: {
+                    Services.Events.Dispatch(ModelingConsts.Event_Simulation_Complete);
+                    OnSyncAchieved?.Invoke();
+                    break;
+                }
+
+                case ModelPhases.Predict: {
+                    OnPredictCompleted?.Invoke();
+                    break;
+                }
+
+                case ModelPhases.Intervene: {
+                    OnInterventionSuccessful?.Invoke();
+                    break;
+                }
+            }
+
+            m_SaveButton.gameObject.SetActive(false);
+        }
+
         private void OnSimulateClicked() {
             m_SimulateButton.gameObject.SetActive(false);
             m_PhaseRoutine.Replace(this, Sync_Attempt());
@@ -566,11 +618,20 @@ namespace Aqua.Modeling {
             m_PhaseRoutine.Replace(this, Intervene_Attempt());
         }
 
+        private void OnInterveneErrorClicked() {
+            Services.UI.Popup.Display(
+                // TODO: modify description depending on whether the player is above or below the target
+                Loc.Find("modeling.noIntervenePopup.header"), Loc.Find("modeling.noIntervenePopup.description")
+            );
+        }
+
         private void OnInterveneResetClicked() {
             m_InterveneButtonGroup.gameObject.SetActive(false);
             m_InterveneAddToggleGroup.SetActive(true);
             m_State.Simulation.ClearIntervention();
             m_PhaseRoutine.Stop();
+            HideSaveButton();
+            m_IntervenePopup.Hide();
 
             m_Graph.PopulateData(m_State, m_ProgressInfo, SimRenderMask.PredictIntervene);
             m_Graph.RenderData(SimRenderMask.PredictIntervene, true);

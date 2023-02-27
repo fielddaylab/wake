@@ -1,30 +1,330 @@
-#basePath   job.bayou-shrimp-tastrophe
+# basePath job.bayou-shrimp-tastrophe
+
+// INTRO
 
 :: start
 @trigger    JobStarted
 @cutscene
+{@bayouSci}    The Shrimpers' requests for an explanation have become more alarmed as the shrimp populations continue to drop.
+                Perhaps after all your work in Site P, we can finally give them an answer.
+                Please construct a {h}Descriptive Model{/h} that explains the situation.
+$set jobs:bayou-shrimp-tastrophe.sync-failed = false
 
-{@profBayou}	Those oxygen levels were perplexing.  I'm curious to see if they could be directly caused by the shrimp.
-{@player} 	I can take a look.
-$call GiveUpgrade(MeasurementTank)
-
-:: helpMeasureOxygen
-@trigger    RequestPartnerHelp
-@when 		JobTaskTop(measureOxygen)
-@cutscene
-{@player} 	What am I looking for again?
-{@guide}	We're trying to see if the bad oxygen levels are directly caused by the shrimp.
-{@guide}	The measurement tank should be able to help us figure that out.
-
-:: gotScans
+:: modelCompleted
 @trigger    JobTasksUpdated
+@when       JobTaskTop(reportBack)
 @once
 @cutscene
-{@guide} Okay, I think that oxygen measurement is what we were looking for!  Let's forward that to {nameof @profBayou}.
+{@guide}    What a model! Looks like there are a lot of overlapping spikes and dips in organism populations and environmental conditions.
+            When you think you understand it, head back to {nameof @bayouSci}.
 
-:: helpBackToShip
+
+// MODEL SUGGESTIONS
+
+:: triggerSyncFailure
+@trigger    SimulationSyncError
+@when       !jobs:bayou-shrimp-tastrophe.sync-failed
+@once
+$set jobs:bayou-shrimp-tastrophe.sync-failed = true
+
+:: helpModelSync.Visual
 @trigger    RequestPartnerHelp
-@when 		JobTaskTop(reportBack)
+@when 		JobTaskActive(modelFish), scene:name == "Modeling", modeling:phase == "visual"
 @cutscene
-{@player} 	Where am I headed again?
-{@guide}	We've collected the oxygen data we needed, and I think {nameof @profBayou} wants to see the results.
+$branch .modelSuggestions
+
+:: helpModelSync.Sync
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(modelFish), scene:name == "Modeling", modeling:phase == "sync"
+@cutscene
+$branch .modelSuggestions
+
+:: modelSuggestions
+$if HasFact(WhiteShrimp.Reproduce), HasFact(WhiteShrimp.Reproduce.Stressed), HasFact(WhiteShrimp.Consume.Oxygen), HasFact(WhiteShrimp.Produce.CarbonDioxide), HasFact(Cyanobacteria.Reproduce), HasFact(Cyanobacteria.Reproduce.Stressed), HasFact(Cyanobacteria.Produce.Oxygen), HasFact(Cyanobacteria.Consume.CarbonDioxide), HasFact(Cyanobacteria.Consume.Light), HasFact(DecomposingBacteria.Reproduce), HasFact(DecomposingBacteria.Eats.Detritus), HasFact(DecomposingBacteria.Eats.Detritus.Stressed), IsFactFullyUpgraded(DecomposingBacteria.Eats.Detritus.Stressed), HasFact(DecomposingBacteria.Consume.Oxygen), HasFact(DecomposingBacteria.Produce.CarbonDioxide) 
+    $if HasFact(Z_OpenOcean.SalmonCompetition.Model.Visual)
+        {@guide}    You're done with this portion! Head to the {h}Describe{/h} tab next.
+    $else
+        {@guide}    Once you import your facts and save the Visual model, we should be good to make our Describe model!
+    $endif
+$else
+    $if !jobs:bayou-shrimp-tastrophe.sync-failed
+        {@guide}    Time to try out your model in the {h}Describe{/h} tab.
+    $else
+        {@guide}    Seems like we don't have enough information to complete our model accurately.
+                    Look for {h}question marks{/h} in the Visual model interface, those point to where we may need more data.
+        $if !HasFact(WhiteShrimp.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(WhiteShrimp.Reproduce.Stressed)
+            $branch .suggestReproduce
+        $elseif !HasFact(WhiteShrimp.Consume.Oxygen)
+            $branch .suggestMeasureEnviro
+        $elseif !HasFact(WhiteShrimp.Produce.CarbonDioxide)
+            $branch .suggestMeasureEnviro
+        $elseif !HasFact(Cyanobacteria.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(Cyanobacteria.Reproduce.Stressed)
+            $branch .suggestReproduce
+        $elseif !HasFact(Cyanobacteria.Produce.Oxygen)
+            $branch .suggestMeasureEnviro
+        $elseif !HasFact(Cyanobacteria.Consume.CarbonDioxide)
+            $branch .suggestMeasureEnviro
+        $elseif !HasFact(Cyanobacteria.Consume.Light)
+            $branch .suggestMeasureEnviro
+        $elseif !HasFact(DecomposingBacteria.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(DecomposingBacteria.Eats.Detritus)
+            $branch .suggestDecompEat
+        $elseif !HasFact(DecomposingBacteria.Eats.Detritus.Stressed)
+            $branch .suggestDecompEat
+        $elseif !IsFactFullyUpgraded(DecomposingBacteria.Eats.Detritus.Stressed)
+            $branch .suggestDecompEat
+        $elseif !HasFact(DecomposingBacteria.Consume.Oxygen)
+            $branch .suggestMeasureEnviro
+        $elseif !HasFact(DecomposingBacteria.Produce.CarbonDioxide) 
+            $branch .suggestMeasureEnviro
+        $endif
+    $endif
+$endif
+
+:: suggestReproduce
+{@guide}    Did you get all the reproduction rates?
+
+:: suggestMeasureEnviro
+{@guide}    Are you sure you've found out all the ways the different organisms affect the water conditions? The {h}Measurement Tank{/h} may still be useful.
+
+:: suggestDecompEat
+{@guide}    Maybe look into what {pluralnameof DecomposingBacteria} eat?
+
+
+// CATCH-ALL GUIDE TEXT
+
+:: catchCreateModel
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(createModel)
+@boostScore -5
+@cutscene
+{@guide}    We need to model why shrimp populations are decreasing.
+            It's a complex system, but with everything we've pieced together over the last shrimp jobs I am sure we can figure it out!
+
+:: catchReportBack
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(reportBack)
+@boostScore -5
+@cutscene
+{@guide}    Time to head back to {nameof bayouSci} in the station.
+
+
+
+
+
+// ARGUMENTATION
+
+::argue.intro
+@trigger    TryArgumentation
+@when   !ArgueIsComplete(tastropheArgueModel)
+@cutscene
+{@bayouSci}    What explanation can I give to the Shrimpers for why the shrimp populations are so low?
+$choice .argue.oxygen.begin; It has to do with the oxygen levels.
+$choice .argue.light.begin; It has to do with the light levels.
+$choice .argue.notSure; Still not sure.
+$choose branch
+
+:: argue.notSure
+{@bayouSci}    That's okay. It is certainly one of our most perplexing issues to date.
+                Let me know when you're more certain.
+
+// ---------- Oxygen Route
+
+:: argue.oxygen.begin
+$if ArgueIsComplete(tastropheArgueShrimpOxygen), ArgueIsComplete(tastropheArgueBacteriaOxygen)
+    // jump to model
+    {@bayouSci}    We've established the shrimp and bacteria bits.
+    $branch .argue.shared.loadModel
+$elseif ArgueIsComplete(tastropheArgueShrimpOxygen)
+    // jump to bacteria half
+    {@bayouSci}    We've established the shrimp bit.
+    $branch .argue.oxygen.loadBacteria
+$else
+    // load shrimp half
+    $branch .argue.oxygen.loadShrimp
+$endif
+
+:: argue.oxygen.loadShrimp
+$call ArgueLoad(tastropheArgueShrimpOxygen)
+$if ArgueSetClaim(ClaimShrimpOxygen, jobs.bayou-shrimp-tastrophe.argue.claimLabelShrimpOxygen)
+    $call ArgueFactSlot(P_DeadZone.Oxygen)
+    $call ArgueFactSlot(WhiteShrimp.Consume.Oxygen)
+$endif
+{@bayouSci}    The oxygen?
+$branch .argue.oxygen.showShrimp
+
+:: argue.oxygen.showShrimp
+{@bayouSci}    What does oxygen have to do with shrimp?
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.oxygen.completeShrimp
+    $answer incorrect, .argue.oxygen.unrelatedShrimp
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.oxygen.unrelatedShrimp
+$call ArgueRejectIncorrect()
+{@bayouSci}     Not quite what I'm looking for, O. 
+$branch .argue.oxygen.showShrimp
+
+:: argue.oxygen.completeShrimp
+$call ArgueCancelClaim()
+$call ArgueComplete()
+{@bayouSci}    The shrimp are suffocating?!
+$branch .argue.oxygen.loadBacteria
+
+
+:: argue.oxygen.loadBacteria
+$call ArgueLoad(tastropheArgueBacteriaOxygen)
+$if ArgueSetClaim(ClaimBacteriaOxygen, jobs.bayou-shrimp-tastrophe.argue.claimLabelBacteriaOxygen)
+    $call ArgueFactSlot(DecomposingBacteria.Consume.Oxygen)
+$endif
+$branch .argue.oxygen.showBacteria
+
+:: argue.oxygen.showBacteria
+{@bayouSci}    Where did all the oxygen go?
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.oxygen.completeBacteria
+    $answer incorrect, .argue.oxygen.unrelatedBacteria
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.oxygen.unrelatedBacteria
+$call ArgueRejectIncorrect()
+{@bayouSci}     Not quite what I'm looking for, O. 
+$branch .argue.oxygen.showBacteria
+
+:: argue.oxygen.completeBacteria
+$call ArgueCancelClaim()
+$call ArgueComplete()
+{@bayouSci}    The decomposers... Hmmm... There is a lot of detritus for them to get rid of.
+                They could overpower the system...
+                Sometimes models speak louder than words.
+$branch .argue.shared.loadModel
+                
+
+// ---------- Light Route
+
+:: argue.light.begin
+$if ArgueIsComplete(tastropheArgueCyanoLight), ArgueIsComplete(tastropheArgueLightShrimpOxygen)
+    // jump to model
+    {@bayouSci}    We've established the {nameof Cyanobacteria} light and shrimp oxygen bits.
+    $branch .argue.shared.loadModel
+$elseif ArgueIsComplete(tastropheArgueCyanoLight)
+    // jump to shrimp half
+    {@bayouSci}    We've established the {nameof Cyanobacteria} light bit.
+    $branch .argue.light.loadShrimp
+$else
+    // load cyanobacteria half
+    $branch .argue.light.loadCyano
+$endif
+
+:: argue.light.loadCyano
+$call ArgueLoad(tastropheArgueCyanoLight)
+$if ArgueSetClaim(ClaimCyanoLight, jobs.bayou-shrimp-tastrophe.argue.claimLabelCyanoLight)
+    $call ArgueFactSlot(Cyanobacteria.Consume.Light)
+$endif
+{@bayouSci}    Shrimp don't interact with light... 
+$branch .argue.light.showCyano
+
+:: argue.light.showCyano
+{@bayouSci}    What interacts with light that you think is at the bottom of this?    
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.light.completeCyano
+    $answer incorrect, .argue.light.unrelatedCyano
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.light.unrelatedCyano
+$if ArgueIsFactSubmitted(Cyanobacteria.Consume.Light.Stressed)
+    $branch .argue.light.completeCyano
+$else
+    $call ArgueRejectIncorrect()
+    {@bayouSci}     Not quite what I'm looking for, O.
+    $branch .argue.light.showCyano
+$endif
+
+
+:: argue.light.completeCyano
+$call ArgueCancelClaim()
+$call ArgueComplete()
+{@bayouSci}    Hmm, there is quite a bit of {nameof Cyanobacteria}. I'm sure that adds up over time.
+$branch .argue.light.loadShrimp
+
+:: argue.light.loadShrimp
+$call ArgueLoad(tastropheArgueLightShrimpOxygen)
+$if ArgueSetClaim(ClaimLightShrimpOxygen, jobs.bayou-shrimp-tastrophe.argue.claimLabelLightShrimpOxygen)
+    $call ArgueFactSlot(P_DeadZone.Oxygen)
+    $call ArgueFactSlot(WhiteShrimp.Consume.Oxygen)
+$endif
+$branch .argue.light.showShrimp
+
+:: argue.light.showShrimp
+// Note: This question with the above facts is probably the largest logical leap in the argumentation
+{@bayouSci}    But what does increased numbers of {nameof Cyanobacteria} have to do with the shrimp? 
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.light.completeShrimp
+    $answer incorrect, .argue.light.unrelatedShrimp
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.light.unrelatedShrimp
+$call ArgueRejectIncorrect()
+{@bayouSci}     Not quite what I'm looking for, O. 
+$branch .argue.light.showShrimp
+
+:: argue.light.completeShrimp
+$call ArgueCancelClaim()
+$call ArgueComplete()
+{@bayouSci}    So their shading is the cause of the reduced oxygen?
+                I'm getting lost in the details. Maybe a visual could better explain?
+$branch .argue.shared.loadModel
+
+
+// Shared
+
+:: argue.shared.loadModel
+$call ArgueLoad(tastropheArgueModel)
+$if ArgueSetClaim(ClaimModel, jobs.bayou-shrimp-tastrophe.argue.claimLabelModel)
+    $call ArgueFactSlot(P_DeadZone.Model.Shrimptastrophe.Sync)
+$endif
+$branch .argue.shared.showModel
+
+:: argue.shared.showModel
+{@bayouSci}    May I see the final model you made?
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.shared.completeModel
+    $answer incorrect, .argue.shared.unrelatedModel
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.shared.unrelatedModel
+$call ArgueRejectIncorrect()
+{@bayouSci}     Not quite what I'm looking for, O. 
+$branch .argue.shared.showModel
+
+:: argue.giveUp
+{@bayouSci}    Okay, then. But don't take too long. A lot of people are waiting on our decision. 
+$call ArgueClearFacts()
+$call ArgueCancelClaim()
+
+// End
+
+:: argue.shared.completeModel
+$call ArgueComplete()
+{@bayouSci}    Yes, I see now. The {nameof Cyanobacteria} shade each other out and the reduction in light causes them stress and then they die.
+                When they die, they turn into detritus.
+                That detritus is food for the decomposers which steal oxygen from the shrimp. If only we could control the {nameof Cyanobacteria}...
+                Your work here has been nothing short of astounding, O!
+                Keep up the good work.
+$call CompleteJob()
+

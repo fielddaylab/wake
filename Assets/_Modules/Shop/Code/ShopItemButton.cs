@@ -10,6 +10,7 @@ namespace Aqua.Shop {
         public Button Button;
         public ColorGroup Outline;
         public PointerListener Listener;
+        public AppearAnim Anim;
 
         [Header("Info")]
         public LocText Title;
@@ -17,11 +18,9 @@ namespace Aqua.Shop {
         public CursorInteractionHint Cursor;
 
         [Header("Cost")]
-        public GameObject LevelRequirementIcon;
-        public LocText LevelRequirementObject;
+        public Image LevelRequirementIcon;
         public LocText CashCost;
         public GameObject CashIcon;
-        public GameObject CostDivider;
 
         [Header("States")]
         public GameObject UnavailableRoot;

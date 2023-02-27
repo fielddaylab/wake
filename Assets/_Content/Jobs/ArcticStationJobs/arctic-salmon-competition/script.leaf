@@ -17,9 +17,11 @@ $call GiveFact(ChinookSalmon.Reproduce.Stressed)
           I wonder if the Arctic Cod are the missing piece. 
           Can you figure out what the Cod eat and add them to our model? 
 {@player}  I'd love to!
-{@profArctic} Um... that wasn't sarcasm, was it?
-{@player}  What? Claro que no, of course not, I just love figuring out stuff like this--
+{@profArctic} .... 
+{@profArctic} Are you being snarky with me, Ollie?  
+{@player}  What? Of course not, I just love figuring out stuff like this--
 {@profArctic}  Okay, okay. I'm just not used to people geeking out about this work as much as I do.
+$set jobs:salmon-competition.sync-failed = false
 
 :: allSet
 @trigger    JobTaskCompleted
@@ -34,6 +36,71 @@ $call GiveFact(ChinookSalmon.Reproduce.Stressed)
 @once
 {@player} Yes!! This model is looking a lot better.
           Can't wait to show {nameof @profArctic}!
+
+
+// MODEL SUGGESTIONS
+
+:: triggerSyncFailure
+@trigger    SimulationSyncError
+@when !jobs:salmon-competition.sync-failed
+@once
+$set jobs:salmon-competition.sync-failed = true
+
+:: helpModelSync.Visual
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(modelFish), scene:name == "Modeling", modeling:phase == "visual"
+@cutscene
+$branch .modelSuggestions
+
+:: helpModelSync.Sync
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(modelFish), scene:name == "Modeling", modeling:phase == "sync"
+@cutscene
+$branch .modelSuggestions
+
+:: modelSuggestions
+$if HasFact(ArcticCod.Eats.Diatoms), HasFact(ArcticCod.Eats.IceAlgae), HasFact(ChinookSalmon.Reproduce), HasFact(ChinookSalmon.Reproduce.Stressed), HasFact(ChinookSalmon.Eats.IceAlgae), HasFact(ChinookSalmon.Eats.Diatoms), IsFactFullyUpgraded(ChinookSalmon.Eats.Diatoms)
+    $if HasFact(Z_OpenOcean.SalmonCompetition.Model.Visual)
+        {@guide}    You're done with this portion! Head to the {h}Describe{/h} tab next.
+    $else
+        {@guide}    Once you import your facts and save the Visual model, we should be good to make our Describe model!
+    $endif
+$else
+    $if !jobs:salmon-competition.sync-failed
+        {@guide}    Time to try out your model in the {h}Describe{/h} tab.
+    $else
+        {@guide}    Seems like we don't have enough information to complete our model accurately.
+                    Look for {h}question marks{/h} in the Visual model interface, those point to where we may need more data.
+        $if !HasFact(ArcticCod.Eats.Diatoms)
+            $branch .suggestArcticCodEat
+        $elseif !HasFact(ArcticCod.Eats.IceAlgae)
+            $branch .suggestArcticCodEat
+        $elseif !HasFact(ChinookSalmon.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(ChinookSalmon.Reproduce.Stressed)
+            $branch .suggestReproduce
+        $elseif !HasFact(ChinookSalmon.Eats.IceAlgae)
+            $branch .suggestChinookSalmonEat
+        $elseif !HasFact(ChinookSalmon.Eats.Diatoms)
+            $branch .suggestChinookSalmonEat
+        $elseif !IsFactFullyUpgraded(ChinookSalmon.Eats.Diatoms)
+            $branch .suggestMeasure
+        $endif
+    $endif
+$endif
+
+:: suggestReproduce
+{@guide}    Did you get all the reproduction rates?
+
+:: suggestMeasure
+{@guide}    Using the {h}Measurement Tank{/h} to find the rates of unmeasured behaviors may help us here.
+
+:: suggestArcticCodEat
+{@guide}    Maybe look into what {nameof ArcticCod} eats?
+
+:: suggestChinookSalmonEat
+{@guide}    Maybe look into what {nameof ChinookSalmon} eats?
+
 
 // CATCH-ALL GUIDE TEXT
 
@@ -113,7 +180,7 @@ $branch .argue.mainQuestion
 
 :: argue.noImpact
 $if ArgueIsComplete(competitionArgue1)
-    {@profArctic}   You already showed me the historic populations of the Artic Cods' prey.
+    {@profArctic}   You already showed me the historic populations of the Arctic Cods' prey.
     $branch .argue.modelQuery
 $else
     $call ArgueLoad(competitionArgue1)

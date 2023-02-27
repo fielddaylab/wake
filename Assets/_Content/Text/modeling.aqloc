@@ -221,16 +221,16 @@ Rodeo Cove Prediction
 {critter-name}Bull Kelp{/critter-name} can still survive in {env-name}Site A{/env-name}.
 
 :: kelpStation.urchinBarrenOtters.name
-Arch Oasis with Otters Model
+Cliffside Oasis with Otters Model
 
 :: kelpStation.urchinBarrenOtters.description
-{env-name}Arch Oasis{/env-name} can be revived by adding {critter-name}Sea Otters{/critter-name}, who will eat the {critter-name}Urchins{/critter-name}.
+{env-name}Cliffside Oasis{/env-name} can be revived by adding {critter-name}Sea Otters{/critter-name}, who will eat the {critter-name}Urchins{/critter-name}.
 
 :: kelpStation.urchinBarren.name
-Arch Oasis Prediction
+Cliffside Oasis Prediction
 
 :: kelpStation.urchinBarren.description
-The {env-name}Arch Oasis{/env-name} Kelp population will remain low.
+The {env-name}Cliffside Oasis{/env-name} Kelp population will remain low.
 
 :: coralStation.sargLightPrediction.name
 Sargassum Covered Reef Light Predition
@@ -248,15 +248,15 @@ The {nameof RedGrouper} population can be safely sustained by significantly redu
 Oxygen Tracking Model in the Trawling Bay
 
 :: bayouStation.deadZoneOxygen.description
-The {critter-name}Decomposing Bacteria{/critter-name} are causing the lack of oxygen in the Trawling Bay.
+{h}Cyanobacteria{/h} produces oxygen; {h}Decomposing Bacteria{/h} and {h}White Shrimp{/h} consume oxygen
 
 :: arcticStation.whaleFallStages.name
 Whale Fall Stages
 
 :: arcticStation.whaleFallStages.description
-Stage 1: Free moving scavangers consume the whale's tissue
-Stage 2: Zombie Worms Increasing
-Stage 3: Decomposition is in its final stages. {critter-name}Zombie Worms{/critter-name} are present but not much else.
+Stage 1: Only free moving scavengers consume the whale's tissue
+Stage 2: Zombie Worms and scavengers are present
+Stage 3: Only {critter-name}Zombie Worms{/critter-name} are present
 
 :: arcticStation.whaleFallStages.sentence
 This model correlates the stages of whale fall to the presence of certain creatures.
@@ -304,7 +304,7 @@ The Giant Kelp here was all eaten by the urchins.
 The {nameof SargassumCoveredReef} will continue to lose {nameof StaghornCoral} as long as {nameof Sargassum} population continues to grow.
 
 :: kelpforest.urchinbarrenvisual.description
-The Arch Oasis food web is missing most of the species found in a kelp forest
+The Cliffside Oasis food web has only two species commonly found in a kelp forest: giant kelp and urchins.
 
 :: kelpForest.mixedKelpForest.RefugeConcept.description
 
@@ -355,7 +355,7 @@ This seems to represent all of the possible behaviors in the system.
 Modelling Reef Removal
 
 :: bayouStation.turtleNoReefInterveneDesc
-The turtle populations are maintained when the rig and reef species are removed.
+The turtle populations do not change when the reef species that depend on the rig are removed.
 
 :: O_OilRig.turtleDanger.header
 Descriptive Validated Model of the species found at Site O
@@ -391,7 +391,7 @@ Yummy Whale Fall
 The Tang aren't eating enough algae to make the model align with the historical populations
 
 :: coralStation.muchAlgaeVisual
-The only species eating Turf Algae is the Blue Tang
+The only species eating {nameof TurfAlgae} is the {nameof BlueTang}
 
 :: bayouStation.turtleNoReefPredict
 Modelling Reef Prediction
@@ -512,4 +512,25 @@ Numerical Model of {nameof RS-2S} including Ick
 
 :: coralStation.ickStressDescribe.desc
 {nameof Ick} has caused {nameof BlueTang} populations to struggle
+
+:: bayouStation.shrimptastrophe.sync.description
+A chain of events that starts with a spike in {h}Cyanobacteria{/h} and ends with high populations of {h}Decomposing Bacteria{/h} and low populations of {h}White Shrimp{/h}
+
+:: bayouStation.shrimptastrophe.visual.description
+A view of the {nameof RS-3P} food ecosystem
+
+:: finalStation.final.header
+Visual model of the {nameof RS-0}
+
+:: finalStation.final.description
+The attacker consumes organisms with white light and avoids red light organisms
+
+:: coralStation.muchAlgaeVisual.head
+Site S Visual Model
+
+:: coralStation.muchAlgaeDescriptive.header
+Numerical Model of {nameof RS-2S}
+
+:: coralStation.muchAlgaeDescriptive.desc
+{nameof BlueTang} are consuming less {nameof TurfAlgae} than expected
 

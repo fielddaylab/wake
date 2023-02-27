@@ -10,24 +10,79 @@
 // Generic
 
 #NoJobHandler(a)
-{@$JobGiverId}  Would you like to see the {h}Job Board{/h}, Mija?
-$choice .action.openJobBoard; Sure!
-$choice .action.cancel; No thanks.
+$if SpecterCount() >= 5, !jobs:specter5-worried.discussed
+    // STORY BEAT F
+    {@player}   Mom, I'm worried about Sam. They should've contacted me by now.
+                I think something might've gone wrong down there.
+    {@$JobGiverId} Oh, Olivia. I understand how you feel.
+                    But sometimes these missions take time. 
+                   I'm sure Sam is perfectly fine.
+    {@player}   But Mom--
+    {@$JobGiverId} I know what you need, Sweetie. Some work to take your mind off things! 
+    // You tell Mom you're worried about Sam and all these weird, glitchy messages. She tells you not to worry, Sam is fine. 
+    $set jobs:specter5-worried.discussed = true
+$else
+    {@$JobGiverId}  Would you like to see the {h}Job Board{/h}, Mija?
+    $choice .action.openJobBoard; Sure!
+    $choice .action.cancel; No thanks.
+$endif
+
+#NoJobHandler(postFinalJob, JobCompleted(final-final))
+@once
+{@$JobGiverId} Oh, Mija. You're back! 
+{@$JobGiverId} Thank goodness you're okay.
+{@$JobGiverId} I heard that your uncle powered your ship back up...
+{@$JobGiverId} Even after I tried to stop you. 
+{@player} Mom, don't be mad at Tío. This was my choice.
+{@player} I had to save Sam. I'm not a kid anymore. And if you want to put me on probation again– 
+{@$JobGiverId} No, Sweetie. I was going to say...
+{@$JobGiverId} You were amazing. I'm so proud of you.  
+{@$JobGiverId} I didn't want to lose you. But obviously you can handle more than I realized.
+{@player} ....Oh.
+{@player} Thanks, Mom. You too. 
+
+#NoJobHandler(articleAfterTransmission, HasJournalEntry("N02_LosingConnection"))
+@once
+{@$JobGiverId} Olivia, welcome back!
+{@$JobGiverId} Have you seen this? 
+{@$JobGiverId} The Oceanic Times did a profile on your friend! 
+{@player} Wow... really? 
+{@$JobGiverId} Here, take a look! Such a nice photo of them. 
+$call GiveJournalEntry("N33_SamArticle")
+
+:: ContinueAfterSamArticle
+@trigger    JournalHidden
+@when       HasJournalEntry("N33_SamArticle")
+@once
+@cutscene
+{@$JobGiverId} Aw, Mija... don't look so sad.
+{@$JobGiverId} I know you wanted to go on that mission, too.
+{@$JobGiverId} But you're doing such an amazing job here. I'm so grateful for your help!
 
 #WrongStationJobHandler(a)
-{@$JobGiverId}  Looks like you've got a job at another station. 
+$if JobInProgress(final-final)
+    // Final job case: Player talks to mom, but job is set in deep deep sea
+    $branch .action.report
+$else
+    {@$JobGiverId}  Looks like you've got a job at another station. 
                 If you have questions, you should probably head back there. 
                 Though if you want to stay and help me with the Kelp Refuge, I wouldn't say no...
     $choice .action.openJobBoard; Sure. Let me see the {h}Job Board{/h}.
     $choice .action.cancel; Never mind, Mom. I'll check back later. 
+$endif
 
 #WrongStationJobHandler(b)
-{@$JobGiverId}  Looks like you took a job at another station. 
+$if JobInProgress(final-final)
+    // Final job case: Player talks to mom, but job is set in deep deep sea
+    $branch .action.report
+$else
+    {@$JobGiverId}  Looks like you took a job at another station. 
                 You'll have to talk to them for the details.
                 Could always take a job here, though...
                 Still want to see the {h}Job Board{/h}?
     $choice .action.openJobBoard; Sure. Thanks, Mom!
     $choice .action.cancel; Nah. I'll check back later. 
+$endif
 
 #JobHandler(a)
 {@$JobGiverId}  {random Olivia! Do you need help with something?|Welcome back, Sweetie! ¿Qué pasa?|Do you need something, Mija?} 
@@ -47,13 +102,8 @@ $endif
 @when       JobIsAtCurrentStation(), JobInProgress(kelp-shop-welcome)
 @cutscene
 @once
-$branch interior.kelpStation.warpMechanicToResearcher
-{@drKelp}  One more thing, Mija! I'm having {nameof @guide} update your ship's map.  
-            You can access your map from the Helm of your ship.  
-{@player}   Thanks mom!
-{@kelpMechanic} Before you go Mijita, we should get your sub upgraded.
-{@drKelp}   Thanks for reminding me Enrique. | Why don't you stop by before you go sweetie?
-$branch interior.kelpStation.warpMechanicToDefault
+{@drKelp}  Your uncle is waiting to chat with you!
+{@drKelp}  He'll help you upgrade your sub. 
 
 :: action.cancel
 @cutscene

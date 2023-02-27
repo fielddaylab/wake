@@ -270,6 +270,17 @@ namespace Aqua
 
             yield return journalMenu;
 
+            // specters
+
+            DMInfo specterMenu = new DMInfo("Specters");
+
+            specterMenu.AddButton("Queue Specter", () => Save.Science.QueueSpecter());
+            specterMenu.AddButton("Reset Specter Timer", () => Script.WriteVariable("world:specter.lastSeenTime", 0), () => Script.ReadVariable("world:specter.lastSeenTime").AsFloat() > 0);
+            specterMenu.AddDivider();
+            specterMenu.AddToggle("Set Decrypted", () => Script.ReadVariable(ScienceData.Var_FullyDecrypted).AsBool(), (b) => Script.WriteVariable(ScienceData.Var_FullyDecrypted, b));
+
+            yield return specterMenu;
+
             // save data menu
 
             DMInfo saveMenu = new DMInfo("Player Profile");

@@ -15,20 +15,27 @@ $call hotbar.guide->Lock()
 $call hotbar.portable->Lock()
 $call StationEntrance->Deactivate()
 $call Player->TeleportTo(IntroSpawn)
-$call CameraSnapToTarget()
+$call CameraSnapToPose("IntroCameraPoseA")
 {wait 0.5}
 
 $set world:intro.completed = false
-{@player} Wow, this place looks so different at night!
-{@player} Tío, you still there? 
+$set jobs:num-specters-seen = 0
+{@player} Wow... this place looks so different at night. 
+{@player} Tío, are you still there? 
 {fade-in 3}
+$fork   .introCameraPan
 {@kelpMechanic} Sí, mijita. I can hear you on the comms.
-{@kelpMechanic} Keep exploring. The computer will calculate your score. 
-{@player} Thanks, Tío. 
-{@player} Just... don't let Mom find out.
+{@kelpMechanic} Keep exploring. Your driver's test is almost done. 
+{@kelpMechanic} A few more seconds, and the computer will be able to calculate your score. 
+{@player} Gracias, Tío. 
+{@player} Just... don't tell Mom I'm out here, okay?
 {@kelpMechanic} No promises, Ollie. 
 {hide-dialog}
+$join
 $start .tutorialMove
+
+:: introCameraPan
+$call CameraRecenterOnTarget(4)
 
 // Intro tutorial
 
@@ -39,19 +46,30 @@ $start .tutorialMove
 {style center}
     Use the {h}Mouse{/h} or the {h}[W][A][S][D]{/h} keys to move your Sub
 {hide-dialog}{fade-in 0.5, wait}
-{/cutscene}
+{/cutscene} {release-dialog}
+$call CameraSetMode(Hinted)
+
+:: tutorialMoveCompleted
+@trigger    PlayerExitRegion
+@when       regionId == "IntroMovement"
+@once
 $CutsceneDelayed(8, .intro-part2)
 
 :: intro-part2
 @cutscene
 {@drKelp}Olivia?? Is that you out there?
 {@player}Uh oh.
-{@player}Mom, I can explain--
-{@drKelp}Sweetie, what were you thinking?! Taking the sub out at night, after last time?
-{@drKelp}Come back to the {m}Kelp Station{/m} immediately.
-{@drKelp}And be careful!
-{@player}Copy that, Mom. On my way.
+{@player}Mom, I can explain——
+{@drKelp} Sweetie, what were you thinking?? Taking the sub out at night, after last time? 
+{@drKelp}Come back to the {m}Station{/m} immediately.
+{hide-dialog}{fade-out black, 0.5, wait}
+$call CameraSnapToPose("StationCameraPose")
 $call StationEntrance->Activate()
+{fade-in 0.5, wait}{wait 1}
+{@drKelp}And be careful!
+{hide-dialog}
+$call CameraRecenterOnTarget(2)
+$call CameraSetMode(Hinted)
 
 // Intro
 
@@ -77,25 +95,26 @@ $call Uncle->TeleportTo(tio-intro-pos)
 @cutscene
 @once
 
-{@drKelp}Olivia! Honey, thank goodness you're okay!
-{@player}I'm fine, Mom. It was no big deal. 
-{@drKelp}Enrique, I can't believe you let her go out there. 
-{@drKelp}She's on probation! She could've crashed, she could've gotten lost--
+{@drKelp}Olivia! Mija, thank goodness you're okay!
+{@drKelp} Rico, I can't believe you let her take the sub out at night.
+{@drKelp} She's on probation! She could've crashed again, she could've gotten lost——
 {@kelpMechanic}Actually, she's not on probation anymore. 
-{@kelpMechanic}Good news, mijita. You passed.  
+{@kelpMechanic}Good news, mijita. You passed.
 {@player}YES!!!
-{@drKelp}Wow. Olivia.|.|.|
-{@drKelp}This is fantastic! You're a junior scientist now!
-{@drKelp}And just in time. I could really use your help. 
-{@player}You mean...| you want me to work here!? At the {nameof RS-1C}? 
-{@drKelp}Of course! You know this place better than anyone. 
-{@drKelp}Sun's almost up. Let's get you started with your first job!
+{@drKelp} Wow. Olivia... this is fantastic!
+{@drKelp} And just in time. I could use your help around here.
+{@player} Here? But... what about the Nautilus mission?
+{@player} I want to help find the Challenger Deep!
+{@drKelp} Oh, Mija. I'm sorry. That mission already left last night. 
+{@drKelp} Besides, the Lower Depths are too dangerous. 
+{@drKelp} You can do so much good right here!  
+{@drKelp}Sun's almost up. Let's get you started with your first job. 
 $call InteriorOpenJobBoard()
 $set global:Act1.TalkedToMomMad = true
 {hide-dialog}
 {wait 0.5}
 {@drKelp}   This is your {map-name}Job Board{/map-name}.
-            Go ahead. Select a job on the left.
+            Select a job on the left.
             Then accept it on the right!
 
 :: LoopKelpWelcome
@@ -103,7 +122,8 @@ $set global:Act1.TalkedToMomMad = true
 @who        drKelp
 @when       !JobStartedOrComplete(kelp-welcome)
 @cutscene
-{@drKelp}   You think you're ready to handle more responsibility? Complete this task for me and we'll see about giving you more to do around here. 
+{@drKelp}   You've got your first job, Olivia! 
+{@drKelp} Let's see how it goes, and then I'll think about giving you more to do around here.  
 $call InteriorOpenJobBoard()
 
 // :: momMad

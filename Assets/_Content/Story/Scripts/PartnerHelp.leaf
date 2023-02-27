@@ -2,26 +2,6 @@
 
 // No job
 
-:: noJob.intro
-@trigger    RequestPartnerHelp
-@when       !player:currentJob, !guide:knowsJobs, !AnyJobsCompleted()
-@boostScore 10000
-@once
-@cutscene
-{@player}   So... what are we supposed to be doing? 
-{@guide #happy}    In case you forgot, we need to make some money. 
-$if guide:seenShipHelm
-            You should check the {map-name}Job Board{/map-name}.
-$else
-            Is there anywhere we can see available jobs?
-    $if scene:name == "Helm", global:nav.shipRoom == "helm"
-            {@player}   Oh, yeah, the {map-name}Job Board{/map-name} is right in front of us!
-    $else
-            {@player}   Oh yeah, we have a {map-name}Job Board{/map-name} in the helm!
-    $endif // scene:name == "Helm", global:nav.shipRoom == "helm"
-$endif // guide:seenShipHelm
-$set    guide:knowsJobs = true
-
 :: noJob.available
 @trigger    RequestPartnerHelp
 @when   !player:currentJob, !AnyJobsAvailable($player:currentStation)

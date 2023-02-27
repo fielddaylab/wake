@@ -6,6 +6,8 @@ using BeauUtil;
 using BeauData;
 using System.Text.RegularExpressions;
 using BeauUtil.Debugger;
+using System;
+using UnityEngine;
 
 namespace Aqua.Editor {
     static public class ProgressionGraph {
@@ -23,6 +25,7 @@ namespace Aqua.Editor {
         }
 
         static private void GenerateAssetsList(JSON nodes, JSON starting) {
+            ValidationUtils.FindAsset<ScienceTweaks>().EditorApply();
             GenerateItemList(nodes, starting);
             GenerateJobsList(nodes, starting);
             GenerateMapList(nodes, starting);
@@ -90,11 +93,11 @@ namespace Aqua.Editor {
                     starting[obj.name].AsUInt = obj.DefaultAmount();
                 }
 
-                if (obj.HasFlags(InvItemFlags.Hidden)) {
+                if (obj.HasFlags(InvItemFlags.Hidden) && obj.Id() != ItemIds.FlashlightCoordinates) {
                     itemJSON["unlockType"].AsString = "manual";
                 }
 
-                if (obj.Category() != InvItemCategory.Currency || obj.CashCost() > 0 || obj.RequiredExp() > 0) {
+                if (obj.Category() != InvItemCategory.Currency || obj.CashCost() > 0 || obj.RequiredLevel() > 0) {
                     itemJSON["type"].AsString = "item";
                     AddRequirement(itemJSON, "Shop");
                 } else {
@@ -105,8 +108,8 @@ namespace Aqua.Editor {
                 if (obj.CashCost() > 0) {
                     AddRequirement(itemJSON, ItemIds.Cash, obj.CashCost(), true);
                 }
-                if (obj.RequiredExp() > 0) {
-                    AddRequirement(itemJSON, ItemIds.Exp, obj.RequiredExp());
+                if (obj.RequiredLevel() > 0) {
+                    AddRequirement(itemJSON, ItemIds.Exp, (int) ScienceUtils.TotalExpForLevel((uint) obj.RequiredLevel()));
                 }
                 if (obj.Prerequisite()) {
                     AddRequirement(itemJSON, obj.Prerequisite().name);
@@ -125,6 +128,12 @@ namespace Aqua.Editor {
                 JSON jobJSON = JSON.CreateObject();
 
                 jobJSON["type"].AsString = "job";
+
+                JSON difficulties = jobJSON["difficulty"];
+
+                int totalDifficulty = obj.Difficulty(ScienceActivityType.Experimentation) + obj.Difficulty(ScienceActivityType.Modeling) + obj.Difficulty(ScienceActivityType.Argumentation);
+                difficulties["total"].AsInt = totalDifficulty;
+                difficulties["max"].AsInt = Mathf.Max(obj.Difficulty(ScienceActivityType.Experimentation), obj.Difficulty(ScienceActivityType.Modeling), obj.Difficulty(ScienceActivityType.Argumentation));
 
                 if (!obj.StationId().IsEmpty) {
                     AddRequirement(jobJSON, obj.StationId());
@@ -203,6 +212,8 @@ namespace Aqua.Editor {
                 AddResult(itemJSON, ItemIds.WaterModeling);
             } else if (id == ItemIds.WaterModeling || id == ItemIds.SyncModel || id == ItemIds.WaterStabilizer || id == ItemIds.AutoFeeder) {
                 itemJSON["unlockType"].AsString = "manual";
+            } else if (id == ItemIds.FlashlightCoordinates) {
+                AddResult(itemJSON, "FinalStation");
             }
         }
 

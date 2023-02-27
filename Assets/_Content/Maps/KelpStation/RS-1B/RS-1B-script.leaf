@@ -1,1 +1,9 @@
 # basePath RS-1B
+
+:: OnScanSub
+@trigger    ScannedObject
+@when       scanId == "RS-1B.crashedSub"
+@cutscene
+@once
+{@player}   Woah. That takes me back.
+$call GiveJournalEntry("N10_CrashedSub")

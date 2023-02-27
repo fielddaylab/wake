@@ -1,3 +1,7 @@
+// #if (UNITY_EDITOR && !IGNORE_UNITY_EDITOR) || DEVELOPMENT_BUILD
+// #define DEVELOPMENT
+// #endif
+
 using System.Collections.Generic;
 using BeauUtil;
 using BeauUtil.Tags;
@@ -5,9 +9,37 @@ using UnityEngine;
 
 namespace Aqua.Profile {
     static public class SavePatcher {
-        public const uint CurrentVersion = 3;
+        // 1: fix all unlocked by default sites
+        // 2: ???
+        // 3: fix for softlock in first job
+        // 4: exp->levels, adjusting starting exp
+        // 5: story
+        public const uint CurrentVersion = 5;
+
+        private const uint ValidVersionThreshold = 5;
+
+        public enum SaveType {
+            Player,
+            Bookmark
+        }
 
         static private Dictionary<StringHash32, StringHash32> s_RenameSet = new Dictionary<StringHash32, StringHash32>(32);
+
+        static public bool IsValid(SaveData ioData, SaveType inType) {
+            #if DEVELOPMENT
+            return true;
+            #else
+            switch(inType) {
+                case SaveType.Player: {
+                    return ioData.Version >= ValidVersionThreshold;
+                }
+
+                default: {
+                    return true;
+                }
+            }
+            #endif // DEVELOPMENT
+        }
 
         static public bool TryPatch(SaveData ioData) {
             if (ioData.Version == CurrentVersion)
@@ -19,15 +51,17 @@ namespace Aqua.Profile {
         }
 
         static private void Patch(SaveData ioData) {
-            if (ioData.Version == 0) {
+            if (ioData.Version < 1) {
                 UpgradeFromVersion0(ioData);
+            }
+            if (ioData.Version < 2) {
                 UpgradeFromVersion1(ioData);
+            }
+            if (ioData.Version < 3) {
                 UpgradeFromVersion2(ioData);
-            } else if (ioData.Version == 1) {
-                UpgradeFromVersion1(ioData);
-                UpgradeFromVersion2(ioData);
-            } else if (ioData.Version == 2) {
-                UpgradeFromVersion2(ioData);
+            }
+            if (ioData.Version < 4) {
+                UpgradeFromVersion3(ioData);
             }
         }
 
@@ -50,6 +84,10 @@ namespace Aqua.Profile {
                 ioData.Map.UnlockRoom("Experimentation");
                 ioData.Inventory.AddUpgrade("ObservationTank");
             }
+        }
+        static private void UpgradeFromVersion3(SaveData ioData) {
+            ioData.Inventory.SetItemWithoutNotify(ItemIds.Exp, ioData.Inventory.Exp() - 10);
+            ioData.Science.SetCurrentLevelWithoutNotify(ScienceUtils.LevelForTotalExp(ioData.Inventory.Exp()));
         }
 
         #region Patching Ids

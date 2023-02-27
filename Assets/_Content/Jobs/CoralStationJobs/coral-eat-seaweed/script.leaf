@@ -148,7 +148,10 @@ $call ArgueComplete()
 {@player} Yes!! Now we just need to get some Urchins in there, and adios, Sargassum!
 {@profCoral} Hmmm. Though I wonder how Urchins might affect the rest of the ecosystem. 
 			 I've heard they can destroy Kelp Forests...
-			 Well, at least we've got a place to start. Thank you for your help, Ollie. 
+$if HasUpgrade(StressTank)
+{@profCoral} Furthermore, it's interesting that the {pluralnameof Urchin} are stressed in this environment.
+			 I wonder if that has an impact on the system.
+$endif
 $call CompleteJob()
 
 :: argue.unrelated
@@ -156,7 +159,7 @@ $if ArgueIsFactSubmitted(Urchin.Eats.Sargassum)
 	$branch .argue.urchin
 $else
 	{@profCoral} That isn't helpful here, Ollie. 
-	{@profCoral} We need evidence that Urchins eat Sargasum. 
+	{@profCoral} We need evidence that Urchins eat Sargassum. 
 	$call ArgueRejectIncorrect()
 	$goto .argue.evidence
 $endif

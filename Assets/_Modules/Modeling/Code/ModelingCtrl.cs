@@ -67,7 +67,7 @@ namespace Aqua.Modeling {
                 PopupContent content = default;
                 content.Text = Loc.Find(t);
                 content.TextColorOverride = c;
-                m_InlinePopup.Present(content, 0);
+                m_InlinePopup.Present(ref content, 0);
             };
             m_State.Display.FactsPopup = (f) => {
                 Array.Sort(f, BFType.SortByVisualOrder);
@@ -83,7 +83,7 @@ namespace Aqua.Modeling {
                 PopupContent content = default;
                 content.Facts = facts;
 
-                m_InlinePopup.Present(content, 0);
+                m_InlinePopup.Present(ref content, 0);
             };
             m_State.Display.ClearPopup = () => m_InlinePopup.Hide();
             m_State.Display.FilterNodes = (any, all, none, force) => {
@@ -361,13 +361,7 @@ namespace Aqua.Modeling {
 
         private void OnInterventionUnsuccessful() {
             Services.Events.Dispatch(ModelingConsts.Event_Intervene_Error);
-            Services.UI.Popup.Display(
-                // TODO: modify description depending on whether the player is above or below the target
-                Loc.Find("modeling.noIntervenePopup.header"), Loc.Find("modeling.noIntervenePopup.description")
-            ).OnComplete((_) => {
-                Services.Script.TriggerResponse(ModelingConsts.Trigger_InterveneError);
-            });
-            Services.Audio.PostEvent("syncDenied");
+            Services.Script.TriggerResponse(ModelingConsts.Trigger_InterveneError);
         }
 
         private void OnAnimationStart() {

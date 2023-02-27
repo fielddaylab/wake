@@ -14,7 +14,7 @@
 {@player}   Wow, that's amazing!
             How can I help?
 {@profArctic} To start with, you'll need to venture below the ice and track down a Ribbon Seal. 
-              Use your {nameof Icebreaker} to reach the {m}Ephemeral Impass{/m}.
+              Use your {nameof Icebreaker} to reach the {m}Ephemeral Impasse{/m}.
 
 // DEFINING DIALOGUE
 
@@ -94,7 +94,7 @@ $endif
 @when 		JobTaskActive(findHabitat)
 @boostScore -5
 @cutscene
-{@guide}    Head to the {m}Ephemeral Impass{/m} and find where {pluralnameof RibbonSeal} live.
+{@guide}    Head to the {m}Ephemeral Impasse{/m} and find where {pluralnameof RibbonSeal} live.
 
 :: catchFindRibbon
 @trigger    RequestPartnerHelp
@@ -214,6 +214,7 @@ $call ArgueComplete()
 {@player}     Yeah. A little eerie, too. 
 {@profArctic} Really? I find it comforting. All that ice and quiet. 
               But if ice crevices aren't your thing, no biggie. I'm sure I can find someone else for the next job--
+$call GiveJournalEntry("N27_RibbonSeals", Silent)
 {@player}     Oh, there's another job down there?? What is it? When do I leave? 
 {@arcticSci}  Well, now you really sound like your sister. 
 {@profArctic} It's all yours if you want it, Ollie. Just check the Job Board when you're ready. 

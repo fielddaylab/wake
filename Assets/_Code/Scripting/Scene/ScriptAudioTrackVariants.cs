@@ -57,6 +57,8 @@ namespace Aqua.Scripting {
         private AudioGroup m_BaseAudio;
         private Routine m_WaitHandle;
         private Routine m_ThinkUpdate;
+        private Routine m_GroupVolumeRoutine;
+        private readonly AudioHandleGroup m_HandleGroup = new AudioHandleGroup();
 
         private AudioHandle m_CurrentSingleAudio;
 
@@ -64,9 +66,12 @@ namespace Aqua.Scripting {
 
         private void OnEnable() {
             m_BaseAudio.Handle = Services.Audio.PostEvent(m_BaseEventId, AudioPlaybackFlags.PreloadOnly);
+            m_BaseAudio.Handle.SetGroup(m_HandleGroup);
             m_BaseAudio.Handle.SetVolume(0);
+
             foreach (var layer in m_Layers) {
                 layer.Group.Handle = Services.Audio.PostEvent(layer.EventId, AudioPlaybackFlags.PreloadOnly);
+                layer.Group.Handle.SetGroup(m_HandleGroup);
                 layer.Group.Handle.SetVolume(0);
                 if (layer.PlayerTrigger && !layer.PlayerListener) {
                     Layer cachedLayer = layer;
@@ -242,6 +247,19 @@ namespace Aqua.Scripting {
                     UpdatePlayingTracks();
                 }
             }
+        }
+
+        [LeafMember("SetVolume")]
+        public void SetVolume(float volume, float duration = 0) {
+            if (!isActiveAndEnabled || duration <= 0) {
+                m_HandleGroup.Properties.Volume = volume;
+                m_GroupVolumeRoutine.Stop();
+                return;
+            }
+
+            m_GroupVolumeRoutine.Replace(this, 
+                Tween.Float(m_HandleGroup.Properties.Volume, volume, (f) => m_HandleGroup.Properties.Volume = f, duration)
+            );
         }
 
         #if UNITY_EDITOR

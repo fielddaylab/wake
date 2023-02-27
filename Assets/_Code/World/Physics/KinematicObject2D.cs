@@ -25,13 +25,19 @@ namespace Aqua
         public LayerMask SolidMask;
 
         [NonSerialized] public Transform Transform;
-        [NonSerialized] public RingBuffer<PhysicsContact> Contacts = new RingBuffer<PhysicsContact>(16, RingBufferMode.Overwrite);
+        
+        [NonSerialized] public unsafe PhysicsContact* Contacts;
+        [NonSerialized] public int ContactCount;
 
         [NonSerialized] public Vector2 AccumulatedForce;
         [NonSerialized] public float AdditionalDrag;
 
+        [NonSerialized] public float ScaledForceMultiplier = 1;
+
         [NonSerialized] public float AdditionalDragMultiplier = 1;
         [NonSerialized] public float AccumulatedForceMultiplier = 1;
+
+        [NonSerialized] public CastableEvent<KinematicObject2D> OnContact = new CastableEvent<KinematicObject2D>();
 
         #endregion // Inspector
 

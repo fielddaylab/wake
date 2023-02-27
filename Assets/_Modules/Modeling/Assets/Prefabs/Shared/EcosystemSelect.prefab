@@ -171,6 +171,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  m_Outline: 0
+  m_Thickness: 1
 --- !u!1 &3947860759692576988
 GameObject:
   m_ObjectHideFlags: 0
@@ -289,6 +291,9 @@ MonoBehaviour:
   m_Category: 1
   m_IgnoreFlags: 0
   m_ToggleGroup: {fileID: 8775475671178897820}
+  m_ScrollLayout: {fileID: 3516937608315415298}
+  m_ScrollLayoutGroup: {fileID: 2208129136973928881}
+  m_ScrollCanvasGroup: {fileID: 4934206808026678191}
   m_ButtonPool:
     m_Prefab: {fileID: 8413770293989733922, guid: f93fb8cd1292457469d91cca6de8c1cb,
       type: 3}
@@ -311,6 +316,7 @@ MonoBehaviour:
     m_ResetTransformOnAlloc: 0
   m_MinIcons: 8
   m_PerRow: 4
+  m_AnimateIntervalMultiplier: 0.2
 --- !u!1 &5705979677986337323
 GameObject:
   m_ObjectHideFlags: 0
@@ -321,6 +327,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5233100738003328591}
   - component: {fileID: 2196930781115940798}
+  - component: {fileID: 4934206808026678191}
   m_Layer: 0
   m_Name: Viewport
   m_TagString: Untagged
@@ -362,6 +369,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Padding: {x: 0, y: 0, z: 0, w: 0}
   m_Softness: {x: 0, y: 0}
+--- !u!225 &4934206808026678191
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5705979677986337323}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &8061273565718693725
 GameObject:
   m_ObjectHideFlags: 0

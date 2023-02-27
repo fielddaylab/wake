@@ -33,11 +33,14 @@ Open Task List
 :: save.saving
 Saving
 
+:: save.error
+Retrying
+
 :: save.complete
 Saved!
 
 :: loading
-Loading
+Loading...
 
 :: options.title
 Settings
@@ -103,8 +106,7 @@ Your currently assigned Job is at this Station.
 Ship Out
 
 :: boot.prompt
-Click Or Tap The Screen
-To Continue
+Click Or Tap Anywhere To Continue
 
 :: boot.ready
 Wake
@@ -123,6 +125,48 @@ Travel to Ship
 
 :: loadingStation
 Traveling to {map-name}{0}{/map-name}
+
+:: scan.progress
+Scanning
+
+:: level.clearanceLevelLabel
+Clearance
+Level
+
+:: dialog.next
+Next
+
+:: station.view.rescue
+Rescue Sam & Co.
+
+:: loading.lengthy
+Your internet connection is slow or unstable.
+
+:: interact.map.button.final
+Go Deeper
+
+:: loading.retryPrompt
+Your internet connection is slow or unstable.
+Downloading assets has failed.
+
+:: loading.retryButton
+Try Again
+
+:: boot.errors
+Your internet connection is not ideal.
+Loading times may be affected.
+
+:: worldMap.legend.current
+Current Job
+
+:: worldMap.legend.new
+Unvisited
+
+:: worldMap.shipOutBlocked
+Already Here
+
+:: worldMap.legend
+Legend
 
 # basePath ui.popup
 
@@ -152,9 +196,17 @@ New Organism Entry
 New Ecosystem Entry
 {env-name}{0}{/env-name}
 
+:: newBestiary.specter.header
+Data Transmission Received
+{critter-name}{0}{/critter-name}
+
+:: newBestiary.specter.description
+This information requires a {h}private key{/h} to decode.
+<margin-left=1.5em><alpha=#AA>{0}
+
 :: jobComplete.header
 Job Completed
-{0}
+<size=80%>{0}
 
 :: jobComplete.description
 Nice work!
@@ -166,13 +218,10 @@ Earned {cash}{0}{/cash}
 Earned {exp}{0}{/exp}
 
 :: levelUp.header
-Science Rank Up
-Level {0}
+Rank Up!
 
 :: levelUp.description
-Your {h}Science Rank{/h} increased from {0} to {1}!
-
-You have been awarded a bonus of {cash}{2}{/cash}!
+Your {h}Clearance Level{/h} increased to {0}!
 
 :: okay
 Okay
@@ -194,6 +243,18 @@ Present
 
 :: knownFactBadge
 Already Known
+
+:: jobComplete.earned
+You earned:
+
+:: jobComplete.quote.1
+Nice work!
+
+:: jobComplete.quote.2
+Great job!
+
+:: jobComplete.quote.3
+Thanks for your help!
 
 # basePath ui.title
 
@@ -257,6 +318,16 @@ Your save may have been created with an incompatible version of the game.
 
 This shouldn't occur under normal circumstances, so please report your save name to the developers so we can investigate.
 
+:: earlyAccessFile.header
+Unsupported Save Data
+
+:: earlyAccessFile.description
+Your save was created with a pre-launch version of the game.
+
+Unfortunately, due to the significant amount of new content added since that version, we cannot support older save files.
+
+We're sorry for the inconvenience, but we believe the game is best experienced fresh from this point on.
+
 :: nsf
 With Support From
 
@@ -270,7 +341,7 @@ Wake
 Created By:
 
 :: subtitle
-Tales from the Aqualab
+Tales from the AquaLab
 
 :: workingLabel
 working title
@@ -284,6 +355,9 @@ Tales From The
 
 :: subtitleB
 AQUALAB
+
+:: credits
+Credits
 
 # basePath ui.ship
 
@@ -358,7 +432,7 @@ Cabin
 Talk to V1ct0r
 
 :: map.header
-The Meredith
+The AquaLab
 
 :: map.subheader
 Research Vessel
@@ -553,6 +627,24 @@ Bayou Station
 :: station.label.arctic
 Arctic Station
 
+:: RS-0-Final.chalDeep.tooltip
+Activate Challenger Deep
+
+:: final.station.name
+Deep Sea Station
+
+:: label.final.lowerDepths
+Lower Depths
+
+:: warning.o2
+O2 Warning
+
+:: warning.engine
+Engine Warning
+
+:: warning.pressure
+Pressure Warning
+
 # basePath ui.journal
 
 :: nextPage
@@ -568,7 +660,7 @@ Personal
 All
 
 :: depthsTag
-Lower Depths
+Challenger Deep
 
 :: arcticTag
 Arctic

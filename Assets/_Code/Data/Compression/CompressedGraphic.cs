@@ -74,15 +74,18 @@ namespace Aqua.Compression {
     public struct CompressedImage {
         [FieldOffset(0)] public CompressedGraphic Graphic;
         [FieldOffset(4)] public ushort SpriteIdx;
+        [FieldOffset(6)] public ushort Flags;
 
         static public void Compress(PackageBuilder compressor, Image image, out CompressedImage data) {
             CompressedGraphic.Compress(image, out data.Graphic);
             data.SpriteIdx = compressor.AddAsset(image.sprite);
+            data.Flags = image.preserveAspect ? (ushort) 1 : (ushort) 0;
         }
 
         static public void Decompress(PackageBank bank, in CompressedImage data, Image image) {
             CompressedGraphic.Decompress(data.Graphic, image);
             image.sprite = (Sprite) bank.GetAsset(data.SpriteIdx);
+            image.preserveAspect = (data.Flags & 1) != 0;
         }
     }
 
@@ -110,12 +113,12 @@ namespace Aqua.Compression {
         [FieldOffset(15)] public byte CharacterSpacing;
         [FieldOffset(16)] public byte WordSpacing;
         [FieldOffset(17)] public byte LineSpacing;
-        [FieldOffset(18)] public byte Wrapping;
-        [FieldOffset(19)] public byte Overflow;
-        [FieldOffset(20)] public byte Margin0;
-        [FieldOffset(21)] public byte Margin1;
-        [FieldOffset(22)] public byte Margin2;
-        [FieldOffset(23)] public byte Margin3;
+        [FieldOffset(18)] public byte Margin0;
+        [FieldOffset(19)] public byte Margin1;
+        [FieldOffset(20)] public byte Margin2;
+        [FieldOffset(21)] public byte Margin3;
+        [FieldOffset(22)] public byte Wrapping;
+        [FieldOffset(23)] public byte Overflow;
 
         static public void Compress(PackageBuilder compressor, TMP_Text text, out CompressedTextMeshPro data) {
             CompressedGraphic.Compress(text, out data.Graphic);
@@ -158,8 +161,8 @@ namespace Aqua.Compression {
         }
 
         static private readonly CompressionRange FontSizeRange = new CompressionRange(0, 512);
-        static private readonly CompressionRange SpacingRange = new CompressionRange(0, 100);
-        static private readonly CompressionRange MarginRange = new CompressionRange(0, 100);
+        static private readonly CompressionRange SpacingRange = new CompressionRange(-100, 100);
+        static private readonly CompressionRange MarginRange = new CompressionRange(-100, 100);
     }
 
     public struct CompressedLocText {

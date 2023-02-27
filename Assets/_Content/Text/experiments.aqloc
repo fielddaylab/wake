@@ -46,7 +46,7 @@ Add Organisms
 You're more likely to discover new facts if you try different combinations of organisms and tank settings.
 
 :: summary.noFacts
-New observations are more likely to occur if you place new combinations of organisms into the tank together.
+It doesn't look like there was a relationship between these species. Keep trying with other species.
 
 :: summary.missedFacts
 If you're not careful, an organism will exhaust its food supply before you have a chance to observe it eating.
@@ -109,6 +109,27 @@ Eating Rate Instructions
 :: button.measure
 Analyze Data
 
+:: button.addEcosystem.activeJob
+Active Job
+
+:: button.addOrganism.inEcosystem
+In Ecosystem
+
+:: tank.observation
+Observation Tank
+
+:: tank.stress
+Stress Tank
+
+:: tank.measurement
+Measurement Tank
+
+:: button.enable
+OFF
+
+:: button.enabled
+ON
+
 # basePath experiment.stress
 
 # basePath experiment.observation
@@ -122,8 +143,7 @@ New Behavior Discovered!
 MALFUNCTION: Cannot be deactivated
 
 :: stabilizer.desc
-Disable to observe an organism's effect on its environment.
-The Environment Stabilizer maintains consistent water chemistry and light conditions.
+When ON, the tank keeps the same water chemistry and light conditions. Turn this OFF only if you want to see an organism's effect on its environment.
 
 :: stabilizer.name
 Tank Stabilizer
@@ -132,8 +152,7 @@ Tank Stabilizer
 Auto-Feeder
 
 :: feeder.desc
-Disable to determine the rate of one species eating another.
-The Auto-Feeder dispenses a nutrient-dense food system to ensure maximum organism survival rates while discouraging predation.
+When ON, all organisms get enough food without eating each other. Leave it ON to see how an organism reproduces. Turn this OFF only if you want to see the rate at which one species eats another.
 
 :: autoFeeder.malfunction
 MALFUNCTION: Cannot be activated

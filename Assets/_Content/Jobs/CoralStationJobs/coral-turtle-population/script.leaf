@@ -172,7 +172,7 @@ $goto .argue.showClaim
 @once
 {@profCoral} Wonderful. Muchas gracias, O.
 {@player}	 De nada, Professor! 
-		     ¿Tienes otras trabajos por aquí? I'd love to keep exploring this place. Plus, my A.I. is jonesing for some data.
+		     ¿Tienes otros trabajos por aquí? I'd love to keep exploring this place. Plus, my A.I. is jonesing for some data.
 {@profCoral}  Hmmmm. Yes. We could always use the help.
 			  There's a new population to study by the reef edge.
 			  And, well. You heard {nameof @coralMechanic}'s concerns over the Lionfish.
@@ -182,6 +182,11 @@ $goto .argue.showClaim
 {@profCoral} Hmmm? Yes, if you'd like.
 			 Feel free to check the job board to see what's available.
 $if !AnyJobsAvailable(CoralStation)
-	{@profCoral}	...Though looking at your sub, you may need some new capabilities before you are ready to take any of them on.
-					Have you considered stopping by {nameof coralMechanic}'s shop?
+	$if CanAffordItem(ProbeHacker)
+		{@profCoral}	...Though looking at your sub, you may need some new capabilities before you are ready to take any of them on.
+		Have you considered stopping by {nameof coralMechanic}'s shop?
+	$else
+		{@profCoral}	...Though looking at your sub, you may need some new capabilities before you are ready to take any of them on.
+		Once you've saved some more money, consider stopping by {nameof coralMechanic}'s shop.
+	$endif
 $endif

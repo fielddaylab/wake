@@ -34,10 +34,10 @@ namespace Aqua.Profile
         private StringHash32 m_CurrentMapId;
         private StringHash32 m_CurrentMapEntranceId;
 
-        private HashSet<StringHash32> m_UnlockedStationIds = new HashSet<StringHash32>();
-        private HashSet<StringHash32> m_UnlockedSiteIds = new HashSet<StringHash32>();
-        private HashSet<StringHash32> m_UnlockedRoomIds = new HashSet<StringHash32>();
-        private HashSet<StringHash32> m_VisitedLocations = new HashSet<StringHash32>();
+        private HashSet<StringHash32> m_UnlockedStationIds = Collections.NewSet<StringHash32>(5);
+        private HashSet<StringHash32> m_UnlockedSiteIds = Collections.NewSet<StringHash32>(18);
+        private HashSet<StringHash32> m_UnlockedRoomIds = Collections.NewSet<StringHash32>(8);
+        private HashSet<StringHash32> m_VisitedLocations = Collections.NewSet<StringHash32>(40);
 
         private int m_RandomSeedOffset;
         
@@ -79,6 +79,7 @@ namespace Aqua.Profile
             if (m_UnlockedStationIds.Add(inStationId))
             {
                 m_HasChanges = true;
+                Services.Events.Queue(GameEvents.MapsUpdated);
                 return true;
             }
 
@@ -91,6 +92,7 @@ namespace Aqua.Profile
             if (m_UnlockedStationIds.Remove(inStationId))
             {
                 m_HasChanges = true;
+                Services.Events.Queue(GameEvents.MapsUpdated);
                 return true;
             }
 
@@ -113,6 +115,7 @@ namespace Aqua.Profile
             if (m_UnlockedSiteIds.Add(inSiteId))
             {
                 m_HasChanges = true;
+                Services.Events.Queue(GameEvents.MapsUpdated);
                 return true;
             }
 
@@ -125,6 +128,7 @@ namespace Aqua.Profile
             if (m_UnlockedSiteIds.Remove(inSiteId))
             {
                 m_HasChanges = true;
+                Services.Events.Queue(GameEvents.MapsUpdated);
                 return true;
             }
 
@@ -210,14 +214,14 @@ namespace Aqua.Profile
             }
         }
 
-        public void FullSync()
+        public void FullSync(StringHash32 inMapOverride = default(StringHash32))
         {
-            SyncMapId();
+            SyncMapId(inMapOverride);
         }
 
-        public bool SyncMapId()
+        public bool SyncMapId(StringHash32 inMapOverride = default(StringHash32))
         {
-            StringHash32 mapId = MapDB.LookupCurrentMap();
+            StringHash32 mapId = inMapOverride.IsEmpty ? MapDB.LookupCurrentMap() : inMapOverride;
             if (!mapId.IsEmpty && m_CurrentMapId != mapId)
             {
                 m_CurrentMapId = mapId;

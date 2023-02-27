@@ -31,6 +31,7 @@ namespace ProtoAqua.Observation
 
         [NonSerialized] private PlayerBody m_Body;
         [NonSerialized] private ScanSystem m_ScanSystem;
+        [NonSerialized] private ScannerDisplay m_ScanDisplay;
         [NonSerialized] private bool m_ScannerOn = false;
         [NonSerialized] private ScannableRegion m_TargetScannable = null;
         [NonSerialized] private ScanData m_TargetScanData = null;
@@ -40,6 +41,7 @@ namespace ProtoAqua.Observation
         [NonSerialized] private Routine m_ScanEnableRoutine;
         [NonSerialized] private Routine m_ScanRoutine;
         [NonSerialized] private float m_AdditionalDrag;
+        [NonSerialized] private float m_ScanFreeze;
 
         [NonSerialized] private readonly Collider2D[] m_ColliderBuffer = new Collider2D[16];
 
@@ -50,6 +52,7 @@ namespace ProtoAqua.Observation
             SetRange(0);
             m_ScanSystem = ScanSystem.Find<ScanSystem>();
             m_ScanSystem.SetDetector(m_RangeCollider);
+            m_ScanDisplay = Services.UI.FindPanel<ScannerDisplay>();
         }
 
         #endregion // Unity Events
@@ -78,7 +81,8 @@ namespace ProtoAqua.Observation
                 return;
 
             CancelScan();
-            Services.UI?.FindPanel<ScannerDisplay>()?.Hide();
+            m_ScanFreeze = 0;
+            m_ScanDisplay?.Hide();
             m_ScannerOn = false;
             m_ScanEnableRoutine.Replace(this, TurnOffAnim());
             Visual2DSystem.Deactivate(GameLayers.Scannable_Mask);
@@ -88,7 +92,7 @@ namespace ProtoAqua.Observation
 
         #region Scanning
 
-        public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody)
+        public bool UpdateTool(float inDeltaTime, in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody)
         {
             m_LastKnownSpeed = inVelocity.magnitude;
 
@@ -108,6 +112,11 @@ namespace ProtoAqua.Observation
             }
             else
             {
+                if (m_ScanFreeze > 0)
+                {
+                    return false;
+                }
+
                 if (inInput.UseHold && inInput.Mouse.Target.HasValue)
                 {
                     Vector2 mousePos = inInput.Mouse.Target.Value;
@@ -144,14 +153,22 @@ namespace ProtoAqua.Observation
                         return true;
                     }
 
-                    Services.UI.FindPanel<ScannerDisplay>().Hide();
+                    m_ScanDisplay.Hide();
+                }
+
+                if (inInput.Move)
+                {
+                    m_ScanDisplay.Hide();
                 }
 
                 return false;
             }
         }
 
-        public void UpdateActive(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
+        public void UpdateActive(float inDeltaTime, in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
+            if (m_ScanFreeze > 0) {
+                m_ScanFreeze = Math.Max(0, m_ScanFreeze - inDeltaTime);
+            }
         }
 
         public bool HasTarget()
@@ -172,7 +189,7 @@ namespace ProtoAqua.Observation
                 if (inbOnGamePlane)
                     outWorld = m_TargetScannable.Collider.transform.position;
                 else
-                    outWorld = m_TargetScannable.transform.position;
+                    outWorld = m_TargetScannable.TrackTransform.position;
 
                 outCursor = m_TargetScannable.Click.transform.position;
             }
@@ -195,6 +212,12 @@ namespace ProtoAqua.Observation
                     m_AdditionalDrag = m_PowerEngineScanDragIncrease;
                     m_Body.Kinematics.AdditionalDrag += m_AdditionalDrag;
                 }
+
+                if (m_TargetScanData != null) {
+                    m_TargetScannable.OnScanStart?.Invoke(m_ScanSystem.WasScanned(m_TargetScanData.Id()));
+                } else {
+                    m_TargetScannable.OnScanStart?.Invoke(false);
+                }
             }
         }
 
@@ -202,7 +225,7 @@ namespace ProtoAqua.Observation
         {
             if (!m_TargetScannable.IsReferenceNull())
             {
-                Services.UI.FindPanel<ScannerDisplay>().CancelIfProgress();
+                m_ScanDisplay.CancelIfProgress();
 
                 if (m_TargetScannable.CurrentIcon)
                 {
@@ -222,8 +245,6 @@ namespace ProtoAqua.Observation
 
         private IEnumerator ScanRoutine()
         {
-            var scanUI = Services.UI.FindPanel<ScannerDisplay>();
-
             ScanData data = m_TargetScanData;
 
             float progress = 0;
@@ -237,7 +258,7 @@ namespace ProtoAqua.Observation
                 progress += increment * Routine.DeltaTime * (1 - Mathf.Min(m_LastKnownSpeed / m_ScanReduceMovementSpeedThreshold, m_ScanReduceMovementSpeedMaxMultiplier));
                 if (progress > 1)
                     progress = 1;
-                scanUI.ShowProgress(progress);
+                m_ScanDisplay.ShowProgress(progress);
                 m_TargetScannable.CurrentIcon.SetFill(progress);
                 yield return null;
             }
@@ -248,11 +269,14 @@ namespace ProtoAqua.Observation
             m_TargetScannable.CurrentIcon.SetSpinning(false);
 
             ScanResult result;
+            ScannableRegion region = m_TargetScannable;
 
             using(PooledList<StringHash32> newFactIds = PooledList<StringHash32>.Create())
             using(PooledList<BFBase> newFacts = PooledList<BFBase>.Create())
             {
-                result = m_ScanSystem.RegisterScanned(data, newFactIds);
+                result = m_ScanSystem.RegisterScanned(data, newFactIds, region);
+                region.OnScanComplete?.Invoke(result);
+                
                 if (result != 0)
                 {
                     foreach(var id in newFactIds)
@@ -264,7 +288,7 @@ namespace ProtoAqua.Observation
                     {
                         Services.Audio.PostEvent("scan_bestiary");
                         var bestiary = Assets.Bestiary(data.BestiaryId());
-                        Script.PopupNewEntity(bestiary, data.Text(), newFacts);
+                        Script.PopupNewEntity(bestiary, data.Text(), newFacts, region.ScanImageOverride);
                     }
                     else if ((result & ScanResult.NewFacts) != 0)
                     {
@@ -282,13 +306,14 @@ namespace ProtoAqua.Observation
                 }
             }
 
-            if ((result & PopupResultMask) == 0)
+            if ((data.Flags() & ScanDataFlags.DoNotShow) == 0 && (result & PopupResultMask) == 0 && !Services.Script.IsCutscene())
             {
-                scanUI.ShowScan(data, result);
+                m_ScanFreeze = data.FreezeDisplay();
+                m_ScanDisplay.ShowScan(data, region.ScanImageOverride, result);
             }
             else
             {
-                scanUI.Hide();
+                m_ScanDisplay.Hide();
             }
         }
 

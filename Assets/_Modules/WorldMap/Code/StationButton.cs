@@ -31,6 +31,8 @@ namespace Aqua.WorldMap
         #endregion // Inspector
 
         [NonSerialized] private bool m_Selected;
+        [NonSerialized] private bool m_InputEventsRegistered;
+        [NonSerialized] private bool m_AlreadyHere;
         private Routine m_HighlightColorRoutine;
         private Routine m_PulseRoutine;
 
@@ -53,13 +55,18 @@ namespace Aqua.WorldMap
         {
             m_Label.SetText(inMap.ShortLabelId());
             m_CursorHint.TooltipId = inMap.LabelId();
-            m_Input.onClick.AddListener(OnClick);
 
-            m_Input.onPointerEnter.AddListener(OnPointerEnter);
-            m_Input.onPointerExit.AddListener(OnPointerExit);
+            if (!m_InputEventsRegistered) {
+                m_Input.onClick.AddListener(OnClick);
+                m_Input.onPointerEnter.AddListener(OnPointerEnter);
+                m_Input.onPointerExit.AddListener(OnPointerExit);
+                m_InputEventsRegistered = true;
+            }
 
-            m_Input.enabled = !inbCurrent;
-            m_Region.Collider.enabled = !inbCurrent;
+            m_Input.enabled = true;
+            m_Region.Collider.enabled = true;
+
+            m_AlreadyHere = inbCurrent;
 
             m_Underline.SetActive(inbCurrent);
 
@@ -73,6 +80,8 @@ namespace Aqua.WorldMap
             } else if (!inbSeen) {
                 m_PulseRoutine.Replace(this, Pulse(m_NotVisitedPulse, 2, 1, 1));
             }
+
+            gameObject.SetActive(true);
         }
 
         private void OnClick(PointerEventData unused)
@@ -82,7 +91,7 @@ namespace Aqua.WorldMap
             }
 
             m_Selected = true;
-            m_HighlightColorRoutine.Replace(this, ColorGroupTween(m_RegionColor, AQColors.HighlightYellow.WithAlpha(0.3f), 0.2f));
+            m_HighlightColorRoutine.Replace(this, ColorGroupTween(m_RegionColor, GetFillColor(AQColors.HighlightYellow.WithAlpha(0.5f)), 0.2f));
             Services.Events.Dispatch(WorldMapCtrl.Event_RequestChangeStation, this);
         }
 
@@ -91,7 +100,7 @@ namespace Aqua.WorldMap
                 return;
             }
 
-            m_HighlightColorRoutine.Replace(this, ColorGroupTween(m_RegionColor, AQColors.BrightBlue.WithAlpha(0.15f), 0.2f));
+            m_HighlightColorRoutine.Replace(this, ColorGroupTween(m_RegionColor, GetFillColor(AQColors.BrightBlue.WithAlpha(0.3f)), 0.2f));
             Services.Audio.PostEvent("ui_hover");
         }
 
@@ -100,7 +109,7 @@ namespace Aqua.WorldMap
                 return;
             }
 
-            m_HighlightColorRoutine.Replace(this, ColorGroupTween(m_RegionColor, AQColors.BrightBlue.WithAlpha(0), 0.2f));
+            m_HighlightColorRoutine.Replace(this, ColorGroupTween(m_RegionColor, GetFillColor(AQColors.BrightBlue.WithAlpha(0)), 0.2f));
         }
 
         public void CancelSelected() {
@@ -109,7 +118,16 @@ namespace Aqua.WorldMap
             }
 
             m_Selected = false;
-            m_HighlightColorRoutine.Replace(this, ColorGroupTween(m_RegionColor, AQColors.HighlightYellow.WithAlpha(0), 0.2f));
+            m_HighlightColorRoutine.Replace(this, ColorGroupTween(m_RegionColor, GetFillColor(AQColors.HighlightYellow.WithAlpha(0)), 0.2f));
+        }
+
+        private Color GetFillColor(Color color) {
+            if (m_AlreadyHere) {
+                float alpha = color.a;
+                color *= 0.5f;
+                color.a = alpha;
+            }
+            return color;
         }
 
         static private Tween ColorGroupTween(ColorGroup group, Color color, float duration) {

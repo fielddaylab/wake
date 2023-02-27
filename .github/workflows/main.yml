@@ -45,6 +45,7 @@ jobs:
           git config --global --add safe.directory "/github/workspace"
           git config --global --add safe.directory /github/workspace/Submodules/unity-aesprite-importer
           git submodule update --init --recursive
+
     # Extracts branch name into BRANCH environment variable
     - name: Extract branch name
       shell: bash
@@ -103,3 +104,4 @@ jobs:
         remote_host: ${{ secrets.FIELDDAY_WISC_EDU_DEPLOY_HOST }}
         remote_user: ${{ secrets.FIELDDAY_WISC_EDU_DEPLOY_USER }}
         remote_key: ${{ secrets.FIELDDAY_WISC_EDU_DEPLOY_KEY }}
+    

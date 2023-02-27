@@ -55,6 +55,7 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.arctic-cause-of-death.task.environmentData
       m_HashValue: 1787861296
+    Category: 2
     Steps:
     - Type: 1
       Target:
@@ -81,6 +82,7 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.arctic-cause-of-death.task.histPopData
       m_HashValue: 3348095174
+    Category: 2
     Steps:
     - Type: 1
       Target:
@@ -101,6 +103,7 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.arctic-cause-of-death.task.currPopData
       m_HashValue: 2591358966
+    Category: 2
     Steps:
     - Type: 1
       Target:
@@ -114,18 +117,6 @@ MonoBehaviour:
         m_HashValue: 2249564735
       ConditionString: 
       Amount: 0
-    - Type: 1
-      Target:
-        m_Source: W_WhaleFall.Population.ArcticCod
-        m_HashValue: 3424523006
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: W_WhaleFall.Population.ChinookSalmon
-        m_HashValue: 1089959629
-      ConditionString: 
-      Amount: 0
     PrerequisiteTaskIds: []
   - Id:
       m_Source: reportBack
@@ -133,6 +124,7 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.arctic-cause-of-death.task.report
       m_HashValue: 3788287745
+    Category: 5
     Steps:
     - Type: 10
       Target:
@@ -217,18 +209,6 @@ MonoBehaviour:
       Target:
         m_Source: W_WhaleFall.Population.Diatoms
         m_HashValue: 2249564735
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: W_WhaleFall.Population.ArcticCod
-        m_HashValue: 3424523006
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: W_WhaleFall.Population.ChinookSalmon
-        m_HashValue: 1089959629
       ConditionString: 
       Amount: 0
     PrerequisiteTaskIndices: 

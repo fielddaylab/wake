@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Aqua.Animation;
 using Aqua.Cameras;
+using Aqua.Profile;
 using AquaAudio;
 using BeauPools;
 using BeauRoutine;
@@ -258,16 +259,34 @@ namespace Aqua.Title
 
         #endregion // Skip
 
+        private void ShowSecretsForSaveData(SaveSummaryData summary) {
+            for(byte i = 0; i < summary.SpecterCount; i++) {
+                m_Config.Specters[i].gameObject.SetActive(RNG.Instance.Chance(0.25f));
+            }
+
+            if ((summary.Flags & SaveSummaryFlags.CompletedFinalJob) == 0) {
+                for(int i = 0; i < m_Config.Dreams.Length; i++) {
+                    Transform dream = m_Config.Dreams[i];
+                    if (dream && (summary.DreamMask & (1 << i)) != 0) {
+                        dream.gameObject.SetActive(RNG.Instance.Chance(0.15f));
+                    }
+                }
+            }
+        }
+
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
         {
             Services.Assets.CancelPreload("Scene/Title");
 
             m_Config = FindObjectOfType<TitleConfig>();
             m_BuildIdText.SetText(string.Format("Build: {0} ({1})", BuildInfo.Id(), BuildInfo.Date()));
+            m_Menu.LoadConfig(m_Config);
 
             foreach(var card in m_Cards) {
                 card.Group.gameObject.SetActive(false);
             }
+
+            ShowSecretsForSaveData(Services.Data.LastProfileSummary());
 
             m_Canvas.enabled = true;
 

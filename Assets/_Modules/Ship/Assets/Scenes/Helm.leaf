@@ -1,1 +1,29 @@
-# basePath ship.helm
+# basePath Helm
+
+// STORY BEAT I
+:: finalJobRadio
+@trigger    SceneStart
+@when       jobs:final-final.tio.code-received
+@once
+@cutscene
+// Upgrade Victor - instantly the specters unscramble. Sam's distress call comes through.
+{@player}       All right, let's see what this upgrade Tío gave me can do.
+{@guide}        Incoming message from {nameof @sam}!
+
+$branch common.ringPhone
+
+{@sam}  O! Do you copy?
+        Things are bad down here, O. We're in big trouble. 
+{@player}   Sam!! Can you hear me? Are you okay?
+            Sam???
+{@guide}    It appears the communication is one-way. They cannot hear you. 
+{@sam}  Ugh. I'm probably talking to nobody right now. 
+        But in case you can hear this, O....
+        The creature is back. Won't leave us alone. 
+        Systems are crashing. Lab's still out of commission. We're running out of time. 
+        I'm sending you the job. Please, O. If you get this—we need help.
+        We need some way to get rid of this thing.
+
+// Start Final Job
+$call SetJob(final-final)
+$call GiveJournalEntry("N25_VictorUpgrade")

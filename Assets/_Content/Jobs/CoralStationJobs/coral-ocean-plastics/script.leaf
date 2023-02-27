@@ -7,17 +7,16 @@
 {@profCoral} I need your help, Ollie. Is it true that you scanned plastic during one of your jobs?
 {@player} Yeah, I found it at the reef.
 {@profCoral} Oh no. This won't do at all. 
-             What if the plastic makes its way to Serenity Meadows? What if the turtles try to eat it??  
+             What if the plastic makes its way to Serenity Meadows? Bags look like {pluralnameof MoonJelly} to the turtles.
+             What if the turtles try to eat it??
 {@player}   Aw, Professor, don't worry. We'll figure out a way to keep the turtles safe. 
             What should I do first? 
 {@profCoral} We need to understand how plastic might affect Serenity Meadows.    
 $if JobTaskTop(scanReefEdge)
     {@profCoral}  Start by making sure you've scanned all the species here at Site V.
-                  Then observe their interactions and construct a food web. 
     {@player}     Copy that. 
 $elseif JobTaskTop(whatTurtlesEat)
     {@profCoral}  I need you to use your Observation Tank to learn more about the organisms you've scanned here at Site V.
-                  Then use what you find out to construct a Food Web. 
     {@player}    Copy that. 
 $else
     {@profCoral}  I'd like you to use what you've learned about the species at Site V to construct a food web. 
@@ -58,7 +57,7 @@ $set    	jobs:coral-turtle-population.seen.bottom = true
 @once
 @cutscene
 {@guide} Adequate work, O!
-         Time to head back to the Meredith. 
+         Time to head back to the AquaLab. 
 
 // CATCH-ALL GUIDE TEXT
 
@@ -106,7 +105,7 @@ $call ArgueLoad(oceanPlasticArgue)
 $goto .argue.firstClaim
 
 ::argue.firstClaim
-$choice .argue.turtles; I've found a cirtter here that interacts with the plastic.
+$choice .argue.turtles; I've found a critter here that interacts with the plastic.
 //$choice .argue.queen; The conch will be impacted.
 //$choice .argue.staghorn; The coral will be impacted.
 $choice .argue.nan; The plastic won't affect anything. 

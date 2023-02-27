@@ -97,7 +97,9 @@ $if JobTaskCompleted(getVisualModel), JobTaskCompleted(getTagger)
     $call UnlockStation(BayouStation)
 
     $call UnlockRoom(WorldMap)
-    $call ShowPopup(map.unlock.shipRoom.header, map.unlock.worldMap.desc)
+    $call MapPanel->Activate()
+    $call MapHolo->Activate()
+    $call ShowPopup(map.unlock.shipFeature.header, map.unlock.worldMap.desc)
     $call ShowPopup(map.unlock.stations.header, map.unlock.stations.desc)
 
     {@guide} Your map is ready!

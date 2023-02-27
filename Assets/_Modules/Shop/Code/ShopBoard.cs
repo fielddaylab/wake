@@ -60,6 +60,7 @@ namespace Aqua.Shop {
         [SerializeField] private Color m_AvailableOutlineColor = Color.white;
         [SerializeField] private Color m_SelectedOutlineColor = Color.white;
         [SerializeField] private Color m_PurchasedOutlineColor = Color.white;
+        [SerializeField] private Sprite[] m_LevelRequirementIcons = null;
 
         [Header("Animation")]
         [SerializeField] private TweenSettings m_TweenOnAnim = new TweenSettings(0.2f);
@@ -67,6 +68,7 @@ namespace Aqua.Shop {
         [SerializeField] private float m_OffscreenPos = 0;
         [SerializeField] private float m_OnscreenPos = 0;
         [SerializeField] private ShopPreview m_Preview = null;
+        [SerializeField] private AppearAnimSet m_AppearSequence = null;
 
         #endregion
 
@@ -129,7 +131,7 @@ namespace Aqua.Shop {
                     table.Set("itemId", button.CachedItem.Id());
                     table.Set("canAfford", canAfford);
                     table.Set("cashCost", button.CachedItem.CashCost());
-                    table.Set("expCost", button.CachedItem.RequiredExp());
+                    table.Set("requiredLevel", button.CachedItem.RequiredLevel());
                     var thread = Services.Script.TriggerResponse(ShopConsts.Trigger_AttemptBuy, table);
 
                     if (!canAfford) {
@@ -164,7 +166,7 @@ namespace Aqua.Shop {
 
         #region Categories
 
-        private void UpdateCategory(ShopCategoryButton category, CategoryId id, StringHash32 triggerId = default) {
+        private void UpdateCategory(ShopCategoryButton category, CategoryId id, StringHash32 triggerId = default, bool animate = true) {
             if (!IsShowing()) {
                 return;
             }
@@ -183,6 +185,10 @@ namespace Aqua.Shop {
 
                 PopulateColumn(m_LeftColumnHeader, category.LeftHeader, m_LeftColumnButtons, category.LeftItems);
                 PopulateColumn(m_RightColumnHeader, category.RightHeader, m_RightColumnButtons, category.RightItems);
+
+                if (animate) {
+                    m_AppearSequence.Play(0);
+                }
 
                 if (!triggerId.IsEmpty)
                     Services.Script.TriggerResponse(triggerId);
@@ -219,15 +225,12 @@ namespace Aqua.Shop {
             button.Cursor.TooltipId = item.NameTextId();
 
             int cashCost = button.CachedItem.CashCost();
-            int expCost = button.CachedItem.RequiredExp();
+            int reqLevel = button.CachedItem.RequiredLevel();
 
-            button.CostDivider.SetActive(cashCost > 0 && expCost > 0);
             button.CashIcon.SetActive(cashCost > 0);
             button.CashCost.gameObject.SetActive(cashCost > 0);
             button.CashCost.SetTextFromString(cashCost.ToStringLookup());
-            button.LevelRequirementIcon.SetActive(expCost > 0);
-            button.LevelRequirementObject.gameObject.SetActive(expCost > 0);
-            button.LevelRequirementObject.SetTextFromString(expCost.ToStringLookup());
+            button.LevelRequirementIcon.sprite = m_LevelRequirementIcons[Math.Max(reqLevel - 1, 0)];
 
             button.gameObject.SetActive(false);
             UpdateButtonState(button);
@@ -287,7 +290,7 @@ namespace Aqua.Shop {
             if (item.Prerequisite() != null && !Save.Inventory.HasUpgrade(item.Prerequisite().Id())) {
                 return ItemStatus.Locked;
             }
-            if (Save.Cash < item.CashCost() || Save.Exp < item.RequiredExp()) {
+            if (Save.Cash < item.CashCost() || Save.ExpLevel < item.RequiredLevel()) {
                 return ItemStatus.CantAfford;
             }
             return ItemStatus.Available;
@@ -311,8 +314,8 @@ namespace Aqua.Shop {
             m_ExplorationCategory.Toggle.SetIsOnWithoutNotify(true);
             m_ScienceCategory.Toggle.SetIsOnWithoutNotify(false);
             Async.InvokeAsync(() => {
-                UpdateCategory(m_ExplorationCategory, CategoryId.Exploration);
-                UpdateCategory(m_ScienceCategory, CategoryId.Science);
+                UpdateCategory(m_ExplorationCategory, CategoryId.Exploration, null, false);
+                UpdateCategory(m_ScienceCategory, CategoryId.Science, null, false);
 
                 Services.Script.TriggerResponse(ShopConsts.Trigger_OpenMenu);
             });

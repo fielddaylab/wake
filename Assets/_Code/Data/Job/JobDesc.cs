@@ -182,6 +182,7 @@ namespace Aqua
     public enum JobDescFlags : uint
     {
         [Hidden] None = 0x0,
-        Hidden = 0x0001
+        Hidden = 0x0001,
+        NoPopup = 0x0002,
     }
 }

@@ -26,23 +26,41 @@ namespace ProtoAqua.Observation
                 yield return null;
             }
 
+            BestiaryDesc newEnvironment = GetNewEnvironment();
+
             var bestiaryData = Save.Bestiary;
-            BestiaryDesc newEnvironment = null;
             foreach(StringHash32 entityId in EntityIds) {
-                if (bestiaryData.RegisterEntity(entityId)) {
-                    newEnvironment = Assets.Bestiary(entityId);
-                    if (newEnvironment.Category() != BestiaryDescCategory.Environment) {
-                        newEnvironment = null;
-                    }
-                }
+                bestiaryData.RegisterEntity(entityId);
             }
             foreach(StringHash32 factId in FactIds) {
                 bestiaryData.RegisterFact(factId);
             }
 
             if (newEnvironment != null) {
+                // so the popup doesn't happen while the game is still running
+                if (Services.UI.IsTransitioning()) {
+                    using(Script.DisableInput()) {
+                        while(Services.UI.IsTransitioning()) {
+                            yield return null;
+                        }
+                    }
+                }
+
                 Script.PopupNewEntity(newEnvironment);
             }
+        }
+
+        private BestiaryDesc GetNewEnvironment() {
+            var bestiaryData = Save.Bestiary;
+            foreach(StringHash32 entityId in EntityIds) {
+                if (!bestiaryData.HasEntity(entityId)) {
+                    BestiaryDesc entry = Assets.Bestiary(entityId);
+                    if (entry.Category() == BestiaryDescCategory.Environment) {
+                        return entry;
+                    }
+                }
+            }
+            return null;
         }
 
         [LeafMember("Suppress"), Preserve]

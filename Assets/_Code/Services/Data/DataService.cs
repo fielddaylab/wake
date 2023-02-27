@@ -27,7 +27,9 @@ namespace Aqua
         private const string LocalSettingsPrefsKey = "settings/local";
         private const string LastUserNameKey = "settings/last-known-profile";
         private const string LastUserSaveSummaryKey = "settings/last-known-profile-summary";
+        
         private const string DeserializeError = "deserialize-error";
+        private const string OutOfDateError = "outdated-error";
 
         #if DEVELOPMENT
         private const string DebugSaveId = "__DEBUG";
@@ -194,6 +196,13 @@ namespace Aqua
             {
                 DebugService.Log(LogMask.DataService, "[DataService] No save located for user id {0}", inUserCode);
                 ioFuture.Fail();
+                yield break;
+            }
+
+            if (!SavePatcher.IsValid(authoritativeSave, SavePatcher.SaveType.Player))
+            {
+                DebugService.Log(LogMask.DataService, "[DataService] Save data for {0} is out of date", inUserCode);
+                ioFuture.Fail(OutOfDateError);
                 yield break;
             }
 
@@ -559,11 +568,11 @@ namespace Aqua
             if (!IsDebugProfile())
             {
                 int attempts = (int) (m_SaveRetryCount + 1);
-                int count = 0;
+                int retryCount = 0;
                 while(attempts > 0)
                 {
                     using(var future = Future.Create())
-                    using(var saveRequest = OGD.GameState.PushState(m_ProfileName, saveData, future.Complete, (r) => future.Fail(r), count))
+                    using(var saveRequest = OGD.GameState.PushState(m_ProfileName, saveData, future.Complete, (r) => future.Fail(r), retryCount))
                     {
                         yield return future;
 
@@ -575,12 +584,13 @@ namespace Aqua
                         else
                         {
                             attempts--;
-                            count++;
                             Log.Warn("[DataService] Failed to save to server: {0}", future.GetFailure().Object);
                             if (attempts > 0)
                             {
                                 Log.Warn("[DataService] Retrying server save...", attempts);
+                                Services.Events.Dispatch(GameEvents.ProfileSaveError);
                                 yield return m_SaveRetryDelay;
+                                ++retryCount;
                             }
                             else
                             {
@@ -703,6 +713,12 @@ namespace Aqua
             OGD.Core.Configure(m_ServerAddress, GameId);
         }
 
+        private void LateUpdate() {
+            if (m_CurrentSaveData != null && !Services.State.IsLoadingScene()) {
+                m_CurrentSaveData.Playtime += Time.unscaledDeltaTime;
+            }
+        }
+
         protected override void Shutdown()
         {
             Services.Events?.DeregisterAll(this);
@@ -760,6 +776,8 @@ namespace Aqua
                     return (ErrorStatus) ((OGD.Core.Error) obj).Status;
                 } else if (obj == (object) DeserializeError) {
                     return ErrorStatus.DeserializeError;
+                } else if (obj == (object) OutOfDateError) {
+                    return ErrorStatus.OutOfDateError;
                 }
             }
 
@@ -777,7 +795,8 @@ namespace Aqua
             Error_Exception,
             Unknown,
 
-            DeserializeError
+            DeserializeError,
+            OutOfDateError
         }
 
         #endregion // Utils

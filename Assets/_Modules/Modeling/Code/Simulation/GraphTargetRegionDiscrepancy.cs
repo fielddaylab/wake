@@ -14,6 +14,7 @@ namespace Aqua.Modeling
         public Image LowerDot;
         public Image Line;
         public Image Circle;
+        public Button Click;
 
         #endregion // Inspector
 

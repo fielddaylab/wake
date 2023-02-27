@@ -6,6 +6,7 @@ using Aqua;
 using BeauUtil.Debugger;
 using BeauUtil.Variants;
 using Leaf;
+using System.Collections.Generic;
 
 namespace ProtoAqua.Observation
 {
@@ -15,10 +16,14 @@ namespace ProtoAqua.Observation
 
         // Ids
         private StringHash32 m_Id = null;
+        private TextId m_HeaderId = null;
+        private TextId m_DescId = null;
 
         // Properties
         private ScanDataFlags m_Flags = 0;
-        [BlockMeta("scanDuration"), UnityEngine.Scripting.Preserve] private int m_ScanDuration = 1;
+        [BlockMeta("scanDuration"), UnityEngine.Scripting.Preserve] private float m_ScanDuration = 1;
+        [BlockMeta("freezeDisplay"), UnityEngine.Scripting.Preserve] private float m_FreezeDisplay = 0;
+        [BlockMeta("typingDuration"), UnityEngine.Scripting.Preserve] private float m_TypingDuration = 1;
 
         // Text
         [BlockMeta("header"), UnityEngine.Scripting.Preserve] private string m_HeaderText = null;
@@ -40,15 +45,19 @@ namespace ProtoAqua.Observation
         public ScanData(string inFullId)
         {
             m_Id = inFullId;
+            m_HeaderId = m_Id.Concat(".header");
+            m_DescId = m_Id.Concat(".body");
         }
 
         public StringHash32 Id() { return m_Id; }
 
         public ScanDataFlags Flags() { return m_Flags; }
-        public int ScanDuration() { return m_ScanDuration; }
+        public float ScanDuration() { return m_ScanDuration; }
+        public float FreezeDisplay() { return m_FreezeDisplay; }
+        public float TypingDuration() { return m_TypingDuration; }
 
-        public string Header() { return m_HeaderText; }
-        public string Text() { return m_DescText; }
+        public string Header() { return Services.Loc?.Localize(m_HeaderId, m_HeaderText); }
+        public string Text() { return Services.Loc?.Localize(m_DescId, m_DescText); }
 
         public string ImagePath() { return m_ImagePath; }
         public StringHash32 LogbookId() { return m_LogbookId; }
@@ -59,7 +68,6 @@ namespace ProtoAqua.Observation
 
         public ListSlice<VariantComparison> Requirements() { return m_Requirements; }
         public StringHash32 FallbackId() { return m_Fallback; }
-
 
         #region Scan
 
@@ -103,8 +111,20 @@ namespace ProtoAqua.Observation
             m_Requirements = LeafUtils.ParseConditionsList(inRequirements);
         }
 
+        [BlockMeta("noDisplay"), UnityEngine.Scripting.Preserve]
+        private void SetNoDisplay()
+        {
+            m_Flags |= ScanDataFlags.DoNotShow;
+        }
+
         void IValidatable.Validate()
         {
+            #if UNITY_EDITOR
+            if (!UnityEngine.Application.isPlaying) {
+                return;
+            }
+            #endif // UNITY_EDITOR
+
             Assert.True(m_BestiaryId.IsEmpty || Services.Assets.Bestiary.HasId(m_BestiaryId),
                 "Scan '{0}' was linked to unknown bestiary entry '{1}'", m_Id, m_BestiaryId);
 
@@ -119,16 +139,37 @@ namespace ProtoAqua.Observation
         }
 
         #endregion // Scan
+        
+        #if UNITY_EDITOR
+
+        internal KeyValuePair<StringHash32, string> ExportHeader()
+        {
+            return new KeyValuePair<StringHash32, string>(m_HeaderId, m_HeaderText);
+        }
+
+        internal KeyValuePair<StringHash32, string> ExportText()
+        {
+            return new KeyValuePair<StringHash32, string>(m_DescId, m_DescText);
+        }
+
+        #endif // UNITY_EDITOR
 
         #region Default
 
         static public readonly ScanData Error;
+        static public readonly ScanData Fake;
 
         static ScanData()
         {
             Error = new ScanData("");
             Error.m_HeaderText = "MISSING SCAN DATA";
             Error.m_DescText = "Scan is missing";
+
+            Fake = new ScanData("fake");
+            Fake.m_HeaderText = "";
+            Fake.m_DescText = "";
+            Fake.m_Flags |= ScanDataFlags.DoNotShow | ScanDataFlags.Important;
+            Fake.m_ScanDuration = 3;
         }
 
         #endregion // Default
@@ -145,6 +186,7 @@ namespace ProtoAqua.Observation
         Important   = 0x10,
         ActivateTool = 0x20,
 
-        DynamicFactType = 0x40
+        DynamicFactType = 0x40,
+        DoNotShow = 0x80,
     }
 }

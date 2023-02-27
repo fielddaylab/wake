@@ -34,7 +34,7 @@
 @cutscene
 {@player}   Okay, {nameof @guide}. Is that everything? 
 $if JobTaskCompleted(scanAll)
-	{@guide}  I believe so! Time to head back to the Meredith and find out what the turtles eat. 
+	{@guide}  I believe so! Time to head back to the AquaLab and find out what the turtles eat. 
 $else
 	{@guide}  Hmmm. I believe you've missed something, O.
               Make sure you've scanned the tiny organisms swimming in the cloudy spots, and the coral, as well.
@@ -45,7 +45,8 @@ $endif
 @when       scene:name == "RS-2V", taskId == "scanAll"
 @once
 @cutscene
-{@player} You know, I can see why {nameof @profCoral} is so obsessed with the turtles. 
+{@player}   Well, I believe I've scanned everything I can.
+{@player} You know, after spending some time here, I can see why {nameof @profCoral} is so obsessed with the turtles. 
           They're almost as adorable as Ovid!
 {@guide} Ah, yes! Your probably-dead otter friend!
 {@player} Nope, no negativity here, V. It's called Serenity Meadows for a reason. 
@@ -53,7 +54,7 @@ $endif
 {@guide} Ah, yes! Your probably-dead-but-possibly-geriatric otter friend! 
 {@player} Um. Slightly better, I guess.
           What should we do now, {nameof @guide}?
-{@guide}  You've gathered all the data you need here. It's time to return to the Meredith!
+{@guide}  You've gathered all the data you need here. It's time to return to the AquaLab!
 
 :: navigation.return
 @trigger    SceneStart

@@ -4,13 +4,14 @@
 :: start
 @trigger    JobStarted
 @cutscene
-{@profArctic} Thank you, Ollie! No one ever offers to help with the salmon counts. 
+{@profArctic} Thank you, Ollie! No one ever offers to help with the salmon estimates. 
 {@player}  But... I don't get it. 
 		   It looks like you already counted the current salmon populations.
 {@profArctic}  Sure, once. That means it's time to count again.
 {@player}   ¿En serio? You count them twice, every time? 
 {@profArctic}	Yep. My work requires detailed, long-term monitoring of the salmon. It's fascinating! 
-			I'll take care of it, if you're too busy--I'm used to handling things myself.	
+			The counts don't have to be exactly the same, but we want to verify our data is reasonably accurate.
+			I'll take care of it, if you're too busy--I'm used to handling things myself.
 {@player}	Nah, I've got this.
 			We do counts like this all the time back at my mom's station. I'm basically an expert.
 {@profArctic}  Oh, that's perfect! Let me know what you find! 
@@ -22,8 +23,8 @@
 @cutscene
 {@player} I can't believe {nameof @profArctic} does this by herself every time.
 		  She must really care about the salmon! 
-	  	What should we do next, {nameof @guide}? 
-{@guide}  You need to verify that your counts match the researchers' records!
+	  	What should we do next, {nameof @guide}?
+{@guide}  You need to add your estimates to the researchers' records at the station!
 
 // CATCH-ALL GUIDE TEXT
 
@@ -70,7 +71,7 @@ $choice .argue.giveUp; Let me get back to you
 
 :: argue.correctFacts
 $call ArgueComplete()
-{@profArctic}  Oh, this is great! Looks like the counts are accurate.
+{@profArctic}  Oh, this is great! Looks like the estimates are accurate.
 			   I like to keep a close eye on our salmon populations here. 
 {@player} I totally get it. My mom is the same way with the Kelp and Otters back home.
 		  Do you need any more help?

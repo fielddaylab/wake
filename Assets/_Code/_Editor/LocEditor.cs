@@ -145,22 +145,6 @@ namespace Aqua.Editor {
             instance.ReloadPackages();
         }
 
-        [MenuItem("Aqualab/Localization/Export Compressed Database")]
-        static private void ExportLocDatabase() {
-            var instance = GetInstance();
-            instance.ReloadPackages();
-
-            using(var writer = new BinaryWriter(File.Open(EditorDatabaseExportPath, FileMode.Create))) {
-                List<TextRecord> records = new List<TextRecord>(instance.m_TextMap.Count);
-                records.AddRange(instance.m_TextMap.Values);
-                records.Sort((x, y) => x.Id.CompareTo(y.Id));
-                foreach (var text in records) {
-                    writer.Write(new StringHash32(text.Id).HashValue);
-                    writer.Write(text.Content ?? string.Empty);
-                }
-            }
-        }
-
         [MenuItem("Aqualab/Localization/Write Changes")]
         static private void WriteAnyChanges() {
             bool bChanges = false;
@@ -513,6 +497,7 @@ namespace Aqua.Editor {
         static public void Export(params LeafExport.CustomRule[] customRules) {
             LeafExport.CustomRule[] rules = customRules;
             ArrayUtils.Add(ref rules, new LeafExport.CustomRule(typeof(LocPackage), (p) => LocPackage.GatherStrings((LocPackage) p)));
+            ArrayUtils.Add(ref rules, new LeafExport.CustomRule(typeof(IHasLocalizationKeys), (p) => ((IHasLocalizationKeys) p).GetStrings()));
             IMethodCache methodCache = Leaf.LeafUtils.CreateMethodCache(typeof(IScriptComponent));
             methodCache.LoadStatic();
             foreach(var type in Reflect.FindAllDerivedTypes(typeof(IScriptComponent))) {

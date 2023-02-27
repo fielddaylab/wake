@@ -42,7 +42,7 @@ namespace Aqua.StationMap
         protected override void Tick(float inDeltaTime)
         {
             PlayerInput.Input input;
-            m_Input.GenerateInput(out input);
+            m_Input.GenerateInput(m_Transform, m_BodyStatus, out input);
 
             if (input.Move && input.MovementVector.sqrMagnitude > 0)
             {

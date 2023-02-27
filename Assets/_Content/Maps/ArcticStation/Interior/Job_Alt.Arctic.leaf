@@ -10,9 +10,13 @@
 // Generic
 
 #NoJobHandler(a)
-{@$JobGiverId}  Hey, want to see the {h}Job Board{/h}?
-$choice .action.openJobBoard; Sure!
-$choice .action.cancel; No thanks.
+$if jobs:specter6-comms.kelp.discussed, !jobs:specter6-comms.arctic.discussed
+    $branch .commsDiscussion
+$else
+    {@$JobGiverId}  Hey, want to see the {h}Job Board{/h}?
+    $choice .action.openJobBoard; Sure!
+    $choice .action.cancel; No thanks.
+$endif
 
 #WrongStationJobHandler(a)
 {@$JobGiverId}  Hmm, it looks like you've taken a job with someone else.
@@ -31,19 +35,29 @@ $choice .action.cancel; No thanks.
     $choice .action.cancel; Nah.
 
 #WrongCharacterJobHandler(a)
-{@$JobGiverId}  Oh, sorry, your current job is with {nameof @profArctic}.
-                You should talk to her about that.
+{@$JobGiverId}  Hmm... looks like your current job is with {nameof @profArctic}.
+                You should talk to her about that. 
 
 #JobHandler(a)
-{@$JobGiverId}  {random Hey, got|So, do you have} anything to report for your current job?
+{@$JobGiverId}  {random Got|So, do you have} anything to report for your current job?
     $choice .action.report; Yep!
     $choice .action.openJobBoard; Let me {random see|look at} the {h}Job Board{/h}.
     $choice .action.cancel.currentJob; Nope.
 
 :: action.cancel
 @cutscene
-{@$JobGiverId}  Okay, well please let me know when you need me.
+{@$JobGiverId}  Okay. Let me know when you need me.
 
 :: action.cancel.currentJob
 @cutscene
-{@$JobGiverId}  Just let me know when you're ready then.
+{@$JobGiverId}  Just let me know when you're ready.
+
+:: commsDiscussion
+    // STORY BEAT H
+    {@player}   Oh, before I go... 
+                I found an old note of Mer's. She was working on an upgrade for {nameof @guide}.
+                 Do you know anything about that?
+    {@arcticSci} Hmm... Meredith may have mentioned it once or twice, but beyond that, I'm not sure. 
+                 She was always working on something new. 
+                 Sorry I can't be more help, Ollie. 
+    $set jobs:specter6-comms.arctic.discussed = true

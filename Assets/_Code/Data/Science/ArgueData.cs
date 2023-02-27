@@ -11,7 +11,7 @@ namespace Aqua {
         public StringHash32 Id;
         public StringHash32 ClaimId;
         public StringHash32 ClaimLabel;
-        public HashSet<StringHash32> ExpectedFacts = new HashSet<StringHash32>();
+        public HashSet<StringHash32> ExpectedFacts = Collections.NewSet<StringHash32>(4);
         public BFShapeId[] FactSlots = new BFShapeId[MaxFactsPerClaim];
         public StringHash32[] SubmittedFacts = new StringHash32[MaxFactsPerClaim];
         public VariantTable Vars = new VariantTable();

@@ -12,6 +12,8 @@ using BeauUtil.Variants;
 using System;
 using BeauUtil.Debugger;
 using System.Collections.Generic;
+using BeauRoutine;
+using System.Text;
 
 [assembly: InternalsVisibleTo("Aqua.Shared.Editor")]
 [assembly: InternalsVisibleTo("Assembly-CSharp-Editor")]
@@ -105,12 +107,20 @@ namespace Aqua
             #endif // DEVELOPMENT
 
             LoadBootParamsSecondPass();
+            Async.InvokeAsync(RetrieveExpensiveSystemResources);
+
+            CrashHandler.Register();
+            CrashHandler.DisplayCrash += OnCrash;
+            #if !UNITY_EDITOR
+            CrashHandler.Enabled = true;
+            #endif // !UNITY_EDITOR
         }
 
         private void OnDestroy()
         {
             if (m_HasPersisted)
             {
+                CrashHandler.Deregister();
                 Services.Shutdown();
             }
         }
@@ -195,5 +205,45 @@ namespace Aqua
         #endif // UNITY_EDITOR
 
         #endregion // Boot Parameters
+    
+        static private void RetrieveExpensiveSystemResources() {
+            Char.IsWhiteSpace('0');
+        }
+
+        static private void OnCrash(Exception e, string error, out string context) {
+            Time.timeScale = 0;
+            Routine.Settings.Paused = true;
+            Services.Audio.DebugMix.Pause = true;
+            Services.Pause.Pause();
+            Services.Input.PushFlags(0);
+
+            DebugService debug = FindObjectOfType<DebugService>();
+            if (debug != null) {
+                debug.enabled = false;
+            }
+
+            var save = Save.Current;
+            StringHash32 jobId;
+
+            StringBuilder contextBuilder = new StringBuilder(512);
+            contextBuilder.Append("Profile Name:\t").Append(save?.Id ?? "(not loaded)");
+            contextBuilder.Append("\nCurrent Job:\t");
+            if (save != null) {
+                if ((jobId = save.Jobs.CurrentJobId).IsEmpty) {
+                    contextBuilder.Append("(no job)");
+                } else {
+                    contextBuilder.Append(Assets.NameOf(jobId));
+                }
+            } else {
+                contextBuilder.Append("(not loaded)");
+            }
+            contextBuilder.Append("\nCurrent Scene:\t").Append(SceneHelper.ActiveScene().Name);
+            if (Services.State.IsLoadingScene()) {
+                contextBuilder.Append(" (loading)");
+            } else {
+                contextBuilder.Append(" (loaded)");
+            }
+            context = contextBuilder.Flush();
+        }
     }
 }

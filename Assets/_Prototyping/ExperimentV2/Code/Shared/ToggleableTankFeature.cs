@@ -11,7 +11,7 @@ namespace ProtoAqua.ExperimentV2
         #region Inspector
 
         public ParticleSystem Particles;
-        public AmbientRenderer Light;
+        // public AmbientRenderer Light;
 
         #endregion // Inspector
 
@@ -25,7 +25,7 @@ namespace ProtoAqua.ExperimentV2
 
             inFeature.State = true;
             inFeature.Particles.Play();
-            inFeature.Light.enabled = true;
+            // inFeature.Light.enabled = true;
             inFeature.OnStateChanged?.Invoke(true);
             if (!inbForce)
                 inFeature.Particles.Emit(32);
@@ -41,7 +41,7 @@ namespace ProtoAqua.ExperimentV2
             if (inbForce) {
                 inFeature.Particles.Clear();
             }
-            inFeature.Light.enabled = false;
+            // inFeature.Light.enabled = false;
             inFeature.OnStateChanged?.Invoke(false);
         }
     }

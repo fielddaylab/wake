@@ -7,6 +7,7 @@ using Aqua.View;
 using BeauPools;
 using BeauRoutine;
 using BeauUtil;
+using BeauUtil.Tags;
 using BeauUtil.Variants;
 using Leaf;
 using Leaf.Runtime;
@@ -39,12 +40,12 @@ namespace Aqua {
 
         [LeafMember("ScriptBlocking"), Preserve]
         static public bool ShouldBlock() {
-            return !Services.Valid || Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.UI.IsLetterboxed() || StateUtil.IsLoading;
+            return !Services.Valid || Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || JournalCanvas.Visible() || Services.UI.IsLetterboxed() || StateUtil.IsLoading;
         }
 
         [LeafMember("ScriptBlockingIgnoreLetterbox"), Preserve]
         static public bool ShouldBlockIgnoreLetterbox() {
-            return Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || StateUtil.IsLoading;
+            return Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying()  || JournalCanvas.Visible() || StateUtil.IsLoading;
         }
 
         [MethodImpl(256)]
@@ -71,24 +72,41 @@ namespace Aqua {
 
         #region Popups
 
-        static public Future<StringHash32> PopupNewEntity(BestiaryDesc entity, string descriptionOverride = null, ListSlice<BFBase> extraFacts = default) {
+        static public Future<StringHash32> PopupNewEntity(BestiaryDesc entity, string descriptionOverride = null, ListSlice<BFBase> extraFacts = default, Sprite inImageOverride = null) {
+            if (entity.HasFlags(BestiaryDescFlags.IsSpecter)) {
+                return PopupNewSpecter(entity, descriptionOverride, extraFacts);
+            }
+
             using (PooledList<BFBase> allFacts = PooledList<BFBase>.Create(entity.AssumedFacts)) {
                 allFacts.AddRange(extraFacts);
                 allFacts.Sort(BFType.SortByVisualOrder);
+
+                StreamedImageSet image;
+                if (inImageOverride != null) {
+                    image = inImageOverride;
+                } else {
+                    image = entity.ImageSet();
+                }
                 if (entity.Category() == BestiaryDescCategory.Critter) {
                     return Services.UI.Popup.PresentFacts(
                         Loc.Format("ui.popup.newBestiary.critter.header", entity.CommonName()),
                         descriptionOverride ?? Loc.Find(entity.Description()),
-                        entity.ImageSet(),
+                        image,
                         new PopupFacts(allFacts));
                 } else {
                     return Services.UI.Popup.PresentFacts(
                         Loc.Format("ui.popup.newBestiary.env.header", entity.CommonName()),
                         descriptionOverride ?? Loc.Find(entity.Description()),
-                        entity.ImageSet(),
+                        image,
                         new PopupFacts(allFacts));
                 }
             }
+        }
+
+        static public Future<StringHash32> PopupNewSpecter(BestiaryDesc entity, string descriptionOverride = null, ListSlice<BFBase> extraFacts = default) {
+            string header = Loc.Format("ui.popup.newBestiary.specter.header", Formatting.ScrambleLoc(entity.CommonName()));
+            string text = Loc.Format("ui.popup.newBestiary.specter.description", Formatting.ScrambleLocTagged(entity.EncodedMessage(), "<color=yellow>"));
+            return Services.UI.Popup.Present(header, text, entity.EncodedIcon(), PopupFlags.TallImage, PopupPanel.DefaultAddToBestiary);
         }
 
         static public Future<StringHash32> PopupNewFact(BFBase fact, BestiaryDesc entity = null, string textOverride = null) {
@@ -110,6 +128,16 @@ namespace Aqua {
         static public Future<StringHash32> PopupFactDetails(BFBase fact, BFDiscoveredFlags flags, BestiaryDesc reference, params NamedOption[] options) {
             BFDetails details = BFType.GenerateDetails(fact, flags, reference);
             bool showFact = (BFType.Flags(fact) & BFFlags.HideFactInDetails) == 0;
+
+            if ((flags & BFDiscoveredFlags.IsEncrypted) != 0) {
+                details.Header = Loc.Format("fact.encrypted.header", Formatting.Scramble(details.Header));
+                details.Description = Loc.Format("fact.encrypted.description", Formatting.Scramble(details.Description));
+                details.Image = default;
+
+                return Services.UI.Popup.Present(
+                    details.Header, details.Description, details.Image, PopupFlags.ShowCloseButton | PopupFlags.TallImage, options
+                );
+            }
 
             if (showFact) {
                 return Services.UI.Popup.PresentFactDetails(

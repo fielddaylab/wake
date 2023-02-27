@@ -16,6 +16,8 @@ using TMPro;
 using EasyAssetStreaming;
 using EasyBugReporter;
 using BeauUtil.Variants;
+using System.Text;
+using System.IO;
 
 namespace Aqua.Debugging
 {
@@ -57,9 +59,11 @@ namespace Aqua.Debugging
         [NonSerialized] private Vector2 m_CameraCursorPivot;
         [NonSerialized] private bool m_CameraLock;
 
-        [NonSerialized] private uint m_LastKnownStreamingCount;
+        [NonSerialized] private int m_LastKnownNetworkCount;
         [NonSerialized] private long m_LastKnownStreamingMem;
         [NonSerialized] private long m_UnlockAllLastPress;
+
+        private readonly StringBuilder m_TextBuilder = new StringBuilder(128);
 
         private void LateUpdate()
         {
@@ -70,11 +74,14 @@ namespace Aqua.Debugging
 
             if (m_MinimalOn)
             {
-                bool bChanged = Ref.Replace(ref m_LastKnownStreamingCount, Streaming.LoadCount());
+                bool bChanged = Ref.Replace(ref m_LastKnownNetworkCount, NetworkStats.ActiveRequests);
                 bChanged |= Ref.Replace(ref m_LastKnownStreamingMem, Streaming.TextureMemoryUsage().Current);
                 if (bChanged)
                 {
-                    m_StreamingDebugText.SetText(string.Format("{0} / {1:0.00}MB", m_LastKnownStreamingCount, m_LastKnownStreamingMem / (1024f * 1024f)));
+                    m_TextBuilder.AppendNoAlloc(m_LastKnownNetworkCount).Append(" / ")
+                        .AppendNoAlloc(m_LastKnownStreamingMem / (1024f * 1024f), 2).Append("MB");
+                    m_StreamingDebugText.SetText(m_TextBuilder);
+                    m_TextBuilder.Clear();
                 }
             }
         }
@@ -209,6 +216,23 @@ namespace Aqua.Debugging
                     m_DebugCamera.SetCamera(Services.Camera.Current, Services.Camera.RootTransform);
                 }
             }
+
+            #if UNITY_EDITOR
+
+            if (m_Input.KeyDown(KeyCode.LeftShift) && m_Input.KeyPressed(KeyCode.Return))
+            {
+                DeviceInput.BlockAll();
+
+                byte[] screenshot = Services.Camera.TakeScreenshot();
+                if (screenshot != null) {
+                    Directory.CreateDirectory("Screenshots");
+                    string fileName = string.Format("{0} {1}.png", DateTime.Now.ToString("dd-MM-yyyy-HHmmss"), SceneHelper.ActiveScene().Name);
+                    File.WriteAllBytes("Screenshots/" + fileName, screenshot);
+                    Debug.LogFormat("[DebugService] Wrote screenshot '{0}' to Screenshots folder", fileName);
+                }
+            }
+
+            #endif // UNITY_EDITOR
 
             if (m_DebugCamera.Camera())
             {
@@ -432,13 +456,6 @@ namespace Aqua.Debugging
             RootDebugMenu();
             #endif // DEVELOPMENT
 
-            DumpSourceCollection src = new DumpSourceCollection();
-            src.Add(new ScreenshotContext());
-            src.Add(new LogContext(EasyBugReporter.LogTypeMask.Development | EasyBugReporter.LogTypeMask.Log));
-            src.Add(new UnityContext());
-            src.Add(new SystemInfoContext());
-            BugReporter.DefaultSources = src;
-
             // BugReporter.OnExceptionOrAssert((s) => {
             //     BugReporter.DumpContextToMemory(DumpFormat.Text, (d) => {
             //         UnityEngine.Debug.LogError(d.Contents);
@@ -461,6 +478,8 @@ namespace Aqua.Debugging
         IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
         {
             DMInfo loggingMenu = new DMInfo("Logging");
+            loggingMenu.AddToggle("Enable Crash Handler", () => CrashHandler.Enabled, (b) => CrashHandler.Enabled = b);
+            loggingMenu.AddDivider();
             RegisterLogToggle(loggingMenu, LogMask.Input);
             RegisterLogToggle(loggingMenu, LogMask.Physics);
             RegisterLogToggle(loggingMenu, LogMask.Scripting);

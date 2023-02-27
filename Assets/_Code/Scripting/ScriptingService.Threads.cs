@@ -145,7 +145,6 @@ namespace Aqua
             ScriptThreadHandle handle = inThread.GetHandle();
             TagString lineEvents = inThread.TagString;
             TagStringEventHandler eventHandler = m_TagEventHandler;
-            DialogPanel dialogPanel = inThread.Dialog ?? (inThread.Dialog = Services.UI.Dialog);
 
             ParseToTag(ref lineEvents, inLine, inThread);
             bool bHasDialogEvents = false;
@@ -154,7 +153,17 @@ namespace Aqua
                 bHasDialogEvents = lineEvents.Nodes[i].Type == TagNodeType.Event && m_DialogOnlyEvents.Contains(lineEvents.Nodes[i].Event.Type);
             }
 
-            eventHandler = dialogPanel.PrepLine(lineEvents, m_TagEventHandler, bHasDialogEvents);
+            DialogPanel dialogPanel = inThread.Dialog;
+            if ((bHasDialogEvents || lineEvents.RichText.Length > 0)) {
+                if (dialogPanel.IsReferenceNull()) {
+                    dialogPanel = (inThread.Dialog = Services.UI.Dialog);
+                }
+            }
+            if (!dialogPanel.IsReferenceNull()) {
+                eventHandler = dialogPanel.PrepLine(lineEvents, m_TagEventHandler, bHasDialogEvents);
+            } else {
+                eventHandler = m_TagEventHandler;
+            }
 
             inThread.RecordDialog(lineEvents);
 

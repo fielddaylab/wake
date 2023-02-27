@@ -1,0 +1,23 @@
+#basePath Dream04
+::samTrigger1
+@trigger PlayerEnterRegion
+@when regionId == "samConvo1"
+@once
+
+{@player}
+Hey, that's Sam's sub... {auto}{wait-abs 3}
+
+
+::samTrigger2
+@trigger PlayerEnterRegion
+@when regionId == "samConvo2"
+@once
+
+{wait 4}
+
+{@player} 
+Sam? {auto}{wait-abs 3}
+
+{@player}
+I've been looking everywhere for you! {auto}{wait-abs 3}
+

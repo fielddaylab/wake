@@ -17,6 +17,7 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using FieldDay;
 using BeauUtil.Debugger;
+using Aqua.Debugging;
 
 namespace Aqua
 {
@@ -49,7 +50,7 @@ namespace Aqua
         [NonSerialized] private string m_CurrentTankType = string.Empty;
         [NonSerialized] private string m_CurrentEnvironment = string.Empty;
         [NonSerialized] private List<string> m_CurrentCritters = new List<string>();
-        [NonSerialized] private bool m_StabilizerEnabled = true;
+        [NonSerialized] private bool m_StabilizerEnabled = false;
         [NonSerialized] private bool m_AutoFeederEnabled = false;
         [NonSerialized] private StringHash32 m_CurrentArgumentId = null;
         [NonSerialized] private bool m_Debug;
@@ -113,6 +114,10 @@ namespace Aqua
             Services.Script.OnTargetedThreadStarted += GuideHandler;
             SceneHelper.OnSceneLoaded += LogSceneChanged;
 
+            CrashHandler.OnCrash += OnCrash;
+
+            NetworkStats.OnError.Register(OnNetworkError);
+
             m_Log = new OGDLog(new OGDLogConsts() {
                 AppId = m_AppId,
                 AppVersion = m_AppVersion,
@@ -169,6 +174,17 @@ namespace Aqua
             {
                 LogGuideScriptTriggered(nodeId);
             }
+        }
+
+        private void OnCrash(Exception exception, string error) {
+            string text = exception != null ? exception.Message : error;
+            using(var e = m_Log.NewEvent("game_error")) {
+                e.Param("error_message", text);
+                e.Param("scene", SceneHelper.ActiveScene().Name);
+                e.Param("time_since_launch", Time.realtimeSinceStartup, 2);
+                e.Param("job_name", m_CurrentJobName);
+            }
+            m_Log.Flush();
         }
 
         private void LogSceneChanged(SceneBinding scene, object context)
@@ -339,14 +355,6 @@ namespace Aqua
 
         private void LogAcceptJob(StringHash32 jobId)
         {
-            if (SetCurrentJob(jobId))
-            {
-                using(var e = m_Log.NewEvent("switch_job")) {
-                    e.Param("job_name", m_CurrentJobName);
-                    e.Param("prev_job_name", m_PreviousJobName);
-                }
-            }
-
             using(var e = m_Log.NewEvent("accept_job")) {
                 e.Param("job_name", m_CurrentJobName);
             }
@@ -411,10 +419,6 @@ namespace Aqua
             using(var e = m_Log.NewEvent("complete_job")) {
                 e.Param("job_name", parsedJobName);
             }
-
-            m_PreviousJobName = m_CurrentJobName;
-            m_CurrentJobHash = null;
-            m_CurrentJobName = NoActiveJobId;
         }
 
         private void LogCompleteTask(StringHash32 inTaskId)
@@ -872,7 +876,7 @@ namespace Aqua
             m_CurrentTankType = string.Empty;
             m_CurrentEnvironment = string.Empty;
             m_CurrentCritters = new List<string>();
-            m_StabilizerEnabled = true;
+            m_StabilizerEnabled = false;
             m_AutoFeederEnabled = false;
         }
 
@@ -928,6 +932,15 @@ namespace Aqua
         }
 
         #endregion // Argumentation
+
+        private void OnNetworkError(string url) {
+            if (url.Length > 480) {
+                url = url.Substring(0, 477) + "...";
+            }
+            using(var e = m_Log.NewEvent("load_error")) {
+                e.Param("url", url);
+            }
+        }
 
         #endregion // Log Events
 

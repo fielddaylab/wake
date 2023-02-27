@@ -4,9 +4,12 @@
 @trigger    JobStarted
 @cutscene
 
-{@profBayou}  Thank you, Ollie,  
-              We need to assess whether the oil rig reef can stay without harming the ecosystem, or if it needs to be removed.
-             Can you take your sub out and get an estimated count of all the local species? 
+{@profBayou}    Thank you, Ollie,  
+                We are beginning an assessment of whether the oil rig reef can stay without harming the ecosystem, or if it needs to be removed.
+                The first step is to estimate organism populations.
+                That will allow us to compare the populations of native species to the invasive species that the rig has enabled to live here.
+                We'll also be able to use that data as a baseline for future models.
+                Can you take your sub out and get an estimated count of all the species here?
 {@player}    Sure, Professor. Happy to help. 
 
 :: diveSite
@@ -23,6 +26,7 @@
 {@guide} Humans who make a living fishing for shrimp. 
 {@player} Hmm. I haven't seen many shrimp around here.  
 {@player} No wonder the guy's grumpy. 
+$call GiveJournalEntry("N06_BayouLife")
 
 // CATCH-ALL GUIDE TEXT
 
@@ -60,12 +64,9 @@
 // ARGUMENTATION
 ::argue.intro
 @trigger    TryArgumentation
-@when   !ArgueIsComplete(siteOAnalysis4Summary)
+@when   !ArgueIsComplete(siteOAnalysis3Invasive)
 @cutscene
-$if ArgueIsComplete(siteOAnalysis3Invasive)
-    // go to pt 4
-    $branch .argue.loadArgue4
-$elseif ArgueIsComplete(siteOAnalysis2Relier)
+$if ArgueIsComplete(siteOAnalysis2Relier)
     // go to pt 3
     $branch .argue.loadArgue3
 $elseif ArgueIsComplete(siteOAnalysis1Native)
@@ -167,46 +168,7 @@ $branch .argue.showClaim3
 
 :: argue.analysis3Complete
 $call ArgueComplete()
-$branch .argue.loadArgue4
-
-// pt 4
-
-:: argue.loadArgue4
-$call ArgueLoad(siteOAnalysis4)
-{@profBayou} Okay. Now, looking at the numbers in total...
-$branch .argue.showClaim4
-
-:: argue.showClaim4
-{@profBayou} Are the invasive species outnumbering the native ones?
-$choice .argue.invasivesOutnumber; Invasives outnumber native species
-$choice .argue.equal; Invasive and native species populations are roughly equal
-$choice .argue.nativesOutnumber; Native species outnumber the invasive species
-$choice .argue.giveUp; Let me get back to you.
-$choose branch
-
-:: argue.invasivesOutnumber
-{@player}   It looks like invasive species outnumber the native ones.
-{@profBayou}    Well then. That doesn't bode too well for the existing ecosystem.
 $branch .argue.analysis4Complete
-
-:: argue.equal
-{@player}   It looks like there are about the same number of each.
-{@profBayou}    Are you sure? I haven't tallied them exactly, but that isn't the sense I get looking at those numbers.
-                Let's take another look.
-$branch .argue.showClaim4
-
-:: argue.nativesOutnumber
-{@player}   It looks like the native species outnumber the invasive ones.
-$if HasFact(O_OilRig.Population.Cyanobacteria)
-    {@profBayou}    I suppose if we count {pluralnameof Cyanobacteria}, that is true. There are about a million of those things.
-                    But if we leave them out of it, it seems clear to me there a significantly more invasive species than native ones.
-    $branch .argue.analysis4Complete
-$else
-    {@profBayou}    Are you sure? I haven't tallied them exactly, but that isn't the sense I get looking at those numbers.
-                    Let's take another look.
-    $branch .argue.showClaim4
-$endif
-
 
 // Ending
 
@@ -220,13 +182,17 @@ $goto .argue.giveUp
 
 :: argue.analysis4Complete
 $call ArgueComplete()
-{@profBayou} Hmmm. Nice work, Ollie. 
-{@profBayou} I need to consider this and plan our next move. 
+{@profBayou}    Okay, so you estimate about 15 turtles and 15 grouper.
+                That's 30 of the native species overall. And you estimate about 40 {nameof AngelFish}, which are invasive species.
+                I would call that about even, maybe a few more invasives. That worries me, because it seems they are set to crowd out the native species.
+                We'll need to keep an eye on whether the {nameof AngelFish} populations increase or remain stable.
+{@profBayou}    Hmmm. Nice work, Ollie.
+{@profBayou}    I need to consider this and plan our next move. 
 {@bayouSci} Aw, you gotta be kiddin' me, Harper. 
             The turtles were here first. Then these new critters moved in and started takin' over.
             If you ask me, we need that reef outta here yesterday! Right, kid?
 {@player}   Oh... um...
             I'm not really used to making these kind of decisions...
-{@profBayou} It's too early to decide anything, Silias. We need more data. 
-{@profBayou} Ollie, let me know if you'd like to help out again. I'm sure I'll have more work for you soon. 
+{@profBayou}    It's too early to decide anything, Silias. We need more data. 
+{@profBayou}    Ollie, let me know if you'd like to help out again. I'm sure I'll have more work for you soon.
 $call CompleteJob()

@@ -86,7 +86,7 @@ namespace Aqua.Compression {
                                 Log.Msg("[LayoutPrefabPackage] Compressing '{0}'...", prefab.name);
                                 byte[] uncompressed = (byte[]) compressed.Clone();
                                 compressed = UnsafeExt.Compress(compressed);
-                                Log.Msg("[LayoutPrefabPackage] Compression Ratio: {0}", (float) uncompressed.Length / compressed.Length);
+                                Log.Msg("[LayoutPrefabPackage] Compression Ratio for '{0}': {1}", prefab.name, (float) uncompressed.Length / compressed.Length);
                                 byte[] decompressed;
                                 if (!UnsafeExt.Decompress(compressed, out decompressed)) {
                                     Log.Error("[LayoutPrefabPackage] Compressed data unable to be decompressed!");
@@ -178,29 +178,31 @@ namespace Aqua.Compression {
                     }
                     EditorGUILayout.EndVertical();
                 }
-                EditorGUILayout.LabelField("Strings", prefabPackage.m_Bank.StringBank.Length.ToString());
-                if (prefabPackage.m_Bank.StringBank.Length > 0) {
-                    EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-                    {
-                        using(new EditorGUI.DisabledScope(true)) {
-                            foreach(var entry in prefabPackage.m_Bank.StringBank) {
-                                EditorGUILayout.TextField(entry);
+                if (prefabPackage.m_Bank != null) {
+                    EditorGUILayout.LabelField("Strings", prefabPackage.m_Bank.StringBank.Length.ToString());
+                    if (prefabPackage.m_Bank.StringBank.Length > 0) {
+                        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                        {
+                            using(new EditorGUI.DisabledScope(true)) {
+                                foreach(var entry in prefabPackage.m_Bank.StringBank) {
+                                    EditorGUILayout.TextField(entry);
+                                }
                             }
                         }
+                        EditorGUILayout.EndVertical();
                     }
-                    EditorGUILayout.EndVertical();
-                }
-                EditorGUILayout.LabelField("References", prefabPackage.m_Bank.AssetBank.Length.ToString());
-                if (prefabPackage.m_Bank.AssetBank.Length > 0) {
-                    EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-                    {
-                        using(new EditorGUI.DisabledScope(true)) {
-                            foreach(var entry in prefabPackage.m_Bank.AssetBank) {
-                                EditorGUILayout.ObjectField(entry, typeof(UnityEngine.Object), false);
+                    EditorGUILayout.LabelField("References", prefabPackage.m_Bank.AssetBank.Length.ToString());
+                    if (prefabPackage.m_Bank.AssetBank.Length > 0) {
+                        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                        {
+                            using(new EditorGUI.DisabledScope(true)) {
+                                foreach(var entry in prefabPackage.m_Bank.AssetBank) {
+                                    EditorGUILayout.ObjectField(entry, typeof(UnityEngine.Object), false);
+                                }
                             }
                         }
+                        EditorGUILayout.EndVertical();
                     }
-                    EditorGUILayout.EndVertical();
                 }
 
                 serializedObject.ApplyModifiedProperties();

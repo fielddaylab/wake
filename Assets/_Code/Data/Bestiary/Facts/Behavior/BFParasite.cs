@@ -83,19 +83,5 @@ namespace Aqua {
         }
 
         #endregion // Behavior
-
-        #if UNITY_EDITOR
-
-        protected override bool IsPair(BFBehavior inOther)
-        {
-            return false;
-        }
-
-        public override bool Bake(BakeFlags flags, BakeContext context)
-        {
-            return false;
-        }
-
-        #endif // UNITY_EDITOR
     }
 }

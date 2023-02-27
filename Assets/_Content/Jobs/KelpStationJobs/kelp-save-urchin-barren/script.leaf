@@ -5,25 +5,22 @@
 @cutscene
 
 {@drKelp}  Oh, Olivia. Thank goodness.
-            Arch Oasis at Site B is looking quite... well, barren.
+           I'm not sure if you've noticed, but Cliffside Oasis at Site B isn't doing well at all. 
            Our funders are talking about pulling the funding for Mer's Refuge.
 {@player}   What?? Why?
 {@drKelp}   Think about how this looks, Olivia. If we can't keep Site B healthy, how can they trust us to create a whole new ecosystem?
-{@drKelp}   Luckily, I think we can fix this.
-            Head back to your {h}Modeling Whiteboard{/h}.
+{@drKelp}   Thankfully, I think we can fix this.
+            Head back to your {h}Modeling Lab{/h}.
            There's one part of the Simulator that you haven't used yet. {nameof @guide} will talk you through it. 
            Good luck, Mija. 
+$set jobs:kelp-save-urchin-barren.sync-failed = false
+
 ::helpGoToModeling
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Helm", JobTaskTop(makeAPlan)
 @cutscene
 {@player} 	Where should we start, {nameof @guide}?
 {@guide}	Head to the {nameof Modeling}!
-$if global:nav.shipRoom == "modeling"
-    {@guide}    Head to the {h}Modeling Whiteboard{/h}.
-$else
-    {@guide}    Head over to the {nameof Modeling}.
-$endif
 
 // in modeling
 
@@ -32,8 +29,8 @@ $endif
 @once
 @cutscene
 
-{@player}  Okay, {nameof @guide}. We need a plan to repair Arch Oasis.
-           Mom said the {h}Modeling Whiteboard{/h} could help.
+{@player}  Okay, {nameof @guide}. We need a plan to repair Cliffside Oasis.
+           Mom said the {nameof Modeling} could help.
 {@guide}   Ah, yes! One of my favorite predictive modeling functions!
 {@player}  Ooookay... 
 {@guide}   You need to use your modeling tool to simulate an {h}intervention{/h} and predict what would happen!
@@ -93,6 +90,63 @@ $else
 	{@player} 	What now, {nameof @guide}?
 	{@guide}	Report your findings to {nameof @drKelp}!
 $endif
+
+
+// MODELING SUGGESTIONS
+
+:: triggerSyncFailure
+@trigger    SimulationSyncError
+@when       !jobs:kelp-save-urchin-barren.sync-failed
+@once
+$set jobs:kelp-save-urchin-barren.sync-failed = true
+
+:: helpModelSync.Visual
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(makeAPlan), scene:name == "Modeling", modeling:phase == "visual"
+@cutscene
+$branch .modelSuggestions
+
+:: helpModelSync.Sync
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(makeAPlan), scene:name == "Modeling", modeling:phase == "sync"
+@cutscene
+$branch .modelSuggestions
+
+:: modelSuggestions
+$if HasFact(Urchin.Reproduce), HasFact(Urchin.Eats.GiantKelp), IsFactFullyUpgraded(Urchin.Eats.GiantKelp), HasFact(GiantKelp.Reproduce)
+    $if HasFact(UrchinBarren.Model.IntroduceOtters)
+        {@guide}    You're done with this portion! Head to the {h}Intervene{/h} tab next.
+    $else
+        {@guide}    Once you import your facts and save the Visual model, you'll be ready to make your Intervene model!
+    $endif
+$else
+    $if !jobs:kelp-save-urchin-barren.sync-failed
+        {@guide}    Time to try out your model in the {h}Intervene{/h} tab.
+    $else
+        {@guide}    Seems like we don't have enough information to complete our model accurately.
+                    Look for {h}question marks{/h} in the Visual model interface. Those point to where you may need more data.
+
+        $if !HasFact(Urchin.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(Urchin.Eats.GiantKelp)
+        	$branch .suggestObserve
+        $elseif !IsFactFullyUpgraded(Urchin.Eats.GiantKelp)
+        	$branch .suggestMeasure
+        $elseif !HasFact(GiantKelp.Reproduce)
+            $branch .suggestReproduce
+        $endif
+    $endif
+$endif
+
+:: suggestReproduce
+{@guide}    Did you get all the reproduction rates?
+
+:: suggestObserve
+{@guide}    Are you sure you have observed all the interactions here?
+
+:: suggestMeasure
+{@guide}    You may need to measure the rates of interactions.
+
 
 // CATCH-ALL GUIDE TEXT
 
@@ -165,7 +219,7 @@ $choice .argue.giveUpHopeless; Let me get back to you.
 
 ::argue.currentModel
 {@drKelp}    That's not relevant, Olivia. 
-            Show me your Intervention Model of Arch Oasis.
+            Show me your Intervention Model of Cliffside Oasis.
 $call ArgueClearFacts()
 $goto .argue.chooseFactsHopeless
 
@@ -202,7 +256,7 @@ $endif
 $goto .argue.checkOtters
 
 ::argue.checkOtters
-{@drKelp}   Ooh. Sounds promising!
+{@drKelp}   Hmm. That sounds promising!
             Do you have a model that shows how otters would help?
 $goto .argue.chooseFactsOtters
 
@@ -235,8 +289,10 @@ $goto .argue.chooseFactsOtters
 {@drKelp} Thank you, Mija. I'll bring this solution to our funders right away.
           {pluralnameof Urchin} eat {pluralnameof GiantKelp}, and {pluralnameof SeaOtter} eat {pluralnameof Urchin}...
           So adding some {pluralnameof SeaOtter} should control the {pluralnameof Urchin} population and give the {critter-name}Kelp{/critter-name} a chance to repopulate!
-          Now we just need to decide which otters to add. Maybe Ofelia and Otis? And Orion could use a change of scenery...
-{@player}  You'll figure it out, Mom. I'm just glad I could help. 
+          Now we just need to decide which otters to add. Maybe Ofelia and Otis? And Ovid could use a change of scenery...
+{@player} Wait a minute... did you say Ovid?? The little guy Mer and I used to play with? 
+{@drKelp} Well, he's a bit bigger now. And he has slowed down in his old age. 
+{@drKelp} But he's still just as cute as ever. 
 $call CompleteJob()
 
 

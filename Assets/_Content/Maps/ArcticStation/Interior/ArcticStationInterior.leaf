@@ -10,17 +10,17 @@
 @once
 @cutscene
 
+$call       ActivateSamConvo()
 {@arcticSci}    Oh my. You must be.... ah.
 {@profArctic}   Don't scare the kid away, Jacques.  
-{@profArctic}   Welcome to the Arctic Station! I'm the lead scientist here. You can call me Juno. 
+{@profArctic}   Welcome to the Arctic Station. I'm the lead scientist here. You can call me Juno. 
                 You're Ollie, right?
-{@player}       Um... yes. How did you know?
-{@profArctic}   Professor Whalen here used to work with your sister.
-                He still talks about her work all the time. Meredith is a legend around here. 
+{@player}       Um... yeah. How do you know my name? 
+{@profArctic}   Professor Whalen here used to work with your sister. You look just like her. 
 {@player}       Wait... for real? You taught my sister?
-{@arcticSci}   Taught her? No. Mer was a prodigy. I could barely keep up.
-                You look so much like her. It's uncanny.
-{@player}       Wow. I would love to hear more stories about her! 
+{@arcticSci}    Taught her? No. Mer was a prodigy. I could barely keep up.
+{@arcticSci}    She used to leave her notes scattered all around this place. I'll see if I can find any of them.
+{@player}       Wow. That would be amazing! 
                 Have you lived out here all this time, Professor? 
 {@arcticSci}    No. I'm only here for one task... seeking out a Bowhead Whale that I've lost track of. 
                 I would love your help. I sure have been worried about her.   
@@ -28,3 +28,22 @@
 $call UnlockSite(RS-4X)
 $call UnlockSite(RS-4Y)
 $call InteriorOpenJobBoard()
+$set jobs:arctic-job3-journal.received = false
+
+:: job1.journal-mer
+@trigger    JournalHidden
+@once
+@cutscene
+$if CompletedJobCount(ArcticStation, 1)
+    // STORY BEAT B
+    {@arcticSci}   Oh, one more thing, Ollie. I found an old page of your sister's notes!
+    {@arcticSci} She thought whale echolocation was the key to a whole new form of communication tech.
+    {@player}   Hmm... whales? Mom never mentioned that.
+    {@arcticSci} Well, it was a slow process. But the more your sister learned about whales, the more she wanted to protect them.
+    {@player}   Wow. Thank you, {nameof @arcticSci}!
+    {@arcticSci} Of course. Anything for Meredith's sister.
+                                 
+    $call GiveJournalEntry("N04_MersObsession")
+$else
+    {@profArctic}   Still broken, I'm afraid.
+$endif

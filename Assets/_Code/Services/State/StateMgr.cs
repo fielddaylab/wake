@@ -234,6 +234,11 @@ namespace Aqua
             BindScene(active);
             m_SceneHistory.PushBack(active);
 
+            if (active.BuildIndex > 0)
+            {
+                Services.Camera.DisableRendering();
+            }
+
             // if we started from another scene than the boot or title scene
             if (active.BuildIndex < 0 || active.BuildIndex >= GameConsts.GameSceneIndexStart)
             {
@@ -258,6 +263,7 @@ namespace Aqua
             yield return WaitForCleanup();
 
             RecordCurrentMapAsSeen(active);
+            Services.Camera.EnableRendering();
 
             m_SceneLock = false;
 
@@ -270,7 +276,9 @@ namespace Aqua
             Services.Physics.Enabled = true;
 
             Services.Events.Dispatch(GameEvents.SceneLoaded);
-            Services.Script.TriggerResponse(GameTriggers.SceneStart);
+            if (Services.Data.IsProfileLoaded()) {
+                Services.Script.TriggerResponse(GameTriggers.SceneStart);
+            }
             m_InitFrame = false;
         }
 
@@ -282,6 +290,8 @@ namespace Aqua
             Services.Script.KillLowPriorityThreads(TriggerPriority.Cutscene, true);
             Services.Physics.Enabled = false;
             BootParams.ClearStartFlag();
+
+            Streaming.RetryErrored();
 
             bool bShowCutscene = (inFlags & SceneLoadFlags.Cutscene) != 0;
             if (bShowCutscene)
@@ -298,9 +308,10 @@ namespace Aqua
             {
                 AutoSave.Suppress();
             }
-
-            if ((inFlags & SceneLoadFlags.DoNotDispatchPreUnload) == 0)
+ 
+            if ((inFlags & SceneLoadFlags.DoNotDispatchPreUnload) == 0) {
                 Services.Events.Dispatch(GameEvents.SceneWillUnload);
+            }
 
             // if we started from another scene than the boot or title scene
             if (inNextScene.BuildIndex < 0 || inNextScene.BuildIndex >= GameConsts.GameSceneIndexStart)
@@ -348,6 +359,7 @@ namespace Aqua
                 yield return null;
 
             BindScene(inNextScene);
+            Services.Camera.DisableRendering();
             yield return WaitForServiceLoading();
 
             if ((inFlags & SceneLoadFlags.DoNotModifyHistory) == 0)
@@ -366,6 +378,7 @@ namespace Aqua
             yield return WaitForCleanup();
 
             RecordCurrentMapAsSeen(inNextScene);
+            Services.Camera.EnableRendering();
 
             m_SceneLock = false;
 
@@ -386,11 +399,13 @@ namespace Aqua
 
                 Services.Events.Dispatch(GameEvents.SceneLoaded);
 
-                // if we're suppressing triggers, then only call functions
-                if ((inFlags & SceneLoadFlags.SuppressTriggers) != 0) {
-                    Services.Script.TryCallFunctions(GameTriggers.SceneStart);
-                } else {
-                    Services.Script.TriggerResponse(GameTriggers.SceneStart);
+                if (Services.Data.IsProfileLoaded()) {
+                    // if we're suppressing triggers, then only call functions
+                    if ((inFlags & SceneLoadFlags.SuppressTriggers) != 0) {
+                        Services.Script.TryCallFunctions(GameTriggers.SceneStart);
+                    } else {
+                        Services.Script.TriggerResponse(GameTriggers.SceneStart);
+                    }
                 }
             }
             m_InitFrame = false;
@@ -421,9 +436,11 @@ namespace Aqua
                 if (allPreloaders.Count > 0)
                 {
                     DebugService.Log(LogMask.Loading, "[StateMgr] Executing preload steps for scene '{0}'", inScene.Path);
-                    yield return Routine.ForEachParallel(allPreloaders.ToArray(), (p) => p.OnPreloadScene(inScene, inContext));
+                    yield return Routine.ForEachParallelChunked(allPreloaders.ToArray(), (p) => p.OnPreloadScene(inScene, inContext), 8);
                 }
             }
+
+            Services.Script.TryCallFunctions(GameTriggers.ScenePreload);
 
             using(PooledList<IStreamingComponent> allStreamingComponents = PooledList<IStreamingComponent>.Create())
             {
@@ -438,9 +455,7 @@ namespace Aqua
                 }
             }
 
-            while(Streaming.IsLoading()) {
-                yield return null;
-            }
+            yield return WaitForStreaming();
         }
 
         private IEnumerator WaitForPreload(GameObject inRoot, object inContext)
@@ -451,11 +466,27 @@ namespace Aqua
                 if (allPreloaders.Count > 0)
                 {
                     DebugService.Log(LogMask.Loading, "[StateMgr] Executing preload steps for gameObject '{0}'", inRoot.FullPath(true));
-                    return Routine.ForEachParallel(allPreloaders.ToArray(), (p) => p.OnPreloadScene(inRoot.scene, inContext));
+                    return Routine.ForEachParallelChunked(allPreloaders.ToArray(), (p) => p.OnPreloadScene(inRoot.scene, inContext), 8);
                 }
             }
 
             return null;
+        }
+
+        private IEnumerator WaitForStreaming() {
+            float downloadTime = 30;
+            while(downloadTime > 0 && (Streaming.IsLoading() || Services.Audio.IsLoadingStreams())) {
+                yield return null;
+                downloadTime -= Routine.DeltaTime;
+            }
+
+            while (Streaming.ErrorCount() > 0) {
+                yield return LoadingIcon.PromptRetry();
+                Streaming.RetryErrored();
+                while(Streaming.IsLoading()) {
+                    yield return null;
+                }
+            }
         }
 
         private IEnumerator WaitForCleanup()
@@ -714,7 +745,7 @@ namespace Aqua
             // if (SceneHelper.ActiveScene().BuildIndex >= GameConsts.GameSceneIndexStart)
             //     Services.UI.ForceLoadingScreen();
 
-            m_SharedManagers = new Dictionary<Type, SharedManager>(8);
+            m_SharedManagers = new Dictionary<Type, SharedManager>(8, ReferenceEqualityComparer<Type>.Default);
 
             Frame.CreateBuffer();
             StartCoroutine(EndOfFrame());
@@ -847,10 +878,29 @@ namespace Aqua
         #region Leaf
 
         [LeafMember("LoadScene"), UnityEngine.Scripting.Preserve]
-        static private IEnumerator LeafLoadScene(string inSceneName, StringHash32 inEntrance = default(StringHash32), string inLoadingMode = null)
+        static private IEnumerator LeafLoadScene([BindThread] ScriptThread inThread, string inSceneName, StringHash32 inEntrance = default(StringHash32), string inLoadingMode = null)
         {
             SceneLoadFlags flags = SceneLoadFlags.Default;
-            return StateUtil.LoadSceneWithWipe(inSceneName, inEntrance, flags);
+            IEnumerator transition = StateUtil.LoadSceneWithWipe(inSceneName, inEntrance, flags);
+            if (LeafRuntime.PredictEnd(inThread)) {
+                return null;
+            }
+            else {
+                return transition;
+            }
+        }
+
+        [LeafMember("LoadSceneFade"), UnityEngine.Scripting.Preserve]
+        static private IEnumerator LeafLoadSceneFade([BindThread] ScriptThread inThread, string inSceneName, StringHash32 inEntrance = default(StringHash32), string inLoadingMode = null)
+        {
+            SceneLoadFlags flags = SceneLoadFlags.Default;
+            IEnumerator transition = StateUtil.LoadSceneWithFader(inSceneName, inEntrance, flags);
+            if (LeafRuntime.PredictEnd(inThread)) {
+                return null;
+            }
+            else {
+                return transition;
+            }
         }
 
         #endregion // Leaf

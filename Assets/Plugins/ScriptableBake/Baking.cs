@@ -79,6 +79,7 @@ namespace ScriptableBake {
             }
 
             BakeContext context = new BakeContext();
+            context.Scene = SceneManager.GetActiveScene();
             context.MainCamera = GameObject.FindObjectOfType<Camera>();
             context.HasFog = RenderSettings.fog;
             if (context.HasFog) {
@@ -200,10 +201,10 @@ namespace ScriptableBake {
         /// <summary>
         /// Flattens the hierarchy at this transform. Children will become siblings.
         /// </summary>
-        static public void FlattenHierarchy(Transform transform, bool destroyInactive, bool recursive = false) {
+        static public void FlattenHierarchy(Transform transform, bool destroyInactive, bool recursive = false, bool ignoreAnimators = true) {
             if (recursive) {
                 int placeIdx = transform.GetSiblingIndex() + 1;
-                FlattenHierarchyRecursive(transform, transform.parent, destroyInactive, ref placeIdx);
+                FlattenHierarchyRecursive(transform, transform.parent, destroyInactive, ignoreAnimators, ref placeIdx);
                 return;
             }
 
@@ -211,6 +212,10 @@ namespace ScriptableBake {
                 GameObject root = PrefabUtility.GetOutermostPrefabInstanceRoot(transform);
                 if (root != null)
                     PrefabUtility.UnpackPrefabInstance(root, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+            }
+
+            if (ignoreAnimators && transform.GetComponent<Animator>()) {
+                return;
             }
 
             Transform parent = transform.parent;
@@ -228,11 +233,15 @@ namespace ScriptableBake {
             }
         }
 
-        static private void FlattenHierarchyRecursive(Transform transform, Transform parent, bool destroyInactive, ref int siblingIndex) {
+        static private void FlattenHierarchyRecursive(Transform transform, Transform parent, bool destroyInactive, bool ignoreAnimators, ref int siblingIndex) {
             if (!Application.isPlaying) {
                 GameObject root = PrefabUtility.GetOutermostPrefabInstanceRoot(transform);
                 if (root != null)
                     PrefabUtility.UnpackPrefabInstance(root, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+            }
+
+            if (ignoreAnimators && transform.GetComponent<Animator>()) {
+                return;
             }
 
             Transform child;
@@ -244,7 +253,7 @@ namespace ScriptableBake {
                 } else {
                     child.SetParent(parent, true);
                     child.SetSiblingIndex(siblingIndex++);
-                    FlattenHierarchyRecursive(child, parent, destroyInactive, ref siblingIndex);
+                    FlattenHierarchyRecursive(child, parent, destroyInactive, ignoreAnimators, ref siblingIndex);
                 }
             }
         }
@@ -450,6 +459,7 @@ namespace ScriptableBake {
 
             if (context == null) {
                 context = new BakeContext();
+                context.Scene = SceneManager.GetActiveScene();
                 context.m_Flags = flags;
             }
 
@@ -616,6 +626,11 @@ namespace ScriptableBake {
     /// Bake context.
     /// </summary>
     public class BakeContext {
+        /// <summary>
+        /// Scene reference.
+        /// </summary>
+        public Scene Scene;
+
         /// <summary>
         /// Scene main camera.
         /// </summary>

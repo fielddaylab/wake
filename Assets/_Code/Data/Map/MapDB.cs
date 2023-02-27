@@ -25,8 +25,8 @@ namespace Aqua
         private readonly Dictionary<string, StringHash32> m_SceneMapping = new Dictionary<string, StringHash32>(StringComparer.Ordinal);
         private StringHash32[] m_BuildIndexMapping;
         private string[] m_SceneNames;
-        private readonly HashSet<MapDesc> m_Stations = new HashSet<MapDesc>();
-        private readonly HashSet<MapDesc> m_DiveSites = new HashSet<MapDesc>();
+        private readonly HashSet<MapDesc> m_Stations = Collections.NewSet<MapDesc>(5);
+        private readonly HashSet<MapDesc> m_DiveSites = Collections.NewSet<MapDesc>(18);
 
         public StringHash32 DefaultStationId() { return m_DefaultStationId; }
         public ListSlice<SerializedHash32> DefaultUnlockedRooms() { return m_DefaultUnlockedRooms; }

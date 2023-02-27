@@ -14,7 +14,13 @@ namespace Aqua.Editor
         private const float TextIconDisplayWidth = 64;
         private const int MaxSearchLines = 12;
 
-        [SerializeField] private string m_CurrentText;
+        private class PropState {
+            public string Text;
+            public string LastKnownKey;
+            public bool Overwrite = true;
+        }
+
+        private readonly Dictionary<uint, PropState> m_States = new Dictionary<uint, PropState>();
 
         [NonSerialized] static private GUIStyle s_NullIconStyle;
         [NonSerialized] static private GUIStyle s_FoundIconStyle;
@@ -30,10 +36,6 @@ namespace Aqua.Editor
 
         [NonSerialized] private List<string> m_SearchResults = new List<string>();
         [NonSerialized] private int m_SearchScroll = 0;
-
-        [NonSerialized] private string m_LastKnownKey;
-
-        private bool m_Overwrite = true;
 
         static private  void InitializeStyles()
         {
@@ -90,14 +92,21 @@ namespace Aqua.Editor
             propRect.width -= TextIconDisplayWidth + 4;
 
             Event oldCurrent = new Event(Event.current);
+
+            uint stateKey = new StringHash32(property.propertyPath).HashValue;
+            PropState state;
+            if (!m_States.TryGetValue(stateKey, out state)) {
+                state = new PropState();
+                m_States.Add(stateKey, state);
+            }
             
             EditorGUI.BeginChangeCheck();
             var stringProp = property.FindPropertyRelative("m_Source");
             var hashProp = property.FindPropertyRelative("m_HashValue");
 
-            if (!stringProp.hasMultipleDifferentValues && stringProp.stringValue != m_LastKnownKey) {
-                m_Overwrite = true;
-                m_LastKnownKey = stringProp.stringValue;
+            if (!stringProp.hasMultipleDifferentValues && stringProp.stringValue != state.LastKnownKey) {
+                state.Overwrite = true;
+                state.LastKnownKey = stringProp.stringValue;
             }
 
             int nextControlId = GUIUtility.GetControlID(FocusType.Keyboard) + 1;
@@ -109,8 +118,8 @@ namespace Aqua.Editor
             if (UnityEditor.EditorGUI.EndChangeCheck())
             {
                 stringProp.stringValue = newString;
-                m_Overwrite = true;
-                m_LastKnownKey = stringProp.stringValue;
+                state.Overwrite = true;
+                state.LastKnownKey = stringProp.stringValue;
                 hashProp.longValue = new StringHash32(stringProp.stringValue).HashValue;
             }
 
@@ -133,26 +142,26 @@ namespace Aqua.Editor
             key = stringProp.stringValue;
             string foundContent = null;
             bool bFound = !string.IsNullOrEmpty(key) && LocEditor.TryLookup(key, out foundContent);
-            if (m_Overwrite && bFound) {
-                m_CurrentText = foundContent;
-                m_Overwrite = false;
+            if (state.Overwrite && bFound) {
+                state.Text = foundContent;
+                state.Overwrite = false;
             }
 
             using(GUIScopes.IndentLevelScope.SetIndent(0)) {
                 if (!string.IsNullOrEmpty(key)) {
-                    m_CurrentText = EditorGUI.TextArea(textBox, m_CurrentText, s_TextAreaStyle);
+                    state.Text = EditorGUI.TextArea(textBox, state.Text, s_TextAreaStyle);
                 }
-                RenderSearchAndStatus(stringProp, hashProp, statusRect, searchResultsBox, key, foundContent, m_CurrentText, bFound, bSelected, oldCurrent);
+                RenderSearchAndStatus(property, stringProp, hashProp, statusRect, searchResultsBox, key, foundContent, state, bFound, bSelected, oldCurrent);
             }
 
             UnityEditor.EditorGUI.EndProperty();
         }
 
-        private void RenderSearchAndStatus(SerializedProperty stringProp, SerializedProperty hashProp, Rect statusPosition, Rect searchPosition, string key, string originalText, string newText, bool found, bool selected, Event evt) {
+        private void RenderSearchAndStatus(SerializedProperty parentProp, SerializedProperty stringProp, SerializedProperty hashProp, Rect statusPosition, Rect searchPosition, string key, string originalText, PropState state, bool found, bool selected, Event evt) {
             if (stringProp.hasMultipleDifferentValues) {
                 EditorGUI.LabelField(statusPosition, "---", s_NullIconStyle);
                 return;
-            }    
+            }
             if (string.IsNullOrEmpty(key)) {
                 EditorGUI.LabelField(statusPosition, "Null", s_NullIconStyle);
                 return;
@@ -160,43 +169,38 @@ namespace Aqua.Editor
 
 
             if (found) {
-                if (originalText == newText) {
+                if (originalText == state.Text) {
                     var validContent = s_ValidContent ?? (s_ValidContent = new GUIContent("Good"));
                     EditorGUI.LabelField(statusPosition, validContent, s_FoundIconStyle);
                 } else {
                     var updateContent = s_OverwriteContent ?? (s_OverwriteContent = new GUIContent("Update?"));
                     if (GUI.Button(statusPosition, updateContent, s_OverwriteIconStyle)) {
-                        LocEditor.TrySet(key, newText);
+                        LocEditor.TrySet(key, state.Text);
                     }
                 }
 
                 return;
             }
-            
+
             var guiContent = s_MissingContent ?? (s_MissingContent = new GUIContent("Create?"));
             if (GUI.Button(statusPosition, guiContent, s_MissingIconStyle)) {
-                LocEditor.TrySet(key, newText);
+                LocEditor.TrySet(key, state.Text);
                 EditorUtility.SetDirty(stringProp.serializedObject.targetObject);
             }
 
-            if (selected && evt.type == EventType.KeyDown)
-            {
-                if (evt.keyCode == KeyCode.PageUp)
-                {
+            if (selected && evt.type == EventType.KeyDown) {
+                if (evt.keyCode == KeyCode.PageUp) {
                     m_SearchScroll -= 1;
                     EditorUtility.SetDirty(stringProp.serializedObject.targetObject);
-                }
-                else if (evt.keyCode == KeyCode.PageDown)
-                {
+                } else if (evt.keyCode == KeyCode.PageDown) {
                     m_SearchScroll += 1;
                     EditorUtility.SetDirty(stringProp.serializedObject.targetObject);
-                }
-                else if (evt.keyCode == KeyCode.Space && m_SearchResults.Count == 1) {
+                } else if (evt.keyCode == KeyCode.Space && m_SearchResults.Count == 1) {
                     string onlyResult = m_SearchResults[0];
-                    m_LastKnownKey = onlyResult;
+                    state.LastKnownKey = onlyResult;
                     stringProp.stringValue = onlyResult;
                     hashProp.longValue = new StringHash32(onlyResult).HashValue;
-                    m_Overwrite = true;
+                    state.Overwrite = true;
                     GUIUtility.keyboardControl = 0;
                 }
             }

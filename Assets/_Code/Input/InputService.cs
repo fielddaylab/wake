@@ -60,8 +60,12 @@ namespace Aqua
         [NonSerialized] private int m_ForceClick = 0;
         [NonSerialized] private RingBuffer<long> m_LastClickTimes = new RingBuffer<long>(2, RingBufferMode.Overwrite);
 
+        [NonSerialized] private PointerEventData m_NativeEventData;
+
         [NonSerialized] private readonly List<PriorityRecord> m_PriorityStack = new List<PriorityRecord>(8);
         [NonSerialized] private readonly List<FlagsRecord> m_FlagsStack = new List<FlagsRecord>(8);
+
+        public event Action<KeyCode> OnKeyPressed;
 
         #region Input Layers
 
@@ -218,7 +222,10 @@ namespace Aqua
             if (rectTransform && !rectTransform.IsPointerInteractable())
                 return false;
             
-            return ExecuteEvents.Execute(inRoot, m_InputModule.GetPointerEventData(), ExecuteEvents.pointerClickHandler);
+            ++m_ForceClick;
+            bool bSuccess = ExecuteEvents.Execute(inRoot, m_InputModule.GetPointerEventData(), ExecuteEvents.pointerClickHandler);
+            --m_ForceClick;
+            return bSuccess;
         }
 
         public bool ForceClick(GameObject inRoot)
@@ -299,15 +306,51 @@ namespace Aqua
 
         private void OnNativeMouseDown(float x, float y)
         {
-            PointerEventData pointerData = m_InputModule.GetPointerEventData();
-            if (pointerData.pointerEnter != null) {
-                ExecuteEvents.Execute(pointerData.pointerEnter, pointerData, NativeMouseDownHandler);
+            m_NativeEventData.button = PointerEventData.InputButton.Left;
+            m_InputModule.FindNativeClick(x, y, m_NativeEventData);
+            GameObject press = ExecuteEvents.ExecuteHierarchy(m_NativeEventData.pointerCurrentRaycast.gameObject, m_NativeEventData, NativeMouseDownHandler);
+            m_NativeEventData.pointerPress = press;
+        }
+
+        private void OnNativeMouseUp(float x, float y)
+        {
+            m_InputModule.FindNativeClick(x, y, m_NativeEventData);
+            GameObject pressed = m_NativeEventData.pointerPress;
+            if (pressed != null) {
+                ExecuteEvents.Execute(pressed, m_NativeEventData, NativeMouseUpHandler);
             }
+            GameObject released = ExecuteEvents.GetEventHandler<INativePointerClickHandler>(m_NativeEventData.pointerCurrentRaycast.gameObject);
+            if (pressed != null && released == pressed) {
+                ExecuteEvents.Execute(released, m_NativeEventData, NativeMouseClickHandler);
+            }
+
+            m_NativeEventData.Reset();
         }
 
         static private readonly ExecuteEvents.EventFunction<INativePointerDownHandler> NativeMouseDownHandler = (INativePointerDownHandler handler, BaseEventData evtData) => {
             handler.OnNativePointerDown(ExecuteEvents.ValidateEventData<PointerEventData>(evtData));
         };
+
+        static private readonly ExecuteEvents.EventFunction<INativePointerDownHandler> NativeMouseUpHandler = (INativePointerDownHandler handler, BaseEventData evtData) => {
+            handler.OnNativePointerDown(ExecuteEvents.ValidateEventData<PointerEventData>(evtData));
+        };
+
+        static private readonly ExecuteEvents.EventFunction<INativePointerClickHandler> NativeMouseClickHandler = (INativePointerClickHandler handler, BaseEventData evtData) => {
+            handler.OnNativePointerClick(ExecuteEvents.ValidateEventData<PointerEventData>(evtData));
+        };
+
+        private void OnGUI() {
+            Event e = Event.current;
+            if (e.type != EventType.KeyDown || e.keyCode == KeyCode.None) {
+                return;
+            }
+
+            if (m_PauseAllCounter > 0 || m_InputModule.IsEditingText()) {
+                return;
+            }
+
+            OnKeyPressed?.Invoke(e.keyCode);
+        }
 
         #endregion // Unity Events
 
@@ -322,6 +365,11 @@ namespace Aqua
 
             NativeInput.Initialize();
             NativeInput.OnMouseDown += OnNativeMouseDown;
+            NativeInput.OnMouseUp += OnNativeMouseUp;
+
+            m_NativeEventData = new PointerEventData(EventSystem.current);
+
+            useGUILayout = false;
         }
 
         protected override void OnDestroy()
@@ -329,11 +377,18 @@ namespace Aqua
             m_InputModule.OnModeChanged -= OnInputModeChanged;
 
             NativeInput.OnMouseDown -= OnNativeMouseDown;
+            NativeInput.OnMouseUp -= OnNativeMouseUp;
             NativeInput.Shutdown();
 
             base.OnDestroy();
         }
 
         #endregion // Service
+
+        #region Cheats
+
+        
+
+        #endregion // Cheats
     }
 }

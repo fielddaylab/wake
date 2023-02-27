@@ -1,17 +1,20 @@
 using System;
-using BeauRoutine;
 using BeauUtil;
-using UnityEditor;
+
 using UnityEngine;
 
-namespace Aqua
-{
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditor.IMGUI.Controls;
+#endif // UNITY_EDITOR
+
+namespace Aqua {
     [ExecuteAlways]
     public class BoxEdgeCollider2D : MonoBehaviour
     {
         #region Inspector
 
-        [SerializeField] private BoxCollider2D[] m_Colliders = null;
+        [SerializeField, PrefabModeOnly] private BoxCollider2D[] m_Colliders = null;
         [SerializeField] private float m_EdgeThickness = 1;
         [SerializeField] private bool m_IsTrigger = false;
 
@@ -61,6 +64,54 @@ namespace Aqua
                     m_RefreshQueued = false;
                     RefreshColliders();
                 };
+            }
+        }
+
+        [UnityEditor.CustomEditor(typeof(BoxEdgeCollider2D)), CanEditMultipleObjects]
+        private class Inspector : UnityEditor.Editor
+        {
+            private readonly BoxBoundsHandle m_BoundsHandle = new BoxBoundsHandle();
+
+            private void OnEnable()
+            {
+                m_BoundsHandle.axes = PrimitiveBoundsHandle.Axes.X | PrimitiveBoundsHandle.Axes.Y;
+            }
+
+            private void OnSceneGUI() {
+                BoxEdgeCollider2D edgeCollider = target as BoxEdgeCollider2D;
+                if (!edgeCollider) {
+                    return;
+                }
+
+                Transform colliderTransform = edgeCollider.transform;
+
+                Matrix4x4 mat = colliderTransform.localToWorldMatrix;
+                mat.SetRow(0, Vector4.Scale(mat.GetRow(0), new Vector4(1f, 1f, 0f, 1f)));
+                mat.SetRow(1, Vector4.Scale(mat.GetRow(1), new Vector4(1f, 1f, 0f, 1f)));
+                mat.SetRow(2, new Vector4(0f, 0f, 1f, colliderTransform.position.z));
+
+                using(new Handles.DrawingScope(mat)) {
+                    m_BoundsHandle.center = Vector3.zero;
+                    m_BoundsHandle.size = edgeCollider.m_Size;
+                    m_BoundsHandle.SetColor(Color.green);
+
+                    EditorGUI.BeginChangeCheck();
+                    m_BoundsHandle.DrawHandle();
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        Undo.RecordObject(edgeCollider, "Modifying collider");
+                        Undo.RecordObject(edgeCollider.transform, "Modifying collider");
+
+                        Vector3 center = m_BoundsHandle.center;
+                        edgeCollider.m_Size = m_BoundsHandle.size;
+                        colliderTransform.position += m_BoundsHandle.center;
+
+                        edgeCollider.RefreshColliders();
+
+                        EditorUtility.SetDirty(colliderTransform);
+                        EditorUtility.SetDirty(edgeCollider);
+                    }
+                }
             }
         }
 

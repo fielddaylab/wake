@@ -15,12 +15,17 @@ namespace Aqua.Shop
         [ItemId(InvItemCategory.Upgrade)] public StringHash32 ItemId;
         
         [Space]
+        public bool IsFake;
         public float Rotation;
 
         [Header("Meshes")]
         public MeshRenderer[] Meshes;
         public Material ActiveMaterial;
+        public Material[] ActiveMaterialSet;
         public Material PreviewMaterial;
+        public Material[] PreviewMaterialSet;
+        public Material HiddenMaterial;
+        public Material[] HiddenMaterialSet;
 
         [Header("Effects")]
         public ParticleSystem[] WeldParticles;

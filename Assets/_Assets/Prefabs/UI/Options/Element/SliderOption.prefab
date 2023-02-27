@@ -64,6 +64,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  m_Outline: 0
+  m_Thickness: 1
 --- !u!1 &1207067703915050801
 GameObject:
   m_ObjectHideFlags: 0
@@ -74,6 +76,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8049465781603423098}
   - component: {fileID: 1363490298339586833}
+  - component: {fileID: 547398514599764319}
+  - component: {fileID: 307336133081045948}
+  - component: {fileID: 8407549824733072518}
   m_Layer: 0
   m_Name: SliderOption
   m_TagString: Untagged
@@ -120,6 +125,47 @@ MonoBehaviour:
   m_Hint: {fileID: 731903367266074941}
   m_Value: {fileID: 7867404417607572199}
   m_Default: {fileID: 8036164777484463480}
+--- !u!225 &547398514599764319
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1207067703915050801}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &307336133081045948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1207067703915050801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee012376a32f0314ead77f5ad3a9b360, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Offset0: {x: 0, y: 0}
+  m_Offset1: {x: 0, y: 0}
+--- !u!114 &8407549824733072518
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1207067703915050801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1ca01ad1ca751d45803abc50cc992ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AnimDurationScale: 1
+  m_AnimDistanceScale: 1
+  m_DisableRaycasts: 0
 --- !u!1 &1350657064267640108
 GameObject:
   m_ObjectHideFlags: 0
@@ -271,7 +317,9 @@ MonoBehaviour:
   m_Text: {fileID: 7867404417607572199}
   m_DefaultText:
     m_Source: 
-    m_Hash: 0
+    m_HashValue: 0
+  m_Prefix: 
+  m_Postfix: 
 --- !u!114 &5680031501988211729
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -409,7 +457,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TooltipId:
     m_Source: 
-    m_Hash: 0
+    m_HashValue: 0
   TooltipOverride: 
   Cursor: 1
 --- !u!1 &6521513138643025082
@@ -563,7 +611,9 @@ MonoBehaviour:
   m_Text: {fileID: 3711889183264693003}
   m_DefaultText:
     m_Source: 
-    m_Hash: 0
+    m_HashValue: 0
+  m_Prefix: 
+  m_Postfix: 
 --- !u!114 &4812709158881453354
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -638,7 +688,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7112098301927259402}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Script: {fileID: 11500000, guid: a3cce1025f282c247b38ed00ee6ddc0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -648,16 +698,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 2514285dbbe219d45939af2ca6f15a5d, type: 3}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 3
+  m_CornerRadius: 8
+  m_Resolution: 0
+  m_Outline: 0
+  m_Thickness: 1
 --- !u!1 &7178379331774429095
 GameObject:
   m_ObjectHideFlags: 0
@@ -712,7 +756,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7178379331774429095}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Script: {fileID: 11500000, guid: a3cce1025f282c247b38ed00ee6ddc0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -722,13 +766,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 2514285dbbe219d45939af2ca6f15a5d, type: 3}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 4
+  m_CornerRadius: 6
+  m_Resolution: 0
+  m_Outline: 0
+  m_Thickness: 1

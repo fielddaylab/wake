@@ -177,6 +177,10 @@ namespace Aqua.Scripting
             {
                 m_TriggerData.TriggerPriority = inPriority;
             }
+            else if (IsFunction())
+            {
+                Log.Warn("[ScriptNode] `triggerPriority` is not implemented for function node '{0}'", m_FullName);
+            }
         }
 
         [BlockMeta("when"), Preserve]
@@ -196,6 +200,10 @@ namespace Aqua.Scripting
             {
                 m_TriggerData.Score += inScore;
             }
+            else if (IsFunction())
+            {
+                Log.Warn("[ScriptNode] `boostScore` is not implemented for function node '{0}'", m_FullName);
+            }
         }
 
         [BlockMeta("once"), Preserve]
@@ -206,6 +214,10 @@ namespace Aqua.Scripting
                 m_TriggerData.RepeatDuration = 0;
                 m_TriggerData.OnceLevel = inCategory.Equals("session") ? PersistenceLevel.Session : PersistenceLevel.Profile;
             }
+            else if (IsFunction())
+            {
+                Log.Warn("[ScriptNode] `once` is not implemented for function node '{0}'", m_FullName);
+            }
         }
 
         [BlockMeta("repeat"), Preserve]
@@ -215,6 +227,10 @@ namespace Aqua.Scripting
             {
                 m_TriggerData.RepeatDuration = (int) inDuration;
                 m_TriggerData.OnceLevel = PersistenceLevel.Untracked;
+            }
+            else if (IsFunction())
+            {
+                Log.Warn("[ScriptNode] `repeat` is not implemented for function node '{0}'", m_FullName);
             }
         }
 

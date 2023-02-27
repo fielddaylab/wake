@@ -14,9 +14,12 @@ namespace Aqua {
 
         [NonSerialized] private Routine m_ActiveAnim;
         [NonSerialized] private Routine m_ClickAnim;
+        [NonSerialized] private bool m_Visible;
+        [NonSerialized] private float m_OriginalIconX;
 
         private void Awake() {
             Button.onClick.AddListener(OnClick);
+            m_OriginalIconX = Icon.anchoredPosition.x;
         }
 
         private void OnDisable() {
@@ -26,6 +29,7 @@ namespace Aqua {
 
         public void SetVisible(bool visible, bool instant) {
             if (instant) {
+                m_Visible = visible;
                 if (visible) {
                     InstantShow();
                 } else {
@@ -34,8 +38,14 @@ namespace Aqua {
                 return;
             }
 
+            if (m_Visible == visible) {
+                return;
+            }
+
+            m_Visible = visible;
+
             if (visible) {
-                Group.blocksRaycasts = false;
+                Group.blocksRaycasts = true;
                 m_ActiveAnim.Replace(this, EnableAnim()).ExecuteWhileDisabled();
             } else {
                 Group.blocksRaycasts = false;
@@ -45,9 +55,8 @@ namespace Aqua {
 
         private IEnumerator EnableAnim() {
             gameObject.SetActive(true);
-            Group.blocksRaycasts = false;
-            yield return Rect.AnchorPosTo(0, 0.2f, Axis.X).Ease(Curve.Smooth);
             Group.blocksRaycasts = true;
+            yield return Rect.AnchorPosTo(0, 0.2f, Axis.X).Ease(Curve.Smooth);
         }
 
         private IEnumerator DisableAnim() {
@@ -60,16 +69,16 @@ namespace Aqua {
 
         private void InstantHide() {
             Rect.SetAnchorPos(-100f * Direction, Axis.X);
-            Group.blocksRaycasts = false;
             gameObject.SetActive(false);
             m_ActiveAnim.Stop();
+            Group.blocksRaycasts = false;
         }
 
         private void InstantShow() {
             Rect.SetAnchorPos(0, Axis.X);
-            Group.blocksRaycasts = true;
             gameObject.SetActive(true);
             m_ActiveAnim.Stop();
+            Group.blocksRaycasts = true;
         }
     
         private void OnClick() {
@@ -77,7 +86,7 @@ namespace Aqua {
         }
 
         private IEnumerator ClickAnim() {
-            return Icon.AnchorPosTo(Icon.anchoredPosition.x + 8 * Direction, 0.1f, Axis.X).Yoyo().Ease(Curve.CubeOut).RevertOnCancel();
+            return Icon.AnchorPosTo(m_OriginalIconX + 8 * Direction, 0.1f, Axis.X).Yoyo().Ease(Curve.CubeOut).RevertOnCancel();
         }
     }
 }

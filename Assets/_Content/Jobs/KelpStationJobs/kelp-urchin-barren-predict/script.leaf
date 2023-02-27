@@ -9,19 +9,25 @@
 {@drKelp}  I'm glad you're back, Olivia!
            Your visual model of Site B has been incredibly helpful.
 {@player}   Really?? Is the ecosystem doing any better? 
-{@drKelp}   Well... not yet, Mija. It looks like Site B is what scientists call an Urchin Barren...
+{@drKelp}   Well... not yet. It looks like Site B is what scientists call an Urchin Barren...
 {@drKelp}   Lots of urchins, and not much else. 
 {@drKelp}   I just finished compiling the rates for the eating rules in your model. 
             Now we can use your model to simulate what will happen at Site B if we don't intervene. 
-            Use the {h}Modeling Whiteboard{/h} on your ship to get started.
+            Use the {nameof Modeling} on your ship to get started.
+{@drKelp}   Oh, and let me know if any bull kelp snags on your sub!
+{@drKelp}   I was thinking I could whip up some kelp cookies between my next two meetings. 
+{@player}   Mom! Aren't you busy enough?
+{@drKelp}   Okay, okay. It was just a thought.    
+
 $set jobs:kelp-urchin-barren-predict.received.facts = false
+$set jobs:kelp-urchin-barren-predict.sync-failed = false
 
 ::WhereToGoHelp
 @trigger    RequestPartnerHelp
 @when 	    scene:name != "Modeling", JobTaskTop("predictSiteB"), !jobs:kelp-urchin-barren.upgradedFacts
 @cutscene
 {@player} 	Okay, {nameof @guide}. Where to?
-{@guide}	Head to the surface and use your {h}Modeling Whiteboard{/h}! 
+{@guide}	Head to the surface and use your {nameof Modeling}! 
 
 // IN MODELING
 
@@ -186,6 +192,63 @@ $else
 	{@guide}	You've completed your task.
                 Now you need to report back to your mother at the {map-name}research station{/map-name}!
 $endif
+
+
+// MODELING SUGGESTIONS
+
+:: triggerSyncFailure
+@trigger    SimulationSyncError
+@when       !jobs:kelp-urchin-barren-predict.sync-failed
+@once
+$set jobs:kelp-urchin-barren-predict.sync-failed = true
+
+:: helpModelSync.Visual
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(predictSiteB), scene:name == "Modeling", modeling:phase == "visual"
+@cutscene
+$branch .modelSuggestions
+
+:: helpModelSync.Sync
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(predictSiteB), scene:name == "Modeling", modeling:phase == "sync"
+@cutscene
+$branch .modelSuggestions
+
+:: modelSuggestions
+$if HasFact(Urchin.Reproduce), HasFact(Urchin.Eats.GiantKelp), IsFactFullyUpgraded(Urchin.Eats.GiantKelp), HasFact(GiantKelp.Reproduce)
+    $if HasFact(UrchinBarren.Model.IntroduceOtters)
+        {@guide}    You're done with this portion! Head to the {h}Describe{/h} tab next.
+    $else
+        {@guide}    Once you import your facts and save the Visual model, we should be good to make our Describe model!
+    $endif
+$else
+    $if !jobs:kelp-urchin-barren-predict.sync-failed
+        {@guide}    Time to try out your model in the {h}Intervene{/h} tab.
+    $else
+        {@guide}    Seems like we don't have enough information to complete our model accurately.
+                    Look for {h}question marks{/h} in the  Visual model interface, those point to where we may need more data.
+
+        $if !HasFact(Urchin.Reproduce)
+            $branch .suggestReproduce
+        $elseif !HasFact(Urchin.Eats.GiantKelp)
+        	$branch .suggestObserve
+        $elseif !IsFactFullyUpgraded(Urchin.Eats.GiantKelp)
+        	$branch .suggestMeasure
+        $elseif !HasFact(GiantKelp.Reproduce)
+            $branch .suggestReproduce
+        $endif
+    $endif
+$endif
+
+:: suggestReproduce
+{@guide}    Did you get all the reproduction rates?
+
+:: suggestObserve
+{@guide}    Are you sure you have observed all the interactions here?
+
+:: suggestMeasure
+{@guide}    You may need to measure the rates of interactions.
+
 
 // CATCH-ALL GUIDE TEXT
 

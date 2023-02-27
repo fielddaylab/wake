@@ -53,7 +53,7 @@ namespace Aqua
             BFDetails details;
 
             details.Header = Loc.Find("fact.state.header");
-            details.Image = desc.ImageSet();
+            details.Image = null;
             
             if (stateFact.HasDeath)
             {

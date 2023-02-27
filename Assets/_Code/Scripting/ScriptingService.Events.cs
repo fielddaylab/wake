@@ -74,6 +74,7 @@ namespace Aqua
             m_TagEventParser.AddEvent("sfx", ScriptEvents.Global.PlaySound).WithStringData();
             m_TagEventParser.AddEvent("show-dialog", ScriptEvents.Global.ShowDialog);
             m_TagEventParser.AddEvent("wait-abs", ScriptEvents.Global.WaitAbsolute).WithFloatData(0.25f);
+            m_TagEventParser.AddEvent("block-input", ScriptEvents.Global.BlockInput).CloseWith(ScriptEvents.Global.UnblockInput);
             m_TagEventParser.AddEvent("cutscene", ScriptEvents.Global.CutsceneOn).CloseWith(ScriptEvents.Global.CutsceneOff);
             m_TagEventParser.AddEvent("enable-object", ScriptEvents.Global.EnableObject).WithStringData();
             m_TagEventParser.AddEvent("disable-object", ScriptEvents.Global.DisableObject).WithStringData();
@@ -85,6 +86,9 @@ namespace Aqua
             m_TagEventParser.AddEvent("screen-flash", ScriptEvents.Global.ScreenFlash).WithStringData();
             m_TagEventParser.AddEvent("trigger-response", ScriptEvents.Global.TriggerResponse).WithStringData();
             m_TagEventParser.AddEvent("style", ScriptEvents.Global.BoxStyle).WithStringHashData();
+
+            // Text-Only Events
+            m_TagEventParser.AddEvent("un", ScriptEvents.Global.Unscramble);
 
             // Dialog-Specific Events
             m_TagEventParser.AddEvent("auto", ScriptEvents.Dialog.Auto);
@@ -312,7 +316,7 @@ namespace Aqua
                 .Register(ScriptEvents.Global.PlayBGM, EventPlayBGM)
                 .Register(ScriptEvents.Global.PlaySound, EventPlaySound)
                 .Register(ScriptEvents.Global.StopBGM, (e, o) => { Services.Audio.StopMusic(e.Argument0.AsFloat()); })
-                .Register(ScriptEvents.Global.WaitAbsolute, (e, o) => { return Routine.WaitRealSeconds(e.Argument0.AsFloat()); })
+                .Register(ScriptEvents.Global.WaitAbsolute, (e, o) => { return Routine.WaitSeconds(e.Argument0.AsFloat()); })
                 .Register(ScriptEvents.Global.BroadcastEvent, EventBroadcastEvent)
                 .Register(ScriptEvents.Global.TriggerResponse, EventTriggerResponse)
                 .Register(ScriptEvents.Global.BoxStyle, EventSetBoxStyle)
@@ -322,9 +326,12 @@ namespace Aqua
                 .Register(ScriptEvents.Global.FadeOut, EventFadeOut)
                 .Register(ScriptEvents.Global.FadeIn, EventFadeIn)
                 .Register(ScriptEvents.Global.EnableObject, EventEnableObject)
-                .Register(ScriptEvents.Global.DisableObject, EventDisableObject);
+                .Register(ScriptEvents.Global.DisableObject, EventDisableObject)
+                .Register(ScriptEvents.Global.BlockInput, () => Services.Input.PauseAll())
+                .Register(ScriptEvents.Global.UnblockInput, () => Services.Input.ResumeAll())
+                .Register(ScriptEvents.Global.Unscramble, () => {});
 
-            m_SkippedEvents = new HashSet<StringHash32>();
+            m_SkippedEvents = Collections.NewSet<StringHash32>(18);
             m_SkippedEvents.Add(ScriptEvents.Global.CutsceneOn);
             m_SkippedEvents.Add(ScriptEvents.Global.CutsceneOff);
             m_SkippedEvents.Add(ScriptEvents.Global.PlaySound);
@@ -344,7 +351,7 @@ namespace Aqua
             m_SkippedEvents.Add(LeafUtils.Events.Character);
             m_SkippedEvents.Add(LeafUtils.Events.Pose);
 
-            m_DialogOnlyEvents = new HashSet<StringHash32>();
+            m_DialogOnlyEvents = Collections.NewSet<StringHash32>(10);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Auto);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.Clear);
             m_DialogOnlyEvents.Add(ScriptEvents.Dialog.InputContinue);

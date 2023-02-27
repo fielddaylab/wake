@@ -129,5 +129,17 @@ namespace Aqua.Editor
             BakeScene(scene);
             StripEditorInfo(scene);
         }
+
+        static public void DEBUGBakeSceneForManifest() {
+            if (EditorApplication.isPlaying)
+                return;
+
+            Scene scene = EditorSceneManager.GetActiveScene();
+            
+            LoadSubscenes(scene);
+            RemoveBootstrap(scene);
+            RemoveDebug(scene);
+            BakeScene(scene);
+        }
     }
 }

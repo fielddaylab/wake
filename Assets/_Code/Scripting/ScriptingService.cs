@@ -94,7 +94,7 @@ namespace Aqua
         private Dictionary<StringHash32, FunctionSet> m_LoadedFunctions;
 
         // objects
-        [NonSerialized] private List<ScriptObject> m_ScriptObjects = new List<ScriptObject>();
+        [NonSerialized] private RingBuffer<ScriptObject> m_ScriptObjects = new RingBuffer<ScriptObject>(256, RingBufferMode.Expand, CompareUtils.DefaultComparer<ScriptObject>());
         [NonSerialized] private bool m_ScriptObjectListDirty = false;
 
         // pools
@@ -346,7 +346,7 @@ namespace Aqua
         /// Executes a script command.
         /// Format should be "method arg0, arg1, arg2, ..." or "targetId->method arg0, arg1, arg2, ..."
         /// </summary>
-        public object Execute(StringSlice inCommand)
+        public NonBoxedValue Execute(StringSlice inCommand)
         {
             StringSlice target = StringSlice.Empty, method, args;
             var methodArgs = TagData.Parse(inCommand, Parsing.InlineEvent);
@@ -779,11 +779,11 @@ namespace Aqua
             });
 
             m_ChoiceSelectors = new Dictionary<StringHash32, ChoiceSelectorHandler>();
-            m_LoadedPackages = new HashSet<ScriptNodePackage>();
-            m_LoadedEntrypoints = new Dictionary<StringHash32, ScriptNode>(256);
-            m_LoadedResponses = new Dictionary<StringHash32, TriggerResponseSet>();
-            m_LoadedFunctions = new Dictionary<StringHash32, FunctionSet>();
-            m_LoadedPackageSourcesAssets = new Dictionary<LeafAsset, ScriptNodePackage>();
+            m_LoadedPackages = Collections.NewSet<ScriptNodePackage>(8);
+            m_LoadedEntrypoints = new Dictionary<StringHash32, ScriptNode>(16);
+            m_LoadedResponses = new Dictionary<StringHash32, TriggerResponseSet>(16);
+            m_LoadedFunctions = new Dictionary<StringHash32, FunctionSet>(16);
+            m_LoadedPackageSourcesAssets = Collections.NewDictionary<LeafAsset, ScriptNodePackage>(16);
 
             m_TablePool = new DynamicPool<VariantTable>(8, Pool.DefaultConstructor<VariantTable>());
             m_TablePool.Config.RegisterOnFree((p, obj) => { obj.Reset(); });

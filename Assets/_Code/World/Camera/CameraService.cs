@@ -92,6 +92,7 @@ namespace Aqua.Cameras
         [NonSerialized] private float m_LastCameraDistance;
         [NonSerialized] private Transform m_PositionRoot;
         [NonSerialized] private Axis m_Axis = Axis.XY;
+        [NonSerialized] private int m_CameraCullingMask;
 
         [NonSerialized] private double m_Time;
         [NonSerialized] private uint m_NextId;
@@ -99,7 +100,8 @@ namespace Aqua.Cameras
         [NonSerialized] private bool m_Paused;
         [NonSerialized] private bool m_CacheDirty;
 
-        [NonSerialized] private Vector3 m_LastGameplayPlaneCenter;
+        [NonSerialized] private Vector3 m_CameraFocusCenter;
+        [NonSerialized] private Vector3 m_LastCameraForward;
         [NonSerialized] private float m_LastGameplayPlaneDistance;
         [NonSerialized] private Matrix4x4 m_LastCameraMatrix;
         [NonSerialized] private Matrix4x4 m_LastCameraMatrixInv;
@@ -117,6 +119,7 @@ namespace Aqua.Cameras
 
         private Routine m_ScriptedAnimation;
         [NonSerialized] private CameraFOVMode m_FOVMode;
+        [NonSerialized] private bool m_LastFullscreen;
 
         public Camera Current { get { return m_Camera; } }
         public CameraRig Rig { get { return m_Rig; } }
@@ -126,9 +129,11 @@ namespace Aqua.Cameras
         public float Zoom { get { return m_FOVPlane.Zoom; } }
         public float AspectRatio { get { return m_Camera.aspect; } }
 
-        public Vector3 FocusPosition { get { return m_LastGameplayPlaneCenter; }}
+        public Vector3 FocusPosition { get { return m_CameraFocusCenter; }}
 
         public CameraMode Mode { get { return m_Mode; } }
+
+        public readonly CastableEvent<bool> OnFullscreenChanged = new CastableEvent<bool>(4);
 
         #region Mode
 
@@ -315,15 +320,12 @@ namespace Aqua.Cameras
             ApplyCameraState(current, m_PositionRoot, m_Camera, m_FOVPlane, m_FOVMode, CameraPoseProperties.Position, m_Axis);
         }
 
-        private static readonly Matrix4x4 View2NDC = Matrix4x4.Translate(-Vector3.one) * Matrix4x4.Scale(Vector3.one * 2);
-        private static readonly Vector3 CenterViewportPos = new Vector3(0.5f, 0.5f, 0);
-
         private void UpdateCachedPlanes()
         {
             Vector3 cameraForwardVector = m_PositionRoot.forward;
             Plane p;
 
-            if (m_FOVPlane)
+            if (m_FOVPlane && m_FOVPlane.Target)
             {
                 p = new Plane(-cameraForwardVector, m_FOVPlane.Target.position);
             }
@@ -334,11 +336,21 @@ namespace Aqua.Cameras
 
             Ray r = new Ray(m_PositionRoot.position, cameraForwardVector);
             p.Raycast(r, out float planeCastDist);
-            m_LastGameplayPlaneCenter = r.GetPoint(planeCastDist);
+            m_CameraFocusCenter = r.GetPoint(planeCastDist);
             m_LastGameplayPlaneDistance = planeCastDist;
 
+            m_LastCameraForward = m_Camera.transform.forward;
             m_LastCameraMatrix = m_Camera.transform.worldToLocalMatrix;
             m_LastCameraMatrixInv = m_Camera.transform.localToWorldMatrix;
+
+            // HACK:    This lets us get the focus point for audio closer to the ship in 3d scenes
+            //          without completely losing the effects of other hints
+            if (m_Axis == Axis.XYZ && m_Mode == CameraMode.Hinted && m_TargetStack.Count > 0) {
+                Transform anchor = m_TargetStack[m_TargetStack.Count - 1].Anchor;
+                if (anchor != null) {
+                    m_CameraFocusCenter = Vector3.Lerp(m_CameraFocusCenter, anchor.position, 0.25f);
+                }
+            }
         }
 
         #endregion // Update
@@ -663,9 +675,24 @@ namespace Aqua.Cameras
 
             m_Camera.transparencySortMode = TransparencySortMode.Orthographic;
             m_LastScreenAspectClip = default(Rect);
+            m_CameraCullingMask = m_Camera.cullingMask & ~GameLayers.UI_Mask;
         }
 
         #endregion // Handlers
+
+        #region Culling Mask
+
+        public void DisableRendering()
+        {
+            m_Camera.cullingMask &= ~m_CameraCullingMask;
+        }
+
+        public void EnableRendering()
+        {
+            m_Camera.cullingMask |= m_CameraCullingMask;
+        }
+
+        #endregion // Culling Mask
 
         #region Hinted
 
@@ -1150,7 +1177,7 @@ namespace Aqua.Cameras
 
             Assert.NotNull(inPose);
 
-            CameraState newState = new CameraState(inPose.transform.position, inPose.transform.rotation, inPose.Height, inPose.Zoom, m_Camera.fieldOfView);
+            CameraState newState = new CameraState(inPose.transform.position, inPose.transform.rotation, inPose.Height, inPose.Zoom, inPose.FieldOfView);
             if (!m_FOVPlane.IsReferenceNull() && inPose.Target != null)
                 m_FOVPlane.Target = inPose.Target;
 
@@ -1334,12 +1361,12 @@ namespace Aqua.Cameras
         /// <summary>
         /// Casts from a screen position to a world position on the current camera plane.
         /// </summary>
-        public Vector3 ScreenToGameplayPosition(Vector2 inScreenPos)
+        public Vector3 ScreenToGameplayPosition(Vector2 inScreenPos, float inZOffset = 0)
         {
             Vector3 screenPos = inScreenPos;
             screenPos.z = 1;
 
-            Plane p = new Plane(-m_Camera.transform.forward, m_FOVPlane.Target.position);
+            Plane p = new Plane(-m_Camera.transform.forward, m_FOVPlane.Target.position + new Vector3(0, 0, inZOffset));
             Ray r = m_Camera.ScreenPointToRay(screenPos);
 
             float dist;
@@ -1411,6 +1438,43 @@ namespace Aqua.Cameras
 
         #region Render Regions
 
+        private void UpdateCameraRenderResolution() {
+            bool fullscreen = Screen.fullScreen;
+            if (m_LastFullscreen != fullscreen) {
+                m_LastFullscreen = fullscreen;
+                OnFullscreenChanged.Invoke(fullscreen);
+            }
+
+            if (!m_RenderScale) {
+                return;
+            }
+
+            float currentHeight = Screen.height;
+            switch(Save.Options.Performance.Resolution) {
+                case Option.OptionsPerformance.ResolutionMode.Minimum: {
+                    m_RenderScale.Mode = CameraRenderScale.ScaleMode.PixelHeight;
+                    m_RenderScale.PixelHeight = (int) DesiredHeight;
+                    break;
+                }
+                case Option.OptionsPerformance.ResolutionMode.Moderate: {
+                    float scaleForMin = DesiredHeight / currentHeight;
+                    m_RenderScale.Mode = CameraRenderScale.ScaleMode.Scale;
+                    if (scaleForMin < 1) {
+                        float newScale = 1 - ((1 - scaleForMin) * 0.5f);
+                        m_RenderScale.Scale = newScale;
+                    } else {
+                        m_RenderScale.Scale = 1;
+                    }
+                    break;
+                }
+                case Option.OptionsPerformance.ResolutionMode.High: {
+                    m_RenderScale.Mode = CameraRenderScale.ScaleMode.Scale;
+                    m_RenderScale.Scale = 1;
+                    break;
+                }
+            }
+        }
+
         private void UpdateCameraRenderRegion() {
             float aspect = DesiredWidth / DesiredHeight;
             float scrW = Screen.width, scrH = Screen.height;
@@ -1437,6 +1501,13 @@ namespace Aqua.Cameras
         }
 
         private void OnCameraPreRender(ScriptableRenderContext ctx, Camera[] cameras) {
+            #if UNITY_EDITOR
+            if (m_ScreenshotMode) {
+                return;
+            }
+            #endif // UNITY_EDITOR
+
+            UpdateCameraRenderResolution();
             UpdateCameraRenderRegion();
 
             foreach(var camera in cameras) {
@@ -1623,13 +1694,13 @@ namespace Aqua.Cameras
         }
 
         [LeafMember("CameraMoveToPose"), UnityEngine.Scripting.Preserve]
-        static private IEnumerator LeafModeToPose(ScriptObject inPose, float inDuration, Curve inCurve = Curve.Smooth)
+        static private IEnumerator LeafMoveToPose(ScriptObject inPose, float inDuration, Curve inCurve = Curve.Smooth)
         {
             Assert.NotNull(inPose, "Cannot pass null pose");
             CameraPose pose = inPose.GetComponent<CameraPose>();
             if (pose != null)
             {
-                return Services.Camera.MoveToPose(pose, inDuration, inCurve);
+                return Services.Camera.MoveToPose(pose, inDuration, inCurve, pose.Properties);
             }
             else
             {
@@ -1681,6 +1752,60 @@ namespace Aqua.Cameras
         }
 
         #endif // DEVELOPMENT
+
+        #if UNITY_EDITOR
+
+        [NonSerialized] private bool m_ScreenshotMode = false;
+
+        internal byte[] TakeScreenshot() {
+            Camera cam = Camera.main;
+            if (cam) {
+                m_ScreenshotMode = true;
+
+                CameraRenderScale renderScale = cam.GetComponent<CameraRenderScale>();
+
+                RenderTextureDescriptor descriptor = new RenderTextureDescriptor(1024 * 4, 660 * 4, RenderTextureFormat.Default, 8, 0);
+                RenderTexture tempTex = RenderTexture.GetTemporary(descriptor);
+                RenderTexture prevCamTarget = cam.targetTexture;
+                Rect prevCamRect = cam.rect;
+                Texture2D png = new Texture2D(tempTex.width, tempTex.height, TextureFormat.RGB24, 0, false);
+                RenderTexture prevTarget = RenderTexture.active;
+
+                float prevScale = 1;
+                CameraRenderScale.ScaleMode prevScaleMode = default;
+                if (renderScale != null) {
+                    prevScale = renderScale.Scale;
+                    prevScaleMode = renderScale.Mode;
+
+                    renderScale.Scale = 1;
+                    renderScale.Mode = CameraRenderScale.ScaleMode.Scale;
+                }
+                cam.rect = new Rect(0, 0, 1, 1);
+                
+                try {
+                    cam.targetTexture = tempTex;
+                    cam.Render();
+                    RenderTexture.active = tempTex;
+                    png.ReadPixels(new Rect(0, 0, tempTex.width, tempTex.height), 0, 0, false);
+                    return png.EncodeToPNG();
+                } finally {
+                    m_ScreenshotMode = false;
+                    if (renderScale != null) {
+                        renderScale.Scale = prevScale;
+                        renderScale.Mode = prevScaleMode;
+                    }
+                    RenderTexture.active = prevTarget;
+                    cam.targetTexture = prevCamTarget;
+                    cam.rect = prevCamRect;
+                    RenderTexture.ReleaseTemporary(tempTex);
+                    DestroyImmediate(png);
+                }
+            }
+
+            return null;
+        }
+
+        #endif // UNITY_EDITOR
 
         #endregion // Debug
     }

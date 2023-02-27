@@ -23,9 +23,11 @@ namespace Aqua.Editor {
         private SerializedProperty m_CommonNameIdProperty;
         private SerializedProperty m_PluralCommonNameIdProperty;
         private SerializedProperty m_DescriptionIdProperty;
+        private SerializedProperty m_EncodedMessageIdProperty;
         private SerializedProperty m_FactsProperty;
         private SerializedProperty m_WaterColorProperty;
         private SerializedProperty m_IconProperty;
+        private SerializedProperty m_EncodedIconProperty;
         private SerializedProperty m_SketchPathProperty;
         private SerializedProperty m_ColorProperty;
         private SerializedProperty m_SortingOrderProperty;
@@ -58,9 +60,11 @@ namespace Aqua.Editor {
             m_CommonNameIdProperty = serializedObject.FindProperty("m_CommonNameId");
             m_PluralCommonNameIdProperty = serializedObject.FindProperty("m_PluralCommonNameId");
             m_DescriptionIdProperty = serializedObject.FindProperty("m_DescriptionId");
+            m_EncodedMessageIdProperty = serializedObject.FindProperty("m_EncodedMessageId");
             m_FactsProperty = serializedObject.FindProperty("m_Facts");
             m_WaterColorProperty = serializedObject.FindProperty("m_WaterColor");
             m_IconProperty = serializedObject.FindProperty("m_Icon");
+            m_EncodedIconProperty = serializedObject.FindProperty("m_EncodedIcon");
             m_SketchPathProperty = serializedObject.FindProperty("m_SketchPath");
             m_ColorProperty = serializedObject.FindProperty("m_Color");
             m_SortingOrderProperty = serializedObject.FindProperty("m_SortingOrder");
@@ -111,6 +115,8 @@ namespace Aqua.Editor {
         }
 
         private void RenderCritterSettings() {
+            bool isSpecter = !m_FlagsProperty.hasMultipleDifferentValues && (m_FlagsProperty.intValue & (int) BestiaryDescFlags.IsSpecter) != 0;
+
             EditorGUILayout.PropertyField(m_SortingOrderProperty, TempContent("Sorting Order", "Visual sorting order within the station"));
 
             if (Section("Organism", ref m_CategoryExpanded)) {
@@ -122,10 +128,17 @@ namespace Aqua.Editor {
                 EditorGUILayout.PropertyField(m_CommonNameIdProperty);
                 EditorGUILayout.PropertyField(m_PluralCommonNameIdProperty);
                 EditorGUILayout.PropertyField(m_DescriptionIdProperty);
+
+                if (isSpecter) {
+                    EditorGUILayout.PropertyField(m_EncodedMessageIdProperty);
+                }
             }
 
             if (Section("Assets", ref m_AssetsExpanded)) {
                 EditorGUILayout.PropertyField(m_IconProperty);
+                if (isSpecter) {
+                    EditorGUILayout.PropertyField(m_EncodedIconProperty);
+                }
                 EditorGUILayout.PropertyField(m_SketchPathProperty);
                 EditorGUILayout.PropertyField(m_ColorProperty);
             }

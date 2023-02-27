@@ -8,12 +8,16 @@ using UnityEngine;
 
 namespace ProtoAqua.Observation {
     public class ScannableRegion : ToolRegion, IEditorOnlyData {
+        public delegate void ScanStartDelegate(bool wasScanned);
+        public delegate void ScanCompleteDelegate(ScanResult result);
+
         #region Inspector
 
         [Header("Scannable")]
         public SerializedHash32 ScanId;
         public Visual2DTransform Click;
         public Transform IconRootOverride;
+        public Sprite ScanImageOverride;
         public float IconZAdjust;
 
         #endregion // Inspector
@@ -22,11 +26,23 @@ namespace ProtoAqua.Observation {
         [NonSerialized] public ScanIcon CurrentIcon;
         [NonSerialized] public bool CanScan;
         [NonSerialized] public bool InMicroscope;
+        [NonSerialized] public bool ScannedLocal;
+
+        public ScanStartDelegate OnScanStart;
+        public ScanCompleteDelegate OnScanComplete;
 
         #if UNITY_EDITOR
 
         void IEditorOnlyData.ClearEditorOnlyData() {
             ValidationUtils.StripDebugInfo(ref ScanId);
+        }
+
+        protected override bool CustomBake() {
+            if (ColliderPosition && Click) {
+                return Ref.Replace(ref Click.IsDynamic, ColliderPosition.IsDynamic);
+            }
+
+            return false;
         }
 
         #endif // UNITY_EDITOR

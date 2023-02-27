@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7679379708463253521}
   - component: {fileID: 2761304640407146112}
-  - component: {fileID: 1241235774480569672}
   - component: {fileID: 6063623827726153622}
+  - component: {fileID: 4607726566453470233}
   m_Layer: 5
   m_Name: Circle
   m_TagString: Untagged
@@ -46,36 +46,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 715062154620201899}
   m_CullTransparentMesh: 0
---- !u!114 &1241235774480569672
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 715062154620201899}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.92549026, g: 0.8352942, b: 0, a: 1}
-  m_RaycastTarget: 0
-  m_Maskable: 0
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: -6404083057675579113, guid: c4fb9f6ff02690948bf4955a77192677,
-    type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!114 &6063623827726153622
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -89,7 +59,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Renderer: {fileID: 0}
-  m_Graphic: {fileID: 1241235774480569672}
+  m_Graphic: {fileID: 4607726566453470233}
   m_Visible: 1
   m_Colors:
     Main: {r: 0.92549026, g: 0.8352942, b: 0, a: 1}
@@ -109,6 +79,31 @@ MonoBehaviour:
     AdditionalProperties: []
   m_EnableRaycastLayer: 0
   m_DisableRaycastLayer: 2
+--- !u!114 &4607726566453470233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 715062154620201899}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b929d2ed17ea3e499cba99c528388cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.92549026, g: 0.8352942, b: 0, a: 1}
+  m_RaycastTarget: 0
+  m_Maskable: 0
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Resolution: 0
+  m_StartDegrees: 0
+  m_ArcDegrees: 360
+  m_ArcFill: 1
+  m_Outline: 1
+  m_Thickness: 2
 --- !u!1 &3346407211756774811
 GameObject:
   m_ObjectHideFlags: 0
@@ -126,6 +121,8 @@ GameObject:
   - component: {fileID: 706891387746174519}
   - component: {fileID: 1278888004398346917}
   - component: {fileID: 4389279493143563444}
+  - component: {fileID: 2641923813093328805}
+  - component: {fileID: 4442120347829288618}
   m_Layer: 5
   m_Name: CloseButton
   m_TagString: Untagged
@@ -323,7 +320,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_KeyCode: 27
+  m_KeyCodeAlt: 0
   m_ButtonDisplay: {fileID: 0}
+--- !u!114 &2641923813093328805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3346407211756774811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee012376a32f0314ead77f5ad3a9b360, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Offset0: {x: 0, y: 0}
+  m_Offset1: {x: 0, y: 0}
+--- !u!114 &4442120347829288618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3346407211756774811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b65daf6ebab4aca41a9a0c35e749ef1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6085848379136587535
 GameObject:
   m_ObjectHideFlags: 0
@@ -334,8 +358,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1800534815544180861}
   - component: {fileID: 8647436849603016511}
-  - component: {fileID: 6408781498113678426}
   - component: {fileID: 5238126468729674339}
+  - component: {fileID: 7278751259000283533}
   m_Layer: 5
   m_Name: BG
   m_TagString: Untagged
@@ -370,35 +394,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6085848379136587535}
   m_CullTransparentMesh: 0
---- !u!114 &6408781498113678426
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6085848379136587535}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.3019608, b: 0.2901961, a: 0.5019608}
-  m_RaycastTarget: 0
-  m_Maskable: 0
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 15aa4a52245f4a14f97a18721c557943, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!114 &5238126468729674339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -412,7 +407,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Renderer: {fileID: 0}
-  m_Graphic: {fileID: 6408781498113678426}
+  m_Graphic: {fileID: 7278751259000283533}
   m_Visible: 1
   m_Colors:
     Main: {r: 0, g: 0.3019608, b: 0.2901961, a: 0.5019608}
@@ -432,6 +427,31 @@ MonoBehaviour:
     AdditionalProperties: []
   m_EnableRaycastLayer: 0
   m_DisableRaycastLayer: 2
+--- !u!114 &7278751259000283533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6085848379136587535}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b929d2ed17ea3e499cba99c528388cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0.3019608, b: 0.2901961, a: 0.5019608}
+  m_RaycastTarget: 0
+  m_Maskable: 0
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Resolution: 0
+  m_StartDegrees: 0
+  m_ArcDegrees: 360
+  m_ArcFill: 1
+  m_Outline: 0
+  m_Thickness: 1
 --- !u!1 &6776948879770836263
 GameObject:
   m_ObjectHideFlags: 0

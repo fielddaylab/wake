@@ -5,11 +5,11 @@
 @cutscene
 
 {@profCoral} The site that we call Restoration Reef has been struggling.
-			 A while back, I had my team add an Artifical Reef. 
+			 A while back, I had my team add an Artificial Reef. 
 			 We hoped it might boost the Staghorn Coral population.
 {@player}	Is it working?
 {@profCoral} I was hoping you'd find that out for us, Ollie.
-		     We need to know if the {critter-name}artificial reefs{/critter-name} is still there...
+		     We need to know if the {critter-name}artificial reefs{/critter-name} are still there...
 			 And if the population of {nameof StaghornCoral} has increased.
 {@player}    Copy that.
 {@profCoral}  Oh, and Ollie... look out for spears out there.
@@ -57,7 +57,9 @@
 @cutscene
 {@guide} Acceptable work, O!
 		 You've gathered enough data to report back to {nameof @profCoral}.
-{@player}  Good. All these spears and dead fish are creeping me out. 
+$if HasFact(Fishers.Eats.Lionfish)
+	{@player}  Good. That spear with the dead fish was starting to creep me out. 
+$endif
 
 :: helpSurface
 @trigger	RequestPartnerHelp
@@ -152,7 +154,7 @@ $choice .argue.giveUp; Let me get back to you
 
 :: argue.correctFactsAB
 $call ArgueComplete()
-{@profCoral} Hmmm. So it seems the artifical reef hasn't helped.
+{@profCoral} Hmmm. So it seems the artificial reef hasn't helped.
 {@player} That's because there's something else going on out there, Professor!
 		  What's the deal with all those spears?
 {@profCoral}   Lionfish hunting is common here, Ollie. They're considered a delicacy. 
@@ -160,7 +162,7 @@ $call ArgueComplete()
 {@profCoral} Yes. If you're interested, I'll be looking into the impact of the lionfish soon...
 			 Sofia is refusing to fix my engine until I investigate her conspiracy th——ahem, I mean, her theory. 
 			 In the meantime, great work out there, Ollie. 
-
+$call GiveJournalEntry("N22_HumanIntervention", Silent)
 $call CompleteJob()
 
 :: argue.incorrectFacts

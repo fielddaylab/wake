@@ -27,12 +27,14 @@ namespace Aqua
         [SerializeField] private TextId m_CommonNameId = default;
         [SerializeField] private TextId m_PluralCommonNameId = default;
         [SerializeField] private TextId m_DescriptionId = default;
+        [SerializeField] private TextId m_EncodedMessageId = default;
         
         [SerializeField] internal BFBase[] m_Facts = Array.Empty<BFBase>();
 
         [SerializeField] private Color m_WaterColor = ColorBank.Blue;
 
         [SerializeField] internal Sprite m_Icon = null;
+        [SerializeField] private Sprite m_EncodedIcon = null;
         [SerializeField, StreamingPath("png,jpg,jpeg,webm,mp4")] private string m_SketchPath = null;
         [SerializeField] private Color m_Color = ColorBank.White;
 
@@ -50,6 +52,7 @@ namespace Aqua
         [SerializeField, HideInInspector] private StringHash32[] m_InhabitingOrganisms;
         [SerializeField, HideInInspector] private uint m_HistoricalRecordDuration = 2;
         [SerializeField, HideInInspector] private ActorStateTransitionSet m_StateTransitions;
+        [SerializeField, HideInInspector] private StringHash32 m_FirstStressFactId;
 
         #endregion // Inspector
 
@@ -64,6 +67,7 @@ namespace Aqua
         [LeafLookup("Name")] public TextId CommonName() { return m_CommonNameId; }
         [LeafLookup("PluralName")] public TextId PluralCommonName() { return m_PluralCommonNameId.IsEmpty ? m_CommonNameId : m_PluralCommonNameId; }
         public TextId Description() { return m_DescriptionId; }
+        public TextId EncodedMessage() { Assert.True((m_Flags & BestiaryDescFlags.IsSpecter) != 0); return m_EncodedMessageId; }
 
         public ListSlice<BFBase> Facts { get { return m_AllFacts; } }
         public ListSlice<BFBase> PlayerFacts { get { return new ListSlice<BFBase>(m_AllFacts, 0, m_PlayerFactCount); } }
@@ -79,6 +83,7 @@ namespace Aqua
         public bool HasAllFlags(BestiaryDescFlags inFlags) { return (m_Flags & inFlags) == inFlags; }
 
         public Sprite Icon() { return m_Icon; }
+        public Sprite EncodedIcon() { return m_EncodedIcon; }
 
         public uint HistoricalRecordDuration()
         {
@@ -103,6 +108,12 @@ namespace Aqua
         public StreamedImageSet ImageSet() { return new StreamedImageSet(m_SketchPath, m_Icon); }
 
         #region Facts
+
+        public StringHash32 FirstStressedFactId()
+        {
+            Assert.True(m_Type == BestiaryDescCategory.Critter, "BestiaryDesc '{0}' is not a critter", name);
+            return m_FirstStressFactId;
+        }
 
         public TFact FactOfType<TFact>() where TFact : BFBase
         {
@@ -216,7 +227,8 @@ namespace Aqua
         TreatAsPlant = 0x80,
         DoNotUseInStressTank = 0x100,
         IsNotLiving = 0x200,
-        HideInBestiary = 0x400
+        HideInBestiary = 0x400,
+        IsSpecter = 0x800
     }
 
     public enum BestiaryDescSize

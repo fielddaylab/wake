@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4559794865420066218}
   - component: {fileID: 479854578353497681}
   - component: {fileID: 7449796669511952209}
+  - component: {fileID: 568093168432492177}
   m_Layer: 5
   m_Name: TagMeter
   m_TagString: Untagged
@@ -38,7 +39,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0.000061035156, y: 0.00012207031}
   m_SizeDelta: {x: 36, y: 36}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &479854578353497681
@@ -53,6 +54,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a9b0a8110d54ed459820fe385b730a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Offset: {fileID: 568093168432492177}
   Icon: {fileID: 8702430441702625948}
   Meter: {fileID: 5041173806459359214}
 --- !u!114 &7449796669511952209
@@ -75,6 +77,20 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &568093168432492177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1918402325032862431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee012376a32f0314ead77f5ad3a9b360, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Offset0: {x: 0, y: 0}
+  m_Offset1: {x: 0, y: 0}
 --- !u!1 &3679575249726777066
 GameObject:
   m_ObjectHideFlags: 0
@@ -129,7 +145,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3679575249726777066}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Script: {fileID: 11500000, guid: 1b929d2ed17ea3e499cba99c528388cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -139,17 +155,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -6333747732059256066, guid: 703afd75effc5184aa2470308efaef04,
-    type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 0
-  m_FillOrigin: 2
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_Resolution: 0
+  m_StartDegrees: 0
+  m_ArcDegrees: 360
+  m_ArcFill: 1
+  m_Outline: 1
+  m_Thickness: 2
 --- !u!1 &4185478873074917105
 GameObject:
   m_ObjectHideFlags: 0
@@ -204,7 +215,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4185478873074917105}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Script: {fileID: 11500000, guid: 1b929d2ed17ea3e499cba99c528388cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -214,16 +225,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 15aa4a52245f4a14f97a18721c557943, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_Resolution: 0
+  m_StartDegrees: 0
+  m_ArcDegrees: 360
+  m_ArcFill: 1
+  m_Outline: 0
+  m_Thickness: 1
 --- !u!1 &4581836023173782737
 GameObject:
   m_ObjectHideFlags: 0
@@ -278,7 +285,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4581836023173782737}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Script: {fileID: 11500000, guid: 1b929d2ed17ea3e499cba99c528388cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -288,17 +295,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -7784890761970012591, guid: c8dd463e102335a49b692c4f0e63b355,
-    type: 3}
-  m_Type: 3
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 0.6
-  m_FillClockwise: 1
-  m_FillOrigin: 2
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_Resolution: 0
+  m_StartDegrees: 90
+  m_ArcDegrees: -360
+  m_ArcFill: 0.66
+  m_Outline: 1
+  m_Thickness: 4
 --- !u!1 &8420455796612608550
 GameObject:
   m_ObjectHideFlags: 0

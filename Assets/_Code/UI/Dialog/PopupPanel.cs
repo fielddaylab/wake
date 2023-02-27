@@ -103,6 +103,7 @@ namespace Aqua {
         private void ShowOrBounce() {
             if (IsShowing()) {
                 m_BoxAnim.Replace(this, BounceAnim());
+                m_Layout.PlayAnim();
             } else {
                 Show();
             }
@@ -110,15 +111,22 @@ namespace Aqua {
 
         private IEnumerator PresentMessageRoutine(Future<StringHash32> ioFuture, PopupContent inContent, PopupFlags inPopupFlags) {
             using (ioFuture) {
-                m_Layout.Configure(inContent, inPopupFlags);
+                m_Layout.Configure(ref inContent, inPopupFlags);
                 
                 Services.Events.Queue(GameEvents.PopupOpened);
 
                 ShowOrBounce();
 
-                SetInputState(true);
-                PopupLayout.AttemptTTS(inContent);
+                PopupLayout.AttemptTTS(ref inContent);
 
+                if (inContent.Execute != null) {
+                    SetInputState(false);
+                    m_RootGroup.blocksRaycasts = false;
+                    yield return inContent.Execute(this, m_Layout);
+                    m_RootGroup.blocksRaycasts = true;
+                }
+
+                SetInputState(true);
                 yield return m_Layout.WaitForInput(inContent, ioFuture);
 
                 Services.TTS.Cancel();
@@ -158,6 +166,8 @@ namespace Aqua {
             m_RootGroup.alpha = durationMultiplier < 1 ? 0.5f : 0;
             m_RootTransform.SetScale(durationMultiplier < 1 ? 0.75f : 0.5f);
             m_RootTransform.gameObject.SetActive(true);
+            
+            m_Layout.PlayAnim(0.15f);
 
             yield return Routine.Combine(
                 m_RootGroup.FadeTo(1, 0.2f * durationMultiplier),

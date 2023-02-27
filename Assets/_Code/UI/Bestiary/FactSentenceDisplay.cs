@@ -41,20 +41,24 @@ namespace Aqua
 
             Clear();
 
+            uint scrambleSeed = inFact.Id.HashValue;
             foreach(var fragment in BFType.GenerateFragments(inFact, inFlags, inReference))
             {
-                TryAllocFragment(fragment);
+                TryAllocFragment(fragment, (inFlags & BFDiscoveredFlags.IsEncrypted) != 0, ref scrambleSeed);
             }
 
             m_Layout.ForceRebuild();
         }
 
-        private bool TryAllocFragment(in BFFragment inFragment)
+        private bool TryAllocFragment(in BFFragment inFragment, bool encrypt, ref uint seed)
         {
             StringSlice str = inFragment.String;
+            if (encrypt) {
+                str = Formatting.Scramble(str, ref seed);
+            }
 
             FactSentenceFragment fragment = m_Tweaks.Alloc(inFragment, m_Layout.transform);
-            fragment.Configure(inFragment.String);
+            fragment.Configure(str);
             m_AllocatedFragments.Add(fragment);
 
             return true;

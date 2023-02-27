@@ -8,9 +8,9 @@ namespace Aqua
     public class SiteSurveyData : ISerializedObject, ISerializedVersion, IKeyValuePair<StringHash32, SiteSurveyData>
     {
         public StringHash32 MapId;
-        public HashSet<StringHash32> TaggedCritters = new HashSet<StringHash32>();
-        public HashSet<StringHash32> GraphedCritters = new HashSet<StringHash32>();
-        public HashSet<StringHash32> GraphedFacts = new HashSet<StringHash32>();
+        public HashSet<StringHash32> TaggedCritters = Collections.NewSet<StringHash32>(8);
+        public HashSet<StringHash32> GraphedCritters = Collections.NewSet<StringHash32>(16);
+        public HashSet<StringHash32> GraphedFacts = Collections.NewSet<StringHash32>(16);
 
         public Action OnChanged;
 

@@ -36,7 +36,9 @@ namespace ProtoAqua.Observation
         {
             SetRange(0);
             m_System = TaggingSystem.Find<TaggingSystem>();
-            m_System.SetDetector(m_RangeCollider);
+            if (m_System != null) {
+                m_System.SetDetector(m_RangeCollider);
+            }
         }
 
         #endregion // Unity Events
@@ -55,7 +57,7 @@ namespace ProtoAqua.Observation
 
             m_On = true;
             m_EnableRoutine.Replace(this, TurnOnAnim());
-            Services.UI.FindPanel<TaggingUI>().Show();
+            Services.UI.FindPanel<TaggingUI>()?.Show();
             Visual2DSystem.Activate(GameLayers.CritterTag_Mask);
 
             m_Loop = Services.Audio.PostEvent("ROV.Tagger.Enabled");
@@ -80,12 +82,12 @@ namespace ProtoAqua.Observation
             m_Loop = default;
         }
 
-        public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody)
+        public bool UpdateTool(float inDeltaTime, in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody)
         {
             return false;
         }
 
-        public void UpdateActive(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
+        public void UpdateActive(float inDeltaTime, in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
             Vector2 myPos = m_RangeCollider.transform.position;
             Vector2 closestPos;
             if (m_System.TryGetClosestCritterGameplayPlane(out closestPos))

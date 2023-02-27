@@ -131,6 +131,11 @@ namespace Aqua.Editor {
             ValidateAllScripts();
         }
 
+        [MenuItem("Aqualab/Leaf/Disassemble Selected Scripts")]
+        static private void DEBUGDisassembleScripts() {
+            DisassembleScripts();
+        }
+
         static public bool ValidateAllScripts() {
             try {
                 ScriptNodePackage.Generator generator = new ScriptNodePackage.Generator(Leaf.Compiler.LeafCompilerFlags.Default_Strict);
@@ -155,6 +160,53 @@ namespace Aqua.Editor {
                     string assetPath = AssetDatabase.GetAssetPath(asset);
 
                     EditorUtility.DisplayProgressBar("Compiling all leaf scripts", assetPath, idx / (float) allScripts.Length);
+
+                    ScriptNodePackage package = LeafAsset.Compile<ScriptNode, ScriptNodePackage>(asset, generator);
+                    var errorState = package.ErrorState();
+                    if (errorState.ErrorMask != 0) {
+                        Debug.LogErrorFormat("Leaf Script '{0}' has compilation errors - see previous error log for detail", assetPath);
+                        hasErrors = true;
+                    }
+                }
+
+                return !hasErrors;
+            }
+            finally {
+                EditorUtility.ClearProgressBar();
+            }
+        }
+
+        static public bool DisassembleScripts() {
+            try {
+                ScriptNodePackage.Generator generator = new ScriptNodePackage.Generator(Leaf.Compiler.LeafCompilerFlags.Default_Strict | Leaf.Compiler.LeafCompilerFlags.Dump_Disassembly | Leaf.Compiler.LeafCompilerFlags.Dump_Stats | Leaf.Compiler.LeafCompilerFlags.Debug);
+                MethodCache<LeafMember> methodCache = LeafUtils.CreateMethodCache(typeof(IScriptComponent));
+                methodCache.LoadStatic();
+                foreach(var type in Reflect.FindDerivedTypes(typeof(IScriptComponent), Reflect.FindAllUserAssemblies())) {
+                    methodCache.Load(type);
+                }
+
+                bool hasErrors = false;
+
+                var selectedObjects = Selection.objects;
+                List<LeafAsset> allScripts = new List<LeafAsset>(selectedObjects.Length);
+                foreach(var obj in selectedObjects) {
+                    if (obj is LeafAsset) {
+                        allScripts.Add(obj as LeafAsset);
+                    }
+                }
+
+                int idx = 0;
+
+                foreach(var asset in allScripts)
+                {
+                    idx++;
+                    if (asset.name.Contains(".template")) {
+                        continue;
+                    }
+
+                    string assetPath = AssetDatabase.GetAssetPath(asset);
+
+                    EditorUtility.DisplayProgressBar("Compiling all leaf scripts", assetPath, idx / (float) allScripts.Count);
 
                     ScriptNodePackage package = LeafAsset.Compile<ScriptNode, ScriptNodePackage>(asset, generator);
                     var errorState = package.ErrorState();
@@ -215,6 +267,13 @@ namespace Aqua.Editor {
                 }
                 Debug.LogFormat("[BuildSettings] Building branch '{0}', development mode {1}", branch, EditorUserBuildSettings.development);
                 try {
+                    if (EditorUserBuildSettings.development) {
+                        PlayerSettings.WebGL.exceptionSupport = WebGLExceptionSupport.FullWithStacktrace;
+                        PlayerSettings.WebGL.debugSymbols = true;
+                    } else {
+                        PlayerSettings.WebGL.exceptionSupport = WebGLExceptionSupport.ExplicitlyThrownExceptionsOnly;
+                        PlayerSettings.WebGL.debugSymbols = false;
+                    }
                     using (Profiling.Time("bake assets"))
                     using (Log.DisableMsgStackTrace()) {
                         Baking.BakeAssets(bBatch ? 0 : BakeFlags.Verbose);
@@ -223,8 +282,8 @@ namespace Aqua.Editor {
                     if (!ValidateAllScripts()) {
                         throw new Exception("Invalid scripts present");
                     }
-                    SceneManifestUtility.BuildPreloadManifest();
                     if (bBatch) {
+                        SceneManifestUtility.BuildPreloadManifest();
                         #if !PRESERVE_DEBUG_SYMBOLS && !DEVELOPMENT
                         CodeStringStripping.ProcessAllFiles(false);
                         #endif // PRESERVE_DEBUG_SYMBOLS && !DEVELOPMENT

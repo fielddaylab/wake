@@ -39,7 +39,6 @@ namespace ProtoAqua.ExperimentV2 {
             inTank.Interface.enabled = false;
             inTank.InterfaceRaycaster.Override = false;
             inTank.InterfaceFader.alpha = 0;
-            inTank.DefaultWaterColor = inTank.WaterColor.Color;
 
             for(int i = 0; i < inTank.Lights.Length; i++) {
                 inTank.Lights[i].enabled = false;

@@ -21,7 +21,7 @@ namespace ProtoAqua.ExperimentV2
             AutoFeeder = 0x02
         }
 
-        public const FeatureMask DefaultFeatures = FeatureMask.Stabilizer;
+        public const FeatureMask DefaultFeatures = 0;
 
         private enum SetupPhase : byte
         {
@@ -51,9 +51,8 @@ namespace ProtoAqua.ExperimentV2
         [SerializeField, Required] private ExperimentScreen m_OrganismScreen = null;
         [SerializeField, Required] private ExperimentScreen m_FeatureScreen = null;
         [SerializeField, Required] private MeasurementFeaturePanel m_FeaturePanel = null;
-        [SerializeField, Required] private ParticleSystem m_AutoFeederParticles = null;
-        // [SerializeField, Required] private ToggleableTankFeature m_StabilizerFeature = null;
-        // [SerializeField, Required] private ToggleableTankFeature m_FeederFeature = null;
+        [SerializeField, Required] private ToggleableTankFeature m_StabilizerFeature = null;
+        [SerializeField, Required] private ToggleableTankFeature m_FeederFeature = null;
 
         [Header("In Progress")]
         [SerializeField, Required] private ExperimentScreen m_InProgressScreen = null;
@@ -110,8 +109,9 @@ namespace ProtoAqua.ExperimentV2
             m_EnvironmentScreen.Panel.OnCleared += OnEnvironmentCleared;
 
             m_OrganismScreen.Panel.HighlightFilter = EvaluateOrganismHighlight;
+            m_OrganismScreen.Panel.MarkerFilter = EvaluateOrganismMarker;
 
-            // m_FeaturePanel.OnUpdated = OnFeaturesUpdated;
+            m_FeaturePanel.OnUpdated = OnFeaturesUpdated;
             m_FeatureScreen.OnReset += (s, w) => m_FeaturePanel.ClearSelection();
 
             m_BeginScreen.CustomButton.onClick.AddListener(OnNextClick);
@@ -135,19 +135,12 @@ namespace ProtoAqua.ExperimentV2
 
         private void Activate() {
             m_World = m_ParentTank.ActorBehavior.World;
-            TankWaterSystem.SetWaterHeight(m_ParentTank, 0);
             m_SetupPhase = SetupPhase.Begin;
             ExperimentScreen.Transition(m_BeginScreen, m_World);
             m_ExperimentData = null;
         }
 
         private void Deactivate() {
-            if (m_ParentTank.WaterFillProportion > 0) {
-                m_ParentTank.WaterSystem.DrainWaterOverTime(m_ParentTank, 1.5f);
-            }
-
-            m_AutoFeederParticles.Stop();
-
             m_ParentTank.CurrentState = 0;
             m_ExperimentData = null;
         }
@@ -159,48 +152,53 @@ namespace ProtoAqua.ExperimentV2
         private void OnEnvironmentAdded(BestiaryDesc inDesc) {
             m_SelectedEnvironment = inDesc;
             m_ParentTank.ActorBehavior.UpdateEnvState(inDesc.GetEnvironment());
-            m_ParentTank.WaterColor.SetColor(inDesc.WaterColor().WithAlpha(m_ParentTank.DefaultWaterColor.a));
             m_OrganismScreen.Panel.Refresh();
         }
 
         private void OnEnvironmentRemoved(BestiaryDesc inDesc) {
             if (Ref.CompareExchange(ref m_SelectedEnvironment, inDesc, null)) {
                 m_ParentTank.ActorBehavior.ClearEnvState();
-                m_ParentTank.WaterColor.SetColor(m_ParentTank.DefaultWaterColor);
             }
         }
 
         private void OnEnvironmentCleared() {
             m_SelectedEnvironment = null;
             m_ParentTank.ActorBehavior.ClearEnvState();
-            m_ParentTank.WaterColor.SetColor(m_ParentTank.DefaultWaterColor);
         }
 
         private bool EvaluateOrganismHighlight(BestiaryDesc organism) {
             return m_SelectedEnvironment?.HasOrganism(organism.Id()) ?? false;
         }
 
+        private bool EvaluateOrganismMarker(BestiaryDesc organism) {
+            StringHash32 stressFactToCheck = organism.FirstStressedFactId();
+            if (!stressFactToCheck.IsEmpty && m_SelectedEnvironment && Save.Bestiary.HasFact(stressFactToCheck)) {
+                return organism.EvaluateActorState(m_SelectedEnvironment.GetEnvironment(), out var _) >= ActorStateId.Stressed;
+            }
+            return false;
+        }
+
         #endregion // Environment Callbacks
 
         #region Feature Callbacks
 
-        // private void OnFeaturesUpdated(FeatureMask inMask) {
-        //     if (m_SetupPhase == SetupPhase.Features) {
-        //         UpdateFeature(inMask, FeatureMask.Stabilizer, m_StabilizerFeature);
-        //         UpdateFeature(inMask, FeatureMask.AutoFeeder, m_FeederFeature);
-        //     } else {
-        //         ToggleableTankFeature.Disable(m_StabilizerFeature);
-        //         ToggleableTankFeature.Disable(m_FeederFeature);
-        //     }
-        // }
+        private void OnFeaturesUpdated(FeatureMask inMask) {
+            if (m_SetupPhase == SetupPhase.Features) {
+                UpdateFeature(inMask, FeatureMask.Stabilizer, m_StabilizerFeature);
+                UpdateFeature(inMask, FeatureMask.AutoFeeder, m_FeederFeature);
+            } else {
+                ToggleableTankFeature.Disable(m_StabilizerFeature);
+                ToggleableTankFeature.Disable(m_FeederFeature);
+            }
+        }
 
-        // static private void UpdateFeature(FeatureMask inSet, FeatureMask inMask, ToggleableTankFeature inFeature) {
-        //     if ((inSet & inMask) != 0) {
-        //         ToggleableTankFeature.Enable(inFeature);
-        //     } else {
-        //         ToggleableTankFeature.Disable(inFeature);
-        //     }
-        // }
+        static private void UpdateFeature(FeatureMask inSet, FeatureMask inMask, ToggleableTankFeature inFeature) {
+            if ((inSet & inMask) != 0) {
+                ToggleableTankFeature.Enable(inFeature);
+            } else {
+                ToggleableTankFeature.Disable(inFeature);
+            }
+        }
 
         #endregion // Feature Callbacks
 
@@ -235,7 +233,7 @@ namespace ProtoAqua.ExperimentV2
             m_SetupPhase--;
             switch (m_SetupPhase) {
                 case SetupPhase.Environment: {
-                        ExperimentScreen.Transition(m_EnvironmentScreen, m_World, SelectableTank.DrainTankSequence(m_ParentTank));
+                        ExperimentScreen.Transition(m_EnvironmentScreen, m_World);
                         break;
                     }
                 case SetupPhase.Critters: {
@@ -253,11 +251,6 @@ namespace ProtoAqua.ExperimentV2
             m_ParentTank.CurrentState |= TankState.Running;
             m_ExperimentData = GenerateData();
             m_IsolatedVar = (IsolatedVariable)m_ExperimentData.CustomData;
-
-            if ((m_ExperimentData.Settings & RunningExperimentData.Flags.Feeder) != 0) {
-                m_AutoFeederParticles.Play();
-            }
-            yield return null;
 
             Services.Camera.MoveToPose(m_ParentTank.ZoomPose, 0.4f);
             m_ParentTank.Guide.MoveTo(m_ParentTank.GuideTargetZoomed);
@@ -437,7 +430,6 @@ namespace ProtoAqua.ExperimentV2
                 Services.Script.KillLowPriorityThreads();
                 using (var fader = Services.UI.WorldFaders.AllocFader()) {
                     yield return fader.Object.Show(Color.black, 1);
-                    yield return m_ParentTank.WaterSystem.DrainWaterOverTime(m_ParentTank, 1f);
                     ClearStateAfterExperiment();
                     yield return 0.5f;
                     yield return fader.Object.Hide(0.5f, false);
@@ -459,13 +451,10 @@ namespace ProtoAqua.ExperimentV2
         }
 
         private void ClearStateAfterExperiment() {
-            TankWaterSystem.SetWaterHeight(m_ParentTank, 0);
-
             SelectableTank.Reset(m_ParentTank, true);
             Services.Camera.SnapToPose(m_ParentTank.CameraPose);
             m_ParentTank.Guide.SnapTo(m_ParentTank.GuideTarget);
 
-            m_AutoFeederParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             m_ParentTank.CurrentState &= ~TankState.Running;
             m_SetupPhase = 0;
             m_ExperimentData = null;

@@ -1,1 +1,259 @@
 # basePath ship.cabin
+
+:: ClearDreamState
+@function   SceneLeave
+$set session:fromDream = null
+$set session:traveling = false
+
+:: StartAudio.NoDream
+@function   SceneStart
+@when       !session:fromDream
+@cutscene
+$call   CabinBGM->PlayBGM()
+$if session:traveling
+    $if CurrStation() == "KelpStation"
+        {@guide}    Good morning. We have arrived at the Kelp Station.
+    $elseif CurrStation() == "ArcticStation"
+        {@guide}    Good morning. We have arrived at the Arctic Station.
+    $elseif CurrStation() == "CoralStation"
+        {@guide}    Good morning. We have arrived at the Coral Station.
+    $elseif CurrStation() == "BayouStation"
+        {@guide}    Good morning. We have arrived at the Bayou Station.
+    $else // Final
+        {@guide}    Good morning. We have arrived at {nameof RS-0}.
+    $endif
+$endif
+
+$if !world:cabin.first-visit-complete
+    $branch .TrunkSequence
+$elseif HasJournalEntry("N18_BayouNecklace"), !jobs:final-final.tioUpgradeCallComplete
+    $branch .TioCall
+$endif
+
+:: TrunkSequence
+@cutscene
+{@player}   Wait a second... {nameof @guide}, is that my sister's old trunk?
+{@guide}    Affirmative, O.
+{@player}   Wow. She used to keep so many notes and sketches in there!
+{@guide}    Would you like me to digitally scan its contents, O?
+{@player}   Oh... no thanks, {nameof @guide}. 
+            I think I'd like to look through it on my own. 
+$set world:cabin.first-visit-complete = true
+
+:: TrunkAfterJournal
+@trigger    JournalHidden
+@when !world:cabin.first-visit-complete
+@once
+@cutscene
+$branch .TrunkSequence
+
+:: TioCall
+//Story Beat
+@trigger    JournalHidden
+@when       HasJournalEntry("N18_BayouNecklace")
+@once
+@cutscene
+{@player} {nameof @guide}, I'm really worried about Sam.
+{@player} Can you call Tío? I need to talk to him. 
+{@guide} Affirmative, O.
+
+$branch common.ringPhone
+
+{@player} Tío, this is O. Do you copy?  
+{@kelpMechanic} Hola, mijita! ¿Qué pasa?
+{@player} Tío, I just found out Mer was working on an upgrade for {nameof @guide}.
+{@player} It could help to unscramble all those glitchy messages from Sam.
+{@kelpMechanic} Hmm. I remember Mer talking about an upgrade.  
+{@kelpMechanic} Not sure if she ever finished it. 
+{@kelpMechanic} She called it something to do with a cephalopod... a nautilus, or maybe an orthoceras...?
+{@player} An ammonite?
+{@kelpMechanic} Oh, that was it! 
+{@kelpMechanic} I'll see if I can find it. 
+{@player} Gracias, Tío. Please hurry. 
+$set jobs:final-final.tioUpgradeCallComplete = true
+
+
+// Dream Sequences
+
+:: StartAudio.FromDream
+@function   SceneStart
+@when       session:fromDream
+$set    player:dreamCounter + 1
+$call AudioOneShot("Cabin.WakeFromDream")
+{cutscene}{wait 3}{trigger-response DreamResponse}{/cutscene}{wait 4}
+$call   CabinBGM->PlayBGM()
+
+:: GetDreamJournal
+@cutscene
+{hide-dialog}
+$call ViewTransitionTo("Desk")
+
+$if session:fromDream == "Dreams00"
+    $call GiveJournalEntry("Dream00_Kelp1")
+$elseif session:fromDream == "Dream01"
+    $call GiveJournalEntry("Dream01_WhaleFall")
+$elseif session:fromDream == "Dream02"
+    $call GiveJournalEntry("Dream02_Coral")
+$elseif session:fromDream == "Dream03"
+    $call GiveJournalEntry("Dream03_DeadZone")
+$elseif session:fromDream == "Dream04"
+    $call GiveJournalEntry("Dream04_Kelp2Barren")
+$elseif session:fromDream == "Dream05"
+    $call GiveJournalEntry("Dream05_Arctic2")
+$elseif session:fromDream == "Dream06"
+    $call GiveJournalEntry("Dream06_Rig")
+$elseif session:fromDream == "Dream07"
+    $call GiveJournalEntry("Dream07_Final")
+$endif //
+
+// From Dream
+
+:: FirstDream
+@trigger    DreamResponse
+@when       session:fromDream == "Dreams00"
+@cutscene
+@once
+$if CurrStation() == "KelpStation"
+    {@guide}    Good morning, O! We have arrived at the Kelp Station.
+$elseif CurrStation()  == "ArcticStation"
+    {@guide}    Good morning, O! We have arrived at the Arctic Station.
+$elseif CurrStation()  == "CoralStation"
+    {@guide}    Good morning, O! We have arrived at the Coral Station.
+$elseif CurrStation() == "BayouStation"
+    {@guide}    Good morning. We have arrived at the Bayou Station.
+$else // Final
+    {@guide}    Good morning. We have arrived at {nameof RS-0}.
+$endif
+            My sensors indicate you are experiencing stress. 
+{@player}   Yeah. I just had the weirdest dream. 
+            Just give me a second... I need to write this down. 
+$branch .GetDreamJournal
+
+:: SecondDream
+@trigger    DreamResponse
+@when       session:fromDream == "Dream01"
+@cutscene
+@once
+{@guide}    Rise and shine, O! 
+            We have arrived at a new ecosystem, full of fascinating data to collect!
+            O? 
+{@player}   Phew... Mer's trunk is still there.
+{@guide}    Were you worried that it had been lost?
+{@player}   Well... no. Not really.
+            Just had another weird dream. 
+$branch .GetDreamJournal
+
+:: ThirdDream
+@trigger    DreamResponse
+@when       session:fromDream == "Dream02"
+@cutscene
+@once
+{@player}  AHHH!
+           Wow... that was a weird one.
+{@guide}   Fascinating how the human brain turns data input into unconscious hallucinations!
+{@player}   Yeah. I guess so. 
+{@player}   Though I've never had so many weird ones in a row. 
+{@guide}    Perhaps you could ask your mother--
+{@player}   No. Don't tell her about this, {nameof @guide}.
+            She already worries about me too much. 
+$branch .GetDreamJournal
+
+:: FourthDream
+@trigger    DreamResponse
+@when       session:fromDream == "Dream03"
+@cutscene
+@once
+{@player} Oh, wow.  
+          {nameof @guide}? 
+          Hello? {nameof @guide}??
+{@guide}  I am here. How can I help you, O? 
+{@player} Um... nothing. Just wanted to make sure you were still there.
+{@player}  Let's get off this ship and take on a new job. I need to be around people. 
+$branch .GetDreamJournal
+
+:: FifthDream
+@trigger    DreamResponse
+@when       session:fromDream == "Dream04"
+@cutscene
+@once
+{@guide} O? What has happened? 
+{@guide} I heard you shouting. 
+{@player} I'm okay, {nameof @guide}. 
+          Any luck unscrambling those messages from Sam? 
+{@guide}  I'm afraid not. The encryption is like nothing I've ever seen. 
+{@player} Okay. Just keep trying, {nameof @guide}.
+{@guide} Affirmative, O. 
+$branch .GetDreamJournal
+
+:: SixthDream
+@trigger    DreamResponse
+@when       session:fromDream == "Dream05"
+@cutscene
+@once
+{@guide} Good morning, O. 
+        According to my sensors, you did not get optimal rest. 
+{@player} Yeah. 
+          I can't stop thinking about Mer. 
+          And Sam.
+{@guide}  Hmmm. When I'm in idle mode, I like to do quadratic reformulations of nonlinear binary optimization problems. 
+          Perhaps that might help you.
+{@player} Um... yeah, maybe. Thanks, V.  
+$branch .GetDreamJournal
+
+:: SeventhDream
+@trigger    DreamResponse
+@when       session:fromDream == "Dream06"
+@cutscene
+@once
+{@player} Oh no. The reef!!
+{@guide}  Apologies, O. I don't know what you mean. 
+{@player} The reef at the Bayou. It's gone!
+          I tried to help them, but it was too late, I couldn't fix it...
+{@guide}  Ah. Another dream!
+{@player} Oh... yeah. I guess so.
+          I hope that place is still standing. 
+$branch .GetDreamJournal
+
+:: EighthDream
+@trigger    DreamResponse
+@when       session:fromDream == "Dream07"
+@cutscene
+@once
+{@guide}   Good morning, O. We have reached our destination.
+$if CurrStation() == "KelpStation"
+    {@guide}    The Kelp Station awaits.
+$elseif CurrStation() == "ArcticStation"
+    {@guide}    The Arctic Station awaits.
+$elseif CurrStation() == "CoralStation"
+    {@guide}    The Coral Station awaits.
+$elseif CurrStation() == "BayouStation"
+    {@guide}    Good morning. We have arrived at the Bayou Station.
+$else // Final
+    {@guide}    Good morning. We have arrived at {nameof RS-0}.
+$endif
+{@player}  Thanks, {nameof @guide}. 
+{@player}  Status update? 
+{@guide}   We are prepared to descend to the Lower Depths.
+{@guide}   Due to the uncertain nature of this mission, I am unable to calculate your odds of survival.
+{@player}  I know, {nameof @guide}. It's worth the risk.   
+{@player}  Let's go find Sam. 
+$branch .GetDreamJournal
+
+:: GenericDream
+@trigger    DreamResponse
+@cutscene
+@boostScore -5
+{@guide}    Good morning, O.
+{@player}   Ugh...{wait 1} More bad dreams.
+$branch .GetDreamJournal
+
+//notes:
+//Dream00: Kelp Forest
+//Dream01: Whalefall
+//Dream02: Lionfish Eats you
+//Dream03: Dead Zone
+// Dream04: Crashed Sub
+//Dream05: Ice Crevice
+//Dream06: Bayou Rig Explosion
+//Dream07: Angler Starfield
+//Final dream will be Mer's death 

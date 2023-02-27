@@ -7,7 +7,7 @@ using UnityEngine.Serialization;
 
 namespace Aqua
 {
-    public abstract class BFBase : ScriptableObject
+    public abstract class BFBase : ScriptableObject, IEditorOnlyData
     {
         [Header("-- DEBUG DISPLAY --")]
         [SerializeField, HideInInspector] public StringHash32 Id;
@@ -107,6 +107,11 @@ namespace Aqua
         protected virtual void OnValidate() { }
 
         protected virtual void Reset() { }
+
+        public virtual void ClearEditorOnlyData()
+        {
+            m_IconOverride = null;
+        }
 
         #endif // UNITY_EDITOR
 

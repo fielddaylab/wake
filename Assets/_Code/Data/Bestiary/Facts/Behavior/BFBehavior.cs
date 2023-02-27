@@ -7,7 +7,7 @@ using UnityEngine.Serialization;
 
 namespace Aqua
 {
-    public abstract class BFBehavior : BFBase, IBaked
+    public abstract class BFBehavior : BFBase
     {
         #region Consts
 
@@ -19,7 +19,6 @@ namespace Aqua
 
         [Header("Behavior")]
         [ShowIfField("DisplayStressed")] public bool OnlyWhenStressed = false;
-        [HideInEditor] public StringHash32 PairId = null;
         internal bool AutoGive = false;
 
         #endregion // Inspector
@@ -38,32 +37,11 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
-        int IBaked.Order { get { return 15; } }
+        // int IBaked.Order => 15;
 
-        public abstract bool Bake(BakeFlags flags, BakeContext context);
-
-        protected T FindPairedFact<T>() where T : BFBehavior
-        {
-            foreach(var behavior in Parent.OwnedFacts)
-            {
-                if (behavior == this)
-                    continue;
-
-                T asT = behavior as T;
-                if (asT == null)
-                    continue;
-
-                if (IsPair(asT))
-                    return asT;
-            }
-
-            return null;
-        }
-
-        protected virtual bool IsPair(BFBehavior inOther)
-        {
-            return inOther.Type == Type;
-        }
+        // bool IBaked.Bake(BakeFlags flags, BakeContext context) {
+        //     return true;
+        // }
 
         private bool DisplayStressed()
         {

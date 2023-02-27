@@ -32,7 +32,7 @@ $call UnlockSite(RS-1B)
 {@player} It's just... Sam and I sneaked out here last year to explore. 
 {@player} It didn't end super well.  
 {@guide} Ah. Perhaps I can ease your mind. 
-{@guide} The probabiity of crashing at the same dive site twice is only 8.2%! 
+{@guide} The probability of crashing at the same dive site twice is only 8.2%! 
 {@player} Thanks, {nameof @guide}. That's... sort of comforting, I guess. 
 
 {wait 0.5}
@@ -56,10 +56,10 @@ $call UnlockSite(RS-1B)
 
 :: helpAtSiteB.A
 @trigger    RequestPartnerHelp
-@when 		scene:name == "RS-1B", JobTaskTop(getTagged)
+@when 		scene:name == "RS-1B", !JobTaskCompleted(getTagged)
 @cutscene
 {@player} 	Ok, here we are. What now?
-{@guide}    According to your task list, you'll need to count all the organisms here. 
+{@guide}    According to your task list in AQOS, you'll need to count all the organisms here. 
 $if !TaggingHasStarted(Urchin)
     {@guide}    Can you find any {pluralnameof Urchin} here?
 $elseif !TaggingHasFinished(Urchin)
@@ -76,13 +76,11 @@ $endif
 @once
 @cutscene
 {@player}	Okay, we've got the current population count.
-            That's a LOT of urchins. 
-            What now, {nameof @guide}?
-{@guide}    Now you must find the {h}Historic Population Probe{/h} and upload its data!
+            That's a LOT of urchins.
 
 :: helpAtSiteB.B
 @trigger    RequestPartnerHelp
-@when 		scene:name == "RS-1B", JobTaskTop(getProbeData)
+@when 		scene:name == "RS-1B", !JobTaskCompleted(getProbeData)
 @cutscene
 
 {@player}   What should I do next?
@@ -98,7 +96,11 @@ $endif
 {@player}   Hmm. Looks like the urchins have been taking over for a while.
             But why?
 {@guide}    I'm not sure, O. 
-            You'll need to head back to your ship and interpret this data. 
+{@guide}    You'll need to head back to your ship and interpret this data.
+$if !JobTaskCompleted(getTagged)
+    // still need to tag
+    {@guide}    But first, let's wrap up counting organism populations here.
+$endif
 
 // TO MODELING
 
@@ -114,7 +116,7 @@ $endif
 @when 		scene:name == "Helm", JobTaskTop(visualSiteB)
 @cutscene
 {@player} 	What now, {nameof @guide}?
-{@guide}	Head to your {map-name}Modeling Whiteboard{/map-name} in the {nameof Modeling}.
+{@guide}	Head to your {nameof Modeling} in the {nameof Modeling}.
 
 :: atShip
 @trigger    SceneStart
@@ -126,19 +128,28 @@ $endif
           Um... not that I was worried, or anything. 
           What now, {nameof @guide}?
 {@guide}  You must create a food web model to help explain the vanishing kelp.
-          Head to your Modeling Whiteboard in the {nameof Modeling}!
+          Head to your {nameof Modeling} in the {nameof Modeling}!
 
 :: helpGoToModeling
 @trigger    RequestPartnerHelp
 @when 		scene:name == "Helm", JobTaskTop(predictSiteB)
 @cutscene
-$if global:nav.shipRoom != "Modeling"
-	{@player} 	Can you remind me where to go, {nameof @guide}?
-	{@guide}	Certainly, O. Head to the {nameof Modeling}.
-$else
-	{@player} 	Okay, {nameof @guide}. What do we do from here? 
-	{@guide}	You must use your {map-name}Modeling Whiteboard{/map-name} to create a Food Web Model!
-$endif
+{@player} 	Can you remind me where to go, {nameof @guide}?
+{@guide}	Certainly, O. Head to the {nameof Modeling}.
+
+:: helpGoToModeling.inModelingFoyer
+@trigger    RequestPartnerHelp
+@when 		scene:name == "ModelingFoyer", JobTaskTop(predictSiteB)
+@cutscene
+{@player} 	Okay, {nameof @guide}. What do we do from here? 
+{@guide}	Let's look at the computer in front of you.
+
+:: helpGoToModeling.inModeling
+@trigger    RequestPartnerHelp
+@when 		scene:name == "Modeling", JobTaskTop(predictSiteB)
+@cutscene
+{@player} 	Okay, {nameof @guide}. What do we do from here? 
+{@guide}	You must use your {nameof Modeling} to create a Food Web Model!
 
 // IN MODELING
 

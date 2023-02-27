@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Aqua.Compression;
 using BeauPools;
 using BeauRoutine;
 using BeauRoutine.Extensions;
@@ -14,6 +15,7 @@ namespace Aqua {
     public sealed class PopupLayout : MonoBehaviour {
         
         public delegate void OptionSelectedDelegate(StringHash32 inOptionId);
+        public delegate IEnumerator ExecuteDelegate(PopupPanel inPanel, PopupLayout inLayout);
 
         [Serializable]
         private struct ButtonConfig {
@@ -31,15 +33,29 @@ namespace Aqua {
         [SerializeField] private LayoutGroup m_Layout = null;
         [SerializeField] private LocText m_HeaderText = null;
         [SerializeField] private LocText m_SubheaderText = null;
+        [SerializeField] private LocText m_ContentsText = null;
+        [SerializeField] private AppearAnimSet m_AppearAnim = null;
+
+        [Header("Image")]
         [SerializeField] private StreamedImageSetDisplay m_ImageDisplay = null;
         [SerializeField] private Graphic m_ImageBG = null;
-        [SerializeField] private LocText m_ContentsText = null;
+        
+        [Header("Facts")]
         [SerializeField] private FactPools m_FactPools = null;
         [SerializeField] private RectTransformPool m_KnownFactBadgePool = null;
         [SerializeField] private VerticalLayoutGroup m_VerticalFactLayout = null;
         [SerializeField] private GridLayoutGroup m_GridFactLayout = null;
+        
+        [Header("Custom")]
         [SerializeField] private int m_CustomModuleSiblingIndex = 0;
         [SerializeField] private RectTransform m_ExtraBackground = null;
+        [SerializeField] private LayoutElement m_TopDivider = null;
+        [SerializeField] private GameObject m_CompressedLayoutContainer = null;
+        [SerializeField] private GameObject m_CompressedLayoutRoot = null;
+        [SerializeField] private LayoutDecompressor m_LayoutDecompressor = null;
+        [SerializeField] private FlashAnim m_FlashAnim = null;
+        
+        [Header("Buttons")]
         [SerializeField] private LayoutElement m_DividerGroup = null;
         [SerializeField] private ButtonConfig[] m_Buttons = null;
         [SerializeField] private Button m_CloseButton = null;
@@ -59,8 +75,9 @@ namespace Aqua {
         [NonSerialized] private BFBase[] m_CachedFactsSet = new BFBase[1];
         [NonSerialized] private BFDiscoveredFlags[] m_CachedFlagsSet = new BFDiscoveredFlags[1];
 
-        [NonSerialized] private RectTransform m_CurrentCustomModule;
+        [NonSerialized] private Transform m_CurrentCustomModule;
         [NonSerialized] private Transform m_OldCustomModuleParent;
+        [NonSerialized] private StringHash32 m_CurrentLayoutId;
 
         public OptionSelectedDelegate OnOptionSelected;
 
@@ -100,6 +117,7 @@ namespace Aqua {
                 m_ImageDisplay.Clear();
             }
             SetCustomModule(null);
+            SetCustomLayout(null);
 
             m_CachedFactsSet[0] = default;
             m_CachedFlagsSet[0] = default;
@@ -118,14 +136,15 @@ namespace Aqua {
             };
         }
 
-        public void Configure(PopupContent inContent, PopupFlags inFlags) {
-            ConfigureText(inContent, inFlags);
-            ConfigureOptions(inContent, inFlags);
-            ConfigureFacts(inContent.Facts);
+        public void Configure(ref PopupContent inContent, PopupFlags inFlags) {
+            ConfigureText(ref inContent, inFlags);
+            ConfigureOptions(ref inContent, inFlags);
+            ConfigureFacts(ref inContent.Facts);
             SetCustomModule(inContent.CustomModule);
+            SetCustomLayout(inContent.CustomLayout);
         }
 
-        public void ConfigureText(PopupContent inContent, PopupFlags inFlags) {
+        public void ConfigureText(ref PopupContent inContent, PopupFlags inFlags) {
             if (m_HeaderText) {
                 if (!string.IsNullOrEmpty(inContent.Header)) {
                     m_HeaderText.SetTextFromString(inContent.Header);
@@ -202,7 +221,7 @@ namespace Aqua {
             }
         }
 
-        private void ConfigureOptions(PopupContent inContent, PopupFlags ioPopupFlags) {
+        private void ConfigureOptions(ref PopupContent inContent, PopupFlags ioPopupFlags) {
             m_OptionCount = inContent.Options.Length;
             if (m_OptionCount == 0) {
                 ioPopupFlags |= PopupFlags.ShowCloseButton;
@@ -231,9 +250,12 @@ namespace Aqua {
             if (m_CloseButton) {
                 m_CloseButton.gameObject.SetActive((ioPopupFlags & PopupFlags.ShowCloseButton) != 0);
             }
+            if (m_TopDivider) {
+                m_TopDivider.gameObject.SetActive((ioPopupFlags & PopupFlags.TopDivider) != 0);
+            }
         }
 
-        private void ConfigureFacts(PopupFacts inFacts) {
+        private void ConfigureFacts(ref PopupFacts inFacts) {
             if (!m_VerticalFactLayout || !m_GridFactLayout || !m_FactPools) {
                 return;
             }
@@ -337,17 +359,21 @@ namespace Aqua {
             m_OptionWasSelected = false;
         }
 
+        public void PlayAnim(float delay = 0) {
+            m_AppearAnim.Play(delay);
+        }
+
         #endregion // Display
 
         #region Custom Modules
 
-        private void SetCustomModule(RectTransform inCustomModule) {
-            if (m_CurrentCustomModule == inCustomModule) {
+        private void SetCustomModule(Transform inCustomModule) {
+            if (!Services.Valid || m_CurrentCustomModule == inCustomModule) {
                 return;
             }
 
             if (m_CurrentCustomModule) {
-                m_CurrentCustomModule.SetParent(m_OldCustomModuleParent);
+                m_CurrentCustomModule.SetParent(m_OldCustomModuleParent, false);
                 m_CurrentCustomModule.gameObject.SetActive(false);
             }
 
@@ -355,9 +381,32 @@ namespace Aqua {
 
             if (inCustomModule) {
                 m_OldCustomModuleParent = inCustomModule.parent;
-                inCustomModule.SetParent(m_Layout.transform);
+                inCustomModule.SetParent(m_Layout.transform, false);
                 inCustomModule.SetSiblingIndex(m_CustomModuleSiblingIndex);
                 inCustomModule.gameObject.SetActive(true);
+            }
+        }
+
+        private void SetCustomLayout(StringHash32 inLayoutId) {
+            if (m_CurrentLayoutId == inLayoutId || !m_LayoutDecompressor) {
+                return;
+            }
+
+            m_LayoutDecompressor.ClearAll();
+            m_CurrentLayoutId = inLayoutId;
+
+            if (!m_CurrentLayoutId.IsEmpty) {
+                GameObject layout = m_LayoutDecompressor.Decompress(Services.UI.CompressedLayouts, m_CurrentLayoutId, m_CompressedLayoutRoot);
+                m_CompressedLayoutContainer.SetActive(true);
+                layout.SetActive(true);
+            } else {
+                m_CompressedLayoutContainer.SetActive(false);
+            }
+        }
+
+        public void Flash() {
+            if (m_FlashAnim) {
+                m_FlashAnim.Ping();
             }
         }
 
@@ -390,7 +439,7 @@ namespace Aqua {
             return content;
         }
 
-        static public void AttemptTTS(PopupContent inContent) {
+        static public void AttemptTTS(ref PopupContent inContent) {
             if (!Accessibility.TTSFull) {
                 return;
             }
@@ -416,12 +465,14 @@ namespace Aqua {
         public string Header;
         public string Subheader;
         public string Text;
-        public Color? HeaderColorOverride;
-        public Color? SubheaderColorOverride;
-        public Color? TextColorOverride;
+        public Color32? HeaderColorOverride;
+        public Color32? SubheaderColorOverride;
+        public Color32? TextColorOverride;
         public StreamedImageSet Image;
-        public RectTransform CustomModule;
+        public Transform CustomModule;
+        public StringHash32 CustomLayout;
         public PopupFacts Facts;
+        public PopupLayout.ExecuteDelegate Execute;
         public ListSlice<NamedOption> Options;
     }
 
@@ -451,6 +502,7 @@ namespace Aqua {
         ShowCloseButton = 0x01,
         TallImage = 0x02,
         ImageTextBG = 0x04,
-        ImageBG = 0x08
+        ImageBG = 0x08,
+        TopDivider = 0x10
     }
 }

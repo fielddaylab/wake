@@ -19,8 +19,8 @@ namespace Aqua
 
         #endregion // Inspector
 
-        [NonSerialized] private readonly HashSet<TweakAsset> m_LoadedTweaks = new HashSet<TweakAsset>();
-        [NonSerialized] private readonly Dictionary<Type, TweakAsset> m_TweakMap = new Dictionary<Type, TweakAsset>();
+        [NonSerialized] private readonly HashSet<TweakAsset> m_LoadedTweaks = Collections.NewSet<TweakAsset>(16);
+        [NonSerialized] private readonly Dictionary<Type, TweakAsset> m_TweakMap = new Dictionary<Type, TweakAsset>(ReferenceEqualityComparer<Type>.Default);
 
         #region IService
 

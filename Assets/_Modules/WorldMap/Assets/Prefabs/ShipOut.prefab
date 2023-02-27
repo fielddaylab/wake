@@ -316,7 +316,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1408118391835887908}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Script: {fileID: 11500000, guid: a3cce1025f282c247b38ed00ee6ddc0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -326,16 +326,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 2514285dbbe219d45939af2ca6f15a5d, type: 3}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 2
+  m_CornerRadius: 8
+  m_Resolution: 0
+  m_Outline: 0
+  m_Thickness: 1
 --- !u!114 &2704069281010801283
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -468,6 +462,8 @@ GameObject:
   - component: {fileID: 6059961814998076779}
   - component: {fileID: 7340520696317216823}
   - component: {fileID: 128327392687401356}
+  - component: {fileID: 6525532411878364958}
+  - component: {fileID: 9080468313171758109}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -545,7 +541,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    m_DisabledColor: {r: 0.4, g: 0.4, b: 0.4, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -633,6 +629,32 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &6525532411878364958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2804964723686034574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee012376a32f0314ead77f5ad3a9b360, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Offset0: {x: 0, y: 0}
+  m_Offset1: {x: 0, y: 0}
+--- !u!114 &9080468313171758109
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2804964723686034574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b65daf6ebab4aca41a9a0c35e749ef1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2951144242464507688
 GameObject:
   m_ObjectHideFlags: 0
@@ -1071,7 +1093,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 234.995, y: 0}
+  m_AnchoredPosition: {x: 234.99, y: 0}
   m_SizeDelta: {x: 0, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8643509317187378148
@@ -1172,9 +1194,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
   m_MinWidth: -1
-  m_MinHeight: 100
+  m_MinHeight: 160
   m_PreferredWidth: -1
-  m_PreferredHeight: 100
+  m_PreferredHeight: 160
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
@@ -1339,6 +1361,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  m_Outline: 0
+  m_Thickness: 1
 --- !u!114 &3413812705211084207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1611,6 +1635,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  m_Outline: 0
+  m_Thickness: 1
 --- !u!114 &2705076078574750613
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1686,7 +1712,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7321933139781143862}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Script: {fileID: 11500000, guid: a3cce1025f282c247b38ed00ee6ddc0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -1696,16 +1722,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 2514285dbbe219d45939af2ca6f15a5d, type: 3}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 2
+  m_CornerRadius: 8
+  m_Resolution: 0
+  m_Outline: 0
+  m_Thickness: 1
 --- !u!114 &1113288703208432410
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1998,7 +2018,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -0.000015258789}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1661683052652768238
@@ -2031,10 +2051,10 @@ MonoBehaviour:
   m_Texture: {fileID: 0}
   m_UVRect:
     serializedVersion: 2
-    x: 0
-    y: 0.15844002
-    width: 1
-    height: 0.68311995
+    x: 0.042540073
+    y: 0
+    width: 0.91491985
+    height: 1
 --- !u!114 &5225618940698972231
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2049,7 +2069,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_RawImage: {fileID: 5023006267147581988}
   m_ColorGroup: {fileID: 0}
-  m_Path: Textures/Bestiary/Ecosystems/SiteA.png
+  m_Path: Textures/Bestiary/Ecosystems/lowerdepthsheader.png
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -2422,8 +2442,8 @@ MonoBehaviour:
   m_Padding:
     m_Left: 20
     m_Right: 20
-    m_Top: 5
-    m_Bottom: 60
+    m_Top: 22
+    m_Bottom: 50
   m_ChildAlignment: 1
   m_Spacing: 8
   m_ChildForceExpandWidth: 1
@@ -2633,7 +2653,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 85.005005, y: 0}
+  m_AnchoredPosition: {x: 85.009995, y: 0}
   m_SizeDelta: {x: 0, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6473968437833473120
@@ -2741,10 +2761,19 @@ MonoBehaviour:
   m_StationDesc: {fileID: 2359657316483112560}
   m_HasCurrentJobGroup: {fileID: 7555374660555897281}
   m_StationHeaderImage: {fileID: 5225618940698972231}
+  m_StatsGroup: {fileID: 7647992108441879721}
+  m_AvailableGroup: {fileID: 8710255005332488298}
   m_AvailableCount: {fileID: 4816262527249868203}
   m_CompletedGroup: {fileID: 4023828366745213474}
   m_CompletedCount: {fileID: 3018146436033871449}
   m_ShipOutButton: {fileID: 8837105311053968382}
+  m_ShipOutLabel: {fileID: 3761198717329559941}
+  m_ShipOutActiveLabel:
+    m_Source: ui.worldMap.shipOut
+    m_HashValue: 333197281
+  m_ShipOutInactiveLabel:
+    m_Source: ui.worldMap.shipOutBlocked
+    m_HashValue: 2707190519
   m_ContentsTransform: {fileID: 629202699187093669}
   m_TotalLayout: {fileID: 4979516161567075810}
 --- !u!1001 &6624608793112371042

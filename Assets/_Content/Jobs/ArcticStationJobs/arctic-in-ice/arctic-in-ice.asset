@@ -43,7 +43,8 @@ MonoBehaviour:
   m_PrereqExp: 0
   m_StationId:
     m_HashValue: 1297447963
-  m_DiveSiteIds: []
+  m_DiveSiteIds:
+  - m_HashValue: 1960141715
   m_Tasks:
   - Id:
       m_Source: scanAlgae
@@ -51,6 +52,7 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.arctic-in-ice.task.scanAlgae
       m_HashValue: 1480056617
+    Category: 2
     Steps:
     - Type: 0
       Target:
@@ -65,6 +67,7 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.arctic-in-ice.task.countAlgae
       m_HashValue: 341190355
+    Category: 2
     Steps:
     - Type: 1
       Target:
@@ -81,6 +84,7 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.arctic-in-ice.task.observeEat
       m_HashValue: 22104152
+    Category: 3
     Steps:
     - Type: 1
       Target:
@@ -97,6 +101,7 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.arctic-in-ice.task.reportBack
       m_HashValue: 2304089719
+    Category: 5
     Steps:
     - Type: 10
       Target:

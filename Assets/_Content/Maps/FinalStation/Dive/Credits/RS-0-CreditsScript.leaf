@@ -1,0 +1,18 @@
+# basePath credits
+
+:: checkIntro
+@trigger    SceneStart
+@noDelay
+
+{fade-out black, 0}
+{wait 0.5}
+{fade-in 1}
+{wait 3}
+$call Music->PlayBGM()
+
+:: afterDone
+@trigger    CreditsOver
+@triggerPriority Cutscene
+
+{bgm-stop 2}{wait 1}
+$call LoadSceneFade("RS-1C-StationInterior")

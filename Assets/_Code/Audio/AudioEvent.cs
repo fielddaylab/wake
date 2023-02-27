@@ -32,11 +32,13 @@ namespace AquaAudio {
         [SerializeField] private FloatRange m_Delay = new FloatRange(0);
         [SerializeField] private bool m_Loop = false;
         [SerializeField] private bool m_RandomizeStartingPosition = false;
+        [SerializeField] private AudioEmitterSettings m_EmitterSettings = default(AudioEmitterSettings);
 
         #endregion // Inspector
 
         [NonSerialized] private StringHash32 m_Id;
         [NonSerialized] private RandomDeck<AudioClip> m_ClipDeck;
+        [NonSerialized] private string m_StreamingOverride = null;
 
         #region IKeyValuePair
 
@@ -49,10 +51,11 @@ namespace AquaAudio {
         public PlaybackMode Mode() { return m_Mode; }
         public AudioBusId Bus() { return m_Bus; }
         public bool Looping() { return m_Loop; }
+        public AudioEmitterMode EmitterMode() { return m_EmitterSettings.Mode; }
 
         public bool CanPlay() {
             if (m_Mode == PlaybackMode.Stream) {
-                return !string.IsNullOrEmpty(m_StreamingPath);
+                return !string.IsNullOrEmpty(StreamingPath());
             } else {
                 return m_Samples.Length > 0;
             }
@@ -60,7 +63,17 @@ namespace AquaAudio {
 
         public string StreamingPath() {
             Assert.True(m_Mode == PlaybackMode.Stream, "Event '{0}' is not a stream event", name);
-            return m_StreamingPath;
+            return m_StreamingOverride ?? m_StreamingPath;
+        }
+
+        public void OverrideStreamingPath(string path) {
+            Assert.True(m_Mode == PlaybackMode.Stream, "Event '{0}' is not a stream event", name);
+            m_StreamingOverride = path;
+        }
+
+        public void ClearStreamingOverride() {
+            Assert.True(m_Mode == PlaybackMode.Stream, "Event '{0}' is not a stream event", name);
+            m_StreamingOverride = null;
         }
 
         #region Streaming
@@ -68,7 +81,7 @@ namespace AquaAudio {
         public void LoadStream(UWTStreamPlayer inPlayer, System.Random inRandom, out AudioPropertyBlock outProperties, out float outDelay) {
             Assert.True(m_Mode == PlaybackMode.Stream, "Event '{0}' is not a stream event", name);
 
-            inPlayer.SetURLFromStreamingAssets(m_StreamingPath);
+            inPlayer.SetURLFromStreamingAssets(StreamingPath());
             inPlayer.Loop = m_Loop;
 
             outProperties.Volume = m_Volume.Generate(inRandom);
@@ -88,6 +101,23 @@ namespace AquaAudio {
 
             inSource.clip = GetNextClip(inRandom);
             inSource.loop = m_Loop;
+
+            AudioEmitterSettings emitter = m_EmitterSettings;
+            switch(emitter.Mode) {
+                case AudioEmitterMode.Flat: {
+                    inSource.spatialBlend = 0;
+                    break;
+                }
+
+                case AudioEmitterMode.World:
+                case AudioEmitterMode.ListenerRelative: {
+                    inSource.spatialBlend = 1 - emitter.Despatialize;
+                    inSource.minDistance = emitter.MinDistance;
+                    inSource.maxDistance = emitter.MaxDistance;
+                    inSource.rolloffMode = emitter.Rolloff;
+                    break;
+                }
+            }
 
             if (m_Loop && m_RandomizeStartingPosition)
                 inSource.time = inRandom.NextFloat(inSource.clip.length);
@@ -117,7 +147,7 @@ namespace AquaAudio {
             AudioEvent evt = ValidationUtils.FindAsset<AudioEvent>(eventId);
             if (evt != null) {
                 manifest.Assets.Add(evt);
-                if (evt.Mode() == AudioEvent.PlaybackMode.Stream) {
+                if (evt.Mode() == AudioEvent.PlaybackMode.Stream && !string.IsNullOrEmpty(evt.StreamingPath())) {
                     manifest.Paths.Add(evt.StreamingPath());
                 }
             }
@@ -138,6 +168,11 @@ namespace AquaAudio {
             private SerializedProperty m_DelayProperty;
             private SerializedProperty m_LoopProperty;
             private SerializedProperty m_RandomizeStartingPositionProperty;
+            private SerializedProperty m_EmitterModeProperty;
+            private SerializedProperty m_EmitterMinDistanceProperty;
+            private SerializedProperty m_EmitterMaxDistanceProperty;
+            private SerializedProperty m_EmitterRolloffProperty;
+            private SerializedProperty m_EmitterDespatializeProperty;
 
             private void OnEnable() {
                 m_ModeProperty = serializedObject.FindProperty("m_Mode");
@@ -149,6 +184,13 @@ namespace AquaAudio {
                 m_DelayProperty = serializedObject.FindProperty("m_Delay");
                 m_LoopProperty = serializedObject.FindProperty("m_Loop");
                 m_RandomizeStartingPositionProperty = serializedObject.FindProperty("m_RandomizeStartingPosition");
+                
+                var emitterProperty = serializedObject.FindProperty("m_EmitterSettings");
+                m_EmitterModeProperty = emitterProperty.FindPropertyRelative("Mode");
+                m_EmitterMinDistanceProperty = emitterProperty.FindPropertyRelative("MinDistance");
+                m_EmitterMaxDistanceProperty = emitterProperty.FindPropertyRelative("MaxDistance");
+                m_EmitterRolloffProperty = emitterProperty.FindPropertyRelative("Rolloff");
+                m_EmitterDespatializeProperty = emitterProperty.FindPropertyRelative("Despatialize");
             }
 
             public override void OnInspectorGUI() {
@@ -191,6 +233,17 @@ namespace AquaAudio {
                 EditorGUILayout.PropertyField(m_LoopProperty, true);
                 if (!m_LoopProperty.hasMultipleDifferentValues && m_LoopProperty.boolValue) {
                     EditorGUILayout.PropertyField(m_RandomizeStartingPositionProperty);
+                }
+
+                EditorGUILayout.Space();
+                EditorGUILayout.LabelField("Emitter", EditorStyles.boldLabel);
+                EditorGUILayout.PropertyField(m_EmitterModeProperty);
+
+                if (!m_EmitterModeProperty.hasMultipleDifferentValues && m_EmitterModeProperty.intValue > 0) {
+                    EditorGUILayout.PropertyField(m_EmitterMinDistanceProperty);
+                    EditorGUILayout.PropertyField(m_EmitterMaxDistanceProperty);
+                    EditorGUILayout.PropertyField(m_EmitterRolloffProperty);
+                    EditorGUILayout.PropertyField(m_EmitterDespatializeProperty);
                 }
             }
 

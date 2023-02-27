@@ -19,6 +19,8 @@
 {@player} .|.|.|Ooookay.| You almost had me there, Professor.| Muy divertido.
 {@profCoral} It's not a joke, Ollie. But we'll take it one step at a time. Slow and steady, remember?
 		     You can decide if you're ready to take this one on, or if you'd like to come back later. 
+$set jobs:coral-hunting-lions.sync-failed = false
+$call GiveJournalEntry("N07_CoralDetective")
 
 // SCANNING
 
@@ -121,6 +123,144 @@
 {@guide} Well, you really were quite excellent. And all that data!!!
 		 Time to head back to the station and tell {nameof @profCoral} what you found!
 
+
+// MODELING SUGGESTIONS
+
+:: triggerSyncFailure
+@trigger    SimulationSyncError
+@when       !jobs:coral-hunting-lions.sync-failed
+@once
+$set jobs:coral-hunting-lions.sync-failed = true
+
+:: helpModelSync.Visual
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(predictModel), scene:name == "Modeling", modeling:phase == "visual"
+@cutscene
+$branch .modelSuggestions
+
+:: helpModelSync.Sync
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(predictModel), scene:name == "Modeling", modeling:phase == "sync"
+@cutscene
+$branch .modelSuggestions
+
+:: modelSuggestions
+$if HasFact(Fishers.Eats.Lionfish), IsFactFullyUpgraded(Fishers.Eats.Lionfish), HasFact(Lionfish.Reproduce), HasFact(Lionfish.Eats.BlueTang), IsFactFullyUpgraded(Lionfish.Eats.BlueTang), HasFact(Lionfish.Eats.BlueheadWrasse), IsFactFullyUpgraded(Lionfish.Eats.BlueheadWrasse), HasFact(Lionfish.Consume.Oxygen), HasFact(Lionfish.Produce.CarbonDioxide), HasFact(RedGrouper.Reproduce), HasFact(RedGrouper.Eats.BlueheadWrasse), IsFactFullyUpgraded(RedGrouper.Eats.BlueheadWrasse), HasFact(RedGrouper.Eats.BlueTang), IsFactFullyUpgraded(RedGrouper.Eats.BlueTang), HasFact(RedGrouper.Consume.Oxygen), HasFact(RedGrouper.Produce.CO2), HasFact(BlueTang.Reproduce), HasFact(BlueTang.Eats.TurfAlgae), IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae), HasFact(BlueTang.Eats.TurfAlgae.Stressed), IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed), HasFact(BlueTang.Consume.Oxygen), HasFact(BlueTang.Produce.CarbonDioxide), HasFact(BlueheadWrasse.Reproduce), HasFact(BlueheadWrasse.Eats.Ick), IsFactFullyUpgraded(BlueheadWrasse.Eats.Ick), HasFact(BlueheadWrasse.Consume.Oxygen), HasFact(BlueheadWrasse.Produce.CarbonDioxide), HasFact(Ick.Reproduce), HasFact(Ick.Stresses.BlueTang), HasFact(Sargassum.Reproduce), HasFact(Sargassum.Produce.Oxygen), HasFact(Sargassum.Consume.CO2), HasFact(Sargassum.Consume.Light), HasFact(TurfAlgae.Reproduce), HasFact(TurfAlgae.Produce.Oxygen), HasFact(TurfAlgae.Consume.CarbonDioxide), HasFact(TurfAlgae.Consume.Light), HasFact(StaghornCoral.Reproduce), HasFact(StaghornCoral.Produce.Oxygen), HasFact(StaghornCoral.Consume.CO2), HasFact(StaghornCoral.Consume.Light)
+    $if HasFact(LionfishInvasion.Model.HuntingLionsVisual)
+        {@guide}    You're done with this portion! Head to the {h}Describe{/h} tab next.
+    $else
+        {@guide}    Once you import your facts and save the Visual model, we should be good to make our Describe model!
+    $endif
+$else
+    $if !jobs:coral-hunting-lions.sync-failed
+        {@guide}    Time to try out your model in the {h}Describe{/h} tab.
+    $else
+        {@guide}    Seems like we don't have enough information to complete our model accurately.
+                    Look for {h}question marks{/h} in the  Visual model interface, those point to where we may need more data.
+		$if !HasFact(Fishers.Eats.Lionfish)
+			$branch .suggestObserve
+		$elseif !IsFactFullyUpgraded(Fishers.Eats.Lionfish)
+			$branch .suggestMeasure
+		$elseif !HasFact(Lionfish.Reproduce)
+			$branch .suggestReproduce
+		$elseif !HasFact(Lionfish.Eats.BlueTang)
+			$branch .suggestObserve
+		$elseif !IsFactFullyUpgraded(Lionfish.Eats.BlueTang)
+			$branch .suggestMeasure
+		$elseif !HasFact(Lionfish.Eats.BlueheadWrasse)
+			$branch .suggestObserve
+		$elseif !IsFactFullyUpgraded(Lionfish.Eats.BlueheadWrasse)
+			$branch .suggestMeasure
+		$elseif !HasFact(Lionfish.Consume.Oxygen)
+			$branch .suggestMeasureEnviro
+		$elseif !HasFact(Lionfish.Produce.CarbonDioxide)
+			$branch .suggestMeasureEnviro
+		$elseif !HasFact(RedGrouper.Reproduce)
+			$branch .suggestReproduce
+		$elseif !HasFact(RedGrouper.Eats.BlueheadWrasse)
+			$branch .suggestObserve
+		$elseif !IsFactFullyUpgraded(RedGrouper.Eats.BlueheadWrasse)
+			$branch .suggestMeasure
+		$elseif !HasFact(RedGrouper.Eats.BlueTang)
+			$branch .suggestObserve
+		$elseif !IsFactFullyUpgraded(RedGrouper.Eats.BlueTang)
+			$branch .suggestMeasure
+		$elseif !HasFact(RedGrouper.Consume.Oxygen)
+			$branch .suggestMeasureEnviro
+		$elseif !HasFact(RedGrouper.Produce.CO2)
+			$branch .suggestMeasureEnviro
+		$elseif !HasFact(BlueTang.Reproduce)
+			$branch .suggestReproduce
+		$elseif !HasFact(BlueTang.Eats.TurfAlgae)
+			$branch .suggestObserve
+		$elseif !IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae)
+			$branch .suggestMeasure
+		$elseif !HasFact(BlueTang.Eats.TurfAlgae.Stressed)
+			$branch .suggestObserve
+		$elseif !IsFactFullyUpgraded(BlueTang.Eats.TurfAlgae.Stressed)
+			$branch .suggestMeasure
+		$elseif !HasFact(BlueTang.Consume.Oxygen)
+			$branch .suggestMeasureEnviro
+		$elseif !HasFact(BlueTang.Produce.CarbonDioxide)
+			$branch .suggestMeasureEnviro
+		$elseif !HasFact(BlueheadWrasse.Reproduce)
+			$branch .suggestReproduce
+		$elseif !HasFact(BlueheadWrasse.Eats.Ick)
+			$branch .suggestObserve
+		$elseif !IsFactFullyUpgraded(BlueheadWrasse.Eats.Ick)
+			$branch .suggestMeasure
+		$elseif !HasFact(BlueheadWrasse.Consume.Oxygen)
+			$branch .suggestMeasureEnviro
+		$elseif !HasFact(BlueheadWrasse.Produce.CarbonDioxide)
+			$branch .suggestMeasureEnviro
+		$elseif !HasFact(Ick.Reproduce)
+			$branch .suggestReproduce
+		$elseif !HasFact(Ick.Stresses.BlueTang)
+			$branch .suggestObserve
+		$elseif !HasFact(Sargassum.Reproduce)
+			$branch .suggestReproduce
+		$elseif !HasFact(Sargassum.Produce.Oxygen)
+			$branch .suggestMeasureEnviro
+		$elseif !HasFact(Sargassum.Consume.CO2)
+			$branch .suggestMeasureEnviro
+		$elseif !HasFact(Sargassum.Consume.Light)
+			$branch .suggestMeasureEnviro
+		$elseif !HasFact(TurfAlgae.Reproduce)
+			$branch .suggestReproduce
+		$elseif !HasFact(TurfAlgae.Produce.Oxygen)
+			$branch .suggestMeasureEnviro
+		$elseif !HasFact(TurfAlgae.Consume.CarbonDioxide)
+			$branch .suggestMeasureEnviro
+		$elseif !HasFact(TurfAlgae.Consume.Light)
+			$branch .suggestMeasureEnviro
+		$elseif !HasFact(StaghornCoral.Reproduce)
+			$branch .suggestReproduce
+		$elseif !HasFact(StaghornCoral.Reproduce.Stressed)
+			$branch .suggestReproduce
+		$elseif !HasFact(StaghornCoral.Produce.Oxygen)
+			$branch .suggestMeasureEnviro
+		$elseif !HasFact(StaghornCoral.Consume.CO2)
+			$branch .suggestMeasureEnviro
+		$elseif !HasFact(StaghornCoral.Consume.Light) 
+			$branch .suggestMeasureEnviro
+		$endif
+    $endif
+$endif
+
+:: suggestReproduce
+{@guide}    Did you get all the reproduction rates?
+
+:: suggestObserve
+{@guide}    Are you sure you have observed all the interactions here?
+
+:: suggestMeasure
+{@guide}    You may need to measure the rates of interactions.
+
+:: suggestMeasureEnviro
+{@guide}    Are you sure you've found out all the ways the different organisms affect the water conditions? The {h}Measurement Tank{/h} may still be useful.
+
+
+
 // REQUEST HELP
 
 :: collectData
@@ -155,7 +295,7 @@
 @when		JobTaskCompleted(scanCritters), JobTaskCompleted(scanHistory), JobTaskCompleted(countPopulation), !IsPlayerOnShip(), !JobTaskTop(argueIncentive)
 @cutscene
 {@player} What now, {nameof @guide}?
-{@guide}   You will need to return to the Meredith to continue your job. 
+{@guide}   You will need to return to the AquaLab to continue your job. 
 
 :: requestHelpEatRules
 @trigger    RequestPartnerHelp
@@ -302,9 +442,15 @@ $choice .argue.giveUpArg; Let me get back to you
 $choose branch
 
 :: argue.incorrectFactsLionfish
-{@profCoral}	Hmmm. This isn't quite what I'm looking for. 
-$call ArgueRejectIncorrect()
-$goto .argue.chooseFactsLionfish
+$if ArgueIsFactSubmitted(BlueTang.Eats.TurfAlgae), ArgueIsFactSubmitted(Ick.Stresses.BlueTang), ArgueIsFactSubmitted(BlueheadWrasse.Eats.Ick), ArgueIsFactSubmitted(Lionfish.Eats.BlueheadWrasse)
+	// allow for submitting non-stressed rule
+	$branch .argue.correctFactsLionfish
+$else
+	{@profCoral}	Hmmm. This isn't quite what I'm looking for.
+
+	$call ArgueRejectIncorrect()
+	$goto .argue.chooseFactsLionfish
+$endif
 
 :: argue.giveUpArg
 $call ArgueClearFacts()
@@ -323,4 +469,5 @@ $call ArgueComplete()
 {@player}		Thanks, Professor. 
 {@profCoral}	Ay... now I just have to tell Sofia.
 			    Guess I'd better prepare myself for a few years' worth of I-Told-You-So's... 
+$call GiveJournalEntry("N21_FishingSolution", Silent)
 $call CompleteJob()

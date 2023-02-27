@@ -16,17 +16,14 @@ namespace Aqua
     {
         public const float DefaultContactOffset = (1f / 128f);
         private const float OverlapThreshold = DefaultContactOffset;
-        private const int TickIterations = 1;
 
         #region Inspector
 
-        [SerializeField] private int m_MaxHandledContacts = 64;
-
         #endregion // Inspector
 
-        private BufferedCollection<KinematicObject2D> m_KinematicObjects = new BufferedCollection<KinematicObject2D>();
-        private Dictionary<Rigidbody2D, KinematicObject2D> m_RigidbodyMap = new Dictionary<Rigidbody2D, KinematicObject2D>();
-        private PhysicsContact[] m_Contacts;
+        private RingBuffer<KinematicObject2D> m_KinematicObjects = new RingBuffer<KinematicObject2D>(8, RingBufferMode.Expand);
+        private Dictionary<RuntimeObjectHandle, KinematicObject2D> m_RigidbodyMap = Collections.NewDictionary<RuntimeObjectHandle, KinematicObject2D>(8);
+        private Unsafe.ArenaHandle m_ContactArena;
 
         private ulong m_TickCount;
 
@@ -35,7 +32,7 @@ namespace Aqua
         public void Register(KinematicObject2D inObject)
         {
             Assert.False(m_KinematicObjects.Contains(inObject), "Object '{0}' is already registered to PhysicsService", inObject);
-            m_KinematicObjects.Add(inObject);
+            m_KinematicObjects.PushBack(inObject);
             m_RigidbodyMap.Add(inObject.Body, inObject);
             SetupRigidbody(inObject.Body);
         }
@@ -43,9 +40,14 @@ namespace Aqua
         public void Deregister(KinematicObject2D inObject)
         {
             Assert.True(m_KinematicObjects.Contains(inObject), "Object '{0}' is not registered to PhysicsService", inObject);
-            m_KinematicObjects.Remove(inObject);
+            m_KinematicObjects.FastRemove(inObject);
             m_RigidbodyMap.Remove(inObject.Body);
             inObject.Body.velocity = default;
+
+            unsafe {
+                inObject.Contacts = null;
+                inObject.ContactCount = 0;
+            }
         }
 
         private void SetupRigidbody(Rigidbody2D inBody)
@@ -68,6 +70,7 @@ namespace Aqua
         }
 
         [NonSerialized] public bool Enabled = false;
+        [NonSerialized] public float TimeScale = 1;
 
         private float m_FixedDeltaTime;
 
@@ -78,18 +81,19 @@ namespace Aqua
             if (!Enabled)
                 return;
             
-            float deltaTime = Time.fixedDeltaTime;
+            float deltaTime = Time.fixedDeltaTime * TimeScale;
             if (deltaTime <= 0)
                 return;
 
             int contactCount = 0;
-            Array.Resize(ref m_Contacts, m_MaxHandledContacts);
             
             // Tick forward
 
+            Unsafe.ResetArena(m_ContactArena);
+
             BeginTick();
             Physics.Simulate(deltaTime);
-            contactCount += Tick(deltaTime, m_KinematicObjects, m_Contacts, contactCount, m_TickCount);
+            contactCount += Tick(deltaTime, m_KinematicObjects, m_ContactArena, m_TickCount);
             EndTick();
 
             // Pass contacts off
@@ -98,16 +102,14 @@ namespace Aqua
             {
                 DebugService.Log(LogMask.Physics, "[PhysicsService] Generated {0} contacts on tick {1}", contactCount, m_TickCount);
 
-                for(int i = 0; i < contactCount; i++)
+                foreach(var obj in m_KinematicObjects)
                 {
-                    ref PhysicsContact contact = ref m_Contacts[i];
-                    contact.Object.Object.Contacts.PushBack(contact);
+                    if (obj.ContactCount > 0 && !obj.OnContact.IsEmpty) {
+                        obj.OnContact.Invoke(obj);
+                    }
                 }
             }
 
-            // clear contacts
-
-            Array.Clear(m_Contacts, 0, contactCount);
             m_TickCount++;
         }
 
@@ -123,6 +125,15 @@ namespace Aqua
             Physics2D.autoSimulation = false;
             Physics.autoSimulation = false;
             Physics.autoSyncTransforms = false;
+
+            m_ContactArena = Unsafe.CreateArena(Unsafe.SizeOf<PhysicsContact>() * 64, "physics");
+        }
+
+        protected override void Shutdown()
+        {
+            Unsafe.DestroyArena(m_ContactArena);
+
+            base.Shutdown();
         }
 
         #endregion // Service
@@ -163,22 +174,17 @@ namespace Aqua
             Physics2D.autoSyncTransforms = true;
         }
 
-        static private unsafe int Tick(float inDeltaTime, BufferedCollection<KinematicObject2D> inObjects, PhysicsContact[] outContacts, int inContactStartIdx, ulong inTickIdx)
+        static private unsafe int Tick(float inDeltaTime, RingBuffer<KinematicObject2D> inObjects, Unsafe.ArenaHandle inContactAllocator, ulong inTickIdx)
         {
-            int outContactIdx = inContactStartIdx;
-            int maxOutputContacts = outContacts.Length;
             int addedContacts = 0;
 
             ContactPoint2D[] contactBuffer = s_ContactBuffer;
-            RaycastHit2D[] raycastBuffer = s_RaycastBuffer;
             ContactFilter2D filter = default(ContactFilter2D);
             Rigidbody2D objBody;
             Collider2D objCollider;
+            KinematicObject2D obj;
 
-            BufferedCollection<KinematicObject2D> objectCollection = inObjects;
-            int objectCount = objectCollection.Count;
-
-            objectCollection.BeginEnumerate();
+            int objectCount = inObjects.Count;
 
             // buffers
             KinematicState2D* states = stackalloc KinematicState2D[objectCount];
@@ -186,10 +192,13 @@ namespace Aqua
             Vector2* frameOffset = stackalloc Vector2[objectCount];
             Vector2* positions = stackalloc Vector2[objectCount];
 
+            float invDeltaTime = 1f / inDeltaTime;
+
             // copy state into buffers
             int objIdx = 0;
-            foreach(var obj in objectCollection)
-            {
+            for(objIdx = 0; objIdx < objectCount; objIdx++) {
+                obj = inObjects[objIdx];
+
                 obj.State.Velocity += obj.AccumulatedForce * obj.AccumulatedForceMultiplier;
                 obj.AccumulatedForce = default;
 
@@ -198,129 +207,127 @@ namespace Aqua
                 positions[objIdx] = obj.Body.position;
                 configs[objIdx].Drag += obj.AdditionalDrag * obj.AdditionalDragMultiplier;
                 obj.Body.useFullKinematicContacts = true;
-                obj.Contacts.Clear();
+
+                obj.Contacts = null;
+                obj.ContactCount = 0;
+            }
+
+            // integrate state
+            for(objIdx = 0; objIdx < objectCount; objIdx++)
+            {
+                frameOffset[objIdx] = KinematicMath2D.Integrate(ref states[objIdx], ref configs[objIdx], inDeltaTime);
+            }
+
+            // move objects
+            for(objIdx = 0; objIdx < objectCount; objIdx++) {
+                obj = inObjects[objIdx];
+                positions[objIdx] += frameOffset[objIdx];
+                obj.Body.velocity = frameOffset[objIdx] * invDeltaTime;
+                SyncPosition(positions[objIdx], obj.Body, null);
                 objIdx++;
             }
 
-            float incrementDeltaTime = inDeltaTime / TickIterations;
-            float invDeltaTime = 1f / incrementDeltaTime;
+            bool bRun = Physics2D.Simulate(inDeltaTime);
+            Assert.True(bRun, "Physics update failed to run");
 
-            for(int iterationIdx = 0; iterationIdx < TickIterations; iterationIdx++)
-            {
-                // integrate state
-                for(objIdx = 0; objIdx < objectCount; objIdx++)
-                {
-                    frameOffset[objIdx] = KinematicMath2D.Integrate(ref states[objIdx], ref configs[objIdx], incrementDeltaTime);
+            // resolve object penetration
+            for(objIdx = 0; objIdx < objectCount; objIdx++) {
+                obj = inObjects[objIdx];
+                if (obj.SolidMask == 0) {
+                    continue;
                 }
 
-                // move objects
-                objIdx = 0;
-                foreach(var obj in objectCollection)
-                {
-                    positions[objIdx] += frameOffset[objIdx];
-                    obj.Body.velocity = frameOffset[objIdx] * invDeltaTime;
-                    SyncPosition(positions[objIdx], obj.Body, null);
-                    objIdx++;
+                objBody = obj.Body;
+                objCollider = obj.Collider;
+
+                filter.useLayerMask = true;
+                filter.layerMask = obj.SolidMask;
+                int contactCount = Physics2D.GetContacts(objCollider, filter, contactBuffer);
+
+                if (contactCount <= 0) {
+                    continue;
                 }
 
-                bool bRun = Physics2D.Simulate(incrementDeltaTime);
-                Assert.True(bRun, "Physics update failed to run");
+                Array.Sort(contactBuffer, 0, contactCount, ContactSorter.Instance);
 
-                // resolve object penetration
-                objIdx = 0;
-                foreach(var obj in objectCollection)
+                ContactPoint2D contact;
+                float separation;
+                float adjustedSeparation;
+
+                Vector2 accumulatedSeparationVector = Vector2.zero;
+
+                PhysicsContact* contactOutput = Unsafe.AllocArray<PhysicsContact>(inContactAllocator, contactCount);
+                obj.Contacts = contactOutput;
+                
+                KinematicState2D originalState = states[objIdx];
+                Vector2 originalVelocityNormalized = originalState.Velocity.normalized;
+                float originalVelocityMagnitude = originalState.Velocity.magnitude;
+                int contactGenIdx = 0;
+
+                Collider2D checkingCollider = null;
+                Collider2D lastCollider = null;
+
+                for(int contactIdx = 0; contactIdx < contactCount; ++contactIdx)
                 {
-                    if (obj.SolidMask != 0)
-                    {
-                        objBody = obj.Body;
-                        objCollider = obj.Collider;
-                        
-                        ContactPoint2D contact;
-                        float separation;
+                    contact = contactBuffer[contactIdx];
+                    Assert.True(contact.otherCollider == objCollider);
+                    
+                    separation = contact.separation + OverlapThreshold;
+                    adjustedSeparation = separation + Vector2.Dot(accumulatedSeparationVector, contact.normal);
 
-                        filter.useLayerMask = true;
-                        filter.layerMask = obj.SolidMask;
-                        int contactCount = Physics2D.GetContacts(objCollider, filter, contactBuffer);
-                        if (contactCount > 0)
-                        {
-                            Array.Sort(contactBuffer, 0, contactCount, ContactSorter.Instance);
-
-                            Collider2D lastCollider = null;
-                            Vector2 separationAccum = Vector2.zero;
-                            PhysicsContact lastContact = default(PhysicsContact);
-                            KinematicState2D originalState = states[objIdx];
-
-                            for(int contactIdx = 0; contactIdx < contactCount; ++contactIdx)
-                            {
-                                contact = contactBuffer[contactIdx];
-                                separation = contact.separation + OverlapThreshold;
-                                if (separation < 0 && contact.otherCollider == objCollider)
-                                {
-                                    Vector2 separateVector = contact.normal;
-                                    separateVector.x *= -separation;
-                                    separateVector.y *= -separation;
-                                    
-                                    DebugService.Log(LogMask.Physics, "[PhysicsService] Resolving contact on {0} by {1} {2} (tick {3}, tickIter {4})", objCollider, contact.normal, separation, inTickIdx, iterationIdx);
-
-                                    if (!ReferenceEquals(lastCollider, contact.collider))
-                                    {
-                                        lastCollider = contact.collider;
-                                        outContacts[outContactIdx++] = lastContact = new PhysicsContact(obj, originalState, contact.collider, contact.point, contact.normal);
-                                        addedContacts++;
-
-                                        positions[objIdx] += separationAccum;
-                                        frameOffset[objIdx] += separationAccum;
-
-                                        separationAccum = separateVector;
-                                    }
-                                    else if (lastContact)
-                                    {
-                                        // average out so we only generate one contact per other collider
-                                        lastContact.Point = (lastContact.Point + contact.point) * 0.5f;
-                                        lastContact.Normal = ((lastContact.Normal + contact.normal) * 0.5f).normalized;
-                                        outContacts[outContactIdx - 1] = lastContact;
-
-                                        // some wonky averaging of separation?
-                                        // 1. max distance to move
-                                        // 2. average direction to move
-                                        float maxSep = (float) Math.Sqrt(Mathf.Max(separationAccum.sqrMagnitude, separateVector.sqrMagnitude));
-                                        separationAccum = ((separationAccum.normalized + separateVector.normalized) / 2).normalized * maxSep;
-                                    }
-
-                                    AdjustVelocity(ref states[objIdx].Velocity, contact.normal, 0);
-                                }
-                            }
-
-                            if (separationAccum.sqrMagnitude > 0)
-                            {
-                                positions[objIdx] += separationAccum;
-                                frameOffset[objIdx] += separationAccum;
-                            }
-
-                            Array.Clear(contactBuffer, 0, contactCount);
-                        }
+                    if (separation >= 0) {
+                        continue;
                     }
-                    ++objIdx;
+
+                    float impact = -Vector2.Dot(originalVelocityNormalized, contact.normal) * originalVelocityMagnitude;
+                    float slide = 0;
+
+                    checkingCollider = contact.collider;
+                    if (checkingCollider != lastCollider) {
+                        contactOutput[contactGenIdx++] = new PhysicsContact(obj, originalState, contact.collider, contact.point, contact.normal, impact, slide);
+                        addedContacts++;
+                        lastCollider = checkingCollider;
+                    } else {
+                        ref PhysicsContact lastContact = ref contactOutput[contactGenIdx - 1];
+                        lastContact.Point = (lastContact.Point + contact.point) * 0.5f; // average contact point
+                        lastContact.Impact = (lastContact.Impact + impact) * 0.5f; // and average impact value
+                    }
+
+                    if (adjustedSeparation < 0)
+                    {
+                        Vector2 separateVector = contact.normal;
+                        separateVector.x *= -adjustedSeparation;
+                        separateVector.y *= -adjustedSeparation;
+                        
+                        DebugService.Log(LogMask.Physics, "[PhysicsService] Resolving contact on {0} by {1} {2} (tick {3})", objCollider, contact.normal, separation, inTickIdx);
+
+                        positions[objIdx] += separateVector;
+                        frameOffset[objIdx] += separateVector;
+
+                        accumulatedSeparationVector += separateVector;
+                    }
+
+                    AdjustVelocity(ref states[objIdx].Velocity, contact.normal, 0);
                 }
 
-                objIdx = 0;
-                foreach(var obj in objectCollection)
+                if (accumulatedSeparationVector.sqrMagnitude > 0)
                 {
-                    SyncPosition(positions[objIdx], obj.Body, obj.Transform);
-                    objIdx++;
+                    positions[objIdx] += accumulatedSeparationVector;
+                    frameOffset[objIdx] += accumulatedSeparationVector;
                 }
+
+                obj.ContactCount = contactGenIdx;
+
+                Array.Clear(contactBuffer, 0, contactCount);
             }
 
-            // copy state from buffers to objects
-            objIdx = 0;
-            foreach(var obj in objectCollection)
-            {
+            for(objIdx = 0; objIdx < objectCount; objIdx++) {
+                obj = inObjects[objIdx];
+                SyncPosition(positions[objIdx], obj.Body, obj.Transform);
                 obj.State = states[objIdx];
                 obj.Body.useFullKinematicContacts = false;
                 objIdx++;
             }
-
-            objectCollection.EndEnumerate();
 
             return addedContacts;
         }
@@ -346,7 +353,6 @@ namespace Aqua
         }
 
         static private readonly ContactPoint2D[] s_ContactBuffer = new ContactPoint2D[16];
-        static private readonly RaycastHit2D[] s_RaycastBuffer = new RaycastHit2D[16];
 
         private class ContactSorter : IComparer<ContactPoint2D>
         {

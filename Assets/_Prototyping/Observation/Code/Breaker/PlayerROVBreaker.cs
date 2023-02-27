@@ -76,7 +76,7 @@ namespace ProtoAqua.Observation {
 
             if (m_Active) {
                 if (m_Phase != Phase.Charging) {
-                    Services.Audio.PostEvent("ROV.Breaker.Off");
+                    // Services.Audio.PostEvent("ROV.Breaker.Off");
                 }
                 m_ExecuteRoutine.Stop();
                 Cancel();
@@ -95,7 +95,7 @@ namespace ProtoAqua.Observation {
             
             if (!m_Active) {
                 m_Active = true;
-                Services.Audio.PostEvent("ROV.Breaker.On");
+                // Services.Audio.PostEvent("ROV.Breaker.On");
                 m_BreakListener.enabled = false;
                 m_UI.Enable(inBody.transform);
             }
@@ -134,11 +134,11 @@ namespace ProtoAqua.Observation {
             }
         }
 
-        public bool UpdateTool(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
+        public bool UpdateTool(float inDeltaTime, in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
             return false;
         }
 
-        public void UpdateActive(in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
+        public void UpdateActive(float inDeltaTime, in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
             switch(m_Phase) {
                 case Phase.Ready: {
                     if (inInput.UseAltHold || m_UI.IsHeld()) {
@@ -268,11 +268,13 @@ namespace ProtoAqua.Observation {
                 if (!Script.ShouldBlock()) {
                     Services.Script.TriggerResponse(Trigger_OnRecharge);
                 }
-                Services.Audio.PostEvent("ROV.Breaker.Recharged");
-                m_RechargingBlink.SetColor(AQColors.BrightBlue);
-                // TODO: Broadcast breaker recharge completed
-                m_Phase = Phase.Ready;
-                m_UI.SetPhase(m_Phase);
+                if (m_UI) {
+                    Services.Audio.PostEvent("ROV.Breaker.Recharged");
+                    m_RechargingBlink.SetColor(AQColors.BrightBlue);
+                    // TODO: Broadcast breaker recharge completed
+                    m_Phase = Phase.Ready;
+                    m_UI.SetPhase(m_Phase);
+                }
             }
         }
 

@@ -43,6 +43,7 @@ namespace Aqua
         [ServiceReference, UnityEngine.Scripting.Preserve] static public LocService Loc { get; private set; }
         [ServiceReference, UnityEngine.Scripting.Preserve] static public PauseService Pause { get; private set; }
         [ServiceReference, UnityEngine.Scripting.Preserve] static public PhysicsService Physics { get; private set; }
+        [ServiceReference, UnityEngine.Scripting.Preserve] static public SecretService Secrets { get; private set; }
         [ServiceReference, UnityEngine.Scripting.Preserve] static public ScriptingService Script { get; private set; }
         [ServiceReference, UnityEngine.Scripting.Preserve] static public StateMgr State { get; private set; }
         [ServiceReference, UnityEngine.Scripting.Preserve] static public TTSService TTS { get; private set; }
@@ -57,6 +58,7 @@ namespace Aqua
             [ServiceReference, UnityEngine.Scripting.Preserve] static public AmbientTransformService AmbientTransforms { get; private set; }
             [ServiceReference, UnityEngine.Scripting.Preserve] static public AmbientRendererService AmbientRenderers { get; private set; }
             [ServiceReference, UnityEngine.Scripting.Preserve] static public SpriteAnimatorService Sprites { get; private set; }
+            [ServiceReference, UnityEngine.Scripting.Preserve] static public LayoutAnimService Layout { get; private set; }
         }
     
         #endregion // Accessors
