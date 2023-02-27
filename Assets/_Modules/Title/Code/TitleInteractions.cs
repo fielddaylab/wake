@@ -86,7 +86,7 @@ namespace Aqua.Title
 
         private void OnCreditsClose(BasePanel.TransitionType _)
         {
-            if (Services.Valid) {
+            if (Services.Valid && !Script.IsLoading) {
                 LoadPage(Page.Title);
             }
         }

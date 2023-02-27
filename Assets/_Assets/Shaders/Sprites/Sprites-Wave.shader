@@ -7,7 +7,6 @@ Shader "Sprites/Wave"
         [PerRendererData] _MainTex ("Sprite Texture", 2D) = "white" {}
         _WaveTex("Wave Texture", 2D) = "white" { }
         _Color ("Tint", Color) = (1,1,1,1)
-        _Cutoff ("Cutoff", Float) = 0.5
         _WaveDistance("Wave Distance", Vector) = (1,1,1,1)
         _TimeScale("Time Scale", Float) = 1
         _WaveFrequency("Wave Frequency", Float) = 1
@@ -44,7 +43,6 @@ Shader "Sprites/Wave"
 
             #define PI 3.1415926538
 
-            fixed _Cutoff;
             float4 _MainTex_TexelSize;
             sampler2D _WaveTex;
             float4 _WaveDistance;
@@ -88,8 +86,6 @@ Shader "Sprites/Wave"
                     * float2(sin(offset + _Time.y * _TimeScale * waveData.x * 1.2), sin(offset * 1.3 + _Time.y * _TimeScale * waveData.x));
 
                 fixed4 c = SampleSpriteTexture (finalCoord) * IN.color;
-
-                clip(c.a - _Cutoff);
                 c.rgb *= c.a;
 
                 return c;

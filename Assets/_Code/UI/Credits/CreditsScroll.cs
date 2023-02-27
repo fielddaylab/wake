@@ -79,7 +79,13 @@ namespace Aqua {
         private void OnDisable() {
             m_Routine.Stop();
             m_SpawnedItems.Clear();
-            m_Logo.Hide();
+            
+            if (m_Logo) {
+                m_Logo.Hide();
+            }
+            if (m_Thanks) {
+                m_Thanks.Hide();
+            }
             
             Async.InvokeAsync(() => {
                 if (!this) {
@@ -99,6 +105,8 @@ namespace Aqua {
             
             if (Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0)) {
                 m_Routine.SetTimeScale(3);
+            } else if (Input.GetKey(KeyCode.LeftShift) || Input.GetMouseButton(1)) {
+                m_Routine.SetTimeScale(0.5f);
             } else {
                 m_Routine.SetTimeScale(1);
             }

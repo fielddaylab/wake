@@ -14,5 +14,5 @@ $call Music->PlayBGM()
 @trigger    CreditsOver
 @triggerPriority Cutscene
 
-{wait 1}
+{bgm-stop 2}{wait 1}
 $call LoadSceneFade("RS-1C-StationInterior")

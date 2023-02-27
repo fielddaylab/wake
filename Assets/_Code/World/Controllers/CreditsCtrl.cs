@@ -3,41 +3,51 @@ using BeauUtil;
 using BeauRoutine;
 using System.Collections;
 using ScriptableBake;
+using BeauRoutine.Extensions;
 
 namespace Aqua {
     public class CreditsCtrl : MonoBehaviour, IBaked, IScenePreloader, ISceneUnloadHandler {
-        public Transform[] CreditsNodes;
+        public WorldCreditsElement[] WorldNodes;
+        public BasePanel ScrollPanel;
+        public CreditsScroll Scroll;
+        public ParticleSystem SpecterParticles;
+        public Transform FinalNode;
+        public float FinalAscentDuration = 50;
 
         private Routine m_Play;
 
         private void Start() {
             Script.OnSceneLoad(() => m_Play.Replace(this, Play()));
+
+            Scroll.OnCompleted = OnScrollCompleted;
         }
 
         private IEnumerator Play() {
+            SpecterParticles.Play();
             yield return 3;
 
-            for(int i = 0; i < CreditsNodes.Length; i++) {
-                if (i == CreditsNodes.Length - 1) {
-                    yield return 1;
-                    Services.Script.TriggerResponse("CreditsOver");
-                }
-                yield return PlayNode(CreditsNodes[i]);
+            for(int i = 0; i < WorldNodes.Length; i++) {
+                yield return PlayNode(WorldNodes[i]);
             }
+
+            yield return 0.1f;
+
+            ScrollPanel.Show(2);
+            Services.Camera.MoveToPosition(FinalNode.position, null, null, FinalAscentDuration, Curve.SineInOut);
         }
 
-        private IEnumerator PlayNode(Transform t) {
-            ColorGroup color;
-            if (t.TryGetComponent(out color)) {
-                Routine.Start(color, Tween.Float(0, 1, color.SetAlpha, 1));
-            }
+        private void OnScrollCompleted() {
+            ScrollPanel.InstantHide();
+            Services.Script.TriggerResponse("CreditsOver");
+        }
 
-            yield return Services.Camera.MoveToPosition(t.position, null, null, 1.5f, Curve.SineInOut);
-            yield return 2;
+        private IEnumerator PlayNode(WorldCreditsElement t) {
+            t.FadeRoutine.Replace(t, Tween.Float(0, 1, t.Fade.SetAlpha, 1).DelayBy(t.MoveTime - t.FadeInOffset));
 
-            if (color) {
-                Routine.Start(color, Tween.Float(1, 0, color.SetAlpha, 1));
-            }
+            yield return Services.Camera.MoveToPosition(t.transform.position, null, null, t.MoveTime, Curve.SineInOut);
+            yield return t.LingerTime;
+
+            t.FadeRoutine.Replace(t, Tween.Float(1, 0, t.Fade.SetAlpha, 1));
         }
 
         public IEnumerator OnPreloadScene(SceneBinding inScene, object inContext) {
@@ -54,13 +64,9 @@ namespace Aqua {
 
         public int Order { get { return 0; } }
 
-        public bool Bake(BakeFlags flags, BakeContext context)
-        {
-            foreach(var node in CreditsNodes) {
-                ColorGroup color;
-                if (node.TryGetComponent(out color)) {
-                    color.SetAlpha(0);
-                }
+        public bool Bake(BakeFlags flags, BakeContext context) {
+            foreach(var node in WorldNodes) {
+                node.Fade.SetAlpha(0);
             }
             return true;
         }
