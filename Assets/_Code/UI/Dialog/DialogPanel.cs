@@ -88,6 +88,7 @@ namespace Aqua
         #region Inspector
 
         [SerializeField] private string m_StyleId = null;
+        [SerializeField, ScriptCharacterId] private StringHash32 m_DefaultCharacter = null;
         
         [Header("Behavior")]
 
