@@ -99,7 +99,7 @@ LightmapSettings:
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 112000004, guid: b5059fbb24d6144d49209a04218407a3,
     type: 2}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -5343,6 +5343,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1 &121155130
 GameObject:
   m_ObjectHideFlags: 0
@@ -5390,6 +5391,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1 &138547423
 GameObject:
   m_ObjectHideFlags: 0
@@ -5810,6 +5812,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7135260869252477136, guid: f6642230f5f03724bb4b02ab411ed728,
+        type: 3}
+      propertyPath: m_DreamMode
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7135260869252477138, guid: f6642230f5f03724bb4b02ab411ed728,
         type: 3}
@@ -6428,9 +6435,44 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 311261081}
+    - target: {fileID: 2789094443033048335, guid: 96ad8e0c3aa2517488b27f20f2837508,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3116488017272050695, guid: 96ad8e0c3aa2517488b27f20f2837508,
         type: 3}
       propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3333531969788973134, guid: 96ad8e0c3aa2517488b27f20f2837508,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3333531969788973134, guid: 96ad8e0c3aa2517488b27f20f2837508,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3333531969788973134, guid: 96ad8e0c3aa2517488b27f20f2837508,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3333531969788973134, guid: 96ad8e0c3aa2517488b27f20f2837508,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3333531969788973134, guid: 96ad8e0c3aa2517488b27f20f2837508,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3333531969788973134, guid: 96ad8e0c3aa2517488b27f20f2837508,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3796027754502764058, guid: 96ad8e0c3aa2517488b27f20f2837508,
@@ -6837,6 +6879,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1 &355869291
 GameObject:
   m_ObjectHideFlags: 0
@@ -7329,6 +7372,7 @@ MonoBehaviour:
   m_Crossfade: 0.5
   m_StopOnDisable: 1
   m_PlayOnLoad: 1
+  m_DoNotPreload: 0
 --- !u!114 &468511363
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7393,6 +7437,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1 &501341557
 GameObject:
   m_ObjectHideFlags: 0
@@ -8212,6 +8257,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!4 &622486489 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1439181330075514184, guid: 1bc3999d7c9928c40b3d6cf018bfa355,
@@ -8265,6 +8311,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1 &643876216
 GameObject:
   m_ObjectHideFlags: 0
@@ -13197,6 +13244,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1 &733664470 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1439181330075514292, guid: 1bc3999d7c9928c40b3d6cf018bfa355,
@@ -13396,7 +13444,7 @@ Transform:
   m_LocalScale: {x: 50, y: 250, z: 1}
   m_Children: []
   m_Father: {fileID: 1123397999}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!64 &796957515
 MeshCollider:
@@ -13635,6 +13683,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1 &921241992
 GameObject:
   m_ObjectHideFlags: 0
@@ -13690,6 +13739,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1 &928708423
 GameObject:
   m_ObjectHideFlags: 0
@@ -18490,6 +18540,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1 &960126053
 GameObject:
   m_ObjectHideFlags: 0
@@ -18639,6 +18690,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1 &1029302015
 GameObject:
   m_ObjectHideFlags: 0
@@ -19169,8 +19221,8 @@ Transform:
   m_LocalPosition: {x: -36.16194, y: -32.342182, z: 775.3847}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 2100999880}
   - {fileID: 796957514}
+  - {fileID: 2100999880}
   - {fileID: 1029302016}
   m_Father: {fileID: 2124751462}
   m_RootOrder: 3
@@ -19190,6 +19242,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1 &1128056790
 GameObject:
   m_ObjectHideFlags: 0
@@ -20733,6 +20786,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1 &1494215778
 GameObject:
   m_ObjectHideFlags: 0
@@ -28700,6 +28754,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1 &2035446711
 GameObject:
   m_ObjectHideFlags: 0
@@ -28987,8 +29042,7 @@ PrefabInstance:
   m_SourcePrefab: {fileID: 100100000, guid: ef1b95f781b0943f3a23b4de5c73550e, type: 3}
 --- !u!4 &2100999880 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ef1b95f781b0943f3a23b4de5c73550e,
-    type: 3}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 2100999879}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &2124751461
@@ -38768,6 +38822,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!114 &1149192964669362652
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38783,6 +38838,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!114 &1149192964873680185
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38798,6 +38854,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!114 &1149192964893688375
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38813,6 +38870,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!114 &1149192965035723122
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38828,6 +38886,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!114 &1149192965248140649
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38843,6 +38902,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!114 &1149192965866254569
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38858,6 +38918,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!114 &1149192965898462926
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38873,6 +38934,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!114 &1149192966008971367
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38888,6 +38950,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1 &1181801025288424241
 GameObject:
   m_ObjectHideFlags: 0
