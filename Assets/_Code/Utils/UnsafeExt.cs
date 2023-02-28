@@ -164,7 +164,8 @@ namespace Aqua {
                 UnsafeExt.Write(mem, size, (ushort) val.Length);
                 if (val.Length > 0) {
                     ushort byteLength = (ushort) StringUtils.EncodeUFT8(strChars, val.Length, *mem, val.Length * 4);
-                    Unsafe.Copy(lengthMarker, sizeof(ushort), &byteLength, sizeof(ushort));
+                    // Unsafe.Copy(lengthMarker, sizeof(ushort), &byteLength, sizeof(ushort));
+                    Unsafe.Copy(&byteLength, sizeof(ushort), lengthMarker, sizeof(ushort));
                     *mem += byteLength;
                     *size += byteLength;
                 }

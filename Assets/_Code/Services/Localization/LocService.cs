@@ -54,7 +54,13 @@ namespace Aqua
 
             m_LanguagePackage.Clear();
             using(Profiling.Time("loading language")) {
-                if (manifest.Packages.Length > 0) {
+                bool loadPackages;
+                #if PREVIEW || PRODUCTION
+                loadPackages = false;
+                #else
+                loadPackages = manifest.Packages.Length > 0;
+                #endif // PREVIEW || PRODUCTION
+                if (loadPackages) {
                     DebugService.Log(LogMask.Loading | LogMask.Localization, "[LocService] Loading '{0}' from {1} packages", manifest.name, manifest.Packages.Length);
                     foreach(var file in manifest.Packages) {
                         var parser = BlockParser.ParseAsync(ref m_LanguagePackage, file, Parsing.Block, LocPackage.Generator.Instance);
