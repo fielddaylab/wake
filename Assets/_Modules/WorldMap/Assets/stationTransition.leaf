@@ -20,92 +20,80 @@ $call   PrepareDream(Dreams00)
 
 :: ArcticDream1
 @trigger    PlayerDream
-@when       previousStation == "ArcticStation", LocationVisited("RS-4W"), world:RS-4W.seenWhalefall
-$if !HasJournalEntry("Dream01_WhaleFall")
-    $if CurrBetweenDreamTravels() > $DreamSpacing
-        // trigger dream after at least 2 world travels
-        $call   PrepareDream(Dream01)
-    $elseif AnyJobsCompleted() >= $DreamOverrideJobThreshold
-        // trigger dream if completed 20+ jobs
-        $call   PrepareDream(Dream01)
-    $else
-        // player must travel more before dream
-    $endif
+@when       previousStation == "ArcticStation", LocationVisited("RS-4W"), world:RS-4W.seenWhalefall, !HasJournalEntry("Dream01_WhaleFall")
+$if CurrBetweenDreamTravels() > $DreamSpacing
+    // trigger dream after at least 2 world travels
+    $call   PrepareDream(Dream01)
+$elseif AnyJobsCompleted() >= $DreamOverrideJobThreshold
+    // trigger dream if completed 20+ jobs
+    $call   PrepareDream(Dream01)
+$else
+    // player must travel more before dream
 $endif
 
 :: CoralDream1
 @trigger    PlayerDream
-@when       previousStation == "CoralStation", LocationVisited("RS-2S")
-$if !HasJournalEntry("Dream02_Coral")
-    $if CurrBetweenDreamTravels() > $DreamSpacing
-        // trigger dream after at least 2 world travels
-        $call   PrepareDream(Dream02)
-    $elseif AnyJobsCompleted() >= $DreamOverrideJobThreshold
-        // trigger dream if completed 20+ jobs
-        $call   PrepareDream(Dream02)
-    $else
-        // player must travel more before dream
-    $endif
+@when       previousStation == "CoralStation", LocationVisited("RS-2S"), !HasJournalEntry("Dream02_Coral")
+$if CurrBetweenDreamTravels() > $DreamSpacing
+    // trigger dream after at least 2 world travels
+    $call   PrepareDream(Dream02)
+$elseif AnyJobsCompleted() >= $DreamOverrideJobThreshold
+    // trigger dream if completed 20+ jobs
+    $call   PrepareDream(Dream02)
+$else
+    // player must travel more before dream
 $endif
 
 :: BayouDream1
 @trigger    PlayerDream
-@when       previousStation == "BayouStation", LocationVisited("RS-3P")
-$if !HasJournalEntry("Dream03_DeadZone")
-    $if CurrBetweenDreamTravels() > $DreamSpacing
-        // trigger dream after at least 2 world travels
-        $call   PrepareDream(Dream03)
-    $elseif AnyJobsCompleted() >= $DreamOverrideJobThreshold
-        // trigger dream if completed 20+ jobs
-        $call   PrepareDream(Dream03)
-    $else
-        // player must travel more before dream
-    $endif
+@when       previousStation == "BayouStation", LocationVisited("RS-3P"), !HasJournalEntry("Dream03_DeadZone")
+$if CurrBetweenDreamTravels() > $DreamSpacing
+    // trigger dream after at least 2 world travels
+    $call   PrepareDream(Dream03)
+$elseif AnyJobsCompleted() >= $DreamOverrideJobThreshold
+    // trigger dream if completed 20+ jobs
+    $call   PrepareDream(Dream03)
+$else
+    // player must travel more before dream
 $endif
 
 :: KelpDream2
 @trigger    PlayerDream
-@when       previousStation == "KelpStation", LocationVisited("RS-1B")
-$if !HasJournalEntry("Dream04_Kelp2Barren")
-    $if CurrBetweenDreamTravels() > $DreamSpacing
-        // trigger dream after at least 2 world travels
-        $call   PrepareDream(Dream04)
-    $elseif AnyJobsCompleted() >= $DreamOverrideJobThreshold
-        // trigger dream if completed 20+ jobs
-        $call   PrepareDream(Dream04)
-    $else
-        // player must travel more before dream
-    $endif
+@when       previousStation == "KelpStation", LocationVisited("RS-1B"), !HasJournalEntry("Dream04_Kelp2Barren")
+$if CurrBetweenDreamTravels() > $DreamSpacing
+    // trigger dream after at least 2 world travels
+    $call   PrepareDream(Dream04)
+$elseif AnyJobsCompleted() >= $DreamOverrideJobThreshold
+    // trigger dream if completed 20+ jobs
+    $call   PrepareDream(Dream04)
+$else
+    // player must travel more before dream
 $endif
 
 :: ArcticDream2
 @trigger    PlayerDream
-@when       previousStation == "ArcticStation", LocationVisited("RS-4Y"), world:RS-4Y.seenIceRiver
-$if !HasJournalEntry("Dream05_Arctic2")
-    $if CurrBetweenDreamTravels() > $DreamSpacing
-        // trigger dream after at least 2 world travels
-        $call   PrepareDream(Dream05)
-    $elseif AnyJobsCompleted() >= $DreamOverrideJobThreshold
-        // trigger dream if completed 20+ jobs
-        $call   PrepareDream(Dream05)
-    $else
-        // player must travel more before dream
-    $endif
+@when       previousStation == "ArcticStation", LocationVisited("RS-4Y"), world:RS-4Y.seenIceRiver, !HasJournalEntry("Dream05_Arctic2")
+$if CurrBetweenDreamTravels() > $DreamSpacing
+    // trigger dream after at least 2 world travels
+    $call   PrepareDream(Dream05)
+$elseif AnyJobsCompleted() >= $DreamOverrideJobThreshold
+    // trigger dream if completed 20+ jobs
+    $call   PrepareDream(Dream05)
+$else
+    // player must travel more before dream
 $endif
 
 :: BayouDream2
 @trigger    PlayerDream
-@when       previousStation == "BayouStation", LocationVisited("RS-3N"), HasEntity("Tubeworm")
-$if !HasJournalEntry("Dream06_Rig")
-    $if CurrBetweenDreamTravels() > $DreamSpacing
-        // trigger dream after at least 2 world travels
-        $call   PrepareDream(Dream06)
-    $elseif AnyJobsCompleted() >= $DreamOverrideJobThreshold
-        // trigger dream if completed 20+ jobs
-        $call   PrepareDream(Dream06)
-    $else
-        // player must travel more before dream
-    $endif
+@when       previousStation == "BayouStation", LocationVisited("RS-3N"), HasEntity("Tubeworm"), !HasJournalEntry("Dream06_Rig")
+$if CurrBetweenDreamTravels() > $DreamSpacing
+    // trigger dream after at least 2 world travels
+    $call   PrepareDream(Dream06)
+$elseif AnyJobsCompleted() >= $DreamOverrideJobThreshold
+    // trigger dream if completed 20+ jobs
+    $call   PrepareDream(Dream06)
+$else
+    // player must travel more before dream
 $endif
 
 :: FinalDream

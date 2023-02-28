@@ -27,7 +27,9 @@ namespace Aqua
         private const string LocalSettingsPrefsKey = "settings/local";
         private const string LastUserNameKey = "settings/last-known-profile";
         private const string LastUserSaveSummaryKey = "settings/last-known-profile-summary";
+        
         private const string DeserializeError = "deserialize-error";
+        private const string OutOfDateError = "outdated-error";
 
         #if DEVELOPMENT
         private const string DebugSaveId = "__DEBUG";
@@ -194,6 +196,13 @@ namespace Aqua
             {
                 DebugService.Log(LogMask.DataService, "[DataService] No save located for user id {0}", inUserCode);
                 ioFuture.Fail();
+                yield break;
+            }
+
+            if (!SavePatcher.IsValid(authoritativeSave, SavePatcher.SaveType.Player))
+            {
+                DebugService.Log(LogMask.DataService, "[DataService] Save data for {0} is out of date", inUserCode);
+                ioFuture.Fail(OutOfDateError);
                 yield break;
             }
 
@@ -767,6 +776,8 @@ namespace Aqua
                     return (ErrorStatus) ((OGD.Core.Error) obj).Status;
                 } else if (obj == (object) DeserializeError) {
                     return ErrorStatus.DeserializeError;
+                } else if (obj == (object) OutOfDateError) {
+                    return ErrorStatus.OutOfDateError;
                 }
             }
 
@@ -784,7 +795,8 @@ namespace Aqua
             Error_Exception,
             Unknown,
 
-            DeserializeError
+            DeserializeError,
+            OutOfDateError
         }
 
         #endregion // Utils

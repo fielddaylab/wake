@@ -37,6 +37,7 @@ namespace Aqua.Title
         [SerializeField] private Button m_NewGameButton = null;
         [SerializeField] private Button m_ContinueGameButton = null;
         [SerializeField] private Button m_CreditsButton = null;
+        [SerializeField] private BasePanel m_SettingsPanel = null;
 
         [Header("Profile Page")]
         [SerializeField] private CanvasGroup m_ProfileGroup = null;
@@ -66,6 +67,9 @@ namespace Aqua.Title
 
             m_ProfileName.onValueChanged.AddListener(OnProfileNameUpdated);
             m_ProfileName.text = Services.Data.LastProfileName();
+
+            m_SettingsPanel.OnShowEvent.AddListener(OnSettingsOpen);
+            m_SettingsPanel.OnHideEvent.AddListener(OnSettingsClosed);
 
             m_InitialGroup.gameObject.SetActive(true);
             m_ProfileGroup.gameObject.SetActive(false);
@@ -181,6 +185,13 @@ namespace Aqua.Title
                         break;
                     }
 
+                    case DataService.ErrorStatus.OutOfDateError: {
+                        Services.UI.Popup.DisplayWithClose(
+                            Loc.Find("ui.title.earlyAccessFile.header"),
+                            Loc.Format("ui.title.earlyAccessFile.description", profileName));
+                        break;
+                    }
+
                     default: {
                         Services.UI.Popup.DisplayWithClose(
                             Loc.Find("ui.title.loadError.header"),
@@ -192,6 +203,16 @@ namespace Aqua.Title
                 Services.Input.ResumeAll();
                 Services.Data.StartPlaying();
             }
+        }
+
+        private void OnSettingsOpen(BasePanel.TransitionType _) {
+            m_InitialGroup.blocksRaycasts = false;
+            m_ProfileGroup.blocksRaycasts = false;
+        }
+
+        private void OnSettingsClosed(BasePanel.TransitionType _) {
+            m_InitialGroup.blocksRaycasts = m_InitialGroup.isActiveAndEnabled;
+            m_ProfileGroup.blocksRaycasts = m_ProfileGroup.isActiveAndEnabled;
         }
 
         #endregion // Handlers

@@ -119,6 +119,7 @@ namespace Aqua.Cameras
 
         private Routine m_ScriptedAnimation;
         [NonSerialized] private CameraFOVMode m_FOVMode;
+        [NonSerialized] private bool m_LastFullscreen;
 
         public Camera Current { get { return m_Camera; } }
         public CameraRig Rig { get { return m_Rig; } }
@@ -131,6 +132,8 @@ namespace Aqua.Cameras
         public Vector3 FocusPosition { get { return m_CameraFocusCenter; }}
 
         public CameraMode Mode { get { return m_Mode; } }
+
+        public readonly CastableEvent<bool> OnFullscreenChanged = new CastableEvent<bool>(4);
 
         #region Mode
 
@@ -1436,6 +1439,12 @@ namespace Aqua.Cameras
         #region Render Regions
 
         private void UpdateCameraRenderResolution() {
+            bool fullscreen = Screen.fullScreen;
+            if (m_LastFullscreen != fullscreen) {
+                m_LastFullscreen = fullscreen;
+                OnFullscreenChanged.Invoke(fullscreen);
+            }
+
             if (!m_RenderScale) {
                 return;
             }

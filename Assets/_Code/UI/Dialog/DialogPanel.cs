@@ -589,7 +589,7 @@ namespace Aqua
             if (m_EndBehavior != LineEndBehavior.WaitForInput || m_CurrentState.Sticky)
                 return;
             
-            if (m_Input.Device.MousePressed(0))
+            if (m_Input.Device.MousePressed(0) || m_Input.Device.KeyDown(KeyCode.Space))
             {
                 m_CurrentState.SkipPressed = true;
             }
