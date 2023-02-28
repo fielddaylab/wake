@@ -174,6 +174,14 @@ namespace Aqua
                     DebugService.AllowLogs(extraCategories);
                 }
             }
+
+            #if PREVIEW || DEVELOPMENT
+            FramerateDisplay.Show();
+            #else
+            if (p.Contains("showFPS")) {
+                FramerateDisplay.Show();
+            }
+            #endif //
         }
         
         static private void LoadBootParamsSecondPass()
