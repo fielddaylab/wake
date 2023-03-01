@@ -141,6 +141,8 @@ namespace Aqua.WorldMap
 
             yield return 0.2f;
 
+            Services.Events.Dispatch(GameEvents.BeginStationTransition);
+
             // todo: play sound effects
 
             StringHash32 oldStationId = Save.Map.CurrentStationId();

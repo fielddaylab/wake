@@ -7,14 +7,15 @@
 @cutscene
 {fade-out black.60, 0.5, wait}
 {@}
-{style center}
+{style center}{@tutorial}{speaker AQOS Tablet}
 
 $call hotbar.portable->Unlock()
 $call hotbar.portable->Show()
 $call hotbar.portable->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.portable)
-    Check your {item-name}AQOS Tablet{/item-name} to see all the info about your active job!
-    This tool also holds all the data you collect.
+    Check your {item-name}AQOS Tablet{/item-name} to see all the info about your active job! \n\
+    This tool also holds all the data you collect. \n\
+    You can access it by clicking on the icon or pressing {h}[Tab]{/h}.
 $call FocusHighlight->Clear()
 
 {hide-dialog}{fade-in 0.5, wait}
@@ -53,14 +54,15 @@ $call Player->SetTool(Scanner)
 
 {fade-out black.60, 0.5, wait}
 {@}
-{style center}
+{style center}{@tutorial}{speaker V1ct0r}
 
 $call hotbar.guide->Unlock()
 $call hotbar.guide->Show()
 $call hotbar.guide->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.guide)
-    Talk to {nameof @guide} by clicking the {h}button with the eyes{/h} here.
-    He can help if you get stuck!
+    Talk to {nameof @guide} by clicking the {h}button with the eyes{/h} here.\n\
+    He can help if you get stuck! \n\
+    You can also talk to him by pressing {h}[Q]{/h}.
 $call FocusHighlight->Clear()
 
 {hide-dialog}{fade-in 0.5, wait}

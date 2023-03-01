@@ -1181,6 +1181,10 @@ namespace Aqua.Cameras
             if (!m_FOVPlane.IsReferenceNull() && inPose.Target != null)
                 m_FOVPlane.Target = inPose.Target;
 
+            if (inPose.RespectSceneBounds) {
+                ConstrainStateToBounds(ref newState);
+            }
+
             RecordLatestState(newState);
             SetFOVMode(inPose.Mode);
             
@@ -1203,6 +1207,7 @@ namespace Aqua.Cameras
             
             CameraState currentState = GetCameraState(m_PositionRoot, m_Camera, m_FOVPlane);
             CameraState newState = new CameraState(inPosition, inRotation.GetValueOrDefault(currentState.Rotation), currentState.Height, inZoom.GetValueOrDefault(currentState.Zoom), currentState.FieldOfView);
+            ConstrainStateToBounds(ref newState);
 
             RecordLatestState(newState);
 
@@ -1232,6 +1237,9 @@ namespace Aqua.Cameras
 
             CameraState currentState = GetCameraState(m_PositionRoot, m_Camera, m_FOVPlane);
             CameraState newState = new CameraState(inPose.transform.position, inPose.transform.rotation, inPose.Height, inPose.Zoom, inPose.FieldOfView);
+            if (inPose.RespectSceneBounds) {
+                ConstrainStateToBounds(ref newState);
+            }
 
             RecordLatestState(newState);
             SetFOVMode(inPose.Mode);
@@ -1261,6 +1269,9 @@ namespace Aqua.Cameras
 
             CameraState currentState = GetCameraState(m_PositionRoot, m_Camera, m_FOVPlane);
             CameraState newState = new CameraState(inPose.transform.position, inPose.transform.rotation, inPose.Height, inPose.Zoom, currentState.FieldOfView);
+            if (inPose.RespectSceneBounds) {
+                ConstrainStateToBounds(ref newState);
+            }
 
             RecordLatestState(newState);
             SetFOVMode(inPose.Mode);
@@ -1416,6 +1427,13 @@ namespace Aqua.Cameras
                 CameraToWorld = m_LastCameraMatrixInv,
                 GameplayDistance = m_LastGameplayPlaneDistance
             };
+        }
+
+        private void ConstrainStateToBounds(ref CameraState ioState)
+        {
+            Vector2 size = FrameSize(m_Camera, m_FOVPlane, ioState.Zoom);
+            ApplySoftConstraints(ref ioState.Position, size, m_Bounds);
+            ApplyHardConstraints(ref ioState.Position, size, m_Bounds);
         }
 
         #endregion // Positions

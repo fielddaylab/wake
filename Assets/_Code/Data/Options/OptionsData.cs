@@ -39,9 +39,9 @@ namespace Aqua.Option
 
         public ulong Hash() {
             ulong hash = UnsafeExt.Hash(Audio);
-            hash = UnsafeExt.Hash(Gameplay);
-            hash = UnsafeExt.Hash(Performance);
-            hash = UnsafeExt.Hash(Accessibility);
+            hash = UnsafeExt.Hash(Gameplay, hash);
+            hash = UnsafeExt.Hash(Performance, hash);
+            hash = UnsafeExt.Hash(Accessibility, hash);
             return hash;
         }
 

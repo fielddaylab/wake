@@ -241,6 +241,7 @@ Transform:
   m_Children:
   - {fileID: 1247654262}
   - {fileID: 1405122598978709190}
+  - {fileID: 551513273}
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -259,6 +260,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1 &106912089 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1779792286001257707, guid: c8341d2bc8ff84688b9c1d9e73b973c9,
@@ -2125,6 +2127,100 @@ EdgeCollider2D:
   - {x: 9.638823, y: 16.500473}
   - {x: 29.920406, y: 23.868664}
   - {x: 53.697433, y: 32.8953}
+--- !u!1 &551513272
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 551513273}
+  - component: {fileID: 551513275}
+  - component: {fileID: 551513274}
+  - component: {fileID: 551513276}
+  m_Layer: 0
+  m_Name: ChestCameraFocus
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &551513273
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 551513272}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -85.89, y: -96.39, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 36556489}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &551513274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 551513272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc7c3cc8d6830bf48b3b37d4d66178e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Region: {fileID: 551513276}
+  m_Zoom: 1
+  m_Lerp: 5
+  m_Offset: {x: 0, y: 0, z: 0}
+  m_Look: {x: 0, y: 0, z: 0}
+  m_Weight: 0.4
+--- !u!114 &551513275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 551513272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced02461c9fab16498d5d024212b8a9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Id:
+    m_Source: d32bc12f-76e4-489f-a142-db446ae81b18
+    m_HashValue: 4096601811
+  m_IsPersistent: 0
+  m_StartDisabled: 0
+--- !u!61 &551513276
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 551513272}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.3362999, y: -5.7336426}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 14.609886, y: 19.923157}
+  m_EdgeRadius: 0
 --- !u!1 &568245978
 GameObject:
   m_ObjectHideFlags: 0
@@ -2154,8 +2250,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 60, y: 10, z: 10}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 60, y: 22.486633, z: 10}
+  m_Center: {x: 0, y: 6.2433167, z: 0}
 --- !u!114 &568245980
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2235,6 +2331,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 1
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!4 &612366479 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c3c2e154a6579cf45939881af8856978,
@@ -3438,7 +3535,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 6fe9a5e6b1b47e3499bf0867f60f1e82, type: 2}
-  m_CullingMode: 0
+  m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -3932,6 +4029,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1001 &993153821
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4909,6 +5007,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 1
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1 &1262258639 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1779792286001257707, guid: c8341d2bc8ff84688b9c1d9e73b973c9,
@@ -5386,6 +5485,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1 &1404735531 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1779792286001257707, guid: c8341d2bc8ff84688b9c1d9e73b973c9,
@@ -8472,6 +8572,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1001 &2735217096859316575
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -57,6 +57,7 @@ namespace Aqua
 
         static public readonly StringHash32 BeginDive = "dive:begin";
         static public readonly StringHash32 BeginArgument = "argument:begin";
+        static public readonly StringHash32 BeginStationTransition = "world-map:station-transition";
 
         static public readonly StringHash32 PortableOpened = "portable:opened"; // PortableRequest request
         static public readonly StringHash32 PortableClosed = "portable:closed"; // no args

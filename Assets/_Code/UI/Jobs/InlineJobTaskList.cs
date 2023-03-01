@@ -86,7 +86,8 @@ namespace Aqua
                 .Register(GameEvents.PopupClosed, OnCutsceneEnd, this)
                 .Register(GameEvents.JournalOpen, OnCutsceneStart, this)
                 .Register(GameEvents.JournalClosed, OnCutsceneEnd, this)
-                .Register(GameEvents.PortableOpened, OnPortableOpened, this);
+                .Register(GameEvents.PortableOpened, OnPortableOpened, this)
+                .Register(GameEvents.BeginStationTransition, OnBeginStationTransition, this);
 
             m_TaskDisplays.Initialize(null, null, 0);
             m_TaskDisplays.Config.RegisterOnConstruct((p, o) => {
@@ -105,6 +106,11 @@ namespace Aqua
         #endregion // Events
 
         #region Handlers
+
+        private void OnBeginStationTransition() {
+            ClearDisplayTasks();
+            m_OperationQueue.Clear();
+        }
 
         private void OnSceneLoaded()
         {
