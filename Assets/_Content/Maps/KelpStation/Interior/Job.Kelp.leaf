@@ -101,9 +101,13 @@ $endif
 @who        $JobGiverId 
 @when       JobIsAtCurrentStation(), JobInProgress(kelp-shop-welcome)
 @cutscene
-@once
-{@drKelp}  Your uncle is waiting to chat with you!
-{@drKelp}  He'll help you upgrade your sub. 
+$if JobTaskTop(returnShip)
+    {@drKelp}   Your map is just about ready.
+                You should head back to your ship.
+$else
+    {@drKelp}  Your uncle is waiting to chat with you!
+    {@drKelp}  He'll help you upgrade your sub. 
+$endif
 
 :: action.cancel
 @cutscene

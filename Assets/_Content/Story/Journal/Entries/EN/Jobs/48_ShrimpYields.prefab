@@ -578,6 +578,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9209f767468d706459dfe660c2a9acb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IgnoreInactive: 0
+  PreserveNames: 0
 --- !u!114 &3832581302912031066
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -597,6 +599,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  m_Outline: 0
+  m_Thickness: 1
 --- !u!1 &4169891516595788855
 GameObject:
   m_ObjectHideFlags: 0
@@ -1109,6 +1113,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 806377189000065302, guid: 4089e59eedd6ea0489e55a80fbb91455,
+        type: 3}
+      propertyPath: IgnoreInactive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2304551821713990047, guid: 4089e59eedd6ea0489e55a80fbb91455,
         type: 3}
       propertyPath: m_Pivot.x
