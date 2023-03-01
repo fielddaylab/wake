@@ -103,16 +103,11 @@ namespace ProtoAqua.Observation
                 shapeRotation.z = directionDeg - arc / 2;
                 shape.rotation = shapeRotation;
                 shape.arc = arc;
+                shape.randomPositionAmount = 0.1f + distFromSurface / 20;
 
                 if (!m_HintParticleSystem.isEmitting)
                 {
                     m_HintParticleSystem.Play();
-                }
-                else
-                {
-                    // HACK: Force this to update even when moving?
-                    shape.enabled = false;
-                    shape.enabled = true;
                 }
             }
             else

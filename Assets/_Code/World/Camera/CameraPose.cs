@@ -32,6 +32,7 @@ namespace Aqua.Cameras
         [HideIfField("IsFOVDirect")] public float Zoom = 1;
         [HideIfField("IsFOVDirect")] public float AudioListenerZOffset = 0;
         [ShowIfField("IsFOVDirect")] public float FieldOfView = 30;
+        public bool RespectSceneBounds;
 
         [AutoEnum] public CameraPoseProperties Properties = CameraPoseProperties.Default;
 
