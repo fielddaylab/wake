@@ -81,7 +81,7 @@ $call UnlockRoom("exterior")
 @when 		scene:name == "KelpStation", !HasEntity(WarmKelpForest), !HasEntity(Urchin), !HasEntity(GiantKelp), !HasEntity(SeaOtter)
 @boostScore 2 //if the player has collected nothing, this should be seen instead of helpReturnToShip
 @cutscene
-{@guide}	You need to find {h}site C{/h}, then dive. 
+{@guide}	You need to find {h}Site C{/h}, then dive. 
             Unless you'd rather just float here forever.  
 
 :: helpAtSiteC
@@ -131,9 +131,9 @@ $branch common.ringPhone
 {@player}Wow. Mer's old AquaLab!
 {@player} How do we get onboard, {nameof @guide}?
 
+{hide-dialog}
 {fade-out black.60, 0.5, wait}
 {@}
-{hide-dialog}
 
 $call ship.map->ForceOnTop()
 $call schematic.button->ForceOnTop()
@@ -160,7 +160,7 @@ $call ship.map->ResetSorting()
 
 {@player}   Is that everything, {nameof @guide}? 
 {@guide}   Hmmm. It appears you missed something. 
-{@guide}    Head back to {h}site C{/h} and try again.
+{@guide}    Head back to {h}Site C{/h} and try again.
 
 
 :: helpReturnToShip
