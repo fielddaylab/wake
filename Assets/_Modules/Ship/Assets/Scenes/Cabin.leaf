@@ -219,23 +219,12 @@ $branch .GetDreamJournal
 @when       session:fromDream == "Dream07"
 @cutscene
 @once
-{@guide}   Good morning, O. We have reached our destination.
-$if CurrStation() == "KelpStation"
-    {@guide}    The Kelp Station awaits.
-$elseif CurrStation() == "ArcticStation"
-    {@guide}    The Arctic Station awaits.
-$elseif CurrStation() == "CoralStation"
-    {@guide}    The Coral Station awaits.
-$elseif CurrStation() == "BayouStation"
-    {@guide}    Good morning. We have arrived at the Bayou Station.
-$else // Final
-    {@guide}    Good morning. We have arrived at {nameof RS-0}.
-$endif
+{@guide}   Good morning, O. We have arrived at our destination.
 {@player}  Thanks, {nameof @guide}. 
 {@player}  Status update? 
 {@guide}   We are prepared to descend to the Lower Depths.
-{@guide}   Due to the uncertain nature of this mission, I am unable to calculate your odds of survival.
-{@player}  I know, {nameof @guide}. It's worth the risk.   
+{@guide}   Due to the uncertain nature of this mission, I am| unable to calculate your odds of survival.
+{@player}  I know, {nameof @guide}.| It's worth the risk.   
 {@player}  Let's go find Sam. 
 $branch .GetDreamJournal
 

@@ -38,10 +38,12 @@ namespace Aqua.Animation
 
             bool hasAnims = mode != OptionsPerformance.FeatureMode.Low;
             bool fullAnims = mode == OptionsPerformance.FeatureMode.High;
-            Animator.enabled = hasAnims;
 
-            if (!hasAnims) {
-                Animator.WriteDefaultValues();
+            if (Animator) {
+                Animator.enabled = hasAnims;
+                if (!hasAnims) {
+                    Animator.WriteDefaultValues();
+                }
             }
 
             int period = fullAnims ? 1 : Math.Max(1, Math.Min(Period, m_SkinnedSprites.Length));

@@ -96,14 +96,14 @@ namespace ProtoAqua.Observation
                 float distFromSurface = Math.Max(0, delta.magnitude - m_MaxRange);
                 float directionDeg = Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg;
 
-                float arc = Mathf.Lerp(8, 30, distFromSurface / 15);
+                float arc = Mathf.Lerp(8, 40, distFromSurface / 15);
                 
                 var shape = m_HintParticleSystem.shape;
                 Vector3 shapeRotation = shape.rotation;
                 shapeRotation.z = directionDeg - arc / 2;
                 shape.rotation = shapeRotation;
                 shape.arc = arc;
-                shape.randomPositionAmount = 0.1f + distFromSurface / 20;
+                shape.randomPositionAmount = 0.1f + Math.Min(distFromSurface / 25, 1f);
 
                 if (!m_HintParticleSystem.isEmitting)
                 {
