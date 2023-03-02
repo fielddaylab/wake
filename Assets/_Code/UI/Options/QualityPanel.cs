@@ -7,25 +7,34 @@ namespace Aqua.Option
     {
         #region Inspector
 
-        [SerializeField] private ToggleOptionBar m_QualityLevel = null;
         [SerializeField] private ToggleOptionBar m_ResolutionLevel = null;
         [SerializeField] private CheckboxOption m_FullscreenToggle = null;
+        [SerializeField] private ToggleOptionBar m_AnimationQuality = null;
+        [SerializeField] private ToggleOptionBar m_ParticleQuality = null;
 
         #endregion // Inspector
 
         protected override void Init()
         {
-            m_QualityLevel.Initialize<OptionsPerformance.FramerateMode>("options.quality.level.label",
-                "options.quality.level.tooltip", OnQualityLevelChanged)
-                .AddOption("options.quality.level.stable.label", "options.quality.level.stable.tooltip", OptionsPerformance.FramerateMode.Stable)
-                .AddOption("options.quality.level.high.label", "options.quality.level.high.tooltip", OptionsPerformance.FramerateMode.High)
-                .Build();
-
             m_ResolutionLevel.Initialize<OptionsPerformance.ResolutionMode>("options.quality.resolution.label",
                 "options.quality.resolution.tooltip", OnResolutionLevelChanged)
                 .AddOption("options.quality.resolution.min.label", "options.quality.resolution.min.tooltip", OptionsPerformance.ResolutionMode.Minimum)
                 .AddOption("options.quality.resolution.moderate.label", "options.quality.resolution.moderate.tooltip", OptionsPerformance.ResolutionMode.Moderate)
                 .AddOption("options.quality.resolution.high.label", "options.quality.resolution.high.tooltip", OptionsPerformance.ResolutionMode.High)
+                .Build();
+
+            m_AnimationQuality.Initialize<OptionsPerformance.FeatureMode>("options.quality.animation.label",
+                "options.quality.animation.tooltip", OnAnimationQualityChanged)
+                .AddOption("options.quality.animation.low.label", "options.quality.animation.low.tooltip", OptionsPerformance.FeatureMode.Low)
+                .AddOption("options.quality.animation.medium.label", "options.quality.animation.medium.tooltip", OptionsPerformance.FeatureMode.Medium)
+                .AddOption("options.quality.animation.high.label", "options.quality.animation.high.tooltip", OptionsPerformance.FeatureMode.High)
+                .Build();
+
+            m_ParticleQuality.Initialize<OptionsPerformance.FeatureMode>("options.quality.effects.label",
+                "options.quality.effects.tooltip", OnParticleQualityChanged)
+                .AddOption("options.quality.effects.low.label", "options.quality.effects.low.tooltip", OptionsPerformance.FeatureMode.Low)
+                .AddOption("options.quality.effects.medium.label", "options.quality.effects.medium.tooltip", OptionsPerformance.FeatureMode.Medium)
+                .AddOption("options.quality.effects.high.label", "options.quality.effects.high.tooltip", OptionsPerformance.FeatureMode.High)
                 .Build();
 
             m_FullscreenToggle.Initialize("options.quality.fullscreen.label",
@@ -37,15 +46,18 @@ namespace Aqua.Option
         }
 
         private void OnDisable() {
-            Services.Camera.OnFullscreenChanged.Deregister(OnFullscreenUpdated);
+            if (Services.Valid) {
+                Services.Camera?.OnFullscreenChanged.Deregister(OnFullscreenUpdated);
+            }
         }
 
         public override void Load(OptionsData inOptions)
         {
             base.Load(inOptions);
             
-            m_QualityLevel.Sync(inOptions.Performance.Framerate);
             m_ResolutionLevel.Sync(inOptions.Performance.Resolution);
+            m_ParticleQuality.Sync(inOptions.Performance.EffectsQuality);
+            m_AnimationQuality.Sync(inOptions.Performance.AnimationQuality);
 
             m_FullscreenToggle.Sync(Screen.fullScreen);
         }
@@ -58,6 +70,20 @@ namespace Aqua.Option
         private void OnResolutionLevelChanged(OptionsPerformance.ResolutionMode inResolution)
         {
             Data.Performance.Resolution = inResolution;
+        }
+
+        private void OnAnimationQualityChanged(OptionsPerformance.FeatureMode inQuality)
+        {
+            Data.Performance.AnimationQuality = inQuality;
+
+            Services.Events.Queue(GameEvents.OptionsUpdated, Data);
+        }
+
+        private void OnParticleQualityChanged(OptionsPerformance.FeatureMode inQuality)
+        {
+            Data.Performance.EffectsQuality = inQuality;
+
+            Services.Events.Queue(GameEvents.OptionsUpdated, Data);
         }
 
         private void OnFullscreenChanged(bool fullscreen) {

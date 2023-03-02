@@ -208,6 +208,18 @@ namespace EasyAssetStreaming {
             }
         }
 
+        /// <summary>
+        /// Size in local space.
+        /// </summary>
+        public Vector2 Size {
+            get { return ((RectTransform) transform).rect.size; }
+            set {
+                RectTransform rect = (RectTransform) transform;
+                rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, value.x);
+                rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, value.y);
+            }
+        }
+
         #endregion // Properties
 
         /// <summary>

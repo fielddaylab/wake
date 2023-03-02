@@ -9,6 +9,7 @@ namespace EasyAssetStreaming {
         float Alpha { get; set; }
         bool Visible { get; set; }
         
+        Vector2 Size { get; set; }
         AutoSizeMode SizeMode { get; set; }
         void Resize(AutoSizeMode sizeMode);
     }

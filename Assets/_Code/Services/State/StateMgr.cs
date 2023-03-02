@@ -19,6 +19,7 @@ using EasyAssetStreaming;
 using ScriptableBake;
 using Aqua.Character;
 using Aqua.Scripting;
+using UnityEngine.U2D.Animation;
 
 namespace Aqua
 {
@@ -733,6 +734,7 @@ namespace Aqua
 
         private void LateUpdate() {
             Frame.IncrementFrame();
+            SpriteSkin.StaggeredUpdateCounter = Frame.Index;
         }
 
         #region IService

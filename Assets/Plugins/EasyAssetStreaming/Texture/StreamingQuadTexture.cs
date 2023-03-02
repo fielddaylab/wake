@@ -249,6 +249,19 @@ namespace EasyAssetStreaming {
             }
         }
 
+        /// <summary>
+        /// Size in local space.
+        /// </summary>
+        public Vector2 Size {
+            get { return m_Size; }
+            set {
+                if (m_Size != value) {
+                    m_Size = value;
+                    Resize(m_AutoSize);
+                }
+            }
+        }
+
         #endregion // Properties
 
         /// <summary>
