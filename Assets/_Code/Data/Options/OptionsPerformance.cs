@@ -67,8 +67,8 @@ namespace Aqua.Option
             EffectsQuality = FeatureMode.High;
             #else
             Resolution = ResolutionMode.Moderate;
-            AnimationQuality = FeatureMode.Moderate;
-            EffectsQuality = FeatureMode.Moderate;
+            AnimationQuality = FeatureMode.Medium;
+            EffectsQuality = FeatureMode.Medium;
             #endif // UNITY_EDITOR
         }
     }

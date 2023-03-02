@@ -73,7 +73,7 @@ namespace Aqua.Animation
             List<SpriteSkin> skinned = new List<SpriteSkin>(12);
             GetComponentsInChildren<SpriteSkin>(skinned);
             skinned.RemoveAll((s) => !s.enabled);
-            // TODO: sort this into roughly equal buckets according to period and number of bones per skinned sprite
+            // TODO: sort this into roughly equal buckets according to period and number of bones per skinned sprite?
             m_SkinnedSprites = skinned.ToArray();
             if (!Animator) {
                 Animator = GetComponentInChildren<Animator>(true);
