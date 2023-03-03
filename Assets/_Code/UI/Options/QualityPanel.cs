@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Runtime.InteropServices;
+using UnityEngine.UI;
 
 namespace Aqua.Option
 {
@@ -11,6 +12,7 @@ namespace Aqua.Option
         [SerializeField] private CheckboxOption m_FullscreenToggle = null;
         [SerializeField] private ToggleOptionBar m_AnimationQuality = null;
         [SerializeField] private ToggleOptionBar m_ParticleQuality = null;
+        [SerializeField] private Button m_AutoDetectButton = null;
 
         #endregion // Inspector
 
@@ -39,6 +41,10 @@ namespace Aqua.Option
 
             m_FullscreenToggle.Initialize("options.quality.fullscreen.label",
                 "options.quality.fullscreen.tooltip", OnFullscreenChanged);
+
+            if (m_AutoDetectButton) {
+                m_AutoDetectButton.onClick.AddListener(OnAutoDetectClicked);
+            }
         }
 
         private void OnEnable() {
@@ -97,6 +103,10 @@ namespace Aqua.Option
             m_FullscreenToggle.Sync(fullscreen);
         }
         
+        private void OnAutoDetectClicked() {
+            // TODO: Implement
+        }
+
         #if UNITY_WEBGL
 
         [DllImport("__Internal")]

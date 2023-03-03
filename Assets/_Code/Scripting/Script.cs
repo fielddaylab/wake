@@ -318,6 +318,10 @@ namespace Aqua {
             routine.TryManuallyUpdate(0);
         }
 
+        static public bool SkipPressed() {
+            return Services.Input.DoubleClick() || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Escape);
+        }
+
         // Added by Xander 06/03/22
         [LeafMember, Preserve]
         static public bool IsPlayerOnShip() {

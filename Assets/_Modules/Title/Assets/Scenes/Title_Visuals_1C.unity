@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -3538,6 +3538,7 @@ MonoBehaviour:
   Zoom: 3
   AudioListenerZOffset: 0
   FieldOfView: 6
+  RespectSceneBounds: 0
   Properties: 31
 --- !u!4 &254554591 stripped
 Transform:
@@ -4092,6 +4093,7 @@ MonoBehaviour:
   Zoom: 2
   AudioListenerZOffset: 0
   FieldOfView: 10.388855
+  RespectSceneBounds: 0
   Properties: 31
 --- !u!1001 &320568730
 PrefabInstance:
@@ -5427,6 +5429,7 @@ MonoBehaviour:
   Zoom: 2
   AudioListenerZOffset: 0
   FieldOfView: 10.388855
+  RespectSceneBounds: 0
   Properties: 31
 --- !u!1001 &384734956
 PrefabInstance:
@@ -13536,6 +13539,7 @@ MonoBehaviour:
   Zoom: 2
   AudioListenerZOffset: 0
   FieldOfView: 10.388855
+  RespectSceneBounds: 0
   Properties: 31
 --- !u!1001 &1191764713
 PrefabInstance:
@@ -16751,6 +16755,7 @@ MonoBehaviour:
   Zoom: 2
   AudioListenerZOffset: 0
   FieldOfView: 10.388855
+  RespectSceneBounds: 0
   Properties: 31
 --- !u!4 &1405694262
 Transform:
@@ -17223,6 +17228,7 @@ MonoBehaviour:
   Zoom: 1
   AudioListenerZOffset: 0
   FieldOfView: 20.60969
+  RespectSceneBounds: 0
   Properties: 31
 --- !u!4 &1499519859
 Transform:
@@ -20686,6 +20692,7 @@ MonoBehaviour:
   Zoom: 1
   AudioListenerZOffset: 0
   FieldOfView: 14
+  RespectSceneBounds: 0
   Properties: 31
 --- !u!4 &1812541128
 Transform:
@@ -29783,7 +29790,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 3000
+    maxNumParticles: 1000
     size3D: 0
     rotation3D: 0
     gravityModifier:
@@ -58995,6 +59002,11 @@ PrefabInstance:
         type: 3}
       propertyPath: ShapeModule.radius.value
       value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8256360651854118586, guid: 9ebbdd07aee2f4a0080124bdc15ba847,
+        type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 256
       objectReference: {fileID: 0}
     - target: {fileID: 8256360651854118586, guid: 9ebbdd07aee2f4a0080124bdc15ba847,
         type: 3}

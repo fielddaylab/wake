@@ -24,6 +24,7 @@ namespace Aqua {
 
         [SerializeField, HideInEditor] private TMP_Text m_Text = null;
         [SerializeField] internal TextId m_DefaultText = default(TextId);
+        [SerializeField] private bool m_TintSprites = false;
 
         [Header("Modifications")]
         [SerializeField] private string m_Prefix = null;
@@ -147,6 +148,7 @@ namespace Aqua {
         #region Unity Events
 
         private void OnEnable() {
+            m_Text.tintAllSprites = m_TintSprites;
             Services.Loc.RegisterText(this);
 
             if (!m_Initialized && !Services.Loc.IsLoading()) {

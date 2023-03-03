@@ -53,7 +53,7 @@ namespace Aqua.Title
 
         private void LateUpdate() {
             if (m_AllowSkip) {
-                if (Services.Input.DoubleClick() || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Escape)) {
+                if (Script.SkipPressed()) {
                     m_AllowSkip = false;
                     m_SkipRoutine.Replace(this, Skip()).Tick();
                 }
