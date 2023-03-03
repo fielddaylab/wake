@@ -201,6 +201,20 @@ namespace Aqua.Compression {
                 child.SetSiblingIndex(ioSiblingIndex++);
                 FlattenHierarchyRecursive(child, inParent, ref ioSiblingIndex);
             }
+
+            NormalizeSize(transform as RectTransform);
+        }
+
+        static private void NormalizeSize(RectTransform rectTransform) {
+            if (!rectTransform || rectTransform.GetComponent<TMP_Text>()) {
+                return;
+            }
+
+            Vector2 scale = rectTransform.localScale;
+            Vector2 sizeDelta = rectTransform.sizeDelta;
+            sizeDelta *= scale;
+            rectTransform.sizeDelta = sizeDelta;
+            rectTransform.localScale = Vector3.one;
         }
 
         #endregion // Flatten

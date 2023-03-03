@@ -18,6 +18,9 @@ namespace Aqua.Compression {
 
         [MethodImpl(256)]
         static public byte Encode8(CompressionRange range, float value) {
+            if (value < range.Min || value > range.Max) {
+                Debug.LogWarningFormat("[CompressionRange.Encode8] Value {0} fell outside encoding range {1}-{2}, data loss likely", value, range.Min, range.Max);
+            }
             float inv = Mathf.Clamp01((value - range.Min) / (range.Max - range.Min));
             return (byte) (inv * Limit8);
         }
@@ -36,6 +39,9 @@ namespace Aqua.Compression {
 
         [MethodImpl(256)]
         static public ushort Encode16(CompressionRange range, float value) {
+            if (value < range.Min || value > range.Max) {
+                Debug.LogWarningFormat("[CompressionRange.Encode8] Value {0} fell outside encoding range {1}-{2}, data loss likely", value, range.Min, range.Max);
+            }
             float inv = Mathf.Clamp01((value - range.Min) / (range.Max - range.Min));
             return (ushort) (inv * Limit16);
         }
