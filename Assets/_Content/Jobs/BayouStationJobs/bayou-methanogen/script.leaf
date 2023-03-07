@@ -55,16 +55,25 @@
 @when   !ArgueIsComplete(MethanoArg)
 @cutscene
 {@profBayou}  Well then, let's dive in.
-              How are the {pluralnameof Methanogen} able to thrive in such a hostile environment?
+$branch .argue.mainQuestion
+
+:: argue.mainQuestion
+{@profBayou}    How are the {pluralnameof Methanogen} able to thrive in such a hostile environment?
 $if ArgueIsComplete(MethanoTemp), !ArgueIsComplete(MethanoMeta)
-    $choice .argue.metabolize;  They metabolize methane.
+    $choice .argue.metabolize;  They consume hydrogen.
+    $choice .argue.uniquelyAdapted;  They are uniquely adapted for this environment.
+    $choice .argue.giveUpMain; Let me get back to you.
     $choose branch
 $elseif ArgueIsComplete(MethanoMeta), !ArgueIsComplete(MethanoTemp)
     $choice .argue.immune;  They're immune to heat.
+    $choice .argue.uniquelyAdapted;  They are uniquely adapted for this environment.
+    $choice .argue.giveUpMain; Let me get back to you.
     $choose branch
 $else
     $choice .argue.immune;  They're immune to heat.
-    $choice .argue.metabolize;  They metabolize methane.
+    $choice .argue.metabolize;  They consume hydrogen.
+    $choice .argue.uniquelyAdapted;  They are uniquely adapted for this environment.
+    $choice .argue.giveUpMain; Let me get back to you.
     $choose branch
 $endif
 
@@ -95,26 +104,45 @@ $choice #argueFactSet; Present facts from AQOS
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
+:: argue.uniquelyAdapted
+$call ArgueLoad(MethanoUnique)
+{@profBayou}   And just how are they adapted to the environment?
+$if ArgueSetClaim(Claim, jobs.bayou-methanogen.argue.claimLabel3) 
+    $call ArgueFactSlot(Methanogen.Eats.H_Gas)
+    $call ArgueFactSlot(Methanogen.Temperature.Stressed) 
+    $call ArgueFactSlot(Methanogen.PH.Stressed) 
+$endif
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.completeUnique
+    $answer *, .argue.unrelatedUnique
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
 :: argue.completeTemp
 $call ArgueComplete()
-$call ArgueUnload()
-$call ArgueClearFacts()
-$goto .aruge.swap
+$branch .argue.swap
 
 :: argue.completeMeta
 $call ArgueComplete()
-$call ArgueUnload()
-$call ArgueClearFacts()
-$goto .aruge.swap
+$branch .argue.swap
 
-:: aruge.swap
-$call ArgueUnload()
+:: argue.completeUnique
+$call ArgueComplete()
+$branch .argue.complete
+
+:: argue.swap
 $if !ArgueIsComplete(MethanoTemp)
-    $goto .argue.immune
+    {@profBayou}    Indeed, they can satisfy their dietary needs through the hydrogen...
+                    But that doesn’t explain how they can withstand such extreme heat.
+    $branch .argue.mainQuestion
 $elseif !ArgueIsComplete(MethanoMeta)
-    $goto .argue.metabolize
+    {@profBayou}    Indeed, they are resistant to temperature...
+                    But that doesn’t explain where they get energy to survive.
+    $branch .argue.mainQuestion
+$else
+    $branch .argue.complete
 $endif
-$goto .argue.complete
 
 :: argue.unrelatedImmune
 $if ArgueIsFactSubmitted(Methanogen.Light.Stressed) 
@@ -127,21 +155,28 @@ $else
     {@profBayou} That's admittedly fascinating, Ollie, but it's not useful here. 
 $endif
 $call ArgueRejectIncorrect()
-$goto .argue.immune
+$branch .argue.immune
 
 :: argue.unrelatedMetabolize
     {@profBayou} That's interesting, Ollie, but it doesn't answer my question.
 $call ArgueRejectIncorrect()
-$goto .argue.metabolize
+$branch .argue.metabolize
+
+:: argue.unrelatedUnique
+    {@profBayou}    That's interesting, Ollie, but it doesn't answer my question.
+$call ArgueRejectIncorrect()
+$branch .argue.uniquelyAdapted
 
 :: argue.giveUp
 {@profBayou} Okay, Ollie. Please get back to me when you're ready. 
 $call ArgueCancelClaim()
 $call ArgueUnload()
 
+:: argue.giveUpMain
+{@profBayou} Okay, Ollie. Please get back to me when you're ready. 
+
 // END
 :: argue.complete
-$call ArgueComplete(MethanoArg)
 {@profBayou} This is all so fascinating. Thank you for your help, O.
              You really are a natural at this. 
 {@player}    Thanks, {nameof @profBayou}. I was happy to help! 
