@@ -87,7 +87,13 @@ namespace Aqua {
                 } else {
                     image = entity.ImageSet();
                 }
-                if (entity.Category() == BestiaryDescCategory.Critter) {
+                if (entity.HasFlags(BestiaryDescFlags.IsNotLiving)) {
+                    return Services.UI.Popup.PresentFacts(
+                        Loc.Format("ui.popup.newBestiary.critter.nonLiving.header", entity.CommonName()),
+                        descriptionOverride ?? Loc.Find(entity.Description()),
+                        image,
+                        new PopupFacts(allFacts));
+                } else if (entity.Category() == BestiaryDescCategory.Critter) {
                     return Services.UI.Popup.PresentFacts(
                         Loc.Format("ui.popup.newBestiary.critter.header", entity.CommonName()),
                         descriptionOverride ?? Loc.Find(entity.Description()),

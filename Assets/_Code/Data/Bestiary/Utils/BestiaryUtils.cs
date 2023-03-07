@@ -376,19 +376,31 @@ namespace Aqua
         }
 
         /// <summary>
+        /// Formats a mass amount.
+        /// </summary>
+        static public string FormatMassRate(float inAmount)
+        {
+            return BestiaryUtils.Property(WaterPropertyId.Mass).FormatRate(inAmount);
+        }
+
+        /// <summary>
         /// Formats population for a given critter type.
         /// </summary>
-        static public string FormatPopulation(BestiaryDesc inCritter, uint inPopulation)
+        static public string FormatPopulation(BestiaryDesc inCritter, uint inPopulation, string prefix = null)
         {
             if (inCritter.HasFlags(BestiaryDescFlags.TreatAsHerd))
             {
                 BFBody body = inCritter.FactOfType<BFBody>();
                 float mass = body.MassDisplayScale * body.MassPerPopulation * inPopulation;
-                return Property(WaterPropertyId.Mass).FormatValue(mass);
+                return Property(WaterPropertyId.Mass).FormatValue(mass, prefix);
             }
             else
             {
-                return inPopulation.ToString();
+                if (string.IsNullOrEmpty(prefix)) {
+                    return inPopulation.ToStringLookup();
+                } else {
+                    return string.Concat(prefix, inPopulation.ToStringLookup());
+                }
             }
         }
 
@@ -398,6 +410,14 @@ namespace Aqua
         static public string FormatProperty(float inAmount, WaterPropertyId inPropertyId)
         {
             return BestiaryUtils.Property(inPropertyId).FormatValue(inAmount);
+        }
+
+        /// <summary>
+        /// Formats a property rate.
+        /// </summary>
+        static public string FormatPropertyRate(float inAmount, WaterPropertyId inPropertyId)
+        {
+            return BestiaryUtils.Property(inPropertyId).FormatRate(inAmount);
         }
 
         /// <summary>

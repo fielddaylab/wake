@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using BeauPools;
 using BeauUtil;
 using EasyAssetStreaming;
@@ -11,6 +12,8 @@ namespace Aqua
     [CreateAssetMenu(menuName = "Aqualab System/Water Property Description", fileName = "NewWaterProp")]
     public class WaterPropertyDesc : DBObject, IEditorOnlyData
     {
+        public const string RateUnit = "t";
+
         #region Inspector
 
         [SerializeField, AutoEnum] private WaterPropertyId m_Index = WaterPropertyId.Oxygen;
@@ -59,10 +62,48 @@ namespace Aqua
         public TextId StateChangeStressOnlyFormat() { return m_StateChangeStressOnlyFormat; }
         public TextId StateChangeUnaffectedFormat() { return m_StateChangeUnaffectedFormat; }
         
-        public string FormatValue(float inValue)
+        public string FormatValue(float inValue, string prefix = null)
         {
-            double value = inValue;
-            int sign = Math.Sign(inValue);
+            AdjustScale(ref inValue, out string unitPrefix);
+
+            using(PooledStringBuilder psb = PooledStringBuilder.Create()) {
+                if (!string.IsNullOrEmpty(prefix)) {
+                    psb.Builder.Append(prefix);
+                }
+                FormatValue(psb.Builder, inValue, m_SignificantDigits, unitPrefix, m_Units);
+                return psb.Builder.Flush();
+            }
+        }
+
+        public string FormatRate(float inValue, string prefix = null)
+        {
+            AdjustScale(ref inValue, out string unitPrefix);
+
+            using(PooledStringBuilder psb = PooledStringBuilder.Create()) {
+                if (!string.IsNullOrEmpty(prefix)) {
+                    psb.Builder.Append(prefix);
+                }
+                FormatValue(psb.Builder, inValue, m_SignificantDigits, null, m_Units);
+                psb.Builder.Append('/').Append(RateUnit);
+                return psb.Builder.Flush();
+            }
+        }
+
+        private void AdjustScale(ref float val, out string unitPrefix) {
+            if (HasFlags(WaterPropertyFlags.AllowKilo) && Math.Abs(val) >= 1500) {
+                val /= 1000;
+                unitPrefix = "K";
+            } else if (HasFlags(WaterPropertyFlags.AllowMilli) && Math.Abs(val) < 0.01) {
+                val *= 1000;
+                unitPrefix = "m";
+            } else {
+                unitPrefix = null;
+            }
+        }
+
+        static private void FormatValue(StringBuilder sb, float valueF, int significantDigits, string preUnits, string units) {
+            double value = valueF;
+            int sign = Math.Sign(value);
             value = Math.Abs(value);
             int exponent = 0;
             if (value > 1000) {
@@ -79,14 +120,14 @@ namespace Aqua
 
             value *= sign;
 
-            using(PooledStringBuilder psb = PooledStringBuilder.Create()) {
-                psb.Builder.AppendNoAlloc(value, m_SignificantDigits, 0);
-                if (exponent != 0) {
-                    psb.Builder.Append("e").AppendNoAlloc(exponent);
-                }
-                psb.Builder.Append(m_Units);
-                return psb.Builder.Flush();
+            sb.AppendNoAlloc(value, significantDigits, 0);
+            if (exponent != 0) {
+                sb.Append("e").AppendNoAlloc(exponent);
             }
+            if (preUnits != null) {
+                sb.Append(preUnits);
+            }
+            sb.Append(units);
         }
 
         public float MinValue() { return m_MinValue; }
@@ -127,6 +168,8 @@ namespace Aqua
     public enum WaterPropertyFlags : ushort
     {
         IsResource = 0x01,
-        IsProperty = 0x02
+        IsProperty = 0x02,
+        AllowKilo = 0x04,
+        AllowMilli = 0x08
     }
 }

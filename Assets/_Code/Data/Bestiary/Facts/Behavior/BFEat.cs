@@ -54,7 +54,7 @@ namespace Aqua {
             {
                 if (BFType.HasRate(inFlags))
                 {
-                    yield return BFFragment.CreateAmount(BestiaryUtils.FormatMass(fact.Amount));
+                    yield return BFFragment.CreateAmount(BestiaryUtils.FormatMassRate(fact.Amount));
                 }
                 yield return BFFragment.CreateLocNoun(fact.Critter.CommonName());
                 yield return BFFragment.CreateLocVerb(bIsHuman ? IsCaughtByVerb : IsEatenByVerb);
@@ -66,7 +66,7 @@ namespace Aqua {
                 yield return BFFragment.CreateLocVerb(bIsHuman ? CatchVerb : EatVerb);
                 if (BFType.HasRate(inFlags))
                 {
-                    yield return BFFragment.CreateAmount(BestiaryUtils.FormatMass(fact.Amount));
+                    yield return BFFragment.CreateAmount(BestiaryUtils.FormatMassRate(fact.Amount));
                 }
                 yield return BFFragment.CreateLocNoun(fact.Critter.CommonName());
             }
