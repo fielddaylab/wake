@@ -295,7 +295,7 @@ namespace UnityEngine.U2D.Animation
         void LateUpdate()
 #endif
         {
-            if (!CanStaggeredUpdate()) {
+            if (!CheckStaggeredUpdate()) {
                 return;
             }
 
@@ -323,7 +323,7 @@ namespace UnityEngine.U2D.Animation
         }
 
         [MethodImpl(256)]
-        bool CanStaggeredUpdate() {
+        bool CheckStaggeredUpdate() {
             return m_StaggerUpdateRate <= 1 || ((s_StaggeredUpdateCounter - m_StaggerUpdateOffset) % m_StaggerUpdateRate) == 0;
         }
 

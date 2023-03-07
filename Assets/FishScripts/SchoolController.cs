@@ -21,7 +21,7 @@ using Aqua;
 using System.Collections;
 
 [DefaultExecutionOrder(-1)]
-public class SchoolController : MonoBehaviour, ScriptableBake.IBaked, IScenePreloader {
+public class SchoolController : MonoBehaviour, ScriptableBake.IBaked, IScenePreloader, IEditorOnlyData {
 	
 	public SchoolChild[] _childPrefab;			// Assign prefab with SchoolChild script attached
 	public bool _groupChildToNewTransform;	// Parents fish transform to school transform
@@ -81,6 +81,8 @@ public class SchoolController : MonoBehaviour, ScriptableBake.IBaked, IScenePrel
 	[NonSerialized] public float _newDelta;
 	[NonSerialized] public int _updateCounter;
 	[NonSerialized] public int _activeChildren;
+
+    [NonSerialized] private float m_AutoRandomWaypointTimer;
 	
 	public void Awake() {
 		_posBuffer = transform.position + _posOffset;
@@ -94,7 +96,7 @@ public class SchoolController : MonoBehaviour, ScriptableBake.IBaked, IScenePrel
         foreach(var child in _roamers) {
             child.Initialize();
         }
-        Invoke("AutoRandomWaypointPosition", RandomWaypointTime());
+        m_AutoRandomWaypointTimer = RandomWaypointTime();
         return null;
     }
 	
@@ -108,6 +110,11 @@ public class SchoolController : MonoBehaviour, ScriptableBake.IBaked, IScenePrel
 				_newDelta = Time.deltaTime;
 			}
 			UpdateFishAmount();
+
+            m_AutoRandomWaypointTimer -= Time.deltaTime;
+            if (m_AutoRandomWaypointTimer <= 0) {
+                AutoRandomWaypointPosition();
+            }
 		}
 	}
 	
@@ -181,8 +188,7 @@ public class SchoolController : MonoBehaviour, ScriptableBake.IBaked, IScenePrel
 		if(_autoRandomPosition && _activeChildren > 0){
 			SetRandomWaypointPosition();
 		}
-		CancelInvoke("AutoRandomWaypointPosition");
-		Invoke("AutoRandomWaypointPosition", RandomWaypointTime());
+        m_AutoRandomWaypointTimer = RandomWaypointTime();
 	}
 	
 	public float RandomWaypointTime(){
@@ -210,6 +216,10 @@ public class SchoolController : MonoBehaviour, ScriptableBake.IBaked, IScenePrel
 	    Gizmos.color = Color.cyan;
 	    Gizmos.DrawWireCube (transform.position, new Vector3((_positionSphere*2)+_spawnSphere*2, (_positionSphereHeight*2)+_spawnSphereHeight*2 ,(_positionSphereDepth*2)+_spawnSphereDepth*2));
 	}
+
+    void IEditorOnlyData.ClearEditorOnlyData() {
+        _childPrefab = null;
+    }
 
 #endif // UNITY_EDITOR
 }

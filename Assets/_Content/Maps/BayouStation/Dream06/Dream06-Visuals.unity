@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -8345,6 +8345,7 @@ GameObject:
   m_Component:
   - component: {fileID: 586416509}
   - component: {fileID: 586416510}
+  - component: {fileID: 586416511}
   m_Layer: 29
   m_Name: RigCollider (3)
   m_TagString: Untagged
@@ -8382,6 +8383,19 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.59
+--- !u!114 &586416511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 586416508}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff0499bec43194bbd56b29aafc250f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Material: 4
 --- !u!4 &594231192 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 0d8149d1b7665ea468f5fc2da43754b2,
@@ -8433,6 +8447,7 @@ GameObject:
   m_Component:
   - component: {fileID: 608220167}
   - component: {fileID: 608220168}
+  - component: {fileID: 608220169}
   m_Layer: 29
   m_Name: RigCollider (1)
   m_TagString: Untagged
@@ -8470,6 +8485,19 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.59
+--- !u!114 &608220169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 608220166}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff0499bec43194bbd56b29aafc250f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Material: 4
 --- !u!1 &614750936
 GameObject:
   m_ObjectHideFlags: 0
@@ -9379,6 +9407,7 @@ GameObject:
   m_Component:
   - component: {fileID: 768935216}
   - component: {fileID: 768935217}
+  - component: {fileID: 768935218}
   m_Layer: 29
   m_Name: RigCollider (2)
   m_TagString: Untagged
@@ -9416,6 +9445,19 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.99
+--- !u!114 &768935218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 768935215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff0499bec43194bbd56b29aafc250f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Material: 4
 --- !u!1 &774504609
 GameObject:
   m_ObjectHideFlags: 0
@@ -16901,6 +16943,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1179701326}
   - component: {fileID: 1179701327}
+  - component: {fileID: 1179701328}
   m_Layer: 29
   m_Name: RigCollider
   m_TagString: Untagged
@@ -16938,6 +16981,19 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.99
+--- !u!114 &1179701328
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1179701325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff0499bec43194bbd56b29aafc250f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Material: 4
 --- !u!1 &1183290199
 GameObject:
   m_ObjectHideFlags: 0
@@ -50821,20 +50877,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 27
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!64 &1853991946
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919132147653841238}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -1291880792337311798, guid: 2d64702fe14fe44d2a60ada4fe6fdb9b, type: 3}
 --- !u!1 &1854406462
 GameObject:
   m_ObjectHideFlags: 0
@@ -72977,7 +73019,6 @@ GameObject:
   - component: {fileID: 543450651846036460}
   - component: {fileID: 3469287837977003081}
   - component: {fileID: 1711813855256195203}
-  - component: {fileID: 1853991946}
   m_Layer: 0
   m_Name: OilRigPier00
   m_TagString: Untagged

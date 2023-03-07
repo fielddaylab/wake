@@ -12,7 +12,7 @@ namespace Aqua.Option
         [SerializeField] private CheckboxOption m_FullscreenToggle = null;
         [SerializeField] private ToggleOptionBar m_AnimationQuality = null;
         [SerializeField] private ToggleOptionBar m_ParticleQuality = null;
-        [SerializeField] private Button m_AutoDetectButton = null;
+        [SerializeField] private ButtonOption m_AutoDetectButton = null;
 
         #endregion // Inspector
 
@@ -43,7 +43,7 @@ namespace Aqua.Option
                 "options.quality.fullscreen.tooltip", OnFullscreenChanged);
 
             if (m_AutoDetectButton) {
-                m_AutoDetectButton.onClick.AddListener(OnAutoDetectClicked);
+                m_AutoDetectButton.Initialize("options.quality.autoDetect.label", "options.quality.autoDetect.tooltip", OnAutoDetectClicked);
             }
         }
 
@@ -104,7 +104,18 @@ namespace Aqua.Option
         }
         
         private void OnAutoDetectClicked() {
-            // TODO: Implement
+            if (SystemInfo.graphicsMemorySize < 64 || SystemInfo.graphicsShaderLevel < 25 || SystemInfo.maxTextureSize < 9000) {
+                Data.Performance.Resolution = OptionsPerformance.ResolutionMode.Minimum;
+                Data.Performance.AnimationQuality = OptionsPerformance.FeatureMode.Low;
+            } else if (SystemInfo.systemMemorySize >= 128 && SystemInfo.graphicsMemorySize >= 256 && SystemInfo.maxTextureSize > 9000) {
+                Data.Performance.Resolution = OptionsPerformance.ResolutionMode.High;
+                Data.Performance.AnimationQuality = OptionsPerformance.FeatureMode.High;
+            } else {
+                Data.Performance.Resolution = OptionsPerformance.ResolutionMode.Moderate;
+                Data.Performance.AnimationQuality = OptionsPerformance.FeatureMode.Medium;
+            }
+            
+            Load(Data);
         }
 
         #if UNITY_WEBGL

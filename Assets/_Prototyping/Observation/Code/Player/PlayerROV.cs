@@ -26,6 +26,10 @@ namespace ProtoAqua.Observation
         static public readonly StringHash32 Trigger_ToolActivated = "ToolActivated";
         static public readonly StringHash32 Trigger_ToolDeactivated = "ToolDeactivated";
 
+        static public readonly StringHash32 Trigger_Dashed = "ROVDashed";
+        static public readonly StringHash32 Trigger_DashCollision = "ROVDashCollision";
+        static public readonly StringHash32 Trigger_HardCollision = "ROVHardCollision";
+
         #region Types
 
         static private readonly string[] ToolIdToString = Enum.GetNames(typeof(ToolId));
@@ -174,6 +178,8 @@ namespace ProtoAqua.Observation
         [NonSerialized] private float m_MouseLookScale = 1;
         [NonSerialized] private float m_DashLeft = 0;
         [NonSerialized] private Vector2 m_InitialDashVector;
+
+        [NonSerialized] private CollisionResponseSystem m_CollisionResponder;
 
         private void Start()
         {
@@ -402,28 +408,43 @@ namespace ProtoAqua.Observation
             int contactCount = m_Kinematics.ContactCount;
             PhysicsContact* contacts = m_Kinematics.Contacts;
             PhysicsContact contact;
+            ColliderMaterialId materialId;
+            float z = m_Transform.position.z;
 
             bool impacted = false;
             bool slid = false;
             for(int i = 0; i < contactCount; i++) {
                 contact = contacts[i];
+                materialId = ColliderMaterial.Find(contact.Collider.Cast<Collider2D>());
                 if (contact.Impact > 4 && !impacted) {
                     Log.Msg("[PlayerROV] Impacted wall, reducing velocity");
                     impacted = true;
                     if (contact.Impact > 8) {
-                        Services.Camera.AddShake(contact.State.Velocity.normalized * 0.15f, new Vector2(0.15f, 0.15f), 0.5f);
                         m_Kinematics.State.Velocity *= 0.25f;
                         m_DashLeft *= 0.25f;
                         m_Input.ClearDash();
-                        // TODO: Play impact noise
-                        // TODO: Play impact effect
+                        if (materialId != ColliderMaterialId.Invisible) {
+                            Services.Camera.AddShake(contact.State.Velocity.normalized * 0.15f, new Vector2(0.15f, 0.15f), 0.5f);
+                            m_CollisionResponder?.Queue(materialId, CollisionResponseSystem.ImpactType.Heavy, PhysicsContact.OnPlane(contact.Point, z), contact.Normal, 1);
+                            // TODO: Play impact noise
+
+                            if (m_DashDuration > 0) {
+                                Services.Script.QueueTriggerResponse(Trigger_DashCollision, -10000);
+                            } else {
+                                Services.Script.QueueTriggerResponse(Trigger_HardCollision, -10000);
+                            }
+                        } else {
+                            Services.Camera.AddShake(contact.State.Velocity.normalized * 0.06f, new Vector2(0.15f, 0.15f), 0.4f);
+                        }
                     } else {
                         m_Kinematics.State.Velocity *= 0.5f;
                         m_DashLeft *= 0.5f;
-                        // TODO: Play impact noise
-                        // TODO: Play impact effect
+                        if (materialId != ColliderMaterialId.Invisible) {
+                            m_CollisionResponder?.Queue(materialId, CollisionResponseSystem.ImpactType.Light, PhysicsContact.OnPlane(contact.Point, z), contact.Normal, 1);
+                            // TODO: Play impact noise
+                        }
                     }
-                } else if (contact.Impact > 1f && contact.Impact < 3 && !slid) {
+                } else if (contact.Impact > 0.5f && contact.Impact < 3 && !slid) {
                     slid = true;
                     Log.Msg("[PlayerROV] Sliding on wall, reducing velocity");
                     m_Kinematics.State.Velocity *= 0.7f;
@@ -631,6 +652,8 @@ namespace ProtoAqua.Observation
 
         void ISceneLoadHandler.OnSceneLoad(SceneBinding inScene, object inContext)
         {
+            m_CollisionResponder = Services.State.FindManager<CollisionResponseSystem>();
+
             ToolId lastToolId = ToolId.NONE;
             if (Save.Inventory.HasUpgrade(ItemIds.ROVScanner)) {
                 lastToolId = ToolId.Scanner;

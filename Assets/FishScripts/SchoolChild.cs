@@ -35,7 +35,7 @@ public class SchoolChild : MonoBehaviour
 	[NonSerialized] private int _updateSeed = -1;
     [NonSerialized] private float randomAnimSpeed;
 	[NonSerialized] private  Transform _cacheTransform;
-	
+	[NonSerialized] private float m_WanderDelay;
 
 #if UNITY_EDITOR
 	public static bool _sWarning;
@@ -91,6 +91,13 @@ public class SchoolChild : MonoBehaviour
 			ForwardMovement();
 			RayCastToPushAwayFromObstacles();
 			SetAnimationSpeed();
+
+            if (m_WanderDelay > 0) {
+                m_WanderDelay -= _spawner._newDelta;
+                if (m_WanderDelay <= 0) {
+                    SetRandomWaypoint();
+                }
+            }
 		}
 	}
 
@@ -119,6 +126,7 @@ public class SchoolChild : MonoBehaviour
 	private void OnDisable()
 	{
 		CancelInvoke();
+        m_WanderDelay = 0;
         if (_instantiated) {
 		    _spawner._activeChildren--;
         }
@@ -311,7 +319,7 @@ public class SchoolChild : MonoBehaviour
 	{
 		_damping = RNG.Instance.NextFloat(_spawner._minDamping, _spawner._maxDamping);
 		_targetSpeed = RNG.Instance.NextFloat(_spawner._minSpeed, _spawner._maxSpeed) * _spawner._speedCurveMultiplier.Evaluate(RNG.Instance.NextFloat()) * _spawner._schoolSpeed;
-		Invoke("SetRandomWaypoint", delay);
+		m_WanderDelay = Math.Max(delay, 0.01f);
 	}
 
 	public void SetRandomWaypoint()

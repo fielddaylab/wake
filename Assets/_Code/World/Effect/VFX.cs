@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using BeauPools;
 using UnityEngine.UI;
+using System.Collections;
 
 namespace Aqua
 {
@@ -20,9 +21,33 @@ namespace Aqua
         [NonSerialized] public Routine Animation;
         private IPool<VFX> m_Source;
 
+        public void Play() {
+            if (Particles != null) {
+                Particles.Play();
+            }
+        }
+
+        public void Play(IEnumerator anim) {
+            if (Particles != null) {
+                Particles.Play();
+            }
+
+            if (anim != null) {
+                Animation.Replace(this, anim);
+            }
+        }
+
         public void Free()
         {
             m_Source.Free(this);
+        }
+
+        public bool IsCompleted() {
+            if (Particles != null && Particles.IsAlive(true)) {
+                return false;
+            }
+
+            return !Animation;
         }
 
         #region IPooledObject
@@ -47,5 +72,18 @@ namespace Aqua
         }
 
         #endif // UNITY_EDITOR
+
+        static public readonly Predicate<VFX> CompletedPredicate = (v) => {
+            return v.IsCompleted();
+        };
+
+        static public readonly Predicate<VFX> FreeOnCompletedPredicate = (v) => {
+            if (v.IsCompleted()) {
+                v.Free();
+                return true;
+            }
+
+            return false;
+        };
     }
 }

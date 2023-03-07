@@ -226,3 +226,97 @@ $call GiveFact(GoassamerWorm.Eats.Detritus, Silent)
 $call GiveFact(MysidShrimp.Eats.Detritus, Silent)
 
 $call GiveFact(ViperFish.Eats.GoassamerWorm, Silent)
+
+// fun little responses
+
+:: dashRamIntoWall.increment
+@function    ROVDashCollision
+$if TimeElapsed($temp:lastDashImpactTS, 3) // max three second intervals between collisions to trigger this
+    $set         temp:dashImpactCounter = 1
+$else
+    $set        temp:dashImpactCounter + 1
+
+    $if temp:dashImpactCounter > player:maxDashImpactsInRow
+        $set    player:maxDashImpactsInRow = temp:dashImpactCounter
+    $endif
+$endif
+
+$set        temp:lastDashImpactTS = time:now
+
+:: dashRamIntoWall.talkAfterALot
+@trigger    RequestPartnerHelp 
+@when       !global:seriousMode, !TimeElapsed($temp:lastDashImpactTS, 15), temp:dashImpactCounter >= 20
+@once
+@cutscene
+$set    player:hadDashImpactDizzyConversation = true
+{@player}   V...{wait 0.5} I'm a |little| dizzy.
+{@guide #confused} There is a 95.2% chance that is a |direct| result of repeated collisions.
+{@player}   {slow}...Right.| I need a moment.{/slow}
+{hide-dialog} {fade-out black, 1, wait} {wait 2} {fade-in 1, wait} {wait 0.2}
+{@guide #raisedEyebrow}    Are you feeling better, O?
+{hide-dialog} {wait 1.8}
+{@player}   Probably.
+
+:: dashRamIntoWall.firstWarning
+@trigger    ROVDashCollision
+@when       !global:seriousMode, temp:dashImpactCounter >= 5
+@who        guide
+@boostScore 10
+@cutscene
+@once
+$set    temp:dashImpactCounter = 0
+$set    temp:lastDashImpactTS = 0
+{wait 1}
+{@guide #narrow}    O, I predict a 34.9% chance of damage if you continue to ram us into things.
+$if HasUpgrade("Hull")
+    {@player}   Relax, V. Won't the {nameof Hull} protect us?
+    {@guide} From pressure?| Yes.{wait 0.5}{#narrow} From a puncture as the result of collision?| Less likely.
+$else
+    {@player}   Relax, V. I'm being careful.
+    {@guide #narrow}    ...I am obligated to note you also run the risk of a concussion.
+$endif
+
+:: dashRamIntoWall.warning.1
+@trigger    ROVDashCollision
+@when       !global:seriousMode, temp:dashImpactCounter == 5
+@who        guide
+@chatter
+@repeat     2
+@once
+{@guide}    O... what are you doing?
+
+:: dashRamIntoWall.warning.2
+@trigger    ROVDashCollision
+@when       !global:seriousMode, temp:dashImpactCounter == 10
+@who        guide
+@interrupt
+@chatter
+@repeat     2
+{@guide}    Are you doing this intentionally?
+
+:: dashRamIntoWall.warning.3
+@trigger    ROVDashCollision
+@when       !global:seriousMode, temp:dashImpactCounter == 15
+@who        guide
+@interrupt
+@chatter
+@repeat     2
+{@guide}    There is a chance of a hull puncture if you continue.
+
+:: dashRamIntoWall.warning.4
+@trigger    ROVDashCollision
+@when       !global:seriousMode, temp:dashImpactCounter == 20
+@who        guide
+@interrupt
+@chatter
+@repeat     2
+{@guide}    Are you even listening to me, O?
+
+:: dashRamIntoWall.warning.5
+@trigger    ROVDashCollision
+@when       !global:seriousMode, temp:dashImpactCounter == 25
+@who        guide
+@interrupt
+@chatter
+@once
+{@guide}    ...logging incident...
