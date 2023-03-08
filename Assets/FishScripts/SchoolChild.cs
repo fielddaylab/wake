@@ -43,7 +43,7 @@ public class SchoolChild : MonoBehaviour
 
     static private int AnimParam_FishAnimSpeed;
     static private MaterialPropertyBlock s_PropertyBlock;
-	static int _updateNextSeed = 0; //When using frameskip seed will prevent calculations for all fish to be on the same frame
+	static uint _updateNextSeed = 0; //When using frameskip seed will prevent calculations for all fish to be on the same frame
 
 	public void Initialize()
 	{
@@ -105,10 +105,9 @@ public class SchoolChild : MonoBehaviour
 	{
 		if (_spawner._updateDivisor > 1)
 		{
-			int _updateSeedCap = _spawner._updateDivisor - 1;
+			int _updateSeedCap = _spawner._updateDivisor;
+			this._updateSeed = (int) (_updateNextSeed % _updateSeedCap);
 			_updateNextSeed++;
-			this._updateSeed = _updateNextSeed;
-			_updateNextSeed = _updateNextSeed % _updateSeedCap;
 		}
 	}
 

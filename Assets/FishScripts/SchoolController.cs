@@ -19,6 +19,7 @@ using System;
 using BeauUtil;
 using Aqua;
 using System.Collections;
+using Aqua.Option;
 
 [DefaultExecutionOrder(-1)]
 public class SchoolController : MonoBehaviour, ScriptableBake.IBaked, IScenePreloader, IEditorOnlyData {
@@ -88,16 +89,44 @@ public class SchoolController : MonoBehaviour, ScriptableBake.IBaked, IScenePrel
 		_posBuffer = transform.position + _posOffset;
 		_schoolSpeed = RNG.Instance.NextFloat(1.0f , _childSpeedMultipler);
         enabled = false;
+
+        GameQuality.OnAnimationChanged.Register(OnQualityUpdated);
 	}
+
+    private void OnDestroy() {
+        GameQuality.OnAnimationChanged.DeregisterAll(this);
+    }
 
     IEnumerator IScenePreloader.OnPreloadScene(SceneBinding inScene, object inContext)
     {
         enabled = true;
+        OnQualityUpdated(Save.Options.Performance.AnimationQuality);
         foreach(var child in _roamers) {
             child.Initialize();
         }
         m_AutoRandomWaypointTimer = RandomWaypointTime();
         return null;
+    }
+
+    private void OnQualityUpdated(OptionsPerformance.FeatureMode mode) {
+        SetUpdateDivisor(mode == OptionsPerformance.FeatureMode.High ? 1 : 2);
+    }
+
+    private void SetUpdateDivisor(int update) {
+        if (update < 1) {
+            update = 1;
+        }
+
+        if (_updateDivisor == update) {
+            return;
+        }
+
+        _updateDivisor = update;
+        _updateCounter = _updateCounter % update;
+
+        foreach(var child in _roamers) {
+            child.FrameSkipSeedInit();
+        }
     }
 	
 	public void Update() {
@@ -109,7 +138,7 @@ public class SchoolController : MonoBehaviour, ScriptableBake.IBaked, IScenePrel
 			}else{
 				_newDelta = Time.deltaTime;
 			}
-			UpdateFishAmount();
+			// UpdateFishAmount();
 
             m_AutoRandomWaypointTimer -= Time.deltaTime;
             if (m_AutoRandomWaypointTimer <= 0) {
