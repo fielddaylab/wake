@@ -15,8 +15,7 @@ namespace Aqua
         [Flags]
         public enum AllowedUnitConversions {
             Kilo = 0x01,
-            Milli = 0x02,
-            Tonne = 0x04
+            Milli = 0x02
         }
 
         public const string RateUnit = "t";
@@ -48,6 +47,7 @@ namespace Aqua
         [SerializeField] private float m_MinValue = 0;
         [SerializeField] private float m_MaxValue = 0;
         [SerializeField] private float m_DefaultValue = 0;
+        [SerializeField] private float m_ValueScale = 1;
 
         #endregion
 
@@ -71,6 +71,7 @@ namespace Aqua
         
         public string FormatValue(float inValue, string prefix = null)
         {
+            inValue *= m_ValueScale;
             AdjustScale(ref inValue, GetAllowedConversions(), out string unitPrefix, out string unitOverride);
 
             using(PooledStringBuilder psb = PooledStringBuilder.Create()) {
@@ -84,6 +85,7 @@ namespace Aqua
 
         public string FormatRate(float inValue, string prefix = null)
         {
+            inValue *= m_ValueScale;
             AdjustScale(ref inValue, GetAllowedConversions(), out string unitPrefix, out string unitOverride);
 
             using(PooledStringBuilder psb = PooledStringBuilder.Create()) {
@@ -99,7 +101,7 @@ namespace Aqua
         private AllowedUnitConversions GetAllowedConversions() {
             AllowedUnitConversions units = 0;
             if (HasFlags(WaterPropertyFlags.AllowKilo)) {
-                units |= AllowedUnitConversions.Kilo | AllowedUnitConversions.Tonne;
+                units |= AllowedUnitConversions.Kilo;
             }
             if (HasFlags(WaterPropertyFlags.AllowMilli)) {
                 units |= AllowedUnitConversions.Milli;
@@ -109,12 +111,7 @@ namespace Aqua
 
         static public void AdjustScale(ref float val, AllowedUnitConversions allowedConversions, out string unitPrefix, out string unitOverride) {
             float abs = Math.Abs(val);
-            if ((allowedConversions & AllowedUnitConversions.Tonne) != 0 && abs >= 1100000) {
-                val /= 1000000;
-                unitPrefix = "M";
-                unitOverride = null;
-            }
-            else if ((allowedConversions & AllowedUnitConversions.Kilo) != 0 && abs >= 1100) {
+            if ((allowedConversions & AllowedUnitConversions.Kilo) != 0 && abs >= 1100) {
                 val /= 1000;
                 unitPrefix = "K";
                 unitOverride = null;
@@ -133,7 +130,7 @@ namespace Aqua
             int sign = Math.Sign(value);
             value = Math.Abs(value);
             int exponent = 0;
-            if (value > 1000) {
+            if (value > 10000) {
                 while(value >= 10) {
                     value /= 10;
                     exponent++;

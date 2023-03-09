@@ -125,9 +125,9 @@ namespace Aqua
             });
             m_Log.UseFirebase(m_Firebase);
 
-            #if DEVELOPMENT
+            #if DEVELOPMENT && !UNITY_EDITOR
             m_Debug = true;
-            #endif // DEVELOPMENT
+            #endif // DEVELOPMENT && !UNITY_EDITOR
 
             m_Log.SetDebug(m_Debug);
         }
