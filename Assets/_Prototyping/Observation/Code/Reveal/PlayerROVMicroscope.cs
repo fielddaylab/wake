@@ -97,7 +97,7 @@ namespace ProtoAqua.Observation {
             return 0;
         }
 
-        public float MoveSpeedMultiplier() { return 0.4f; }
+        public float MoveSpeedMultiplier() { return 0.65f; }
 
         public bool UpdateTool(float inDeltaTime, in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
             return false;

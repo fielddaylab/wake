@@ -12,6 +12,13 @@ namespace Aqua
     [CreateAssetMenu(menuName = "Aqualab System/Water Property Description", fileName = "NewWaterProp")]
     public class WaterPropertyDesc : DBObject, IEditorOnlyData
     {
+        [Flags]
+        public enum AllowedUnitConversions {
+            Kilo = 0x01,
+            Milli = 0x02,
+            Tonne = 0x04
+        }
+
         public const string RateUnit = "t";
 
         #region Inspector
@@ -64,44 +71,64 @@ namespace Aqua
         
         public string FormatValue(float inValue, string prefix = null)
         {
-            AdjustScale(ref inValue, out string unitPrefix);
+            AdjustScale(ref inValue, GetAllowedConversions(), out string unitPrefix, out string unitOverride);
 
             using(PooledStringBuilder psb = PooledStringBuilder.Create()) {
                 if (!string.IsNullOrEmpty(prefix)) {
                     psb.Builder.Append(prefix);
                 }
-                FormatValue(psb.Builder, inValue, m_SignificantDigits, unitPrefix, m_Units);
+                FormatValue(psb.Builder, inValue, m_SignificantDigits, unitPrefix, unitOverride ?? m_Units);
                 return psb.Builder.Flush();
             }
         }
 
         public string FormatRate(float inValue, string prefix = null)
         {
-            AdjustScale(ref inValue, out string unitPrefix);
+            AdjustScale(ref inValue, GetAllowedConversions(), out string unitPrefix, out string unitOverride);
 
             using(PooledStringBuilder psb = PooledStringBuilder.Create()) {
                 if (!string.IsNullOrEmpty(prefix)) {
                     psb.Builder.Append(prefix);
                 }
-                FormatValue(psb.Builder, inValue, m_SignificantDigits, null, m_Units);
+                FormatValue(psb.Builder, inValue, m_SignificantDigits, unitPrefix, unitOverride ?? m_Units);
                 psb.Builder.Append('/').Append(RateUnit);
                 return psb.Builder.Flush();
             }
         }
 
-        private void AdjustScale(ref float val, out string unitPrefix) {
-            if (HasFlags(WaterPropertyFlags.AllowKilo) && Math.Abs(val) >= 1500) {
+        private AllowedUnitConversions GetAllowedConversions() {
+            AllowedUnitConversions units = 0;
+            if (HasFlags(WaterPropertyFlags.AllowKilo)) {
+                units |= AllowedUnitConversions.Kilo | AllowedUnitConversions.Tonne;
+            }
+            if (HasFlags(WaterPropertyFlags.AllowMilli)) {
+                units |= AllowedUnitConversions.Milli;
+            }
+            return units;
+        }
+
+        static public void AdjustScale(ref float val, AllowedUnitConversions allowedConversions, out string unitPrefix, out string unitOverride) {
+            float abs = Math.Abs(val);
+            if ((allowedConversions & AllowedUnitConversions.Tonne) != 0 && abs >= 1100000) {
+                val /= 1000000;
+                unitPrefix = "M";
+                unitOverride = null;
+            }
+            else if ((allowedConversions & AllowedUnitConversions.Kilo) != 0 && abs >= 1100) {
                 val /= 1000;
                 unitPrefix = "K";
-            } else if (HasFlags(WaterPropertyFlags.AllowMilli) && Math.Abs(val) < 0.01) {
+                unitOverride = null;
+            } else if ((allowedConversions & AllowedUnitConversions.Milli) != 0 && abs < 0.01) {
                 val *= 1000;
                 unitPrefix = "m";
+                unitOverride = null;
             } else {
                 unitPrefix = null;
+                unitOverride = null;
             }
         }
 
-        static private void FormatValue(StringBuilder sb, float valueF, int significantDigits, string preUnits, string units) {
+        static public void FormatValue(StringBuilder sb, float valueF, int significantDigits, string unitPrefix, string units) {
             double value = valueF;
             int sign = Math.Sign(value);
             value = Math.Abs(value);
@@ -124,8 +151,8 @@ namespace Aqua
             if (exponent != 0) {
                 sb.Append("e").AppendNoAlloc(exponent);
             }
-            if (preUnits != null) {
-                sb.Append(preUnits);
+            if (unitPrefix != null) {
+                sb.Append(unitPrefix);
             }
             sb.Append(units);
         }

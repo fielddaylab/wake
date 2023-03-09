@@ -25,7 +25,7 @@ namespace Aqua.Modeling {
             public uint* ConnectionMasks;
             public uint MovedOutputMask;
             public Vector2* FixedPropertyPositions;
-            public Vector2* MinimumIntersectionResult;
+            public uint RandomState;
         }
 
         private struct MaskableEntry {
@@ -51,6 +51,7 @@ namespace Aqua.Modeling {
         private const int MaxPropertyNodes = (int) WaterProperties.TrackedMax + 1;
         private const int MaxGraphNodes = MaxOrganismNodes + MaxPropertyNodes;
         private const int MaxSolverIterations = 64;
+        private const int MaxGraphRetries = 300;
         private const float SolverVelocityThresholdSq = .1f * .1f;
         private const int ConnectionMaskSize = MaxOrganismNodes + MaxPropertyNodes;
 
@@ -151,10 +152,6 @@ namespace Aqua.Modeling {
             };
         }
 
-        ~ModelWorldDisplay() {
-            Unsafe.TryDestroyArena(ref m_SolverState.Allocator);
-        }
-
         private void Awake() {
             m_WaterChemMap[(int) WaterPropertyId.Light] = m_LightProperty;
             m_WaterChemMap[(int) WaterPropertyId.Temperature] = m_TemperatureProperty;
@@ -178,7 +175,6 @@ namespace Aqua.Modeling {
             m_SolverState.Forces = Unsafe.AllocArray<Vector2>(m_SolverState.Allocator, ConnectionMaskSize);
             m_SolverState.ConnectionMasks = Unsafe.AllocArray<uint>(m_SolverState.Allocator, ConnectionMaskSize);
             m_SolverState.FixedPropertyPositions = m_SolverState.Positions + MaxOrganismNodes;
-            m_SolverState.MinimumIntersectionResult = Unsafe.AllocArray<Vector2>(m_SolverState.Allocator, MaxOrganismNodes);
         }
 
         private unsafe void InitFixedPositions() {
@@ -242,7 +238,7 @@ namespace Aqua.Modeling {
 
         private void LateUpdate() {
             if (m_Canvas.enabled && m_Input.Device.KeyPressed(KeyCode.Y)) {
-                Reconstruct();
+                Reconstruct(true);
             }
         }
 
@@ -264,15 +260,15 @@ namespace Aqua.Modeling {
             Reconstruct();
         }
         
-        public IEnumerator Reconstruct() {
+        public IEnumerator Reconstruct(bool ignorePreviousSeed = false) {
             m_ReconstructHandle.Cancel();
             m_LastConstructedId = m_State.Environment.Id();
-            m_ReconstructHandle = Async.Schedule(ReconstructProcess(), AsyncFlags.HighPriority | AsyncFlags.MainThreadOnly);
+            m_ReconstructHandle = Async.Schedule(ReconstructProcess(ignorePreviousSeed), AsyncFlags.HighPriority | AsyncFlags.MainThreadOnly);
             m_LastConstructedInterventionTarget = m_State.Simulation.Intervention.Target;
             return m_ReconstructHandle;
         }
 
-        private IEnumerator ReconstructProcess() {
+        private IEnumerator ReconstructProcess(bool ignorePreviousSeed) {
             m_OrganismPool.Reset();
             m_ConnectionPool.Reset();
             m_AttachmentPool.Reset();
@@ -321,7 +317,11 @@ namespace Aqua.Modeling {
 
                 BestiaryDesc target = BFType.Target(fact);
                 if (target != null) {
-                    GenerateConnection(fact, fact.Parent, target, Save.Bestiary.GetDiscoveredFlags(fact.Id));
+                    if (fact.Type == BFTypeId.Parasite) {
+                        GenerateConnection(fact, target, fact.Parent, Save.Bestiary.GetDiscoveredFlags(fact.Id));
+                    } else {
+                        GenerateConnection(fact, fact.Parent, target, Save.Bestiary.GetDiscoveredFlags(fact.Id));
+                    }
                 }
 
                 WaterPropertyId property = BFType.WaterProperty(fact);
@@ -372,20 +372,63 @@ namespace Aqua.Modeling {
                 }
             }
 
-            yield return 1;
+            int lineCount = m_ConnectionPool.ActiveObjects.Count;
 
             using(Profiling.Time("solving conceptual model graph")) {
                 int iterations = MaxSolverIterations;
-                while(m_SolverState.MovedOutputMask != 0 && iterations > 0) {
-                    iterations--;
-                    SolveStep(ref m_SolverState, organismCount);
+                uint seed = ignorePreviousSeed ? 0 : m_State.SiteData.GraphLayoutSeed;
+                if (seed == 0) {
+                    seed = (uint) RNG.Instance.Next(1, int.MaxValue);
+                }
+                int tries = MaxGraphRetries;
+                uint bestSeed = 0;
+                float bestScore = float.MaxValue;
+                do {
+                    m_SolverState.RandomState = seed;
+                    iterations = MaxSolverIterations;
+                    RandomizeSolverPositions(ref m_SolverState.RandomState, organismCount);
+                    while(m_SolverState.MovedOutputMask != 0 && iterations > 0) {
+                        iterations--;
+                        SolveStep(ref m_SolverState, organismCount);
+                        yield return null;
+                    }
+                    if (m_SolverState.MovedOutputMask != 0) {
+                        Log.Warn("[ModelWorldDisplay] Graph layout did not reach equilibrium in {0} iterations", MaxSolverIterations - iterations);
+                    }
+
+                    float badness = CalculateArrangementBadness(ref m_SolverState, organismCount, lineCount);
+                    Log.Msg("[ModelWorldDisplay] Solved graph layout (seed {0}) in {1} iterations with badness score {2}", seed, MaxSolverIterations - iterations, badness);
                     yield return null;
+
+                    if (badness < bestScore) {
+                        bestScore = badness;
+                        bestSeed = seed;
+                        if (badness < 0.3f) {
+                            if (tries > 0) {
+                                tries--;
+                            }
+                            break;
+                        }
+                    }
+                    if (tries > 1) {
+                        seed = (uint) RNG.Instance.Next(1, int.MaxValue);
+                    }
+                } while(tries-- > 0);
+
+                Log.Msg("[ModelWorldDisplay] Best graph layout seed is {0} with badness score {1} in {2} tries", bestSeed, bestScore, MaxGraphRetries - tries);
+
+                if (bestSeed != seed) {
+                    m_SolverState.RandomState = bestSeed;
+                    iterations = MaxSolverIterations;
+                    RandomizeSolverPositions(ref m_SolverState.RandomState, organismCount);
+                    while(m_SolverState.MovedOutputMask != 0 && iterations > 0) {
+                        iterations--;
+                        SolveStep(ref m_SolverState, organismCount);
+                        yield return null;
+                    }
                 }
-                if (m_SolverState.MovedOutputMask != 0) {
-                    Log.Warn("[ModelWorldDisplay] Graph layout did not reach equilibrium in {0} iterations", MaxSolverIterations - iterations);
-                } else {
-                    Log.Msg("[ModelWorldDisplay] Solved graph layout in {0} iterations", MaxSolverIterations - iterations);
-                }
+
+                m_State.SiteData.GraphLayoutSeed = bestSeed;
             }
 
             UpdateOrganismPositions(organismCount);
@@ -404,12 +447,18 @@ namespace Aqua.Modeling {
             m_Input.Override = null;
         }
 
+        private unsafe void RandomizeSolverPositions(ref uint rngState, int count) {
+            for(int i = 0; i < count; i++) {
+                m_SolverState.Positions[i] = new Vector2(PseudoRandom.Float(ref rngState, -2, 2), PseudoRandom.Float(ref rngState, -2, 2));
+                m_SolverState.Forces[i] = default;
+            }
+            m_SolverState.MovedOutputMask = (1u << count) - 1;
+        }
+
         private unsafe ModelOrganismDisplay AllocOrganism(BestiaryDesc desc, int index) {
             ModelOrganismDisplay display = m_OrganismPool.Alloc();
             display.Initialize(desc, index, m_OrganismInterventionDelegate, m_State.Simulation.IsOrganismRelevant(desc.Id()) ? WorldFilterMask.Relevant : 0);
             m_OrganismMap.Add(desc.Id(), display);
-            m_SolverState.Positions[index] = new Vector2(RNG.Instance.NextFloat(-2, 2), RNG.Instance.NextFloat(-2, 2));
-            m_SolverState.Forces[index] = default;
             m_SolverState.ConnectionMasks[index] = 0;
 
             #if UNITY_EDITOR
@@ -907,6 +956,63 @@ namespace Aqua.Modeling {
                     solverState.MovedOutputMask |= (1u << a);
                 }
                 *forceA = default;
+            }
+        }
+
+        static private unsafe float CalculateArrangementBadness(ref GraphSolverState solverState, int count, int lineBufferSize) {
+            Vector2 posA, posB;
+            int a, b;
+            uint maskA;
+
+            // more moved pieces
+            float movedScore = Bits.Count(solverState.MovedOutputMask) * 2;
+            
+            // line intersections
+            Vector2* lineComp = stackalloc Vector2[lineBufferSize * 2];
+            int lineCompCount = 0;
+
+            // get all lines
+            for(a = 0; a < count; a++) {
+                posA = solverState.Positions[a];
+                maskA = solverState.ConnectionMasks[a];
+
+                for(b = a + 1; b < count; b++) {
+                    if ((maskA & (1 << b)) != 0) {
+                        posB = solverState.Positions[b];
+                        lineComp[lineCompCount++] = posA;
+                        lineComp[lineCompCount++] = posB - posA;
+                    }
+                }
+            }
+
+            int lineCount = lineCompCount >> 1;
+            int aOffset, bOffset;
+            float intersectionScore = 0;
+
+            for(a = 0; a < lineCompCount; a++) {
+                aOffset = a * 2;
+                for(b = a + 1; b < lineCompCount; b++) {
+                    bOffset = b * 2;
+                    if (IntersectionPoint(lineComp[aOffset], lineComp[aOffset + 1], lineComp[bOffset], lineComp[bOffset + 1], out float intersectionPoint) && intersectionPoint > 0.15 && intersectionPoint < 0.85) {
+                        float perpendicular = 1.25f - Math.Abs(Vector2.Dot(lineComp[aOffset + 1].normalized, lineComp[bOffset + 1].normalized));
+                        intersectionScore += perpendicular * (0.8f - Math.Abs(intersectionPoint - 0.5f)) * 4;
+                    }
+                }
+            }
+
+            return movedScore + intersectionScore;
+        }
+
+        static private bool IntersectionPoint(Vector2 a, Vector2 aVec, Vector2 b, Vector2 bVec, out float point) {
+            float perp = aVec.x * bVec.y - aVec.y * bVec.x;
+
+            if (perp != 0) {
+                Vector2 c = new Vector2(b.x - a.x, b.y - a.y);
+                point = (c.x * bVec.y - c.y * bVec.x) / perp;
+                return point >= 0 && point <= 1;
+            } else {
+                point = 0;
+                return false;
             }
         }
 

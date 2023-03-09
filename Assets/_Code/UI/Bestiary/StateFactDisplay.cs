@@ -112,8 +112,8 @@ namespace Aqua
             float dMin = min - avg;
             float dMax = max - avg;
 
-            dMin *= Formatting.PseudoRandom(ref seed, 0.5f, 2f);
-            dMax *= Formatting.PseudoRandom(ref seed, 0.5f, 2f);
+            dMin *= PseudoRandom.Float(ref seed, 0.5f, 2f);
+            dMax *= PseudoRandom.Float(ref seed, 0.5f, 2f);
 
             min = avg + dMin;
             max = avg + dMax;

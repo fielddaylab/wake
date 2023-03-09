@@ -131,7 +131,7 @@ namespace Aqua.Debugging
                 {
                     SetTimescale(1);
                 }
-                else if (m_Input.KeyPressed(KeyCode.F9) && m_Input.KeyDown(KeyCode.LeftControl))
+                else if (m_Input.KeyDown(KeyCode.LeftControl) && (m_Input.KeyPressed(KeyCode.F9) || m_Input.KeyPressed(KeyCode.Backspace)))
                 {
                     BugReporter.DumpContext();
                 }

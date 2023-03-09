@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Aqua;
 using Aqua.Debugging;
 using Aqua.Profile;
@@ -413,6 +414,8 @@ namespace ProtoAqua.Observation {
 
             m_EnvironmentType = Assets.Bestiary(Assets.Map(mapId).EnvironmentId());
 
+            HashSet<StringHash32> missingOrganisms = new HashSet<StringHash32>(m_EnvironmentType.Organisms());
+
             RingBuffer<TaggingManifest> entries = new RingBuffer<TaggingManifest>();
             SceneHelper.ActiveScene().Scene.ForEachComponent<TaggableCritter>(true, (scn, critter) => {
                 FindManifest(entries, critter.CritterId).TotalInScene++;
@@ -420,7 +423,15 @@ namespace ProtoAqua.Observation {
             for(int i = 0; i < entries.Count; i++) {
                 ref TaggingManifest manifest = ref entries[i];
                 manifest.Required = (ushort) (manifest.TotalInScene * FindProportion(manifest.Id, m_DefaultTagProportion, m_CritterProportionOverrides));
+                missingOrganisms.Remove(manifest.Id);
             }
+
+            if (missingOrganisms.Count > 0) {
+                foreach(var organism in missingOrganisms) {
+                    Log.Warn("[TaggingSystem] Organism '{0}' is present in AQOS but not present in '{1}'", organism, m_EnvironmentType.name);
+                }
+            }
+
             m_SceneManifest = entries.ToArray();
             return true;
         }

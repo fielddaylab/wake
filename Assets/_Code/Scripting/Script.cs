@@ -72,7 +72,7 @@ namespace Aqua {
 
         #region Popups
 
-        static public Future<StringHash32> PopupNewEntity(BestiaryDesc entity, string descriptionOverride = null, ListSlice<BFBase> extraFacts = default, Sprite inImageOverride = null) {
+        static public Future<StringHash32> PopupNewEntity(BestiaryDesc entity, string headerOverride = null, string descriptionOverride = null, ListSlice<BFBase> extraFacts = default, Sprite inImageOverride = null) {
             if (entity.HasFlags(BestiaryDescFlags.IsSpecter)) {
                 return PopupNewSpecter(entity, descriptionOverride, extraFacts);
             }
@@ -89,19 +89,19 @@ namespace Aqua {
                 }
                 if (entity.HasFlags(BestiaryDescFlags.IsNotLiving)) {
                     return Services.UI.Popup.PresentFacts(
-                        Loc.Format("ui.popup.newBestiary.critter.nonLiving.header", entity.CommonName()),
+                        Loc.Format("ui.popup.newBestiary.critter.nonLiving.header", headerOverride ?? entity.CommonName()),
                         descriptionOverride ?? Loc.Find(entity.Description()),
                         image,
                         new PopupFacts(allFacts));
                 } else if (entity.Category() == BestiaryDescCategory.Critter) {
                     return Services.UI.Popup.PresentFacts(
-                        Loc.Format("ui.popup.newBestiary.critter.header", entity.CommonName()),
+                        Loc.Format("ui.popup.newBestiary.critter.header", headerOverride ?? entity.CommonName()),
                         descriptionOverride ?? Loc.Find(entity.Description()),
                         image,
                         new PopupFacts(allFacts));
                 } else {
                     return Services.UI.Popup.PresentFacts(
-                        Loc.Format("ui.popup.newBestiary.env.header", entity.CommonName()),
+                        Loc.Format("ui.popup.newBestiary.env.header", headerOverride ?? entity.CommonName()),
                         descriptionOverride ?? Loc.Find(entity.Description()),
                         image,
                         new PopupFacts(allFacts));
