@@ -4,12 +4,13 @@ using Aqua.Profile;
 using BeauData;
 using BeauUtil;
 using BeauUtil.Debugger;
+using UnityEngine;
 
 namespace Aqua
 {
     public class SiteSurveyData : ISerializedObject, ISerializedVersion, IKeyValuePair<StringHash32, SiteSurveyData>, ISerializedCallbacks
     {
-        public StringHash32 MapId;
+        public StringHash32 EnvOrMapId;
         public HashSet<StringHash32> TaggedCritters = Collections.NewSet<StringHash32>(8);
         public HashSet<StringHash32> GraphedCritters = Collections.NewSet<StringHash32>(16);
         public HashSet<StringHash32> GraphedFacts = Collections.NewSet<StringHash32>(16);
@@ -19,7 +20,7 @@ namespace Aqua
 
         #region KeyValue
 
-        StringHash32 IKeyValuePair<StringHash32, SiteSurveyData>.Key { get { return MapId; } }
+        StringHash32 IKeyValuePair<StringHash32, SiteSurveyData>.Key { get { return EnvOrMapId; } }
         SiteSurveyData IKeyValuePair<StringHash32, SiteSurveyData>.Value { get { return this; } }
 
         #endregion // KeyValue
@@ -32,7 +33,7 @@ namespace Aqua
 
         public void Serialize(Serializer ioSerializer)
         {
-            ioSerializer.UInt32Proxy("mapId", ref MapId);
+            ioSerializer.UInt32Proxy("mapId", ref EnvOrMapId);
             ioSerializer.UInt32ProxySet("taggedCritters", ref TaggedCritters);
             if (ioSerializer.ObjectVersion < 2)
             {
@@ -103,44 +104,51 @@ namespace Aqua
                 return false;
             });
 
-            if (!MapId.IsEmpty) {
-                StringHash32 envId = Assets.Map(MapId).EnvironmentId();
-                if (!envId.IsEmpty) {
-                    BestiaryDesc env = Assets.Bestiary(envId);
-                    if (env != null) {
-                        TaggedCritters.RemoveWhere((critterId) => {
-                            if (!env.HasOrganism(critterId))
-                            {
-                                Log.Warn("[SiteSurveyData] Environment '{0}' no longer has critter '{1}'", env.name, critterId);
-                                return true;
-                            }
+            if (!EnvOrMapId.IsEmpty) {
+                BestiaryDesc env = GetBestiaryEntryForMapOrBestiary(EnvOrMapId);
+                if (env != null) {
+                    TaggedCritters.RemoveWhere((critterId) => {
+                        if (!env.HasOrganism(critterId))
+                        {
+                            Log.Warn("[SiteSurveyData] Environment '{0}' no longer has critter '{1}'", env.name, critterId);
+                            return true;
+                        }
 
-                            return false;
-                        });
+                        return false;
+                    });
 
-                        GraphedCritters.RemoveWhere((critterId) => {
-                            if (!env.HasOrganism(critterId))
-                            {
-                                Log.Warn("[SiteSurveyData] Environment '{0}' no longer has critter '{1}'", env.name, critterId);
-                                return true;
-                            }
+                    GraphedCritters.RemoveWhere((critterId) => {
+                        if (!env.HasOrganism(critterId))
+                        {
+                            Log.Warn("[SiteSurveyData] Environment '{0}' no longer has critter '{1}'", env.name, critterId);
+                            return true;
+                        }
 
-                            return false;
-                        });
+                        return false;
+                    });
 
-                        GraphedFacts.RemoveWhere((factId) => {
-                            var fact = Assets.Fact(factId);
-                            if (fact.Parent.Category() == BestiaryDescCategory.Critter && !env.HasOrganism(fact.Parent.Id()))
-                            {
-                                Log.Warn("[SiteSurveyData] Environment '{0}' no longer has critter '{1}' to support '{2}'", env.name, fact.Parent.name, factId);
-                                return true;
-                            }
+                    GraphedFacts.RemoveWhere((factId) => {
+                        var fact = Assets.Fact(factId);
+                        if (fact.Parent.Category() == BestiaryDescCategory.Critter && !env.HasOrganism(fact.Parent.Id()))
+                        {
+                            Log.Warn("[SiteSurveyData] Environment '{0}' no longer has critter '{1}' to support '{2}'", env.name, fact.Parent.name, factId);
+                            return true;
+                        }
 
-                            return false;
-                        });
-                    }
+                        return false;
+                    });
                 }
             }
+        }
+
+        static private BestiaryDesc GetBestiaryEntryForMapOrBestiary(StringHash32 mapOrBestiaryId) {
+            ScriptableObject obj = Assets.Find(mapOrBestiaryId);
+            MapDesc map = obj as MapDesc;
+            if (map != null) {
+                return Assets.Bestiary(map.EnvironmentId());
+            }
+
+            return obj as BestiaryDesc;
         }
 
         #endregion // ISerializedObject

@@ -28,7 +28,6 @@ namespace OGD {
                     return Core.Error.Success;
                 } else {
                     Core.Error error = new Core.Error(status, response.msg);
-                    onError?.Invoke(error);
                     return error;
                 }
             }, (error, data) => {
@@ -56,7 +55,6 @@ namespace OGD {
                     return Core.Error.Success;
                 } else {
                     Core.Error error = new Core.Error(status, response.msg);
-                    onError?.Invoke(error);
                     return error;
                 }
             }, (error, data) => {

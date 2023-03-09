@@ -287,7 +287,7 @@ namespace ProtoAqua.Observation {
             m_SiteData.OnChanged();
             Services.Audio.PostEvent("ROV.Tagger.Completed");
 
-            Services.Events.Queue(GameEvents.SiteDataUpdated, m_SiteData.MapId);
+            Services.Events.Queue(GameEvents.SiteDataUpdated, m_SiteData.EnvOrMapId);
             MarkAllAsTagged(manifest.Id);
 
             Services.UI.FindPanel<TaggingUI>()?.Populate(m_SceneManifest, m_TagCounts);
