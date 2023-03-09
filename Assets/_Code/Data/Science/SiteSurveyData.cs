@@ -134,6 +134,12 @@ namespace Aqua
                             Log.Warn("[SiteSurveyData] Environment '{0}' no longer has critter '{1}' to support '{2}'", env.name, fact.Parent.name, factId);
                             return true;
                         }
+                        var target = BFType.Target(fact);
+                        if (target != null && target.Category() == BestiaryDescCategory.Critter && !env.HasOrganism(target.Id()))
+                        {
+                            Log.Warn("[SiteSurveyData] Environment '{0}' no longer has critter '{1}' to support '{2}'", env.name, target.name, factId);
+                            return true;
+                        }
 
                         return false;
                     });
