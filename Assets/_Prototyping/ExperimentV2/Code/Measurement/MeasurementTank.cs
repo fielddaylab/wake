@@ -519,6 +519,10 @@ namespace ProtoAqua.ExperimentV2
                         }
                 }
 
+                if (inData.CritterIds.Length == 1) {
+                    result.Target = Assets.Bestiary(inData.CritterIds[0]);
+                }
+
                 result.Facts = newFacts.ToArray();
             }
             return result;

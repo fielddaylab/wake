@@ -56,6 +56,7 @@ namespace Aqua
 
         public Predicate<BestiaryDesc> HighlightFilter;
         public Predicate<BestiaryDesc> MarkerFilter;
+        public Predicate<BestiaryDesc> HistoryFilter;
         public Func<BestiaryDesc, Color> ColorFilter;
 
         #region Unity Events
@@ -277,9 +278,11 @@ namespace Aqua
                 
                 bool highlight = HighlightFilter != null && HighlightFilter(critter);
                 bool marker = MarkerFilter != null && MarkerFilter(critter);
+                bool history = HistoryFilter != null && HistoryFilter(critter);
 
                 button.Highlight.SetActive(highlight);
                 button.Marker.gameObject.SetActive(marker);
+                button.Historical.SetActive(history);
 
                 if (ColorFilter != null) {
                     button.Color.Color = ColorFilter(critter);

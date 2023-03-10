@@ -116,6 +116,7 @@ namespace ProtoAqua.ExperimentV2 {
 
             ExperimentResult result = new ExperimentResult();
             result.Facts = experimentFacts.ToArray();
+            result.Target = m_SelectedCritter;
 
             return result;
         }

@@ -90,6 +90,12 @@ namespace Aqua.Scripting
             m_Reveal.SetActive(true);
         }
 
+        [LeafMember("ObjectDestroyed"), Preserve]
+        static private bool LeafIsDestroyed(ScriptObject obj) {
+            ScriptDestructible dest = obj.GetComponent<ScriptDestructible>();
+            return dest != null && dest.IsDestroyed();
+        }
+
         #region IBaked
 
         #if UNITY_EDITOR

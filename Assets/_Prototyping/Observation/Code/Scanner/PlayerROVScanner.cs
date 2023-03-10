@@ -288,7 +288,7 @@ namespace ProtoAqua.Observation
                     {
                         Services.Audio.PostEvent("scan_bestiary");
                         var bestiary = Assets.Bestiary(data.BestiaryId());
-                        Script.PopupNewEntity(bestiary, data.Header(), data.Text(), newFacts, region.ScanImageOverride);
+                        Script.PopupNewEntity(bestiary, data.Text(), newFacts, region.ScanImageOverride);
                     }
                     else if ((result & ScanResult.NewFacts) != 0)
                     {

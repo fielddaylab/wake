@@ -113,6 +113,9 @@ namespace ProtoAqua.ExperimentV2 {
             if ((result.Feedback & ExperimentFeedbackFlags.NoNewObservations) != 0) {
                 hints.Add("experiment.summary.noFacts");
             }
+            if ((result.Feedback & ExperimentFeedbackFlags.AlreadyObserved) != 0) {
+                hints.Add("experiment.summary.noNewFacts");
+            }
             if ((result.Feedback & ExperimentFeedbackFlags.MissedObservations) != 0) {
                 hints.Add("experiment.summary.missedFacts");
             }
@@ -149,6 +152,8 @@ namespace ProtoAqua.ExperimentV2 {
             TextId noteBase = "experiment.summary.noteHeader";
             if ((result.Feedback & ExperimentFeedbackFlags.NoInteraction) != 0) {
                 noteBase = "experiment.summary.noInteractionHeader";
+            } else if ((result.Feedback & ExperimentFeedbackFlags.AlreadyObserved) != 0) {
+                noteBase = "experiment.summary.alreadyObservedHeader";
             }
             outHintBase = noteBase;
             return hints;

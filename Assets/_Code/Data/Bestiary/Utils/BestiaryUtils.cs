@@ -429,6 +429,14 @@ namespace Aqua
         }
 
         /// <summary>
+        /// Formats a percentage rate.
+        /// </summary>
+        static public string FormatPercentageRate(float inAmount)
+        {
+            return string.Format("{0}%/t", (int) (inAmount * 100));
+        }
+
+        /// <summary>
         /// Calculates the mass for a given population.
         /// </summary>
         static public float PopulationToMass(StringHash32 inCritterId, uint inPopulation)

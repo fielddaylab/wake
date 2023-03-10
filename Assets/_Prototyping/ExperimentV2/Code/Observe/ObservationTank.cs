@@ -51,6 +51,7 @@ namespace ProtoAqua.ExperimentV2 {
         [NonSerialized] private BestiaryDesc m_SelectedEnvironment;
         [NonSerialized] private HashSet<BFBase> m_PotentialNewFacts = Collections.NewSet<BFBase>(8);
         [NonSerialized] private int m_MissedFactCount = 0;
+        [NonSerialized] private int m_AlreadyKnownFactCount = 0;
         [NonSerialized] private readonly List<ExperimentFactResult> m_FactResults = new List<ExperimentFactResult>();
         
         [NonSerialized] private Routine m_IdleRoutine;
@@ -299,12 +300,13 @@ namespace ProtoAqua.ExperimentV2 {
             m_ParentTank.Guide.MoveTo(m_ParentTank.GuideTargetZoomed);
             
             m_PotentialNewFacts.Clear();
-            int potentialNewObservationsCount;
+            int potentialNewObservationsCount, alreadyKnownFacts;
             using (Profiling.Time("getting potential observations")) {
-                potentialNewObservationsCount = ActorBehaviorSystem.GetPotentialNewObservations(m_World, Save.Bestiary.HasFact, m_PotentialNewFacts);
+                potentialNewObservationsCount = ActorBehaviorSystem.GetPotentialNewObservations(m_World, Save.Bestiary.HasFact, m_PotentialNewFacts, out alreadyKnownFacts);
                 Log.Msg("[ObservationTank] {0} potentially observable facts", potentialNewObservationsCount);
             }
             m_MissedFactCount = 0;
+            m_AlreadyKnownFactCount = alreadyKnownFacts;
 
             using (var table = TempVarTable.Alloc()) {
                 table.Set("tankType", m_ParentTank.Type.ToString());
@@ -395,7 +397,11 @@ namespace ProtoAqua.ExperimentV2 {
                 } else if (m_PotentialNewFacts.Count > 0) {
                     result.Feedback |= ExperimentFeedbackFlags.HadObservationsRemaining;
                 } else if (m_OrganismScreen.Panel.Selected.Count > 1) {
-                    result.Feedback |= ExperimentFeedbackFlags.NoNewObservations;
+                    if (m_AlreadyKnownFactCount > 0) {
+                        result.Feedback |= ExperimentFeedbackFlags.AlreadyObserved;
+                    } else {
+                        result.Feedback |= ExperimentFeedbackFlags.NoNewObservations;
+                    }
                 } else {
                     result.Feedback |= ExperimentFeedbackFlags.SingleOrganism;
                 }

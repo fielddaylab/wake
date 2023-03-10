@@ -34,6 +34,7 @@ namespace Aqua
 
         [Header("Text")]
         [SerializeField] private string m_Units = "";
+        [SerializeField] private string m_RateUnits = null;
         [SerializeField] private int m_SignificantDigits = 1;
 
         [Header("Facts")]
@@ -83,7 +84,7 @@ namespace Aqua
             }
         }
 
-        public string FormatRate(float inValue, string prefix = null)
+        public string FormatRate(float inValue, string prefix = null, string additionalUnits = null)
         {
             inValue *= m_ValueScale;
             AdjustScale(ref inValue, GetAllowedConversions(), out string unitPrefix, out string unitOverride);
@@ -92,7 +93,10 @@ namespace Aqua
                 if (!string.IsNullOrEmpty(prefix)) {
                     psb.Builder.Append(prefix);
                 }
-                FormatValue(psb.Builder, inValue, m_SignificantDigits, unitPrefix, unitOverride ?? m_Units);
+                FormatValue(psb.Builder, inValue, m_SignificantDigits, unitPrefix, unitOverride ?? (!string.IsNullOrEmpty(m_RateUnits) ? m_RateUnits : m_Units));
+                if (additionalUnits != null) {
+                    psb.Builder.Append('/').Append(additionalUnits);
+                }
                 psb.Builder.Append('/').Append(RateUnit);
                 return psb.Builder.Flush();
             }
