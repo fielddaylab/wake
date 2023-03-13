@@ -42,6 +42,8 @@ $call GiveJournalEntry("N16_BayouExplosion")
 @once
 @cutscene
 {@player} Hmmmm... I wonder how much {nameof Methane} is down here...
+{@player} Methane is explosive, right?
+{@guide} Very much so, O. Our chances of encountering an explosion have increased to 70.2%.
 
 :: methaneScanned
 @trigger JobTaskCompleted
@@ -49,9 +51,7 @@ $call GiveJournalEntry("N16_BayouExplosion")
 @once
 @cutscene
 {@player} Wow. I think we've solved it, V.
-{@player} Methane is explosive, right?
-{@guide} Very much so, O. Our chances of encountering an explosion have increased to 70.2%.
-{@player} Aaaand that's our cue to get out of here. 
+{@player} Let's get out of the danger zone.
 
 // CATCH-ALL GUIDE TEXT
 :: catchGoToSiteN

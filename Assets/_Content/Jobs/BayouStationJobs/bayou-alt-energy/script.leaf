@@ -29,7 +29,7 @@ $endif
 @once
 @cutscene
 {@player} Wow. This is amazing, {nameof @guide}!
-{@player} It looks like this ecosystem has more than one source of power.
+{@player} It looks like this ecosystem has more than one source of energy.
 {@guide}  Yes. And so much wonderful data!
 {@player} I never would've guessed there could be so much energy in all that darkness.
           Can't wait to tell {nameof @profBayou}!
@@ -106,14 +106,14 @@ $goto .argue.selectClaim
 @cutscene
 
 $if !ArgueIsComplete(bayouAltEnergy_Branch3)
-    $choice .argue.1_Methane; It's the methane from the vents.
-    $choice .argue.2_Detritus; It's the falling detritus.
-    $choice .argue.4_Both; It's the methane AND detritus: it depends on the species.
+    $choice .argue.1_Methane; It's the {h}Hydrogen{/h} from the vents.
+    $choice .argue.2_Detritus; It's the falling {h}Detritus{/h}.
+    $choice .argue.4_Both; It's the {h}Hydrogen{/h} AND {h}Detritus{/h}: it depends on the species.
     $choice .argue.3_Heat; It's the heat from the vents.
     $choose branch
 $else
-    $choice .argue.1_Methane; It's the methane from the vents.
-    $choice .argue.2_Detritus; It's the falling detritus.
+    $choice .argue.1_Methane; It's the {h}Hydrogen{/h} from the vents.
+    $choice .argue.2_Detritus; It's the falling {h}Detritus{/h}.
     $choice .argue.4_Both; Both: it depends on the species.
     $choose branch
 $endif
@@ -122,7 +122,7 @@ $endif
 :: argue.1_Methane
 $call ArgueLoad(bayouAltEnergy_Branch1)
 {@profBayou} Wow... that's amazing! Can you show me your Visual Model, Ollie? 
-             I'd like to see what species at Site N consume Methane.
+             I'd like to see what species at Site N consume {h}Hydrogen{/h}.
 $goto .argue.1_Methane_ChooseFacts
 
 :: argue.1_Methane_ChooseFacts
@@ -142,7 +142,8 @@ $call ArgueRejectIncorrect()
 $goto .argue.1_Methane_ChooseFacts
 
 :: argue.1_Methane_BranchEnd
-{@profBayou} Hmmm. Based on this model, it looks Methane isn't the only energy source. 
+{@profBayou}    Hmmm. Based on this model, it looks {h}Hydrogen{/h} isn't the only energy source.
+                Your model indicates two sources of energy. Both {h}Detritus{/h} and {h}Hydrogen{/h} are fueling the ecosystem.
 $call ArgueComplete()
 $goto .argue.done
 
@@ -150,7 +151,7 @@ $goto .argue.done
 :: argue.2_Detritus
 $call ArgueLoad(bayouAltEnergy_Branch2)
 {@profBayou} Wow... that's fascinating, Ollie!
-            Can you show me your Visual Model? I'd like to see what eats the Detritus.
+            Can you show me your Visual Model? I'd like to see what eats the {h}Detritus{/h}.
 $goto .argue.2_Detritus_ChooseFacts
 
 :: argue.2_Detritus_ChooseFacts
@@ -170,7 +171,8 @@ $call ArgueRejectIncorrect()
 $goto .argue.2_Detritus_ChooseFacts
 
 :: argue.2_Detritus_BranchEnd
-{@profBayou} Hmmm. Based on this model, it looks like Detritus isn't the only energy source.
+{@profBayou}    Hmmm. Based on this model, it looks like {h}Detritus{/h} isn't the only energy source.
+                Your model indicates two sources of energy. Both {h}Detritus{/h} and {h}Hydrogen{/h} are fueling the ecosystem.
 $call ArgueComplete()
 $goto .argue.done
 
@@ -207,7 +209,7 @@ $goto .argue.selectClaim
 :: argue.4_Both
 $call ArgueLoad(bayouAltEnergy_Branch4)
 {@profBayou} Wow... that's amazing! Can you show me your Visual Model, Ollie? 
-             I'd like to see what species at Site N consume Methane and Detritus.
+             I'd like to see what species at Site N consume {h}Hydrogen{/h} and {h}Detritus{/h}.
 $goto .argue.4_Both_ChooseFacts
 
 :: argue.4_Both_ChooseFacts
@@ -241,10 +243,10 @@ $call ArgueUnload()
 :: argue.done
 $call ArgueLoad(bayouAltEnergy)
 $call ArgueComplete()
-{@profBayou}  Oh, this is fascinating! Both {h}Methane{/h} and {h}Detritus{/h} are primary sources of energy!
+{@profBayou}  Oh, this is fascinating! Both {h}Hydrogen{/h} and {h}Detritus{/h} are primary sources of energy!
 {@bayouSci}   I gotta admit, that's a pretty cool finding, kid. Maybe even groundbreaking. 
               I'll keep lookin' into it after the professor moves on outta here. You can help me, if you like. 
-{@player}     That would be amazing! Thanks, Silias. 
+{@player}     That would be amazing! Thanks, Silias.
 {@profBayou}  Actually... I might end up sticking around the Bayou, too. This new ecosystem merits further study. 
 {@bayouSci}   Ah.... that's, um... that's somethin', Professor. Can't wait to keep workin' with you. 
 $call CompleteJob()
