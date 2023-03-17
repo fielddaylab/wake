@@ -80,6 +80,23 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
+      m_Source: getModel
+      m_HashValue: 48080564
+    LabelId:
+      m_Source: jobs.bayou-alt-energy.task.getModel
+      m_HashValue: 26718178
+    Category: 4
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: N_ThermalVent.Model.Visual
+        m_HashValue: 166525121
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: wormEat
+      m_HashValue: 4215918552
+  - Id:
       m_Source: wormEat
       m_HashValue: 4215918552
     LabelId:
@@ -126,23 +143,6 @@ MonoBehaviour:
     PrerequisiteTaskIds:
     - m_Source: scanCritters
       m_HashValue: 1495220036
-  - Id:
-      m_Source: getModel
-      m_HashValue: 48080564
-    LabelId:
-      m_Source: jobs.bayou-alt-energy.task.getModel
-      m_HashValue: 26718178
-    Category: 4
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: N_ThermalVent.Model.Visual
-        m_HashValue: 166525121
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: wormEat
-      m_HashValue: 4215918552
   - Id:
       m_Source: reportBack
       m_HashValue: 2059105924

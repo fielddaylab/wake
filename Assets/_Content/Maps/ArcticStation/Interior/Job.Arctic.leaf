@@ -29,16 +29,16 @@ $endif
 {@$JobGiverId} Poor guy... I'm sure he'll beat me one of these days.
 $call GiveJournalEntry("N26_JunoAlone")
 
-:: ContinueAfterSamArticle
+:: ContinueAfterJunoAlone
 @trigger    JournalHidden
 @when       HasJournalEntry("N26_JunoAlone")
 @cutscene
 @once
-{@$JobGiverId} Anyway, what can I do for you, Ollie? 
+{@$JobGiverId} Anyway, what can I do for you, Ollie?
 $choice .action.openJobBoard; Job board!
 $choice .action.cancel; Nothing for now.
 
-#NoJobHandler(afterSamArticle, HasJournalEntry("N33_SamArticle"))
+#NoJobHandler(afterSamArticle, HasJournalEntry("N33_SamArticle"), HasJournalEntry("N26_JunoAlone"))
 @once
 {@$JobGiverId} Hey, Ollie! I was just chatting with your mom.
 {@player} Wait... you know my mom? 
@@ -49,6 +49,15 @@ $choice .action.cancel; Nothing for now.
 {@$JobGiverId} She's amazing. Your friend {nameof @sam} is in good company. 
 $call GiveJournalEntry("N31_SnowAlgae", Silent)
 $call GiveJournalEntry("N28_Connected")
+
+:: ContinueAfterConnected
+@trigger    JournalHidden
+@when       HasJournalEntry("N28_Connected")
+@cutscene
+@once
+{@$JobGiverId} Anyway, what can I do for you, Ollie?
+$choice .action.openJobBoard; Job board!
+$choice .action.cancel; Nothing for now.
 
 
 #NoJobHandler(postFinalJob, JobCompleted(final-final))

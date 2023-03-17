@@ -48,21 +48,6 @@ MonoBehaviour:
   - m_HashValue: 1960141715
   m_Tasks:
   - Id:
-      m_Source: scanSponge
-      m_HashValue: 3773120186
-    LabelId:
-      m_Source: jobs.arctic-isolated-instance.task.scanSponge
-      m_HashValue: 1884410105
-    Category: 2
-    Steps:
-    - Type: 0
-      Target:
-        m_Source: GlassSponge
-        m_HashValue: 3492975621
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds: []
-  - Id:
       m_Source: scanAll
       m_HashValue: 1784740587
     LabelId:
@@ -118,9 +103,7 @@ MonoBehaviour:
         m_HashValue: 3323473791
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: scanSponge
-      m_HashValue: 3773120186
+    PrerequisiteTaskIds: []
   - Id:
       m_Source: checkPredator
       m_HashValue: 752639504

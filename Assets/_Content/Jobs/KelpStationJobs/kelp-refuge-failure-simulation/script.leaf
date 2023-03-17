@@ -163,9 +163,35 @@ $endif
 @cutscene
 $call ArgueLoad(refugeFailureSimulationArgue)
 {@drKelp} Okay, Sweetie, let's see what you discovered.
-		  How bad is it going to be? 
-$if ArgueSetClaim(refugeFailureSimulationArgueClaim, jobs.kelp-refuge-failure-simulation.argue.claimLabel)
-			$call ArgueFactSlot(MixedKelp.Model.RefugeFailPredict)
+$branch .argue.mainQuestion
+
+:: argue.mainQuestion
+$set jobs:kelp-refuge-failure-simulation.correctClaim = false
+{@drKelp} Without any intervention, is it going to get better?
+	$choice .argue.struggle; The {nameof BullKelp} will continue to struggle
+	$choice .argue.increase; The {nameof BullKelp} population will increase
+	$choice .argue.notReady; I'm not sure. Let me get back to you.
+$choose branch
+
+:: argue.struggle
+$set jobs:kelp-refuge-failure-simulation.correctClaim = true
+$branch .argue.chooseFacts
+
+:: argue.increase
+$set jobs:kelp-refuge-failure-simulation.correctClaim = false
+$branch .argue.chooseFacts
+
+:: argue.chooseFacts
+{@drKelp}	Could you show me the Prediction Model you made?
+
+$if jobs:kelp-refuge-failure-simulation.correctClaim == true
+	$if ArgueSetClaim(refugeFailureSimulationArgueClaim, jobs.kelp-refuge-failure-simulation.argue.claimLabelStruggle)
+		$call ArgueFactSlot(MixedKelp.Model.RefugeFailPredict)
+	$endif
+$else
+	$if ArgueSetClaim(refugeFailureSimulationArgueClaim, jobs.kelp-refuge-failure-simulation.argue.claimLabelIncrease)
+		$call ArgueFactSlot(MixedKelp.Model.RefugeFailPredict)
+	$endif
 $endif
 $call ArgueDisplayClaim()
 $goto .argue.defendClaim
@@ -181,14 +207,21 @@ $else
 $endif
 
 :: argue.correctFacts
-$call ArgueComplete()
-{@drKelp}	Wow. Looks like we've got a Kelp Emergency on our hands. 
-{@player}   I'm sorry, Mom. I knew this job was a bad idea. 
-{@drKelp}   A bad idea?? Sweetie, this information is exactly what we needed.
-{@drKelp}   The Bull Kelp would still be dying whether we knew about it or not. 
-{@drKelp}   Now that we understand how bad it is, we can make a plan.
-{@drKelp}   I'm glad you figured it out. 
-$call CompleteJob()
+$if jobs:kelp-refuge-failure-simulation.correctClaim == true
+	$call ArgueComplete()
+	{@drKelp}	Wow. Looks like we've got a long-term Kelp decline on our hands. 
+	{@player}   I'm sorry, Mom. I knew this job was a bad idea. 
+	{@drKelp}   A bad idea?? Sweetie, this information is exactly what we needed.
+	{@drKelp}   The Bull Kelp would still be dying whether we knew about it or not. 
+	{@drKelp}   Now that we understand how bad it is, we can make a plan.
+	{@drKelp}   I'm glad you figured it out. 
+	$call CompleteJob()
+$else
+	{@drKelp}	Looking at this model, I'm not seeing the {nameof BullKelp} populations increasing over time.
+				Want to reconsider your claim?
+	$call ArgueCancelClaim()
+	$branch .argue.mainQuestion
+$endif
 
 :: argue.incorrectFacts
 {@drKelp} Hmm. That isn't what we're looking for. 
@@ -196,7 +229,11 @@ $call CompleteJob()
 $call ArgueRejectIncorrect()
 $goto .argue.defendClaim
 
+:: argue.notReady
+{@drKelp} Okay, Sweetie. Get back to me when you're ready.
+
 :: argue.giveUp
+$call ArgueCancelClaim()
 {@drKelp} Okay, Sweetie. Get back to me when you're ready.
 
 ::end

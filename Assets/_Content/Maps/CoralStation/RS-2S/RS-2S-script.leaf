@@ -9,3 +9,35 @@ $if !HasEntity(Fishers)
     $call GiveEntity(Fishers)
 $endif
 $call GiveFact(Fishers.Eats.Lionfish)
+
+
+:: darkSargassum
+@trigger    PlayerEnterRegion
+@when       regionId == "DarkSargassum"
+@cutscene
+@once
+$if HasEntity(Sargassum)
+    {@player}   That {nameof Sargassum} is really thick on the surface of the water.
+                Also, is it just me, or does it seem darker over here?
+    {@guide}    It is not just you, O. My sensors confirm that light readings are lower here than the left half of the site.
+$else
+    {@player}   What's all that stuff on the surface of the water?
+                And why is it so dark over here?
+    {@guide}    I am uncertain, O. But the dimness and the organism on the surface may be related.
+                Scanning it will allow us to obtain more information.
+$endif
+
+:: bleachedCoral
+@trigger    PlayerEnterRegion
+@when       regionId == "BleachedCoral"
+@cutscene
+@once
+{@player}   Isn't coral supposed to colorful and vibrant?
+            All the coral over here looks bleached and unhealthy.
+{@guide}    Typically, yes.
+$if JobStartedOrComplete(coral-fake-fix)
+    {@guide}    This is what {nameof profCoral}'s team set out to fix using artificial reef structures. 
+$else
+    {@guide}    Clearly something has thrown this ecosystem out of wack.
+                I wonder if {nameof profCoral}'s team knows about this.
+$endif

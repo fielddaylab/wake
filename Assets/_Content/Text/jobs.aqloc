@@ -285,7 +285,10 @@ Refuge Failure
 :: kelp-refuge-failure.desc
 Our refuge didn't turn out as planned. It seems the Bull Kelp stopped growing. We think it may have something to do with the rate each species reproduces, but need you to figure it out and provide a model.
 
-:: kelp-refuge-failure.argue.claimLabel
+:: kelp-refuge-failure.argue.claimLabelSlow
+The Bull Kelp population is reproducing at a slower rate than expected.
+
+:: kelp-refuge-failure.argue.claimLabelModel
 The Bull Kelp population is reproducing at a slower rate than expected.
 
 :: kelp-mussel-fest.name
@@ -468,8 +471,11 @@ Create a Predictive Model of Giant Kelp and Bull Kelp that shows the light decre
 :: kelp-refuge-failure-simulation.task.shareModel
 Share your model containing what would happen if the refuge is left as-is
 
-:: kelp-refuge-failure-simulation.argue.claimLabel
-The Bull Kelp population will decrease drastically in a short time.
+:: kelp-refuge-failure-simulation.argue.claimLabelStruggle
+The Bull Kelp population will gradually decrease.
+
+:: kelp-refuge-failure-simulation.argue.claimLabelIncrease
+The Bull Kelp population will gradually increase.
 
 :: kelp-urchin-barren-predict.task.reportBack
 Report back with your prediction
@@ -619,7 +625,7 @@ Scan any new organisms at {h}Site S{/h}
 Observe how Lionfish interact with their environment
 
 :: lionfish-conspiracy.task.arguePredator
-Argue that Lionfish are predators of other fish
+Report findings to {nameof profCoral}
 
 :: coral-lionfish-conspiracy.argue.claimEvidence
 Lionfish are predators that eat other fish
@@ -628,7 +634,7 @@ Lionfish are predators that eat other fish
 Hunting Lions
 
 :: coral-hunting-lions.desc
-Interested in hunting, eh? We need to model how hunting might work so we can figure out whether to allow it -- or perhaps even advocate for it
+Fisher interest in hunting {nameof Lionfish} is growing. We need to model how hunting might work so we can decide whether to regulate or even advocate for it.
 
 :: coral-hunting-lions.task.scanSpear
 Identify how hunters hunt Lionfish
@@ -916,7 +922,7 @@ Discuss your findings with {nameof @profArctic}
 Determine Glass Sponge stress levels
 
 :: arctic-isolated-instance.task.findPredator
-Search a {h}Site Y{/h} for predators of {nameof GlassSponge}
+Search {h}Site Y{/h} for predators of {nameof GlassSponge}
 
 :: arctic-isolated-instance.task.scanSponge
 Scan a Glass Sponge
@@ -1160,10 +1166,10 @@ Methane and detritus are the energy sources of {h}Site N{/h}.
 Salmon Competition
 
 :: arctic-salmon-competition.desc
-Well, you really have proven useful. We have been trying to make a model about Salmon summering in the arctic. We aren't happy with how our model is working, but maybe your information about cod could be used to improve it.
+We've been working on a model about {nameof ChinookSalmon} summering in the arctic, but it's not the most accurate. Maybe your info could improve it.
 
 :: arctic-salmon-competition.task.observeCod
-Determine Cod interactions within the ecosystem
+Determine {nameof ArcticCod} interactions within the ecosystem
 
 :: arctic-in-ice.name
 In the Ice
@@ -1211,19 +1217,19 @@ Diatoms are more nutritious than Ice Algae
 Ice Algae is more nutritious than Diatoms
 
 :: arctic-salmon-competition.task.modelFish
-Construct a Numerical model of how Cod and Salmon impact one another
+Construct a Numerical model of how {nameof ArcticCod} and {nameof ChinookSalmon} impact one another
 
 :: arctic-salmon-competition.task.reportBack
 Report back
 
-:: arctic-salmon-competition.argue.claimLabelNoImpact
-Cod and Salmon do not impact each other
+:: arctic-salmon-competition.argue.claimLabelImprove
+Adding {nameof ArcticCod} improved the model of {nameof ChinookSalmon}
 
-:: arctic-salmon-competition.argue.claimLabelImbalance
-Cod and Salmon are unbalanced in the ecosystem
+:: arctic-salmon-competition.argue.claimLabelNotImprove
+Adding {nameof ArcticCod} did not improve the model of {nameof ChinookSalmon}
 
-:: arctic-salmon-competition.argue.claimLabelImproved
-Present an improved Numerical model
+:: arctic-salmon-competition.argue.claimLabelShowModel
+Present your new Numerical model
 
 :: arctic-in-ice.task.countAlgae
 Count Ice Algae populations at the ice shelf
