@@ -27,6 +27,7 @@ namespace Aqua.Argumentation {
         private readonly StringHash32[] m_RevertSubmitState = new StringHash32[ArgueConsts.MaxFactsPerClaim]; 
         private Routine m_Sentinel;
         [NonSerialized] private bool m_ShouldRevert = false;
+        [NonSerialized] private PortableAppId m_LastApp = PortableAppId.Organisms;
 
         #region Argue
 
@@ -50,6 +51,7 @@ namespace Aqua.Argumentation {
             m_CurrentId = id;
             m_CurrentStatus = profile.GetArgue(id, out created);
             m_CurrentCompleted = m_CurrentStatus == null;
+            m_LastApp = PortableAppId.Organisms;
             if (!m_CurrentCompleted) {
                 Services.Data.BindTable(ArgumentTableId, m_CurrentStatus.Vars);
             }
@@ -405,6 +407,7 @@ namespace Aqua.Argumentation {
             Array.Copy(m_CurrentStatus.SubmittedFacts, m_RevertSubmitState, ArgueConsts.MaxFactsPerClaim);
 
             PortableRequest request = PortableRequest.SelectFact();
+            request.App = m_LastApp;
             request.CanSelect = CanSelectAndHasSlot;
             request.OnSelect = HandleSingleSelect;
             request.Response.OnComplete((f) => SubmitFact(f));
@@ -420,6 +423,7 @@ namespace Aqua.Argumentation {
             m_ShouldRevert = true;
 
             PortableRequest request = PortableRequest.SelectFactSet(HandleMultiSelect);
+            request.App = m_LastApp;
             request.CanSelect = CanSelectAndHasSlot;
 
             PortableMenu.Request(request);
@@ -469,6 +473,19 @@ namespace Aqua.Argumentation {
             m_ShouldRevert = false;
         }
 
+        private void OnPortableAppOpened(PortableAppId id) {
+            if (m_CurrentId.IsEmpty) {
+                return;
+            }
+
+            switch(id) {
+                case PortableAppId.Organisms:
+                case PortableAppId.Environments:
+                    m_LastApp = id;
+                    break;
+            }
+        }
+
         #endregion // Fact Selector
 
         #region IService
@@ -479,7 +496,8 @@ namespace Aqua.Argumentation {
             Services.Script.RegisterChoiceSelector("argueFactSet", SelectFactSet);
             Services.Script.RegisterChoiceSelector("argueFact", SelectFact);
 
-            Services.Events.Register(GameEvents.PortableClosed, TryRevert, this);
+            Services.Events.Register(GameEvents.PortableClosed, TryRevert, this)
+                .Register<PortableAppId>(GameEvents.PortableAppOpened, OnPortableAppOpened);
         }
 
         protected override void Shutdown() {

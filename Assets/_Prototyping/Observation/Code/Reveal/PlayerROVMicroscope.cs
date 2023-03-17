@@ -7,6 +7,7 @@ using Aqua.Character;
 using System;
 using ScriptableBake;
 using System.Collections.Generic;
+using UnityEngine.Rendering.Universal;
 
 namespace ProtoAqua.Observation {
     public sealed class PlayerROVMicroscope : MonoBehaviour, PlayerROV.ITool, IBaked {
@@ -83,6 +84,8 @@ namespace ProtoAqua.Observation {
             m_CameraHint = Services.Camera.AddHint(m_ProjectionCenter, m_CameraHintStrength, m_CameraHintWeight, m_CameraHintZoom).Id;
 
             m_WorldMicroscopeLayer.SetActive(true);
+
+            m_ProjectionCamera.backgroundColor = Services.Camera.Current.backgroundColor;
         }
 
         public void GetTargetPosition(bool inbOnGamePlane, out Vector3? outWorld, out Vector3? outCursor) {

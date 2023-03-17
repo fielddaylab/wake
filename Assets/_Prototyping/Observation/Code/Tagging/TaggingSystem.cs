@@ -404,11 +404,12 @@ namespace ProtoAqua.Observation {
         }
 
         bool IBaked.Bake(ScriptableBake.BakeFlags flags, BakeContext context) {
+            string currentSceneName = SceneHelper.ActiveScene().Name;
             StringHash32 mapId = MapDB.LookupCurrentMap();
             if (!m_EnvironmentOverride.IsEmpty) {
                 mapId = m_EnvironmentOverride;
             }
-            Assert.False(mapId.IsEmpty, "Tagging enabled in scene {0} which has no corresponding map", SceneHelper.ActiveScene().Name);
+            Assert.False(mapId.IsEmpty, "Tagging enabled in scene {0} which has no corresponding map", currentSceneName);
 
             m_MapId = mapId;
 
@@ -424,11 +425,21 @@ namespace ProtoAqua.Observation {
                 ref TaggingManifest manifest = ref entries[i];
                 manifest.Required = (ushort) (manifest.TotalInScene * FindProportion(manifest.Id, m_DefaultTagProportion, m_CritterProportionOverrides));
                 missingOrganisms.Remove(manifest.Id);
+
+                BFPopulation rule = BestiaryUtils.FindPopulationRule(m_EnvironmentType, manifest.Id);
+                if (rule == null) {
+                    Log.Error("[TaggingSystem] Organism '{0}' is present in '{1}' but has no fact in AQOS", manifest.Id, currentSceneName);
+                } else {
+                    uint totalInAqos = rule.Value + rule.DisplayExtra;
+                    if (totalInAqos < manifest.TotalInScene) {
+                        Log.Warn("[TaggingSystem] Organism '{0}' has {1} in '{2}' but only showing {3} in AQOS", manifest.Id, manifest.TotalInScene, currentSceneName, totalInAqos);
+                    }
+                }
             }
 
             if (missingOrganisms.Count > 0) {
                 foreach(var organism in missingOrganisms) {
-                    Log.Warn("[TaggingSystem] Organism '{0}' is present in AQOS but not present in '{1}'", organism, m_EnvironmentType.name);
+                    Log.Warn("[TaggingSystem] Organism '{0}' is present in AQOS but not present in '{1}'", organism, currentSceneName);
                 }
             }
 

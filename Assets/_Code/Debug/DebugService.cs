@@ -475,7 +475,7 @@ namespace Aqua.Debugging
 
         #region IDebuggable
 
-        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
+        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus(FindOrCreateMenu findOrCreate)
         {
             DMInfo loggingMenu = new DMInfo("Logging");
             loggingMenu.AddToggle("Enable Crash Handler", () => CrashHandler.Enabled, (b) => CrashHandler.Enabled = b);

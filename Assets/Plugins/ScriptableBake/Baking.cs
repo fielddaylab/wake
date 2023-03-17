@@ -80,7 +80,7 @@ namespace ScriptableBake {
 
             BakeContext context = new BakeContext();
             context.Scene = SceneManager.GetActiveScene();
-            context.MainCamera = GameObject.FindObjectOfType<Camera>();
+            context.MainCamera = FindMainCamera();
             context.HasFog = RenderSettings.fog;
             if (context.HasFog) {
                 context.FogStartDistance = RenderSettings.fogStartDistance;
@@ -88,6 +88,36 @@ namespace ScriptableBake {
             }
             context.m_Flags = flags;
             return Process(bakeComponents, "scene: " + scene.name, flags, context, null);
+        }
+
+        static private Camera FindMainCamera() {
+            var cameras = GameObject.FindObjectsOfType<Camera>();
+            Camera bestMask = null;
+            int bestMaskCount = 0;
+            foreach(var camera in cameras) {
+                if (camera.CompareTag("MainCamera")) {
+                    return camera;
+                }
+
+                int maskCount = CountCameraMask(camera.cullingMask);
+                if (maskCount > bestMaskCount) {
+                    bestMaskCount = maskCount;
+                    bestMask = camera;
+                }
+            }
+
+            return bestMask;
+        }
+
+        static private unsafe int CountCameraMask(int eventMask) {
+            uint unsigned = *(uint*)(&eventMask);
+            int count = 0;
+            while(unsigned != 0)
+            {
+                count += (int) (unsigned & 1);
+                unsigned >>= 1;
+            }
+            return count;
         }
 
         #endregion // Scene

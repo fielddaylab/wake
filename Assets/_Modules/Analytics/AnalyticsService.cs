@@ -946,9 +946,9 @@ namespace Aqua
 
         #if DEVELOPMENT
 
-        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus() {
-            DMInfo menu = new DMInfo("Analytics", 1);
-            menu.AddToggle("Enable Logging", () => {
+        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus(FindOrCreateMenu findOrCreate) {
+            DMInfo menu = findOrCreate("Logging");
+            menu.AddToggle("Analytics Logging", () => {
                 return m_Debug;
             }, (t) => {
                 m_Debug = t;

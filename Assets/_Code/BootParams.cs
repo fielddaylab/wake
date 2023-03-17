@@ -84,14 +84,31 @@ namespace Aqua
             #if DEVELOPMENT
 
             List<DMInfo> debugMenus = new List<DMInfo>(8);
+            FindOrCreateMenu findOrCreateMenu = (s, c) => {
+                foreach(var menu in debugMenus) {
+                    if (menu.Header.Label == s) {
+                        if (menu.Elements.Count > 0) {
+                            menu.AddDivider();
+                        }
+                        return menu;
+                    }
+                }
+
+                return new DMInfo(s, c);
+            };
+
             foreach(var debugService in Services.AllDebuggable())
             {
                 Log.Msg("[BootParams] Getting debug menus from {0}", debugService);
-                foreach(var menu in debugService.ConstructDebugMenus())
+                foreach(var menu in debugService.ConstructDebugMenus(findOrCreateMenu))
                 {
                     Assert.NotNull(menu, "Provided menu is null");
-                    Log.Msg("[BootParams] ...menu {0}", menu.Header.Label);
-                    debugMenus.Add(menu);
+                    if (!debugMenus.Contains(menu)) {
+                        debugMenus.Add(menu);
+                        Log.Msg("[BootParams] ...menu {0}", menu.Header.Label);
+                    } else {
+                        Log.Msg("[BootParams] ...menu {0} (reused)", menu.Header.Label);
+                    }
                 }
             }
             Debug.LogFormat("[BootParams] Found '{0}' debug menus", debugMenus.Count);
@@ -216,6 +233,7 @@ namespace Aqua
     
         static private void RetrieveExpensiveSystemResources() {
             Char.IsWhiteSpace('0');
+            Shader.WarmupAllShaders();
         }
 
         static private void OnCrash(Exception e, string error, out string context) {

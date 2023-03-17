@@ -12,7 +12,11 @@ namespace Aqua
     public interface IDebuggable
     {
         #if DEVELOPMENT
-        IEnumerable<DMInfo> ConstructDebugMenus();
+        IEnumerable<DMInfo> ConstructDebugMenus(FindOrCreateMenu findOrCreate);
         #endif // DEVELOPMENT
     }
+
+    #if DEVELOPMENT
+    public delegate DMInfo FindOrCreateMenu(string label, int capacity = 0);
+    #endif // DEVELOPMENT
 }

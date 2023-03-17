@@ -1,10 +1,16 @@
 #basePath RS-0-Cave
 
+:: heartbeatTrigger
+@function    PlayerEnterRegion
+@when       regionId == "StartHeartbeat"
+$call       HeartbeatEffect->Activate()
+
 :: preJellyTrigger
 @trigger    PlayerEnterRegion
 @when       regionId == "postJelly00"
 @chatter
 @once
+$call       RatchetCollider1->Activate()
 {@guide}    WARNING: Low oxygen.
 
 :: polypTrigger
@@ -14,6 +20,18 @@
 @once
 {@player}   Is this even a cave?
 
+:: startBreathing
+@trigger    PlayerEnterRegion
+@when       regionId == "StartBreathing"
+@once
+$call       RatchetCollider2->Activate()
+$call       BreathAudio->PlayAudio()
+
+:: toothAudio
+@trigger    TimelineStarted
+@when       timelineId == "Cave-Timeline00-Teeth"
+@once
+$call       ToothTensionAudio->PlayAudio()
 
 :: teethTrigger
 @trigger    PlayerEnterRegion
@@ -23,3 +41,15 @@
 {@player}   {nameof @guide}, are you seeing the teeth?
 {@guide}    Negative. I am incapable of hallucinating which is what you are currently doing.
             You are experiencing visual hallucinations as a result of low oxygen. This is called hypoxia.
+
+:: toothBreak1
+@trigger    ScriptObjectDestroyed
+@once
+@boostScore 2
+$call   ToothBreak1->PlayAudio()
+
+:: toothBreak2
+@trigger    ScriptObjectDestroyed
+@once
+@boostScore 1
+$call   ToothBreak2->PlayAudio()

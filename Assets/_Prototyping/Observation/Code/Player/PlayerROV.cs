@@ -328,10 +328,10 @@ namespace ProtoAqua.Observation
                 if ((BodyStatus & PlayerBodyStatus.SilentMovement) == 0) {
                     if (m_LastInputData.Dash == PlayerROVInput.DashType.Primary) {
                         Services.Audio.PostEvent("ROV.Engine.Dash");
-                        Services.Camera.AddShake(0.6f, 0.15f, 0.3f);
+                        Services.Camera.AddShake(0.04f, 0.15f, 0.3f);
                     } else {
                         Services.Audio.PostEvent("ROV.Engine.SecondaryDash");
-                        Services.Camera.AddShake(0.4f, 0.15f, 0.3f);
+                        Services.Camera.AddShake(0.02f, 0.15f, 0.3f);
                     }
                 }
                 m_DashLeft = m_DashDuration;

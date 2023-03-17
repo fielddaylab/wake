@@ -8,11 +8,12 @@ using System;
 using ScriptableBake;
 using System.Collections.Generic;
 using AquaAudio;
+using BeauUtil.Debugger;
 
 namespace ProtoAqua.Observation
 {
     [DefaultExecutionOrder(500)]
-    public class CollisionResponseSystem : SharedManager, IScenePreloader {
+    public class CollisionResponseSystem : SharedManager, IScenePreloader, IBaked {
         public enum ImpactType {
             Light,
             Heavy,
@@ -168,5 +169,41 @@ namespace ProtoAqua.Observation
 
             response.InstantiatedPool = pool;
         }
+
+        #if UNITY_EDITOR
+
+        int IBaked.Order { get { return 10000; } }
+
+        bool IBaked.Bake(BakeFlags flags, BakeContext context)
+        {
+            List<Collider2D> colliders = new List<Collider2D>(128);
+            context.Scene.GetAllComponents<Collider2D>(true, colliders);
+            HashSet<ColliderMaterialId> materials = Collections.NewSet<ColliderMaterialId>(8);
+            colliders.ForEach((c) => {
+                if (c.gameObject.layer != GameLayers.Solid_Index) {
+                    return;
+                }
+
+                ColliderMaterialId matId = ColliderMaterial.Find(c);
+                if (matId != ColliderMaterialId.Invisible) {
+                    materials.Add(matId);
+                }
+            });
+
+            HashSet<ColliderMaterialId> discardedMaterials = new HashSet<ColliderMaterialId>();
+
+            for(int i = m_Responses.Length - 1; i >= 0; i--) {
+                if (!materials.Contains(m_Responses[i].Material)) {
+                    if (discardedMaterials.Add(m_Responses[i].Material)) {
+                        Log.Msg("[CollisionResponseSystem] Material '{0}' is not present - discarding collision effects", m_Responses[i].Material);
+                    }
+                    ArrayUtils.RemoveAt(ref m_Responses, i);
+                }
+            }
+
+            return true;
+        }
+
+        #endif // UNITY_EDITOR
     }
 }

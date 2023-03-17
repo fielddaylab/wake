@@ -25,7 +25,7 @@ namespace Aqua
         {
             ApplyFrame(0);
             m_CurrentFrame = 0;
-            m_CurrentFrameDelay = 0;
+            m_CurrentFrameDelay = m_CurrentFrameDelay = 1f / m_FrameRate;
         }
 
         private void OnEnable()

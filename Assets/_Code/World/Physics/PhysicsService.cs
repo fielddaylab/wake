@@ -438,7 +438,7 @@ namespace Aqua
 
         #if DEVELOPMENT
 
-        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
+        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus(FindOrCreateMenu findOrCreate)
         {
             DMInfo physicsMenu = new DMInfo("Physics", 8);
             physicsMenu.AddToggle("Noclip (Free Player Movement)", () => {

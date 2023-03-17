@@ -128,28 +128,29 @@ namespace Aqua {
             }
         }
 
-        private bool CheckBottomItem() {
+        private float CheckBottomItem() {
             CreditsElement element;
             if (m_SpawnedItems.TryPeekBack(out element)) {
                 float bottomY = element.Transform.anchoredPosition.y - element.Transform.rect.height;
-                return bottomY > m_Bottom;
+                return bottomY - m_Bottom;
             }
 
-            return true;
+            return 0;
         }
 
         private IEnumerator SpawnRoutine() {
             while(true) {
                 int i = 0;
+                float offset;
                 if (m_Logo != null) {
                     SpawnItem(m_Logo, null, null, 0);
                 }
                 while(i < m_Items.Length) {
-                    while(!CheckBottomItem()) {
+                    while((offset = CheckBottomItem()) < 0) {
                         MoveAllItems();
                         yield return null;
                     }
-                    SpawnItems(m_Items[i]);
+                    SpawnItems(m_Items[i], offset);
                     i++;
                     yield return null;
                 }
@@ -173,8 +174,7 @@ namespace Aqua {
             }
         }
 
-        private void SpawnItems(CreditsItem item) {
-            float offset = 0;
+        private void SpawnItems(CreditsItem item, float offset) {
             if (!item.Header.IsEmpty) {
                 offset = SpawnItem(m_HeaderPool, item.Header, null, offset);
             }

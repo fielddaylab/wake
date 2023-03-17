@@ -48,6 +48,7 @@ namespace Aqua {
         private struct CheatEntry {
             public StringHash32 Id;
             public CheatType Type;
+            public StringHash32 Context;
 
             public Keystroke[] Pattern;
 
@@ -64,17 +65,18 @@ namespace Aqua {
 
         [NonSerialized] private AudioPackage m_AudioPackage;
 
-        [NonSerialized] private int m_CheatEnableCounter = 0;
+        [NonSerialized] private HashSet<StringHash32> m_CheatContexts = Collections.NewSet<StringHash32>(4);
         [NonSerialized] private int m_CheatBlockCounter = 0;
-        [NonSerialized] private bool m_CachedCheatsAllowed = false;
+        [NonSerialized] private bool m_CachedCheatsAllowed = true;
         private HashSet<StringHash32> m_ActiveCheats = Collections.NewSet<StringHash32>(16);
 
         #region Cheats
 
-        public void RegisterCheat(StringHash32 cheatId, CheatType type, string pattern, Action activate, Func<bool> validate = null, Action deactivate = null) {
+        public void RegisterCheat(StringHash32 cheatId, CheatType type, StringHash32 context, string pattern, Action activate, Func<bool> validate = null, Action deactivate = null) {
             CheatEntry entry = default;
             entry.Id = cheatId;
             entry.Type = type;
+            entry.Context = context;
             entry.Pattern = GeneratePattern(pattern);
             entry.Activate = activate;
             entry.Validate = validate;
@@ -92,7 +94,7 @@ namespace Aqua {
         }
 
         private void HandleKeyPressed(KeyCode keycode) {
-            if (!m_CachedCheatsAllowed || Services.State.IsLoadingScene()) {
+            if (!m_CachedCheatsAllowed || Script.IsPausedOrLoading) {
                 return;
             }
 
@@ -102,14 +104,12 @@ namespace Aqua {
 
         #region State
 
-        public void AllowCheats() {
-            m_CheatEnableCounter++;
-            CheckCheatsEnabled();
+        public void AllowCheats(StringHash32 context) {
+            m_CheatContexts.Add(context);
         }
 
-        public void DisallowCheats() {
-            m_CheatEnableCounter--;
-            CheckCheatsEnabled();
+        public void DisallowCheats(StringHash32 context) {
+            m_CheatContexts.Remove(context);
         }
 
         public void BlockCheats() {
@@ -123,7 +123,7 @@ namespace Aqua {
         }
 
         private void CheckCheatsEnabled() {
-            bool allowed = m_CheatEnableCounter > 0 && m_CheatBlockCounter <= 0;
+            bool allowed = m_CheatBlockCounter <= 0;
             if (allowed != m_CachedCheatsAllowed) {
                 m_CachedCheatsAllowed = allowed;
                 m_LastKeyEntries.Clear();
@@ -178,6 +178,15 @@ namespace Aqua {
         }
 
         private bool ShouldCheckCheat(ref CheatEntry entry) {
+            if (entry.Context.IsEmpty) {
+                if (!Save.IsLoaded) {
+                    return false;
+                }
+            }
+            else if (!m_CheatContexts.Contains(entry.Context)) {
+                return false;
+            }
+
             switch(entry.Type) {
                 case CheatType.Single: {
                     return !m_ActiveCheats.Contains(entry.Id);
@@ -307,7 +316,7 @@ namespace Aqua {
         static internal void RegisterCheats(SecretService service) {
 
             // swap to mal's voice
-            service.RegisterCheat("victor_malvoice", SecretService.CheatType.Toggle, "forevermine", () => {
+            service.RegisterCheat("victor_malvoice", SecretService.CheatType.Toggle, null, "forevermine", () => {
                 Services.Audio.RemapEvent("text_type_guide", "text_type_guide_MAL");
                 Assets.Character(GameConsts.Target_V1ctor).AdditionalTypingTextDelay = 0.05f;
             }, null, () => {

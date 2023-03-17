@@ -291,6 +291,7 @@ namespace Aqua
             Services.Script.KillLowPriorityThreads(TriggerPriority.Cutscene, true);
             Services.Physics.Enabled = false;
             BootParams.ClearStartFlag();
+            Services.Secrets.BlockCheats();
 
             Streaming.RetryErrored();
 
@@ -380,6 +381,7 @@ namespace Aqua
 
             RecordCurrentMapAsSeen(inNextScene);
             Services.Camera.EnableRendering();
+            Services.Secrets.UnblockCheats();
 
             m_SceneLock = false;
 
@@ -456,6 +458,7 @@ namespace Aqua
                 }
             }
 
+            Shader.WarmupAllShaders();
             yield return WaitForStreaming();
         }
 
@@ -773,7 +776,7 @@ namespace Aqua
 
         #if DEVELOPMENT
 
-        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
+        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus(FindOrCreateMenu findOrCreate)
         {
             var loadSceneMenu = new DMInfo("Load Scene", 16);
 
