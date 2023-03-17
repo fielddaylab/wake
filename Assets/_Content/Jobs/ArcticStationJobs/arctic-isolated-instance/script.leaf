@@ -143,14 +143,6 @@ $call CheckJobTasks()
 
 // CATCH-ALL GUIDE TEXT
 
-:: catchScanSponge
-@trigger	RequestPartnerHelp
-@when		JobTaskTop(scanSponge)
-@boostScore -5
-@cutscene
-{@player} What now, {nameof @guide}?
-{@guide}	Go to Site X and scan a {nameof GlassSponge}.
-
 :: catchScanAll
 @trigger	RequestPartnerHelp
 @when		JobTaskTop(scanAll)
