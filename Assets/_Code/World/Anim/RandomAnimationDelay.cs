@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using BeauRoutine;
+using BeauUtil;
 using UnityEngine;
 
 public class RandomAnimationDelay : MonoBehaviour
@@ -14,21 +16,20 @@ public class RandomAnimationDelay : MonoBehaviour
     public float speedMax;
     public float speedMin;
 
+    private Routine m_Delay;
 
     private void Awake()
     {
         animator.SetFloat(cycleOffsetParam, Random.Range(0.0f, 1.0f));
         animator.SetFloat(speedParam, Random.Range(speedMin, speedMax));
-        StartCoroutine(DelayAnimation());
+        m_Delay = Routine.Start(this, DelayAnimation());
 
     }
 
 
     IEnumerator DelayAnimation()
     {
-        yield return new WaitForSeconds(Random.Range(delayMin, delayMax));
+        yield return RNG.Instance.NextFloat(delayMin, delayMax);
         animator.SetTrigger(idleExitParam);
     }
-
-
 }

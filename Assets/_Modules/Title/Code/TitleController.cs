@@ -158,6 +158,11 @@ namespace Aqua.Title
 
         private IEnumerator SpawnOtters() {
             yield return RNG.Instance.NextFloat(2, 3);
+            for(int i = 0; i < m_Config.OtterPrefabs.Length; i++) {
+                RandomAnimationDelay randomDelay = m_Config.OtterPrefabs[i].GetComponent<RandomAnimationDelay>();
+                randomDelay.delayMin *= 0.1f;
+                randomDelay.delayMax *= 0.1f;
+            }
             for(int i = 0; i < 30; i++) {
                 int idx = i % m_Config.OtterPrefabs.Length;
                 GameObject newOtter = Instantiate(m_Config.OtterPrefabs[idx]);
