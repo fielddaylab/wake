@@ -134,6 +134,11 @@ namespace Aqua {
             base.Shutdown();
         }
     
+        public void OnLocalizationLoaded()
+        {
+            m_Bestiary.CacheSortingInfo();
+        }
+
         #region Preload
 
         public bool PreloadGroup(StringHash32 groupId) {

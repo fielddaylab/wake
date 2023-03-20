@@ -92,7 +92,7 @@ namespace Aqua
             } else {
                 var propData = Assets.Property(m_CachedPropertyId);
                 float value = inEnvironment.GetEnvironment()[m_CachedPropertyId];
-                float anchorX = propData.RemapValue(value);
+                float anchorX = Mathf.Clamp01(propData.RemapValue(value));
                 anchorX = m_AliveRange.AdjustValue(anchorX);
 
                 Vector2 anchorMin = m_EnvironmentValueMarker.anchorMin,

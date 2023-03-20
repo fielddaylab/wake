@@ -171,7 +171,7 @@ namespace Aqua.Portable {
                     Handler.GetEntries(Handler.Category, entities);
                 } else {
                     Save.Bestiary.GetEntities(Handler.Category, entities);
-                    entities.Sort((a, b) => BestiaryDesc.SortByEnvironment(a.Entity, b.Entity));
+                    entities.Sort((a, b) => BestiaryDesc.SortNatural(a.Entity, b.Entity));
                 }
 
                 StringHash32 mapId = default;

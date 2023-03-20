@@ -320,7 +320,7 @@ namespace Aqua
 
                 if (future.IsComplete())
                 {
-                    DebugService.Log(LogMask.DataService, "[DataService] Save with profile name {0} found on server!", m_ProfileName);
+                    DebugService.Log(LogMask.DataService, "[DataService] Save with profile name {0} found on server!", inUserCode);
                     SaveData serverData = null;
                     bool bSuccess;
                     using(Profiling.Time("reading save data from server"))
@@ -481,7 +481,7 @@ namespace Aqua
 
         static private bool IdentifyDebugProfile(ref string ioId)
         {
-            if (ioId == DebugSaveId)
+            if (ioId == DebugSaveId || string.IsNullOrEmpty(ioId))
                 return true;
                 
             if (Guid.TryParse(ioId, out _))
@@ -773,7 +773,9 @@ namespace Aqua
 
             OGD.Core.Configure(m_ServerAddress, GameId);
 
-            m_UpdateSummaryFromServer.Replace(this, TryUpdateSaveSummary());
+            if (SceneHelper.ActiveScene().BuildIndex < GameConsts.GameSceneIndexStart) {
+                m_UpdateSummaryFromServer.Replace(this, TryUpdateSaveSummary());
+            }
         }
 
         private void LateUpdate() {

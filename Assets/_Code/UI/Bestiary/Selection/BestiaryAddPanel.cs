@@ -218,7 +218,7 @@ namespace Aqua
                 CollectEntities(Save.Bestiary, m_Category, m_IgnoreFlags, Filter, availableCritters);
                 yield return null;
                 
-                availableCritters.Sort(BestiaryDesc.SortByEnvironment);
+                availableCritters.Sort(BestiaryDesc.SortNatural);
 
                 yield return Routine.Amortize(PopulateCritters(availableCritters), 6);
             }

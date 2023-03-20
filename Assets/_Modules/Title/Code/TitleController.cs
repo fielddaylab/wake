@@ -168,6 +168,7 @@ namespace Aqua.Title
                 GameObject newOtter = Instantiate(m_Config.OtterPrefabs[idx]);
                 newOtter.transform.position = m_OriginalOtterPositions[idx] + RNG.Instance.NextVector3(1, 5);
                 newOtter.transform.SetScale(newOtter.transform.localScale * RNG.Instance.NextFloat(0.8f, 2f));
+                newOtter.GetComponent<Animator>().Rebind();
                 yield return 0.1f;
             }
         }

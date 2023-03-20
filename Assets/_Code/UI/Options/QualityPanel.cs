@@ -32,13 +32,6 @@ namespace Aqua.Option
                 .AddOption("options.quality.animation.high.label", "options.quality.animation.high.tooltip", OptionsPerformance.FeatureMode.High)
                 .Build();
 
-            m_ParticleQuality.Initialize<OptionsPerformance.FeatureMode>("options.quality.effects.label",
-                "options.quality.effects.tooltip", OnParticleQualityChanged)
-                .AddOption("options.quality.effects.low.label", "options.quality.effects.low.tooltip", OptionsPerformance.FeatureMode.Low)
-                .AddOption("options.quality.effects.medium.label", "options.quality.effects.medium.tooltip", OptionsPerformance.FeatureMode.Medium)
-                .AddOption("options.quality.effects.high.label", "options.quality.effects.high.tooltip", OptionsPerformance.FeatureMode.High)
-                .Build();
-
             m_FullscreenToggle.Initialize("options.quality.fullscreen.label",
                 "options.quality.fullscreen.tooltip", OnFullscreenChanged);
 
@@ -81,15 +74,11 @@ namespace Aqua.Option
         private void OnAnimationQualityChanged(OptionsPerformance.FeatureMode inQuality)
         {
             Data.Performance.AnimationQuality = inQuality;
-
-            Services.Events.Queue(GameEvents.OptionsUpdated, Data);
         }
 
         private void OnParticleQualityChanged(OptionsPerformance.FeatureMode inQuality)
         {
             Data.Performance.EffectsQuality = inQuality;
-
-            Services.Events.Queue(GameEvents.OptionsUpdated, Data);
         }
 
         private void OnFullscreenChanged(bool fullscreen) {

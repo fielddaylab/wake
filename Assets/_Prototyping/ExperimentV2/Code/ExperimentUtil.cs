@@ -93,6 +93,13 @@ namespace ProtoAqua.ExperimentV2 {
                 if (!IsAnyNew(result)) {
                     options = PopupPanel.DefaultDismiss;
                 }
+                if (result.Target != null) {
+                    return Services.UI.Popup.PresentFacts(
+                        Loc.Format("experiment.summary.single.header", result.Target.CommonName()),
+                        hintText, null, factSet, 0, options
+                    );
+                }
+
                 return Services.UI.Popup.PresentFacts(
                     Loc.Find("experiment.summary.header"),
                     hintText, null, factSet, 0, options

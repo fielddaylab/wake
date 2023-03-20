@@ -36,6 +36,8 @@ namespace Aqua.Portable {
         [NonSerialized] private BestiaryDesc m_ComparisonEnv = null;
         [NonSerialized] private List<BestiaryDesc> m_AvailableEnvironments = new List<BestiaryDesc>(8);
 
+        static private readonly RingBuffer<TaggedBestiaryDesc> SortBuffer = new RingBuffer<TaggedBestiaryDesc>(16, RingBufferMode.Expand);
+
         private void Awake() {
             GetComponent<BestiaryApp>().Handler = new BestiaryApp.DisplayHandler() {
                 Category = BestiaryDescCategory.Critter,
@@ -74,6 +76,9 @@ namespace Aqua.Portable {
         static private void GetEntries(BestiaryDescCategory category, List<TaggedBestiaryDesc> entries) {
             var ordering = Services.Tweaks.Get<ScienceTweaks>().CanonicalOrganismOrdering();
 
+            SortBuffer.Clear();
+            StringHash32 prevTag = null;
+
             foreach(var organism in ordering) {
                 if (!organism.Tag.IsEmpty && organism.Tag != organism.Entity.StationId() && !Save.Map.HasVisitedLocation(organism.Tag)) {
                     continue;
@@ -87,7 +92,27 @@ namespace Aqua.Portable {
                     continue;
                 }
 
-                entries.Add(organism);
+                if (organism.Tag != prevTag) {
+                    prevTag = organism.Tag;
+
+                    if (SortBuffer.Count > 0) {
+                        SortBuffer.Sort((x, y) => BestiaryDesc.SortNaturalInStation(x.Entity, y.Entity));
+                        foreach(var entry in SortBuffer) {
+                            entries.Add(entry);
+                        }
+                        SortBuffer.Clear();
+                    }
+                }
+
+                SortBuffer.PushBack(organism);
+            }
+
+            if (SortBuffer.Count > 0) {
+                SortBuffer.Sort((x, y) => BestiaryDesc.SortNaturalInStation(x.Entity, y.Entity));
+                foreach(var entry in SortBuffer) {
+                    entries.Add(entry);
+                }
+                SortBuffer.Clear();
             }
         }
 

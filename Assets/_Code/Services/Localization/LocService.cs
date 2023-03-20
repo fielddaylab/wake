@@ -15,6 +15,7 @@ using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Blocks;
 using BeauUtil.Debugger;
+using BeauUtil.Services;
 using BeauUtil.Tags;
 using EasyAssetStreaming;
 using ScriptableBake;
@@ -22,6 +23,7 @@ using UnityEngine;
 
 namespace Aqua
 {
+    [ServiceDependency(typeof(AssetsService))]
     public partial class LocService : ServiceBehaviour, ILoadable, IDebuggable
     {
         static private readonly FourCC DefaultLanguage = FourCC.Parse("EN");
@@ -226,9 +228,10 @@ namespace Aqua
 
         private void DispatchTextRefresh()
         {
+            Services.Assets.OnLocalizationLoaded();
+
             for(int i = 0, length = m_ActiveTexts.Count; i < length; i++)
                 m_ActiveTexts[i].OnLocalizationRefresh();
-
             OnLanguageUpdated.Invoke(m_CurrentLanguage);
         }
 
