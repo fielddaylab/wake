@@ -30,6 +30,9 @@ namespace Aqua.Title
         [Header("Audio")]
         [SerializeField] private SerializedHash32 m_WhaleCallAudioId = null;
         [SerializeField] private AudioBGMTrigger m_TitleBGM = null;
+
+        [Header("Renderers")]
+        [SerializeField] private Material m_OtterGlitchMaterial = null;
         
         #endregion // Inspector
 
@@ -38,21 +41,32 @@ namespace Aqua.Title
         [NonSerialized] private Routine m_IntroCutscene;
         [NonSerialized] private Routine m_SkipRoutine;
         [NonSerialized] private bool m_AllowSkip;
+        [NonSerialized] private Vector3[] m_OriginalOtterPositions;
 
         private void Start()
         {
             m_Canvas.enabled = false;
+
+            Services.Secrets.RegisterCheat("title_k", SecretService.CheatType.Single, "title", "UUDDLRLRba", () => {
+                foreach(var otter in m_Config.Otters) {
+                    otter.sharedMaterial = m_OtterGlitchMaterial;
+                }
+                Routine.Start(this, SpawnOtters());
+            });
         }
 
         private void OnDestroy()
         {
+            Services.Secrets?.DeregisterCheat("title_k");
+
             Services.UI?.StopSkipCutscene();
             Services.Events?.DeregisterAll(this);
             Services.UI?.StopSkipCutscene();
+            Services.Secrets?.DisallowCheats("title");
         }
 
         private void LateUpdate() {
-            if (m_AllowSkip) {
+            if (m_AllowSkip && Time.timeScale > 0) {
                 if (Script.SkipPressed()) {
                     m_AllowSkip = false;
                     m_SkipRoutine.Replace(this, Skip()).Tick();
@@ -78,6 +92,7 @@ namespace Aqua.Title
             m_SubtitleGroup.Show();
             m_ControlsGroup.Show();
             m_CreatedByGroup.Show();
+            Services.Secrets.AllowCheats("title");
         }
 
         private void InitializeFromBootScene()
@@ -123,6 +138,7 @@ namespace Aqua.Title
             );
 
             Services.Input.ResumeAll();
+            Services.Secrets.AllowCheats("title");
             m_AllowSkip = false;
         }
 
@@ -139,6 +155,17 @@ namespace Aqua.Title
         }
 
         #region Routines
+
+        private IEnumerator SpawnOtters() {
+            yield return RNG.Instance.NextFloat(2, 3);
+            for(int i = 0; i < 30; i++) {
+                int idx = i % m_Config.OtterPrefabs.Length;
+                GameObject newOtter = Instantiate(m_Config.OtterPrefabs[idx]);
+                newOtter.transform.position = m_OriginalOtterPositions[idx] + RNG.Instance.NextVector3(1, 5);
+                newOtter.transform.SetScale(newOtter.transform.localScale * RNG.Instance.NextFloat(0.8f, 2f));
+                yield return 0.1f;
+            }
+        }
 
         private void PlayWhaleSound() {
             if (m_SkipRoutine) {
@@ -281,6 +308,11 @@ namespace Aqua.Title
             m_Config = FindObjectOfType<TitleConfig>();
             m_BuildIdText.SetText(string.Format("Build: {0} ({1})", BuildInfo.Id(), BuildInfo.Date()));
             m_Menu.LoadConfig(m_Config);
+
+            m_OriginalOtterPositions = new Vector3[m_Config.OtterPrefabs.Length];
+            for(int i = 0; i < m_OriginalOtterPositions.Length; i++) {
+                m_OriginalOtterPositions[i] = m_Config.OtterPrefabs[i].transform.position;
+            }
 
             foreach(var card in m_Cards) {
                 card.Group.gameObject.SetActive(false);

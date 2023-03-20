@@ -13,6 +13,8 @@ namespace Aqua {
     public sealed class SecretService : ServiceBehaviour {
         private const string AudioPath = "Secret/SecretAudio";
 
+        public const int MaxKeyRecord = 20;
+
         #region Types
 
         private enum KeyKind {
@@ -61,7 +63,7 @@ namespace Aqua {
         #endregion // Types
 
         private readonly RingBuffer<CheatEntry> m_Cheats = new RingBuffer<CheatEntry>(32, RingBufferMode.Expand);
-        private readonly RingBuffer<KeyCode> m_LastKeyEntries = new RingBuffer<KeyCode>(16, RingBufferMode.Overwrite);
+        private readonly RingBuffer<KeyCode> m_LastKeyEntries = new RingBuffer<KeyCode>(MaxKeyRecord, RingBufferMode.Overwrite);
 
         [NonSerialized] private AudioPackage m_AudioPackage;
 
@@ -72,7 +74,7 @@ namespace Aqua {
 
         #region Cheats
 
-        public void RegisterCheat(StringHash32 cheatId, CheatType type, StringHash32 context, string pattern, Action activate, Func<bool> validate = null, Action deactivate = null) {
+        public SecretService RegisterCheat(StringHash32 cheatId, CheatType type, StringHash32 context, string pattern, Action activate, Func<bool> validate = null, Action deactivate = null) {
             CheatEntry entry = default;
             entry.Id = cheatId;
             entry.Type = type;
@@ -83,10 +85,13 @@ namespace Aqua {
             entry.Deactivate = deactivate;
 
             m_Cheats.PushBack(entry);
+            return this;
         }
 
-        public void DeregisterCheat(StringHash32 cheatId) {
+        public SecretService DeregisterCheat(StringHash32 cheatId) {
             m_Cheats.RemoveWhere((e, id) => e.Id == id, cheatId);
+            m_ActiveCheats.Remove(cheatId);
+            return this;
         }
 
         public bool IsCheatActive(StringHash32 cheatId) {
@@ -246,6 +251,9 @@ namespace Aqua {
         }
 
         static private Keystroke[] GeneratePattern(string pattern) {
+            if (pattern.Length > MaxKeyRecord) {
+                throw new ArgumentException(string.Format("provided pattern '{0}' is too long - max chars is {1}", pattern, MaxKeyRecord));
+            }
             Keystroke[] strokes = new Keystroke[pattern.Length];
             for(int i = 0; i < pattern.Length; i++) {
                 strokes[i] = GenerateStroke(pattern[i]);
@@ -299,6 +307,9 @@ namespace Aqua {
 
         protected override void Initialize() {
             Services.Input.OnKeyPressed += HandleKeyPressed;
+            Services.Events.Register(GameEvents.SceneWillUnload, () => {
+                m_LastKeyEntries.Clear();
+            });
 
             GameCheats.RegisterCheats(this);
         }
@@ -306,6 +317,7 @@ namespace Aqua {
         protected override void Shutdown() {
             if (Services.Valid && Services.Input) {
                 Services.Input.OnKeyPressed -= HandleKeyPressed;
+                Services.Events?.DeregisterAll(this);
             }
         }
 
