@@ -27,6 +27,7 @@ $set jobs:salmon-competition.sync-failed = false
 :: allSet
 @trigger    JobTaskCompleted
 @when       taskId == "observeCod"
+@cutscene
 @once
 {@guide} Adequate work, O! You've obtained the data you needed here.
          Time to head to the Modeling Lab!
@@ -34,6 +35,7 @@ $set jobs:salmon-competition.sync-failed = false
 :: modelsComplete
 @trigger    JobTaskCompleted
 @when       taskId == "modelFish"
+@cutscene
 @once
 {@player} Yes!! This model is looking a lot better.
           Can't wait to show {nameof @profArctic}!
