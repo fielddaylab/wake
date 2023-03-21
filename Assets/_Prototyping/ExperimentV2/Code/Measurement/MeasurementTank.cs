@@ -425,6 +425,12 @@ namespace ProtoAqua.ExperimentV2
         }
 
         private IEnumerator FinishExperiment(ExperimentResult inResult) {
+            using (var table = TempVarTable.Alloc()) {
+                table.Set("tankType", m_ParentTank.Type.ToString());
+                table.Set("tankId", m_ParentTank.Id);
+                Services.Script.TriggerResponse(ExperimentTriggers.ExperimentFinishing, table);
+            }
+
             using (Script.DisableInput())
             using (Script.Letterbox()) {
                 Services.Script.KillLowPriorityThreads();

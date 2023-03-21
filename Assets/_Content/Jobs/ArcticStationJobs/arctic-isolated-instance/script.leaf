@@ -127,7 +127,7 @@ $endif
 // Put Glass Sponge in tank with predators
 
 :: checkPredators
-@trigger	ExperimentStarted
+@trigger	ExperimentFinishing
 @when		tankType == "Observation"
 @cutscene
 $if ExperimentHasCritter("GlassSponge"), ExperimentHasCritter("SnowCrab")
