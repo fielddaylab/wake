@@ -39,6 +39,7 @@ namespace Aqua
         [SerializeField] private int m_MinIcons = 30;
         [SerializeField] private int m_PerRow = 0;
         [SerializeField] private float m_AnimateIntervalMultiplier = 0.2f;
+        [SerializeField] private bool m_SortAlphabetically = false;
 
         #endregion // Inspector
 
@@ -218,7 +219,11 @@ namespace Aqua
                 CollectEntities(Save.Bestiary, m_Category, m_IgnoreFlags, Filter, availableCritters);
                 yield return null;
                 
-                availableCritters.Sort(BestiaryDesc.SortNatural);
+                if (m_SortAlphabetically) {
+                    availableCritters.Sort(BestiaryDesc.SortByName);
+                } else {
+                    availableCritters.Sort(BestiaryDesc.SortNatural);
+                }
 
                 yield return Routine.Amortize(PopulateCritters(availableCritters), 6);
             }

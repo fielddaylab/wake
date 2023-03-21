@@ -458,7 +458,6 @@ namespace Aqua
                 }
             }
 
-            Shader.WarmupAllShaders();
             yield return WaitForStreaming();
         }
 
