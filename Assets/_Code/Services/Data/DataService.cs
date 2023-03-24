@@ -770,6 +770,7 @@ namespace Aqua
             LoadOptionsSettings();
 
             SavePatcher.InitializeIdPatcher(m_IdRenames);
+            Assets.FullyUnload(ref m_IdRenames);
 
             OGD.Core.Configure(m_ServerAddress, GameId);
 

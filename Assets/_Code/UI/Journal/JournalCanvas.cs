@@ -114,6 +114,7 @@ namespace Aqua {
                 return go;
             };
             m_Decompressor.NewComponent = PrefabDecompressor.DefaultNewComponent;
+            m_Decompressor.ResourceCache = new Dictionary<ushort, UnityEngine.Object>(5);
         }
 
         protected override void Awake() {
@@ -134,6 +135,8 @@ namespace Aqua {
             if (!m_InScene && Services.Valid) {
                 Services.Assets.CancelPreload(PreloadGroup);
             }
+
+            m_Decompressor.ResourceCache.Clear();
 
             base.OnDestroy();
         }

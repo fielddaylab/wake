@@ -107,6 +107,8 @@ namespace Aqua {
                 }
             }
             Log.Msg("[AssetsService] Found {0} preload groups", m_PreloadGroupMap.Count);
+
+            Assets.FullyUnload(ref m_PreloadGroupFiles);
         }
 
         private IEnumerator StreamingManagementRoutine() {

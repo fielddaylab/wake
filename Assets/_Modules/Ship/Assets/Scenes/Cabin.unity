@@ -158,6 +158,7 @@ MonoBehaviour:
   Zoom: 1
   AudioListenerZOffset: 0
   FieldOfView: 29.34286
+  RespectSceneBounds: 0
   Properties: 31
 --- !u!4 &100272172
 Transform:
@@ -206,6 +207,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 1
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!4 &128313769
 Transform:
   m_ObjectHideFlags: 0
@@ -237,6 +239,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Always: 1
+  IgnoreAnimators: 1
 --- !u!1 &135640543
 GameObject:
   m_ObjectHideFlags: 0
@@ -287,6 +290,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!114 &135640546
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -300,6 +304,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Always: 1
+  IgnoreAnimators: 1
 --- !u!1001 &147055636
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5173,7 +5178,7 @@ GameObject:
   - component: {fileID: 199151770}
   - component: {fileID: 199151772}
   - component: {fileID: 199151771}
-  m_Layer: 0
+  m_Layer: 28
   m_Name: CabinPostVolume
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5308,6 +5313,7 @@ MonoBehaviour:
   m_Crossfade: 0.5
   m_StopOnDisable: 0
   m_PlayOnLoad: 0
+  m_DoNotPreload: 0
 --- !u!114 &356390657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10394,6 +10400,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!114 &459778283
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10407,6 +10414,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Always: 1
+  IgnoreAnimators: 1
 --- !u!1001 &497016219
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10544,6 +10552,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: 15.650002
       objectReference: {fileID: 0}
+    - target: {fileID: 944676438212943717, guid: a3739fd6ea81b7645a569d80dbc5c938,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2538909648691037396, guid: a3739fd6ea81b7645a569d80dbc5c938,
         type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -10558,6 +10571,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Texture
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5244353419862726152, guid: a3739fd6ea81b7645a569d80dbc5c938,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6255998736047863277, guid: a3739fd6ea81b7645a569d80dbc5c938,
         type: 3}
@@ -10722,6 +10740,7 @@ MonoBehaviour:
   Zoom: 1
   AudioListenerZOffset: 0
   FieldOfView: 28
+  RespectSceneBounds: 0
   Properties: 31
 --- !u!1001 &611702065
 PrefabInstance:
@@ -10845,7 +10864,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 619090833}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.000014305115, y: 10.93, z: 60.000015}
+  m_LocalPosition: {x: -17.83, y: -5.9, z: 60.000015}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -10873,7 +10892,7 @@ MonoBehaviour:
     serializedVersion: 2
     rgba: 4294967295
   m_Visible: 1
-  m_Size: {x: 96, y: 48}
+  m_Size: {x: 17.660378, y: 18}
   m_Pivot: {x: 0.5, y: 0.5}
   m_UVRect:
     serializedVersion: 2
@@ -10944,6 +10963,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Always: 1
+  IgnoreAnimators: 1
 --- !u!1 &711237504
 GameObject:
   m_ObjectHideFlags: 0
@@ -16085,6 +16105,7 @@ MonoBehaviour:
   Zoom: 1
   AudioListenerZOffset: 0
   FieldOfView: 28
+  RespectSceneBounds: 0
   Properties: 31
 --- !u!1 &1058461207
 GameObject:
@@ -16753,7 +16774,7 @@ GameObject:
   - component: {fileID: 1488734594}
   - component: {fileID: 1488734593}
   - component: {fileID: 1488734592}
-  m_Layer: 0
+  m_Layer: 30
   m_Name: ToDesk
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17736,6 +17757,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 1
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!114 &1904364433
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17749,6 +17771,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Always: 1
+  IgnoreAnimators: 1
 --- !u!114 &1904364434
 MonoBehaviour:
   m_ObjectHideFlags: 0

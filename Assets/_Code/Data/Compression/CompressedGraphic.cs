@@ -82,9 +82,9 @@ namespace Aqua.Compression {
             data.Flags = image.preserveAspect ? (ushort) 1 : (ushort) 0;
         }
 
-        static public void Decompress(PackageBank bank, in CompressedImage data, Image image) {
+        static public void Decompress(PackageBank bank, in CompressedImage data, Image image, in PrefabDecompressor decompressor) {
             CompressedGraphic.Decompress(data.Graphic, image);
-            image.sprite = (Sprite) bank.GetAsset(data.SpriteIdx);
+            image.sprite = bank.GetAsset<Sprite>(data.SpriteIdx, decompressor);
             image.preserveAspect = (data.Flags & 1) != 0;
         }
     }
@@ -141,10 +141,10 @@ namespace Aqua.Compression {
             data.Margin3 = CompressionRange.Encode8(MarginRange, text.margin.w);
         }
 
-        static public void Decompress(PackageBank bank, in CompressedTextMeshPro data, TMP_Text text) {
+        static public void Decompress(PackageBank bank, in CompressedTextMeshPro data, TMP_Text text, in PrefabDecompressor decompressor) {
             CompressedGraphic.Decompress(data.Graphic, text);
             
-            text.font = (TMP_FontAsset) bank.GetAsset(data.FontIdx);
+            text.font = bank.GetAsset<TMP_FontAsset>(data.FontIdx, decompressor);
             text.fontSize = CompressionRange.Decode16(FontSizeRange, data.FontSize, 0.5f);
             text.fontStyle = (FontStyles) data.FontStyle;
             text.alignment = (TextAlignmentOptions) data.Alignment;

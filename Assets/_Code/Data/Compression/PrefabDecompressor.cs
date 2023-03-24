@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using EasyAssetStreaming;
 using TMPro;
 using System;
+using System.Collections.Generic;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -21,6 +22,8 @@ namespace Aqua.Compression {
 
         public NewRootDelegate NewRoot;
         public NewComponentDelegate NewComponent;
+
+        public Dictionary<ushort, UnityEngine.Object> ResourceCache;
 
         static public NewRootDelegate DefaultNewRoot = (n, f, c, p) => {
             GameObject go = new GameObject(n);

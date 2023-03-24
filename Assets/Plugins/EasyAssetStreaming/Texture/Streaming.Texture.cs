@@ -437,7 +437,11 @@ namespace EasyAssetStreaming {
 
                     long mark = Stopwatch.GetTimestamp();
                     PostApplySettings(texture2d, settings, ResolveCompression(settings.CompressionLevel), true);
-                    UnityEngine.Debug.LogFormat("[Streaming] Applied compression to '{0}' (took {1}ms)", meta.Address, (double) (Stopwatch.GetTimestamp() - mark) / Stopwatch.Frequency * 1000);
+                    long oldSize = handle.StateInfo.Size;
+                    RecomputeMemorySize(ref MemoryUsage, handle, texture2d);
+                    long newSize = handle.StateInfo.Size;
+                    UnityEngine.Debug.LogFormat("[Streaming] Applied compression to '{0}' (new format {1}, reduced by {2}%) (took {3}ms)", meta.Address, texture2d.format, 100 - (newSize * 100 / oldSize), (double) (Stopwatch.GetTimestamp() - mark) / Stopwatch.Frequency * 1000);
+                    VerifyTextureDimensions(texture2d, handle); 
                 }
             }
 
@@ -540,6 +544,12 @@ namespace EasyAssetStreaming {
                     default: {
                         return FormatMappingsDefault[idx];
                     }
+                }
+            }
+
+            static internal void VerifyTextureDimensions(Texture2D texture, StreamingAssetHandle id) {
+                if (!StreamingHelper.IsAppropriateDimensionsForFormat(texture, texture.format)) {
+                    UnityEngine.Debug.LogWarningFormat("[Streaming] Texture '{0}' is not the appropriate dimensions for its format {1} ({2}x{3}) - memory usage may be higher than reported", id.MetaInfo.Address, texture.format, texture.width, texture.height);
                 }
             }
 
@@ -648,7 +658,9 @@ namespace EasyAssetStreaming {
                     texture.LoadImage(bytes, false);
                     PostApplySettings(texture, settings, compression, false);
                     RecomputeMemorySize(ref MemoryUsage, id, texture);
+                    VerifyTextureDimensions(texture, id);
                     UnityEngine.Debug.LogFormat("[Streaming] ...finished loading (sync) '{0}' (format {1})", id.MetaInfo.Address, texture.format.ToString());
+
                     ref AssetEditorInfo editorInfo = ref id.EditorInfo;
                     editorInfo.Path = correctedPath;
                     try {
@@ -691,6 +703,8 @@ namespace EasyAssetStreaming {
                 editorInfo.EditTime = File.GetLastWriteTimeUtc(editorInfo.Path).ToFileTimeUtc();
 
                 UnityEngine.Debug.LogFormat("[Streaming] Texture '{0}' reloaded", id.MetaInfo.Address);
+                VerifyTextureDimensions(texture, id);
+
                 InvokeCallbacks(id, texture);
             }
 

@@ -76,18 +76,27 @@ namespace EasyAssetStreaming {
             bool manifestUpdated = Manifest.ReloadEditor();
 
             HashSet<uint> allAddressHashes = new HashSet<uint>();
-            foreach(var path in deletedAssets) {
-                allAddressHashes.Add(AddressKey(path));
+
+            void AddToPaths(string[] paths, HashSet<uint> hashes) {
+                foreach(var path in paths) {
+                    if (!path.StartsWith("Assets/StreamingAssets/")) {
+                        continue;
+                    }
+
+                    string relativePath = path.Substring(23);
+                    hashes.Add(AddressKey(relativePath));
+                }
             }
-            foreach(var path in movedAssets) {
-                allAddressHashes.Add(AddressKey(path));
-            }
-            foreach(var path in movedFromAssetPaths) {
-                allAddressHashes.Add(AddressKey(path));
-            }
+
+            AddToPaths(importedAssets, allAddressHashes);
+            AddToPaths(deletedAssets, allAddressHashes);
+            AddToPaths(movedAssets, allAddressHashes);
+            AddToPaths(movedFromAssetPaths, allAddressHashes);
             
-            foreach(var id in s_Cache.ByAddressHash.Values) {
-                TryReloadAsset(id, allAddressHashes, manifestUpdated);
+            if (allAddressHashes.Count > 0) {
+                foreach(var id in s_Cache.ByAddressHash.Values) {
+                    TryReloadAsset(id, allAddressHashes, manifestUpdated);
+                }
             }
         }
 
