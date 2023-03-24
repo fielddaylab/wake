@@ -258,7 +258,7 @@ namespace Aqua {
         }
 
         static public void FullyUnload(UnityEngine.Object asset) {
-            Debug.LogWarningFormat("[Assets] Manually destroying resource '{0}'", asset);
+            Debug.LogWarningFormat("[Assets] Manually destroying resource '{0}'", asset.name);
             #if !UNITY_EDITOR
             UnityEngine.Object.DestroyImmediate(asset, true);
             #endif // !UNITY_EDITOR

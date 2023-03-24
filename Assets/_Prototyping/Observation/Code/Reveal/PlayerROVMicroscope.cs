@@ -22,6 +22,8 @@ namespace ProtoAqua.Observation {
         [SerializeField] private float m_CameraHintZoom = 1;
 
         [Header("Projection")]
+        [SerializeField] private Renderer m_ProjectionMask = null;
+        [SerializeField] private Material m_ProjectionMaskMaterial = null;
         [SerializeField] private Transform m_ProjectionCenter = null;
         [SerializeField] private Camera m_ProjectionCamera = null;
         [SerializeField] private float m_ProjectionRadius = 1;
@@ -57,6 +59,9 @@ namespace ProtoAqua.Observation {
             Script.OnSceneLoad(() => {
                 m_WorldMicroscopeLayer.ForceActive(false);
             });
+
+            Debug.Log(m_ProjectionMask.sharedMaterial);
+            m_ProjectionMask.sharedMaterial = m_ProjectionMaskMaterial;
         }
 
         #region ITool
