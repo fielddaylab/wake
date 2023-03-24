@@ -33,6 +33,20 @@ namespace ProtoAqua.Observation {
 
         #if UNITY_EDITOR
 
+        protected override bool CustomBake() {
+            bool changed = false;
+            if (Scannable != null && !ArrayUtils.Contains(ProjectedTransforms, Scannable.Click)) {
+                changed = true;
+                ArrayUtils.Add(ref ProjectedTransforms, Scannable.Click);
+                if (Scannable.Click.transform != Scannable.IconRootOverride) {
+                    Scannable.IconRootOverride = Scannable.Click.transform;
+                    Baking.SetDirty(Scannable);
+                }
+            }
+            changed |= ValidationUtils.EnsureUnique(ref ProjectedTransforms);
+            return changed;
+        }
+
         protected override void Reset() {
             base.Reset();
 

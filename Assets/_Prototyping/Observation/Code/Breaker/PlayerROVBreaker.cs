@@ -15,6 +15,8 @@ namespace ProtoAqua.Observation {
     public sealed class PlayerROVBreaker : MonoBehaviour, PlayerROV.ITool {
         static public readonly TableKeyPair Var_TotalBroken = TableKeyPair.Parse("player:stats.brokenCount");
 
+        static public readonly StringHash32 Event_OnFire = "PlayerROVBreaker::Fired";
+
         static public readonly StringHash32 Trigger_OnCharging = "IceBreakerCharging";
         static public readonly StringHash32 Trigger_OnCancel = "IceBreakerCanceled";
         static public readonly StringHash32 Trigger_OnFire = "IceBreakerFired";
@@ -206,6 +208,8 @@ namespace ProtoAqua.Observation {
                 Services.UI.WorldFaders.Flash(Color.white.WithAlpha(0.5f), 0.1f);
                 Services.Camera.AddShake(0.1f, 0.1f, 0.4f);
 
+                Services.Events.Queue(Event_OnFire);
+                
                 if (!Script.ShouldBlock()) {
                     Services.Script.TriggerResponse(Trigger_OnFire);
                 }

@@ -23,6 +23,10 @@ namespace ProtoAqua.Observation
         static public readonly StringHash32 Event_ToolSwitched = "PlayerROV::ToolSwitched"; // ToolState
         static public readonly StringHash32 Event_ToolPermissions = "PlayerROV::ToolPermissions"; // ToolState
 
+        static public readonly StringHash32 Event_HardCollision = "PlayerROV::HardCollision";
+        static public readonly StringHash32 Event_DashCollision = "PlayerROV::DashCollision";
+        static public readonly StringHash32 Event_Dashed = "PlayerROV::Dashed";
+
         static public readonly StringHash32 Trigger_ToolActivated = "ToolActivated";
         static public readonly StringHash32 Trigger_ToolDeactivated = "ToolDeactivated";
 
@@ -336,6 +340,7 @@ namespace ProtoAqua.Observation
                 }
                 m_DashLeft = m_DashDuration;
                 Services.Script.QueueTriggerResponse(Trigger_Dashed, -10000);
+                Services.Events.Queue(Event_Dashed);
                 Log.Msg("[PlayerROV] Dash activated");
                 SetEngineState(true);
                 return;
@@ -432,8 +437,10 @@ namespace ProtoAqua.Observation
                             // TODO: Play impact noise
 
                             if (m_DashDuration > 0) {
+                                Services.Events.Queue(Event_DashCollision, contact.Normal);
                                 Services.Script.QueueTriggerResponse(Trigger_DashCollision, -10000);
                             } else {
+                                Services.Events.Queue(Event_HardCollision, contact.Normal);
                                 Services.Script.QueueTriggerResponse(Trigger_HardCollision, -10000);
                             }
                         } else {

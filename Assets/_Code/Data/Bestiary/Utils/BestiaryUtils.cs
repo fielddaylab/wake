@@ -7,6 +7,27 @@ namespace Aqua
 {
     static public class BestiaryUtils
     {
+        #region Common
+
+        static public BestiaryDesc FindCommonParent(ListSlice<BFBase> inFacts)
+        {
+            if (inFacts.Length <= 0) {
+                return null;
+            }
+
+            BestiaryDesc desc = inFacts[0].Parent;
+
+            for(int i = 1; i < inFacts.Length; i++) {
+                if (desc != inFacts[i].Parent) {
+                    return null;
+                }
+            }
+
+            return null;
+        }
+
+        #endregion // Common
+
         #region Find Facts
 
         /// <summary>

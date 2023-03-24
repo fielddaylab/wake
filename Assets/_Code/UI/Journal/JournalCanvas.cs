@@ -88,8 +88,11 @@ namespace Aqua {
         [NonSerialized] private bool m_HiddenTriggerQueued;
 
         static public bool Visible() {
-            JournalCanvas c = Services.UI.FindPanel<JournalCanvas>();
-            return c != null && (c.IsTransitioning() || c.IsShowing());
+            if (Services.UI.TryFindPanel<JournalCanvas>(out JournalCanvas c)) {
+                return c.IsTransitioning() || c.IsShowing();
+            } else {
+                return false;
+            }
         }
 
         private JournalCanvas() {

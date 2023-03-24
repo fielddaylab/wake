@@ -19,10 +19,10 @@ namespace Aqua
     static public class ValidationUtils
     #endif // UNITY_EDITOR
     {
-        static public void EnsureUnique<T>(ref T[] ioArray) where T : UnityEngine.Object
+        static public bool EnsureUnique<T>(ref T[] ioArray) where T : UnityEngine.Object
         {
             if (ioArray == null)
-                return;
+                return false;
 
             int originalLength = ioArray.Length;
             int length = originalLength;
@@ -35,14 +35,18 @@ namespace Aqua
                 }
             }
 
-            if (length != originalLength)
+            if (length != originalLength) {
                 Array.Resize(ref ioArray, length);
+                return true;
+            }
+
+            return false;
         }
 
-        static public void EnsureUnique<T>(List<T> ioList) where T : UnityEngine.Object
+        static public bool EnsureUnique<T>(List<T> ioList) where T : UnityEngine.Object
         {
             if (ioList == null)
-                return;
+                return false;;
 
             int length = ioList.Count;
             using(PooledSet<T> duplicateTracker = PooledSet<T>.Create())
@@ -53,6 +57,8 @@ namespace Aqua
                         ListUtils.FastRemoveAt(ioList, i);
                 }
             }
+
+            return ioList.Count != length;
         }
 
         #if UNITY_EDITOR

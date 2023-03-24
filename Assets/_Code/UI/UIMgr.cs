@@ -234,6 +234,15 @@ namespace Aqua
             return (T) panel;
         }
 
+        public bool TryFindPanel<T>(out T outPanel) where T : SharedPanel
+        {
+            Type t = typeof(T);
+            SharedPanel panel;
+            bool success = m_SharedPanels.TryGetValue(t, out panel);
+            outPanel = panel as T;
+            return success;
+        }
+
         #endregion // Additional Panels
 
         #region Updates
