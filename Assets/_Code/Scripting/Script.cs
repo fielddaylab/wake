@@ -116,11 +116,12 @@ namespace Aqua {
         }
 
         static public Future<StringHash32> PopupNewFact(BFBase fact, BestiaryDesc entity = null, string textOverride = null) {
-            BestiaryDescCategory category = entity?.Category() ?? fact.Parent.Category();
+            BestiaryDesc entityRef = (entity ?? fact.Parent);
+            BestiaryDescCategory category = entityRef.Category();
             if (category == BestiaryDescCategory.Critter) {
-                return Services.UI.Popup.PresentFact(Loc.Format("ui.popup.newFact.critter.header", entity.CommonName()), textOverride, entity ? entity.ImageSet() : null, fact, Save.Bestiary.GetDiscoveredFlags(fact.Id));
+                return Services.UI.Popup.PresentFact(Loc.Format("ui.popup.newFact.critter.header", entityRef.CommonName()), textOverride, entity ? entity.ImageSet() : null, fact, Save.Bestiary.GetDiscoveredFlags(fact.Id));
             } else {
-                return Services.UI.Popup.PresentFact(Loc.Format("ui.popup.newFact.ecosystem.header", entity.CommonName()), textOverride, entity ? entity.ImageSet() : null, fact, Save.Bestiary.GetDiscoveredFlags(fact.Id));
+                return Services.UI.Popup.PresentFact(Loc.Format("ui.popup.newFact.ecosystem.header", entityRef.CommonName()), textOverride, entity ? entity.ImageSet() : null, fact, Save.Bestiary.GetDiscoveredFlags(fact.Id));
             }
         }
 
