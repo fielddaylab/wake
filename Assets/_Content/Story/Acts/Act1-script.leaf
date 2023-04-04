@@ -70,6 +70,36 @@ $call StationEntrance->Activate()
 {hide-dialog}
 $call CameraRecenterOnTarget(2)
 $call CameraSetMode(Hinted)
+$goto .intro-extra-nudge-start
+
+:: intro-extra-nudge-start
+$call Wait(20)
+$fork .intro-extra-nudge
+
+:: intro-extra-nudge
+@cutscene
+{@drKelp}Olivia! Come back to the station!
+{@player}All right, all right!
+{hide-dialog}
+$goto .intro-extra-nudge-start2
+
+:: intro-extra-nudge-start2
+$call Wait(12)
+$fork .intro-extra-nudge2
+
+:: intro-extra-nudge2
+@cutscene
+{@drKelp}Olivia, I really need you to come back.
+{@drKelp}The station is near the bottom left of the site.
+{hide-dialog}{fade-out black, 0.5, wait}
+$call CameraSnapToPose("StationCameraPose")
+$call StationEntrance->Activate()
+{fade-in 0.5, wait}{wait 1}
+{@drKelp}Swim under the domed part of the station, then come up through the hole with the lights.
+{hide-dialog}
+$call CameraRecenterOnTarget(2)
+$call CameraSetMode(Hinted)
+$goto .intro-extra-nudge-start2
 
 // Intro
 
