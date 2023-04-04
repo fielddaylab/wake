@@ -14,6 +14,7 @@ namespace Aqua
         static public readonly TableKeyPair ViewId = TableKeyPair.Parse("temp:view");
 
         // session
+        static public readonly TableKeyPair Secret_Bounce = TableKeyPair.Parse("session:secret.bounce");
 
         // jobs
         static public readonly TableKeyPair CurrentJob = TableKeyPair.Parse("player:currentJob");

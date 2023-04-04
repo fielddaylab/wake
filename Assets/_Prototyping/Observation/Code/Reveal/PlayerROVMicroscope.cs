@@ -122,6 +122,9 @@ namespace ProtoAqua.Observation {
                 if (region.Scannable) {
                     region.Scannable.InMicroscope = true;
                 }
+                foreach(var scan in region.AdditionalScannables) {
+                    scan.InMicroscope = true;
+                }
                 region.Hidden.SetActive(false);
                 region.Reveal.SetActive(true);
                 foreach(var v2d in region.ProjectedTransforms) {
@@ -146,6 +149,9 @@ namespace ProtoAqua.Observation {
                 }
                 if (region.Scannable) {
                     region.Scannable.InMicroscope = false;
+                }
+                foreach(var scan in region.AdditionalScannables) {
+                    scan.InMicroscope = false;
                 }
                 region.OnUnviewed?.Invoke(region);
             }

@@ -32,7 +32,7 @@ namespace Aqua
     }
 
     [LabeledEnum(false)]
-    public enum ColliderMaterialId {
+    public enum ColliderMaterialId : byte {
         [Label("Null")] Invisible,
 
         [Label("Sand")] Sand,
@@ -41,6 +41,8 @@ namespace Aqua
         [Label("Metal")] Metal,
 
         [Label("Weird/Flesh")] Flesh,
-        [Label("Weird/Bone")] Bone
+        [Label("Weird/Bone")] Bone,
+
+        [Label("Weird/Squeaky")] Squeaky
     }
 }

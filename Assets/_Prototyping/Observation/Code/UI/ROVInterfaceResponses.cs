@@ -45,7 +45,7 @@ namespace ProtoAqua.Observation
                 return;
             }
 
-            m_ShakeVector = normal * 3;
+            m_ShakeVector = normal * 3 + RNG.Instance.NextVector2(0.4f, 0.5f);
             m_ShakeDuration = 1;
         }
 
@@ -54,7 +54,7 @@ namespace ProtoAqua.Observation
                 return;
             }
 
-            m_ShakeVector = normal * 3;
+            m_ShakeVector = normal * 3 + RNG.Instance.NextVector2(0.4f, 0.5f);
             m_ShakeDuration = 0.8f;
         }
 

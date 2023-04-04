@@ -5,6 +5,7 @@ using Aqua.Character;
 using AquaAudio;
 using BeauUtil;
 using BeauUtil.Services;
+using BeauUtil.Variants;
 using UnityEngine;
 
 namespace Aqua {
@@ -88,9 +89,15 @@ namespace Aqua {
             return this;
         }
 
+        public SecretService RegisterVarToggleCheat(StringHash32 cheatId, StringHash32 context, string pattern, TableKeyPair varId, Func<bool> validate = null) {
+            return RegisterCheat(cheatId, CheatType.Toggle, context, pattern, () => Script.WriteVariable(varId, true), validate, () => Script.WriteVariable(varId, false));
+        }
+
         public SecretService DeregisterCheat(StringHash32 cheatId) {
             m_Cheats.RemoveWhere((e, id) => e.Id == id, cheatId);
-            m_ActiveCheats.Remove(cheatId);
+            if (m_ActiveCheats.Remove(cheatId)) {
+                Services.Events.Queue(GameEvents.SecretsChanged);
+            }
             return this;
         }
 
@@ -179,6 +186,8 @@ namespace Aqua {
                         break;
                     }
                 }
+
+                Services.Events.Queue(GameEvents.SecretsChanged);
             }
         }
 
@@ -335,6 +344,8 @@ namespace Aqua {
                 Services.Audio.ClearRemap("text_type_guide");
                 Assets.Character(GameConsts.Target_V1ctor).AdditionalTypingTextDelay = 0;
             });
+
+            service.RegisterVarToggleCheat("bouncy_mode", null, "bouncyhouse", GameVars.Secret_Bounce);
         }
     }
 }

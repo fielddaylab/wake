@@ -86,9 +86,6 @@ namespace Aqua
                 default: {
                     return SkinWeights.TwoBones;
                 }
-                case OptionsPerformance.FeatureMode.Low: {
-                    return SkinWeights.OneBone;
-                }
             }
         }
     }

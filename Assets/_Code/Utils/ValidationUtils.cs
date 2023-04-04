@@ -58,7 +58,7 @@ namespace Aqua
                 }
             }
 
-            return ioList.Count != length;
+            return length != ioList.Count;
         }
 
         #if UNITY_EDITOR

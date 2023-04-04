@@ -424,6 +424,21 @@ namespace Aqua {
 
         #endregion // Compression
 
+        #region Encryption
+
+        static private readonly byte[] XORKey = new byte[] { 0x05, 0x02, 0x14, 0x07 };
+
+        static public string XORCrypt(string src) {
+            int srcLength = src.Length, keyLength = XORKey.Length;
+            char* buffer = stackalloc char[srcLength];
+            for(int i = 0; i < srcLength; i++) {
+                buffer[i] = (char) (src[i] ^ XORKey[i % keyLength]);
+            }
+            return new string(buffer, 0, srcLength);
+        }
+
+        #endregion // Encryption
+
         static private string HexString(byte* src, int srcSize) {
             int bufferSize = 3 * srcSize - 1;
             char* buffer = stackalloc char[bufferSize];

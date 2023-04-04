@@ -14,7 +14,7 @@ namespace ProtoAqua.Observation
 {
     [DefaultExecutionOrder(500)]
     public class CollisionResponseSystem : SharedManager, IScenePreloader, IBaked {
-        public enum ImpactType {
+        public enum ImpactType : byte {
             Light,
             Heavy,
             Slide
@@ -63,9 +63,16 @@ namespace ProtoAqua.Observation
         public struct Request {
             public ColliderMaterialId Material;
             public ImpactType Type;
+            public RequestFlags Flags;
             public Vector3 Position;
             public Vector3 Normal;
             public float Size;
+        }
+
+        [Flags]
+        public enum RequestFlags : ushort {
+            Silent = 0x01,
+            DoNotOverride = 0x02
         }
 
         [SerializeField] private EffectResponse[] m_Responses = null;
@@ -81,8 +88,16 @@ namespace ProtoAqua.Observation
         private readonly RingBuffer<Request> m_RequestQueue = new RingBuffer<Request>(16, RingBufferMode.Expand);
         private readonly Dictionary<VFX, VFX.Pool> m_PoolMap = new Dictionary<VFX, VFX.Pool>(8);
 
+        [NonSerialized] private bool m_BouncyMode;
+
         protected override void Awake() {
             base.Awake();
+            Services.Events.Register(GameEvents.SecretsChanged, OnSecretsUpdated);
+        }
+
+        protected override void OnDestroy() {
+            Services.Events?.DeregisterAll(this);
+            base.OnDestroy();
         }
 
         private void LateUpdate() {
@@ -92,6 +107,10 @@ namespace ProtoAqua.Observation
 
             while(m_RequestQueue.Count > 0) {
                 Request request = m_RequestQueue.PopFront();
+                if (request.Material != ColliderMaterialId.Invisible && m_BouncyMode && (request.Flags & RequestFlags.DoNotOverride) == 0) {
+                    request.Material = ColliderMaterialId.Squeaky;
+                }
+
                 int responseIdx = FindResponseIndex(request.Material, request.Type);
                 if (responseIdx >= 0) {
                     ref EffectResponse response = ref m_Responses[responseIdx];
@@ -105,7 +124,7 @@ namespace ProtoAqua.Observation
                     m_ActiveEffects.PushBack(effect);
                     effect.Play();
 
-                    if (!response.Sound.IsEmpty) {
+                    if (!response.Sound.IsEmpty && (request.Flags & RequestFlags.Silent) == 0) {
                         AudioHandle sfx = Services.Audio.PostEvent(response.Sound).SetPosition(request.Position);
                         if (response.SoundVolume > 0 && response.SoundVolume < 1) {
                             sfx.SetVolume(response.SoundVolume);
@@ -126,14 +145,19 @@ namespace ProtoAqua.Observation
             return -1;
         }
 
-        public void Queue(ColliderMaterialId materialId, ImpactType type, Vector3 position, Vector3 normal, float size = 1) {
+        public void Queue(ColliderMaterialId materialId, ImpactType type, Vector3 position, Vector3 normal, float size = 1, RequestFlags flags = 0) {
             m_RequestQueue.PushBack(new Request() {
                 Material = materialId,
                 Type = type,
                 Position = position,
                 Normal = normal,
-                Size = size
+                Size = size,
+                Flags = flags
             });
+        }
+
+        private void OnSecretsUpdated() {
+            m_BouncyMode = Script.ReadVariable(GameVars.Secret_Bounce).AsBool();
         }
 
         IEnumerator IScenePreloader.OnPreloadScene(SceneBinding inScene, object inContext) {
@@ -189,6 +213,7 @@ namespace ProtoAqua.Observation
                     materials.Add(matId);
                 }
             });
+            materials.Add(ColliderMaterialId.Squeaky); // do not discard the squeaky!
 
             HashSet<ColliderMaterialId> discardedMaterials = new HashSet<ColliderMaterialId>();
 

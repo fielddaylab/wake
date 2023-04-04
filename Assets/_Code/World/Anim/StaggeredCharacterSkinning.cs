@@ -14,6 +14,7 @@ namespace Aqua.Animation
         public int Period = 2;
         public int Stagger = 0;
         public Animator Animator;
+        public bool ForceSomeAnimation;
 
         [SerializeField] private SpriteSkin[] m_SkinnedSprites = null;
 
@@ -36,7 +37,7 @@ namespace Aqua.Animation
                 return;
             }
 
-            bool hasAnims = mode != OptionsPerformance.FeatureMode.Low;
+            bool hasAnims = ForceSomeAnimation || mode != OptionsPerformance.FeatureMode.Low;
             bool fullAnims = mode == OptionsPerformance.FeatureMode.High;
 
             if (Animator) {
