@@ -146,6 +146,7 @@ namespace Aqua
         protected override void Shutdown()
         {
             Services.Events?.DeregisterAll(this);
+            m_Log.Dispose();
         }
         #endregion // IService
 
