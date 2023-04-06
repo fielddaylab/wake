@@ -223,6 +223,10 @@ namespace Aqua
         {
             Services.Input.PauseAll();
             yield return WaitForServiceLoading();
+
+            while(!Streaming.IsManifestLoaded()) {
+                yield return null;
+            }
             
             yield return WaitForPreload(m_InitialPreloadRoot, null);
 

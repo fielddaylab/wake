@@ -42,6 +42,13 @@ namespace EasyAssetStreaming {
 
         #endregion // Types
 
+        /// <summary>
+        /// Returns if the manifest has been loaded.
+        /// </summary>
+        static public bool IsManifestLoaded() {
+            return Manifest.Loaded;
+        }
+
         static internal class Manifest {
             #region State
 

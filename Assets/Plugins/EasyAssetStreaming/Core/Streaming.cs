@@ -135,6 +135,13 @@ namespace EasyAssetStreaming {
             EnsureTick();
         }
 
+        /// <summary>
+        /// Manually initializes streaming.
+        /// </summary>
+        static public void Initialize() {
+            EnsureInitialized();
+        }
+
         #endregion // Initialization
 
         #region Status
