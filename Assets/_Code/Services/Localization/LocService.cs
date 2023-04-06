@@ -1,6 +1,12 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#define DEVELOPMENT
+#endif // UNITY_EDITOR || DEVELOPMENT_BUILD
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using Aqua.Compression;
 using Aqua.Debugging;
 using BeauData;
@@ -9,6 +15,7 @@ using BeauRoutine;
 using BeauUtil;
 using BeauUtil.Blocks;
 using BeauUtil.Debugger;
+using BeauUtil.Services;
 using BeauUtil.Tags;
 using EasyAssetStreaming;
 using ScriptableBake;
@@ -16,7 +23,8 @@ using UnityEngine;
 
 namespace Aqua
 {
-    public partial class LocService : ServiceBehaviour, ILoadable
+    [ServiceDependency(typeof(AssetsService))]
+    public partial class LocService : ServiceBehaviour, ILoadable, IDebuggable
     {
         static private readonly FourCC DefaultLanguage = FourCC.Parse("EN");
 
@@ -35,6 +43,14 @@ namespace Aqua
         [NonSerialized] private FourCC m_CurrentLanguage;
         [NonSerialized] private LayoutPrefabPackage m_CurrentJournalPackage;
         [NonSerialized] private List<LocText> m_ActiveTexts = new List<LocText>(64);
+
+        public readonly CastableEvent<FourCC> OnLanguageUpdated = new CastableEvent<FourCC>(8);
+
+        #if DEVELOPMENT
+
+        [NonSerialized] private readonly HashSet<StringHash32> m_UsageAudit = Collections.NewSet<StringHash32>(1024);
+
+        #endif // DEVELOPMENT
         
         #region Loading
 
@@ -71,6 +87,15 @@ namespace Aqua
                     yield return Async.Schedule(LocPackage.ReadFromBinary(m_LanguagePackage, manifest.Binary));
                 }
             }
+
+            #if DEVELOPMENT
+
+            m_UsageAudit.Clear();
+            foreach(var key in m_LanguagePackage.AllKeys) {
+                m_UsageAudit.Add(key);
+            }
+
+            #endif // DEVELOPMENT
 
             DebugService.Log(LogMask.Loading | LogMask.Localization, "[LocService] Loaded {0} keys ({1})", m_LanguagePackage.Count, manifest.LanguageId.ToString());
 
@@ -127,6 +152,10 @@ namespace Aqua
             }
             else
             {
+                #if DEVELOPMENT
+                m_UsageAudit.Remove(inKey);
+                #endif // DEVELOPMENT
+
                 hasEvents = m_LanguagePackage.HasEvents(inKey);
             }
             
@@ -175,6 +204,10 @@ namespace Aqua
                 return false;
             }
 
+            #if DEVELOPMENT
+            m_UsageAudit.Remove(inKey);
+            #endif // DEVELOPMENT
+
             Services.Script.ParseToTag(ref ioTagString, content, inContext);
             return true;
         }
@@ -195,8 +228,11 @@ namespace Aqua
 
         private void DispatchTextRefresh()
         {
+            Services.Assets.OnLocalizationLoaded();
+
             for(int i = 0, length = m_ActiveTexts.Count; i < length; i++)
                 m_ActiveTexts[i].OnLocalizationRefresh();
+            OnLanguageUpdated.Invoke(m_CurrentLanguage);
         }
 
         #endregion // Texts
@@ -224,5 +260,37 @@ namespace Aqua
         }
 
         #endregion // IService
+
+        #region IDebuggable
+
+        #if DEVELOPMENT
+
+        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus(FindOrCreateMenu findOrCreate)
+        {
+            DMInfo info = findOrCreate("Audit");
+
+            info.AddButton("Log Unused Localization Keys", () => {
+                if (m_UsageAudit.Count > 0) {
+                    StringBuilder sb = new StringBuilder(1024);
+                    foreach(var unused in m_UsageAudit) {
+                        sb.Append(unused.ToDebugString()).Append('\n');
+                    }
+                    sb.TrimEnd(StringUtils.DefaultNewLineChars);
+
+                    string output = sb.Flush();
+
+                    Log.Warn("[LocService] {0} unused keys\n{1}", m_UsageAudit.Count, output);
+                    File.WriteAllText("Temp/Unused Localization Keys.txt", output);
+                } else {
+                    Log.Msg("[LocService] No unused localization keys! Wow!");
+                }
+            });
+
+            yield return info;
+        }
+
+        #endif // DEVELOPMENT
+
+        #endregion // IDebuggable
     }
 }

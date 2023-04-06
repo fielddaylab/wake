@@ -67,7 +67,7 @@ namespace Aqua.Option
 
             if (bHasTTS)
             {
-                m_TTSLabel.SetTextFromString(Loc.Find("options.accessibility.tts.available"));
+                m_TTSLabel.SetText("options.accessibility.tts.available");
 
                 m_TTSGroup.interactable = true;
                 m_TTSGroup.alpha = 1;
@@ -85,7 +85,7 @@ namespace Aqua.Option
             }
             else
             {
-                m_TTSLabel.SetTextFromString(Loc.Find("options.accessibility.notAvailable"));
+                m_TTSLabel.SetText("options.accessibility.notAvailable");
 
                 m_TTSGroup.interactable = false;
                 m_TTSGroup.alpha = 0.5f;

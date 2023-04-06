@@ -30,7 +30,7 @@ $call CheckJobTasks()
 @once
 @cutscene
 {@player}   Well, {nameof Detritus} doesn't grow on its own. I suppose that makes sense, since it's just dead matter.
-{@guide}    Yes. It appears {nameof Detritus} only comes from organisms dying out.
+{@guide}    Yes. {nameof Detritus} is dead plant and animal matter.
 
 // WHEN detritus shown not to reproduce: 
 
@@ -101,7 +101,7 @@ $else
     $call ArgueLoad(dirtyDetritusArgueHistory) 
     {@bayouSci}    Why is there so much {nameof Detritus} in the {nameof RS-3P}?
     $choice .argue.detritusReproduce; Detritus is reproducing on its own.
-    $choice .argue.organismsDying; Organisms are dying out.
+    $choice .argue.organismsDying; Something must be dying.
     $choice .argue.giveUpArgueless; Let me get back to you.
     $choose branch
 $endif
@@ -138,7 +138,7 @@ $branch .argue.showClaimHistory
 :: argue.completeHistory
 $call ArgueCancelClaim()
 $call ArgueComplete()
-{@bayouSci}    Oh. Interesting. All of these have been cycling over the past 12 years.
+{@bayouSci}    Oh. Interesting. All of these have been cycling over the past 7 years.
 {@player}   What does that mean?
 {@bayouSci}    It means the populations rise and fall, rise and fall, over and over again.
                 If I look at the most recent history... yes.

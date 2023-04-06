@@ -181,6 +181,7 @@ MonoBehaviour:
   m_AnimDurationScale: 1
   m_AnimDistanceScale: 1
   m_DisableRaycasts: 0
+  m_PlayOnEnable: 0
 --- !u!1 &361737899317156971
 GameObject:
   m_ObjectHideFlags: 0
@@ -334,6 +335,7 @@ MonoBehaviour:
   m_DefaultText:
     m_Source: 
     m_HashValue: 0
+  m_TintSprites: 0
   m_Prefix: 
   m_Postfix: 
 --- !u!114 &5019612755586398090
@@ -365,6 +367,7 @@ MonoBehaviour:
   m_AnimDurationScale: 1
   m_AnimDistanceScale: 1
   m_DisableRaycasts: 0
+  m_PlayOnEnable: 0
 --- !u!1 &1310482262850031277
 GameObject:
   m_ObjectHideFlags: 0
@@ -559,8 +562,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -182}
-  m_SizeDelta: {x: -32, y: 96}
+  m_AnchoredPosition: {x: 0, y: -181}
+  m_SizeDelta: {x: -32, y: 98}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &5388220963928332944
 CanvasRenderer:
@@ -620,6 +623,7 @@ MonoBehaviour:
   m_AnimDurationScale: 1
   m_AnimDistanceScale: 1
   m_DisableRaycasts: 0
+  m_PlayOnEnable: 0
 --- !u!225 &1694832071903776068
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -784,6 +788,7 @@ MonoBehaviour:
   m_DefaultText:
     m_Source: 
     m_HashValue: 0
+  m_TintSprites: 0
   m_Prefix: 
   m_Postfix: 
 --- !u!114 &4232142901839723888
@@ -953,6 +958,7 @@ MonoBehaviour:
   m_DefaultText:
     m_Source: 
     m_HashValue: 0
+  m_TintSprites: 0
   m_Prefix: 
   m_Postfix: 
 --- !u!114 &5489380069170966812
@@ -1162,6 +1168,7 @@ MonoBehaviour:
   m_DefaultText:
     m_Source: 
     m_HashValue: 0
+  m_TintSprites: 0
   m_Prefix: 
   m_Postfix: 
 --- !u!114 &6907828445578791084
@@ -1427,6 +1434,7 @@ MonoBehaviour:
   m_DefaultText:
     m_Source: 
     m_HashValue: 0
+  m_TintSprites: 0
   m_Prefix: 
   m_Postfix: 
 --- !u!1 &3740659950410268066
@@ -1521,6 +1529,7 @@ MonoBehaviour:
   m_InitialDelay: 0
   m_PlayOnEnable: 1
   m_ClippingRegion: {fileID: 0}
+  m_NextSet: {fileID: 0}
 --- !u!1 &4218050977807958654
 GameObject:
   m_ObjectHideFlags: 0
@@ -1633,6 +1642,7 @@ MonoBehaviour:
   m_AnimDurationScale: 1
   m_AnimDistanceScale: 1
   m_DisableRaycasts: 0
+  m_PlayOnEnable: 0
 --- !u!225 &2492694432843245512
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -1895,6 +1905,7 @@ MonoBehaviour:
   m_DefaultText:
     m_Source: ui.job.postedBy
     m_HashValue: 537189998
+  m_TintSprites: 0
   m_Prefix: 
   m_Postfix: 
 --- !u!1 &5200281925101576136
@@ -2080,6 +2091,7 @@ MonoBehaviour:
   m_AnimDurationScale: 1
   m_AnimDistanceScale: 1
   m_DisableRaycasts: 0
+  m_PlayOnEnable: 0
 --- !u!1 &7008719191218459955
 GameObject:
   m_ObjectHideFlags: 0
@@ -2318,6 +2330,7 @@ MonoBehaviour:
   m_InitialDelay: 0.05
   m_PlayOnEnable: 0
   m_ClippingRegion: {fileID: 0}
+  m_NextSet: {fileID: 0}
 --- !u!1 &9058768759192407864
 GameObject:
   m_ObjectHideFlags: 0
@@ -2385,9 +2398,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Check the Job Board
+  m_text: 'Check your nearest {h}Job Board{/h}
 
-    For available jobs'
+    for available jobs!'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7940b4e17d8b8a0439ce330effed3c43, type: 2}
   m_sharedMaterial: {fileID: 2068542018519400990, guid: 7940b4e17d8b8a0439ce330effed3c43,
@@ -2471,8 +2484,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Text: {fileID: 6506858244088578786}
   m_DefaultText:
-    m_Source: 
-    m_HashValue: 0
+    m_Source: aqos.job.noJob.description
+    m_HashValue: 2032114944
+  m_TintSprites: 0
   m_Prefix: 
   m_Postfix: 
 --- !u!114 &5113292150004153389
@@ -2504,6 +2518,7 @@ MonoBehaviour:
   m_AnimDurationScale: 1
   m_AnimDistanceScale: 1
   m_DisableRaycasts: 0
+  m_PlayOnEnable: 0
 --- !u!1 &9087520519614495142
 GameObject:
   m_ObjectHideFlags: 0

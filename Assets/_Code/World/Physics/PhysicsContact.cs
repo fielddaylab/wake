@@ -41,5 +41,13 @@ namespace Aqua
         {
             return inContact.Collider;
         }
+
+        static public Vector3 OnPlane(Vector2 point, Transform plane) {
+            return new Vector3(point.x, point.y, plane.position.z);
+        }
+
+        static public Vector3 OnPlane(Vector2 point, float plane) {
+            return new Vector3(point.x, point.y, plane);
+        }
     }
 }

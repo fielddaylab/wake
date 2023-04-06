@@ -13,6 +13,7 @@ using BeauUtil.Debugger;
 using Leaf.Runtime;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace Aqua.Cameras
 {
@@ -89,6 +90,7 @@ namespace Aqua.Cameras
         [NonSerialized] private CameraRig m_Rig;
         [NonSerialized] private CameraFOVPlane m_FOVPlane;
         [NonSerialized] private CameraRenderScale m_RenderScale;
+        [NonSerialized] private UniversalAdditionalCameraData m_AdditionalCameraData;
         [NonSerialized] private float m_LastCameraDistance;
         [NonSerialized] private Transform m_PositionRoot;
         [NonSerialized] private Axis m_Axis = Axis.XY;
@@ -672,6 +674,7 @@ namespace Aqua.Cameras
             Assert.NotNull(m_Camera, "No main camera located for scene");
 
             m_RenderScale = m_Camera.EnsureComponent<CameraRenderScale>();
+            m_AdditionalCameraData = m_Camera.GetUniversalAdditionalCameraData();
 
             m_Camera.transparencySortMode = TransparencySortMode.Orthographic;
             m_LastScreenAspectClip = default(Rect);
@@ -1472,6 +1475,7 @@ namespace Aqua.Cameras
                 case Option.OptionsPerformance.ResolutionMode.Minimum: {
                     m_RenderScale.Mode = CameraRenderScale.ScaleMode.PixelHeight;
                     m_RenderScale.PixelHeight = (int) DesiredHeight;
+                    m_RenderScale.enabled = true;
                     break;
                 }
                 case Option.OptionsPerformance.ResolutionMode.Moderate: {
@@ -1480,14 +1484,17 @@ namespace Aqua.Cameras
                     if (scaleForMin < 1) {
                         float newScale = 1 - ((1 - scaleForMin) * 0.5f);
                         m_RenderScale.Scale = newScale;
+                        m_RenderScale.enabled = true;
                     } else {
                         m_RenderScale.Scale = 1;
+                        m_RenderScale.enabled = false;
                     }
                     break;
                 }
                 case Option.OptionsPerformance.ResolutionMode.High: {
                     m_RenderScale.Mode = CameraRenderScale.ScaleMode.Scale;
                     m_RenderScale.Scale = 1;
+                    m_RenderScale.enabled = false;
                     break;
                 }
             }

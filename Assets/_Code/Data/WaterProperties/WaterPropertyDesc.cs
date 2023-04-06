@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using BeauPools;
 using BeauUtil;
 using EasyAssetStreaming;
@@ -11,6 +12,14 @@ namespace Aqua
     [CreateAssetMenu(menuName = "Aqualab System/Water Property Description", fileName = "NewWaterProp")]
     public class WaterPropertyDesc : DBObject, IEditorOnlyData
     {
+        [Flags]
+        public enum AllowedUnitConversions {
+            Kilo = 0x01,
+            Milli = 0x02
+        }
+
+        public const string RateUnit = "t";
+
         #region Inspector
 
         [SerializeField, AutoEnum] private WaterPropertyId m_Index = WaterPropertyId.Oxygen;
@@ -25,6 +34,7 @@ namespace Aqua
 
         [Header("Text")]
         [SerializeField] private string m_Units = "";
+        [SerializeField] private string m_RateUnits = null;
         [SerializeField] private int m_SignificantDigits = 1;
 
         [Header("Facts")]
@@ -38,6 +48,7 @@ namespace Aqua
         [SerializeField] private float m_MinValue = 0;
         [SerializeField] private float m_MaxValue = 0;
         [SerializeField] private float m_DefaultValue = 0;
+        [SerializeField] private float m_ValueScale = 1;
 
         #endregion
 
@@ -59,13 +70,71 @@ namespace Aqua
         public TextId StateChangeStressOnlyFormat() { return m_StateChangeStressOnlyFormat; }
         public TextId StateChangeUnaffectedFormat() { return m_StateChangeUnaffectedFormat; }
         
-        public string FormatValue(float inValue)
+        public string FormatValue(float inValue, string prefix = null)
         {
-            double value = inValue;
-            int sign = Math.Sign(inValue);
+            inValue *= m_ValueScale;
+            AdjustScale(ref inValue, GetAllowedConversions(), out string unitPrefix, out string unitOverride);
+
+            using(PooledStringBuilder psb = PooledStringBuilder.Create()) {
+                if (!string.IsNullOrEmpty(prefix)) {
+                    psb.Builder.Append(prefix);
+                }
+                FormatValue(psb.Builder, inValue, m_SignificantDigits, unitPrefix, unitOverride ?? m_Units);
+                return psb.Builder.Flush();
+            }
+        }
+
+        public string FormatRate(float inValue, string prefix = null, string additionalUnits = null)
+        {
+            inValue *= m_ValueScale;
+            AdjustScale(ref inValue, GetAllowedConversions(), out string unitPrefix, out string unitOverride);
+
+            using(PooledStringBuilder psb = PooledStringBuilder.Create()) {
+                if (!string.IsNullOrEmpty(prefix)) {
+                    psb.Builder.Append(prefix);
+                }
+                FormatValue(psb.Builder, inValue, m_SignificantDigits, unitPrefix, unitOverride ?? (!string.IsNullOrEmpty(m_RateUnits) ? m_RateUnits : m_Units));
+                if (additionalUnits != null) {
+                    psb.Builder.Append('/').Append(additionalUnits);
+                }
+                psb.Builder.Append('/').Append(RateUnit);
+                return psb.Builder.Flush();
+            }
+        }
+
+        private AllowedUnitConversions GetAllowedConversions() {
+            AllowedUnitConversions units = 0;
+            if (HasFlags(WaterPropertyFlags.AllowKilo)) {
+                units |= AllowedUnitConversions.Kilo;
+            }
+            if (HasFlags(WaterPropertyFlags.AllowMilli)) {
+                units |= AllowedUnitConversions.Milli;
+            }
+            return units;
+        }
+
+        static public void AdjustScale(ref float val, AllowedUnitConversions allowedConversions, out string unitPrefix, out string unitOverride) {
+            float abs = Math.Abs(val);
+            if ((allowedConversions & AllowedUnitConversions.Kilo) != 0 && abs >= 1100) {
+                val /= 1000;
+                unitPrefix = "K";
+                unitOverride = null;
+            } else if ((allowedConversions & AllowedUnitConversions.Milli) != 0 && abs < 0.01) {
+                val *= 1000;
+                unitPrefix = "m";
+                unitOverride = null;
+            } else {
+                unitPrefix = null;
+                unitOverride = null;
+            }
+        }
+
+        static public void FormatValue(StringBuilder sb, float valueF, int significantDigits, string unitPrefix, string units) {
+            double value = valueF;
+            int sign = Math.Sign(value);
             value = Math.Abs(value);
             int exponent = 0;
-            if (value > 1000) {
+            if (value > 10000) {
                 while(value >= 10) {
                     value /= 10;
                     exponent++;
@@ -79,14 +148,14 @@ namespace Aqua
 
             value *= sign;
 
-            using(PooledStringBuilder psb = PooledStringBuilder.Create()) {
-                psb.Builder.AppendNoAlloc(value, m_SignificantDigits, 0);
-                if (exponent != 0) {
-                    psb.Builder.Append("e").AppendNoAlloc(exponent);
-                }
-                psb.Builder.Append(m_Units);
-                return psb.Builder.Flush();
+            sb.AppendNoAlloc(value, significantDigits, 0);
+            if (exponent != 0) {
+                sb.Append("e").AppendNoAlloc(exponent);
             }
+            if (unitPrefix != null) {
+                sb.Append(unitPrefix);
+            }
+            sb.Append(units);
         }
 
         public float MinValue() { return m_MinValue; }
@@ -127,6 +196,8 @@ namespace Aqua
     public enum WaterPropertyFlags : ushort
     {
         IsResource = 0x01,
-        IsProperty = 0x02
+        IsProperty = 0x02,
+        AllowKilo = 0x04,
+        AllowMilli = 0x08
     }
 }

@@ -135,7 +135,9 @@ $endif
 @cutscene
 {@player} Huh. Something's off here.
 {@guide}	Yes. The {nameof BlueTang} aren't eating as much as our observed rules would suggest.
-{@player}	Better go talk it over with {nameof @profCoral}. I'm sure he'll be able to fix this. 
+			For the amount of Tang in the site, our previous model would suggest they would eat more of the algae.
+			Are they not as hungry as before?
+{@player}	Better go talk it over with {nameof @profCoral}. Maybe he can help us understand this.
 		    I mean, if he ever takes a break from studying turtles.
 {@guide} Estimated probability: 1.2%.
 {@player} Ha. You're a little bit snarky today, V. Qué chido.
@@ -271,7 +273,7 @@ $branch .argue.chooseClaim
 :: argue.chooseClaim
 {@profCoral} Okay, let's talk through what you found.
 			  Why is there so much {nameof TurfAlgae} at {m}Site S{/m}?
-	$choice .argue.claimSparseFish; There aren't enough fish there to eat it.
+	$choice .argue.claimSparseFish; The fish aren’t eating enough, something must be stressing them
 	$choice .argue.claimLionfishQuicken; The lionfish are making it reproduce faster!
 	$choice .argue.giveUp; Let me get back to you.
 $choose branch

@@ -42,7 +42,7 @@ namespace Aqua.Modeling {
                 if (!organism) {
                     Log.Error("[JobModelScope] Organism id '{0}' not found for JobModelScope '{1}'", organismId, name);
                 } else if (env != null && !env.HasOrganism(organismId)) {
-                    Log.Error("[JobModelScope] Organism '{0}' is not present in environment '{1]' for JobModelScope '{2}'", organismId, EnvironmentId, name);
+                    Log.Error("[JobModelScope] Organism '{0}' is not present in environment '{1}' for JobModelScope '{2}'", organismId, EnvironmentId, name);
                 }
 
                 if (organism) {
@@ -56,6 +56,11 @@ namespace Aqua.Modeling {
                     Log.Error("[JobModelScope] Behavior id '{0}' not found for JobModelScope '{1}'", behaviorId, name);
                 } else if (!validFacts.Contains(fact)) {
                     Log.Error("[JobModelScope] Behavior id '{0}' not within the list of discovered facts for JobModelScope '{1}'", behaviorId, name);
+                } else {
+                    BestiaryDesc target = BFType.Target(fact);
+                    if (target != null && !env.HasOrganism(target.Id())) {
+                        Log.Error("[JobModelScope] Fact '{0}' requires organism '{1}' which is not present in '{2}' for JobModelScope '{3}'", fact.name, target.name, env.name, name);
+                    }
                 }
             }
 

@@ -131,7 +131,7 @@ namespace Aqua.Debugging
                 {
                     SetTimescale(1);
                 }
-                else if (m_Input.KeyPressed(KeyCode.F9) && m_Input.KeyDown(KeyCode.LeftControl))
+                else if (m_Input.KeyDown(KeyCode.LeftControl) && (m_Input.KeyPressed(KeyCode.F9) || m_Input.KeyPressed(KeyCode.Backspace)))
                 {
                     BugReporter.DumpContext();
                 }
@@ -475,7 +475,7 @@ namespace Aqua.Debugging
 
         #region IDebuggable
 
-        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
+        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus(FindOrCreateMenu findOrCreate)
         {
             DMInfo loggingMenu = new DMInfo("Logging");
             loggingMenu.AddToggle("Enable Crash Handler", () => CrashHandler.Enabled, (b) => CrashHandler.Enabled = b);

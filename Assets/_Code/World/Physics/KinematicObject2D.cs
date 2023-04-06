@@ -23,6 +23,7 @@ namespace Aqua
         [Header("Solid")]
 
         public LayerMask SolidMask;
+        public float Bounce = 0;
 
         [NonSerialized] public Transform Transform;
         

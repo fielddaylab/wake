@@ -60,23 +60,6 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
-      m_Source: reportBack
-      m_HashValue: 2059105924
-    LabelId:
-      m_Source: jobs.bayou-boom-cause.task.reportBack
-      m_HashValue: 1068100685
-    Category: 5
-    Steps:
-    - Type: 10
-      Target:
-        m_Source: 
-        m_HashValue: 0
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: methaneTag
-      m_HashValue: 622412797
-  - Id:
       m_Source: methaneTag
       m_HashValue: 622412797
     LabelId:
@@ -93,6 +76,23 @@ MonoBehaviour:
     PrerequisiteTaskIds:
     - m_Source: methaneScan
       m_HashValue: 320743886
+  - Id:
+      m_Source: reportBack
+      m_HashValue: 2059105924
+    LabelId:
+      m_Source: jobs.bayou-boom-cause.task.reportBack
+      m_HashValue: 1068100685
+    Category: 5
+    Steps:
+    - Type: 10
+      Target:
+        m_Source: 
+        m_HashValue: 0
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: methaneTag
+      m_HashValue: 622412797
   m_OptimizedTaskList:
   - Id:
       m_Source: methaneScan

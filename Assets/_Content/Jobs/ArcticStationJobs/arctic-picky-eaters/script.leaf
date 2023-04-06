@@ -14,7 +14,8 @@ $elseif !HasFact(ArcticCod.Eats.Diatoms)
 {@profArctic}   I'll send you the data we have collected so far.
 $endif
 
-$call GiveEntity(ArcticCod)
+$call GiveEntity(ArcticCod, Silent)
+$call GiveEntity(Diatoms, Silent)
 $call GiveFact(ArcticCod.Eats.Diatoms)
 
 {@profArctic}   Our mechanic has been annoyed at all the Algae clogging up people's engines.

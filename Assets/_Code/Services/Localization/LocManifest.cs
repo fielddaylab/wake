@@ -46,7 +46,9 @@ namespace Aqua
 
         void IEditorOnlyData.ClearEditorOnlyData()
         {
+            #if !PRESERVE_DEBUG_SYMBOLS && !DEVELOPMENT
             Packages = null;
+            #endif // !PRESERVE_DEBUG_SYMBOLS && !DEVELOPMENT
         }
 
         [CustomEditor(typeof(LocManifest), true)]

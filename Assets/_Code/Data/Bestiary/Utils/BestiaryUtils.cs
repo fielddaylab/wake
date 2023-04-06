@@ -7,6 +7,27 @@ namespace Aqua
 {
     static public class BestiaryUtils
     {
+        #region Common
+
+        static public BestiaryDesc FindCommonParent(ListSlice<BFBase> inFacts)
+        {
+            if (inFacts.Length <= 0) {
+                return null;
+            }
+
+            BestiaryDesc desc = inFacts[0].Parent;
+
+            for(int i = 1; i < inFacts.Length; i++) {
+                if (desc != inFacts[i].Parent) {
+                    return null;
+                }
+            }
+
+            return null;
+        }
+
+        #endregion // Common
+
         #region Find Facts
 
         /// <summary>
@@ -376,19 +397,31 @@ namespace Aqua
         }
 
         /// <summary>
+        /// Formats a mass amount.
+        /// </summary>
+        static public string FormatMassRate(float inAmount)
+        {
+            return BestiaryUtils.Property(WaterPropertyId.Mass).FormatRate(inAmount);
+        }
+
+        /// <summary>
         /// Formats population for a given critter type.
         /// </summary>
-        static public string FormatPopulation(BestiaryDesc inCritter, uint inPopulation)
+        static public string FormatPopulation(BestiaryDesc inCritter, uint inPopulation, string prefix = null)
         {
             if (inCritter.HasFlags(BestiaryDescFlags.TreatAsHerd))
             {
                 BFBody body = inCritter.FactOfType<BFBody>();
                 float mass = body.MassDisplayScale * body.MassPerPopulation * inPopulation;
-                return Property(WaterPropertyId.Mass).FormatValue(mass);
+                return Property(WaterPropertyId.Mass).FormatValue(mass, prefix);
             }
             else
             {
-                return inPopulation.ToString();
+                if (string.IsNullOrEmpty(prefix)) {
+                    return inPopulation.ToStringLookup();
+                } else {
+                    return string.Concat(prefix, inPopulation.ToStringLookup());
+                }
             }
         }
 
@@ -401,11 +434,27 @@ namespace Aqua
         }
 
         /// <summary>
+        /// Formats a property rate.
+        /// </summary>
+        static public string FormatPropertyRate(float inAmount, WaterPropertyId inPropertyId)
+        {
+            return BestiaryUtils.Property(inPropertyId).FormatRate(inAmount);
+        }
+
+        /// <summary>
         /// Formats a percentage.
         /// </summary>
         static public string FormatPercentage(float inAmount)
         {
             return string.Format("{0}%", (int) (inAmount * 100));
+        }
+
+        /// <summary>
+        /// Formats a percentage rate.
+        /// </summary>
+        static public string FormatPercentageRate(float inAmount)
+        {
+            return string.Format("{0}%/t", (int) (inAmount * 100));
         }
 
         /// <summary>

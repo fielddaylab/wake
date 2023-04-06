@@ -7,16 +7,20 @@ using EasyBugReporter;
 namespace Aqua.Profile {
     public struct SaveSummaryData : ISerializedObject, ISerializedVersion {
         public string Id;
+        public long LastUpdated;
         public uint ActId;
         public StringHash32 CurrentLocation;
         public StringHash32 CurrentStation;
         public byte SpecterCount;
+        public StringHash32 CurrentJob;
+        public ushort JobCompletedCount;
+        public ushort CurrentLevel;
         public SaveSummaryFlags Flags;
         public ushort DreamMask;
 
         #region ISerializedObject
 
-        public ushort Version { get { return 3; } }
+        public ushort Version { get { return 4; } }
 
         public void Serialize(Serializer ioSerializer) {
             ioSerializer.Serialize("profileId", ref Id);
@@ -30,6 +34,12 @@ namespace Aqua.Profile {
                 ioSerializer.Serialize("specters", ref SpecterCount);
                 ioSerializer.Serialize("dreams", ref DreamMask);
             }
+            if (ioSerializer.ObjectVersion >= 4) {
+                ioSerializer.Serialize("lastUpdated", ref LastUpdated);
+                ioSerializer.UInt32Proxy("currentJob", ref CurrentJob);
+                ioSerializer.Serialize("jobCompletedCount", ref JobCompletedCount);
+                ioSerializer.Serialize("currentLevel", ref CurrentLevel);
+            }
         }
 
         #endregion // ISerializedObject
@@ -37,12 +47,16 @@ namespace Aqua.Profile {
         static public SaveSummaryData FromSave(SaveData data) {
             SaveSummaryData summary;
             summary.Id = data.Id ?? string.Empty;
+            summary.LastUpdated = data.LastUpdated;
             summary.ActId = data.Script.ActIndex;
             summary.CurrentLocation = data.Map.SavedSceneId();
             summary.CurrentStation = data.Map.CurrentStationId();
             summary.Flags = GetFlags(data);
+            summary.CurrentJob = data.Jobs.CurrentJobId;
+            summary.JobCompletedCount = (ushort) data.Jobs.CompletedJobIds().Count;
             summary.SpecterCount = (byte) data.Science.SpecterCount();
             summary.DreamMask = GetDreamMask(data);
+            summary.CurrentLevel = (ushort) data.Science.CurrentLevel();
             return summary;
         }
 

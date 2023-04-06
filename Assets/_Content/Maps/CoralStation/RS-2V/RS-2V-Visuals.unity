@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -357,6 +357,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1001 &14583834
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -490,6 +491,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1001 &35157536
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2346,6 +2348,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1001 &102756094
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6254,6 +6257,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1001 &246925177
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6689,6 +6693,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1001 &281014439
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7353,6 +7358,7 @@ GameObject:
   m_Component:
   - component: {fileID: 314641225}
   - component: {fileID: 314641224}
+  - component: {fileID: 314641226}
   m_Layer: 29
   m_Name: Collider
   m_TagString: Untagged
@@ -7390,6 +7396,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &314641226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 314641223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff0499bec43194bbd56b29aafc250f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Material: 2
 --- !u!1001 &315286102
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8346,6 +8365,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1001 &332326508
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15568,6 +15588,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1001 &599319973
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16789,6 +16810,16 @@ PrefabInstance:
       propertyPath: Pattern
       value: .-- . / .- .-. . / .. - ... / ...- --- .. -.-. . / ..-. .- -.-. . /
         ... -.-. .-. . .- --
+      objectReference: {fileID: 0}
+    - target: {fileID: 4574252975513893574, guid: a34e73a396ddeba4595f0186b08ec06f,
+        type: 3}
+      propertyPath: PatternId.m_Source
+      value: V2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4574252975513893574, guid: a34e73a396ddeba4595f0186b08ec06f,
+        type: 3}
+      propertyPath: PatternId.m_HashValue
+      value: 2533005633
       objectReference: {fileID: 0}
     - target: {fileID: 4719403338280455046, guid: a34e73a396ddeba4595f0186b08ec06f,
         type: 3}
@@ -18588,6 +18619,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1001 &710181506
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19156,6 +19188,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1 &753473745
 GameObject:
   m_ObjectHideFlags: 0
@@ -23301,6 +23334,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1001 &904547564
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24003,7 +24037,7 @@ GameObject:
   - component: {fileID: 937294716}
   - component: {fileID: 937294715}
   - component: {fileID: 937294714}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: BackgroundSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24041,7 +24075,7 @@ MonoBehaviour:
   m_ColorGroup: {fileID: 0}
   m_Path: Textures/Observation/UnderwaterBG02.png
   m_Material: {fileID: 2100000, guid: c8b6641b5a3b33b458c8057d085962b8, type: 2}
-  m_Tessellation: 0
+  m_Tessellation: 3
   m_Color:
     serializedVersion: 2
     rgba: 4294967295
@@ -28021,6 +28055,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1 &1063793877
 GameObject:
   m_ObjectHideFlags: 0
@@ -28798,6 +28833,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!4 &1093811037
 Transform:
   m_ObjectHideFlags: 0
@@ -30548,6 +30584,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!4 &1154671016
 Transform:
   m_ObjectHideFlags: 0
@@ -31085,6 +31122,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1001 &1177693547
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -37174,6 +37212,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!4 &1388736787 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7698699207350504051, guid: d92ee60d188d94837875ef38435af6f5,
@@ -39406,6 +39445,16 @@ PrefabInstance:
         type: 3}
       propertyPath: Pattern
       value: '- .... . / --- -.-. . .- -. / .. ... / .- .-.. .. ...- .'
+      objectReference: {fileID: 0}
+    - target: {fileID: 32908033056869697, guid: 42d405ca303297f4b961efd7c770b0f8,
+        type: 3}
+      propertyPath: PatternId.m_Source
+      value: V1
+      objectReference: {fileID: 0}
+    - target: {fileID: 32908033056869697, guid: 42d405ca303297f4b961efd7c770b0f8,
+        type: 3}
+      propertyPath: PatternId.m_HashValue
+      value: 2482672776
       objectReference: {fileID: 0}
     - target: {fileID: 1048300013026926186, guid: 42d405ca303297f4b961efd7c770b0f8,
         type: 3}
@@ -46263,6 +46312,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1 &1750389795
 GameObject:
   m_ObjectHideFlags: 0
@@ -47786,6 +47836,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1001 &1792395485
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -51007,6 +51058,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1001 &1928710646
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -52999,6 +53051,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!4 &2018403909
 Transform:
   m_ObjectHideFlags: 0
@@ -53544,6 +53597,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1001 &2046941071
 PrefabInstance:
   m_ObjectHideFlags: 0

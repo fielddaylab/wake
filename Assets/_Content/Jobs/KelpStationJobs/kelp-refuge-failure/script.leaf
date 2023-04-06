@@ -296,7 +296,7 @@ $call ArgueLoad(refugeFailureArgue)
 {@drKelp} Olivia! I'm eager to hear what you discovered. 
 {@drKelp} Why did the Refuge fail for the {nameof BullKelp}?
 	$choice .argue.wrongTemp; The water is the wrong temperature.
-	$choice .argue.slowGrowth; The Bull Kelp are reproducing at a slower rate than expected.
+	$choice .argue.slowGrowthTransition; The Bull Kelp are reproducing at a slower rate than expected.
 	$choice .argue.pickyUrchins; The urchins are only eating the Bull Kelp.
 	$choice .argue.notReady; I'm not sure. Let me get back to you.
 $choose branch
@@ -316,14 +316,21 @@ $goto .argue.chooseClaim
 {@drKelp}   Do you have another theory?
 $goto .argue.chooseClaim
 
+// Part 1
+
+:: argue.slowGrowthTransition
+{@drKelp}	Why? 
+$branch .argue.slowGrowth
+
 ::argue.slowGrowth
-{@drKelp}	Hmmm. Yes, that could be the problem.
-			Show me your model. Does it explain why the {nameof BullKelp} are reproducing more slowly?
-$if ArgueSetClaim(refugeFailureArgueClaim, jobs.kelp-refuge-failure.argue.claimLabel)
-			$call ArgueFactSlot(MixedKelp.Model.RefugeFail)
+{@drKelp}	What is causing their stress?
+$if ArgueSetClaim(refugeFailureArgueClaim, jobs.kelp-refuge-failure.argue.claimLabelSlow)
+			$call ArgueFactSlot(MixedKelp.Light)
+			$call ArgueFactSlot(BullKelp.Light.Stressed)
 $endif
 $call ArgueDisplayClaim()
 $goto .argue.defendClaim
+
 
 ::argue.defendClaim
 $if ArgueAllFactsCorrect()
@@ -333,9 +340,41 @@ $else
 			$answer correct, .argue.correctFacts
 			$answer incorrect, .argue.incorrectFacts
 	$choice .argue.giveUp; Let me get back to you
+	$choose branch
 $endif
 
 :: argue.correctFacts
+$call ArgueCancelClaim()
+{@drKelp}	Hmmm. Yes, that could be the problem.
+$branch .argue.slowGrowthModel
+
+:: argue.incorrectFacts
+{@drKelp} That doesn't explain it, Olivia.
+$call ArgueRejectIncorrect()
+$branch .argue.slowGrowth
+
+
+// Part 2
+
+::argue.slowGrowthModel
+{@drKelp}	Show me your model. Does it include these factors for why the {nameof BullKelp} are reproducing more slowly?
+$if ArgueSetClaim(refugeFailureArgueClaim, jobs.kelp-refuge-failure.argue.claimLabelModel)
+			$call ArgueFactSlot(MixedKelp.Model.RefugeFail)
+$endif
+$call ArgueDisplayClaim()
+$goto .argue.defendClaimModel
+
+::argue.defendClaimModel
+$if ArgueAllFactsCorrect()
+    $goto .argue.correctFactsModel
+$else
+	$choice #argueFactSet; Present facts from AQOS
+			$answer correct, .argue.correctFactsModel
+			$answer incorrect, .argue.incorrectFactsModel
+	$choice .argue.giveUp; Let me get back to you
+$endif
+
+:: argue.correctFactsModel
 $call ArgueComplete()
 {@drKelp}	Wow. So both types of kelp were doing fine, but then the {nameof GiantKelp} started blocking the light, stressing the {nameof BullKelp}.
 {@drKelp}	Excellent work, Olivia!
@@ -348,12 +387,13 @@ $call ArgueComplete()
 
 $call CompleteJob()
 
-:: argue.incorrectFacts
+:: argue.incorrectFactsModel
 {@drKelp} That doesn't explain it, Olivia. Did you make a model of the site?
 $call ArgueRejectIncorrect()
-$goto .argue.defendClaim
+$goto .argue.defendClaimModel
 
 :: argue.giveUp
+$call ArgueCancelClaim()
 {@drKelp} Okay, Sweetie. Get back to me when you're ready.
 
 ::end

@@ -2110,6 +2110,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bd5c9637a07fd463c841d7995a009e5d, type: 3}
+--- !u!137 &128965428 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 1646559899875049467, guid: bd5c9637a07fd463c841d7995a009e5d,
+    type: 3}
+  m_PrefabInstance: {fileID: 128965427}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &144758871
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3538,6 +3544,7 @@ MonoBehaviour:
   Zoom: 3
   AudioListenerZOffset: 0
   FieldOfView: 6
+  RespectSceneBounds: 0
   Properties: 31
 --- !u!4 &254554591 stripped
 Transform:
@@ -4092,6 +4099,7 @@ MonoBehaviour:
   Zoom: 2
   AudioListenerZOffset: 0
   FieldOfView: 10.388855
+  RespectSceneBounds: 0
   Properties: 31
 --- !u!1001 &320568730
 PrefabInstance:
@@ -5427,6 +5435,7 @@ MonoBehaviour:
   Zoom: 2
   AudioListenerZOffset: 0
   FieldOfView: 10.388855
+  RespectSceneBounds: 0
   Properties: 31
 --- !u!1001 &384734956
 PrefabInstance:
@@ -6260,6 +6269,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 463482263}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &468807371 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3713886558369980754, guid: bd5c9637a07fd463c841d7995a009e5d,
+    type: 3}
+  m_PrefabInstance: {fileID: 1035691934}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &471953895
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6468,6 +6483,13 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  Otters:
+  - {fileID: 1035691936}
+  - {fileID: 128965428}
+  - {fileID: 642375775}
+  OtterPrefabs:
+  - {fileID: 468807371}
+  - {fileID: 1771163048}
 --- !u!1001 &513090130
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8417,6 +8439,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bd5c9637a07fd463c841d7995a009e5d, type: 3}
+--- !u!137 &642375775 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 1646559899875049467, guid: bd5c9637a07fd463c841d7995a009e5d,
+    type: 3}
+  m_PrefabInstance: {fileID: 642375774}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &643459483
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12383,6 +12411,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1035691934}
   m_PrefabAsset: {fileID: 0}
+--- !u!137 &1035691936 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 1646559899875049467, guid: bd5c9637a07fd463c841d7995a009e5d,
+    type: 3}
+  m_PrefabInstance: {fileID: 1035691934}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1044056175 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4281942245607644518, guid: 66cbd1222bfab43e7a8258db35ca9630,
@@ -13536,6 +13570,7 @@ MonoBehaviour:
   Zoom: 2
   AudioListenerZOffset: 0
   FieldOfView: 10.388855
+  RespectSceneBounds: 0
   Properties: 31
 --- !u!1001 &1191764713
 PrefabInstance:
@@ -16751,6 +16786,7 @@ MonoBehaviour:
   Zoom: 2
   AudioListenerZOffset: 0
   FieldOfView: 10.388855
+  RespectSceneBounds: 0
   Properties: 31
 --- !u!4 &1405694262
 Transform:
@@ -17223,6 +17259,7 @@ MonoBehaviour:
   Zoom: 1
   AudioListenerZOffset: 0
   FieldOfView: 20.60969
+  RespectSceneBounds: 0
   Properties: 31
 --- !u!4 &1499519859
 Transform:
@@ -20132,6 +20169,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1759115382}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1771163048 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3713886558369980754, guid: bd5c9637a07fd463c841d7995a009e5d,
+    type: 3}
+  m_PrefabInstance: {fileID: 128965427}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1784219211
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20686,6 +20729,7 @@ MonoBehaviour:
   Zoom: 1
   AudioListenerZOffset: 0
   FieldOfView: 14
+  RespectSceneBounds: 0
   Properties: 31
 --- !u!4 &1812541128
 Transform:
@@ -29783,7 +29827,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 3000
+    maxNumParticles: 1000
     size3D: 0
     rotation3D: 0
     gravityModifier:
@@ -58995,6 +59039,11 @@ PrefabInstance:
         type: 3}
       propertyPath: ShapeModule.radius.value
       value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8256360651854118586, guid: 9ebbdd07aee2f4a0080124bdc15ba847,
+        type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 256
       objectReference: {fileID: 0}
     - target: {fileID: 8256360651854118586, guid: 9ebbdd07aee2f4a0080124bdc15ba847,
         type: 3}

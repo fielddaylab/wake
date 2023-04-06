@@ -116,21 +116,6 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
-      m_Source: Reproduction
-      m_HashValue: 3112461819
-    LabelId:
-      m_Source: jobs.bayou-methanogen.task.reproduce
-      m_HashValue: 1326915592
-    Category: 3
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: Methanogen.Reproduce
-        m_HashValue: 989599352
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds: []
-  - Id:
       m_Source: Report
       m_HashValue: 1182923275
     LabelId:
@@ -151,8 +136,6 @@ MonoBehaviour:
       m_HashValue: 716119891
     - m_Source: WaterChem
       m_HashValue: 3126357661
-    - m_Source: Reproduction
-      m_HashValue: 3112461819
   m_OptimizedTaskList:
   - Id:
       m_Source: EatRule
@@ -227,26 +210,10 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
-      m_Source: Reproduction
-      m_HashValue: 3112461819
-    IdString: Reproduction
-    Index: 3
-    LabelId:
-      m_Source: jobs.bayou-methanogen.task.reproduce
-      m_HashValue: 1326915592
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: Methanogen.Reproduce
-        m_HashValue: 989599352
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 
-  - Id:
       m_Source: Report
       m_HashValue: 1182923275
     IdString: Report
-    Index: 4
+    Index: 3
     LabelId:
       m_Source: jobs.bayou-methanogen.task.report
       m_HashValue: 1529160575
@@ -257,7 +224,7 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 0000010002000300
+    PrerequisiteTaskIndices: 000001000200
   m_CashReward: 150
   m_ExpReward: 10
   m_JournalId:

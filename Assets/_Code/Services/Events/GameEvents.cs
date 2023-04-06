@@ -55,6 +55,8 @@ namespace Aqua
 
         static public readonly StringHash32 VariableSet = "data:variable-set"; // TableKeyPair variableId
 
+        static public readonly StringHash32 SecretsChanged = "secrets:changed";
+
         static public readonly StringHash32 BeginDive = "dive:begin";
         static public readonly StringHash32 BeginArgument = "argument:begin";
         static public readonly StringHash32 BeginStationTransition = "world-map:station-transition";

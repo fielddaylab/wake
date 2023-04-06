@@ -16,8 +16,8 @@ namespace Aqua
             Unknown = 255
         }
 
-        public UpdateType Type;
         public StringHash32 Id;
+        public UpdateType Type;
 
         public BestiaryUpdateParams(UpdateType inType, StringHash32 inId)
         {

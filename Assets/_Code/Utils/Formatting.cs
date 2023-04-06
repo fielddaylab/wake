@@ -75,13 +75,13 @@ namespace Aqua {
             int length = 0;
             while(i < segment.Length) {
                 c = segment[i++];
-                if ((c == ' ' || c == '\n') && PseudoRandom(ref seed, 64, c) < 50) {
+                if ((c == ' ' || c == '\n') && PseudoRandom.Int(ref seed, 64, c) < 50) {
                     *writeHead++ = (char) c;
                 } else {
-                    if (i < segment.Length - 1 && PseudoRandom(ref seed, 64, c) == 0) {
+                    if (i < segment.Length - 1 && PseudoRandom.Int(ref seed, 64, c) == 0) {
                         c ^= segment[i++];
                     }
-                    *writeHead++ = ScrambleChars[PseudoRandom(ref seed, ScrambleCharLength, c)];
+                    *writeHead++ = ScrambleChars[PseudoRandom.Int(ref seed, ScrambleCharLength, c)];
                 }
                 length++;
             }
@@ -94,13 +94,13 @@ namespace Aqua {
             int length = 0;
             while(i < segmentLength) {
                 c = segment[i++];
-                if ((c == ' ' || c == '\n') && PseudoRandom(ref seed, 64, c) < 50) {
+                if ((c == ' ' || c == '\n') && PseudoRandom.Int(ref seed, 64, c) < 50) {
                     *writeHead++ = (char) c;
                 } else {
-                    if (i < segmentLength - 1 && PseudoRandom(ref seed, 64, c) == 0) {
+                    if (i < segmentLength - 1 && PseudoRandom.Int(ref seed, 64, c) == 0) {
                         c ^= segment[i++];
                     }
-                    *writeHead++ = ScrambleChars[PseudoRandom(ref seed, ScrambleCharLength, c)];
+                    *writeHead++ = ScrambleChars[PseudoRandom.Int(ref seed, ScrambleCharLength, c)];
                 }
                 length++;
             }
@@ -125,16 +125,6 @@ namespace Aqua {
             string result = ScrambleTagged(tag, ref hash, colorTag);
             tag.Clear();
             return result;
-        }
-
-        static public int PseudoRandom(ref uint seed, int range, uint mod = 0) {
-            seed = (uint) (((ulong) seed * 48271 * (mod + 1)) % 0x7FFFFFFF);
-            return (int) (seed % range);
-        }
-
-        static public float PseudoRandom(ref uint seed, float min, float max, uint mod = 0) {
-            float rand = PseudoRandom(ref seed, ushort.MaxValue, mod) / (float) ushort.MaxValue;
-            return min + (max - min) * rand;
         }
     }
 }

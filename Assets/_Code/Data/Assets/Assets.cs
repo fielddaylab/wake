@@ -249,5 +249,36 @@ namespace Aqua {
         }
 
         #endregion // Decompression
+
+        #region Unloading
+
+        static public void FullyUnload<T>(ref T asset) where T : UnityEngine.Object {
+            FullyUnload(asset);
+            asset = null;
+        }
+
+        static public void FullyUnload(UnityEngine.Object asset) {
+            Debug.LogWarningFormat("[Assets] Manually destroying resource '{0}'", asset.name);
+            #if !UNITY_EDITOR
+            UnityEngine.Object.DestroyImmediate(asset, true);
+            #endif // !UNITY_EDITOR
+        }
+
+        static public void FullyUnload<T>(ref T[] assets) where T : UnityEngine.Object {
+            for(int i = 0; i < assets.Length; i++) {
+                FullyUnload(ref assets[i]);
+            }
+            assets = null;
+        }
+
+        static public void FullyUnload<T>(ref List<T> assets) where T : UnityEngine.Object {
+            for(int i = 0; i < assets.Count; i++) {
+                FullyUnload(assets[i]);
+            }
+            assets.Clear();
+            assets = null;
+        }
+
+        #endregion // Unloading
     }
 }

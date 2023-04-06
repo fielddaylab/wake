@@ -812,7 +812,7 @@ namespace Aqua
 
         #if DEVELOPMENT
 
-        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
+        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus(FindOrCreateMenu findOrCreate)
         {
             DMInfo scriptingMenu = new DMInfo("Scripting");
 

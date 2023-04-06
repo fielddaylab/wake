@@ -34,5 +34,10 @@ namespace Aqua
         {
             get { return Save.Options.Accessibility.HasFlag(OptionAccessibilityFlags.ReduceFlashing); }
         }
+
+        static public bool DisplayShortcuts
+        {
+            get { return Save.Options.Accessibility.HasFlag(OptionAccessibilityFlags.DisplayKeyboardShortcuts); }
+        }
     }
 }

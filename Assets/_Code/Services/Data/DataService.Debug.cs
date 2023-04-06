@@ -22,6 +22,8 @@ namespace Aqua
     {
         #if DEVELOPMENT
 
+        private const string LastBookmarkSaveKey = "debug/last-bookmark-name";
+
         #if UNITY_EDITOR
         [NonSerialized] private DMInfo m_BookmarksMenu;
         #endif // UNITY_EDITOR
@@ -41,17 +43,24 @@ namespace Aqua
         {
             TextAsset bookmarkAsset = Resources.Load<TextAsset>("Bookmarks/" + inBookmarkName);
             if (!bookmarkAsset)
+            {
+                Log.Warn("[DataService] No bookmark with name '{0}'", inBookmarkName);
                 return;
+            }
 
             SaveData bookmark;
             if (TryLoadProfileFromBytes(bookmarkAsset.bytes, out bookmark))
             {
                 ClearOldProfile();
 
+                bookmark.IsBookmark = true;
+
                 DebugService.Log(LogMask.DataService, "[DataService] Loaded profile from bookmark '{0}'", inBookmarkName);
 
-                DeclareProfile(bookmark, false, false);
                 m_LastBookmarkName = inBookmarkName;
+                PlayerPrefs.SetString(LastBookmarkSaveKey, inBookmarkName);
+
+                DeclareProfile(bookmark, false, false);
                 StartPlaying(null, true);
             }
 
@@ -115,10 +124,18 @@ namespace Aqua
             string path = UnityEditor.EditorUtility.SaveFilePanelInProject("Save Bookmark", string.Empty, "json", "Choose a location to save your bookmark", "Assets/Resources/Bookmarks/");
             if (!string.IsNullOrEmpty(path))
             {
+                bool oldbookmark = m_CurrentSaveData.IsBookmark;
+                m_CurrentSaveData.IsBookmark = true;
                 Serializer.WriteFile(m_CurrentSaveData, path, OutputOptions.PrettyPrint, Serializer.Format.JSON);
                 Debug.LogFormat("[DataService] Saved bookmark at {0}", path);
                 AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
                 RegenerateBookmarks(m_BookmarksMenu);
+
+                m_CurrentSaveData.IsBookmark = oldbookmark;
+
+                string bookmarkName = Path.GetFileName(path);
+                PlayerPrefs.SetString(LastBookmarkSaveKey, bookmarkName);
+                PlayerPrefs.Save();
             }
 
             Cursor.visible = false;
@@ -128,7 +145,7 @@ namespace Aqua
 
         #region IDebuggable
 
-        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
+        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus(FindOrCreateMenu findOrCreate)
         {
             // jobs menu
 
@@ -140,7 +157,9 @@ namespace Aqua
 
             jobsMenu.AddSubmenu(startJobMenu);
             jobsMenu.AddDivider();
+            jobsMenu.AddText("Current Job", () => Save.Jobs.CurrentJob.Job?.name ?? "---");
             jobsMenu.AddButton("Complete Current Job", () => Save.Jobs.MarkComplete(Save.CurrentJobId), () => Save.CurrentJob.IsValid);
+            jobsMenu.AddDivider();
             jobsMenu.AddButton("Clear All Job Progress", () => Save.Jobs.ClearAll());
 
             yield return jobsMenu;
@@ -213,9 +232,18 @@ namespace Aqua
 
             // ship rooms
 
-            DMInfo roomMenu = new DMInfo("Rooms");
+            DMInfo roomMenu = new DMInfo("Locations");
 
+            roomMenu.AddButton("Unlock All Dive Sites", () => UnlockAllSites());
             roomMenu.AddButton("Unlock All Rooms", () => UnlockAllRooms());
+
+            roomMenu.AddDivider();
+
+            foreach(var diveSite in Services.Assets.Map.DiveSites())
+            {
+                RegisterSiteToggle(roomMenu, diveSite.Id());
+            }
+
             roomMenu.AddDivider();
 
             foreach(var room in Services.Assets.Map.Rooms())
@@ -224,20 +252,6 @@ namespace Aqua
             }
 
             yield return roomMenu;
-
-            // dive sites
-
-            DMInfo diveSiteMenu  = new DMInfo("Dive Sites");
-
-            diveSiteMenu.AddButton("Unlock All Dive Sites", () => UnlockAllSites());
-            diveSiteMenu.AddDivider();
-
-            foreach(var diveSite in Services.Assets.Map.DiveSites())
-            {
-                RegisterSiteToggle(diveSiteMenu, diveSite.Id());
-            }
-
-            yield return diveSiteMenu;
 
             // inventory menu
 
@@ -305,14 +319,24 @@ namespace Aqua
 
             saveMenu.AddDivider();
 
-            #if DEVELOPMENT
             saveMenu.AddButton("Reload Save", () => ForceReloadSave(), IsProfileLoaded);
             saveMenu.AddButton("Restart from Beginning", () => ForceRestart());
-            #endif // DEVELOPMENT
 
             saveMenu.AddDivider();
 
             saveMenu.AddButton("Clear Local Saves", () => ClearLocalSaves());
+
+            saveMenu.AddDivider();
+
+            saveMenu.AddText("Last Bookmark", () => {
+                return PlayerPrefs.GetString(LastBookmarkSaveKey, "---");
+            });
+            saveMenu.AddButton("Load Last Bookmark", () => {
+                LoadBookmark(PlayerPrefs.GetString(LastBookmarkSaveKey));
+            }, () => {
+                string name = PlayerPrefs.GetString(LastBookmarkSaveKey, "");
+                return !string.IsNullOrEmpty(name);
+            });
 
             yield return saveMenu;
 

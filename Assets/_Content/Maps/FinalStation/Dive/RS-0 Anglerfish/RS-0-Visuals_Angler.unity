@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -1487,6 +1487,7 @@ GameObject:
   m_Component:
   - component: {fileID: 245634289}
   - component: {fileID: 245634290}
+  - component: {fileID: 245634291}
   m_Layer: 29
   m_Name: caveCollider
   m_TagString: Untagged
@@ -1536,6 +1537,19 @@ EdgeCollider2D:
   - {x: 0.36257946, y: 0.08786774}
   - {x: -1.1900576, y: -2.708641}
   - {x: -5.801957, y: -4.2406387}
+--- !u!114 &245634291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 245634288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff0499bec43194bbd56b29aafc250f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Material: 2
 --- !u!1001 &249662586
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11538,7 +11552,7 @@ GameObject:
   - component: {fileID: 1299919517}
   - component: {fileID: 1299919516}
   - component: {fileID: 1299919515}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: BackgroundSprite (0)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11562,7 +11576,7 @@ MonoBehaviour:
   m_ColorGroup: {fileID: 0}
   m_Path: Textures/Observation/UnderwaterBG08.png
   m_Material: {fileID: 2100000, guid: c8b6641b5a3b33b458c8057d085962b8, type: 2}
-  m_Tessellation: 0
+  m_Tessellation: 3
   m_Color:
     serializedVersion: 2
     rgba: 4294967295

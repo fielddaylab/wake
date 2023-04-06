@@ -10,7 +10,7 @@ using UnityEditor.IMGUI.Controls;
 
 namespace Aqua {
     [ExecuteAlways]
-    public class BoxEdgeCollider2D : MonoBehaviour
+    public class BoxEdgeCollider2D : MonoBehaviour, IColliderMaterialSource
     {
         #region Inspector
 
@@ -22,7 +22,15 @@ namespace Aqua {
         [SerializeField] private Vector2 m_Size = new Vector2(1, 1);
         [SerializeField, AutoEnum] private RectEdges m_Edges = RectEdges.All;
 
+        [Header("Materials")]
+        [SerializeField, AutoEnum] private ColliderMaterialId m_TopMaterial = ColliderMaterialId.Invisible;
+        [SerializeField, AutoEnum] private ColliderMaterialId m_BottomMaterial = ColliderMaterialId.Invisible;
+        [SerializeField, AutoEnum] private ColliderMaterialId m_LeftMaterial = ColliderMaterialId.Invisible;
+        [SerializeField, AutoEnum] private ColliderMaterialId m_RightMaterial = ColliderMaterialId.Invisible;
+
         #endregion // Inspector
+
+        private readonly RectEdges[] m_EdgeMapping = new RectEdges[4];
 
         private void OnEnable()
         {
@@ -31,6 +39,32 @@ namespace Aqua {
                 return;
             #endif // UNITY_EDITOR
             RefreshColliders();
+        }
+
+        public ColliderMaterialId GetMaterial(Collider2D collider) {
+            for(int i = 0; i < m_Colliders.Length; i++) {
+                if (m_Colliders[i] == collider) {
+                    switch(m_EdgeMapping[i]) {
+                        case RectEdges.Left: {
+                            return m_LeftMaterial;
+                        }
+                        case RectEdges.Right: {
+                            return m_RightMaterial;
+                        }
+                        case RectEdges.Bottom: {
+                            return m_BottomMaterial;
+                        }
+                        case RectEdges.Top: {
+                            return m_TopMaterial;
+                        }
+                        default: {
+                            return ColliderMaterialId.Invisible;
+                        }
+                    }
+                }
+            }
+
+            return ColliderMaterial.DefaultMaterial;
         }
 
         #if UNITY_EDITOR
@@ -134,6 +168,7 @@ namespace Aqua {
                 collider.offset = new Vector2(-halfWidth - halfEdge, 0);
                 collider.size = new Vector2(m_EdgeThickness, m_Size.y + m_EdgeThickness);
                 collider.isTrigger = m_IsTrigger;
+                m_EdgeMapping[used - 1] = RectEdges.Left;
             }
 
             if ((m_Edges & RectEdges.Right) != 0)
@@ -143,6 +178,7 @@ namespace Aqua {
                 collider.offset = new Vector2(halfWidth + halfEdge, 0);
                 collider.size = new Vector2(m_EdgeThickness, m_Size.y + m_EdgeThickness);
                 collider.isTrigger = m_IsTrigger;
+                m_EdgeMapping[used - 1] = RectEdges.Right;
             }
 
             if ((m_Edges & RectEdges.Top) != 0)
@@ -152,6 +188,7 @@ namespace Aqua {
                 collider.offset = new Vector2(0, halfHeight + halfEdge);
                 collider.size = new Vector2(m_Size.x + m_EdgeThickness, m_EdgeThickness);
                 collider.isTrigger = m_IsTrigger;
+                m_EdgeMapping[used - 1] = RectEdges.Top;
             }
 
             if ((m_Edges & RectEdges.Bottom) != 0)
@@ -161,11 +198,13 @@ namespace Aqua {
                 collider.offset = new Vector2(0, -halfHeight - halfEdge);
                 collider.size = new Vector2(m_Size.x + m_EdgeThickness, m_EdgeThickness);
                 collider.isTrigger = m_IsTrigger;
+                m_EdgeMapping[used - 1] = RectEdges.Bottom;
             }
 
             for(; used < colliderCount; used++)
             {
                 m_Colliders[used].enabled = false;
+                m_EdgeMapping[used] = RectEdges.None;
             }
         }
     }

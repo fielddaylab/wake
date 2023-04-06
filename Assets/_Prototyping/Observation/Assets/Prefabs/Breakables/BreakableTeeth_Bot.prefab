@@ -14553,6 +14553,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1 &7114805257504220235
 GameObject:
   m_ObjectHideFlags: 0
@@ -14759,6 +14760,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Always: 1
+  IgnoreAnimators: 1
 --- !u!1 &7114805259053165280
 GameObject:
   m_ObjectHideFlags: 0
@@ -14770,6 +14772,7 @@ GameObject:
   - component: {fileID: 7114805259053165287}
   - component: {fileID: 7114805259053165286}
   - component: {fileID: 1844135544320500280}
+  - component: {fileID: 5557578541154952085}
   m_Layer: 29
   m_Name: SolidCollider
   m_TagString: Untagged
@@ -14845,3 +14848,17 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
+--- !u!114 &5557578541154952085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7114805259053165280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff0499bec43194bbd56b29aafc250f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Material: 6

@@ -307,7 +307,7 @@ namespace Aqua
                         accumulatedSeparationVector += separateVector;
                     }
 
-                    AdjustVelocity(ref states[objIdx].Velocity, contact.normal, 0);
+                    AdjustVelocity(ref states[objIdx].Velocity, contact.normal, obj.Bounce);
                 }
 
                 if (accumulatedSeparationVector.sqrMagnitude > 0)
@@ -368,6 +368,8 @@ namespace Aqua
     
         #region Utils
 
+        static private readonly RaycastHit2D[] s_RaycastHitBuffer = new RaycastHit2D[8];
+
         /// <summary>
         /// Checks if a solid object is next 
         /// </summary>
@@ -382,6 +384,43 @@ namespace Aqua
 
             outNormal = default(Vector2);
             return false;
+        }
+
+        /// <summary>
+        /// Raycasts to the closest solid surface.
+        /// </summary>
+        static public RaycastHit2D SolidRaycast(Vector2 inPosition, Vector2 inOffset, float distance = -1, Collider2D excludedCollider = null, Predicate<RaycastHit2D> inContactFilter = null)
+        {
+            if (distance < 0) {
+                distance = float.PositiveInfinity;
+            }
+
+            int all = Physics2D.RaycastNonAlloc(inPosition, inOffset, s_RaycastHitBuffer, distance, GameLayers.Solid_Mask);
+            float minDist = float.MaxValue;
+            int minDistIdx = -1;
+            for(int i = 0; i < all; i++) {
+                RaycastHit2D hit = s_RaycastHitBuffer[i];
+                if (hit.distance >= minDist) {
+                    continue;
+                }
+
+                if (excludedCollider == hit.collider) {
+                    continue;
+                }
+
+                if (inContactFilter != null && !inContactFilter(hit)) {
+                    continue;
+                }
+
+                minDist = hit.distance;
+                minDistIdx = i;
+            }
+
+            if (minDistIdx >= 0) {
+                return s_RaycastHitBuffer[minDistIdx];
+            } else {
+                return default(RaycastHit2D);
+            }
         }
 
         /// <summary>
@@ -438,7 +477,7 @@ namespace Aqua
 
         #if DEVELOPMENT
 
-        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
+        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus(FindOrCreateMenu findOrCreate)
         {
             DMInfo physicsMenu = new DMInfo("Physics", 8);
             physicsMenu.AddToggle("Noclip (Free Player Movement)", () => {

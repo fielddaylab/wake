@@ -39,6 +39,7 @@ namespace Aqua
         [SerializeField] private int m_MinIcons = 30;
         [SerializeField] private int m_PerRow = 0;
         [SerializeField] private float m_AnimateIntervalMultiplier = 0.2f;
+        [SerializeField] private bool m_SortAlphabetically = false;
 
         #endregion // Inspector
 
@@ -56,6 +57,7 @@ namespace Aqua
 
         public Predicate<BestiaryDesc> HighlightFilter;
         public Predicate<BestiaryDesc> MarkerFilter;
+        public Predicate<BestiaryDesc> HistoryFilter;
         public Func<BestiaryDesc, Color> ColorFilter;
 
         #region Unity Events
@@ -217,7 +219,11 @@ namespace Aqua
                 CollectEntities(Save.Bestiary, m_Category, m_IgnoreFlags, Filter, availableCritters);
                 yield return null;
                 
-                availableCritters.Sort(BestiaryDesc.SortByEnvironment);
+                if (m_SortAlphabetically) {
+                    availableCritters.Sort(BestiaryDesc.SortByName);
+                } else {
+                    availableCritters.Sort(BestiaryDesc.SortNatural);
+                }
 
                 yield return Routine.Amortize(PopulateCritters(availableCritters), 6);
             }
@@ -277,9 +283,11 @@ namespace Aqua
                 
                 bool highlight = HighlightFilter != null && HighlightFilter(critter);
                 bool marker = MarkerFilter != null && MarkerFilter(critter);
+                bool history = HistoryFilter != null && HistoryFilter(critter);
 
                 button.Highlight.SetActive(highlight);
                 button.Marker.gameObject.SetActive(marker);
+                button.Historical.SetActive(history);
 
                 if (ColorFilter != null) {
                     button.Color.Color = ColorFilter(critter);

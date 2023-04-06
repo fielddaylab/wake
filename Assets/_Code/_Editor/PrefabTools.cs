@@ -206,6 +206,41 @@ namespace Aqua.Editor
             }
         }
 
+        // static private PropertyModification[] s_CopiedOverrides;
+
+        // [MenuItem("Aqualab/Prefab Overrides/Copy Prefab Modifications", false, 90)]
+        // static public void CopyPrefabModifications() {
+        //     s_CopiedOverrides = PrefabUtility.GetPropertyModifications(Selection.activeGameObject);
+        // }
+
+        // [MenuItem("Aqualab/Prefab Overrides/Copy Prefab Modifications", true, 90)]
+        // static private bool CopyPrefabModifications_Validate() {
+        //     if (!Selection.activeGameObject) {
+        //         return false;
+        //     }
+
+        //     return PrefabUtility.IsPartOfPrefabInstance(Selection.activeGameObject);
+        // }
+
+        // [MenuItem("Aqualab/Prefab Overrides/Paste Prefab Modifications", false, 100)]
+        // static public void PastePrefabModifications() {
+        //     SerializedObject obj = new SerializedObject(Selection.activeGameObject);
+            
+        // }
+
+        // [MenuItem("Aqualab/Prefab Overrides/Paste Prefab Modifications", true, 100)]
+        // static private bool PastePrefabModifications_Validate() {
+        //     if (s_CopiedOverrides == null || s_CopiedOverrides.Length == 0) {
+        //         return false;
+        //     }
+
+        //     if (!Selection.activeGameObject) {
+        //         return false;
+        //     }
+
+        //     return PrefabUtility.IsPartOfPrefabInstance(Selection.activeGameObject);
+        // }
+
         [MenuItem("Aqualab/Align GameObject with Collider Offset")]
         static public void AlignObjectWithColliderOffset() {
             foreach(var obj in Selection.gameObjects) {

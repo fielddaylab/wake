@@ -25,6 +25,9 @@ namespace Aqua
             if ((m_Flags & BestiaryDescFlags.IsSpecter) != 0) {
                 m_Flags |= BestiaryDescFlags.DoNotUseInExperimentation;
             }
+            if ((m_Flags & BestiaryDescFlags.IsMicroscopic) != 0) {
+                m_Flags |= BestiaryDescFlags.TreatAsHerd;
+            }
 
             foreach(var fact in m_Facts)
             {

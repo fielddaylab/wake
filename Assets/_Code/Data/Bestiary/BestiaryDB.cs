@@ -232,6 +232,12 @@ namespace Aqua
 
         #endregion // Internal
 
+        public void CacheSortingInfo() {
+            foreach(var obj in m_Objects) {
+                obj.CacheName();
+            }
+        }
+
         #if UNITY_EDITOR
 
         int IBaked.Order { get { return 10; } }

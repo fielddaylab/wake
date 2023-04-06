@@ -91,6 +91,10 @@ namespace Aqua.Scripting
             GizmoViz.Box(center, size, m_Collider.transform.rotation, ColorBank.DarkGoldenrod, ColorBank.White, RectEdges.All, inAlpha);
         }
 
+        private void Reset() {
+            m_Collider = GetComponentInChildren<Collider2D>();
+        }
+
         #endif // UNITY_EDITOR
     }
 }

@@ -88,8 +88,11 @@ namespace Aqua {
         [NonSerialized] private bool m_HiddenTriggerQueued;
 
         static public bool Visible() {
-            JournalCanvas c = Services.UI.FindPanel<JournalCanvas>();
-            return c != null && (c.IsTransitioning() || c.IsShowing());
+            if (Services.UI.TryFindPanel<JournalCanvas>(out JournalCanvas c)) {
+                return c.IsTransitioning() || c.IsShowing();
+            } else {
+                return false;
+            }
         }
 
         private JournalCanvas() {
@@ -114,6 +117,7 @@ namespace Aqua {
                 return go;
             };
             m_Decompressor.NewComponent = PrefabDecompressor.DefaultNewComponent;
+            m_Decompressor.ResourceCache = new Dictionary<ushort, UnityEngine.Object>(5);
         }
 
         protected override void Awake() {
@@ -134,6 +138,8 @@ namespace Aqua {
             if (!m_InScene && Services.Valid) {
                 Services.Assets.CancelPreload(PreloadGroup);
             }
+
+            m_Decompressor.ResourceCache.Clear();
 
             base.OnDestroy();
         }

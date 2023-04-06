@@ -16,6 +16,7 @@ namespace ProtoAqua.Observation {
         public ActiveGroup Visuals = new ActiveGroup();
         public Visual2DTransform[] ProjectedTransforms = Array.Empty<Visual2DTransform>();
         public ScannableRegion Scannable = null;
+        public ScannableRegion[] AdditionalScannables = null;
 
         #endregion // Inspector
 
@@ -32,6 +33,47 @@ namespace ProtoAqua.Observation {
         }
 
         #if UNITY_EDITOR
+
+        protected override bool CustomBake() {
+            bool bChanged = false;
+
+            if (Scannable) {
+                Scannable.IconRootOverride = Scannable.Click.transform;
+                Baking.SetDirty(Scannable);
+                bChanged = true;
+
+                if (!ArrayUtils.Contains(Reveal.GameObjects, Scannable.gameObject)) {
+                    ArrayUtils.Add(ref Reveal.GameObjects, Scannable.gameObject);
+                }
+                if (!ArrayUtils.Contains(ProjectedTransforms, Scannable.Click)) {
+                    ArrayUtils.Add(ref ProjectedTransforms, Scannable.Click);
+                }
+            }
+
+            if (AdditionalScannables != null && AdditionalScannables.Length > 0) {
+                foreach(var scannable in AdditionalScannables) {
+                    scannable.IconRootOverride = scannable.Click.transform;
+                    Baking.SetDirty(scannable);
+                    bChanged = true;
+
+                    if (!ArrayUtils.Contains(Reveal.GameObjects, scannable.gameObject)) {
+                        ArrayUtils.Add(ref Reveal.GameObjects, scannable.gameObject);
+                    }
+                    if (!ArrayUtils.Contains(ProjectedTransforms, scannable.Click)) {
+                        ArrayUtils.Add(ref ProjectedTransforms, scannable.Click);
+                    }
+                }
+            }
+
+            ValidationUtils.EnsureUnique(ref Reveal.GameObjects);
+            ValidationUtils.EnsureUnique(ref Hidden.GameObjects);
+            ValidationUtils.EnsureUnique(ref Visuals.GameObjects);
+            ValidationUtils.EnsureUnique(ref ProjectedTransforms);
+
+            Reveal.ForceActive(false);
+
+            return bChanged;
+        }
 
         protected override void Reset() {
             base.Reset();
@@ -68,6 +110,10 @@ namespace ProtoAqua.Observation {
                     ArrayUtils.Add(ref Hidden.GameObjects, hintRegion.gameObject);
                 }
             }
+            ValidationUtils.EnsureUnique(ref Reveal.GameObjects);
+            ValidationUtils.EnsureUnique(ref Hidden.GameObjects);
+            ValidationUtils.EnsureUnique(ref Visuals.GameObjects);
+            ValidationUtils.EnsureUnique(ref ProjectedTransforms);
             UnityEditor.EditorUtility.SetDirty(this);
         }
 

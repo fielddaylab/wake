@@ -285,7 +285,10 @@ Refuge Failure
 :: kelp-refuge-failure.desc
 Our refuge didn't turn out as planned. It seems the Bull Kelp stopped growing. We think it may have something to do with the rate each species reproduces, but need you to figure it out and provide a model.
 
-:: kelp-refuge-failure.argue.claimLabel
+:: kelp-refuge-failure.argue.claimLabelSlow
+The Bull Kelp population is reproducing at a slower rate than expected.
+
+:: kelp-refuge-failure.argue.claimLabelModel
 The Bull Kelp population is reproducing at a slower rate than expected.
 
 :: kelp-mussel-fest.name
@@ -424,7 +427,7 @@ Report back to {nameof @drKelp}
 We need to know why the turtles are so successful here by creating a food web model of everything they eat.
 
 :: kelp-urchin-barren-viz.name
-An Cliffside Oasis Visualization
+A Cliffside Oasis Visualization
 
 :: kelp-urchin-barren-predict.name
 Predicting the Future of Cliffside Oasis
@@ -468,8 +471,11 @@ Create a Predictive Model of Giant Kelp and Bull Kelp that shows the light decre
 :: kelp-refuge-failure-simulation.task.shareModel
 Share your model containing what would happen if the refuge is left as-is
 
-:: kelp-refuge-failure-simulation.argue.claimLabel
-The Bull Kelp population will decrease drastically in a short time.
+:: kelp-refuge-failure-simulation.argue.claimLabelStruggle
+The Bull Kelp population will gradually decrease.
+
+:: kelp-refuge-failure-simulation.argue.claimLabelIncrease
+The Bull Kelp population will gradually increase.
 
 :: kelp-urchin-barren-predict.task.reportBack
 Report back with your prediction
@@ -616,10 +622,10 @@ Why is no one talking about the lionfish? There's a reason they prefer the reef 
 Scan any new organisms at {h}Site S{/h}
 
 :: lionfish-conspiracy.task.observeInteractions
-Observe how Lionfish interact with their environment
+Determine the food sources of {nameof Lionfish}
 
 :: lionfish-conspiracy.task.arguePredator
-Argue that Lionfish are predators of other fish
+Report findings to {nameof profCoral}
 
 :: coral-lionfish-conspiracy.argue.claimEvidence
 Lionfish are predators that eat other fish
@@ -628,7 +634,7 @@ Lionfish are predators that eat other fish
 Hunting Lions
 
 :: coral-hunting-lions.desc
-Interested in hunting, eh? We need to model how hunting might work so we can figure out whether to allow it -- or perhaps even advocate for it
+Fisher interest in hunting {nameof Lionfish} is growing. We need to model how hunting might work so we can decide whether to regulate or even advocate for it.
 
 :: coral-hunting-lions.task.scanSpear
 Identify how hunters hunt Lionfish
@@ -916,7 +922,7 @@ Discuss your findings with {nameof @profArctic}
 Determine Glass Sponge stress levels
 
 :: arctic-isolated-instance.task.findPredator
-Search a {h}Site Y{/h} for predators of {nameof GlassSponge}
+Search {h}Site Y{/h} for predators of {nameof GlassSponge}
 
 :: arctic-isolated-instance.task.scanSponge
 Scan a Glass Sponge
@@ -1037,7 +1043,7 @@ These species... they are unlike anything we've seen. We can't figure out how to
 How do {nameof Methanogen} survive down in {h}Site N{/h}?
 
 :: bayou-methanogen.task.eatRules
-Measure {nameof Methanogen} eat rules.
+Measure the eating rate of {nameof Methanogen}.
 
 :: bayou-methanogen.task.stressRanges
 Measure {nameof Methanogen} stress ranges.
@@ -1056,6 +1062,9 @@ The {nameof Methanogen} are immune to heat.
 
 :: bayou-methanogen.argue.claimLabel2
 The {nameof Methanogen} metabolize methane.
+
+:: bayou-methanogen.argue.claimLabel3
+The {nameof Methanogen} are uniquely adapted to their environment.
 
 :: bayou-boom-cause.name
 Boom Cause
@@ -1157,10 +1166,10 @@ Methane and detritus are the energy sources of {h}Site N{/h}.
 Salmon Competition
 
 :: arctic-salmon-competition.desc
-Well, you really have proven useful. We have been trying to make a model about Salmon summering in the arctic. We aren't happy with how our model is working, but maybe your information about cod could be used to improve it.
+We've been working on a model about {nameof ChinookSalmon} summering in the arctic, but it's not the most accurate. Maybe your info could improve it.
 
 :: arctic-salmon-competition.task.observeCod
-Determine Cod interactions within the ecosystem
+Determine {nameof ArcticCod} interactions within the ecosystem
 
 :: arctic-in-ice.name
 In the Ice
@@ -1208,19 +1217,19 @@ Diatoms are more nutritious than Ice Algae
 Ice Algae is more nutritious than Diatoms
 
 :: arctic-salmon-competition.task.modelFish
-Construct a Numerical model of how Cod and Salmon impact one another
+Construct a Numerical model of how {nameof ArcticCod} and {nameof ChinookSalmon} impact one another
 
 :: arctic-salmon-competition.task.reportBack
 Report back
 
-:: arctic-salmon-competition.argue.claimLabelNoImpact
-Cod and Salmon do not impact each other
+:: arctic-salmon-competition.argue.claimLabelImprove
+Adding {nameof ArcticCod} improved the model of {nameof ChinookSalmon}
 
-:: arctic-salmon-competition.argue.claimLabelImbalance
-Cod and Salmon are unbalanced in the ecosystem
+:: arctic-salmon-competition.argue.claimLabelNotImprove
+Adding {nameof ArcticCod} did not improve the model of {nameof ChinookSalmon}
 
-:: arctic-salmon-competition.argue.claimLabelImproved
-Present an improved Numerical model
+:: arctic-salmon-competition.argue.claimLabelShowModel
+Present your new Numerical model
 
 :: arctic-in-ice.task.countAlgae
 Count Ice Algae populations at the ice shelf
@@ -1331,7 +1340,7 @@ The reports of declining shrimp are not accurate
 Blue Waters
 
 :: bayou-blue-waters.desc
-The fishermen gave reports of the water being clear blue not too long ago. Now it's green. What in {fullnameof RS-3P} is causing this?
+The fishermen reported the water being clear blue not too long ago. Now it's green. What in {fullnameof RS-3P} is causing this? Find out everything you can and report back.
 
 :: bayou-blue-waters.task.findGreen
 Scan Site P for something that could be turning the water green
@@ -1418,7 +1427,7 @@ The fishers are all over me for an explanation about why shrimp populations are 
 Create a {h}Descriptive Model{/h} that explains why shrimp populations are decreasing
 
 :: bayou-shrimp-tastrophe.task.reportBack
-Present your model to {nameof profBayou} and explain what it means
+Present your model to {nameof bayouSci} and explain what it means
 
 :: bayou-shrimp-tastrophe.argue.claimLabelShrimpOxygen
 Present facts connecting shrimp to oxygen levels in the {nameof RS-3P}
@@ -1426,11 +1435,20 @@ Present facts connecting shrimp to oxygen levels in the {nameof RS-3P}
 :: bayou-shrimp-tastrophe.argue.claimLabelBacteriaOxygen
 Present another organism in the {nameof RS-3P} that consumes oxygen besides shrimp
 
+:: bayou-shrimp-tastrophe.argue.claimLabelCyanoDetritus
+Present what has been turning into {nameof Detritus} 
+
+:: bayou-shrimp-tastrophe.argue.claimLabelCyanoDyingCause
+Present evidence that explains why {nameof Cyanobacteria} are dying off
+
 :: bayou-shrimp-tastrophe.argue.claimLabelCyanoLight
 Present an organism that affects the light levels in the {nameof RS-3P}
 
-:: bayou-shrimp-tastrophe.argue.claimLabelLightShrimpOxygen
-Present facts connecting shrimp to light levels in the {nameof RS-3P}
+:: bayou-shrimp-tastrophe.argue.claimLabelLightDecompPopulation
+Present evidence of an organism in the {nameof RS-3P} that may affect the {nameof WhiteShrimp}
+
+:: bayou-shrimp-tastrophe.argue.claimLabelLightDecompOxygen
+Present evidence of {nameof DecomposingBacteria} affecting the {nameof WhiteShrimp}
 
 :: bayou-shrimp-tastrophe.argue.claimLabelModel
 Present your Descriptive Model of the {nameof RS-3P}

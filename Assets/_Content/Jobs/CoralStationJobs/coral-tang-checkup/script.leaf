@@ -65,21 +65,20 @@ $branch .microHintContents
 :: microHintContents
 {@profCoral}	I was looking through some of your data from {nameof @guide}'s previous upload.
 				According to the {nameof BlueTang} stress ranges you've measured, the environmental conditions at {h}Site S{/h} are well within the {nameof BlueTang}'s comfortable range. 
-{@player}       So... something else is stressing the tang?
-				I wonder what it could be...
-{@profCoral}	I have an idea: {h}Microorganisms{/h}. 
-				I'd suggest returning to Site S and scanning for any microorganisms you might have missed.
+{@player}       So... the tang aren’t being stressed by the water chemistry. It must be something else then?
 $set jobs:coral-tang-checkup.microHintGiven = true
 $if HasEntity(Ick)
 	{@player}	I did notice some {nameof Ick} out there previously...
 	$if !HasFact(Ick.Stresses.BlueTang)
-		{@player}	That's probably what was stressing the {nameof BlueTang}!
+		{@player}	Let’s see if the {nameof Ick} is effecting them, it sure looks like a parasite.
 		$if !HasFact(LionfishInvasion.Population.Ick)
 			{@player}	I'll go and get counts of them.
 		$endif
 	$else
 		{@player}	That's what was stressing the {nameof BlueTang}!
 	$endif
+$else
+	{@player}	I wonder if they are sick. Let’s go observe the {nameof BlueTang} with the microscope and see if we learn anything.
 $endif
 
 $if JobTaskCompleted(countIck), !jobs:coral-tang-checkup.grantedData
@@ -101,7 +100,7 @@ $endif
 @when		taskId == "countIck", scene:name == "RS-2S"
 @once
 @cutscene
-{@player}	Ugh. This place is just crawling with {nameof Ick}. 
+{@player}	These fish are just crawling with {nameof Ick}. 
 {@guide} 	Yes. I'd suggest using your {item}Observation tank{/item} to see how the {nameof Ick} is affecting the Tang.
 
 

@@ -86,7 +86,7 @@ namespace Aqua.Testing {
 
         #region IDebuggable
 
-        public IEnumerable<DMInfo> ConstructDebugMenus() {
+        public IEnumerable<DMInfo> ConstructDebugMenus(FindOrCreateMenu findOrCreate) {
             // DMInfo menu = new DMInfo("Auto Testing", 8);
 
             // menu.AddButton("Scene Loading", () => RunTest("Scene Loading", SceneLoadValidation.LoadAllScenes(), 60));

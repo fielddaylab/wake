@@ -1,0 +1,23 @@
+# basePath RS-3N.script
+
+#include "Headers/Common.leaf"
+
+:: darkAndHot
+@trigger    SceneStart
+@cutscene
+@once
+{@guide}    WOW. It's REALLY dark and hot.
+
+:: darkerAndHotter
+@trigger  PlayerEnterRegion
+@when       regionId == "DarkerAndHotter"
+@chatter
+@once
+{@guide}    It's getting even darker and hotter!
+
+:: bubbleHeat
+@trigger   PlayerEnterRegion
+@when       regionId == "BubbleHeat"
+@cutscene
+@once
+{@guide}    The heat seems to be coming from those bubbles! What is this?

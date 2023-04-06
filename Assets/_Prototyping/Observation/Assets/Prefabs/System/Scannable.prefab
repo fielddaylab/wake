@@ -89,6 +89,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   Radius: 0
+  IsDynamic: 0
 --- !u!114 &1292219738141401676
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,6 +115,7 @@ GameObject:
   - component: {fileID: 5470274428244772036}
   - component: {fileID: 7416540549332941139}
   - component: {fileID: 8165673931000088414}
+  - component: {fileID: 3182530869875883988}
   m_Layer: 0
   m_Name: Scannable
   m_TagString: Scannable
@@ -174,6 +176,7 @@ MonoBehaviour:
     m_HashValue: 0
   Click: {fileID: 532167340832557143}
   IconRootOverride: {fileID: 0}
+  ScanImageOverride: {fileID: 0}
   IconZAdjust: 0
 --- !u!114 &7416540549332941139
 MonoBehaviour:
@@ -200,6 +203,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Always: 0
+  IgnoreAnimators: 1
+--- !u!114 &3182530869875883988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5470274428244772039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1934239d9b5327f499938b4b62abc302, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Recursive: 1
+  DestroyGameObject: 0
 --- !u!1 &5470274429010608830
 GameObject:
   m_ObjectHideFlags: 0
@@ -289,6 +307,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   Radius: 0
+  IsDynamic: 0
 --- !u!114 &281647702499743140
 MonoBehaviour:
   m_ObjectHideFlags: 0

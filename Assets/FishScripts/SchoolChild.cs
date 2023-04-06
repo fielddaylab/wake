@@ -35,7 +35,7 @@ public class SchoolChild : MonoBehaviour
 	[NonSerialized] private int _updateSeed = -1;
     [NonSerialized] private float randomAnimSpeed;
 	[NonSerialized] private  Transform _cacheTransform;
-	
+	[NonSerialized] private float m_WanderDelay;
 
 #if UNITY_EDITOR
 	public static bool _sWarning;
@@ -43,7 +43,7 @@ public class SchoolChild : MonoBehaviour
 
     static private int AnimParam_FishAnimSpeed;
     static private MaterialPropertyBlock s_PropertyBlock;
-	static int _updateNextSeed = 0; //When using frameskip seed will prevent calculations for all fish to be on the same frame
+	static uint _updateNextSeed = 0; //When using frameskip seed will prevent calculations for all fish to be on the same frame
 
 	public void Initialize()
 	{
@@ -91,6 +91,13 @@ public class SchoolChild : MonoBehaviour
 			ForwardMovement();
 			RayCastToPushAwayFromObstacles();
 			SetAnimationSpeed();
+
+            if (m_WanderDelay > 0) {
+                m_WanderDelay -= _spawner._newDelta;
+                if (m_WanderDelay <= 0) {
+                    SetRandomWaypoint();
+                }
+            }
 		}
 	}
 
@@ -98,10 +105,9 @@ public class SchoolChild : MonoBehaviour
 	{
 		if (_spawner._updateDivisor > 1)
 		{
-			int _updateSeedCap = _spawner._updateDivisor - 1;
+			int _updateSeedCap = _spawner._updateDivisor;
+			this._updateSeed = (int) (_updateNextSeed % _updateSeedCap);
 			_updateNextSeed++;
-			this._updateSeed = _updateNextSeed;
-			_updateNextSeed = _updateNextSeed % _updateSeedCap;
 		}
 	}
 
@@ -119,6 +125,7 @@ public class SchoolChild : MonoBehaviour
 	private void OnDisable()
 	{
 		CancelInvoke();
+        m_WanderDelay = 0;
         if (_instantiated) {
 		    _spawner._activeChildren--;
         }
@@ -311,7 +318,7 @@ public class SchoolChild : MonoBehaviour
 	{
 		_damping = RNG.Instance.NextFloat(_spawner._minDamping, _spawner._maxDamping);
 		_targetSpeed = RNG.Instance.NextFloat(_spawner._minSpeed, _spawner._maxSpeed) * _spawner._speedCurveMultiplier.Evaluate(RNG.Instance.NextFloat()) * _spawner._schoolSpeed;
-		Invoke("SetRandomWaypoint", delay);
+		m_WanderDelay = Math.Max(delay, 0.01f);
 	}
 
 	public void SetRandomWaypoint()

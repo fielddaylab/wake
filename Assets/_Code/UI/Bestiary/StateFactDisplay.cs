@@ -92,7 +92,7 @@ namespace Aqua
             } else {
                 var propData = Assets.Property(m_CachedPropertyId);
                 float value = inEnvironment.GetEnvironment()[m_CachedPropertyId];
-                float anchorX = propData.RemapValue(value);
+                float anchorX = Mathf.Clamp01(propData.RemapValue(value));
                 anchorX = m_AliveRange.AdjustValue(anchorX);
 
                 Vector2 anchorMin = m_EnvironmentValueMarker.anchorMin,
@@ -112,8 +112,8 @@ namespace Aqua
             float dMin = min - avg;
             float dMax = max - avg;
 
-            dMin *= Formatting.PseudoRandom(ref seed, 0.5f, 2f);
-            dMax *= Formatting.PseudoRandom(ref seed, 0.5f, 2f);
+            dMin *= PseudoRandom.Float(ref seed, 0.5f, 2f);
+            dMax *= PseudoRandom.Float(ref seed, 0.5f, 2f);
 
             min = avg + dMin;
             max = avg + dMax;

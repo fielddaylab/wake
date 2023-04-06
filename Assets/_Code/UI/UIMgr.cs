@@ -13,6 +13,7 @@ using BeauRoutine;
 using BeauRoutine.Extensions;
 using BeauUtil;
 using BeauUtil.Debugger;
+using BeauUtil.Services;
 using Leaf;
 using Leaf.Runtime;
 using UnityEngine;
@@ -20,7 +21,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace Aqua
 {
-    [DefaultExecutionOrder(10000)]
+    [DefaultExecutionOrder(10000), ServiceDependency(typeof(EventService))]
     public class UIMgr : ServiceBehaviour, IDebuggable
     {
         #region Inspector
@@ -63,6 +64,7 @@ namespace Aqua
         [NonSerialized] private CursorHintMgr m_CursorHintMgr;
         [NonSerialized] private List<GameObject> m_PersistentUIObjects = new List<GameObject>();
         [NonSerialized] private BufferedCollection<IUpdaterUI> m_UIUpdates = new BufferedCollection<IUpdaterUI>();
+        [NonSerialized] private RingBuffer<KeyboardShortcutDisplay> m_ShortcutDisplays = new RingBuffer<KeyboardShortcutDisplay>(16, RingBufferMode.Expand);
 
         private Routine m_PersistentUILoad;
         private Routine m_JournalLoad;
@@ -232,6 +234,15 @@ namespace Aqua
             return (T) panel;
         }
 
+        public bool TryFindPanel<T>(out T outPanel) where T : SharedPanel
+        {
+            Type t = typeof(T);
+            SharedPanel panel;
+            bool success = m_SharedPanels.TryGetValue(t, out panel);
+            outPanel = panel as T;
+            return success;
+        }
+
         #endregion // Additional Panels
 
         #region Updates
@@ -245,6 +256,19 @@ namespace Aqua
         }
 
         #endregion // Updates
+
+        #region Shortcuts
+
+        public void RegisterShortcut(KeyboardShortcutDisplay shortcut) {
+            m_ShortcutDisplays.PushBack(shortcut);
+            shortcut.SetDisplay(Accessibility.DisplayShortcuts);
+        }
+
+        public void DeregisterShortcut(KeyboardShortcutDisplay shortcut) {
+            m_ShortcutDisplays.FastRemove(shortcut);
+        }
+
+        #endregion // Shortcuts
 
         #region Persistent UI
 
@@ -432,6 +456,13 @@ namespace Aqua
 
         #region IService
 
+        private void OnOptionsUpdated() {
+            bool shortcutsEnabled = Accessibility.DisplayShortcuts;
+            foreach(var shortcut in m_ShortcutDisplays) {
+                shortcut.SetDisplay(shortcutsEnabled);
+            }
+        }
+
         protected override void Shutdown()
         {
             SceneHelper.OnSceneUnload -= CleanupFromScene;
@@ -448,6 +479,8 @@ namespace Aqua
             m_SharedPanels = new Dictionary<Type, SharedPanel>(16, ReferenceEqualityComparer<Type>.Default);
             m_CursorHintMgr = new CursorHintMgr(m_Cursor, m_Tooltip);
             SceneHelper.OnSceneUnload += CleanupFromScene;
+
+            Services.Events.Register(GameEvents.OptionsUpdated, OnOptionsUpdated);
 
             BindCamera(Camera.main);
             transform.FlattenHierarchy();
@@ -479,7 +512,7 @@ namespace Aqua
 
         #if DEVELOPMENT
 
-        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus()
+        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus(FindOrCreateMenu findOrCreate)
         {
             DMInfo uiMenu = new DMInfo("UI");
 

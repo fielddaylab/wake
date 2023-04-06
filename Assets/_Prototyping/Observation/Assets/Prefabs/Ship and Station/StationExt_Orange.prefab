@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 1323597515152377735}
   - component: {fileID: 8501750645539613652}
   - component: {fileID: 4756829093090950100}
+  - component: {fileID: 6192436420976097737}
   m_Layer: 29
   m_Name: Collider
   m_TagString: Untagged
@@ -105,6 +106,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cec70eb26bb1e374a82d4a8fe0ce4794, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6192436420976097737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2112610965728997278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff0499bec43194bbd56b29aafc250f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Material: 4
 --- !u!1 &7654777827916615559
 GameObject:
   m_ObjectHideFlags: 0
@@ -4907,8 +4921,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1001 &2625165872996364036
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -275,8 +275,9 @@ namespace OGD {
         static internal void CancelRequest<TResponse>(ref Request<TResponse> request) {
             if (request != null) {
                 if (request.WebRequest != null) {
-                    request.WebRequest.Dispose();
+                    UnityWebRequest uwr = request.WebRequest;
                     request.WebRequest = null;
+                    uwr.Dispose();
                 }
 
                 request.Handler = null;

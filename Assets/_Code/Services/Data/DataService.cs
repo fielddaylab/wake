@@ -72,6 +72,7 @@ namespace Aqua
         [NonSerialized] private ulong m_LastOptionsHash;
 
         [NonSerialized] private Future<bool> m_SaveResult;
+        [NonSerialized] private Routine m_UpdateSummaryFromServer;
         [NonSerialized] private bool m_AutoSaveEnabled;
         [NonSerialized] private SaveSummaryData m_LastKnownProfile;
         [NonSerialized] private bool m_ForceSavingDisabled;
@@ -169,6 +170,27 @@ namespace Aqua
 
         private IEnumerator LoadProfileRoutine(Future<bool> ioFuture, string inUserCode)
         {
+            Future<SaveData> authoritativeCheck = Future.Create<SaveData>();
+            yield return RetrieveAuthoritativeSave(authoritativeCheck, inUserCode);
+
+            if (!authoritativeCheck.IsComplete())
+            {
+                ioFuture.Fail(authoritativeCheck.GetFailure());
+                yield break;
+            }
+
+            SaveData authoritativeSave = authoritativeCheck.Get();
+            
+            ClearOldProfile();
+
+            DebugService.Log(LogMask.DataService, "[DataService] Loaded profile with user id '{0}'", inUserCode);
+
+            DeclareProfile(authoritativeSave, true, true);
+            ioFuture.Complete(true);
+        }
+
+        private IEnumerator RetrieveAuthoritativeSave(Future<SaveData> ioFuture, string inUserCode)
+        {
             Future<SaveData> serverCheck = TryLoadProfileFromServer(inUserCode);
             yield return serverCheck;
 
@@ -206,12 +228,7 @@ namespace Aqua
                 yield break;
             }
 
-            ClearOldProfile();
-
-            DebugService.Log(LogMask.DataService, "[DataService] Loaded profile with user id '{0}'", inUserCode);
-
-            DeclareProfile(authoritativeSave, true, true);
-            ioFuture.Complete(true);
+            ioFuture.Complete(authoritativeSave);
         }
 
         public void StartPlaying()
@@ -303,7 +320,7 @@ namespace Aqua
 
                 if (future.IsComplete())
                 {
-                    DebugService.Log(LogMask.DataService, "[DataService] Save with profile name {0} found on server!", m_ProfileName);
+                    DebugService.Log(LogMask.DataService, "[DataService] Save with profile name {0} found on server!", inUserCode);
                     SaveData serverData = null;
                     bool bSuccess;
                     using(Profiling.Time("reading save data from server"))
@@ -346,7 +363,7 @@ namespace Aqua
             Save.DeclareProfile(inProfile);
             
             #if DEVELOPMENT
-            m_IsDebugProfile = IdentifyDebugProfile(ref inProfile.Id);
+            m_IsDebugProfile = inProfile.IsBookmark || IdentifyDebugProfile(ref inProfile.Id);
             m_LastBookmarkName = null;
             #endif // DEVELOPMENT
 
@@ -358,12 +375,14 @@ namespace Aqua
                 Log.Msg("[DataService] Patched save data from version {0} to {1}", oldVersion, SavePatcher.CurrentVersion);
             }
 
-            if (!IsDebugProfile() && inbSetLastKnown)
+            if (!IsDebugProfile())
             {
-                SetLastKnownProfile(m_CurrentSaveData);
+                if (inbSetLastKnown) {
+                    SetLastKnownProfile(m_CurrentSaveData);
+                }
+                OptionsData.SyncFrom(m_CurrentSaveData.Options, m_CurrentOptions, OptionsData.Authority.Profile);
             }
-
-            OptionsData.SyncFrom(m_CurrentSaveData.Options, m_CurrentOptions, OptionsData.Authority.Profile);
+            
             m_LastOptionsHash = m_CurrentOptions.Hash();
 
             HookSaveDataToVariableResolver(inProfile);
@@ -462,7 +481,7 @@ namespace Aqua
 
         static private bool IdentifyDebugProfile(ref string ioId)
         {
-            if (ioId == DebugSaveId)
+            if (ioId == DebugSaveId || string.IsNullOrEmpty(ioId))
                 return true;
                 
             if (Guid.TryParse(ioId, out _))
@@ -479,6 +498,42 @@ namespace Aqua
         static private bool IdentifyDebugProfile(ref string ioId) { return false; }
 
         #endif // DEVELOPMENT
+
+        private IEnumerator TryUpdateSaveSummary() {
+            string lastProfileId = m_LastKnownProfile.Id;
+            if (string.IsNullOrEmpty(lastProfileId)) {
+                yield break;
+            }
+
+            if (IdentifyDebugProfile(ref lastProfileId)) {
+                m_LastKnownProfile = default;
+                PlayerPrefs.DeleteKey(LastUserSaveSummaryKey);
+                Log.Warn("[DataService] Debug profile found in user save summary - deleting summary");
+                yield break;
+            }
+
+            // we add an additional delay in builds to hopefully stagger this among the other requests
+            #if !UNITY_EDITOR
+            yield return 1;
+            #endif // UNITY_EDITOR
+
+            Log.Msg("[DataService] Attempting to download latest save for '{0}' from the server to update save summary...", lastProfileId);
+
+            Future<SaveData> authoritative = Future.Create<SaveData>();
+            yield return RetrieveAuthoritativeSave(authoritative, lastProfileId);
+
+            if (authoritative.IsComplete()) {
+                SaveData data = authoritative.Get();
+                if (data.LastUpdated != m_LastKnownProfile.LastUpdated) {
+                    Log.Msg("[DataService] Local summary is out-of-date - updating with new summary");
+                    SaveSummaryData summary = SaveSummaryData.FromSave(data);
+                    OverwriteSummary(summary);
+                    PlayerPrefs.Save();
+                } else {
+                    Log.Msg("[DataService] Local save summary is up-to-date!");
+                }
+            }
+        }
 
         #endregion // Loading
 
@@ -559,14 +614,15 @@ namespace Aqua
             yield return null;
 
             PlayerPrefs.SetString(key, saveData);
-            OverwriteSummary(summary);
-            yield return null;
-            
             PlayerPrefs.Save();
             yield return null;
 
             if (!IsDebugProfile())
             {
+                OverwriteSummary(summary);
+                PlayerPrefs.Save();
+                yield return null;
+
                 int attempts = (int) (m_SaveRetryCount + 1);
                 int retryCount = 0;
                 while(attempts > 0)
@@ -695,9 +751,16 @@ namespace Aqua
 
             Services.Events.Register(GameEvents.SceneLoaded, PerformPostLoad, this);
 
-            if (Serializer.ReadPrefs(ref m_LastKnownProfile, LastUserSaveSummaryKey))
+            if (PlayerPrefs.HasKey(LastUserSaveSummaryKey) && Serializer.ReadPrefs(ref m_LastKnownProfile, LastUserSaveSummaryKey))
             {
-                DebugService.Log(LogMask.DataService, "[DataService] Loaded last profile summary");
+                if (IdentifyDebugProfile(ref m_LastKnownProfile.Id)) {
+                    PlayerPrefs.DeleteKey(LastUserSaveSummaryKey);
+                    m_LastKnownProfile = default;
+                    PlayerPrefs.DeleteKey(LastUserSaveSummaryKey);
+                    Log.Warn("[DataService] Debug profile found in user save summary - deleting summary");
+                } else {
+                    DebugService.Log(LogMask.DataService, "[DataService] Loaded last profile summary");
+                }
             }
             else
             {
@@ -707,16 +770,33 @@ namespace Aqua
             LoadOptionsSettings();
 
             SavePatcher.InitializeIdPatcher(m_IdRenames);
-
-            // m_DialogHistory = new RingBuffer<DialogRecord>(m_DialogHistorySize, RingBufferMode.Overwrite);
+            Assets.FullyUnload(ref m_IdRenames);
 
             OGD.Core.Configure(m_ServerAddress, GameId);
+
+            if (SceneHelper.ActiveScene().BuildIndex < GameConsts.GameSceneIndexStart) {
+                m_UpdateSummaryFromServer.Replace(this, TryUpdateSaveSummary());
+            }
         }
 
         private void LateUpdate() {
-            if (m_CurrentSaveData != null && !Services.State.IsLoadingScene()) {
+            if (Script.IsPausedOrLoading) {
+                return;
+            }
+
+            if (m_CurrentSaveData != null) {
                 m_CurrentSaveData.Playtime += Time.unscaledDeltaTime;
             }
+
+            #if DEVELOPMENT
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Slash)) {
+                string lastBookmark = PlayerPrefs.GetString(LastBookmarkSaveKey, "");
+                if (!string.IsNullOrEmpty(lastBookmark)) {
+                    LoadBookmark(lastBookmark);
+                }
+                DeviceInput.BlockAll();
+            }
+            #endif // DEVELOPMENT
         }
 
         protected override void Shutdown()
@@ -731,7 +811,7 @@ namespace Aqua
 
         bool ILoadable.IsLoading()
         {
-            return m_SaveResult != null;
+            return m_SaveResult != null && !m_UpdateSummaryFromServer;
         }
 
         #endregion // ILoadable

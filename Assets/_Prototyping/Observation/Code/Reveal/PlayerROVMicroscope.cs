@@ -7,6 +7,7 @@ using Aqua.Character;
 using System;
 using ScriptableBake;
 using System.Collections.Generic;
+using UnityEngine.Rendering.Universal;
 
 namespace ProtoAqua.Observation {
     public sealed class PlayerROVMicroscope : MonoBehaviour, PlayerROV.ITool, IBaked {
@@ -21,6 +22,8 @@ namespace ProtoAqua.Observation {
         [SerializeField] private float m_CameraHintZoom = 1;
 
         [Header("Projection")]
+        [SerializeField] private Renderer m_ProjectionMask = null;
+        [SerializeField] private Material m_ProjectionMaskMaterial = null;
         [SerializeField] private Transform m_ProjectionCenter = null;
         [SerializeField] private Camera m_ProjectionCamera = null;
         [SerializeField] private float m_ProjectionRadius = 1;
@@ -56,6 +59,9 @@ namespace ProtoAqua.Observation {
             Script.OnSceneLoad(() => {
                 m_WorldMicroscopeLayer.ForceActive(false);
             });
+
+            Debug.Log(m_ProjectionMask.sharedMaterial);
+            m_ProjectionMask.sharedMaterial = m_ProjectionMaskMaterial;
         }
 
         #region ITool
@@ -83,6 +89,8 @@ namespace ProtoAqua.Observation {
             m_CameraHint = Services.Camera.AddHint(m_ProjectionCenter, m_CameraHintStrength, m_CameraHintWeight, m_CameraHintZoom).Id;
 
             m_WorldMicroscopeLayer.SetActive(true);
+
+            m_ProjectionCamera.backgroundColor = Services.Camera.Current.backgroundColor;
         }
 
         public void GetTargetPosition(bool inbOnGamePlane, out Vector3? outWorld, out Vector3? outCursor) {
@@ -97,7 +105,7 @@ namespace ProtoAqua.Observation {
             return 0;
         }
 
-        public float MoveSpeedMultiplier() { return 0.4f; }
+        public float MoveSpeedMultiplier() { return 0.65f; }
 
         public bool UpdateTool(float inDeltaTime, in PlayerROVInput.InputData inInput, Vector2 inVelocity, PlayerBody inBody) {
             return false;
@@ -113,6 +121,9 @@ namespace ProtoAqua.Observation {
             if (region != null) {
                 if (region.Scannable) {
                     region.Scannable.InMicroscope = true;
+                }
+                foreach(var scan in region.AdditionalScannables) {
+                    scan.InMicroscope = true;
                 }
                 region.Hidden.SetActive(false);
                 region.Reveal.SetActive(true);
@@ -138,6 +149,9 @@ namespace ProtoAqua.Observation {
                 }
                 if (region.Scannable) {
                     region.Scannable.InMicroscope = false;
+                }
+                foreach(var scan in region.AdditionalScannables) {
+                    scan.InMicroscope = false;
                 }
                 region.OnUnviewed?.Invoke(region);
             }

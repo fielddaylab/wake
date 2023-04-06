@@ -195,19 +195,19 @@ MonoBehaviour:
     PrefabName: ArcticCopepod
     SpawnAmountOverride: -1
     Spawning:
-      SpawnLocation: 0
-      SpawnAnimation: 0
+      SpawnLocation: 3
+      SpawnAnimation: 2
       AvoidTankSidesRadius: 0.4
       AvoidTankTopBottomRadius: 1
     Movement:
-      MoveType: 1
+      MoveType: 0
       MovementIdleDistance: 2
       MovementSpeed: 2
       MovementCurve: 1
       MovementInterval: 1.5
       MovementIntervalRandom: 1
     Eating:
-      EatType: 1
+      EatType: 3
       MovementMultiplier: 1
     Stress:
       MovementSpeedMultiplier: 0.8
@@ -248,21 +248,21 @@ MonoBehaviour:
       FactId:
         m_HashValue: 2922309349
     ParasiteTargets: []
-    SpawnCount: 10
-    SpawnMax: 30
+    SpawnCount: 1
+    SpawnMax: 3
     AliveReproduceRate: 1
     StressedReproduceRate: 0.5
     IsPlant: 0
     IsLivingOrganism: 1
-    IsDistributed: 0
-    TargetLimit: 1
-    FreeOnEaten: 1
+    IsDistributed: 1
+    TargetLimit: 8
+    FreeOnEaten: 0
     EatOffsetRange:
       serializedVersion: 2
-      x: -0.9
-      y: -0.9
-      width: 1.8
-      height: 1.8
+      x: -1
+      y: -1
+      width: 2
+      height: 2
     LocalBoundsRect:
       serializedVersion: 2
       x: -1
@@ -593,10 +593,10 @@ MonoBehaviour:
         StressedMin: -Infinity
         StressedMax: Infinity
       PH:
-        AliveMin: 7.25
-        AliveMax: 8.3
-        StressedMin: 6.6
-        StressedMax: 8.5
+        AliveMin: 5.3
+        AliveMax: 7
+        StressedMin: 3.7
+        StressedMax: 7.5
     AliveEatTargets:
     - TargetId:
         m_HashValue: 3040832533
@@ -683,8 +683,8 @@ MonoBehaviour:
     FreeOnEaten: 0
     EatOffsetRange:
       serializedVersion: 2
-      x: -7.0932636
-      y: 2.946229
+      x: -5.913264
+      y: 1.906229
       width: 8.591779
       height: 6.3948565
     LocalBoundsRect:
@@ -787,19 +787,19 @@ MonoBehaviour:
     PrefabName: Clione
     SpawnAmountOverride: -1
     Spawning:
-      SpawnLocation: 0
-      SpawnAnimation: 0
+      SpawnLocation: 3
+      SpawnAnimation: 2
       AvoidTankSidesRadius: 0.4
       AvoidTankTopBottomRadius: 0
     Movement:
-      MoveType: 1
+      MoveType: 0
       MovementIdleDistance: 2
       MovementSpeed: 2
       MovementCurve: 1
       MovementInterval: 1.5
       MovementIntervalRandom: 1
     Eating:
-      EatType: 0
+      EatType: 3
       MovementMultiplier: 1
     Stress:
       MovementSpeedMultiplier: 0.8
@@ -832,21 +832,21 @@ MonoBehaviour:
       FactId:
         m_HashValue: 3531182325
     ParasiteTargets: []
-    SpawnCount: 10
-    SpawnMax: 30
+    SpawnCount: 1
+    SpawnMax: 3
     AliveReproduceRate: 1
     StressedReproduceRate: 0.5
     IsPlant: 0
     IsLivingOrganism: 1
-    IsDistributed: 0
-    TargetLimit: 1
-    FreeOnEaten: 1
+    IsDistributed: 1
+    TargetLimit: 8
+    FreeOnEaten: 0
     EatOffsetRange:
       serializedVersion: 2
-      x: -0.9
-      y: -0.9
-      width: 1.8
-      height: 1.8
+      x: -1
+      y: -1
+      width: 2
+      height: 2
     LocalBoundsRect:
       serializedVersion: 2
       x: -1
@@ -920,7 +920,7 @@ MonoBehaviour:
     IsLivingOrganism: 1
     IsDistributed: 0
     TargetLimit: 1
-    FreeOnEaten: 1
+    FreeOnEaten: 0
     EatOffsetRange:
       serializedVersion: 2
       x: -0.9
@@ -984,7 +984,7 @@ MonoBehaviour:
     IsLivingOrganism: 1
     IsDistributed: 0
     TargetLimit: 1
-    FreeOnEaten: 1
+    FreeOnEaten: 0
     EatOffsetRange:
       serializedVersion: 2
       x: -0.3135441
@@ -1056,7 +1056,7 @@ MonoBehaviour:
     IsLivingOrganism: 1
     IsDistributed: 0
     TargetLimit: 1
-    FreeOnEaten: 1
+    FreeOnEaten: 0
     EatOffsetRange:
       serializedVersion: 2
       x: -0.9
@@ -1456,7 +1456,7 @@ MonoBehaviour:
     IsLivingOrganism: 1
     IsDistributed: 0
     TargetLimit: 1
-    FreeOnEaten: 1
+    FreeOnEaten: 0
     EatOffsetRange:
       serializedVersion: 2
       x: -0.8997911
@@ -1724,11 +1724,11 @@ MonoBehaviour:
     SpawnMax: 30
     AliveReproduceRate: 0.71
     StressedReproduceRate: 0.35
-    IsPlant: 0
+    IsPlant: 1
     IsLivingOrganism: 1
     IsDistributed: 0
-    TargetLimit: 1
-    FreeOnEaten: 1
+    TargetLimit: 4
+    FreeOnEaten: 0
     EatOffsetRange:
       serializedVersion: 2
       x: -0.25459126
@@ -3760,11 +3760,11 @@ MonoBehaviour:
     SpawnMax: 20
     AliveReproduceRate: 0.75
     StressedReproduceRate: 0.4
-    IsPlant: 0
+    IsPlant: 1
     IsLivingOrganism: 1
     IsDistributed: 0
-    TargetLimit: 1
-    FreeOnEaten: 1
+    TargetLimit: 4
+    FreeOnEaten: 0
     EatOffsetRange:
       serializedVersion: 2
       x: -0.34807998

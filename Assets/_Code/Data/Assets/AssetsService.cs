@@ -107,6 +107,8 @@ namespace Aqua {
                 }
             }
             Log.Msg("[AssetsService] Found {0} preload groups", m_PreloadGroupMap.Count);
+
+            Assets.FullyUnload(ref m_PreloadGroupFiles);
         }
 
         private IEnumerator StreamingManagementRoutine() {
@@ -134,6 +136,11 @@ namespace Aqua {
             base.Shutdown();
         }
     
+        public void OnLocalizationLoaded()
+        {
+            m_Bestiary.CacheSortingInfo();
+        }
+
         #region Preload
 
         public bool PreloadGroup(StringHash32 groupId) {

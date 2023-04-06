@@ -44,7 +44,7 @@ namespace Aqua {
             else
             {
                 yield return BFFragment.CreateLocVerb(ReproduceVerb);
-                yield return BFFragment.CreateAmount(BestiaryUtils.FormatPercentage(fact.Amount));
+                yield return BFFragment.CreateAmount(BestiaryUtils.FormatPercentageRate(fact.Amount));
             }
         }
 
@@ -64,7 +64,7 @@ namespace Aqua {
                 }
                 else
                 {
-                    details.Description = Loc.Format(ReproduceSentenceStressed, inFact.Parent.CommonName(), BestiaryUtils.FormatPercentage(fact.Amount));
+                    details.Description = Loc.Format(ReproduceSentenceStressed, inFact.Parent.CommonName(), BestiaryUtils.FormatPercentageRate(fact.Amount));
                 }
             }
             else
@@ -75,7 +75,7 @@ namespace Aqua {
                 }
                 else
                 {
-                    details.Description = Loc.Format(ReproduceSentence, inFact.Parent.CommonName(), BestiaryUtils.FormatPercentage(fact.Amount));
+                    details.Description = Loc.Format(ReproduceSentence, inFact.Parent.CommonName(), BestiaryUtils.FormatPercentageRate(fact.Amount));
                 }
             }
 

@@ -15,7 +15,8 @@ $call hotbar.portable->ForceOnTop()
 $call FocusHighlight->Focus(hotbar.portable)
     Check your {item-name}AQOS Tablet{/item-name} to see all the info about your active job! \n\
     This tool also holds all the data you collect. \n\
-    You can access it by clicking on the icon or pressing {h}[Tab]{/h}.
+    You can access it by clicking on the icon or pressing {h}[Tab]{/h}.\n\
+    Keyboard shortcut hints can be toggled on from the {h}Options Menu{/h}.
 $call FocusHighlight->Clear()
 
 {hide-dialog}{fade-in 0.5, wait}
@@ -238,7 +239,7 @@ $endif
 
 $if local:factId == "Urchin.Eats.GiantKelp"
     {@guide}    You captured a new behavior! Looks like {pluralnameof Urchin} eat {pluralnameof GiantKelp}. 
-    {$guide}    You captured a new behavior! Looks like {pluralnameof SeaOtter} eat {pluralnameof Urchin}. 
+    {@guide}    You captured a new behavior! Looks like {pluralnameof SeaOtter} eat {pluralnameof Urchin}. 
 $endif
 {@guide}    That should be recorded in our {item-name}Bestiary{/item-name} now.
 

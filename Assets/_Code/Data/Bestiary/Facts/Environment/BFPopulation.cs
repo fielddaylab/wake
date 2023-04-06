@@ -9,6 +9,7 @@ namespace Aqua {
         [Header("Population")]
         [FilterBestiary(BestiaryDescCategory.Critter)] public BestiaryDesc Critter = null;
         public uint Value = 0;
+        [Tooltip("Adjustment to Value strictly for displaying in AQOS")] public uint DisplayExtra = 0;
 
         #endregion // Inspector
 
@@ -41,7 +42,7 @@ namespace Aqua {
             TextId format = PopulationSentence;
             if (fact.Critter.HasFlags(BestiaryDescFlags.TreatAsHerd))
                 format = PopulationHerdSentence;
-            details.Description = Loc.Format(format, BestiaryUtils.FormatPopulation(fact.Critter, fact.Value), fact.Critter.PluralCommonName(), BestiaryUtils.LocationLabel(fact.Parent));
+            details.Description = Loc.Format(format, BestiaryUtils.FormatPopulation(fact.Critter, fact.Value + fact.DisplayExtra), fact.Critter.PluralCommonName(), BestiaryUtils.LocationLabel(fact.Parent));
 
             return details;
         }

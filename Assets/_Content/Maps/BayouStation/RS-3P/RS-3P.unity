@@ -547,6 +547,7 @@ MonoBehaviour:
   m_Crossfade: 0.5
   m_StopOnDisable: 1
   m_PlayOnLoad: 1
+  m_DoNotPreload: 0
 --- !u!1001 &488935157
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -750,6 +751,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1 &733664470 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1439181330075514292, guid: 1bc3999d7c9928c40b3d6cf018bfa355,
@@ -1395,6 +1397,90 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1bc3999d7c9928c40b3d6cf018bfa355, type: 3}
+--- !u!1001 &1202667133
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 700942761360683785, guid: 3f878c6f9b8cd7244ad5bf9a444e3b5a,
+        type: 3}
+      propertyPath: m_Name
+      value: CollisionResponseSystem
+      objectReference: {fileID: 0}
+    - target: {fileID: 3031233357951170482, guid: 3f878c6f9b8cd7244ad5bf9a444e3b5a,
+        type: 3}
+      propertyPath: m_ColorTint.Color.b
+      value: 0.71444464
+      objectReference: {fileID: 0}
+    - target: {fileID: 3031233357951170482, guid: 3f878c6f9b8cd7244ad5bf9a444e3b5a,
+        type: 3}
+      propertyPath: m_ColorTint.Color.g
+      value: 0.8962264
+      objectReference: {fileID: 0}
+    - target: {fileID: 3031233357951170482, guid: 3f878c6f9b8cd7244ad5bf9a444e3b5a,
+        type: 3}
+      propertyPath: m_ColorTint.Color.r
+      value: 0.7557286
+      objectReference: {fileID: 0}
+    - target: {fileID: 3917440175644402977, guid: 3f878c6f9b8cd7244ad5bf9a444e3b5a,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 3917440175644402977, guid: 3f878c6f9b8cd7244ad5bf9a444e3b5a,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3917440175644402977, guid: 3f878c6f9b8cd7244ad5bf9a444e3b5a,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3917440175644402977, guid: 3f878c6f9b8cd7244ad5bf9a444e3b5a,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3917440175644402977, guid: 3f878c6f9b8cd7244ad5bf9a444e3b5a,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3917440175644402977, guid: 3f878c6f9b8cd7244ad5bf9a444e3b5a,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3917440175644402977, guid: 3f878c6f9b8cd7244ad5bf9a444e3b5a,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3917440175644402977, guid: 3f878c6f9b8cd7244ad5bf9a444e3b5a,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3917440175644402977, guid: 3f878c6f9b8cd7244ad5bf9a444e3b5a,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3917440175644402977, guid: 3f878c6f9b8cd7244ad5bf9a444e3b5a,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3917440175644402977, guid: 3f878c6f9b8cd7244ad5bf9a444e3b5a,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3f878c6f9b8cd7244ad5bf9a444e3b5a, type: 3}
 --- !u!4 &1316677036 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7135260869252477138, guid: f6642230f5f03724bb4b02ab411ed728,
@@ -3168,6 +3254,10 @@ MonoBehaviour:
   m_IsTrigger: 0
   m_Size: {x: 48.2, y: 29.683605}
   m_Edges: 13
+  m_TopMaterial: 0
+  m_BottomMaterial: 0
+  m_LeftMaterial: 0
+  m_RightMaterial: 0
 --- !u!61 &4118583867286398485
 BoxCollider2D:
   m_ObjectHideFlags: 0

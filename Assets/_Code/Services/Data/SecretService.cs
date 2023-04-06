@@ -5,6 +5,7 @@ using Aqua.Character;
 using AquaAudio;
 using BeauUtil;
 using BeauUtil.Services;
+using BeauUtil.Variants;
 using UnityEngine;
 
 namespace Aqua {
@@ -12,6 +13,8 @@ namespace Aqua {
     [ServiceDependency(typeof(InputService), typeof(StateMgr))]
     public sealed class SecretService : ServiceBehaviour {
         private const string AudioPath = "Secret/SecretAudio";
+
+        public const int MaxKeyRecord = 20;
 
         #region Types
 
@@ -48,6 +51,7 @@ namespace Aqua {
         private struct CheatEntry {
             public StringHash32 Id;
             public CheatType Type;
+            public StringHash32 Context;
 
             public Keystroke[] Pattern;
 
@@ -60,31 +64,41 @@ namespace Aqua {
         #endregion // Types
 
         private readonly RingBuffer<CheatEntry> m_Cheats = new RingBuffer<CheatEntry>(32, RingBufferMode.Expand);
-        private readonly RingBuffer<KeyCode> m_LastKeyEntries = new RingBuffer<KeyCode>(16, RingBufferMode.Overwrite);
+        private readonly RingBuffer<KeyCode> m_LastKeyEntries = new RingBuffer<KeyCode>(MaxKeyRecord, RingBufferMode.Overwrite);
 
         [NonSerialized] private AudioPackage m_AudioPackage;
 
-        [NonSerialized] private int m_CheatEnableCounter = 0;
+        [NonSerialized] private HashSet<StringHash32> m_CheatContexts = Collections.NewSet<StringHash32>(4);
         [NonSerialized] private int m_CheatBlockCounter = 0;
-        [NonSerialized] private bool m_CachedCheatsAllowed = false;
+        [NonSerialized] private bool m_CachedCheatsAllowed = true;
         private HashSet<StringHash32> m_ActiveCheats = Collections.NewSet<StringHash32>(16);
 
         #region Cheats
 
-        public void RegisterCheat(StringHash32 cheatId, CheatType type, string pattern, Action activate, Func<bool> validate = null, Action deactivate = null) {
+        public SecretService RegisterCheat(StringHash32 cheatId, CheatType type, StringHash32 context, string pattern, Action activate, Func<bool> validate = null, Action deactivate = null) {
             CheatEntry entry = default;
             entry.Id = cheatId;
             entry.Type = type;
+            entry.Context = context;
             entry.Pattern = GeneratePattern(pattern);
             entry.Activate = activate;
             entry.Validate = validate;
             entry.Deactivate = deactivate;
 
             m_Cheats.PushBack(entry);
+            return this;
         }
 
-        public void DeregisterCheat(StringHash32 cheatId) {
+        public SecretService RegisterVarToggleCheat(StringHash32 cheatId, StringHash32 context, string pattern, TableKeyPair varId, Func<bool> validate = null) {
+            return RegisterCheat(cheatId, CheatType.Toggle, context, pattern, () => Script.WriteVariable(varId, true), validate, () => Script.WriteVariable(varId, false));
+        }
+
+        public SecretService DeregisterCheat(StringHash32 cheatId) {
             m_Cheats.RemoveWhere((e, id) => e.Id == id, cheatId);
+            if (m_ActiveCheats.Remove(cheatId)) {
+                Services.Events.Queue(GameEvents.SecretsChanged);
+            }
+            return this;
         }
 
         public bool IsCheatActive(StringHash32 cheatId) {
@@ -92,7 +106,7 @@ namespace Aqua {
         }
 
         private void HandleKeyPressed(KeyCode keycode) {
-            if (!m_CachedCheatsAllowed || Services.State.IsLoadingScene()) {
+            if (!m_CachedCheatsAllowed || Script.IsPausedOrLoading) {
                 return;
             }
 
@@ -102,14 +116,12 @@ namespace Aqua {
 
         #region State
 
-        public void AllowCheats() {
-            m_CheatEnableCounter++;
-            CheckCheatsEnabled();
+        public void AllowCheats(StringHash32 context) {
+            m_CheatContexts.Add(context);
         }
 
-        public void DisallowCheats() {
-            m_CheatEnableCounter--;
-            CheckCheatsEnabled();
+        public void DisallowCheats(StringHash32 context) {
+            m_CheatContexts.Remove(context);
         }
 
         public void BlockCheats() {
@@ -123,7 +135,7 @@ namespace Aqua {
         }
 
         private void CheckCheatsEnabled() {
-            bool allowed = m_CheatEnableCounter > 0 && m_CheatBlockCounter <= 0;
+            bool allowed = m_CheatBlockCounter <= 0;
             if (allowed != m_CachedCheatsAllowed) {
                 m_CachedCheatsAllowed = allowed;
                 m_LastKeyEntries.Clear();
@@ -174,10 +186,21 @@ namespace Aqua {
                         break;
                     }
                 }
+
+                Services.Events.Queue(GameEvents.SecretsChanged);
             }
         }
 
         private bool ShouldCheckCheat(ref CheatEntry entry) {
+            if (entry.Context.IsEmpty) {
+                if (!Save.IsLoaded) {
+                    return false;
+                }
+            }
+            else if (!m_CheatContexts.Contains(entry.Context)) {
+                return false;
+            }
+
             switch(entry.Type) {
                 case CheatType.Single: {
                     return !m_ActiveCheats.Contains(entry.Id);
@@ -237,6 +260,9 @@ namespace Aqua {
         }
 
         static private Keystroke[] GeneratePattern(string pattern) {
+            if (pattern.Length > MaxKeyRecord) {
+                throw new ArgumentException(string.Format("provided pattern '{0}' is too long - max chars is {1}", pattern, MaxKeyRecord));
+            }
             Keystroke[] strokes = new Keystroke[pattern.Length];
             for(int i = 0; i < pattern.Length; i++) {
                 strokes[i] = GenerateStroke(pattern[i]);
@@ -290,6 +316,9 @@ namespace Aqua {
 
         protected override void Initialize() {
             Services.Input.OnKeyPressed += HandleKeyPressed;
+            Services.Events.Register(GameEvents.SceneWillUnload, () => {
+                m_LastKeyEntries.Clear();
+            });
 
             GameCheats.RegisterCheats(this);
         }
@@ -297,6 +326,7 @@ namespace Aqua {
         protected override void Shutdown() {
             if (Services.Valid && Services.Input) {
                 Services.Input.OnKeyPressed -= HandleKeyPressed;
+                Services.Events?.DeregisterAll(this);
             }
         }
 
@@ -307,13 +337,15 @@ namespace Aqua {
         static internal void RegisterCheats(SecretService service) {
 
             // swap to mal's voice
-            service.RegisterCheat("victor_malvoice", SecretService.CheatType.Toggle, "forevermine", () => {
+            service.RegisterCheat("victor_malvoice", SecretService.CheatType.Toggle, null, "forevermine", () => {
                 Services.Audio.RemapEvent("text_type_guide", "text_type_guide_MAL");
                 Assets.Character(GameConsts.Target_V1ctor).AdditionalTypingTextDelay = 0.05f;
             }, null, () => {
                 Services.Audio.ClearRemap("text_type_guide");
                 Assets.Character(GameConsts.Target_V1ctor).AdditionalTypingTextDelay = 0;
             });
+
+            service.RegisterVarToggleCheat("bouncy_mode", null, "bouncyhouse", GameVars.Secret_Bounce);
         }
     }
 }

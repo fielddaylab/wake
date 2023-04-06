@@ -62,5 +62,6 @@ namespace Aqua.Option
     {
         ReduceFlashing = 0x001,
         ReduceCameraMovement = 0x002,
+        DisplayKeyboardShortcuts = 0x004
     }
 }

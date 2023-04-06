@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -1219,6 +1219,7 @@ GameObject:
   m_Component:
   - component: {fileID: 228497585}
   - component: {fileID: 228497586}
+  - component: {fileID: 228497587}
   m_Layer: 29
   m_Name: Whale00 (4)
   m_TagString: Untagged
@@ -1266,6 +1267,19 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 5.8249073, y: 0.46514678}
   m_EdgeRadius: 0
+--- !u!114 &228497587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 228497584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff0499bec43194bbd56b29aafc250f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Material: 6
 --- !u!1001 &254141259
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1601,6 +1615,7 @@ GameObject:
   m_Component:
   - component: {fileID: 275371509}
   - component: {fileID: 275371510}
+  - component: {fileID: 275371511}
   m_Layer: 29
   m_Name: Ice00 (2)
   m_TagString: Untagged
@@ -1620,7 +1635,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 979506678}
-  m_RootOrder: 7
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!68 &275371510
 EdgeCollider2D:
@@ -1654,6 +1669,19 @@ EdgeCollider2D:
   - {x: 40.94454, y: 8.894929}
   - {x: 41.580986, y: 12.072747}
   - {x: 40.15921, y: 16.484854}
+--- !u!114 &275371511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 275371508}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff0499bec43194bbd56b29aafc250f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Material: 3
 --- !u!1001 &278869998
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1889,6 +1917,16 @@ PrefabInstance:
         type: 3}
       propertyPath: Pattern
       value: -- . .-. . -.. .. - ....
+      objectReference: {fileID: 0}
+    - target: {fileID: 4574252975513893574, guid: a34e73a396ddeba4595f0186b08ec06f,
+        type: 3}
+      propertyPath: PatternId.m_Source
+      value: W2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4574252975513893574, guid: a34e73a396ddeba4595f0186b08ec06f,
+        type: 3}
+      propertyPath: PatternId.m_HashValue
+      value: 2365082348
       objectReference: {fileID: 0}
     - target: {fileID: 7475199891950128548, guid: a34e73a396ddeba4595f0186b08ec06f,
         type: 3}
@@ -2450,6 +2488,7 @@ GameObject:
   m_Component:
   - component: {fileID: 344514918}
   - component: {fileID: 344514919}
+  - component: {fileID: 344514920}
   m_Layer: 29
   m_Name: Ice00 (1)
   m_TagString: Untagged
@@ -2469,7 +2508,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 979506678}
-  m_RootOrder: 6
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!60 &344514919
 PolygonCollider2D:
@@ -2511,6 +2550,19 @@ PolygonCollider2D:
       - {x: 5.4443855, y: -12.703341}
       - {x: 7.951721, y: -10.534935}
       - {x: 7.8942385, y: -8.171644}
+--- !u!114 &344514920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 344514917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff0499bec43194bbd56b29aafc250f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Material: 3
 --- !u!1001 &352500603
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7953,7 +8005,7 @@ GameObject:
   - component: {fileID: 411474528}
   - component: {fileID: 411474527}
   - component: {fileID: 411474526}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: BackgroundSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7991,7 +8043,7 @@ MonoBehaviour:
   m_ColorGroup: {fileID: 0}
   m_Path: Textures/Observation/UnderwaterBG06.png
   m_Material: {fileID: 2100000, guid: c347b5088bd94144bab38c44547b2cf2, type: 2}
-  m_Tessellation: 0
+  m_Tessellation: 3
   m_Color:
     serializedVersion: 2
     rgba: 4294967295
@@ -8737,7 +8789,7 @@ PrefabInstance:
     - target: {fileID: 6773339596789699248, guid: b775f0d45653043d9ae953eac08a4c6b,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.59
       objectReference: {fileID: 0}
     - target: {fileID: 6773339596789699248, guid: b775f0d45653043d9ae953eac08a4c6b,
         type: 3}
@@ -8801,17 +8853,17 @@ PrefabInstance:
     - target: {fileID: 2307664229347635465, guid: c90dd50cc0c475648a4db23859dc6af2,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.92
+      value: -0.679
       objectReference: {fileID: 0}
     - target: {fileID: 2307664229347635465, guid: c90dd50cc0c475648a4db23859dc6af2,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.37
+      value: -0.174
       objectReference: {fileID: 0}
     - target: {fileID: 2307664229347635465, guid: c90dd50cc0c475648a4db23859dc6af2,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.06
+      value: -0.08
       objectReference: {fileID: 0}
     - target: {fileID: 2853694286139605314, guid: c90dd50cc0c475648a4db23859dc6af2,
         type: 3}
@@ -8836,17 +8888,17 @@ PrefabInstance:
     - target: {fileID: 2853694286139605314, guid: c90dd50cc0c475648a4db23859dc6af2,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.269
+      value: -1.14
       objectReference: {fileID: 0}
     - target: {fileID: 2853694286139605314, guid: c90dd50cc0c475648a4db23859dc6af2,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.463
+      value: 0.69
       objectReference: {fileID: 0}
     - target: {fileID: 2853694286139605314, guid: c90dd50cc0c475648a4db23859dc6af2,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.593
+      value: 0.26
       objectReference: {fileID: 0}
     - target: {fileID: 2853694286139605314, guid: c90dd50cc0c475648a4db23859dc6af2,
         type: 3}
@@ -8891,17 +8943,22 @@ PrefabInstance:
     - target: {fileID: 6023052745990973829, guid: c90dd50cc0c475648a4db23859dc6af2,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.59
+      value: -0.11
       objectReference: {fileID: 0}
     - target: {fileID: 6023052745990973829, guid: c90dd50cc0c475648a4db23859dc6af2,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.62
+      value: 0.89
       objectReference: {fileID: 0}
     - target: {fileID: 6023052745990973829, guid: c90dd50cc0c475648a4db23859dc6af2,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.022
+      value: 0.38
+      objectReference: {fileID: 0}
+    - target: {fileID: 6023052745990973831, guid: c90dd50cc0c475648a4db23859dc6af2,
+        type: 3}
+      propertyPath: IconZAdjust
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9161116738374420450, guid: c90dd50cc0c475648a4db23859dc6af2,
         type: 3}
@@ -10035,6 +10092,7 @@ GameObject:
   m_Component:
   - component: {fileID: 714208524}
   - component: {fileID: 714208525}
+  - component: {fileID: 714208526}
   m_Layer: 29
   m_Name: Ice00 (0)
   m_TagString: Untagged
@@ -10054,7 +10112,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 979506678}
-  m_RootOrder: 5
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!60 &714208525
 PolygonCollider2D:
@@ -10101,6 +10159,19 @@ PolygonCollider2D:
       - {x: 9.815901, y: -0.45570225}
       - {x: 9.233656, y: 0.09314191}
       - {x: 9.379933, y: 2.505633}
+--- !u!114 &714208526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 714208523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff0499bec43194bbd56b29aafc250f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Material: 3
 --- !u!1 &716293279
 GameObject:
   m_ObjectHideFlags: 0
@@ -10456,6 +10527,67 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1882884455}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &771641194
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 771641195}
+  - component: {fileID: 771641197}
+  - component: {fileID: 771641196}
+  m_Layer: 29
+  m_Name: Whale00 (6)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &771641195
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 771641194}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -20.35, y: -23.57, z: -0.32999998}
+  m_LocalScale: {x: -0.5836209, y: 0.5836209, z: 0.5836209}
+  m_Children: []
+  m_Father: {fileID: 979506678}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &771641196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 771641194}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff0499bec43194bbd56b29aafc250f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Material: 6
+--- !u!58 &771641197
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 771641194}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.85
 --- !u!1001 &782865117
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11991,6 +12123,8 @@ Transform:
   - {fileID: 2115916483}
   - {fileID: 1780064498}
   - {fileID: 228497585}
+  - {fileID: 1980011871}
+  - {fileID: 771641195}
   - {fileID: 714208524}
   - {fileID: 344514918}
   - {fileID: 275371509}
@@ -14048,6 +14182,16 @@ PrefabInstance:
       propertyPath: Pattern
       value: .-- . / .-. . --. .-. . - / -- --- ..- .-. -. / .... --- -. --- .-.
       objectReference: {fileID: 0}
+    - target: {fileID: 32908033056869697, guid: 42d405ca303297f4b961efd7c770b0f8,
+        type: 3}
+      propertyPath: PatternId.m_Source
+      value: W1
+      objectReference: {fileID: 0}
+    - target: {fileID: 32908033056869697, guid: 42d405ca303297f4b961efd7c770b0f8,
+        type: 3}
+      propertyPath: PatternId.m_HashValue
+      value: 2415415205
+      objectReference: {fileID: 0}
     - target: {fileID: 2003565938470526055, guid: 42d405ca303297f4b961efd7c770b0f8,
         type: 3}
       propertyPath: ScanId.m_Source
@@ -14066,12 +14210,12 @@ PrefabInstance:
     - target: {fileID: 5774820918325110237, guid: 42d405ca303297f4b961efd7c770b0f8,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 12.06
+      value: 9.36
       objectReference: {fileID: 0}
     - target: {fileID: 5774820918325110237, guid: 42d405ca303297f4b961efd7c770b0f8,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -8.19
+      value: -10.76
       objectReference: {fileID: 0}
     - target: {fileID: 5774820918325110237, guid: 42d405ca303297f4b961efd7c770b0f8,
         type: 3}
@@ -19795,6 +19939,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1780064498}
   - component: {fileID: 1780064499}
+  - component: {fileID: 1780064500}
   m_Layer: 29
   m_Name: Whale00 (3)
   m_TagString: Untagged
@@ -19832,6 +19977,19 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.85
+--- !u!114 &1780064500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1780064497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff0499bec43194bbd56b29aafc250f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Material: 6
 --- !u!1001 &1786291300
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20497,6 +20655,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1840505654}
   - component: {fileID: 1840505655}
+  - component: {fileID: 1840505656}
   m_Layer: 29
   m_Name: Whale00 (1)
   m_TagString: Untagged
@@ -20556,6 +20715,19 @@ PolygonCollider2D:
       - {x: 5.1480255, y: -0.24035645}
       - {x: 4.07827, y: 0.06470108}
       - {x: 3.2571688, y: 0.18304437}
+--- !u!114 &1840505656
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1840505653}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff0499bec43194bbd56b29aafc250f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Material: 6
 --- !u!1001 &1843460714
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20606,7 +20778,7 @@ PrefabInstance:
     - target: {fileID: 6773339596789699248, guid: b775f0d45653043d9ae953eac08a4c6b,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.64
       objectReference: {fileID: 0}
     - target: {fileID: 6773339596789699248, guid: b775f0d45653043d9ae953eac08a4c6b,
         type: 3}
@@ -21122,6 +21294,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1960643423}
   - component: {fileID: 1960643424}
+  - component: {fileID: 1960643425}
   m_Layer: 29
   m_Name: Whale00 (0)
   m_TagString: Untagged
@@ -21159,6 +21332,19 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.26
+--- !u!114 &1960643425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1960643422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff0499bec43194bbd56b29aafc250f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Material: 6
 --- !u!1001 &1978755649
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21283,6 +21469,94 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d43f84959769055489a36095d9d2631d, type: 3}
+--- !u!1 &1980011870
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1980011871}
+  - component: {fileID: 1980011874}
+  - component: {fileID: 1980011873}
+  - component: {fileID: 1980011872}
+  m_Layer: 29
+  m_Name: Whale00 (5)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1980011871
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1980011870}
+  m_LocalRotation: {x: -0, y: -0, z: 0.2626527, w: 0.9648905}
+  m_LocalPosition: {x: -17.75, y: -22.17, z: -0.32999998}
+  m_LocalScale: {x: -0.9506, y: 0.9506, z: 0.9506}
+  m_Children: []
+  m_Father: {fileID: 979506678}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 30.455002}
+--- !u!61 &1980011872
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1980011870}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.08284521, y: 0.10189901}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 2.664443, y: 0.79620194}
+  m_EdgeRadius: 0
+--- !u!114 &1980011873
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1980011870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff0499bec43194bbd56b29aafc250f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Material: 6
+--- !u!58 &1980011874
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1980011870}
+  m_Enabled: 0
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.85
 --- !u!1001 &1986796405
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22780,6 +23054,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2115916483}
   - component: {fileID: 2115916484}
+  - component: {fileID: 2115916485}
   m_Layer: 29
   m_Name: Whale00 (2)
   m_TagString: Untagged
@@ -22817,6 +23092,19 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.85
+--- !u!114 &2115916485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2115916482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff0499bec43194bbd56b29aafc250f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Material: 6
 --- !u!1001 &2138271762
 PrefabInstance:
   m_ObjectHideFlags: 0

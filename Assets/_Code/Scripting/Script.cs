@@ -40,12 +40,12 @@ namespace Aqua {
 
         [LeafMember("ScriptBlocking"), Preserve]
         static public bool ShouldBlock() {
-            return !Services.Valid || Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || JournalCanvas.Visible() || Services.UI.IsLetterboxed() || StateUtil.IsLoading;
+            return !Services.Valid || Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.UI.IsLetterboxed() || StateUtil.IsLoading || JournalCanvas.Visible();
         }
 
         [LeafMember("ScriptBlockingIgnoreLetterbox"), Preserve]
         static public bool ShouldBlockIgnoreLetterbox() {
-            return Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying()  || JournalCanvas.Visible() || StateUtil.IsLoading;
+            return Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || StateUtil.IsLoading || JournalCanvas.Visible();
         }
 
         [MethodImpl(256)]
@@ -87,7 +87,13 @@ namespace Aqua {
                 } else {
                     image = entity.ImageSet();
                 }
-                if (entity.Category() == BestiaryDescCategory.Critter) {
+                if (entity.HasFlags(BestiaryDescFlags.IsNotLiving)) {
+                    return Services.UI.Popup.PresentFacts(
+                        Loc.Format("ui.popup.newBestiary.critter.nonLiving.header", entity.CommonName()),
+                        descriptionOverride ?? Loc.Find(entity.Description()),
+                        image,
+                        new PopupFacts(allFacts));
+                } else if (entity.Category() == BestiaryDescCategory.Critter) {
                     return Services.UI.Popup.PresentFacts(
                         Loc.Format("ui.popup.newBestiary.critter.header", entity.CommonName()),
                         descriptionOverride ?? Loc.Find(entity.Description()),
@@ -110,19 +116,23 @@ namespace Aqua {
         }
 
         static public Future<StringHash32> PopupNewFact(BFBase fact, BestiaryDesc entity = null, string textOverride = null) {
-            return Services.UI.Popup.PresentFact(Loc.Find("ui.popup.newFact.header"), textOverride, entity ? entity.ImageSet() : null, fact, Save.Bestiary.GetDiscoveredFlags(fact.Id));
+            return Services.UI.Popup.PresentFact(GetPopupFactHeader(fact, entity, "ui.popup.newFact.header", "ui.popup.newFact.critter.header", "ui.popup.newFact.ecosystem.header"),
+                textOverride, entity ? entity.ImageSet() : null, fact, Save.Bestiary.GetDiscoveredFlags(fact.Id));
         }
 
         static public Future<StringHash32> PopupNewFacts(ListSlice<BFBase> facts, ListSlice<BFDiscoveredFlags> flags, BestiaryDesc entity = null, string textOverride = null) {
-            return Services.UI.Popup.PresentFacts(Loc.Find("ui.popup.factsUpdated.header"), textOverride, entity ? entity.ImageSet() : null, new PopupFacts(facts, flags));
+            return Services.UI.Popup.PresentFacts(GetPopupFactHeader(facts, entity, "ui.popup.factsUpdated.header", "ui.popup.factsUpdated.critter.header", "ui.popup.factsUpdated.ecosystem.header"),
+                textOverride, entity ? entity.ImageSet() : null, new PopupFacts(facts, flags));
         }
 
         static public Future<StringHash32> PopupUpgradedFact(BFBase fact, BestiaryDesc entity = null, string textOverride = null) {
-            return Services.UI.Popup.PresentFact(Loc.Find("ui.popup.upgradedFact.header"), textOverride, entity ? entity.ImageSet() : null, fact, Save.Bestiary.GetDiscoveredFlags(fact.Id));
+            return Services.UI.Popup.PresentFact(GetPopupFactHeader(fact, entity, "ui.popup.upgradedFact.header", "ui.popup.upgradedFact.critter.header", "ui.popup.upgradedFact.ecosystem.header"),
+                textOverride, entity ? entity.ImageSet() : null, fact, Save.Bestiary.GetDiscoveredFlags(fact.Id));
         }
 
         static public Future<StringHash32> PopupUpgradedFacts(ListSlice<BFBase> facts, ListSlice<BFDiscoveredFlags> flags, BestiaryDesc entity = null, string textOverride = null) {
-            return Services.UI.Popup.PresentFacts(Loc.Find("ui.popup.factsUpdated.header"), textOverride, entity ? entity.ImageSet() : null, new PopupFacts(facts, flags));
+            return Services.UI.Popup.PresentFacts(GetPopupFactHeader(facts, entity, "ui.popup.factsUpdated.header", "ui.popup.factsUpdated.critter.header", "ui.popup.factsUpdated.ecosystem.header"),
+                textOverride, entity ? entity.ImageSet() : null, new PopupFacts(facts, flags));
         }
 
         static public Future<StringHash32> PopupFactDetails(BFBase fact, BFDiscoveredFlags flags, BestiaryDesc reference, params NamedOption[] options) {
@@ -157,6 +167,28 @@ namespace Aqua {
                 item.ImageSet(),
                 PopupFlags.TallImage | PopupFlags.ShowCloseButton | PopupFlags.ImageTextBG,
                 options);
+        }
+
+        static private string GetPopupFactHeader(BFBase fact, BestiaryDesc entity, StringHash32 noneId, StringHash32 critterId, StringHash32 ecosystemId) {
+            entity = entity ?? fact.Parent;
+            if (entity == null) {
+                return Loc.Find(noneId);
+            } else if (entity.Category() == BestiaryDescCategory.Critter) {
+                return Loc.Format(critterId, entity.CommonName());
+            } else {
+                return Loc.Format(ecosystemId, entity.CommonName());
+            }
+        }
+
+        static private string GetPopupFactHeader(ListSlice<BFBase> fact, BestiaryDesc entity, StringHash32 noneId, StringHash32 critterId, StringHash32 ecosystemId) {
+            entity = entity ?? BestiaryUtils.FindCommonParent(fact);
+            if (entity == null) {
+                return Loc.Find(noneId);
+            } else if (entity.Category() == BestiaryDescCategory.Critter) {
+                return Loc.Format(critterId, entity.CommonName());
+            } else {
+                return Loc.Format(ecosystemId, entity.CommonName());
+            }
         }
 
         #endregion // Popups
@@ -316,6 +348,10 @@ namespace Aqua {
 
         static public void Tick(this Routine routine) {
             routine.TryManuallyUpdate(0);
+        }
+
+        static public bool SkipPressed() {
+            return Services.Input.DoubleClick() || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Escape);
         }
 
         // Added by Xander 06/03/22

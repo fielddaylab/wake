@@ -33,7 +33,7 @@ namespace Aqua
             m_Background.color = palette.Background;
             m_Value.Graphic.color = palette.Content;
 
-            float remap = propData.RemapValue(inFact.Value);
+            float remap = Mathf.Clamp01(propData.RemapValue(inFact.Value));
             remap = RangeDisplay.AdjustValue(remap, 0.9f);
             m_Bar.rectTransform.SetAnchorX(remap);
 

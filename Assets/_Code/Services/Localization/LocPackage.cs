@@ -37,6 +37,11 @@ namespace Aqua
             return m_IdsWithEvents.Contains(inId);
         }
 
+        public Dictionary<StringHash32, string>.KeyCollection AllKeys
+        {
+            [MethodImpl(256)] get { return m_Nodes.Keys; }
+        }
+
         #endregion // Retrieve
 
         #region IDataBlockPackage

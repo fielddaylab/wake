@@ -119,6 +119,14 @@ $if GroupCount($UpperBlockerGroup) < $UpperBlockerCount
     $call   AboveIceBlocker->Deactivate()
 $endif
 
+$if ObjectDestroyed(IceTunnelBlocker)
+    $call   IceTunnelCameraFound->Activate()
+    $call   IceTunnelCameraNotFound->Deactivate()
+$else
+    $call   IceTunnelCameraFound->Deactivate()
+    $call   IceTunnelCameraNotFound->Activate()
+$endif
+
 :: IceRegionEntrance
 @function   PlayerEnterRegion
 @when       regionId == "IceRiver"

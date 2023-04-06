@@ -77,13 +77,13 @@ namespace Aqua.Portable {
             Services.Events.Register(GameEvents.SceneWillUnload, () => Hide(), this);
 
             m_Input.OnInputEnabled.AddListener(() => {
-                Services.Secrets.AllowCheats();
+                Services.Secrets.AllowCheats("aqos");
             });
             m_Input.OnInputDisabled.AddListener(() => {
-                Services.Secrets.DisallowCheats();
+                Services.Secrets.DisallowCheats("aqos");
             });
 
-            Services.Secrets.RegisterCheat("aqos_flag", SecretService.CheatType.Repeat, "transrights", AdvanceLogoColoring, IsShowing, ClearLogoColoring);
+            Services.Secrets.RegisterCheat("aqos_flag", SecretService.CheatType.Repeat, "aqos", "transrights", AdvanceLogoColoring, null, ClearLogoColoring);
         }
 
         protected override void OnDestroy() {

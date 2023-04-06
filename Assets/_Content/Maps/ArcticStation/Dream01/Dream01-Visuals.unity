@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -7387,6 +7387,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1960643423}
   - component: {fileID: 1960643424}
+  - component: {fileID: 1960643425}
   m_Layer: 29
   m_Name: Whale00
   m_TagString: Untagged
@@ -7472,6 +7473,19 @@ EdgeCollider2D:
   - {x: 57.18238, y: 18.260695}
   - {x: 62.0029, y: 18.046616}
   - {x: 69.23099, y: 15.795971}
+--- !u!114 &1960643425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1960643422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ff0499bec43194bbd56b29aafc250f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Material: 6
 --- !u!1 &1979180159
 GameObject:
   m_ObjectHideFlags: 0

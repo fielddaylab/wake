@@ -8,6 +8,7 @@ namespace ProtoAqua.ExperimentV2
 {
     public class ExperimentResult
     {
+        public BestiaryDesc Target;
         public ExperimentFactResult[] Facts;
         public ExperimentFeedbackFlags Feedback;
     }
@@ -49,5 +50,6 @@ namespace ProtoAqua.ExperimentV2
         EatNeedsObserve = 2 << 10,
         HadObservationsRemaining = 2 << 11,
         ParasiteNeedsObserve = 2 << 12,
+        AlreadyObserved = 2 << 13,
     }
 }

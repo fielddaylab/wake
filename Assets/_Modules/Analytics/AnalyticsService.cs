@@ -125,9 +125,9 @@ namespace Aqua
             });
             m_Log.UseFirebase(m_Firebase);
 
-            #if DEVELOPMENT
+            #if DEVELOPMENT && !UNITY_EDITOR
             m_Debug = true;
-            #endif // DEVELOPMENT
+            #endif // DEVELOPMENT && !UNITY_EDITOR
 
             m_Log.SetDebug(m_Debug);
         }
@@ -146,6 +146,7 @@ namespace Aqua
         protected override void Shutdown()
         {
             Services.Events?.DeregisterAll(this);
+            m_Log.Dispose();
         }
         #endregion // IService
 
@@ -946,9 +947,9 @@ namespace Aqua
 
         #if DEVELOPMENT
 
-        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus() {
-            DMInfo menu = new DMInfo("Analytics", 1);
-            menu.AddToggle("Enable Logging", () => {
+        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus(FindOrCreateMenu findOrCreate) {
+            DMInfo menu = findOrCreate("Logging");
+            menu.AddToggle("Analytics Logging", () => {
                 return m_Debug;
             }, (t) => {
                 m_Debug = t;

@@ -14,6 +14,7 @@ namespace Aqua
         static public readonly TableKeyPair ViewId = TableKeyPair.Parse("temp:view");
 
         // session
+        static public readonly TableKeyPair Secret_Bounce = TableKeyPair.Parse("session:secret.bounce");
 
         // jobs
         static public readonly TableKeyPair CurrentJob = TableKeyPair.Parse("player:currentJob");
@@ -29,8 +30,10 @@ namespace Aqua
         static public readonly TableKeyPair MapId = TableKeyPair.Parse("scene:mapId");
         static public readonly TableKeyPair LastEntrance = TableKeyPair.Parse("scene:lastEntrance");
         static public readonly TableKeyPair ActNumber = TableKeyPair.Parse("global:actNumber");
+        static public readonly TableKeyPair SeriousMode = TableKeyPair.Parse("global:seriousMode");
 
         // save data
+        static public readonly TableKeyPair Timestamp = TableKeyPair.Parse("time:now");
         static public readonly TableKeyPair TotalPlayTime_Seconds = TableKeyPair.Parse("time:seconds");
         static public readonly TableKeyPair TotalPlayTime_Minutes = TableKeyPair.Parse("time:minutes");
     }

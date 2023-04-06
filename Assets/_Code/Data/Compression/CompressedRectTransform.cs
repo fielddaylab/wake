@@ -40,7 +40,7 @@ namespace Aqua.Compression {
             rect.anchorMin = new Vector2(CompressionRange.Decode8(CompressionRange.ZeroToOne, data.AnchorMinX), CompressionRange.Decode8(CompressionRange.ZeroToOne, data.AnchorMinY));
             rect.anchorMax = new Vector2(CompressionRange.Decode8(CompressionRange.ZeroToOne, data.AnchorMaxX), CompressionRange.Decode8(CompressionRange.ZeroToOne, data.AnchorMaxY));
             rect.pivot = new Vector2(CompressionRange.Decode8(CompressionRange.ZeroToOne, data.PivotX), CompressionRange.Decode8(CompressionRange.ZeroToOne, data.PivotY));
-            rect.localScale = new Vector3(CompressionRange.Decode16(bounds.Scale, data.ScaleX), CompressionRange.Decode16(bounds.Scale, data.ScaleY), 1);
+            rect.localScale = new Vector3(CompressionRange.Decode16(bounds.Scale, data.ScaleX, 0.005f), CompressionRange.Decode16(bounds.Scale, data.ScaleY, 0.005f), 1);
             rect.localEulerAngles = new Vector3(0, 0, CompressionRange.Decode16(CompressedRectTransformBounds.RotationZ, data.RotationZ));
         }
     }

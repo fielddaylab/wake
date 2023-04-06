@@ -636,6 +636,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1001 &34948406
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6237,6 +6238,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1001 &261740313
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21710,6 +21712,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1001 &794790343
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24748,6 +24751,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1001 &899931580
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25620,7 +25624,7 @@ GameObject:
   - component: {fileID: 937294716}
   - component: {fileID: 937294715}
   - component: {fileID: 937294714}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: BackgroundSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25658,7 +25662,7 @@ MonoBehaviour:
   m_ColorGroup: {fileID: 0}
   m_Path: Textures/Observation/UnderwaterBG02.png
   m_Material: {fileID: 2100000, guid: c8b6641b5a3b33b458c8057d085962b8, type: 2}
-  m_Tessellation: 0
+  m_Tessellation: 3
   m_Color:
     serializedVersion: 2
     rgba: 4294967295
@@ -27107,6 +27111,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 1
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1001 &1018079746
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29514,6 +29519,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!4 &1093811037
 Transform:
   m_ObjectHideFlags: 0
@@ -29728,6 +29734,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1001 &1101649870
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -30050,7 +30057,7 @@ GameObject:
   - component: {fileID: 1114687991}
   - component: {fileID: 1114687990}
   - component: {fileID: 1114687993}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: Terrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30811,29 +30818,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1154671016}
-  - component: {fileID: 1154671015}
+  - component: {fileID: 1154671017}
   m_Layer: 0
-  m_Name: foreground
+  m_Name: PlasticBags
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1154671015
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1154671014}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DestroyInactiveChildren: 0
-  Recursive: 0
-  DestroyGameObject: 1
 --- !u!4 &1154671016
 Transform:
   m_ObjectHideFlags: 0
@@ -30849,6 +30841,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &1154671017
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1154671014}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 78d97118f1501924f9fa1a23c96f4c80, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1001 &1156073438
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -32406,6 +32417,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1001 &1183680044
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -40271,6 +40283,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1001 &1401212153
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -41042,6 +41055,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 1
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1001 &1414145569
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -42607,6 +42621,16 @@ PrefabInstance:
         type: 3}
       propertyPath: Pattern
       value: ... --- ...
+      objectReference: {fileID: 0}
+    - target: {fileID: 32908033056869697, guid: 42d405ca303297f4b961efd7c770b0f8,
+        type: 3}
+      propertyPath: PatternId.m_Source
+      value: R1
+      objectReference: {fileID: 0}
+    - target: {fileID: 32908033056869697, guid: 42d405ca303297f4b961efd7c770b0f8,
+        type: 3}
+      propertyPath: PatternId.m_HashValue
+      value: 201608140
       objectReference: {fileID: 0}
     - target: {fileID: 2003565938470526052, guid: 42d405ca303297f4b961efd7c770b0f8,
         type: 3}
@@ -51488,17 +51512,17 @@ PrefabInstance:
     - target: {fileID: 1264615091982000664, guid: 6131c1469c119e9499d37450bc18f713,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -27.3
+      value: -26.6
       objectReference: {fileID: 0}
     - target: {fileID: 1264615091982000664, guid: 6131c1469c119e9499d37450bc18f713,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.2
+      value: -2.88
       objectReference: {fileID: 0}
     - target: {fileID: 1264615091982000664, guid: 6131c1469c119e9499d37450bc18f713,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 1.59
       objectReference: {fileID: 0}
     - target: {fileID: 1264615091982000664, guid: 6131c1469c119e9499d37450bc18f713,
         type: 3}
@@ -57365,6 +57389,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!4 &2018403909
 Transform:
   m_ObjectHideFlags: 0
@@ -62592,6 +62617,16 @@ PrefabInstance:
       propertyPath: Pattern
       value: .-- . / .-- .. ... .... / .-- . / -.-. --- ..- .-.. -.. / .... . .-..
         .--.
+      objectReference: {fileID: 0}
+    - target: {fileID: 4574252975513893574, guid: a34e73a396ddeba4595f0186b08ec06f,
+        type: 3}
+      propertyPath: PatternId.m_Source
+      value: R2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4574252975513893574, guid: a34e73a396ddeba4595f0186b08ec06f,
+        type: 3}
+      propertyPath: PatternId.m_HashValue
+      value: 251940997
       objectReference: {fileID: 0}
     - target: {fileID: 4719403338280455046, guid: a34e73a396ddeba4595f0186b08ec06f,
         type: 3}

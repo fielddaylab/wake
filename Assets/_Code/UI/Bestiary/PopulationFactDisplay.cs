@@ -21,7 +21,7 @@ namespace Aqua
             m_IconBG.color = inFact.Critter.Color();
             m_Icon.sprite = inFact.Icon;
             m_Label.SetText(inFact.Critter.CommonName());
-            m_Population.SetText(BestiaryUtils.FormatPopulation(inFact.Critter, inFact.Value));
+            m_Population.SetText(BestiaryUtils.FormatPopulation(inFact.Critter, inFact.Value + inFact.DisplayExtra, "~"));
         }
     }
 }

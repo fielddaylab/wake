@@ -220,10 +220,12 @@ namespace Aqua
             m_VariableResolver.SetVar(GameVars.CurrentJob, GetJobId);
             m_VariableResolver.SetVar(GameVars.CurrentStation, GetStationId);
             m_VariableResolver.SetVar(GameVars.ActNumber, GetActNumber);
+            m_VariableResolver.SetVar(GameVars.SeriousMode, () => Save.CurrentJobId == JobIds.Final_final);
             m_VariableResolver.SetVar(GameVars.PlayerCash, () => (int) Save.Cash);
             m_VariableResolver.SetVar(GameVars.PlayerExp, () => (int) Save.Exp);
             m_VariableResolver.SetVar(GameVars.PlayerLevel, () => (int) Save.ExpLevel);
 
+            m_VariableResolver.SetVar(GameVars.Timestamp, () => (float) Save.Current.Playtime);
             m_VariableResolver.SetVar(GameVars.TotalPlayTime_Seconds, () => (float) Save.Current.Playtime);
             m_VariableResolver.SetVar(GameVars.TotalPlayTime_Minutes, () => (float) (Save.Current.Playtime / 60));
         }
@@ -909,6 +911,15 @@ namespace Aqua
                 
                 Log.Error("[DataService] Unknown rarity '{0}'", inData);
                 return false;
+            }
+
+            [LeafMember("TimeElapsed"), UnityEngine.Scripting.Preserve]
+            static private Variant HasTimeElapsed(float since, float seconds = 0) {
+                float elapsed = (float) (Save.Current.Playtime - since);
+                if (seconds <= 0) {
+                    return elapsed;
+                }
+                return elapsed >= seconds;
             }
 
             static private readonly StringHash32 RandomRare = "rare";

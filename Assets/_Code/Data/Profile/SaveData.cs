@@ -11,6 +11,7 @@ namespace Aqua.Profile
         public long LastUpdated;
         public uint Version;
         public double Playtime;
+        public bool IsBookmark;
 
         public CharacterProfile Character = new CharacterProfile();
         public InventoryData Inventory = new InventoryData();
@@ -31,7 +32,8 @@ namespace Aqua.Profile
 
         // v2: added options
         // v5: added playtime
-        ushort ISerializedVersion.Version { get { return 5; } }
+        // v6: added bookmark flag
+        ushort ISerializedVersion.Version { get { return 6; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
@@ -46,6 +48,9 @@ namespace Aqua.Profile
 
             ioSerializer.Serialize("id", ref Id);
             ioSerializer.Serialize("lastUpdated", ref LastUpdated, 0L);
+
+            if (ioSerializer.ObjectVersion >= 6)
+                ioSerializer.Serialize("isBookmark", ref IsBookmark);
             
             ioSerializer.Object("character", ref Character);
             ioSerializer.Object("inventory", ref Inventory);

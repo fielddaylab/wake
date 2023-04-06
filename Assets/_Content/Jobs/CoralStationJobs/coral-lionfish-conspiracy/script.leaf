@@ -73,7 +73,7 @@ $endif
 {@guide}	Place {nameof StaghornCoral} and {nameof Lionfish} in the Observation Tank and see if there are any direct interactions.
 
 :: checkStaghorn
-@trigger	ExperimentStarted
+@trigger	ExperimentFinishing
 @when		tankType == "Observation"
 @cutscene
 $if ExperimentHasCritter("StaghornCoral"), ExperimentHasCritter("Lionfish")

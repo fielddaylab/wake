@@ -198,7 +198,7 @@ $choose branch
 
 :: argue.unrelatedDanger
 $call ArgueRejectIncorrect()
-{@arcticSci}    That doesn't support your data. Do you have a prediction model?
+{@arcticSci}    That doesn't support your data. Do you have a Prediction Model?
 $goto .argue.showClaimDanger
 
 :: argue.completeDanger
@@ -221,11 +221,11 @@ $choose branch
 :: argue.unrelatedStable
 $if ArgueIsFactSubmitted(Y_IceCrevice.Model.EndangeredSealsDescribe)
     {@arcticSci}   I need to see the future model, not what's already happened.
-                    Do you have a prediction model?
+                    Do you have a Prediction Model?
     $branch .argue.showClaimStable
 $else
     $call ArgueRejectIncorrect()
-    {@arcticSci}   That doesn't support your data. Do you have a prediction model?
+    {@arcticSci}   That doesn't support your data. Do you have a Prediction Model?
     $branch .argue.showClaimStable
 $endif
 
@@ -248,11 +248,11 @@ $choose branch
 :: argue.unrelatedIncrease
 $if ArgueIsFactSubmitted(Y_IceCrevice.Model.EndangeredSealsDescribe)
     {@arcticSci}   I need to see the future model, not what's already happened.
-                    Do you have a prediction model?
+                    Do you have a Prediction Model?
     $branch .argue.showClaimIncrease
 $else
     $call ArgueRejectIncorrect()
-    {@arcticSci}    That doesn't support your data. Do you have a prediction model?
+    {@arcticSci}    That doesn't support your data. Do you have a Prediction Model?
     $branch .argue.showClaimIncrease
 $endif
 

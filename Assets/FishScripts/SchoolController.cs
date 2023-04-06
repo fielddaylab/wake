@@ -19,9 +19,10 @@ using System;
 using BeauUtil;
 using Aqua;
 using System.Collections;
+using Aqua.Option;
 
 [DefaultExecutionOrder(-1)]
-public class SchoolController : MonoBehaviour, ScriptableBake.IBaked, IScenePreloader {
+public class SchoolController : MonoBehaviour, ScriptableBake.IBaked, IScenePreloader, IEditorOnlyData {
 	
 	public SchoolChild[] _childPrefab;			// Assign prefab with SchoolChild script attached
 	public bool _groupChildToNewTransform;	// Parents fish transform to school transform
@@ -81,21 +82,51 @@ public class SchoolController : MonoBehaviour, ScriptableBake.IBaked, IScenePrel
 	[NonSerialized] public float _newDelta;
 	[NonSerialized] public int _updateCounter;
 	[NonSerialized] public int _activeChildren;
+
+    [NonSerialized] private float m_AutoRandomWaypointTimer;
 	
 	public void Awake() {
 		_posBuffer = transform.position + _posOffset;
 		_schoolSpeed = RNG.Instance.NextFloat(1.0f , _childSpeedMultipler);
         enabled = false;
+
+        GameQuality.OnAnimationChanged.Register(OnQualityUpdated);
 	}
+
+    private void OnDestroy() {
+        GameQuality.OnAnimationChanged.DeregisterAll(this);
+    }
 
     IEnumerator IScenePreloader.OnPreloadScene(SceneBinding inScene, object inContext)
     {
         enabled = true;
+        OnQualityUpdated(Save.Options.Performance.AnimationQuality);
         foreach(var child in _roamers) {
             child.Initialize();
         }
-        Invoke("AutoRandomWaypointPosition", RandomWaypointTime());
+        m_AutoRandomWaypointTimer = RandomWaypointTime();
         return null;
+    }
+
+    private void OnQualityUpdated(OptionsPerformance.FeatureMode mode) {
+        SetUpdateDivisor(mode == OptionsPerformance.FeatureMode.High ? 1 : 2);
+    }
+
+    private void SetUpdateDivisor(int update) {
+        if (update < 1) {
+            update = 1;
+        }
+
+        if (_updateDivisor == update) {
+            return;
+        }
+
+        _updateDivisor = update;
+        _updateCounter = _updateCounter % update;
+
+        foreach(var child in _roamers) {
+            child.FrameSkipSeedInit();
+        }
     }
 	
 	public void Update() {
@@ -107,7 +138,12 @@ public class SchoolController : MonoBehaviour, ScriptableBake.IBaked, IScenePrel
 			}else{
 				_newDelta = Time.deltaTime;
 			}
-			UpdateFishAmount();
+			// UpdateFishAmount();
+
+            m_AutoRandomWaypointTimer -= Time.deltaTime;
+            if (m_AutoRandomWaypointTimer <= 0) {
+                AutoRandomWaypointPosition();
+            }
 		}
 	}
 	
@@ -181,8 +217,7 @@ public class SchoolController : MonoBehaviour, ScriptableBake.IBaked, IScenePrel
 		if(_autoRandomPosition && _activeChildren > 0){
 			SetRandomWaypointPosition();
 		}
-		CancelInvoke("AutoRandomWaypointPosition");
-		Invoke("AutoRandomWaypointPosition", RandomWaypointTime());
+        m_AutoRandomWaypointTimer = RandomWaypointTime();
 	}
 	
 	public float RandomWaypointTime(){
@@ -210,6 +245,10 @@ public class SchoolController : MonoBehaviour, ScriptableBake.IBaked, IScenePrel
 	    Gizmos.color = Color.cyan;
 	    Gizmos.DrawWireCube (transform.position, new Vector3((_positionSphere*2)+_spawnSphere*2, (_positionSphereHeight*2)+_spawnSphereHeight*2 ,(_positionSphereDepth*2)+_spawnSphereDepth*2));
 	}
+
+    void IEditorOnlyData.ClearEditorOnlyData() {
+        _childPrefab = null;
+    }
 
 #endif // UNITY_EDITOR
 }

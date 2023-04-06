@@ -125,7 +125,7 @@ namespace Aqua.StationMap
             Services.Events.Dispatch(GameEvents.BeginDive, Assets.Map(inspectable.TargetMapId()).name);
             yield return Routine.Race(
                 Routine.WaitSeconds(6),
-                Routine.WaitCondition(() => Services.Input.DoubleClick())
+                Routine.WaitCondition(Script.SkipPressed)
             );
             Services.UI.HideLetterbox();
         }

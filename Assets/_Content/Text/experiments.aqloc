@@ -82,11 +82,24 @@ Parasitic interactions must be observed in the {nameof ObservationTank} before t
 <b>Note:</b><margin-left=1.5em>
 {0}
 
+:: summary.alreadyObserved
+<b>No New Interactions Discovered</b>
+
+<b>Note:</b><margin-left=1.5em>
+{0}
+
 :: summary.header
 Experiment Results
 
+:: summary.single.header
+Experiment Results
+<size=80%>{critter-name}{0}{/critter-name}
+
 :: summary.header.fail
 Experiment Inconclusive
+
+:: summary.header.redundant
+Experiment Unnecessary
 
 :: summary.measure.repro
 Reproduction Rate Instructions
@@ -139,9 +152,6 @@ New Behavior Discovered!
 
 # basePath experiment.measure
 
-:: stabilizer.malfunction
-MALFUNCTION: Cannot be deactivated
-
 :: stabilizer.desc
 When ON, the tank keeps the same water chemistry and light conditions. Turn this OFF only if you want to see an organism's effect on its environment.
 
@@ -153,9 +163,6 @@ Auto-Feeder
 
 :: feeder.desc
 When ON, all organisms get enough food without eating each other. Leave it ON to see how an organism reproduces. Turn this OFF only if you want to see the rate at which one species eats another.
-
-:: autoFeeder.malfunction
-MALFUNCTION: Cannot be activated
 
 :: analyzing
 Analyzing tank configuration...

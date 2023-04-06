@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Aqua;
 using Aqua.Debugging;
 using Aqua.Profile;
@@ -286,7 +287,7 @@ namespace ProtoAqua.Observation {
             m_SiteData.OnChanged();
             Services.Audio.PostEvent("ROV.Tagger.Completed");
 
-            Services.Events.Queue(GameEvents.SiteDataUpdated, m_SiteData.MapId);
+            Services.Events.Queue(GameEvents.SiteDataUpdated, m_SiteData.EnvOrMapId);
             MarkAllAsTagged(manifest.Id);
 
             Services.UI.FindPanel<TaggingUI>()?.Populate(m_SceneManifest, m_TagCounts);
@@ -403,15 +404,18 @@ namespace ProtoAqua.Observation {
         }
 
         bool IBaked.Bake(ScriptableBake.BakeFlags flags, BakeContext context) {
+            string currentSceneName = SceneHelper.ActiveScene().Name;
             StringHash32 mapId = MapDB.LookupCurrentMap();
             if (!m_EnvironmentOverride.IsEmpty) {
                 mapId = m_EnvironmentOverride;
             }
-            Assert.False(mapId.IsEmpty, "Tagging enabled in scene {0} which has no corresponding map", SceneHelper.ActiveScene().Name);
+            Assert.False(mapId.IsEmpty, "Tagging enabled in scene {0} which has no corresponding map", currentSceneName);
 
             m_MapId = mapId;
 
             m_EnvironmentType = Assets.Bestiary(Assets.Map(mapId).EnvironmentId());
+
+            HashSet<StringHash32> missingOrganisms = new HashSet<StringHash32>(m_EnvironmentType.Organisms());
 
             RingBuffer<TaggingManifest> entries = new RingBuffer<TaggingManifest>();
             SceneHelper.ActiveScene().Scene.ForEachComponent<TaggableCritter>(true, (scn, critter) => {
@@ -420,7 +424,25 @@ namespace ProtoAqua.Observation {
             for(int i = 0; i < entries.Count; i++) {
                 ref TaggingManifest manifest = ref entries[i];
                 manifest.Required = (ushort) (manifest.TotalInScene * FindProportion(manifest.Id, m_DefaultTagProportion, m_CritterProportionOverrides));
+                missingOrganisms.Remove(manifest.Id);
+
+                BFPopulation rule = BestiaryUtils.FindPopulationRule(m_EnvironmentType, manifest.Id);
+                if (rule == null) {
+                    Log.Error("[TaggingSystem] Organism '{0}' is present in '{1}' but has no fact in AQOS", manifest.Id, currentSceneName);
+                } else {
+                    uint totalInAqos = rule.Value + rule.DisplayExtra;
+                    if (totalInAqos < manifest.TotalInScene) {
+                        Log.Warn("[TaggingSystem] Organism '{0}' has {1} in '{2}' but only showing {3} in AQOS", manifest.Id, manifest.TotalInScene, currentSceneName, totalInAqos);
+                    }
+                }
             }
+
+            if (missingOrganisms.Count > 0) {
+                foreach(var organism in missingOrganisms) {
+                    Log.Warn("[TaggingSystem] Organism '{0}' is present in AQOS but not present in '{1}'", organism, currentSceneName);
+                }
+            }
+
             m_SceneManifest = entries.ToArray();
             return true;
         }

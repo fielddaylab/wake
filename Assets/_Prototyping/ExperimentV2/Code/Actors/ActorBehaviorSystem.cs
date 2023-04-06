@@ -231,10 +231,11 @@ namespace ProtoAqua.ExperimentV2 {
             }
         }
 
-        static public int GetPotentialNewObservations(ActorWorld inWorld, HasFactDelegate inDelegate, ICollection<BFBase> outFactIds) {
+        static public int GetPotentialNewObservations(ActorWorld inWorld, HasFactDelegate inDelegate, ICollection<BFBase> outFactIds, out int outDelegateFailCount) {
             Assert.NotNull(inDelegate);
 
             int factCount = 0;
+            outDelegateFailCount = 0;
             ActorDefinition def;
             ActorStateId state;
             ActorDefinition.ValidInteractionTarget[] possibleEats;
@@ -247,19 +248,31 @@ namespace ProtoAqua.ExperimentV2 {
                 state = def.StateEvaluator.Evaluate(inWorld.Water);
                 possibleEats = ActorDefinition.GetEatTargets(def, state);
 
-                foreach (var eat in possibleEats) {
-                    if (inDelegate(eat.FactId) || ActorWorld.GetPopulation(inWorld, eat.TargetId) == 0)
+                foreach (var fact in possibleEats) {
+                    if (ActorWorld.GetPopulation(inWorld, fact.TargetId) == 0) {
                         continue;
+                    }
+
+                    if (inDelegate(fact.FactId)) {
+                        outDelegateFailCount++;
+                        continue;
+                    }
 
                     factCount++;
                     if (outFactIds != null) {
-                        outFactIds.Add(Assets.Fact(eat.FactId));
+                        outFactIds.Add(Assets.Fact(fact.FactId));
                     }
                 }
 
                 foreach(var fact in def.ParasiteTargets) {
-                    if (inDelegate(fact.FactId) || ActorWorld.GetPopulation(inWorld, fact.TargetId) == 0)
+                    if (ActorWorld.GetPopulation(inWorld, fact.TargetId) == 0) {
                         continue;
+                    }
+
+                    if (inDelegate(fact.FactId)) {
+                        outDelegateFailCount++;
+                        continue;
+                    }
 
                     factCount++;
                     if (outFactIds != null) {
@@ -290,13 +303,19 @@ namespace ProtoAqua.ExperimentV2 {
 
                     possibleEats = ActorDefinition.GetEatTargets(def, ActorStateId.Stressed);
 
-                    foreach (var eat in possibleEats) {
-                        if (inDelegate(eat.FactId) || ActorWorld.GetPopulation(inWorld, eat.TargetId) == 0)
+                    foreach (var fact in possibleEats) {
+                        if (ActorWorld.GetPopulation(inWorld, fact.TargetId) == 0) {
                             continue;
+                        }
+
+                        if (inDelegate(fact.FactId)) {
+                            outDelegateFailCount++;
+                            continue;
+                        }
 
                         factCount++;
                         if (outFactIds != null) {
-                            outFactIds.Add(Assets.Fact(eat.FactId));
+                            outFactIds.Add(Assets.Fact(fact.FactId));
                         }
                     }
                 }

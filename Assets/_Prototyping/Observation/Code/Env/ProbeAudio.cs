@@ -21,13 +21,13 @@ namespace ProtoAqua.Observation {
 
         private void OnLoad() {
             StringHash32 scanId = m_Scannable.ScanId;
-            if (Save.Inventory.WasScanned(scanId)) {
+            if (Save.Inventory.HasUpgrade(ItemIds.ProbeHacker) && Save.Inventory.WasScanned(scanId)) {
                 m_Pattern.Play();
             }
         }
 
         private void OnScanComplete(ScanResult result) {
-            if ((result & ScanResult.NewScan) != 0) {
+            if ((result & ScanResult.NewScan) != 0 && Save.Inventory.HasUpgrade(ItemIds.ProbeHacker)) {
                 Routine.Start(this, StartPattern());
             }
         }

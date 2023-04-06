@@ -123,7 +123,7 @@ $endif
 @trigger    TryArgumentation
 @when   !ArgueIsComplete(tastropheArgueModel)
 @cutscene
-{@bayouSci}    What explanation can I give to the Shrimpers for why the shrimp populations are so low?
+{@bayouSci}    So what is it that happened in this area to create this "Deadzone"?
 $choice .argue.oxygen.begin; It has to do with the oxygen levels.
 $choice .argue.light.begin; It has to do with the light levels.
 $choice .argue.notSure; Still not sure.
@@ -136,10 +136,18 @@ $choose branch
 // ---------- Oxygen Route
 
 :: argue.oxygen.begin
-$if ArgueIsComplete(tastropheArgueShrimpOxygen), ArgueIsComplete(tastropheArgueBacteriaOxygen)
+$if ArgueIsComplete(tastropheArgueShrimpOxygen), ArgueIsComplete(tastropheArgueBacteriaOxygen), ArgueIsComplete(tastropheArgueCyanoDetritus), ArgueIsComplete(tastropheArgueCyanoDyingCause)
     // jump to model
-    {@bayouSci}    We've established the shrimp and bacteria bits.
+    {@bayouSci}    We've established the oxygen conflict between {nameof WhiteShrimp} and {nameof DecomposingBacteria}, as well as the what and why of {nameof Cyanobacteria} dying off.
     $branch .argue.shared.loadModel
+$elseif ArgueIsComplete(tastropheArgueShrimpOxygen), ArgueIsComplete(tastropheArgueBacteriaOxygen), ArgueIsComplete(tastropheArgueCyanoDetritus)
+    // jump to next bit
+    {@bayouSci}    We've established the oxygen conflict between {nameof WhiteShrimp} and {nameof DecomposingBacteria}, as well as that {nameof Cyanobacteria} are dying off.
+    $branch .argue.oxygen.loadCyanoDyingCause
+$elseif ArgueIsComplete(tastropheArgueShrimpOxygen), ArgueIsComplete(tastropheArgueBacteriaOxygen)
+    // jump to detritus source
+    {@bayouSci}    We've established the oxygen competition between {nameof WhiteShrimp} and {nameof DecomposingBacteria}.
+    $branch .argue.oxygen.loadCyanoDetritus
 $elseif ArgueIsComplete(tastropheArgueShrimpOxygen)
     // jump to bacteria half
     {@bayouSci}    We've established the shrimp bit.
@@ -183,6 +191,7 @@ $branch .argue.oxygen.loadBacteria
 $call ArgueLoad(tastropheArgueBacteriaOxygen)
 $if ArgueSetClaim(ClaimBacteriaOxygen, jobs.bayou-shrimp-tastrophe.argue.claimLabelBacteriaOxygen)
     $call ArgueFactSlot(DecomposingBacteria.Consume.Oxygen)
+    $call ArgueFactSlot(P_DeadZone.Population.DecomposingBacteria)
 $endif
 $branch .argue.oxygen.showBacteria
 
@@ -203,23 +212,83 @@ $branch .argue.oxygen.showBacteria
 :: argue.oxygen.completeBacteria
 $call ArgueCancelClaim()
 $call ArgueComplete()
-{@bayouSci}    The decomposers... Hmmm... There is a lot of detritus for them to get rid of.
-                They could overpower the system...
-                Sometimes models speak louder than words.
+{@bayouSci}     The decomposers... Hmmm... I guess all that {nameof Detritus} is causing them to reproduce.
+                Remind me.
+$branch .argue.oxygen.loadCyanoDetritus
+
+:: argue.oxygen.loadCyanoDetritus
+$call ArgueLoad(tastropheArgueCyanoDetritus)
+$if ArgueSetClaim(ClaimCyanoDetritus, jobs.bayou-shrimp-tastrophe.argue.claimLabelCyanoDetritus)
+    $call ArgueFactSlot(P_DeadZone.Population.Cyanobacteria)
+$endif
+$branch .argue.oxygen.showCyanoDetritus
+
+:: argue.oxygen.showCyanoDetritus
+{@bayouSci}     Where is all the {nameof Detritus} coming from?
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.oxygen.completeCyanoDetritus
+    $answer incorrect, .argue.oxygen.unrelatedCyanoDetritus
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+
+:: argue.oxygen.unrelatedCyanoDetritus
+$call ArgueRejectIncorrect()
+{@bayouSci}     Not quite what I'm looking for, O. 
+$branch .argue.oxygen.showCyanoDetritus
+
+:: argue.oxygen.completeCyanoDetritus
+$call ArgueCancelClaim()
+$call ArgueComplete()
+$branch .argue.oxygen.loadCyanoDyingCause
+
+
+:: argue.oxygen.loadCyanoDyingCause
+$call ArgueLoad(tastropheArgueCyanoDyingCause)
+$if ArgueSetClaim(ClaimCyanoDyingCause, jobs.bayou-shrimp-tastrophe.argue.claimLabelCyanoDyingCause)
+    $call ArgueFactSlot(Cyanobacteria.Consume.Light)
+    $call ArgueFactSlot(P_DeadZone.Light)
+$endif
+$branch .argue.oxygen.showCyanoDyingCause
+
+:: argue.oxygen.showCyanoDyingCause
+{@bayouSci}     Why are they dying off?
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.oxygen.completeCyanoDyingCause
+    $answer incorrect, .argue.oxygen.unrelatedCyanoDyingCause
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+
+:: argue.oxygen.unrelatedCyanoDyingCause
+$call ArgueRejectIncorrect()
+{@bayouSci}     Not quite what I'm looking for, O. 
+$branch .argue.oxygen.showCyanoDyingCause
+
+:: argue.oxygen.completeCyanoDyingCause
+$call ArgueCancelClaim()
+$call ArgueComplete()
+{@bayouSci}     Wow. That's a lot!
 $branch .argue.shared.loadModel
                 
 
 // ---------- Light Route
 
 :: argue.light.begin
-$if ArgueIsComplete(tastropheArgueCyanoLight), ArgueIsComplete(tastropheArgueLightShrimpOxygen)
+$if ArgueIsComplete(tastropheArgueCyanoLight), ArgueIsComplete(tastropheArgueLightDecompPopulation), ArgueIsComplete(tastropheArgueLightDecompOxygen)
     // jump to model
-    {@bayouSci}    We've established the {nameof Cyanobacteria} light and shrimp oxygen bits.
+    {@bayouSci}    We've established the {nameof Cyanobacteria} light, how {nameof DecomposingBacteria} may be involved, and that {nameof Cyanobacteria} is dying off.
     $branch .argue.shared.loadModel
+$elseif ArgueIsComplete(tastropheArgueCyanoLight), ArgueIsComplete(tastropheArgueLightDecompPopulation)
+    // jump to why dying off
+    {@bayouSci}    We've established the {nameof Cyanobacteria} light and how {nameof DecomposingBacteria} may be involved.
+    $branch .argue.light.loadDecompOxygen
 $elseif ArgueIsComplete(tastropheArgueCyanoLight)
     // jump to shrimp half
     {@bayouSci}    We've established the {nameof Cyanobacteria} light bit.
-    $branch .argue.light.loadShrimp
+    $branch .argue.light.loadDecompPopulation
 $else
     // load cyanobacteria half
     $branch .argue.light.loadCyano
@@ -229,6 +298,7 @@ $endif
 $call ArgueLoad(tastropheArgueCyanoLight)
 $if ArgueSetClaim(ClaimCyanoLight, jobs.bayou-shrimp-tastrophe.argue.claimLabelCyanoLight)
     $call ArgueFactSlot(Cyanobacteria.Consume.Light)
+    $call ArgueFactSlot(P_DeadZone.Population.Cyanobacteria)
 $endif
 {@bayouSci}    Shrimp don't interact with light... 
 $branch .argue.light.showCyano
@@ -255,37 +325,62 @@ $endif
 :: argue.light.completeCyano
 $call ArgueCancelClaim()
 $call ArgueComplete()
-{@bayouSci}    Hmm, there is quite a bit of {nameof Cyanobacteria}. I'm sure that adds up over time.
-$branch .argue.light.loadShrimp
+{@bayouSci}    Hmm, there is quite a bit of {nameof Cyanobacteria}. I'm sure the ones lower down are being starved of light, dying, and turning into {nameof Detritus}.
+$branch .argue.light.loadDecompPopulation
 
-:: argue.light.loadShrimp
-$call ArgueLoad(tastropheArgueLightShrimpOxygen)
-$if ArgueSetClaim(ClaimLightShrimpOxygen, jobs.bayou-shrimp-tastrophe.argue.claimLabelLightShrimpOxygen)
-    $call ArgueFactSlot(P_DeadZone.Oxygen)
-    $call ArgueFactSlot(WhiteShrimp.Consume.Oxygen)
+:: argue.light.loadDecompPopulation
+$call ArgueLoad(tastropheArgueLightDecompPopulation)
+$if ArgueSetClaim(ClaimLightDecompPopulation, jobs.bayou-shrimp-tastrophe.argue.claimLabelLightDecompPopulation)
+    $call ArgueFactSlot(P_DeadZone.Population.DecomposingBacteria)
 $endif
-$branch .argue.light.showShrimp
+$branch .argue.light.showDecompPopulation
 
-:: argue.light.showShrimp
-// Note: This question with the above facts is probably the largest logical leap in the argumentation
-{@bayouSci}    But what does increased numbers of {nameof Cyanobacteria} have to do with the shrimp? 
+:: argue.light.showDecompPopulation
+{@bayouSci}     Is all the extra {nameof Detritus} having an effect on any other population that might effect the shrimp?
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
-    $answer correct, .argue.light.completeShrimp
-    $answer incorrect, .argue.light.unrelatedShrimp
+    $answer correct, .argue.light.completeDecompPopulation
+    $answer incorrect, .argue.light.unrelatedDecompPopulation
 $choice .argue.giveUp; Let me get back to you.
 $choose branch
 
-:: argue.light.unrelatedShrimp
+:: argue.light.unrelatedDecompPopulation
 $call ArgueRejectIncorrect()
 {@bayouSci}     Not quite what I'm looking for, O. 
-$branch .argue.light.showShrimp
+$branch .argue.light.showDecompPopulation
 
-:: argue.light.completeShrimp
+:: argue.light.completeDecompPopulation
 $call ArgueCancelClaim()
 $call ArgueComplete()
-{@bayouSci}    So their shading is the cause of the reduced oxygen?
-                I'm getting lost in the details. Maybe a visual could better explain?
+$branch .argue.light.loadDecompOxygen
+
+
+:: argue.light.loadDecompOxygen
+$call ArgueLoad(tastropheArgueLightDecompOxygen)
+$if ArgueSetClaim(ClaimLightDecompPopulation, jobs.bayou-shrimp-tastrophe.argue.claimLabelLightDecompOxygen)
+    $call ArgueFactSlot(DecomposingBacteria.Consume.Oxygen)
+$endif
+$branch .argue.light.showDecompOxygen
+
+:: argue.light.showDecompOxygen
+{@bayouSci}    And how precisely do the {nameof DecomposingBacteria} affect the {nameof WhiteShrimp}?
+$call ArgueDisplayClaim()
+$choice #argueFactSet; Present facts from AQOS
+    $answer correct, .argue.light.completeDecompOxygen
+    $answer incorrect, .argue.light.unrelatedDecompOxygen
+$choice .argue.giveUp; Let me get back to you.
+$choose branch
+
+:: argue.light.unrelatedDecompOxygen
+$call ArgueRejectIncorrect()
+{@bayouSci}     Not quite what I'm looking for, O. 
+$branch .argue.light.showDecompOxygen
+
+:: argue.light.completeDecompOxygen
+$call ArgueCancelClaim()
+$call ArgueComplete()
+{@bayouSci}    The decomposers... Hmmm... There is a lot of {nameof Detritus} for them to get rid of.
+                They could overpower the system... Sometimes models speak louder than words.
 $branch .argue.shared.loadModel
 
 
@@ -299,7 +394,7 @@ $endif
 $branch .argue.shared.showModel
 
 :: argue.shared.showModel
-{@bayouSci}    May I see the final model you made?
+{@bayouSci}    Can I see the model that brings this all together?
 $call ArgueDisplayClaim()
 $choice #argueFactSet; Present facts from AQOS
     $answer correct, .argue.shared.completeModel
@@ -322,7 +417,7 @@ $call ArgueCancelClaim()
 :: argue.shared.completeModel
 $call ArgueComplete()
 {@bayouSci}    Yes, I see now. The {nameof Cyanobacteria} shade each other out and the reduction in light causes them stress and then they die.
-                When they die, they turn into detritus.
+                When they die, they turn into {nameof Detritus}.
                 That detritus is food for the decomposers which steal oxygen from the shrimp. If only we could control the {nameof Cyanobacteria}...
                 Your work here has been nothing short of astounding, O!
                 Keep up the good work.

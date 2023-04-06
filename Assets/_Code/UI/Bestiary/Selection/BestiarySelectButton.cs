@@ -17,6 +17,7 @@ namespace Aqua
         public CursorInteractionHint Tooltip;
         public GameObject Highlight;
         public RectTransform Marker;
+        public GameObject Historical;
         public AppearAnim Anim;
         public FlashAnim Flash;
 

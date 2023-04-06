@@ -754,6 +754,13 @@ namespace EasyAssetStreaming {
             if (memUsage.Max < memUsage.Current) {
                 memUsage.Max = memUsage.Current;
             }
+
+            // if (asset != null) {
+            //     long reportedSize = UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(asset);
+            //     if (state.Size != reportedSize) {
+            //         UnityEngine.Debug.LogWarningFormat("[Streaming] Asset {0}: computed size of {1} and profiler size {2} do not match (difference of {3})", asset.name, state.Size, reportedSize, reportedSize - state.Size);
+            //     }
+            // }
         }
 
         [MethodImpl(256)]

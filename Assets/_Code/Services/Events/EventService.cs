@@ -335,6 +335,13 @@ namespace Aqua
         public unsafe struct UnmanagedUnion {
             [FieldOffset(0)] public Variant Variant;
             [FieldOffset(0)] public fixed byte PackedStruct[16];
+            [FieldOffset(0)] public StringHash32 StringHash32;
+            [FieldOffset(0)] public BestiaryUpdateParams BestiaryUpdate; 
         }
+
+        public UnmanagedUnion Unmanaged;
+        public string String;
+        public DialogRecord DialogRecord;
+        public object Ref;
     }
 }

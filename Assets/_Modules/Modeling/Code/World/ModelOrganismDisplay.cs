@@ -86,9 +86,11 @@ namespace Aqua.Modeling {
             m_InterveneRemoveLabel.gameObject.SetActive(result.DifferenceValue < 0);
 
             if (result.DifferenceValue > 0) {
-                m_InterveneAddLabel.SetText("+" + result.DifferenceValue.ToString());
+                string label = BestiaryUtils.FormatPopulation(Organism, (uint) result.DifferenceValue, "+");
+                m_InterveneAddLabel.SetText(label);
             } else if (result.DifferenceValue < 0) {
-                m_InterveneRemoveLabel.SetText(result.DifferenceValue.ToString());
+                string label = BestiaryUtils.FormatPopulation(Organism, (uint) (-result.DifferenceValue), "-");
+                m_InterveneRemoveLabel.SetText(label);
             }
         }
 

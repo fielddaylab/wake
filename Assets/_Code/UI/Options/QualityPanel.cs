@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Runtime.InteropServices;
+using UnityEngine.UI;
 
 namespace Aqua.Option
 {
@@ -7,20 +8,16 @@ namespace Aqua.Option
     {
         #region Inspector
 
-        [SerializeField] private ToggleOptionBar m_QualityLevel = null;
         [SerializeField] private ToggleOptionBar m_ResolutionLevel = null;
         [SerializeField] private CheckboxOption m_FullscreenToggle = null;
+        [SerializeField] private ToggleOptionBar m_AnimationQuality = null;
+        [SerializeField] private ToggleOptionBar m_ParticleQuality = null;
+        [SerializeField] private ButtonOption m_AutoDetectButton = null;
 
         #endregion // Inspector
 
         protected override void Init()
         {
-            m_QualityLevel.Initialize<OptionsPerformance.FramerateMode>("options.quality.level.label",
-                "options.quality.level.tooltip", OnQualityLevelChanged)
-                .AddOption("options.quality.level.stable.label", "options.quality.level.stable.tooltip", OptionsPerformance.FramerateMode.Stable)
-                .AddOption("options.quality.level.high.label", "options.quality.level.high.tooltip", OptionsPerformance.FramerateMode.High)
-                .Build();
-
             m_ResolutionLevel.Initialize<OptionsPerformance.ResolutionMode>("options.quality.resolution.label",
                 "options.quality.resolution.tooltip", OnResolutionLevelChanged)
                 .AddOption("options.quality.resolution.min.label", "options.quality.resolution.min.tooltip", OptionsPerformance.ResolutionMode.Minimum)
@@ -28,8 +25,19 @@ namespace Aqua.Option
                 .AddOption("options.quality.resolution.high.label", "options.quality.resolution.high.tooltip", OptionsPerformance.ResolutionMode.High)
                 .Build();
 
+            m_AnimationQuality.Initialize<OptionsPerformance.FeatureMode>("options.quality.animation.label",
+                "options.quality.animation.tooltip", OnAnimationQualityChanged)
+                .AddOption("options.quality.animation.low.label", "options.quality.animation.low.tooltip", OptionsPerformance.FeatureMode.Low)
+                .AddOption("options.quality.animation.medium.label", "options.quality.animation.medium.tooltip", OptionsPerformance.FeatureMode.Medium)
+                .AddOption("options.quality.animation.high.label", "options.quality.animation.high.tooltip", OptionsPerformance.FeatureMode.High)
+                .Build();
+
             m_FullscreenToggle.Initialize("options.quality.fullscreen.label",
                 "options.quality.fullscreen.tooltip", OnFullscreenChanged);
+
+            if (m_AutoDetectButton) {
+                m_AutoDetectButton.Initialize("options.quality.autoDetect.label", "options.quality.autoDetect.tooltip", OnAutoDetectClicked);
+            }
         }
 
         private void OnEnable() {
@@ -37,15 +45,18 @@ namespace Aqua.Option
         }
 
         private void OnDisable() {
-            Services.Camera.OnFullscreenChanged.Deregister(OnFullscreenUpdated);
+            if (Services.Valid) {
+                Services.Camera?.OnFullscreenChanged.Deregister(OnFullscreenUpdated);
+            }
         }
 
         public override void Load(OptionsData inOptions)
         {
             base.Load(inOptions);
             
-            m_QualityLevel.Sync(inOptions.Performance.Framerate);
             m_ResolutionLevel.Sync(inOptions.Performance.Resolution);
+            m_ParticleQuality.Sync(inOptions.Performance.EffectsQuality);
+            m_AnimationQuality.Sync(inOptions.Performance.AnimationQuality);
 
             m_FullscreenToggle.Sync(Screen.fullScreen);
         }
@@ -60,6 +71,16 @@ namespace Aqua.Option
             Data.Performance.Resolution = inResolution;
         }
 
+        private void OnAnimationQualityChanged(OptionsPerformance.FeatureMode inQuality)
+        {
+            Data.Performance.AnimationQuality = inQuality;
+        }
+
+        private void OnParticleQualityChanged(OptionsPerformance.FeatureMode inQuality)
+        {
+            Data.Performance.EffectsQuality = inQuality;
+        }
+
         private void OnFullscreenChanged(bool fullscreen) {
             Screen.fullScreen = fullscreen;
             #if UNITY_WEBGL && !UNITY_EDITOR
@@ -71,6 +92,21 @@ namespace Aqua.Option
             m_FullscreenToggle.Sync(fullscreen);
         }
         
+        private void OnAutoDetectClicked() {
+            if (SystemInfo.graphicsMemorySize < 64 || SystemInfo.graphicsShaderLevel < 25 || SystemInfo.maxTextureSize < 9000) {
+                Data.Performance.Resolution = OptionsPerformance.ResolutionMode.Minimum;
+                Data.Performance.AnimationQuality = OptionsPerformance.FeatureMode.Low;
+            } else if (SystemInfo.systemMemorySize >= 128 && SystemInfo.graphicsMemorySize >= 256 && SystemInfo.maxTextureSize > 9000) {
+                Data.Performance.Resolution = OptionsPerformance.ResolutionMode.High;
+                Data.Performance.AnimationQuality = OptionsPerformance.FeatureMode.High;
+            } else {
+                Data.Performance.Resolution = OptionsPerformance.ResolutionMode.Moderate;
+                Data.Performance.AnimationQuality = OptionsPerformance.FeatureMode.Medium;
+            }
+            
+            Load(Data);
+        }
+
         #if UNITY_WEBGL
 
         [DllImport("__Internal")]

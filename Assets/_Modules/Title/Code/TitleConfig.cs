@@ -20,6 +20,8 @@ namespace Aqua.Title
         public CameraDrift Drift;
         public Transform[] Specters;
         public Transform[] Dreams;
+        public Renderer[] Otters;
+        public GameObject[] OtterPrefabs;
 
         #if UNITY_EDITOR
 

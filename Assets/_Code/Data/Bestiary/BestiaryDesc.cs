@@ -54,6 +54,8 @@ namespace Aqua
         [SerializeField, HideInInspector] private ActorStateTransitionSet m_StateTransitions;
         [SerializeField, HideInInspector] private StringHash32 m_FirstStressFactId;
 
+        [NonSerialized] private string m_CachedName;
+
         #endregion // Inspector
 
         public BestiaryDescCategory Category() { return m_Type; }
@@ -178,9 +180,16 @@ namespace Aqua
 
         #region Sorting
 
+        public void CacheName()
+        {
+            m_CachedName = Loc.Find(m_CommonNameId);
+        }
+
         static public readonly Comparison<BestiaryDesc> SortById = (x, y) => x.Id().CompareTo(y.Id());
         static public readonly Comparison<BestiaryDesc> SortByOrder = (x, y) => x.m_SortingOrder.CompareTo(y.m_SortingOrder);
+        
         static public readonly Comparison<BestiaryDesc> SortByEnvironment = (x, y) => EnvironmentSortingFirst(x, y, SortByOrder);
+        static public readonly Comparison<BestiaryDesc> SortByName = (x, y) => x.m_CachedName.CompareTo(y.m_CachedName);
 
         static private int EnvironmentSortingFirst(BestiaryDesc x, BestiaryDesc y, Comparison<BestiaryDesc> inComparison)
         {
@@ -196,6 +205,29 @@ namespace Aqua
                 return envX.CompareTo(envY);
             }
         }
+
+        static public readonly Comparison<BestiaryDesc> SortNatural = (x, y) => {
+            int env = x.m_StationSortingOrder - y.m_StationSortingOrder;
+            if (env != 0) {
+                return env;
+            }
+
+            int order = x.m_SortingOrder - y.m_SortingOrder;
+            if (order != 0) {
+                return order;
+            }
+
+            return x.m_CachedName.CompareTo(y.m_CachedName);
+        };
+
+        static public readonly Comparison<BestiaryDesc> SortNaturalInStation = (x, y) => {
+            int order = x.m_SortingOrder - y.m_SortingOrder;
+            if (order != 0) {
+                return order;
+            }
+
+            return x.m_CachedName.CompareTo(y.m_CachedName);
+        };
 
         #endregion // Sorting
     }

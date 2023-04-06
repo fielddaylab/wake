@@ -30,13 +30,13 @@ namespace Aqua.Profile
 
         public IReadOnlyList<SiteSurveyData> Sites() { return m_SiteData; }
 
-        public SiteSurveyData GetSiteData(StringHash32 inMapId)
+        public SiteSurveyData GetSiteData(StringHash32 inEnvId)
         {
             SiteSurveyData data;
-            if (!m_SiteData.TryGetValue<StringHash32, SiteSurveyData>(inMapId, out data))
+            if (!m_SiteData.TryGetValue<StringHash32, SiteSurveyData>(inEnvId, out data))
             {
                 data = new SiteSurveyData();
-                data.MapId = inMapId;
+                data.EnvOrMapId = inEnvId;
                 data.OnChanged = MarkChanged;
                 m_SiteData.Add(data);
                 m_HasChanges = true;
@@ -44,10 +44,10 @@ namespace Aqua.Profile
             return data;
         }
 
-        public SiteSurveyData TryGetSiteData(StringHash32 inMapId)
+        public SiteSurveyData TryGetSiteData(StringHash32 inEnvId)
         {
             SiteSurveyData data;
-            m_SiteData.TryGetValue<StringHash32, SiteSurveyData>(inMapId, out data);
+            m_SiteData.TryGetValue<StringHash32, SiteSurveyData>(inEnvId, out data);
             return data;
         }
 
@@ -268,7 +268,7 @@ namespace Aqua.Profile
 
             foreach(var data in m_SiteData)
             {
-                SavePatcher.PatchId(ref data.MapId);
+                SavePatcher.PatchId(ref data.EnvOrMapId);
                 SavePatcher.PatchIds(data.TaggedCritters);
                 SavePatcher.PatchIds(data.GraphedCritters);
                 SavePatcher.PatchIds(data.GraphedFacts);
@@ -287,7 +287,7 @@ namespace Aqua.Profile
             writer.KeyValue("Science Level", m_CurrentLevel);
 
             foreach(var siteSurvey in m_SiteData) {
-                writer.Header("Survey Data for " + Assets.NameOf(siteSurvey.MapId));
+                writer.Header("Survey Data for " + Assets.NameOf(siteSurvey.EnvOrMapId));
                 foreach(var taggedId in siteSurvey.TaggedCritters) {
                     writer.KeyValue("Tagged", Assets.NameOf(taggedId));
                 }

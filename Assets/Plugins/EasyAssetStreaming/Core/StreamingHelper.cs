@@ -182,6 +182,78 @@ namespace EasyAssetStreaming {
             return clip.samples * sizeof(float);
         }
     
+        static public bool IsAppropriateDimensionsForFormat(Texture2D texture, TextureFormat format) {
+            int width = texture.width, height = texture.height;
+
+            switch(format) {
+                case TextureFormat.DXT1:
+                case TextureFormat.DXT1Crunched:
+                case TextureFormat.DXT5:
+                case TextureFormat.DXT5Crunched:
+                    return (width % 4) == 0 && (height % 4) == 0;
+
+                case TextureFormat.PVRTC_RGB2:
+                case TextureFormat.PVRTC_RGBA2:
+                case TextureFormat.PVRTC_RGB4:
+                case TextureFormat.PVRTC_RGBA4:
+                    return (width % 2) == 0 && (height % 2) == 0 && width >= 4 && height >= 4;
+
+                case TextureFormat.ETC_RGB4:
+                case TextureFormat.EAC_R:
+                case TextureFormat.EAC_R_SIGNED:
+                case TextureFormat.EAC_RG:
+                case TextureFormat.EAC_RG_SIGNED:
+                case TextureFormat.ETC2_RGB:
+                case TextureFormat.ETC2_RGBA1:
+                case TextureFormat.ETC2_RGBA8:
+                #if UNITY_5_5_OR_NEWER
+                case TextureFormat.BC4:
+                case TextureFormat.BC5:
+                case TextureFormat.BC6H:
+                case TextureFormat.BC7:
+                #if UNITY_2017_3_OR_NEWER
+                case TextureFormat.ETC_RGB4Crunched:
+                case TextureFormat.ETC2_RGBA8Crunched:
+                #endif // UNITY_2017_3_OR_NEWER
+                #endif // UNITY_5_5_OR_NEWER
+                    return (width % 4) == 0 && (height % 4) == 0;
+
+                #if UNITY_2019_1_OR_NEWER
+                case TextureFormat.ASTC_RGB_4x4:
+                case TextureFormat.ASTC_HDR_4x4:
+                case TextureFormat.ASTC_RGBA_4x4:
+                    return (width % 4) == 0 && (height % 4) == 0;
+
+                case TextureFormat.ASTC_RGB_5x5:
+                case TextureFormat.ASTC_RGBA_5x5:
+                case TextureFormat.ASTC_HDR_5x5:
+                    return (width % 5) == 0 && (height % 5) == 0;
+                
+                case TextureFormat.ASTC_RGB_6x6:
+                case TextureFormat.ASTC_RGBA_6x6:
+                case TextureFormat.ASTC_HDR_6x6:
+                    return (width % 6) == 0 && (height % 6) == 0;
+
+                case TextureFormat.ASTC_RGB_8x8:
+                case TextureFormat.ASTC_RGBA_8x8:
+                case TextureFormat.ASTC_HDR_8x8:
+                    return (width % 8) == 0 && (height % 8) == 0;
+                
+                case TextureFormat.ASTC_RGB_10x10:
+                case TextureFormat.ASTC_RGBA_10x10:
+                case TextureFormat.ASTC_HDR_10x10:
+                    return (width % 10) == 0 && (height % 10) == 0;
+                
+                case TextureFormat.ASTC_RGB_12x12:
+                case TextureFormat.ASTC_RGBA_12x12:
+                case TextureFormat.ASTC_HDR_12x12:
+                    return (width % 12) == 0 && (height % 12) == 0;
+                #endif // UNITY_2019_1_OR_NEWER
+            }
+
+            return true;
+        }
+
         #endregion // Resources
 
         #region Streamed Textures

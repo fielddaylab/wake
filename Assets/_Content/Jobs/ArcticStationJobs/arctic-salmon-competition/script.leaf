@@ -10,6 +10,7 @@
 $call GiveEntity(ChinookSalmon, Silent)
 $call GiveFact(ChinookSalmon.Eats.IceAlgae)
 $call GiveFact(ChinookSalmon.Eats.Clione)
+$call GiveFact(ChinookSalmon.Eats.Diatoms)
 $call GiveFact(ChinookSalmon.Reproduce)
 $call GiveFact(ChinookSalmon.Reproduce.Stressed)
 {@player} So where are you stuck?
@@ -26,6 +27,7 @@ $set jobs:salmon-competition.sync-failed = false
 :: allSet
 @trigger    JobTaskCompleted
 @when       taskId == "observeCod"
+@cutscene
 @once
 {@guide} Adequate work, O! You've obtained the data you needed here.
          Time to head to the Modeling Lab!
@@ -33,6 +35,7 @@ $set jobs:salmon-competition.sync-failed = false
 :: modelsComplete
 @trigger    JobTaskCompleted
 @when       taskId == "modelFish"
+@cutscene
 @once
 {@player} Yes!! This model is looking a lot better.
           Can't wait to show {nameof @profArctic}!
@@ -139,7 +142,7 @@ $endif
 @when       !ArgueIsComplete(competitionArgue2)
 @cutscene
 $if ArgueIsComplete(competitionArgue1)
-    $branch .argue.noImpact
+    $branch .argue.improve
 $else
     $call ArgueLoad(competitionArgue1)
     {@profArctic}  Okay, Ollie, hope you've got an answer for me, because this model is driving me up the wall.
@@ -147,74 +150,89 @@ $else
 $endif
 
 :: argue.mainQuestion
-{@profArctic}   Did you discover anything in the ecosystem that could've affected our model?
+{@profArctic}   Did anything you discover improve our model?
 $branch .argue.chooseClaim
 
 :: argue.chooseClaim
-$choice .argue.noImpact; The Cod and Salmon are balanced
-$choice .argue.imbalance; The Cod and Salmon are unbalanced
+$choice .argue.improve; Adding {nameof ArcticCod} improves the model about {nameof ChinookSalmon}
+$choice .argue.notImprove; Adding {nameof ArcticCod} does not improve the model about {nameof ChinookSalmon}
+$choice .argue.notReady; Let me get back to you
 $choose branch
 
-// Cod branch
+:: argue.notReady
+{@profArctic}   No worries, Ollie. Let me know when you're ready.
 
-:: argue.imbalance
-$if ArgueSetClaim(Claim, jobs.arctic-salmon-competition.argue.claimLabelImbalance)
-    $call ArgueFactSlot(ArcticCod.Eats.IceAlgae)
+// not improve branch
+
+:: argue.notImprove
+$if ArgueSetClaim(Claim, jobs.arctic-salmon-competition.argue.claimLabelShowModel)
+    $call ArgueFactSlot(Z_OpenOcean.SalmonCompetition.Model.Sync)
 $endif
 $call ArgueDisplayClaim()
-{@profArctic}  Hmm, interesting. What makes you think that? 
+{@profArctic}  Hmm, interesting. Can you show me your newest model?
 $choice #argueFactSet; Present facts from AQOS
-    $answer correct, .argue.unrelatedCod
-    $answer *, .argue.unrelatedCod
+    $answer correct, .argue.correctModelNotImprove
+    $answer *, .argue.unrelatedNotImprove
 $choice .argue.notSure; Let me get back to you.
 $choose branch
 
-:: argue.unrelatedCod
-{@profArctic}  Sorry, Ollie, but this isn't exactly helpful.  
+:: argue.correctModelNotImprove
+{@profArctic}   This is actually much more in line with our measurements of {nameof ChinookSalmon} than our previous model.
+                I think you may need to revisit your claim.
 $call ArgueClearFacts()
 $call ArgueCancelClaim()
 $call ArgueHideClaim()
 $branch .argue.mainQuestion
 
-// Neither branch
+:: argue.unrelatedNotImprove
+{@profArctic}  Sorry, Ollie, but this isn't exactly helpful. 
+$call ArgueClearFacts()
+$call ArgueCancelClaim()
+$call ArgueHideClaim()
+$branch .argue.mainQuestion
 
-:: argue.noImpact
+// improve branch
+
+:: argue.improve
 $if ArgueIsComplete(competitionArgue1)
-    {@profArctic}   You already showed me the historic populations of the Arctic Cods' prey.
+    {@profArctic}   You already explained to me why adding {nameof ArcticCod} makes a difference in the ecosystem.
     $branch .argue.modelQuery
 $else
     $call ArgueLoad(competitionArgue1)
-    $if ArgueSetClaim(Claim, jobs.arctic-salmon-competition.argue.claimLabelNoImpact)
-        $call ArgueFactSlot(Z_OpenOcean.PopulationHistory.Diatoms)
-        $call ArgueFactSlot(Z_OpenOcean.PopulationHistory.IceAlgae)
+    $if ArgueSetClaim(Claim, jobs.arctic-salmon-competition.argue.claimLabelImprove)
+        $call ArgueFactSlot(ArcticCod.Eats.IceAlgae)
+        $call ArgueFactSlot(ArcticCod.Eats.Diatoms)
+        $call ArgueFactSlot(ChinookSalmon.Eats.IceAlgae)
+        $call ArgueFactSlot(ChinookSalmon.Eats.Diatoms)
     $endif
     $call ArgueDisplayClaim()
-    {@profArctic}   Oh, that's fascinating! Are Salmons' food sources not affected by the Cod growth?
-    $branch .argue.noImpactQuery
+    $branch .argue.improveQuery
 $endif
 
-:: argue.noImpactQuery
-{@profArctic}   Can you show me the historic populations of Cods' prey?
+:: argue.improveQuery
+{@profArctic}   Why does adding cod matter? Do they share resources?
 $choice #argueFactSet; Present facts from AQOS
-    $answer correct, .argue.correctPopulations
-    $answer *, .argue.unrelatedPopulations
+    $answer correct, .argue.correctEats
+    $answer *, .argue.unrelatedEats
 $choice .argue.notSure; Let me get back to you.
 $choose branch
 
-:: argue.unrelatedPopulations
-{@profArctic}  That doesn't look right, Ollie. I need to see the historic populations of the Cods' food sources.
+:: argue.unrelatedEats
+{@profArctic}   That doesn't look right, Ollie.
+                I need to see whether there is overlap between {nameof ArcticCod}'s and {nameof ChinookSalmon}'s food sources.
 $call ArgueRejectIncorrect()
-$branch .argue.noImpactQuery
+$branch .argue.improveQuery
 
-:: argue.correctPopulations
+:: argue.correctEats
+{@profArctic}   Ah. So there is definitely overlap there.
 $call ArgueComplete()
 $call ArgueCancelClaim()
 $goto .argue.modelQuery
 
 :: argue.modelQuery
-{@profArctic}  So your information about the Cod improved our model? Can I see the updated version?
+{@profArctic}   Can you show me the impact on the model?
 $call ArgueLoad(competitionArgue2)
-$if ArgueSetClaim(Claim2, jobs.arctic-salmon-competition.argue.claimLabelImproved)
+$if ArgueSetClaim(Claim2, jobs.arctic-salmon-competition.argue.claimLabelShowModel)
     $call ArgueFactSlot(Z_OpenOcean.SalmonCompetition.Model.Sync)
 $endif
 $call ArgueDisplayClaim()
@@ -235,9 +253,9 @@ $call ArgueComplete()
 $call CompleteJob()
 
 :: argue.unrelatedModel
-{@profArctic}   That's not it, Ollie. I need to see an updated Numerical model about Salmon and Cod.
+{@profArctic}   That's not it, Ollie. I need to see an updated Numerical Model about {nameof ChinookSalmon} and {nameof ArcticCod}.
 $call ArgueRejectIncorrect()
-{@profArctic}   Did your information about the Cod improve our model?
+{@profArctic}   Did your information about the {nameof ArcticCod} improve our model?
 $branch .argue.chooseFactsModel
 
 // Shared
