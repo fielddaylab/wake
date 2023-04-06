@@ -130,6 +130,8 @@ namespace Aqua
             #endif // DEVELOPMENT && !UNITY_EDITOR
 
             m_Log.SetDebug(m_Debug);
+
+            RefreshGameState();
         }
 
         private void SetUserCode(string userCode)
@@ -154,6 +156,12 @@ namespace Aqua
         {
             m_CurrentPortableAppId = PortableAppId.NULL;
             m_CurrentPortableBestiaryTabId = null;
+        }
+
+        private void RefreshGameState() {
+            using(var gs = m_Log.OpenGameState()) {
+                gs.Param("job_name", m_CurrentJobName);
+            }
         }
 
         #region Log Events
@@ -183,7 +191,7 @@ namespace Aqua
                 e.Param("error_message", text);
                 e.Param("scene", SceneHelper.ActiveScene().Name);
                 e.Param("time_since_launch", Time.realtimeSinceStartup, 2);
-                e.Param("job_name", m_CurrentJobName);
+                
             }
             m_Log.Flush();
         }
@@ -195,7 +203,6 @@ namespace Aqua
             if (sceneName != "Boot" && sceneName != "Title")
             {
                 using(var e = m_Log.NewEvent("scene_changed")) {
-                    e.Param("job_name", m_CurrentJobName);
                     e.Param("scene_name", sceneName);
                 }
             }
@@ -204,7 +211,6 @@ namespace Aqua
         private void LogRoomChanged(string roomName)
         {
             using(var e = m_Log.NewEvent("room_changed")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("room_name", roomName);
             }
         }
@@ -341,10 +347,12 @@ namespace Aqua
             if (jobId.IsEmpty)
             {
                 m_CurrentJobName = NoActiveJobId;
+                RefreshGameState();
             }
             else
             {
                 m_CurrentJobName = Assets.Job(jobId).name;
+                RefreshGameState();
                 if (m_PreviousJobName != NoActiveJobId)
                 {
                     return true;
@@ -357,7 +365,6 @@ namespace Aqua
         private void LogAcceptJob(StringHash32 jobId)
         {
             using(var e = m_Log.NewEvent("accept_job")) {
-                e.Param("job_name", m_CurrentJobName);
             }
         }
 
@@ -366,7 +373,6 @@ namespace Aqua
             SetCurrentJob(jobId);
 
             using(var e = m_Log.NewEvent("switch_job")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("prev_job_name", m_PreviousJobName);
             }
         }
@@ -389,7 +395,6 @@ namespace Aqua
                 BFBase fact = Assets.Fact(inParams.Id);
                 
                 using(var e = m_Log.NewEvent("receive_fact")) {
-                    e.Param("job_name", m_CurrentJobName);
                     AddFactDetails(e, fact);
                 }
             }
@@ -398,7 +403,6 @@ namespace Aqua
                 BFBase fact = Assets.Fact(inParams.Id);
                 
                 using(var e = m_Log.NewEvent("upgrade_fact")) {
-                    e.Param("job_name", m_CurrentJobName);
                     AddFactDetails(e, fact);
                 }
             }
@@ -407,7 +411,6 @@ namespace Aqua
                 string parsedEntityId = Assets.Bestiary(inParams.Id).name;
 
                 using(var e = m_Log.NewEvent("receive_entity")) {
-                    e.Param("job_name", m_CurrentJobName);
                     e.Param("entity_id", parsedEntityId);
                 }
             }
@@ -427,7 +430,6 @@ namespace Aqua
             string taskId = Assets.Job(m_CurrentJobHash).Task(inTaskId).IdString;
 
             using(var e = m_Log.NewEvent("complete_task")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("task_id", taskId);
             }
         }
@@ -435,7 +437,6 @@ namespace Aqua
         private void LogBeginDive(string inTargetScene)
         {
             using(var e = m_Log.NewEvent("begin_dive")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("site_id", inTargetScene);
             }
         }
@@ -443,21 +444,18 @@ namespace Aqua
         private void LogBeginModel()
         {
             using(var e = m_Log.NewEvent("begin_model")) {
-                e.Param("job_name", m_CurrentJobName);
             }
         }
 
         private void LogBeginSimulation()
         {
             using(var e = m_Log.NewEvent("begin_simulation")) {
-                e.Param("job_name", m_CurrentJobName);
             }
         }
 
         private void LogAskForHelp(string nodeId)
         {
             using(var e = m_Log.NewEvent("ask_for_help")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("node_id", nodeId);
             }
         }
@@ -465,7 +463,6 @@ namespace Aqua
         private void LogTalkWithGuide(string nodeId)
         {
             using(var e = m_Log.NewEvent("talk_with_guide")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("node_id", nodeId);
             }
         }
@@ -476,7 +473,6 @@ namespace Aqua
             m_CurrentPortableBestiaryTabId = BestiaryDescCategory.Critter;
 
             using(var e = m_Log.NewEvent("open_bestiary")) {
-                e.Param("job_name", m_CurrentJobName);
             }
             LogBestiaryOpenSpeciesTab();
         }
@@ -486,7 +482,6 @@ namespace Aqua
             m_CurrentPortableBestiaryTabId = BestiaryDescCategory.Environment;
 
             using(var e = m_Log.NewEvent("open_bestiary")) {
-                e.Param("job_name", m_CurrentJobName);
             }
             LogBestiaryOpenEnvironmentsTab();
         }
@@ -494,47 +489,40 @@ namespace Aqua
         private void LogBestiaryOpenSpeciesTab()
         {
             using(var e = m_Log.NewEvent("bestiary_open_species_tab")) {
-                e.Param("job_name", m_CurrentJobName);
             }
         }
         private void LogBestiaryOpenEnvironmentsTab()
         {
             using(var e = m_Log.NewEvent("bestiary_open_environments_tab")) {
-                e.Param("job_name", m_CurrentJobName);
             }
         }
         private void LogBestiaryOpenModelsTab()
         {
             using(var e = m_Log.NewEvent("bestiary_open_models_tab")) {
-                e.Param("job_name", m_CurrentJobName);
             }
         }
 
         private void LogBestiarySelectSpecies(string speciesId)
         {
             using(var e = m_Log.NewEvent("bestiary_select_species")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("species_id", speciesId);
             }
         }
         private void LogBestiarySelectEnvironment(string environmentId)
         {
             using(var e = m_Log.NewEvent("bestiary_select_environment")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("environment_id", environmentId);
             }
         }
         private void LogBestiarySelectModel(string modelId)
         {
             using(var e = m_Log.NewEvent("bestiary_select_model")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("model_id", modelId);
             }
         }
         private void LogCloseBestiary()
         {
             using(var e = m_Log.NewEvent("close_bestiary")) {
-                e.Param("job_name", m_CurrentJobName);
             }
         }
         #endregion
@@ -543,7 +531,6 @@ namespace Aqua
         private void LogOpenStatus()
         {
             using(var e = m_Log.NewEvent("open_status")) {
-                e.Param("job_name", m_CurrentJobName);
             }
 
             LogStatusOpenJobTab(); //Status starts by opening tasks tab
@@ -552,28 +539,24 @@ namespace Aqua
         private void LogStatusOpenJobTab()
         {
             using(var e = m_Log.NewEvent("status_open_job_tab")) {
-                e.Param("job_name", m_CurrentJobName);
             }
         }
 
         private void LogStatusOpenItemTab()
         {
             using(var e = m_Log.NewEvent("status_open_item_tab")) {
-                e.Param("job_name", m_CurrentJobName);
             }
         }
 
         private void LogStatusOpenTechTab()
         {
             using(var e = m_Log.NewEvent("status_open_tech_tab")) {
-                e.Param("job_name", m_CurrentJobName);
             }
         }
 
         private void LogCloseStatus()
         {
             using(var e = m_Log.NewEvent("close_status")) {
-                e.Param("job_name", m_CurrentJobName);
             }
         }
         #endregion
@@ -581,14 +564,12 @@ namespace Aqua
         private void LogSimulationSyncAchieved()
         {
             using(var e = m_Log.NewEvent("simulation_sync_achieved")) {
-                e.Param("job_name", m_CurrentJobName);
             }
         }
 
         private void LogGuideScriptTriggered(string nodeId)
         {
             using(var e = m_Log.NewEvent("guide_script_triggered")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("node_id", nodeId);
             }
         }
@@ -596,7 +577,6 @@ namespace Aqua
         private void LogScriptFired(string nodeId)
         {
             using(var e = m_Log.NewEvent("script_fired")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("node_id", nodeId);
             }
         }
@@ -604,7 +584,6 @@ namespace Aqua
         private void LogScriptLine(DialogPanel.TextDisplayArgs args)
         {
             using(var e = m_Log.NewEvent("script_line_displayed")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("text_string", args.VisibleText);
                 e.Param("node_id", args.NodeId);
             }
@@ -615,7 +594,6 @@ namespace Aqua
         private void LogStartModel()
         {
             using(var e = m_Log.NewEvent("model_start")) {
-                e.Param("job_name", m_CurrentJobName);
             }
         }
 
@@ -624,7 +602,6 @@ namespace Aqua
             m_CurrentModelPhase = ((ModelPhases)inPhase).ToString();
 
             using(var e = m_Log.NewEvent("model_phase_changed")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("phase", m_CurrentModelPhase);
             }
         }
@@ -634,7 +611,6 @@ namespace Aqua
             m_CurrentModelEcosystem = ecosystem;
 
             using(var e = m_Log.NewEvent("model_ecosystem_selected")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("ecosystem", m_CurrentModelEcosystem);
             }
         }
@@ -642,7 +618,6 @@ namespace Aqua
         private void LogModelConceptStarted()
         {
             using(var e = m_Log.NewEvent("model_concept_started")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("ecosystem", m_CurrentModelEcosystem);
             }
         }
@@ -650,7 +625,6 @@ namespace Aqua
         private void LogModelConceptUpdated(ConceptualModelState.StatusId status)
         {
             using(var e = m_Log.NewEvent("model_concept_updated")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("ecosystem", m_CurrentModelEcosystem);
                 e.Param("status", status.ToString());
             }
@@ -659,7 +633,6 @@ namespace Aqua
         private void LogModelConceptExported()
         {
             using(var e = m_Log.NewEvent("model_concept_exported")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("ecosystem", m_CurrentModelEcosystem);
             }
         }
@@ -667,7 +640,6 @@ namespace Aqua
         private void LogModelSyncError(int sync)
         {
             using(var e = m_Log.NewEvent("model_sync_error")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("ecosystem", m_CurrentModelEcosystem);
                 e.Param("sync", sync);
             }
@@ -676,7 +648,6 @@ namespace Aqua
         private void LogModelPredictCompleted()
         {
             using(var e = m_Log.NewEvent("model_predict_completed")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("ecosystem", m_CurrentModelEcosystem);
             }
         }
@@ -684,7 +655,6 @@ namespace Aqua
         private void LogModelInterveneUpdate(InterveneUpdateData data)
         {
             using(var e = m_Log.NewEvent("model_intervene_update")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("ecosystem", m_CurrentModelEcosystem);
                 e.Param("organism", data.Organism);
                 e.Param("difference_value", data.DifferenceValue);
@@ -694,7 +664,6 @@ namespace Aqua
         private void LogModelInterveneError()
         {
             using(var e = m_Log.NewEvent("model_intervene_error")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("ecosystem", m_CurrentModelEcosystem);
             }
         }
@@ -702,7 +671,6 @@ namespace Aqua
         private void LogModelInterveneCompleted()
         {
             using(var e = m_Log.NewEvent("model_intervene_completed")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("ecosystem", m_CurrentModelEcosystem);
             }
         }
@@ -710,7 +678,6 @@ namespace Aqua
         private void LogEndModel()
         {
             using(var e = m_Log.NewEvent("model_end")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("phase", m_CurrentModelPhase);
                 e.Param("ecosystem", m_CurrentModelEcosystem);
             }
@@ -733,7 +700,6 @@ namespace Aqua
                 int cost = item.CashCost();
 
                 using(var e = m_Log.NewEvent("purchase_upgrade")) {
-                    e.Param("job_name", m_CurrentJobName);
                     e.Param("item_id", inUpgradeId.ToString());
                     e.Param("item_name", name);
                     e.Param("cost", cost);
@@ -748,7 +714,6 @@ namespace Aqua
             int cost = item.CashCost();
 
             using(var e = m_Log.NewEvent("insufficient_funds")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("item_id", inUpgradeId.ToString());
                 e.Param("item_name", name);
                 e.Param("cost", cost);
@@ -758,7 +723,6 @@ namespace Aqua
         private void LogTalkToShopkeep()
         {
             using(var e = m_Log.NewEvent("talk_to_shopkeep")) {
-                e.Param("job_name", m_CurrentJobName);
             }
         }
 
@@ -801,7 +765,6 @@ namespace Aqua
             m_CurrentEnvironment = environment;
 
             using(var e = m_Log.NewEvent("add_environment")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("tank_type", m_CurrentTankType);
                 e.Param("environment", environment);
             }
@@ -813,7 +776,6 @@ namespace Aqua
             m_CurrentEnvironment = string.Empty;
 
             using(var e = m_Log.NewEvent("remove_environment")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("tank_type", m_CurrentTankType);
                 e.Param("environment", environment);
             }
@@ -825,7 +787,6 @@ namespace Aqua
             m_CurrentCritters.Add(critter);
 
             using(var e = m_Log.NewEvent("add_critter")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("tank_type", m_CurrentTankType);
                 e.Param("environment", m_CurrentEnvironment);
                 e.Param("critter", critter);
@@ -838,7 +799,6 @@ namespace Aqua
             m_CurrentCritters.Remove(critter);
 
             using(var e = m_Log.NewEvent("remove_critter")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("tank_type", m_CurrentTankType);
                 e.Param("environment", m_CurrentEnvironment);
                 e.Param("critter", critter);
@@ -851,7 +811,6 @@ namespace Aqua
             string critters = String.Join(",", m_CurrentCritters.ToArray());
 
             using(var e = m_Log.NewEvent("begin_experiment")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("tank_type", tankType);
                 e.Param("environment", m_CurrentEnvironment);
                 e.Param("critters", critters);
@@ -866,7 +825,6 @@ namespace Aqua
             string critters = String.Join(",", m_CurrentCritters.ToArray());
 
             using(var e = m_Log.NewEvent("end_experiment")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("tank_type", tankType);
                 e.Param("environment", m_CurrentEnvironment);
                 e.Param("critters", critters);
@@ -890,7 +848,6 @@ namespace Aqua
             m_CurrentArgumentId = id;
 
             using(var e = m_Log.NewEvent("begin_argument")) {
-                e.Param("job_name", m_CurrentJobName);
             }
         }
 
@@ -899,7 +856,6 @@ namespace Aqua
             string factId = Assets.Fact(inFactId).name;
 
             using(var e = m_Log.NewEvent("fact_submitted")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("fact_id", factId);
             }
         }
@@ -909,7 +865,6 @@ namespace Aqua
             string factId = Assets.Fact(inFactId).name;
 
             using(var e = m_Log.NewEvent("fact_rejected")) {
-                e.Param("job_name", m_CurrentJobName);
                 e.Param("fact_id", factId);
             }
         }
@@ -919,14 +874,12 @@ namespace Aqua
             if (ArgumentationService.LeafIsComplete(m_CurrentArgumentId)) return;
 
             using(var e = m_Log.NewEvent("leave_argument")) {
-                e.Param("job_name", m_CurrentJobName);
             }
         }
 
         private void LogCompleteArgument(StringHash32 id)
         {
             using(var e = m_Log.NewEvent("complete_argument")) {
-                e.Param("job_name", m_CurrentJobName);
             }
             
             m_CurrentArgumentId = null;

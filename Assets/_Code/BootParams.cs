@@ -233,7 +233,7 @@ namespace Aqua
     
         static private void RetrieveExpensiveSystemResources() {
             Char.IsWhiteSpace('0');
-            Shader.WarmupAllShaders();
+            EasyAssetStreaming.Streaming.Initialize();
         }
 
         static private void OnCrash(Exception e, string error, out string context) {
