@@ -10807,6 +10807,7 @@ GameObject:
   m_Component:
   - component: {fileID: 438809407}
   - component: {fileID: 438809408}
+  - component: {fileID: 438809409}
   m_Layer: 29
   m_Name: LeftCollider
   m_TagString: Untagged
@@ -10854,6 +10855,25 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 4, y: 18}
   m_EdgeRadius: 0
+--- !u!95 &438809409
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 438809406}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1001 &448385420
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -36208,6 +36228,8 @@ PlayableDirector:
     value: {fileID: 5792732944218642617}
   - key: {fileID: 2853783842397811772, guid: 7cdf2d79ed0d34c63b48b505882051ed, type: 2}
     value: {fileID: 69102703}
+  - key: {fileID: 5995137782269589507, guid: 7cdf2d79ed0d34c63b48b505882051ed, type: 2}
+    value: {fileID: 438809409}
   m_ExposedReferences:
     m_References: []
 --- !u!4 &1342054396
