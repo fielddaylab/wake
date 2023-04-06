@@ -21,3 +21,13 @@
 @cutscene
 @once
 {@guide}    The heat seems to be coming from those bubbles! What is this?
+
+:: marineSnowScanned
+@trigger    ScannedNewObject
+@when       scanId == "RS-3N.marineSnow"
+@once
+@cutscene
+{@player}   Uh, {nameof guide}? Do you see these little white flakes falling all around us?
+{@guide}    Affirmative, O. That is a form of {nameof Detritus} commonly refered to as "Marine Snow".
+{@player}   "Marine Snow", huh?
+            Quite a poetic name for a bunch of dead stuff.
