@@ -469,5 +469,8 @@ $call ArgueComplete()
 {@player}		Thanks, Professor. 
 {@profCoral}	Ay... now I just have to tell Sofia.
 			    Guess I'd better prepare myself for a few years' worth of I-Told-You-So's... 
+$if JobCompleted(coral-fake-fix), JobCompleted(coral-ocean-plastics)
+	$call GiveJournalEntry("N22_HumanIntervention", Silent)
+$endif
 $call GiveJournalEntry("N21_FishingSolution", Silent)
 $call CompleteJob()

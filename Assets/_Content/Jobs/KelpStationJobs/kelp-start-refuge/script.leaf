@@ -135,7 +135,8 @@ $call ArgueComplete()
 		   Now can we celebrate?
 {@drKelp}  I suppose so. This data looks incredibly promising.  
 		   And I do have a recipe for spicy kelp rolls I've wanting to try...
-		   
+$call GiveJournalEntry("N12_RefugeStarting", Silent)
+$call GiveJournalEntry("N34_MerCelebration", Silent)
 $call CompleteJob()
 // Unlock Mixed Kelp Refuge Site
 $call UnlockSite(RS-1D)

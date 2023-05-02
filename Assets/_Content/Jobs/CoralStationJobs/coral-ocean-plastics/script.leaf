@@ -25,20 +25,6 @@ $endif
 {@profCoral} Thank you. And Ollie... please hurry. 
 
 
-:: helpLeaveShip
-@trigger    RequestPartnerHelp
-@when 		scene:name == "Helm", !jobs:coral-ocean-plastic.task.speciesReefEdge, JobTaskTop(scanReefEdge)
-@cutscene
-{@player}   What should I be doing, {nameof @guide}?
-{@guide}	Head to Site V and scan anything that the Loggerhead Turtle might eat.
-					
-:: helpGoToSiteV
-@trigger    RequestPartnerHelp
-@when 		scene:name == "CoralStation", !jobs:coral-ocean-plastic.task.speciesReefEdge
-@cutscene
-{@player}   I think I'm lost, {nameof @guide}. 
-{@guide}	Keep exploring. You will need to dive at Site V. 
-
 :: diveSite
 @trigger    SceneStart
 @when       scene:name == "RS-2V", !jobs:coral-ocean-plastic.task.speciesReefEdge
@@ -63,11 +49,15 @@ $set    	jobs:coral-turtle-population.seen.bottom = true
 
 :: catchScanReef
 @trigger    RequestPartnerHelp
-@when 		JobTaskActive(scanReef)
+@when 		JobTaskActive(scanReefEdge)
 @boostScore -5
 @cutscene
-{@player} What should I do now, {nameof @guide}?
-{@guide}    Scan the Organisms at Site V.
+{@player}   I think I'm lost, {nameof @guide}.
+$if scene:name == "RS-2V"
+    {@guide}	Keep exploring. You need to scan all the organisms here.
+$else
+    {@guide}	Keep exploring. You will need to dive at Site V and scan all the organisms there.
+$endif
 
 :: catchWhatTurtlesEat
 @trigger    RequestPartnerHelp
@@ -142,6 +132,9 @@ $call ArgueComplete()
 {@profCoral} Don't worry. We aren't going to take this lying down.
 {@profCoral} We need to do something to get rid of this plastic, as soon as possible.
              For the turtles!!
+$if JobCompleted(coral-fake-fix), JobCompleted(coral-hunting-lions)
+	$call GiveJournalEntry("N22_HumanIntervention", Silent)
+$endif
 $call CompleteJob()
 
 ::argue.unrelated

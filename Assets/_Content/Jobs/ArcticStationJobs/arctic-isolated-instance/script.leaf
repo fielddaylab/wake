@@ -39,7 +39,7 @@ $endif
 
 :: experimentCompleteZ
 @trigger	ExperimentFinished
-@when		tankType == "Observation", jobs:arctic-isolated-instance.checkedCrab, jobs:arctic-isolated-instance.checkedSeal, jobs:arctic-isolated-instance.checkedShark
+@when		tankType == "Observation", jobs:arctic-isolated-instance.checkedCrab, jobs:arctic-isolated-instance.checkedShark
 @once
 @cutscene
 {@player} Huh. No lo entiendo.
@@ -133,9 +133,6 @@ $endif
 $if ExperimentHasCritter("GlassSponge"), ExperimentHasCritter("SnowCrab")
 	$set jobs:arctic-isolated-instance.checkedCrab = true
 $endif
-$if ExperimentHasCritter("GlassSponge"), ExperimentHasCritter("RibbonSeal")
-	$set jobs:arctic-isolated-instance.checkedSeal = true
-$endif
 $if ExperimentHasCritter("GlassSponge"), ExperimentHasCritter("SalmonShark")
 	$set jobs:arctic-isolated-instance.checkedShark = true
 $endif
@@ -159,14 +156,6 @@ $call CheckJobTasks()
 {@player} What now, {nameof @guide}?
 {@guide}  You need to find out if any predators from Site Z eat Glass Sponges.
 		  I would suggest placing them together in your {h}Observation Tank{/h}. 
-
-:: catchCheckSeal
-@trigger	RequestPartnerHelp
-@when		JobTaskTop(checkPredator), !jobs:arctic-isolated-instance.checkedSeal
-@boostScore -5
-@cutscene
-{@guide}	Use your Observation Tank to find out if any predators from {h}Site Z{/h} eat Glass Sponges.
-			I believe you have more species to observe. 
 
 :: catchCheckShark
 @trigger	RequestPartnerHelp
