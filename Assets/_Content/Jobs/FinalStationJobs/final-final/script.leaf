@@ -239,6 +239,9 @@ $call ArgueComplete()
 $call       Mom->TeleportTo(mom-hidden-pos)
 $set jobs:final-power-disabled = true
 $set jobs:final-mom-hidden = true
+$call LockRoom("Experimentation")
+$call LockRoom("Modeling")
+$call LockRoom("ModelingFoyer")
 $call GiveJournalEntry("53_FinalJob")
 
 :: argueRevisited

@@ -207,6 +207,41 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 2082831966}
+    - target: {fileID: 2789094443033048335, guid: 96ad8e0c3aa2517488b27f20f2837508,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3333531969788973134, guid: 96ad8e0c3aa2517488b27f20f2837508,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3333531969788973134, guid: 96ad8e0c3aa2517488b27f20f2837508,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3333531969788973134, guid: 96ad8e0c3aa2517488b27f20f2837508,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3333531969788973134, guid: 96ad8e0c3aa2517488b27f20f2837508,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3333531969788973134, guid: 96ad8e0c3aa2517488b27f20f2837508,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3333531969788973134, guid: 96ad8e0c3aa2517488b27f20f2837508,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3796027754502764058, guid: 96ad8e0c3aa2517488b27f20f2837508,
         type: 3}
       propertyPath: m_UVRect.width
@@ -380,7 +415,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &468511360
 MonoBehaviour:
@@ -410,6 +445,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_EventId: underwater_loop
   m_CrossfadeDuration: 0
+  m_FadeOutDuration: 0.1
+  m_PlayOnAwake: 1
+  m_Location: {fileID: 0}
 --- !u!114 &468511362
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -510,7 +548,7 @@ Transform:
   - {fileID: 1643728057}
   - {fileID: 1151728832}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &711474611
 MonoBehaviour:
@@ -527,6 +565,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1001 &831283956
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1426,7 +1465,7 @@ PrefabInstance:
     - target: {fileID: 7641851830111207961, guid: 6b31701e034dac24d9891a08bf5bdb9d,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 7641851830111207961, guid: 6b31701e034dac24d9891a08bf5bdb9d,
         type: 3}
@@ -6806,6 +6845,7 @@ MonoBehaviour:
   m_Crossfade: 0.5
   m_StopOnDisable: 1
   m_PlayOnLoad: 1
+  m_DoNotPreload: 0
 --- !u!114 &2138298743
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6876,6 +6916,41 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4110892452540609664, guid: 9e1a17ee241ad8b4b8c9f721464b546c,
+        type: 3}
+      propertyPath: m_ImportantScanConfig.NodeConfig.UnscannedFillColor.a
+      value: 0.6509804
+      objectReference: {fileID: 0}
+    - target: {fileID: 4110892452540609664, guid: 9e1a17ee241ad8b4b8c9f721464b546c,
+        type: 3}
+      propertyPath: m_ImportantScanConfig.NodeConfig.UnscannedFillColor.b
+      value: 0.4198113
+      objectReference: {fileID: 0}
+    - target: {fileID: 4110892452540609664, guid: 9e1a17ee241ad8b4b8c9f721464b546c,
+        type: 3}
+      propertyPath: m_ImportantScanConfig.NodeConfig.UnscannedFillColor.g
+      value: 0.4644412
+      objectReference: {fileID: 0}
+    - target: {fileID: 4110892452540609664, guid: 9e1a17ee241ad8b4b8c9f721464b546c,
+        type: 3}
+      propertyPath: m_ImportantScanConfig.NodeConfig.UnscannedFillColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4110892452540609664, guid: 9e1a17ee241ad8b4b8c9f721464b546c,
+        type: 3}
+      propertyPath: m_ImportantScanConfig.NodeConfig.UnscannedLineColor.b
+      value: 0.033018887
+      objectReference: {fileID: 0}
+    - target: {fileID: 4110892452540609664, guid: 9e1a17ee241ad8b4b8c9f721464b546c,
+        type: 3}
+      propertyPath: m_ImportantScanConfig.NodeConfig.UnscannedLineColor.g
+      value: 0.094741076
+      objectReference: {fileID: 0}
+    - target: {fileID: 4110892452540609664, guid: 9e1a17ee241ad8b4b8c9f721464b546c,
+        type: 3}
+      propertyPath: m_ImportantScanConfig.NodeConfig.UnscannedLineColor.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4110892452540609666, guid: 9e1a17ee241ad8b4b8c9f721464b546c,
         type: 3}
       propertyPath: m_Name
@@ -6884,7 +6959,7 @@ PrefabInstance:
     - target: {fileID: 4110892452540609667, guid: 9e1a17ee241ad8b4b8c9f721464b546c,
         type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4110892452540609667, guid: 9e1a17ee241ad8b4b8c9f721464b546c,
         type: 3}

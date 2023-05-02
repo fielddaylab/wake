@@ -54,6 +54,17 @@ $else
     {@guide}    Head to the {nameof RS-3P} and scan anything we haven't identified yet.
 $endif
 
+:: catchScanProbe
+@trigger    RequestPartnerHelp
+@when 		JobTaskActive(scanProbe)
+@boostScore -5
+@cutscene
+$if scene:name == "RS-3P"
+    {@guide}    Scan the Population Probe there. It must be around here somewhere.
+$else
+    {@guide}    Head to the {nameof RS-3P} and scan the Population Probe there.
+$endif
+
 
 :: catchCountDetritus
 @trigger    RequestPartnerHelp

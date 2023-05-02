@@ -132,6 +132,9 @@ $call CameraSnapToPose("ShopSubCam")
 {@player}       Thank you,| Tío.{wait 1} Wish me luck.
 $set jobs:final-uncleHelped = true
 $set jobs:final-power-disabled = false
+$call UnlockRoom("Experimentation")
+$call UnlockRoom("Modeling")
+$call UnlockRoom("ModelingFoyer")
 $call CheckJobTasks()
 
 #ShopHandler(postFinalJob, JobCompleted(final-final))
