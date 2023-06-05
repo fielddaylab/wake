@@ -37,7 +37,8 @@ $endif
 {@player}   Wow. She used to keep so many notes and sketches in there!
 {@guide}    Would you like me to digitally scan its contents, O?
 {@player}   Oh... no thanks, {nameof @guide}. 
-            I think I'd like to look through it on my own. 
+            I think I'd like to look through it on my own.
+$call GiveJournalEntry("N35_MerTrunk")
 $set world:cabin.first-visit-complete = true
 
 :: TrunkAfterJournal
