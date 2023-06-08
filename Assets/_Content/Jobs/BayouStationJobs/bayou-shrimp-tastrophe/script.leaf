@@ -29,62 +29,63 @@ $set jobs:bayou-shrimp-tastrophe.sync-failed = true
 
 :: helpModelSync.Visual
 @trigger    RequestPartnerHelp
-@when 		JobTaskActive(modelFish), scene:name == "Modeling", modeling:phase == "visual"
+@when 		JobTaskActive(createModel), scene:name == "Modeling", modeling:phase == "visual"
 @cutscene
 $branch .modelSuggestions
 
 :: helpModelSync.Sync
 @trigger    RequestPartnerHelp
-@when 		JobTaskActive(modelFish), scene:name == "Modeling", modeling:phase == "sync"
+@when 		JobTaskActive(createModel), scene:name == "Modeling", modeling:phase == "sync"
 @cutscene
 $branch .modelSuggestions
 
 :: modelSuggestions
-$if HasFact(WhiteShrimp.Reproduce), HasFact(WhiteShrimp.Reproduce.Stressed), HasFact(WhiteShrimp.Consume.Oxygen), HasFact(WhiteShrimp.Produce.CarbonDioxide), HasFact(Cyanobacteria.Reproduce), HasFact(Cyanobacteria.Reproduce.Stressed), HasFact(Cyanobacteria.Produce.Oxygen), HasFact(Cyanobacteria.Consume.CarbonDioxide), HasFact(Cyanobacteria.Consume.Light), HasFact(DecomposingBacteria.Reproduce), HasFact(DecomposingBacteria.Eats.Detritus), HasFact(DecomposingBacteria.Eats.Detritus.Stressed), IsFactFullyUpgraded(DecomposingBacteria.Eats.Detritus.Stressed), HasFact(DecomposingBacteria.Consume.Oxygen), HasFact(DecomposingBacteria.Produce.CarbonDioxide) 
-    $if HasFact(Z_OpenOcean.SalmonCompetition.Model.Visual)
-        {@guide}    You're done with this portion! Head to the {h}Describe{/h} tab next.
-    $else
-        {@guide}    Once you import your facts and save the Visual model, we should be good to make our Describe model!
-    $endif
-$else
-    $if !jobs:bayou-shrimp-tastrophe.sync-failed
-        {@guide}    Time to try out your model in the {h}Describe{/h} tab.
-    $else
-        {@guide}    Seems like we don't have enough information to complete our model accurately.
-                    Look for {h}question marks{/h} in the Visual model interface, those point to where we may need more data.
-        $if !HasFact(WhiteShrimp.Reproduce)
-            $branch .suggestReproduce
-        $elseif !HasFact(WhiteShrimp.Reproduce.Stressed)
-            $branch .suggestReproduce
-        $elseif !HasFact(WhiteShrimp.Consume.Oxygen)
-            $branch .suggestMeasureEnviro
-        $elseif !HasFact(WhiteShrimp.Produce.CarbonDioxide)
-            $branch .suggestMeasureEnviro
-        $elseif !HasFact(Cyanobacteria.Reproduce)
-            $branch .suggestReproduce
-        $elseif !HasFact(Cyanobacteria.Reproduce.Stressed)
-            $branch .suggestReproduce
-        $elseif !HasFact(Cyanobacteria.Produce.Oxygen)
-            $branch .suggestMeasureEnviro
-        $elseif !HasFact(Cyanobacteria.Consume.CarbonDioxide)
-            $branch .suggestMeasureEnviro
-        $elseif !HasFact(Cyanobacteria.Consume.Light)
-            $branch .suggestMeasureEnviro
-        $elseif !HasFact(DecomposingBacteria.Reproduce)
-            $branch .suggestReproduce
-        $elseif !HasFact(DecomposingBacteria.Eats.Detritus)
-            $branch .suggestDecompEat
-        $elseif !HasFact(DecomposingBacteria.Eats.Detritus.Stressed)
-            $branch .suggestDecompEat
-        $elseif !IsFactFullyUpgraded(DecomposingBacteria.Eats.Detritus.Stressed)
-            $branch .suggestDecompEat
-        $elseif !HasFact(DecomposingBacteria.Consume.Oxygen)
-            $branch .suggestMeasureEnviro
-        $elseif !HasFact(DecomposingBacteria.Produce.CarbonDioxide) 
-            $branch .suggestMeasureEnviro
+    $if HasFact(P_DeadZone.Model.Shrimptastrophe.Visual)
+        $if !jobs:bayou-shrimp-tastrophe.sync-failed
+            {@guide}    Time to try out your model in the {h}Describe{/h} tab.
+        $else
+            $branch .notEnoughData
         $endif
+    $else
+        $branch .notEnoughData
     $endif
-$endif
+
+:: notEnoughData
+{@guide}    Seems like we don't have enough information to complete our model accurately.
+                        Look for {h}question marks{/h} in the Visual model interface, those point to where we may need more data.
+            $if !HasFact(WhiteShrimp.Reproduce)
+                $branch .suggestReproduce
+            $elseif !HasFact(WhiteShrimp.Reproduce.Stressed)
+                $branch .suggestReproduce
+            $elseif !HasFact(WhiteShrimp.Consume.Oxygen)
+                $branch .suggestMeasureEnviro
+            $elseif !HasFact(WhiteShrimp.Produce.CarbonDioxide)
+                $branch .suggestMeasureEnviro
+            $elseif !HasFact(Cyanobacteria.Reproduce)
+                $branch .suggestReproduce
+            $elseif !HasFact(Cyanobacteria.Reproduce.Stressed)
+                $branch .suggestReproduce
+            $elseif !HasFact(Cyanobacteria.Produce.Oxygen)
+                $branch .suggestMeasureEnviro
+            $elseif !HasFact(Cyanobacteria.Consume.CarbonDioxide)
+                $branch .suggestMeasureEnviro
+            $elseif !HasFact(Cyanobacteria.Consume.Light)
+                $branch .suggestMeasureEnviro
+            $elseif !HasFact(DecomposingBacteria.Reproduce)
+                $branch .suggestReproduce
+            $elseif !HasFact(DecomposingBacteria.Eats.Detritus)
+                $branch .suggestDecompEat
+            $elseif !HasFact(DecomposingBacteria.Consume.Oxygen)
+                $branch .suggestMeasureEnviro
+            $elseif !HasFact(DecomposingBacteria.Produce.CarbonDioxide) 
+                $branch .suggestMeasureEnviro
+            $elseif !HasFact(WhiteShrimp.Eats.Cyanobacteria)
+                $branch .suggestShrimpEat
+            $elseif !IsFactFullyUpgraded(WhiteShrimp.Eats.Cyanobacteria)
+                $branch .suggestEatRates
+            $else
+                {@guide}    When you think you've found the missing pieces, try to simulate again with the new data.
+            $endif
 
 :: suggestReproduce
 {@guide}    Did you get all the reproduction rates?
@@ -95,6 +96,11 @@ $endif
 :: suggestDecompEat
 {@guide}    Maybe look into what {pluralnameof DecomposingBacteria} eat?
 
+:: suggestShrimpEat
+{@guide}    Maybe look into what {pluralnameof WhiteShrimp} eat?
+
+:: suggestEatRates
+{@guide}    Maybe look into the eating rates of these organisms?
 
 // CATCH-ALL GUIDE TEXT
 
