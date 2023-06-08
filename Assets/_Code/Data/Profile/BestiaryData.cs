@@ -73,6 +73,10 @@ namespace Aqua.Profile
             return false;
         }
 
+        public IEnumerable<StringHash32> GetEntityIds() {
+            return m_ObservedEntities;
+        }
+
         public IEnumerable<BestiaryDesc> GetEntities()
         {
             foreach(var entityId in m_ObservedEntities)
@@ -170,6 +174,10 @@ namespace Aqua.Profile
         {
             Assert.True(Services.Assets.Bestiary.HasFactWithId(inFactId), "Fact with id '{0}' does not exist", inFactId);
             return m_ObservedFacts.Contains(inFactId) || Services.Assets.Bestiary.IsAutoFact(inFactId);
+        }
+
+        public IEnumerable<StringHash32> GetFactIds() {
+            return m_ObservedFacts;
         }
 
         public bool RegisterFact(StringHash32 inFactId, bool inbIncludeEntity = false)
