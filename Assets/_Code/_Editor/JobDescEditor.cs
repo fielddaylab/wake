@@ -23,6 +23,7 @@ namespace Aqua.Editor
         private SerializedProperty m_DescIdProperty;
         private SerializedProperty m_DescShortIdProperty;
 
+        private SerializedProperty m_TopicComplexityProperty;
         private SerializedProperty m_ExperimentDifficultyProperty;
         private SerializedProperty m_ModelingDifficultyProperty;
         private SerializedProperty m_ArgumentationDifficultyProperty;
@@ -91,6 +92,7 @@ namespace Aqua.Editor
             m_CategoryProperty = serializedObject.FindProperty("m_Category");
             m_FlagsProperty = serializedObject.FindProperty("m_Flags");
             m_NameIdProperty = serializedObject.FindProperty("m_NameId");
+            m_TopicComplexityProperty = serializedObject.FindProperty("m_TopicComplexity");
             m_PosterIdProperty = serializedObject.FindProperty("m_PosterId");
             m_DescIdProperty = serializedObject.FindProperty("m_DescId");
             m_DescShortIdProperty = serializedObject.FindProperty("m_DescShortId");
@@ -152,6 +154,7 @@ namespace Aqua.Editor
             EditorGUILayout.PropertyField(m_CategoryProperty);
             EditorGUILayout.PropertyField(m_FlagsProperty);
             EditorGUILayout.PropertyField(m_StationIdProperty);
+            EditorGUILayout.PropertyField(m_TopicComplexityProperty);
 
             if (Section("Text", ref m_TextExpanded)) {
                 EditorGUILayout.PropertyField(m_NameIdProperty);
@@ -235,7 +238,6 @@ namespace Aqua.Editor
 
                 m_ExtraAssetsList.DoLayoutList();
             }
-
             if (Section("Difficulty Ratings", ref m_DifficultyExpanded)) {
                 EditorGUILayout.PropertyField(m_ExperimentDifficultyProperty);
                 EditorGUILayout.PropertyField(m_ModelingDifficultyProperty);

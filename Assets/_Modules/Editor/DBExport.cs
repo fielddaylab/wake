@@ -37,6 +37,8 @@ namespace Aqua.Editor {
         private class JobData : ISerializedObject {
             public string Id;
             public ActiveRange Date;
+            public int topicComplexity;
+
             public MechanicRatingsData Difficulties;
             public int RequiredExp;
             public List<IdentifierData> RequiredJobs = new List<IdentifierData>();
@@ -48,6 +50,7 @@ namespace Aqua.Editor {
             public void Serialize(Serializer ioSerializer) {
                 ioSerializer.Serialize("id", ref Id);
                 ioSerializer.Object("date", ref Date);
+                ioSerializer.Serialize("topicComplexity", ref topicComplexity, 0);
                 ioSerializer.Serialize("requiredExp", ref RequiredExp, 0);
                 ioSerializer.ObjectArray("requiredJobs", ref RequiredJobs);
                 ioSerializer.ObjectArray("requiredUpgrades", ref RequiredUpgrades);
@@ -186,6 +189,7 @@ namespace Aqua.Editor {
                 }
 
                 jobData.RequiredExp = job.RequiredExp();
+                jobData.topicComplexity = job.TopicComplexity();
                 jobData.Difficulties.ExperimentationDifficulty = job.Difficulty(ScienceActivityType.Experimentation);
                 jobData.Difficulties.ModelingDifficulty = job.Difficulty(ScienceActivityType.Modeling);
                 jobData.Difficulties.ArgumentationDifficulty = job.Difficulty(ScienceActivityType.Argumentation);
