@@ -51,6 +51,8 @@ MonoBehaviour:
       m_Source: jobs.arctic-above-n-below.task.scanNew
       m_HashValue: 2211061590
     Category: 2
+    TaskComplexity: 0
+    ScaffoldingComplexity: 0
     Steps:
     - Type: 0
       Target:
@@ -84,6 +86,8 @@ MonoBehaviour:
       m_Source: jobs.arctic-above-n-below.task.countNew
       m_HashValue: 1901418690
     Category: 2
+    TaskComplexity: 0
+    ScaffoldingComplexity: 0
     Steps:
     - Type: 1
       Target:
@@ -119,6 +123,8 @@ MonoBehaviour:
       m_Source: jobs.arctic-above-n-below.task.experimentInteractions
       m_HashValue: 1293197251
     Category: 3
+    TaskComplexity: 1
+    ScaffoldingComplexity: 2
     Steps:
     - Type: 1
       Target:
@@ -130,29 +136,14 @@ MonoBehaviour:
     - m_Source: countNew
       m_HashValue: 1760192562
   - Id:
-      m_Source: createModel
-      m_HashValue: 2425868018
-    LabelId:
-      m_Source: jobs.arctic-above-n-below.task.createModel
-      m_HashValue: 3081049218
-    Category: 4
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: Y_IceCrevice.Model.AboveAndBelowVisual
-        m_HashValue: 755100527
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: experimentInteractions
-      m_HashValue: 2119170003
-  - Id:
       m_Source: reportBack
       m_HashValue: 2059105924
     LabelId:
       m_Source: jobs.arctic-above-n-below.task.reportBack
       m_HashValue: 2565893556
     Category: 5
+    TaskComplexity: 1
+    ScaffoldingComplexity: 2
     Steps:
     - Type: 10
       Target:
@@ -163,6 +154,25 @@ MonoBehaviour:
     PrerequisiteTaskIds:
     - m_Source: createModel
       m_HashValue: 2425868018
+  - Id:
+      m_Source: createModel
+      m_HashValue: 2425868018
+    LabelId:
+      m_Source: jobs.arctic-above-n-below.task.createModel
+      m_HashValue: 3081049218
+    Category: 4
+    TaskComplexity: 2
+    ScaffoldingComplexity: 1
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: Y_IceCrevice.Model.AboveAndBelowVisual
+        m_HashValue: 755100527
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: experimentInteractions
+      m_HashValue: 2119170003
   m_OptimizedTaskList:
   - Id:
       m_Source: scanNew
@@ -172,6 +182,8 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.arctic-above-n-below.task.scanNew
       m_HashValue: 2211061590
+    TaskComplexity: 0
+    ScaffoldingComplexity: 0
     Steps:
     - Type: 0
       Target:
@@ -206,6 +218,8 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.arctic-above-n-below.task.countNew
       m_HashValue: 1901418690
+    TaskComplexity: 0
+    ScaffoldingComplexity: 0
     Steps:
     - Type: 1
       Target:
@@ -240,6 +254,8 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.arctic-above-n-below.task.experimentInteractions
       m_HashValue: 1293197251
+    TaskComplexity: 0
+    ScaffoldingComplexity: 0
     Steps:
     - Type: 1
       Target:
@@ -256,6 +272,8 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.arctic-above-n-below.task.createModel
       m_HashValue: 3081049218
+    TaskComplexity: 0
+    ScaffoldingComplexity: 0
     Steps:
     - Type: 1
       Target:
@@ -272,6 +290,8 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.arctic-above-n-below.task.reportBack
       m_HashValue: 2565893556
+    TaskComplexity: 0
+    ScaffoldingComplexity: 0
     Steps:
     - Type: 10
       Target:

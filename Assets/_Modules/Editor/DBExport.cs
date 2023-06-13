@@ -50,7 +50,7 @@ namespace Aqua.Editor {
             public void Serialize(Serializer ioSerializer) {
                 ioSerializer.Serialize("id", ref Id);
                 ioSerializer.Object("date", ref Date);
-                ioSerializer.Serialize("topicComplexity", ref topicComplexity, 0);
+                ioSerializer.Serialize("topicComplexity", ref topicComplexity);
                 ioSerializer.Serialize("requiredExp", ref RequiredExp, 0);
                 ioSerializer.ObjectArray("requiredJobs", ref RequiredJobs);
                 ioSerializer.ObjectArray("requiredUpgrades", ref RequiredUpgrades);
@@ -97,10 +97,14 @@ namespace Aqua.Editor {
 
         private class TaskData : IdentifierData {
             public JobDesc.JobTaskCategory Category;
+            public int TaskComplexity;
+            public int ScaffoldingComplexity;
 
             public override void Serialize(Serializer ioSerializer) {
                 base.Serialize(ioSerializer);
                 ioSerializer.Enum("category", ref Category, JobDesc.JobTaskCategory.Unknown, FieldOptions.Optional);
+                ioSerializer.Serialize("taskComplexity", ref TaskComplexity);
+                ioSerializer.Serialize("scaffoldingComplexity", ref ScaffoldingComplexity);
             }
         }
 
@@ -185,6 +189,8 @@ namespace Aqua.Editor {
                     }
 
                     taskData.Category = job.EditorTaskCategory(taskId);
+                    taskData.TaskComplexity = job.EditorTaskComplexity(taskId);
+                    taskData.ScaffoldingComplexity = job.EditorTaskScaffoldingComplexity(taskId);
                     taskData.Included = true;
                 }
 

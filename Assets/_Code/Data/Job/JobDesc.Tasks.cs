@@ -35,6 +35,8 @@ namespace Aqua
             public SerializedHash32 Id;
             public TextId LabelId;
             public JobTaskCategory Category;
+            [SerializeField, Range(0, 3)] public int TaskComplexity;
+            [SerializeField, Range(0, 3)] public int  ScaffoldingComplexity;
             
             public JobStep[] Steps = null;
 
@@ -57,6 +59,24 @@ namespace Aqua
                 }
             }
             return JobTaskCategory.Unknown;
+        }
+
+        internal int EditorTaskComplexity(StringHash32 id) {
+            foreach(var task in m_Tasks){
+                if (task.Id == id) {
+                    return task.TaskComplexity;
+                }
+            }
+            return 0;
+        }
+
+        internal int EditorTaskScaffoldingComplexity(StringHash32 id) {
+            foreach(var task in m_Tasks){
+                if (task.Id == id) {
+                    return task.ScaffoldingComplexity;
+                }
+            }
+            return 0;
         }
 
         int IBaked.Order { get { return 16; }}

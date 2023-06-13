@@ -59,6 +59,8 @@ MonoBehaviour:
       m_Source: jobs.coral-hunting-lions.task.scanCritters
       m_HashValue: 1635544448
     Category: 2
+    TaskComplexity: 0
+    ScaffoldingComplexity: 0
     Steps:
     - Type: 0
       Target:
@@ -122,6 +124,8 @@ MonoBehaviour:
       m_Source: jobs.coral-hunting-lions.task.scanHistory
       m_HashValue: 32716956
     Category: 2
+    TaskComplexity: 0
+    ScaffoldingComplexity: 0
     Steps:
     - Type: 1
       Target:
@@ -143,6 +147,8 @@ MonoBehaviour:
       m_Source: jobs.coral-hunting-lions.task.countPopulation
       m_HashValue: 3885012231
     Category: 2
+    TaskComplexity: 0
+    ScaffoldingComplexity: 0
     Steps:
     - Type: 1
       Target:
@@ -188,6 +194,8 @@ MonoBehaviour:
       m_Source: jobs.coral-hunting-lions.task.observeEatRules
       m_HashValue: 826814686
     Category: 3
+    TaskComplexity: 1
+    ScaffoldingComplexity: 2
     Steps:
     - Type: 1
       Target:
@@ -223,6 +231,8 @@ MonoBehaviour:
       m_Source: jobs.coral-hunting-lions.task.measureEatRates
       m_HashValue: 1847961002
     Category: 3
+    TaskComplexity: 2
+    ScaffoldingComplexity: 2
     Steps:
     - Type: 2
       Target:
@@ -252,65 +262,14 @@ MonoBehaviour:
     - m_Source: obtainStressRules
       m_HashValue: 3804672883
   - Id:
-      m_Source: measureStressReproduceRates
-      m_HashValue: 795492441
-    LabelId:
-      m_Source: jobs.coral-hunting-lions.task.measureStressReproduceRates
-      m_HashValue: 651488821
-    Category: 3
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: StaghornCoral.Reproduce
-        m_HashValue: 3964275685
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: BlueheadWrasse.Reproduce
-        m_HashValue: 1563920227
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: BlueTang.Reproduce
-        m_HashValue: 427368968
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: Lionfish.Reproduce
-        m_HashValue: 3773007000
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: TurfAlgae.Reproduce
-        m_HashValue: 1199979687
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: Sargassum.Reproduce
-        m_HashValue: 3860466180
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: Ick.Reproduce
-        m_HashValue: 516665143
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: measureEatRates
-      m_HashValue: 1302348262
-  - Id:
       m_Source: obtainStressRules
       m_HashValue: 3804672883
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.obtainStressRules
       m_HashValue: 1076555463
     Category: 3
+    TaskComplexity: 2
+    ScaffoldingComplexity: 2
     Steps:
     - Type: 1
       Target:
@@ -424,12 +383,69 @@ MonoBehaviour:
     - m_Source: observeEatRules
       m_HashValue: 4279728306
   - Id:
+      m_Source: measureStressReproduceRates
+      m_HashValue: 795492441
+    LabelId:
+      m_Source: jobs.coral-hunting-lions.task.measureStressReproduceRates
+      m_HashValue: 651488821
+    Category: 3
+    TaskComplexity: 3
+    ScaffoldingComplexity: 2
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: StaghornCoral.Reproduce
+        m_HashValue: 3964275685
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BlueheadWrasse.Reproduce
+        m_HashValue: 1563920227
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: BlueTang.Reproduce
+        m_HashValue: 427368968
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Lionfish.Reproduce
+        m_HashValue: 3773007000
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: TurfAlgae.Reproduce
+        m_HashValue: 1199979687
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Sargassum.Reproduce
+        m_HashValue: 3860466180
+      ConditionString: 
+      Amount: 0
+    - Type: 1
+      Target:
+        m_Source: Ick.Reproduce
+        m_HashValue: 516665143
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: measureEatRates
+      m_HashValue: 1302348262
+  - Id:
       m_Source: obtainChemistry
       m_HashValue: 1751383414
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.obtainChemistry
       m_HashValue: 2308555914
     Category: 3
+    TaskComplexity: 3
+    ScaffoldingComplexity: 2
     Steps:
     - Type: 1
       Target:
@@ -531,6 +547,8 @@ MonoBehaviour:
       m_Source: jobs.coral-hunting-lions.task.predictModel
       m_HashValue: 4179720499
     Category: 4
+    TaskComplexity: 2
+    ScaffoldingComplexity: 2
     Steps:
     - Type: 1
       Target:
@@ -548,6 +566,8 @@ MonoBehaviour:
       m_Source: jobs.coral-hunting-lions.task.interveneModel
       m_HashValue: 113021158
     Category: 4
+    TaskComplexity: 3
+    ScaffoldingComplexity: 1
     Steps:
     - Type: 1
       Target:
@@ -565,6 +585,8 @@ MonoBehaviour:
       m_Source: jobs.coral-hunting-lions.task.argueIncentive
       m_HashValue: 1939686082
     Category: 5
+    TaskComplexity: 3
+    ScaffoldingComplexity: 3
     Steps:
     - Type: 10
       Target:
@@ -584,6 +606,8 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.countPopulation
       m_HashValue: 3885012231
+    TaskComplexity: 0
+    ScaffoldingComplexity: 0
     Steps:
     - Type: 1
       Target:
@@ -630,6 +654,8 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.observeEatRules
       m_HashValue: 826814686
+    TaskComplexity: 0
+    ScaffoldingComplexity: 0
     Steps:
     - Type: 1
       Target:
@@ -664,6 +690,8 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.obtainStressRules
       m_HashValue: 1076555463
+    TaskComplexity: 0
+    ScaffoldingComplexity: 0
     Steps:
     - Type: 1
       Target:
@@ -782,6 +810,8 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.measureEatRates
       m_HashValue: 1847961002
+    TaskComplexity: 0
+    ScaffoldingComplexity: 0
     Steps:
     - Type: 2
       Target:
@@ -816,6 +846,8 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.measureStressReproduceRates
       m_HashValue: 651488821
+    TaskComplexity: 0
+    ScaffoldingComplexity: 0
     Steps:
     - Type: 1
       Target:
@@ -868,6 +900,8 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.obtainChemistry
       m_HashValue: 2308555914
+    TaskComplexity: 0
+    ScaffoldingComplexity: 0
     Steps:
     - Type: 1
       Target:
@@ -968,6 +1002,8 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.predictModel
       m_HashValue: 4179720499
+    TaskComplexity: 0
+    ScaffoldingComplexity: 0
     Steps:
     - Type: 1
       Target:
@@ -984,6 +1020,8 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.interveneModel
       m_HashValue: 113021158
+    TaskComplexity: 0
+    ScaffoldingComplexity: 0
     Steps:
     - Type: 1
       Target:
@@ -1000,6 +1038,8 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.scanCritters
       m_HashValue: 1635544448
+    TaskComplexity: 0
+    ScaffoldingComplexity: 0
     Steps:
     - Type: 0
       Target:
@@ -1064,6 +1104,8 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.scanHistory
       m_HashValue: 32716956
+    TaskComplexity: 0
+    ScaffoldingComplexity: 0
     Steps:
     - Type: 1
       Target:
@@ -1086,6 +1128,8 @@ MonoBehaviour:
     LabelId:
       m_Source: jobs.coral-hunting-lions.task.argueIncentive
       m_HashValue: 1939686082
+    TaskComplexity: 0
+    ScaffoldingComplexity: 0
     Steps:
     - Type: 10
       Target:

@@ -257,7 +257,7 @@ namespace Aqua.Editor
             JobDesc job = (JobDesc) target;
             JobDesc.EditorJobTask jobTask = job.m_Tasks[index];
             EditorGUI.LabelField(rect, jobTask.Id.ToDebugString());
-        }
+        } 
 
         private void RenderTaskSettings(JobDesc inJob, int inIndex) {
             if (inIndex < 0 || inIndex >= inJob.m_Tasks.Length) {
@@ -270,9 +270,14 @@ namespace Aqua.Editor
                     SerializedProperty idProperty = taskAsProperty.FindPropertyRelative("Id");
                     SerializedProperty labelProperty = taskAsProperty.FindPropertyRelative("LabelId");
                     SerializedProperty categoryProperty = taskAsProperty.FindPropertyRelative("Category");
+                    SerializedProperty taskComplexity = taskAsProperty.FindPropertyRelative("TaskComplexity");
+                    SerializedProperty scaffoldingComplexity = taskAsProperty.FindPropertyRelative("ScaffoldingComplexity");
                     EditorGUILayout.PropertyField(idProperty);
                     EditorGUILayout.PropertyField(labelProperty);
                     EditorGUILayout.PropertyField(categoryProperty);
+                    EditorGUILayout.PropertyField(taskComplexity);
+                    EditorGUILayout.PropertyField(scaffoldingComplexity);
+
 
                     EditorGUILayout.Space();
 
