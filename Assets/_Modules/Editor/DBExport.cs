@@ -37,7 +37,6 @@ namespace Aqua.Editor {
         private class JobData : ISerializedObject {
             public string Id;
             public ActiveRange Date;
-            public int topicComplexity;
 
             public MechanicRatingsData Difficulties;
             public int RequiredExp;
@@ -50,7 +49,6 @@ namespace Aqua.Editor {
             public void Serialize(Serializer ioSerializer) {
                 ioSerializer.Serialize("id", ref Id);
                 ioSerializer.Object("date", ref Date);
-                ioSerializer.Serialize("topicComplexity", ref topicComplexity);
                 ioSerializer.Serialize("requiredExp", ref RequiredExp, 0);
                 ioSerializer.ObjectArray("requiredJobs", ref RequiredJobs);
                 ioSerializer.ObjectArray("requiredUpgrades", ref RequiredUpgrades);
@@ -75,11 +73,14 @@ namespace Aqua.Editor {
             public int ExperimentationDifficulty;
             public int ModelingDifficulty;
             public int ArgumentationDifficulty;
+            public int TopicComplexity;
+
 
             public void Serialize(Serializer ioSerializer) {
                 ioSerializer.Serialize("experimentation", ref ExperimentationDifficulty);
                 ioSerializer.Serialize("modeling", ref ModelingDifficulty);
                 ioSerializer.Serialize("argumentation", ref ArgumentationDifficulty);
+                ioSerializer.Serialize("topicComplexity", ref TopicComplexity);
             }
         }
 
@@ -195,7 +196,7 @@ namespace Aqua.Editor {
                 }
 
                 jobData.RequiredExp = job.RequiredExp();
-                jobData.topicComplexity = job.TopicComplexity();
+                jobData.Difficulties.TopicComplexity = job.TopicComplexity();
                 jobData.Difficulties.ExperimentationDifficulty = job.Difficulty(ScienceActivityType.Experimentation);
                 jobData.Difficulties.ModelingDifficulty = job.Difficulty(ScienceActivityType.Modeling);
                 jobData.Difficulties.ArgumentationDifficulty = job.Difficulty(ScienceActivityType.Argumentation);
