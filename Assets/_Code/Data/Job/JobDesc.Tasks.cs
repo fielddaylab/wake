@@ -52,12 +52,14 @@ namespace Aqua
             return ArrayUtils.MapFrom(m_Tasks, (t) => t.Id.ToDebugString());
         }
 
-        public SerializedHash32[] EditorReqTaskIds(StringHash32 id) {
+        public string[] EditorReqTaskIds(StringHash32 id) {
             foreach(var task in m_Tasks) {
                 if (task.Id == id) {
-                    return task.PrerequisiteTaskIds;
+                    // return array of prereq task IDs from the given task ID
+                    return ArrayUtils.MapFrom(task.PrerequisiteTaskIds, (t) => t.ToDebugString());
                 }
             }
+            Log.Error("[JobDesc] Task '{0}' not found in job '{1}', name, id.ToDebugString()");
             return null;
         }
 
@@ -86,6 +88,15 @@ namespace Aqua
                 }
             }
             return 0;
+        }
+
+        public JobStep[] EditorJobTaskSteps(StringHash32 id) {
+            foreach(var task in m_Tasks) {
+                if (task.Id == id) {
+                    return task.Steps;
+                }
+            }
+            return null;
         }
 
         int IBaked.Order { get { return 16; }}

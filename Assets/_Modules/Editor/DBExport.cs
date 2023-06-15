@@ -102,6 +102,7 @@ namespace Aqua.Editor {
             public int ScaffoldingComplexity;
 
             public List<IdentifierData> ReqTasks = new List<IdentifierData>();
+            public List<StepData> Steps = new List<StepData>();
 
             public override void Serialize(Serializer ioSerializer) {
                 base.Serialize(ioSerializer);
@@ -109,7 +110,19 @@ namespace Aqua.Editor {
                 ioSerializer.Serialize("taskComplexity", ref TaskComplexity);
                 ioSerializer.Serialize("scaffoldingComplexity", ref ScaffoldingComplexity);
                 ioSerializer.ObjectArray("requiredTasks", ref ReqTasks);
+                ioSerializer.ObjectArray("steps", ref Steps);
             }
+        }
+
+        private class StepData : IdentifierData {
+            public JobStepType StepType;
+
+            public override void Serialize(Serializer ioSerializer)
+            {
+                ioSerializer.Enum("stepType", ref StepType, JobStepType.Unknown);
+                base.Serialize(ioSerializer);
+            }
+
         }
 
         [MenuItem("Aqualab/Export DB")]
@@ -198,17 +211,38 @@ namespace Aqua.Editor {
                     taskData.Included = true;
 
                     foreach (var reqTaskId in job.EditorReqTaskIds(taskId)){
-                        string reqTaskString = reqTaskId.ToDebugString(); 
-                        IdentifierData reqTaskData = taskData.ReqTasks.Find((t) => t.Id == reqTaskString);
+                        IdentifierData reqTaskData = taskData.ReqTasks.Find((t) => t.Id == reqTaskId);
                         if (reqTaskData == null) {
                             reqTaskData = new IdentifierData();
-                            reqTaskData.Id = reqTaskString;
+                            reqTaskData.Id = reqTaskId;
                             reqTaskData.Date.Added = nowTS;
                             reqTaskData.Date.Updated = nowTS;
                             taskData.ReqTasks.Add(reqTaskData);
                             Log.Msg("[DBExport] New task '{0}' required task '{1}' found", taskId, reqTaskId);
                         }
                         reqTaskData.Included = true;
+                    }
+
+                    foreach (var step in job.EditorJobTaskSteps(taskId)){
+                        if (step.Type == JobStepType.AcquireBestiaryEntry || 
+                            step.Type == JobStepType.AcquireFact ||
+                            step.Type == JobStepType.UpgradeFact){
+                                string stepId = step.Target.ToDebugString();
+                                StepData stepData = taskData.Steps.Find((s) => s.Id == stepId && s.StepType == step.Type);
+                                if (stepData == null) {
+                                    stepData = new StepData();
+                                    stepData.Id = stepId;
+                                    stepData.Date.Added = nowTS;
+                                    stepData.Date.Deprecated = nowTS;
+                                    stepData.Date.Updated = nowTS;
+                                    taskData.Steps.Add(stepData);
+                                    Log.Msg("[DBExport] New step '{0}' in task '{1}' found", stepId, taskId);
+                                }
+
+                                stepData.StepType = step.Type;
+                                stepData.Included = true;
+                            }
+
                     }
                 }
 
@@ -283,6 +317,16 @@ namespace Aqua.Editor {
                         } else if (reqTask.Included && reqTask.Date.Deprecated != 0) {
                             Log.Warn("[DBExport] Task '{0}' required task '{1}' was deprecated but is now valid again? Please don't do that.", task.Id, reqTask.Id);
                             reqTask.Date.Deprecated = 0;
+                        }
+                    }
+
+                    foreach (var step in task.Steps) {
+                        if (!step.Included && step.Date.Deprecated == 0) {
+                            Log.Msg("[DBExport] Task '{0}' step '{1}' found to be deprecated", task.Id, step.Id);
+                            step.Date.Deprecated = nowTS; 
+                        } else if (step.Included && step.Date.Deprecated != 0) {
+                            Log.Warn("[DBExport] Task '{0}' required step '{1}' was deprecated but is now valid again? Please don't do that.", task.Id, step.Id);
+                            step.Date.Deprecated = 0;
                         }
                     }
                 }
