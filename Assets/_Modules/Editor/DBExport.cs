@@ -88,7 +88,7 @@ namespace Aqua.Editor {
             public string Id;
             public ActiveRange Date;
 
-            internal bool Included;
+            internal bool Included = false;
 
             public virtual void Serialize(Serializer ioSerializer) {
                 ioSerializer.Serialize("id", ref Id);
@@ -101,11 +101,14 @@ namespace Aqua.Editor {
             public int TaskComplexity;
             public int ScaffoldingComplexity;
 
+            public List<IdentifierData> ReqTasks = new List<IdentifierData>();
+
             public override void Serialize(Serializer ioSerializer) {
                 base.Serialize(ioSerializer);
                 ioSerializer.Enum("category", ref Category, JobDesc.JobTaskCategory.Unknown, FieldOptions.Optional);
                 ioSerializer.Serialize("taskComplexity", ref TaskComplexity);
                 ioSerializer.Serialize("scaffoldingComplexity", ref ScaffoldingComplexity);
+                ioSerializer.ObjectArray("requiredTasks", ref ReqTasks);
             }
         }
 
@@ -193,7 +196,22 @@ namespace Aqua.Editor {
                     taskData.TaskComplexity = job.EditorTaskComplexity(taskId);
                     taskData.ScaffoldingComplexity = job.EditorTaskScaffoldingComplexity(taskId);
                     taskData.Included = true;
+
+                    foreach (var reqTaskId in job.EditorReqTaskIds(taskId)){
+                        string reqTaskString = reqTaskId.ToDebugString(); 
+                        IdentifierData reqTaskData = taskData.ReqTasks.Find((t) => t.Id == reqTaskString);
+                        if (reqTaskData == null) {
+                            reqTaskData = new IdentifierData();
+                            reqTaskData.Id = reqTaskString;
+                            reqTaskData.Date.Added = nowTS;
+                            reqTaskData.Date.Updated = nowTS;
+                            taskData.ReqTasks.Add(reqTaskData);
+                            Log.Msg("[DBExport] New task '{0}' required task '{1}' found", taskId, reqTaskId);
+                        }
+                        reqTaskData.Included = true;
+                    }
                 }
+
 
                 jobData.RequiredExp = job.RequiredExp();
                 jobData.Difficulties.TopicComplexity = job.TopicComplexity();
@@ -255,6 +273,16 @@ namespace Aqua.Editor {
                         } else if (task.Included && task.Date.Deprecated != 0) {
                             Log.Warn("[DBExport] Job '{0}' task '{1}' was deprecated but is now valid again? Please don't do that.", job.Id, task.Id);
                             task.Date.Deprecated = 0;
+                        }
+
+                        foreach (var reqTask in task.ReqTasks) {
+                            if (!reqTask.Included && reqTask.Date.Deprecated == 0) {
+                                Log.Msg("[DBExport] Task '{0}' required task '{1}' found to be deprecated", task.Id, reqTask.Id);
+                               reqTask.Date.Deprecated = nowTS; 
+                            } else if (reqTask.Included && reqTask.Date.Deprecated != 0) {
+                                Log.Warn("[DBExport] Task '{0}' required task '{1}' was deprecated but is now valid again? Please don't do that.", task.Id, reqTask.Id);
+                                reqTask.Date.Deprecated = 0;
+                            }
                         }
                     }
                 }

@@ -30,7 +30,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "reportBack",
@@ -39,7 +41,27 @@
                },
                "category": "Argue",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "findWhale",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "findTracker",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "foundDetritus",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "findTracker",
@@ -48,7 +70,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "foundDetritus",
@@ -57,7 +81,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "findWhale",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -109,7 +141,9 @@
                   "deprecated": 1.3294107995602E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "reportBack",
@@ -118,7 +152,9 @@
                },
                "category": "Argue",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 3
+               "scaffoldingComplexity": 3,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "getPops",
@@ -127,7 +163,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             }
          ]
       },
@@ -154,7 +192,9 @@
                   "added": 1.32914936623526E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "scanIceAlgae",
@@ -162,7 +202,9 @@
                   "added": 1.32914936623526E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "reportBack",
@@ -170,7 +212,9 @@
                   "added": 1.32914936623526E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             }
          ]
       },
@@ -197,7 +241,9 @@
                },
                "category": "Travel",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "getScans",
@@ -206,7 +252,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "visitSiteO",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "getCounts",
@@ -215,7 +269,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "getScans",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reportBack",
@@ -224,7 +286,15 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "getCounts",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "makeModel",
@@ -232,7 +302,9 @@
                   "added": 1.3305916268445E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             }
          ]
       },
@@ -288,7 +360,9 @@
                   "deprecated": 1.3295916222049E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "jellyObservation",
@@ -297,7 +371,9 @@
                   "deprecated": 1.3295916222049E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "jellyRates",
@@ -306,7 +382,9 @@
                   "deprecated": 1.3295916222049E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "jellyPrediction",
@@ -315,7 +393,9 @@
                   "deprecated": 1.3295916222049E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "reportBack",
@@ -324,7 +404,9 @@
                   "deprecated": 1.3295916222049E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             }
          ]
       },
@@ -418,7 +500,9 @@
                   "deprecated": 1.33111006512628E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "measureOxygenUsage",
@@ -427,7 +511,9 @@
                   "deprecated": 1.33111006512628E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "createModel",
@@ -436,7 +522,9 @@
                   "deprecated": 1.33111006512628E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "reportBack",
@@ -445,7 +533,15 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "makeVisual",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "scanAll",
@@ -454,7 +550,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "measureCritters",
@@ -463,7 +561,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "scanAll",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "makeVisual",
@@ -472,7 +578,15 @@
                },
                "category": "Model",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "measureCritters",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -521,7 +635,9 @@
                   "deprecated": 1.3295916222049E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "reportBack",
@@ -530,7 +646,9 @@
                   "deprecated": 1.3295916222049E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             }
          ]
       },
@@ -565,7 +683,9 @@
                   "deprecated": 1.33111006512628E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "reportBack",
@@ -574,7 +694,9 @@
                   "deprecated": 1.33111006512628E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             }
          ]
       },
@@ -662,7 +784,9 @@
                   "deprecated": 1.33111006512628E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "reportBack",
@@ -671,7 +795,15 @@
                },
                "category": "Argue",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 3
+               "scaffoldingComplexity": 3,
+               "requiredTasks": [
+                  {
+                     "id": "createModel",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "createModel",
@@ -680,7 +812,9 @@
                },
                "category": "Model",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+               ]
             }
          ]
       },
@@ -725,7 +859,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "countCyano",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "visualModelO",
@@ -734,7 +876,15 @@
                },
                "category": "Model",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "experimentsForSiteO",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reportBack",
@@ -743,7 +893,15 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "visualModelO",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "scanCyano",
@@ -752,7 +910,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "countCyano",
@@ -761,7 +921,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "scanCyano",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -842,7 +1010,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "syncModel",
@@ -851,7 +1021,15 @@
                },
                "category": "Model",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "measureStress",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reportBack",
@@ -860,7 +1038,15 @@
                },
                "category": "Argue",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "syncModel",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "measureStress",
@@ -869,7 +1055,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "historicalData",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -944,7 +1138,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "popProbe",
@@ -953,7 +1149,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "scanSarg",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "chemHistory",
@@ -962,7 +1166,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "scanSarg",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "sargGrowthRate",
@@ -971,7 +1183,21 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "chemHistory",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "popProbe",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "sargLight",
@@ -980,7 +1206,21 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "chemHistory",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "popProbe",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "coralGrowthRate",
@@ -989,7 +1229,21 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "chemHistory",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "popProbe",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "coralGrowthStressed",
@@ -998,7 +1252,21 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "chemHistory",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "popProbe",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "sargModel",
@@ -1007,7 +1275,39 @@
                },
                "category": "Model",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "coralGrowthStressed",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "sargLight",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "sargGrowthRate",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "coralGrowthRate",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "coralLight",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "sargArgue",
@@ -1016,7 +1316,15 @@
                },
                "category": "Argue",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "sargModel",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "coralLight",
@@ -1025,7 +1333,21 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "chemHistory",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "popProbe",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -1058,7 +1380,9 @@
                },
                "category": "Experiment",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "urchinSargArgue",
@@ -1067,7 +1391,15 @@
                },
                "category": "Argue",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "urchinSarg",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -1118,7 +1450,9 @@
                },
                "category": "Travel",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "scanProbes",
@@ -1127,7 +1461,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "countPopulation",
@@ -1136,7 +1472,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "argue",
@@ -1145,7 +1483,27 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "findReef",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "scanProbes",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "countPopulation",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -1196,7 +1554,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "historicalPopulations",
@@ -1205,7 +1565,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "getModel",
@@ -1214,7 +1576,21 @@
                },
                "category": "Model",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "getScans",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "historicalPopulations",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reportBack",
@@ -1223,7 +1599,15 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "getModel",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -1311,7 +1695,9 @@
                   "deprecated": 1.3305916268445E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "scanCritters",
@@ -1320,7 +1706,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "scanHistory",
@@ -1329,7 +1717,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "countPopulation",
@@ -1338,7 +1728,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "observeEatRules",
@@ -1347,7 +1739,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "countPopulation",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "obtainStressRules",
@@ -1356,7 +1756,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "observeEatRules",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "measureStressEatRates",
@@ -1365,7 +1773,9 @@
                   "deprecated": 1.3305916268445E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "measureStressReproduceRates",
@@ -1374,7 +1784,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "measureEatRates",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "obtainChemistry",
@@ -1383,7 +1801,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "measureStressReproduceRates",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "predictModel",
@@ -1392,7 +1818,15 @@
                },
                "category": "Model",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "obtainChemistry",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "interveneModel",
@@ -1401,7 +1835,15 @@
                },
                "category": "Model",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "predictModel",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "argueIncentive",
@@ -1410,7 +1852,15 @@
                },
                "category": "Argue",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 3
+               "scaffoldingComplexity": 3,
+               "requiredTasks": [
+                  {
+                     "id": "interveneModel",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "measureEatRates",
@@ -1419,7 +1869,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "obtainStressRules",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -1458,7 +1916,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "observeInteractions",
@@ -1467,7 +1927,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "observeCoral",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "arguePredator",
@@ -1476,7 +1944,15 @@
                },
                "category": "Argue",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "observeInteractions",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "observeCoral",
@@ -1485,7 +1961,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "scanNew",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -1536,7 +2020,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "observeEatAlgae",
@@ -1545,7 +2031,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "scanAll",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "measureEatRate",
@@ -1554,7 +2048,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "observeEatAlgae",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "modelPopulations",
@@ -1563,7 +2065,15 @@
                },
                "category": "Model",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "measureEatRate",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reportBack",
@@ -1572,7 +2082,15 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "modelPopulations",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "histPop",
@@ -1581,7 +2099,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "scanAll",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -1632,7 +2158,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "whatTurtlesEat",
@@ -1641,7 +2169,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "scanReefEdge",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reportBack",
@@ -1650,7 +2186,15 @@
                },
                "category": "Argue",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "whatTurtlesEat",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "makeModel",
@@ -1658,7 +2202,9 @@
                   "added": 1.3305916268445E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             }
          ]
       },
@@ -1709,7 +2255,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "stressCoral",
@@ -1718,7 +2266,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "siteR",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reportBack",
@@ -1727,7 +2283,15 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "stressCoral",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -1754,7 +2318,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "turtleModel",
@@ -1762,7 +2328,9 @@
                   "added": 1.32914936623526E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "reportBack",
@@ -1771,7 +2339,15 @@
                },
                "category": "Argue",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "countTurtle",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "countTurtle",
@@ -1780,7 +2356,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "scanTurtle",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -1813,7 +2397,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "behavior",
@@ -1822,7 +2408,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "scanAll",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "turtleModel",
@@ -1831,7 +2425,15 @@
                },
                "category": "Model",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "behavior",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reportBack",
@@ -1840,7 +2442,15 @@
                },
                "category": "Argue",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "turtleModel",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -1875,7 +2485,9 @@
                   "deprecated": 1.33138730177673E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "urchinStressed",
@@ -1884,7 +2496,9 @@
                   "deprecated": 1.33138730177673E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "siteRModel",
@@ -1893,7 +2507,9 @@
                   "deprecated": 1.33138730177673E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "present",
@@ -1902,7 +2518,9 @@
                   "deprecated": 1.33138730177673E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             }
          ]
       },
@@ -1935,7 +2553,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "foodweb",
@@ -1944,7 +2564,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "siteA",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reportBack",
@@ -1953,7 +2581,15 @@
                },
                "category": "Argue",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "foodweb",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -1986,7 +2622,9 @@
                },
                "category": "Model",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "reportBack",
@@ -1995,7 +2633,15 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "foodweb",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -2052,7 +2698,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "waterData",
@@ -2061,7 +2709,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "stressParam",
@@ -2070,7 +2720,21 @@
                },
                "category": "Experiment",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "waterData",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "scanMussels",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "report",
@@ -2079,7 +2743,15 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "stressParam",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -2124,7 +2796,9 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "stressedRate",
@@ -2133,7 +2807,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "unstressedRate",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reportChange",
@@ -2142,7 +2824,21 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "stressedRate",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "unstressedRate",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -2193,7 +2889,9 @@
                },
                "category": "Travel",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "histPop",
@@ -2202,7 +2900,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "visitSite",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "growthRates",
@@ -2211,7 +2917,21 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "histPop",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "histChem",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "growthRatesBull",
@@ -2220,7 +2940,21 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "histPop",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "histChem",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "lightRatesGiant",
@@ -2229,7 +2963,21 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "histPop",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "histChem",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "lightRatesBull",
@@ -2238,7 +2986,21 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "histPop",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "histChem",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "newModel",
@@ -2247,7 +3009,39 @@
                },
                "category": "Model",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "histPop",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "growthRates",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "growthRatesBull",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "lightRatesGiant",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "lightRatesBull",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "getPaid",
@@ -2256,7 +3050,15 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 3
+               "scaffoldingComplexity": 3,
+               "requiredTasks": [
+                  {
+                     "id": "newModel",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "histChem",
@@ -2265,7 +3067,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "visitSite",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -2304,7 +3114,9 @@
                },
                "category": "Model",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "shareModel",
@@ -2313,7 +3125,15 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "createModel",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -2352,7 +3172,9 @@
                },
                "category": "Model",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "return",
@@ -2361,7 +3183,15 @@
                },
                "category": "Argue",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "makeAPlan",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -2412,7 +3242,9 @@
                },
                "category": "Experiment",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "getGiantKelpStress",
@@ -2421,7 +3253,9 @@
                },
                "category": "Experiment",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "argueSite",
@@ -2430,7 +3264,21 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "getBullKelpStress",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "getGiantKelpStress",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -2469,7 +3317,9 @@
                },
                "category": "Model",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "reportBack",
@@ -2478,7 +3328,15 @@
                },
                "category": "Argue",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "predictSiteB",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -2529,7 +3387,9 @@
                },
                "category": "Travel",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "getProbeData",
@@ -2538,7 +3398,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "gotoSiteB",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "getTagged",
@@ -2547,7 +3415,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "gotoSiteB",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "visualSiteB",
@@ -2556,7 +3432,21 @@
                },
                "category": "Model",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "getProbeData",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "getTagged",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reportBack",
@@ -2565,7 +3455,21 @@
                },
                "category": "Argue",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "getProbeData",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "visualSiteB",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -2616,7 +3520,9 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "urchinEatGiant",
@@ -2625,7 +3531,9 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "reportBack",
@@ -2634,7 +3542,21 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "urchinEatBull",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "urchinEatGiant",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -2661,7 +3583,9 @@
                },
                "category": "Travel",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "scanGiantKelp",
@@ -2670,7 +3594,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "gotoSiteC",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "scanUrchin",
@@ -2679,7 +3611,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "gotoSiteC",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "scanOtter",
@@ -2688,7 +3628,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "gotoSiteC",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "returnToShip",
@@ -2697,7 +3645,27 @@
                },
                "category": "Travel",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "scanOtter",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "scanUrchin",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "scanGiantKelp",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "runExperiment",
@@ -2706,7 +3674,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "returnToShip",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reportBack",
@@ -2715,7 +3691,15 @@
                },
                "category": "Argue",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "runExperiment",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -2784,7 +3768,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "getPopulationData",
@@ -2793,7 +3779,9 @@
                   "deprecated": 1.3305916268445E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "reportBack",
@@ -2802,7 +3790,27 @@
                },
                "category": "Argue",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 3
+               "scaffoldingComplexity": 3,
+               "requiredTasks": [
+                  {
+                     "id": "getEnvironmentData",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "getHistPopulationData",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "getCurrPopulationData",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "getHistPopulationData",
@@ -2811,7 +3819,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "getCurrPopulationData",
@@ -2820,7 +3830,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             }
          ]
       },
@@ -2877,7 +3889,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "modelInteractions",
@@ -2886,7 +3900,15 @@
                },
                "category": "Model",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 3
+               "scaffoldingComplexity": 3,
+               "requiredTasks": [
+                  {
+                     "id": "scanCritters",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reportBack",
@@ -2895,7 +3917,15 @@
                },
                "category": "Argue",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "modelInteractions",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -2961,7 +3991,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "scanAll",
@@ -2970,7 +4002,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "experimentPredatorZ",
@@ -2979,7 +4013,9 @@
                   "deprecated": 1.3305916268445E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "findPredator",
@@ -2988,7 +4024,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "discussFindings",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "experimentPredatorAll",
@@ -2997,7 +4041,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "findPredator",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "countPopulations",
@@ -3006,7 +4058,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "experimentPredatorAll",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "determineStress",
@@ -3015,7 +4075,9 @@
                },
                "category": "Experiment",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "discussFindings",
@@ -3024,7 +4086,21 @@
                },
                "category": "Argue",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "checkPredator",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "determineStress",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "checkCrab",
@@ -3033,7 +4109,9 @@
                   "deprecated": 1.33067919669553E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "checkSeal",
@@ -3042,7 +4120,9 @@
                   "deprecated": 1.33067919669553E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "checkShark",
@@ -3051,7 +4131,9 @@
                   "deprecated": 1.33067919669553E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "reportFinal",
@@ -3060,7 +4142,21 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "countPopulations",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "determineStress",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "checkPredator",
@@ -3069,7 +4165,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "scanAll",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -3120,7 +4224,9 @@
                },
                "category": "Model",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "report",
@@ -3129,7 +4235,15 @@
                },
                "category": "Argue",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "visualModel",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -3162,7 +4276,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "reportBack",
@@ -3171,7 +4287,15 @@
                },
                "category": "Argue",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "explore",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -3204,7 +4328,9 @@
                   "deprecated": 1.3305916268445E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "getTagger",
@@ -3213,7 +4339,9 @@
                },
                "category": "Narrative",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "getVisualModel",
@@ -3222,7 +4350,9 @@
                },
                "category": "Narrative",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "returnShip",
@@ -3231,7 +4361,21 @@
                },
                "category": "Travel",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "getTagger",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "getVisualModel",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -3282,7 +4426,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "jellyObservation",
@@ -3291,7 +4437,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "jellyScan",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "jellyRates",
@@ -3300,7 +4454,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "jellyObservation",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "jellyPrediction",
@@ -3309,7 +4471,21 @@
                },
                "category": "Model",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "jellyObservation",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "jellyRates",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reportBack",
@@ -3318,7 +4494,15 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "jellyPrediction",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -3363,7 +4547,9 @@
                },
                "category": "Model",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "reportBack",
@@ -3372,7 +4558,15 @@
                },
                "category": "Argue",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "interventionDecision",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -3412,7 +4606,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "countNew",
@@ -3421,7 +4617,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "scanNew",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "experimentInteractions",
@@ -3430,7 +4634,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "countNew",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "createModel",
@@ -3439,7 +4651,15 @@
                },
                "category": "Model",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "experimentInteractions",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reportBack",
@@ -3448,7 +4668,15 @@
                },
                "category": "Argue",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "createModel",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -3499,7 +4727,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "countAlgae",
@@ -3508,7 +4738,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "scanAlgae",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "observeEat",
@@ -3517,7 +4755,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "countAlgae",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reportBack",
@@ -3526,7 +4772,15 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 3
+               "scaffoldingComplexity": 3,
+               "requiredTasks": [
+                  {
+                     "id": "observeEat",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -3571,7 +4825,9 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "obtainRateDiatoms",
@@ -3580,7 +4836,9 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "reportBack",
@@ -3589,7 +4847,21 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "obtainRateDiatoms",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "obtainRateAlgae",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -3652,7 +4924,9 @@
                },
                "category": "Experiment",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "modelFish",
@@ -3661,7 +4935,15 @@
                },
                "category": "Model",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "observeCod",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reportBack",
@@ -3670,7 +4952,15 @@
                },
                "category": "Argue",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "modelFish",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -3709,7 +4999,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "reportBack",
@@ -3718,7 +5010,15 @@
                },
                "category": "Argue",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "countSalmon",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -3763,7 +5063,9 @@
                   "added": 1.3305916268445E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "findHabitat",
@@ -3771,7 +5073,9 @@
                   "added": 1.3305916268445E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "findMicro",
@@ -3779,7 +5083,9 @@
                   "added": 1.3305916268445E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "findPop",
@@ -3787,7 +5093,9 @@
                   "added": 1.3305916268445E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "report",
@@ -3795,7 +5103,9 @@
                   "added": 1.3305916268445E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             }
          ]
       },
@@ -3846,7 +5156,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "wormEat",
@@ -3855,7 +5167,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "scanCritters",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "getModel",
@@ -3864,7 +5184,15 @@
                },
                "category": "Model",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "wormEat",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reportBack",
@@ -3873,7 +5201,15 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "getModel",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -3912,7 +5248,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "methaneTag",
@@ -3921,7 +5259,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "methaneScan",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reportBack",
@@ -3930,7 +5276,15 @@
                },
                "category": "Argue",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "methaneTag",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -3981,7 +5335,9 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "StressRanges",
@@ -3990,7 +5346,9 @@
                },
                "category": "Experiment",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "WaterChem",
@@ -3999,7 +5357,9 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "Reproduction",
@@ -4009,7 +5369,9 @@
                },
                "category": "Experiment",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "Report",
@@ -4018,7 +5380,27 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "EatRule",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "StressRanges",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "WaterChem",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -4045,7 +5427,9 @@
                   "added": 1.3305916268445E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "reportBack",
@@ -4053,7 +5437,9 @@
                   "added": 1.3305916268445E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             }
          ]
       },
@@ -4104,7 +5490,9 @@
                },
                "category": "Experiment",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "findMicro",
@@ -4113,7 +5501,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "findStress",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "countIck",
@@ -4122,7 +5518,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "findMicro",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "observeIck",
@@ -4131,7 +5535,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "countIck",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reviseModels",
@@ -4140,7 +5552,15 @@
                },
                "category": "Model",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "observeIck",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "report",
@@ -4149,7 +5569,15 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "reviseModels",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -4194,7 +5622,9 @@
                },
                "category": "Travel",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "findRibbon",
@@ -4203,7 +5633,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "findMicro",
@@ -4212,7 +5644,21 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "findHabitat",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "findRibbon",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "countMicro",
@@ -4221,7 +5667,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "findMicro",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "findPop",
@@ -4229,7 +5683,9 @@
                   "added": 1.33067919669553E+17
                },
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "report",
@@ -4238,7 +5694,27 @@
                },
                "category": "Argue",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "countSeal",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "countMicro",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "findRibbon",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "countSeal",
@@ -4247,7 +5723,21 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "findHabitat",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "findRibbon",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -4322,7 +5812,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "modelSync",
@@ -4331,7 +5823,15 @@
                },
                "category": "Model",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "scanProbe",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "modelPredict",
@@ -4340,7 +5840,15 @@
                },
                "category": "Model",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "modelSync",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reportBack",
@@ -4349,7 +5857,15 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "modelPredict",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -4412,7 +5928,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "countGreen",
@@ -4421,7 +5939,15 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "findGreen",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "stressCB",
@@ -4430,7 +5956,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "countGreen",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "measureEffect",
@@ -4439,7 +5973,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "stressCB",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "measureReproduce",
@@ -4448,7 +5990,15 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "stressCB",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reportBack",
@@ -4457,7 +6007,21 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "measureReproduce",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "measureEffect",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -4502,7 +6066,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "countDetritus",
@@ -4511,7 +6077,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "eatDetritus",
@@ -4520,7 +6088,27 @@
                },
                "category": "Experiment",
                "taskComplexity": 1,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "countDetritus",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "scanNew",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "scanProbe",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "growDetritus",
@@ -4529,7 +6117,27 @@
                },
                "category": "Experiment",
                "taskComplexity": 3,
-               "scaffoldingComplexity": 2
+               "scaffoldingComplexity": 2,
+               "requiredTasks": [
+                  {
+                     "id": "countDetritus",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "scanNew",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "scanProbe",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reportBack",
@@ -4538,7 +6146,21 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "eatDetritus",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  },
+                  {
+                     "id": "growDetritus",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "scanProbe",
@@ -4547,7 +6169,15 @@
                },
                "category": "Argue",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "scanNew",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -4586,7 +6216,9 @@
                },
                "category": "Scan_Count",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "reportBack",
@@ -4595,7 +6227,15 @@
                },
                "category": "Argue",
                "taskComplexity": 2,
-               "scaffoldingComplexity": 1
+               "scaffoldingComplexity": 1,
+               "requiredTasks": [
+                  {
+                     "id": "countShrimp",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       },
@@ -4622,7 +6262,9 @@
                },
                "category": "Narrative",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "createModel",
@@ -4631,7 +6273,15 @@
                },
                "category": "Model",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "tellMom",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "reportBack",
@@ -4640,7 +6290,15 @@
                },
                "category": "Argue",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "createModel",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "sneakOut",
@@ -4649,7 +6307,15 @@
                },
                "category": "Narrative",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "reportBack",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "getUncleHelp",
@@ -4658,7 +6324,15 @@
                },
                "category": "Narrative",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "sneakOut",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "checkShip",
@@ -4667,16 +6341,27 @@
                },
                "category": "Narrative",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "getUncleHelp",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             },
             {
                "id": "returnToShop",
                "date": {
-                  "added": 1.33138730177673E+17
+                  "added": 1.33138730177673E+17,
+                  "deprecated": 1.33312398136518E+17
                },
                "category": "Narrative",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+               ]
             },
             {
                "id": "performRescue",
@@ -4685,7 +6370,15 @@
                },
                "category": "Narrative",
                "taskComplexity": 0,
-               "scaffoldingComplexity": 0
+               "scaffoldingComplexity": 0,
+               "requiredTasks": [
+                  {
+                     "id": "checkShip",
+                     "date": {
+                        "added": 1.33312355881023E+17
+                     }
+                  }
+               ]
             }
          ]
       }
