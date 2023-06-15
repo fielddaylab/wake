@@ -255,34 +255,34 @@ namespace Aqua.Editor {
                         Log.Warn("[DBExport] Job '{0}' required job '{1}' was deprecated but is now valid again? Please don't do that.", job.Id, reqJob.Id);
                         reqJob.Date.Deprecated = 0;
                     }
+                }
 
-                    foreach (var upgrade in job.RequiredUpgrades) {
-                        if (!upgrade.Included && upgrade.Date.Deprecated == 0) {
-                            Log.Msg("[DBExport] Job '{0}' required upgrade '{1}' found to be deprecated", job.Id, upgrade.Id);
-                            upgrade.Date.Deprecated = nowTS;
-                        } else if (upgrade.Included && upgrade.Date.Deprecated != 0) {
-                            Log.Warn("[DBExport] Job '{0}' required upgrade '{1}' was deprecated but is now valid again? Please don't do that.", job.Id, upgrade.Id);
-                            upgrade.Date.Deprecated = 0;
-                        }
+                foreach (var upgrade in job.RequiredUpgrades) {
+                    if (!upgrade.Included && upgrade.Date.Deprecated == 0) {
+                        Log.Msg("[DBExport] Job '{0}' required upgrade '{1}' found to be deprecated", job.Id, upgrade.Id);
+                        upgrade.Date.Deprecated = nowTS;
+                    } else if (upgrade.Included && upgrade.Date.Deprecated != 0) {
+                        Log.Warn("[DBExport] Job '{0}' required upgrade '{1}' was deprecated but is now valid again? Please don't do that.", job.Id, upgrade.Id);
+                        upgrade.Date.Deprecated = 0;
+                    }
+                }
+
+                foreach (var task in job.Tasks) {
+                    if (!task.Included && task.Date.Deprecated == 0) {
+                        Log.Msg("[DBExport] Job '{0}' task '{1}' found to be deprecated", job.Id, task.Id);
+                        task.Date.Deprecated = nowTS;
+                    } else if (task.Included && task.Date.Deprecated != 0) {
+                        Log.Warn("[DBExport] Job '{0}' task '{1}' was deprecated but is now valid again? Please don't do that.", job.Id, task.Id);
+                        task.Date.Deprecated = 0;
                     }
 
-                    foreach (var task in job.Tasks) {
-                        if (!task.Included && task.Date.Deprecated == 0) {
-                            Log.Msg("[DBExport] Job '{0}' task '{1}' found to be deprecated", job.Id, task.Id);
-                            task.Date.Deprecated = nowTS;
-                        } else if (task.Included && task.Date.Deprecated != 0) {
-                            Log.Warn("[DBExport] Job '{0}' task '{1}' was deprecated but is now valid again? Please don't do that.", job.Id, task.Id);
-                            task.Date.Deprecated = 0;
-                        }
-
-                        foreach (var reqTask in task.ReqTasks) {
-                            if (!reqTask.Included && reqTask.Date.Deprecated == 0) {
-                                Log.Msg("[DBExport] Task '{0}' required task '{1}' found to be deprecated", task.Id, reqTask.Id);
-                               reqTask.Date.Deprecated = nowTS; 
-                            } else if (reqTask.Included && reqTask.Date.Deprecated != 0) {
-                                Log.Warn("[DBExport] Task '{0}' required task '{1}' was deprecated but is now valid again? Please don't do that.", task.Id, reqTask.Id);
-                                reqTask.Date.Deprecated = 0;
-                            }
+                    foreach (var reqTask in task.ReqTasks) {
+                        if (!reqTask.Included && reqTask.Date.Deprecated == 0) {
+                            Log.Msg("[DBExport] Task '{0}' required task '{1}' found to be deprecated", task.Id, reqTask.Id);
+                            reqTask.Date.Deprecated = nowTS; 
+                        } else if (reqTask.Included && reqTask.Date.Deprecated != 0) {
+                            Log.Warn("[DBExport] Task '{0}' required task '{1}' was deprecated but is now valid again? Please don't do that.", task.Id, reqTask.Id);
+                            reqTask.Date.Deprecated = 0;
                         }
                     }
                 }
