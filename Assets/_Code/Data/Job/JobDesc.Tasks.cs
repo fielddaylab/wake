@@ -35,6 +35,8 @@ namespace Aqua
             public SerializedHash32 Id;
             public TextId LabelId;
             public JobTaskCategory Category;
+            [SerializeField, Range(0, 3)] public int TaskComplexity;
+            [SerializeField, Range(0, 3)] public int  ScaffoldingComplexity;
             
             public JobStep[] Steps = null;
 
@@ -50,6 +52,17 @@ namespace Aqua
             return ArrayUtils.MapFrom(m_Tasks, (t) => t.Id.ToDebugString());
         }
 
+        public string[] EditorReqTaskIds(StringHash32 id) {
+            foreach(var task in m_Tasks) {
+                if (task.Id == id) {
+                    // return array of prereq task IDs from the given task ID
+                    return ArrayUtils.MapFrom(task.PrerequisiteTaskIds, (t) => t.ToDebugString());
+                }
+            }
+            Log.Error("[JobDesc] Task '{0}' not found in job '{1}', name, id.ToDebugString()");
+            return null;
+        }
+
         internal JobTaskCategory EditorTaskCategory(StringHash32 id) {
             foreach(var task in m_Tasks) {
                 if (task.Id == id) {
@@ -57,6 +70,33 @@ namespace Aqua
                 }
             }
             return JobTaskCategory.Unknown;
+        }
+
+        internal int EditorTaskComplexity(StringHash32 id) {
+            foreach(var task in m_Tasks){
+                if (task.Id == id) {
+                    return task.TaskComplexity;
+                }
+            }
+            return 0;
+        }
+
+        internal int EditorTaskScaffoldingComplexity(StringHash32 id) {
+            foreach(var task in m_Tasks){
+                if (task.Id == id) {
+                    return task.ScaffoldingComplexity;
+                }
+            }
+            return 0;
+        }
+
+        public JobStep[] EditorJobTaskSteps(StringHash32 id) {
+            foreach(var task in m_Tasks) {
+                if (task.Id == id) {
+                    return task.Steps;
+                }
+            }
+            return null;
         }
 
         int IBaked.Order { get { return 16; }}

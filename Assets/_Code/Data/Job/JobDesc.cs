@@ -22,6 +22,7 @@ namespace Aqua
         [SerializeField] private TextId m_DescId = default;
         [SerializeField] private TextId m_DescShortId = default;
 
+        [SerializeField, Range(0, 3)] private int m_TopicComplexity = 0;
         [SerializeField, Range(0, 5)] private int m_ExperimentDifficulty = 0;
         [SerializeField, Range(0, 5)] private int m_ModelingDifficulty = 0;
         [SerializeField, Range(0, 5)] private int m_ArgumentationDifficulty = 0;
@@ -81,6 +82,7 @@ namespace Aqua
         public ListSlice<StringHash32> RequiredUpgrades() { return m_PrereqUpgrades; }
         public StringSlice RequiredConditions() { return m_PrereqConditions; }
         public int RequiredExp() { return m_PrereqExp; }
+        public int TopicComplexity() {return m_TopicComplexity; }
         public StringHash32 RequiredBestiaryEntry() { return m_PrereqBestiaryEntry; }
         public StringHash32 RequiredScanId() { return m_PrereqScanId; }
 
