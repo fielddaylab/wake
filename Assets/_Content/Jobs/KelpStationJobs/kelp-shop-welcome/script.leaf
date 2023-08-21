@@ -103,7 +103,15 @@ $if JobTaskCompleted(getVisualModel), JobTaskCompleted(getTagger)
     $call ShowPopup(map.unlock.stations.header, map.unlock.stations.desc)
 
     {@guide} Your map is ready!
-    {@guide}  Use the map to view available jobs and travel to different ecosystems. 
+
+    {fade-out black.60, 0.5, wait}
+    {@}
+    {style center}{@tutorial}{speaker World Map}
+    $call FocusHighlight->Focus(WorldMap.Highlight)
+        Use the map to view available jobs and travel to different ecosystems. 
+    $call FocusHighlight->Clear()
+    {hide-dialog}{fade-in 0.5, wait}
+
     $call CompleteJob()
     $set    jobs:common-dive.seen.tagger-intro = false
     $set    jobs:common-dive.seen.probe-intro = false
