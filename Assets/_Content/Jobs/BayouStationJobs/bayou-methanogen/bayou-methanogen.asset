@@ -100,29 +100,6 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
-      m_Source: WaterChem
-      m_HashValue: 3126357661
-    LabelId:
-      m_Source: jobs.bayou-methanogen.task.waterChem
-      m_HashValue: 333240985
-    Category: 3
-    TaskComplexity: 3
-    ScaffoldingComplexity: 2
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: Methanogen.Consume.CarbonDioxide
-        m_HashValue: 1288877368
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: Methanogen.Consume.CarbonDioxide.Stressed
-        m_HashValue: 840918511
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds: []
-  - Id:
       m_Source: Report
       m_HashValue: 1182923275
     LabelId:
@@ -143,8 +120,6 @@ MonoBehaviour:
       m_HashValue: 2106692851
     - m_Source: StressRanges
       m_HashValue: 716119891
-    - m_Source: WaterChem
-      m_HashValue: 3126357661
   m_OptimizedTaskList:
   - Id:
       m_Source: EatRule
@@ -197,32 +172,10 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
-      m_Source: WaterChem
-      m_HashValue: 3126357661
-    IdString: WaterChem
-    Index: 2
-    LabelId:
-      m_Source: jobs.bayou-methanogen.task.waterChem
-      m_HashValue: 333240985
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: Methanogen.Consume.CarbonDioxide
-        m_HashValue: 1288877368
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: Methanogen.Consume.CarbonDioxide.Stressed
-        m_HashValue: 840918511
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 
-  - Id:
       m_Source: Report
       m_HashValue: 1182923275
     IdString: Report
-    Index: 3
+    Index: 2
     LabelId:
       m_Source: jobs.bayou-methanogen.task.report
       m_HashValue: 1529160575
@@ -233,7 +186,7 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 000001000200
+    PrerequisiteTaskIndices: 00000100
   m_CashReward: 150
   m_ExpReward: 10
   m_JournalId:
