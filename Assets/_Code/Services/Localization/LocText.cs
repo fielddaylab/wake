@@ -137,10 +137,18 @@ namespace Aqua {
         }
 
         internal void OnLocalizationRefresh() {
-            if (m_LastMetrics.RichCharCount == 0 && !m_DefaultText.IsEmpty)
-                SetText(m_DefaultText, null);
+            if (!m_Initialized) {
+                if (m_LastMetrics.RichCharCount == 0 && !m_DefaultText.IsEmpty) {
+                    SetText(m_DefaultText, null);
+                }
 
-            m_Initialized = true;
+                m_Initialized = true;
+            }
+            else {
+                if (!m_LastId.IsEmpty) {
+                    SetText(m_LastId, null);
+                }
+            }
         }
 
         #endregion // Text

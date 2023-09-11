@@ -19,6 +19,8 @@ namespace Aqua
         static public readonly StringHash32 ProfileAutosaveSuppress = "profile:autosave-suppress"; // no args
         static public readonly StringHash32 ProfileSpawnLocationUpdate = "profile:spawn-location-update"; // StringHash32 location
 
+        static public readonly StringHash32 OnLanguageChange = "profile:language-change"; // FourCC langCode
+
         static public readonly StringHash32 HotbarHide = "hotbar:hide";
         static public readonly StringHash32 HotbarShow = "hotbar:show";
 
