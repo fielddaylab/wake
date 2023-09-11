@@ -188,6 +188,7 @@ $choice .argue.giveUpArgument; Let me get back to you
 :: argue.incorrectFactsModel
 {@drKelp}   Are you sure this is what you wanted to show me?
             You're not making sense. I really wish you'd drop this subject.
+$call ArgueRejectIncorrect()
 $branch .argue.chooseFactsModel
 
 :: argue.correctFactsModel
@@ -200,7 +201,7 @@ $call ArgueLoad(finalArgueEat)
 $if ArgueSetClaim(finalArgueEatClaim, jobs.final-final.argue.claimLabelEat)
     $call ArgueFactSlot(ColossalSquid.Eats.ViperFish)
     $call ArgueFactSlot(ColossalSquid.Eats.AnglerFish)
-    $call ArgueFactSlot(ColossalSquid.Eats.GoassamerWorm) // typo in Goassamer asset
+    $call ArgueFactSlot(ColossalSquid.Eats.GoassamerWorm)
 $endif
 $call ArgueDisplayClaim()
 $branch .argue.chooseFactsEat
@@ -215,6 +216,7 @@ $choice .argue.giveUpArgument; Let me get back to you
 :: argue.incorrectFactsEat
 {@drKelp}   Are you sure this is what you wanted to show me?
             You're not making sense. I really wish you'd drop this subject.
+$call ArgueRejectIncorrect()
 $branch .argue.chooseFactsEat
 
 // End

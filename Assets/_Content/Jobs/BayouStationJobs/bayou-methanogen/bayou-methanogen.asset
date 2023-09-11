@@ -25,6 +25,7 @@ MonoBehaviour:
   m_DescShortId:
     m_Source: jobs.bayou-methanogen.desc.short
     m_HashValue: 1157150941
+  m_TopicComplexity: 3
   m_ExperimentDifficulty: 4
   m_ModelingDifficulty: 0
   m_ArgumentationDifficulty: 3
@@ -53,6 +54,8 @@ MonoBehaviour:
       m_Source: jobs.bayou-methanogen.task.eatRules
       m_HashValue: 1258523636
     Category: 3
+    TaskComplexity: 3
+    ScaffoldingComplexity: 2
     Steps:
     - Type: 1
       Target:
@@ -74,6 +77,8 @@ MonoBehaviour:
       m_Source: jobs.bayou-methanogen.task.stressRanges
       m_HashValue: 3306379975
     Category: 3
+    TaskComplexity: 2
+    ScaffoldingComplexity: 2
     Steps:
     - Type: 1
       Target:
@@ -95,33 +100,14 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
-      m_Source: WaterChem
-      m_HashValue: 3126357661
-    LabelId:
-      m_Source: jobs.bayou-methanogen.task.waterChem
-      m_HashValue: 333240985
-    Category: 3
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: Methanogen.Consume.CarbonDioxide
-        m_HashValue: 1288877368
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: Methanogen.Consume.CarbonDioxide.Stressed
-        m_HashValue: 840918511
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds: []
-  - Id:
       m_Source: Report
       m_HashValue: 1182923275
     LabelId:
       m_Source: jobs.bayou-methanogen.task.report
       m_HashValue: 1529160575
     Category: 5
+    TaskComplexity: 2
+    ScaffoldingComplexity: 2
     Steps:
     - Type: 10
       Target:
@@ -134,8 +120,6 @@ MonoBehaviour:
       m_HashValue: 2106692851
     - m_Source: StressRanges
       m_HashValue: 716119891
-    - m_Source: WaterChem
-      m_HashValue: 3126357661
   m_OptimizedTaskList:
   - Id:
       m_Source: EatRule
@@ -188,32 +172,10 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIndices: 
   - Id:
-      m_Source: WaterChem
-      m_HashValue: 3126357661
-    IdString: WaterChem
-    Index: 2
-    LabelId:
-      m_Source: jobs.bayou-methanogen.task.waterChem
-      m_HashValue: 333240985
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: Methanogen.Consume.CarbonDioxide
-        m_HashValue: 1288877368
-      ConditionString: 
-      Amount: 0
-    - Type: 1
-      Target:
-        m_Source: Methanogen.Consume.CarbonDioxide.Stressed
-        m_HashValue: 840918511
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIndices: 
-  - Id:
       m_Source: Report
       m_HashValue: 1182923275
     IdString: Report
-    Index: 3
+    Index: 2
     LabelId:
       m_Source: jobs.bayou-methanogen.task.report
       m_HashValue: 1529160575
@@ -224,7 +186,7 @@ MonoBehaviour:
         m_HashValue: 0
       ConditionString: 
       Amount: 0
-    PrerequisiteTaskIndices: 000001000200
+    PrerequisiteTaskIndices: 00000100
   m_CashReward: 150
   m_ExpReward: 10
   m_JournalId:

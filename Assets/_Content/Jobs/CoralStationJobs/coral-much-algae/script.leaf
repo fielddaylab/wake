@@ -283,13 +283,16 @@ $choose branch
 
 :: argue.claimSparseFish
 {@profCoral}	Hmmm. That does make sense.
-			    What is supposed to eat the {nameof TurfAlgae}?
 $call ArgueLoad(coralMuchAlgaeArgue)
 $if ArgueSetClaim(coralMuchAlgaeArgueClaim, jobs.coral-much-algae.argue.claimLabel)
     $call ArgueFactSlot(LionfishInvasion.Model.MuchAlgaeDescriptive)
     $call ArgueFactSlot(BlueTang.Eats.TurfAlgae)
 $endif
 $call ArgueDisplayClaim()
+$goto .argue.claimSparseFishQuestion
+
+:: argue.claimSparseFishQuestion
+{@profCoral}	What is supposed to eat the {nameof TurfAlgae}?
 $goto .argue.chooseFactsSparseFish
 
 :: argue.chooseFactsSparseFish
@@ -308,25 +311,30 @@ $call CompleteJob()
 :: argue.incorrectFacts
 
 $if ArgueIsFactSubmitted(LionfishInvasion.Model.MuchAlgaeVisual)
+	// Presented visual instead of descriptive model
 	{@profCoral}	Hmmm. This is a {h}Visual Model{/h}. Why don't you try again? 
     $call ArgueRejectIncorrect()
     $call ArgueClearFacts()
-    $goto .argue.chooseFactsSparseFish
-$endif
-
-$if ArgueIsFactSubmitted(LionfishInvasion.Model.MuchAlgaeDescriptive)
-	$if ArgueIsFactSubmitted(BlueTang.Eats.TurfAlgae.Stressed)
-		// B only 
+    $goto .argue.claimSparseFishQuestion
+$elseif ArgueIsFactSubmitted(LionfishInvasion.Model.MuchAlgaeDescriptive)
+	$if ArgueIsFactSubmitted(BlueTang.Eats.TurfAlgae)
+		// Presented B correctly, but not A 
 		{@profCoral}	Hmmm. So the Tang would normally be keeping the {nameof TurfAlgae} under control. 
 				 		Have you created a {h}Descriptive Model{/h} with this data?
 		$call ArgueRejectIncorrect()
-		$goto .argue.chooseFactsSparseFish
+		$goto .argue.claimSparseFishQuestion
 	$else
 		// neither
         {@profCoral}	Your model is sound, Ollie. But I'm not sure how that second fact is relevant. 
 		$call ArgueRejectIncorrect()
-        $goto .argue.chooseFactsSparseFish
+        $goto .argue.claimSparseFishQuestion
 	$endif
+$else
+	// Any other incorrect submissions
+	{@profCoral}	Hmmm. I'm not seeing how this is relevant to the current problem. Why don't you try again? 
+    $call ArgueRejectIncorrect()
+    $call ArgueClearFacts()
+    $goto .argue.claimSparseFishQuestion
 $endif
 
 :: argue.giveUp

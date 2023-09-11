@@ -18,6 +18,7 @@ using UnityEngine;
 using FieldDay;
 using BeauUtil.Debugger;
 using Aqua.Debugging;
+using BeauPools;
 
 namespace Aqua
 {
@@ -122,7 +123,9 @@ namespace Aqua
                 AppId = m_AppId,
                 AppVersion = m_AppVersion,
                 ClientLogVersion = 3
-            });
+            }, new OGDLog.MemoryConfig(
+                4096, 1024 * 1024 * 32, 256
+            )); // 32 kb game_state buffer? it's for switch_job, that can be massive, up to 32kb
             m_Log.UseFirebase(m_Firebase);
 
             #if DEVELOPMENT && !UNITY_EDITOR
@@ -372,9 +375,29 @@ namespace Aqua
         {
             SetCurrentJob(jobId);
 
+            using(var gs = m_Log.OpenGameState()) {
+                gs.Param("job_name", m_CurrentJobName);
+
+                using(var psb = PooledStringBuilder.Create()) {
+                    psb.Builder.Append('[');
+                    foreach(var entityId in Save.Bestiary.GetEntityIds()) {
+                        psb.Builder.Append("\"").Append(Assets.NameOf(entityId)).Append("\",");
+                    }
+                    foreach(var factId in Save.Bestiary.GetFactIds()) {
+                        psb.Builder.Append("\"").Append(Assets.NameOf(factId)).Append("\",");
+                    }
+
+                    psb.Builder.TrimEnd(new char[] { ',' }).Append(']');
+
+                    gs.Param("current_bestiary", psb.Builder);
+                }
+            }
+
             using(var e = m_Log.NewEvent("switch_job")) {
                 e.Param("prev_job_name", m_PreviousJobName);
             }
+
+            RefreshGameState();
         }
 
         private void HandleBestiaryUpdated(BestiaryUpdateParams inParams)

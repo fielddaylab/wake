@@ -1,24 +1,17 @@
 {
    "__serializerVersion": 2,
-   "__version": 4,
-   "version": 3,
+   "__version": 6,
+   "version": 5,
    "id": "FumingNutmeg",
-   "lastUpdated": 1.33063713681435E+17,
+   "lastUpdated": 1.33371088537223E+17,
+   "isBookmark": true,
    "character": {
       "displayName": null,
       "pronouns": "Neutral"
    },
    "inventory": {
-      "__version": 4,
+      "__version": 5,
       "items": [
-         {
-            "id": 374439154,
-            "value": 220
-         },
-         {
-            "id": 3618342856,
-            "value": 40
-         }
       ],
       "scannerIds": [
          1681199945,
@@ -44,7 +37,9 @@
       "journalIds": [
          1690893570,
          3910825456
-      ]
+      ],
+      "cash": 220,
+      "exp": 30
    },
    "script": {
       "__version": 3,
@@ -74,10 +69,13 @@
          1325648103,
          1017397600,
          2497182804,
-         1630633922,
-         979207716,
+         3813673061,
+         2862378157,
          2850645092,
-         3950222316
+         3950222316,
+         979207716,
+         1630633922,
+         2837319767
       ],
       "globals": {
          "name": 503252654,
@@ -103,6 +101,11 @@
                "value": false
             },
             {
+               "id": 1491068017,
+               "type": "Bool",
+               "value": true
+            },
+            {
                "id": 1796845088,
                "type": "Bool",
                "value": true
@@ -114,11 +117,6 @@
             },
             {
                "id": 2859916113,
-               "type": "Bool",
-               "value": true
-            },
-            {
-               "id": 1491068017,
                "type": "Bool",
                "value": true
             }
@@ -160,7 +158,7 @@
             {
                "id": 1087390274,
                "type": "Int",
-               "value": 22
+               "value": 20
             },
             {
                "id": 2694561082,
@@ -175,12 +173,12 @@
             {
                "id": 3290506108,
                "type": "Float",
-               "value": 132.760070800781
+               "value": 122.697998046875
             },
             {
                "id": 3307283727,
                "type": "Float",
-               "value": -152.863830566406
+               "value": -96.7361297607422
             },
             {
                "id": 3354567132,
@@ -308,10 +306,7 @@
          166525121,
          3731268004,
          2039233590,
-         127235188,
-         1288877368,
-         840918511,
-         989599352
+         127235188
       ],
       "factMetas": [
          {
@@ -343,14 +338,6 @@
          {
             "jobId": 3619585842,
             "taskId": 716119891
-         },
-         {
-            "jobId": 3619585842,
-            "taskId": 3126357661
-         },
-         {
-            "jobId": 3619585842,
-            "taskId": 3112461819
          }
       ]
    },
@@ -435,7 +422,11 @@
          "observationAction": "Hold"
       },
       "performance": {
-         "framerate": "Stable"
+         "__version": 3,
+         "framerate": "High",
+         "resolution": "High",
+         "animation": "High",
+         "effects": "High"
       },
       "accessibility": {
          "tts": "Off",
@@ -443,40 +434,43 @@
       }
    },
    "science": {
-      "__version": 5,
+      "__version": 6,
       "siteSurveys": [
          {
-            "__version": 2,
+            "__version": 3,
             "mapId": 2212350453,
             "taggedCritters": [
             ],
             "graphedCritters": [
             ],
             "graphedFacts": [
-            ]
+            ],
+            "graphLayoutSeed": 0
          },
          {
-            "__version": 2,
+            "__version": 3,
             "mapId": 2178795215,
             "taggedCritters": [
             ],
             "graphedCritters": [
             ],
             "graphedFacts": [
-            ]
+            ],
+            "graphLayoutSeed": 0
          },
          {
-            "__version": 2,
+            "__version": 3,
             "mapId": 3353522735,
             "taggedCritters": [
             ],
             "graphedCritters": [
             ],
             "graphedFacts": [
-            ]
+            ],
+            "graphLayoutSeed": 0
          },
          {
-            "__version": 2,
+            "__version": 3,
             "mapId": 3336745116,
             "taggedCritters": [
                722380343
@@ -484,10 +478,11 @@
             "graphedCritters": [
             ],
             "graphedFacts": [
-            ]
+            ],
+            "graphLayoutSeed": 0
          },
          {
-            "__version": 2,
+            "__version": 3,
             "mapId": 1404744802,
             "taggedCritters": [
             ],
@@ -510,7 +505,8 @@
                1413322363,
                2658689946,
                1337839348
-            ]
+            ],
+            "graphLayoutSeed": 0
          }
       ],
       "argues": [
@@ -540,7 +536,7 @@
             }
          },
          {
-            "id": 766563704,
+            "id": 574443334,
             "claim": 0,
             "label": 0,
             "expected": [
@@ -571,6 +567,10 @@
          1126634695,
          3561203866
       ],
-      "level": 0
-   }
+      "level": 2,
+      "decrypt": 0,
+      "spectersQueued": 0,
+      "spectersQueueOverride": 0
+   },
+   "playtime": 179.419982686639
 }

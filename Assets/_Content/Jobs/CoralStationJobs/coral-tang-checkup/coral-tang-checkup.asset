@@ -25,6 +25,7 @@ MonoBehaviour:
   m_DescShortId:
     m_Source: 
     m_HashValue: 0
+  m_TopicComplexity: 3
   m_ExperimentDifficulty: 3
   m_ModelingDifficulty: 3
   m_ArgumentationDifficulty: 2
@@ -47,12 +48,52 @@ MonoBehaviour:
   - m_HashValue: 2212791738
   m_Tasks:
   - Id:
+      m_Source: findMicro
+      m_HashValue: 3884350846
+    LabelId:
+      m_Source: jobs.coral-check-up.task.findMicro
+      m_HashValue: 971912509
+    Category: 2
+    TaskComplexity: 0
+    ScaffoldingComplexity: 0
+    Steps:
+    - Type: 0
+      Target:
+        m_Source: Ick
+        m_HashValue: 3815586090
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: findStress
+      m_HashValue: 4156621478
+  - Id:
+      m_Source: countIck
+      m_HashValue: 2900031109
+    LabelId:
+      m_Source: jobs.coral-check-up.task.countIck
+      m_HashValue: 3346759308
+    Category: 2
+    TaskComplexity: 0
+    ScaffoldingComplexity: 0
+    Steps:
+    - Type: 1
+      Target:
+        m_Source: LionfishInvasion.Population.Ick
+        m_HashValue: 1380939620
+      ConditionString: 
+      Amount: 0
+    PrerequisiteTaskIds:
+    - m_Source: findMicro
+      m_HashValue: 3884350846
+  - Id:
       m_Source: findStress
       m_HashValue: 4156621478
     LabelId:
       m_Source: jobs.coral-check-up.task.findStress
       m_HashValue: 828071247
     Category: 3
+    TaskComplexity: 2
+    ScaffoldingComplexity: 2
     Steps:
     - Type: 1
       Target:
@@ -74,46 +115,14 @@ MonoBehaviour:
       Amount: 0
     PrerequisiteTaskIds: []
   - Id:
-      m_Source: findMicro
-      m_HashValue: 3884350846
-    LabelId:
-      m_Source: jobs.coral-check-up.task.findMicro
-      m_HashValue: 971912509
-    Category: 2
-    Steps:
-    - Type: 0
-      Target:
-        m_Source: Ick
-        m_HashValue: 3815586090
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: findStress
-      m_HashValue: 4156621478
-  - Id:
-      m_Source: countIck
-      m_HashValue: 2900031109
-    LabelId:
-      m_Source: jobs.coral-check-up.task.countIck
-      m_HashValue: 3346759308
-    Category: 2
-    Steps:
-    - Type: 1
-      Target:
-        m_Source: LionfishInvasion.Population.Ick
-        m_HashValue: 1380939620
-      ConditionString: 
-      Amount: 0
-    PrerequisiteTaskIds:
-    - m_Source: findMicro
-      m_HashValue: 3884350846
-  - Id:
       m_Source: observeIck
       m_HashValue: 3336794152
     LabelId:
       m_Source: jobs.coral-check-up.task.observeIck
       m_HashValue: 4211324833
     Category: 3
+    TaskComplexity: 1
+    ScaffoldingComplexity: 2
     Steps:
     - Type: 1
       Target:
@@ -131,6 +140,8 @@ MonoBehaviour:
       m_Source: jobs.coral-check-up.task.reviseVisual
       m_HashValue: 1895454920
     Category: 4
+    TaskComplexity: 3
+    ScaffoldingComplexity: 2
     Steps:
     - Type: 1
       Target:
@@ -154,6 +165,8 @@ MonoBehaviour:
       m_Source: jobs.coral-check-up.task.report
       m_HashValue: 3562548038
     Category: 5
+    TaskComplexity: 2
+    ScaffoldingComplexity: 1
     Steps:
     - Type: 10
       Target:

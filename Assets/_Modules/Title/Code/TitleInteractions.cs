@@ -67,6 +67,7 @@ namespace Aqua.Title
 
             m_ProfileName.onValueChanged.AddListener(OnProfileNameUpdated);
             m_ProfileName.text = Services.Data.LastProfileName();
+            m_ProfileName.onSelect.AddListener(OnProfileNameSelected);
 
             m_SettingsPanel.OnShowEvent.AddListener(OnSettingsOpen);
             m_SettingsPanel.OnHideEvent.AddListener(OnSettingsClosed);
@@ -113,6 +114,14 @@ namespace Aqua.Title
         private void OnProfileNameUpdated(string inText)
         {
             UpdateInteractable();
+        }
+
+        private void OnProfileNameSelected(string inText) {
+            Debug.Log("[Keyboard] Selected!");
+            bool deviceIsIpad = UnityEngine.iOS.Device.generation.ToString().Contains("iPad");
+            if (deviceIsIpad) {
+                TouchScreenKeyboard.Open(m_ProfileName.text, TouchScreenKeyboardType.Default, false, false, false);
+            }
         }
 
         private void OnStartClicked()

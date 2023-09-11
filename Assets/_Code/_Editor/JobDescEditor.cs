@@ -23,6 +23,7 @@ namespace Aqua.Editor
         private SerializedProperty m_DescIdProperty;
         private SerializedProperty m_DescShortIdProperty;
 
+        private SerializedProperty m_TopicComplexityProperty;
         private SerializedProperty m_ExperimentDifficultyProperty;
         private SerializedProperty m_ModelingDifficultyProperty;
         private SerializedProperty m_ArgumentationDifficultyProperty;
@@ -94,6 +95,7 @@ namespace Aqua.Editor
             m_PosterIdProperty = serializedObject.FindProperty("m_PosterId");
             m_DescIdProperty = serializedObject.FindProperty("m_DescId");
             m_DescShortIdProperty = serializedObject.FindProperty("m_DescShortId");
+            m_TopicComplexityProperty = serializedObject.FindProperty("m_TopicComplexity");
             m_ExperimentDifficultyProperty = serializedObject.FindProperty("m_ExperimentDifficulty");
             m_ModelingDifficultyProperty = serializedObject.FindProperty("m_ModelingDifficulty");
             m_ArgumentationDifficultyProperty = serializedObject.FindProperty("m_ArgumentationDifficulty");
@@ -235,11 +237,11 @@ namespace Aqua.Editor
 
                 m_ExtraAssetsList.DoLayoutList();
             }
-
             if (Section("Difficulty Ratings", ref m_DifficultyExpanded)) {
                 EditorGUILayout.PropertyField(m_ExperimentDifficultyProperty);
                 EditorGUILayout.PropertyField(m_ModelingDifficultyProperty);
                 EditorGUILayout.PropertyField(m_ArgumentationDifficultyProperty);
+                EditorGUILayout.PropertyField(m_TopicComplexityProperty);
             }
 
             serializedObject.ApplyModifiedProperties();
@@ -255,7 +257,7 @@ namespace Aqua.Editor
             JobDesc job = (JobDesc) target;
             JobDesc.EditorJobTask jobTask = job.m_Tasks[index];
             EditorGUI.LabelField(rect, jobTask.Id.ToDebugString());
-        }
+        } 
 
         private void RenderTaskSettings(JobDesc inJob, int inIndex) {
             if (inIndex < 0 || inIndex >= inJob.m_Tasks.Length) {
@@ -268,9 +270,14 @@ namespace Aqua.Editor
                     SerializedProperty idProperty = taskAsProperty.FindPropertyRelative("Id");
                     SerializedProperty labelProperty = taskAsProperty.FindPropertyRelative("LabelId");
                     SerializedProperty categoryProperty = taskAsProperty.FindPropertyRelative("Category");
+                    SerializedProperty taskComplexity = taskAsProperty.FindPropertyRelative("TaskComplexity");
+                    SerializedProperty scaffoldingComplexity = taskAsProperty.FindPropertyRelative("ScaffoldingComplexity");
                     EditorGUILayout.PropertyField(idProperty);
                     EditorGUILayout.PropertyField(labelProperty);
                     EditorGUILayout.PropertyField(categoryProperty);
+                    EditorGUILayout.PropertyField(taskComplexity);
+                    EditorGUILayout.PropertyField(scaffoldingComplexity);
+
 
                     EditorGUILayout.Space();
 
