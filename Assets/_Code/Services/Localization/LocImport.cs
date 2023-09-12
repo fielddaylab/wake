@@ -19,7 +19,7 @@ namespace Aqua
         private static string inImportFilePath = "Assets/_Content/Text/Localization/TranslationToImport.csv";
         private static string outImportFilePathRoot = "Assets\\_Content\\Text\\";
 
-        private static char CSV_DELIM = '^'; // Ensure this matches the delim when the csv is exported!
+#if UNITY_EDITOR
 
         [MenuItem("Aqualab/Localization/Import Spanish Translation")] 
         public static void ImportSpanishTranslation() {
@@ -27,6 +27,7 @@ namespace Aqua
 
             ImportTranslation(FourCC.Parse("ES"), translationIndex);
         }
+#endif // UNITY_EDITOR
 
         private static void ImportTranslation(FourCC langCode, int translationIndex) {
             FileStream importStream = File.OpenRead(inImportFilePath);
