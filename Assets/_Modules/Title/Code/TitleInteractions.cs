@@ -126,10 +126,12 @@ namespace Aqua.Title
         }
 
         private void OnProfileNameSelected(string inText) {
+            /* TODO: check for IOS and display keyboard
             bool deviceIsIpad = UnityEngine.iOS.Device.generation.ToString().Contains("iPad");
             if (deviceIsIpad) {
                 TouchScreenKeyboard.Open(m_ProfileName.text, TouchScreenKeyboardType.Default, false, false, false);
             }
+            */
         }
 
         private void OnStartClicked()
