@@ -3,6 +3,7 @@ using System.Collections;
 using Aqua.Animation;
 using Aqua.Cameras;
 using AquaAudio;
+using BeauData;
 using BeauPools;
 using BeauRoutine;
 using BeauRoutine.Extensions;
@@ -51,6 +52,11 @@ namespace Aqua.Title
         [Header("Credits Page")]
         [SerializeField] private BasePanel m_CreditsPanel = null;
 
+        [Header("Language")]
+        [SerializeField] private CanvasGroup m_LanguageGroup = null;
+        [SerializeField] private Button m_EnglishButton = null;
+        [SerializeField] private Button m_SpanishButton = null;
+
         #endregion // Inspector
 
         [NonSerialized] private TitleConfig m_TitleConfig = null;
@@ -74,6 +80,9 @@ namespace Aqua.Title
 
             m_InitialGroup.gameObject.SetActive(true);
             m_ProfileGroup.gameObject.SetActive(false);
+
+            m_EnglishButton.onClick.AddListener(OnEnglishClicked);
+            m_SpanishButton.onClick.AddListener(OnSpanishClicked);
 
             m_LoadingSpinner.SetActive(false);
         }
@@ -117,11 +126,12 @@ namespace Aqua.Title
         }
 
         private void OnProfileNameSelected(string inText) {
-            Debug.Log("[Keyboard] Selected!");
+            /* TODO: check for IOS and display keyboard
             bool deviceIsIpad = UnityEngine.iOS.Device.generation.ToString().Contains("iPad");
             if (deviceIsIpad) {
                 TouchScreenKeyboard.Open(m_ProfileName.text, TouchScreenKeyboardType.Default, false, false, false);
             }
+            */
         }
 
         private void OnStartClicked()
@@ -222,6 +232,16 @@ namespace Aqua.Title
         private void OnSettingsClosed(BasePanel.TransitionType _) {
             m_InitialGroup.blocksRaycasts = m_InitialGroup.isActiveAndEnabled;
             m_ProfileGroup.blocksRaycasts = m_ProfileGroup.isActiveAndEnabled;
+        }
+
+        private void OnEnglishClicked() {
+            Debug.Log("[Lang] English clicked");
+            Services.Events.Dispatch(GameEvents.OnLanguageChange, FourCC.Parse("EN"));
+        }
+
+        private void OnSpanishClicked() {
+            Debug.Log("[Lang] Spanish clicked");
+            Services.Events.Dispatch(GameEvents.OnLanguageChange, FourCC.Parse("ES"));
         }
 
         #endregion // Handlers

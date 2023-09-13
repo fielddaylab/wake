@@ -31,6 +31,7 @@ namespace Aqua
         #region Inspector
 
         [SerializeField, Required] private LocManifest m_EnglishManifest;
+        [SerializeField, Required] private LocManifest m_SpanishManifest;
 
         #endregion // Inspector
 
@@ -46,56 +47,55 @@ namespace Aqua
 
         public readonly CastableEvent<FourCC> OnLanguageUpdated = new CastableEvent<FourCC>(8);
 
-        #if DEVELOPMENT
+#if DEVELOPMENT
 
         [NonSerialized] private readonly HashSet<StringHash32> m_UsageAudit = Collections.NewSet<StringHash32>(1024);
 
-        #endif // DEVELOPMENT
-        
+#endif // DEVELOPMENT
+
         #region Loading
 
-        private IEnumerator InitialLoad()
-        {
+        private IEnumerator InitialLoad() {
             yield return LoadLanguage(m_EnglishManifest);
         }
 
-        private IEnumerator LoadLanguage(LocManifest manifest)
-        {
+        private IEnumerator LoadLanguage(LocManifest manifest) {
             m_Loading = true;
-            
+
             if (m_LanguagePackage == null) {
                 m_LanguagePackage = ScriptableObject.CreateInstance<LocPackage>();
                 m_LanguagePackage.name = "LanguageStrings";
             }
 
             m_LanguagePackage.Clear();
-            using(Profiling.Time("loading language")) {
+            using (Profiling.Time("loading language")) {
                 bool loadPackages;
-                #if PREVIEW || PRODUCTION
+#if PREVIEW || PRODUCTION
                 loadPackages = false;
-                #else
+#else
                 loadPackages = manifest.Packages.Length > 0;
-                #endif // PREVIEW || PRODUCTION
+#endif // PREVIEW || PRODUCTION
                 if (loadPackages) {
                     DebugService.Log(LogMask.Loading | LogMask.Localization, "[LocService] Loading '{0}' from {1} packages", manifest.name, manifest.Packages.Length);
-                    foreach(var file in manifest.Packages) {
+                    foreach (var file in manifest.Packages) {
                         var parser = BlockParser.ParseAsync(ref m_LanguagePackage, file, Parsing.Block, LocPackage.Generator.Instance);
-                        yield return Async.Schedule(parser); 
+                        yield return Async.Schedule(parser);
                     }
-                } else {
+                }
+                else {
                     DebugService.Log(LogMask.Loading | LogMask.Localization, "[LocService] Loading '{0}' from {1:0.00}kb binary", manifest.name, manifest.Binary.Length / 1024);
                     yield return Async.Schedule(LocPackage.ReadFromBinary(m_LanguagePackage, manifest.Binary));
                 }
             }
 
-            #if DEVELOPMENT
+#if DEVELOPMENT
 
             m_UsageAudit.Clear();
-            foreach(var key in m_LanguagePackage.AllKeys) {
+            foreach (var key in m_LanguagePackage.AllKeys) {
                 m_UsageAudit.Add(key);
             }
 
-            #endif // DEVELOPMENT
+#endif // DEVELOPMENT
 
             DebugService.Log(LogMask.Loading | LogMask.Localization, "[LocService] Loaded {0} keys ({1})", m_LanguagePackage.Count, manifest.LanguageId.ToString());
 
@@ -107,6 +107,25 @@ namespace Aqua
 
         #endregion // Loading
 
+
+        #region Handlers
+
+        private void HandleLanguageChange(FourCC langCode) {
+            if (m_Loading) {
+                return;
+            }
+
+            Debug.Log("[Lang] Handling change to " + langCode);
+            if (langCode == FourCC.Parse("EN") && m_CurrentLanguage != m_EnglishManifest.LanguageId) {
+                m_LoadRoutine.Replace(this, LoadLanguage(m_EnglishManifest)).Tick();
+            }
+            else if (langCode == FourCC.Parse("ES") && m_CurrentLanguage != m_SpanishManifest.LanguageId) {
+                m_LoadRoutine.Replace(this, LoadLanguage(m_SpanishManifest)).Tick();
+            }
+        }
+
+        #endregion // Handlers
+
         #region Localization
 
         public FourCC CurrentLanguageId {
@@ -117,21 +136,22 @@ namespace Aqua
             get { return m_CurrentJournalPackage; }
         }
 
+        public bool IsDefaultLanguage() {
+            return m_CurrentLanguage == DefaultLanguage;
+        }
+
         /// <summary>
         /// Localizes the given key.
         /// </summary>
-        public string Localize(TextId inKey, bool inbIgnoreEvents = false)
-        {
+        public string Localize(TextId inKey, bool inbIgnoreEvents = false) {
             return Localize(inKey, string.Empty, null, inbIgnoreEvents);
         }
 
         /// <summary>
         /// Localize the given key.
         /// </summary>
-        public string Localize(TextId inKey, StringSlice inDefault, object inContext = null, bool inbIgnoreEvents = false)
-        {
-            if (m_Loading)
-            {
+        public string Localize(TextId inKey, StringSlice inDefault, object inContext = null, bool inbIgnoreEvents = false) {
+            if (m_Loading) {
                 Debug.LogErrorFormat("[LocService] Localization is still loading");
                 return inDefault.ToString();
             }
@@ -141,33 +161,27 @@ namespace Aqua
 
             string content;
             bool hasEvents;
-            if (!m_LanguagePackage.TryGetContent(inKey, out content))
-            {
-                if (inDefault.IsEmpty || m_CurrentLanguage != DefaultLanguage)
-                {
+            if (!m_LanguagePackage.TryGetContent(inKey, out content)) {
+                if (inDefault.IsEmpty || m_CurrentLanguage != DefaultLanguage) {
                     Debug.LogErrorFormat("[LocService] Unable to locate entry for '{0}' ({1})", inKey.Source(), inKey.Hash().HashValue);
                 }
                 content = inDefault.ToString();
                 hasEvents = content.IndexOf('{') >= 0;
             }
-            else
-            {
-                #if DEVELOPMENT
+            else {
+#if DEVELOPMENT
                 m_UsageAudit.Remove(inKey);
-                #endif // DEVELOPMENT
+#endif // DEVELOPMENT
 
                 hasEvents = m_LanguagePackage.HasEvents(inKey);
             }
-            
-            if (!inbIgnoreEvents && hasEvents)
-            {
-                using(var tagAlloc = m_TagStringPool.TempAlloc())
-                {
+
+            if (!inbIgnoreEvents && hasEvents) {
+                using (var tagAlloc = m_TagStringPool.TempAlloc()) {
                     TagString tagStr = tagAlloc.Object;
                     Services.Script.ParseToTag(ref tagStr, content, inContext);
                     content = tagStr.RichText;
-                    if (tagStr.EventCount > 0)
-                    {
+                    if (tagStr.EventCount > 0) {
                         Log.Warn("[LocService] Entry for '{0}' contains {1} embedded events, which are discarded when translating directly to string", inKey, tagStr.EventCount);
                     }
                 }
@@ -175,38 +189,38 @@ namespace Aqua
             return content;
         }
 
+        public bool Lookup(TextId inKey, out string str) {
+            return m_LanguagePackage.TryGetContent(inKey, out str);
+        }
+
         #endregion // Localization
 
         #region Tagged
 
-        public bool LocalizeTagged(ref TagString ioTagString, TextId inKey, object inContext = null)
-        {
+        public bool LocalizeTagged(ref TagString ioTagString, TextId inKey, object inContext = null) {
             if (ioTagString == null)
                 ioTagString = new TagString();
             else
                 ioTagString.Clear();
 
-            if (m_Loading)
-            {
+            if (m_Loading) {
                 Debug.LogErrorFormat("[LocService] Localization is still loading");
                 return false;
             }
 
-            if (inKey.IsEmpty)
-            {
+            if (inKey.IsEmpty) {
                 return true;
             }
 
             string content;
-            if (!m_LanguagePackage.TryGetContent(inKey, out content))
-            {
+            if (!m_LanguagePackage.TryGetContent(inKey, out content)) {
                 Debug.LogErrorFormat("[LocService] Unable to locate entry for '{0}' ({1})", inKey.Source(), inKey.Hash().HashValue);
                 return false;
             }
 
-            #if DEVELOPMENT
+#if DEVELOPMENT
             m_UsageAudit.Remove(inKey);
-            #endif // DEVELOPMENT
+#endif // DEVELOPMENT
 
             Services.Script.ParseToTag(ref ioTagString, content, inContext);
             return true;
@@ -216,21 +230,18 @@ namespace Aqua
 
         #region Texts
 
-        public void RegisterText(LocText inText)
-        {
+        public void RegisterText(LocText inText) {
             m_ActiveTexts.Add(inText);
         }
 
-        public void DeregisterText(LocText inText)
-        {
+        public void DeregisterText(LocText inText) {
             m_ActiveTexts.FastRemove(inText);
         }
 
-        private void DispatchTextRefresh()
-        {
+        private void DispatchTextRefresh() {
             Services.Assets.OnLocalizationLoaded();
 
-            for(int i = 0, length = m_ActiveTexts.Count; i < length; i++)
+            for (int i = 0, length = m_ActiveTexts.Count; i < length; i++)
                 m_ActiveTexts[i].OnLocalizationRefresh();
             OnLanguageUpdated.Invoke(m_CurrentLanguage);
         }
@@ -239,21 +250,20 @@ namespace Aqua
 
         #region IService
 
-        public bool IsLoading()
-        {
+        public bool IsLoading() {
             return m_LoadRoutine;
         }
 
-        protected override void Initialize()
-        {
+        protected override void Initialize() {
             m_LoadRoutine.Replace(this, InitialLoad()).Tick();
 
             m_TagStringPool = new DynamicPool<TagString>(4, Pool.DefaultConstructor<TagString>());
             m_TagStringPool.Prewarm();
+
+            Services.Events.Register<FourCC>(GameEvents.OnLanguageChange, HandleLanguageChange);
         }
 
-        protected override void Shutdown()
-        {
+        protected override void Shutdown() {
             UnityHelper.SafeDestroy(ref m_LanguagePackage);
 
             base.Shutdown();
@@ -263,16 +273,15 @@ namespace Aqua
 
         #region IDebuggable
 
-        #if DEVELOPMENT
+#if DEVELOPMENT
 
-        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus(FindOrCreateMenu findOrCreate)
-        {
+        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus(FindOrCreateMenu findOrCreate) {
             DMInfo info = findOrCreate("Audit");
 
             info.AddButton("Log Unused Localization Keys", () => {
                 if (m_UsageAudit.Count > 0) {
                     StringBuilder sb = new StringBuilder(1024);
-                    foreach(var unused in m_UsageAudit) {
+                    foreach (var unused in m_UsageAudit) {
                         sb.Append(unused.ToDebugString()).Append('\n');
                     }
                     sb.TrimEnd(StringUtils.DefaultNewLineChars);
@@ -281,7 +290,8 @@ namespace Aqua
 
                     Log.Warn("[LocService] {0} unused keys\n{1}", m_UsageAudit.Count, output);
                     File.WriteAllText("Temp/Unused Localization Keys.txt", output);
-                } else {
+                }
+                else {
                     Log.Msg("[LocService] No unused localization keys! Wow!");
                 }
             });
@@ -289,7 +299,7 @@ namespace Aqua
             yield return info;
         }
 
-        #endif // DEVELOPMENT
+#endif // DEVELOPMENT
 
         #endregion // IDebuggable
     }

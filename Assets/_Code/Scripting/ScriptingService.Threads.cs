@@ -72,7 +72,12 @@ namespace Aqua
 
         bool ILeafPlugin.TryLookupLine(StringHash32 inLineCode, LeafNode inLocalNode, out string outLine)
         {
-            return inLocalNode.Package().TryGetLine(inLineCode, out outLine);
+            if (Services.Loc.IsDefaultLanguage()) {
+                return inLocalNode.Package().TryGetLine(inLineCode, out outLine);
+            }
+            else {
+                return Services.Loc.Lookup(inLineCode, out outLine);
+            }
         }
 
         bool ILeafPlugin<ScriptNode>.TryLookupNode(StringHash32 inNodeId, ScriptNode inLocalNode, out ScriptNode outNode)

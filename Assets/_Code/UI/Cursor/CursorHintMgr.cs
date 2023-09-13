@@ -56,10 +56,11 @@ namespace Aqua
                         }
                         else
                         {
-                            m_Tooltip.SetId(m_CurrentHint.TooltipId);
-                            if (prevTimer < inTooltipTime)
-                            {
-                                Services.TTS.Tooltip(m_CurrentHint.TooltipId);
+                            if (!Services.Loc.IsLoading()) {
+                                m_Tooltip.SetId(m_CurrentHint.TooltipId);
+                                if (prevTimer < inTooltipTime) {
+                                    Services.TTS.Tooltip(m_CurrentHint.TooltipId);
+                                }
                             }
                         }
                     }

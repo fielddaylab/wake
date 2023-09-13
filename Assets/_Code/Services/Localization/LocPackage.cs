@@ -14,7 +14,7 @@ namespace Aqua
 {
     public class LocPackage : ScriptableDataBlockPackage<LocNode>
     {
-        private const int MaxCompressedSize = 1024 * 1024 * 4;
+        private const int MaxCompressedSize = 1024 * 1024 * 8;
 
         private readonly Dictionary<StringHash32, string> m_Nodes = new Dictionary<StringHash32, string>(512);
         private readonly HashSet<StringHash32> m_IdsWithEvents = Collections.NewSet<StringHash32>(128);
@@ -54,7 +54,9 @@ namespace Aqua
         }
 
         public override void Clear()
-        {
+        { 
+            base.Clear();
+            m_RootPath = string.Empty;
             m_Nodes.Clear();
             m_IdsWithEvents.Clear();
         }
@@ -71,10 +73,16 @@ namespace Aqua
             {
                 inUtil.TempBuilder.Length = 0;
                 inUtil.TempBuilder.Append(inPackage.m_RootPath);
-                if (!inPackage.m_RootPath.EndsWith(".") && !inId.Id.StartsWith('.'))
+                if (inPackage.m_RootPath.Length > 0 && !inPackage.m_RootPath.EndsWith(".") && !inId.Id.StartsWith('.'))
                     inUtil.TempBuilder.Append('.');
                 inUtil.TempBuilder.AppendSlice(inId.Id);
                 string fullId = inUtil.TempBuilder.Flush();
+                if (fullId.IndexOf("__") != -1) {
+                    fullId = fullId.Replace("__", "|");
+                }
+                if (fullId.IndexOf("_c_") != -1) {
+                    fullId = fullId.Replace("_c_", ":");
+                }
                 outBlock = inPackage.m_CachedNode;
                 outBlock.Id = fullId;
                 outBlock.Content = string.Empty;
