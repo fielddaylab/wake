@@ -14,7 +14,7 @@ namespace Aqua.Option
 
         public FourCC LanguageCode;
 
-        public ushort Version { get { return 7; } }
+        public ushort Version { get { return 3; } }
 
 
         public void Serialize(Serializer ioSerializer) {

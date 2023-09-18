@@ -79,7 +79,7 @@ namespace Aqua.Option
             {
                 ioSerializer.Object("performance", ref Performance);
                 ioSerializer.Object("accessibility", ref Accessibility);
-                if (ioSerializer.ObjectVersion >= 7) {
+                if (ioSerializer.ObjectVersion >= 3) {
                     ioSerializer.Object("language", ref Language);
                 }
             }
