@@ -19,6 +19,7 @@ namespace Aqua.Option
         public OptionsGameplay Gameplay;
         public OptionsPerformance Performance;
         public OptionsAccessibility Accessibility;
+        public OptionsLanguage Language;
 
         private bool m_HasChanges = false;
 
@@ -28,6 +29,7 @@ namespace Aqua.Option
             {
                 Audio.SetDefaults();
                 Performance.SetDefaults();
+                Language.SetDefaults();
             }
 
             if ((inAuthority & Authority.Profile) != 0)
@@ -42,6 +44,7 @@ namespace Aqua.Option
             hash = UnsafeExt.Hash(Gameplay, hash);
             hash = UnsafeExt.Hash(Performance, hash);
             hash = UnsafeExt.Hash(Accessibility, hash);
+            hash = UnsafeExt.Hash(Language, hash);
             return hash;
         }
 
@@ -54,6 +57,7 @@ namespace Aqua.Option
             {
                 inTarget.Audio = inSource.Audio;
                 inTarget.Performance = inSource.Performance;
+                inTarget.Language = inSource.Language;
             }
 
             if ((inAuthority & Authority.Profile) != 0)
@@ -75,6 +79,9 @@ namespace Aqua.Option
             {
                 ioSerializer.Object("performance", ref Performance);
                 ioSerializer.Object("accessibility", ref Accessibility);
+                if (ioSerializer.ObjectVersion >= 7) {
+                    ioSerializer.Object("language", ref Language);
+                }
             }
             else
             {

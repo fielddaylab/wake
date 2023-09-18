@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Aqua.Animation;
 using Aqua.Cameras;
+using Aqua.Option;
 using AquaAudio;
 using BeauData;
 using BeauPools;
@@ -20,6 +21,10 @@ namespace Aqua.Title
     {
         static private readonly TextId NewHeader = "ui.title.new";
         static private readonly TextId ContinueHeader = "ui.title.continue";
+
+        // Loading texts defined outside of localization because it needs to display before localization has finished loading
+        static private readonly string EnglishLoadingText = "Loading..."; 
+        static private readonly string SpanishLoadingText = "Cargando...";
 
         private enum Page
         {
@@ -56,6 +61,8 @@ namespace Aqua.Title
         [SerializeField] private CanvasGroup m_LanguageGroup = null;
         [SerializeField] private Button m_EnglishButton = null;
         [SerializeField] private Button m_SpanishButton = null;
+        [SerializeField] private CanvasGroup m_LoadingLangGroup = null;
+        [SerializeField] private TMP_Text m_LoadingLangText = null;
 
         #endregion // Inspector
 
@@ -235,16 +242,59 @@ namespace Aqua.Title
         }
 
         private void OnEnglishClicked() {
+            if (Services.Loc.IsLoading()) {
+                return;
+            }
+
+            FourCC newCode = FourCC.Parse("EN");
+
             Debug.Log("[Lang] English clicked");
-            Services.Events.Dispatch(GameEvents.OnLanguageChange, FourCC.Parse("EN"));
+            Services.Events.Dispatch(GameEvents.OnLanguageChange, newCode);
+            m_LoadingLangText.text = EnglishLoadingText;
+
+            Save.Options.Language.LanguageCode = newCode;
+
+            Routine.Start(this, LanguageClickedCommon());
         }
 
         private void OnSpanishClicked() {
+            if (Services.Loc.IsLoading()) {
+                return;
+            }
+
+            FourCC newCode = FourCC.Parse("ES");
+
+
             Debug.Log("[Lang] Spanish clicked");
-            Services.Events.Dispatch(GameEvents.OnLanguageChange, FourCC.Parse("ES"));
+            Services.Events.Dispatch(GameEvents.OnLanguageChange, newCode);
+            m_LoadingLangText.text = SpanishLoadingText;
+
+            Save.Options.Language.LanguageCode = newCode;
+
+            Routine.Start(this, LanguageClickedCommon());
         }
 
         #endregion // Handlers
+
+
+        private IEnumerator LanguageClickedCommon() {
+            Services.Input.PauseAll();
+
+            m_LoadingLangGroup.alpha = 1;
+
+            // Wait for loading
+            while (Services.Loc.IsLoading()) {
+                yield return null;
+            }
+
+            m_LoadingLangGroup.alpha = 0;
+
+            if (Services.Valid) {
+                Services.Data?.SaveOptionsSettings();
+            }
+
+            Services.Input.ResumeAll();
+        }
 
         private void LoadPage(Page inPage)
         {
