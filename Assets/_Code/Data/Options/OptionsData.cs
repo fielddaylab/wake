@@ -69,7 +69,7 @@ namespace Aqua.Option
 
         #region ISerializedObject
 
-        public ushort Version { get { return 2; } }
+        public ushort Version { get { return 3; } }
 
         public void Serialize(Serializer ioSerializer)
         {
