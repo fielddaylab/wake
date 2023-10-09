@@ -59,8 +59,8 @@ namespace Aqua.Title
 
         [Header("Language")]
         [SerializeField] private CanvasGroup m_LanguageGroup = null;
-        [SerializeField] private Button m_EnglishButton = null;
-        [SerializeField] private Button m_SpanishButton = null;
+        [SerializeField] private LanguageButton m_EnglishButton = null;
+        [SerializeField] private LanguageButton m_SpanishButton = null;
         [SerializeField] private CanvasGroup m_LoadingLangGroup = null;
         [SerializeField] private TMP_Text m_LoadingLangText = null;
 
@@ -88,8 +88,15 @@ namespace Aqua.Title
             m_InitialGroup.gameObject.SetActive(true);
             m_ProfileGroup.gameObject.SetActive(false);
 
-            m_EnglishButton.onClick.AddListener(OnEnglishClicked);
-            m_SpanishButton.onClick.AddListener(OnSpanishClicked);
+            m_EnglishButton.Button.onClick.AddListener(OnEnglishClicked);
+            m_SpanishButton.Button.onClick.AddListener(OnSpanishClicked);
+
+            if (Save.Options.Language.LanguageCode == FourCC.Parse("ES")) {
+                m_EnglishButton.Underline.enabled = false;
+            }
+            else if (Save.Options.Language.LanguageCode == FourCC.Parse("EN")) {
+                m_SpanishButton.Underline.enabled = false;
+            }
 
             m_LoadingSpinner.SetActive(false);
         }
@@ -251,6 +258,8 @@ namespace Aqua.Title
             Debug.Log("[Lang] English clicked");
             Services.Events.Dispatch(GameEvents.OnLanguageChange, newCode);
             m_LoadingLangText.text = EnglishLoadingText;
+            m_EnglishButton.Underline.enabled = true;
+            m_SpanishButton.Underline.enabled = false;
 
             Save.Options.Language.LanguageCode = newCode;
 
@@ -268,6 +277,8 @@ namespace Aqua.Title
             Debug.Log("[Lang] Spanish clicked");
             Services.Events.Dispatch(GameEvents.OnLanguageChange, newCode);
             m_LoadingLangText.text = SpanishLoadingText;
+            m_EnglishButton.Underline.enabled = false;
+            m_SpanishButton.Underline.enabled = true;
 
             Save.Options.Language.LanguageCode = newCode;
 

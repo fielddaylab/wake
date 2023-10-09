@@ -9,6 +9,7 @@ using System.IO;
 using System.Text;
 using Aqua.Compression;
 using Aqua.Debugging;
+using Aqua.Option;
 using BeauData;
 using BeauPools;
 using BeauRoutine;
@@ -26,6 +27,8 @@ namespace Aqua
     [ServiceDependency(typeof(AssetsService))]
     public partial class LocService : ServiceBehaviour, ILoadable, IDebuggable
     {
+        private const string LocalSettingsPrefsKey = "settings/local";
+
         static private readonly FourCC DefaultLanguage = FourCC.Parse("EN");
 
         #region Inspector
@@ -56,7 +59,13 @@ namespace Aqua
         #region Loading
 
         private IEnumerator InitialLoad() {
-            yield return LoadLanguage(m_EnglishManifest);
+            if (Save.Options.Language.LanguageCode == FourCC.Parse("ES")) {
+                yield return LoadLanguage(m_SpanishManifest);
+            }
+            else {
+                // english by default
+                yield return LoadLanguage(m_EnglishManifest);
+            }
         }
 
         private IEnumerator LoadLanguage(LocManifest manifest) {
