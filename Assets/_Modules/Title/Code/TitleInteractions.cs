@@ -94,7 +94,7 @@ namespace Aqua.Title
             if (Save.Options.Language.LanguageCode == FourCC.Parse("ES")) {
                 m_EnglishButton.Underline.enabled = false;
             }
-            else if (Save.Options.Language.LanguageCode == FourCC.Parse("EN")) {
+            else {
                 m_SpanishButton.Underline.enabled = false;
             }
 
