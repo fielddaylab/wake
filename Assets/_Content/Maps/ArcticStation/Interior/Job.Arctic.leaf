@@ -18,6 +18,14 @@ $else
     $choice .action.cancel; No thanks.
 $endif
 
+#NoJobHandler(mentionTio, jobs:final-final.upgradeReady, !jobs:final-final.tio.code-received)
+{@$JobGiverId}  Hey Ollie!
+                {nameof kelpMechanic} wants us to remind you to talk to him at the {nameof RS-1C}. Something about upgrading an access card?
+                Consider giving him a visit before taking any new jobs.
+                Anyways, want to see the {h}Job Board{/h}?
+$choice .action.openJobBoard; Sure!
+$choice .action.cancel; No thanks.
+
 #NoJobHandler(earlyConvo, CompletedJobCount(ArcticStation, 2))
 @once
 {@$JobGiverId} Oh, hey Ollie. Nice to see you.
@@ -108,7 +116,7 @@ $choice .action.cancel.currentJob; Nope.
 :: commsDiscussion
     // STORY BEAT H
     {@player}   Oh, by the way... 
-                {@nameof @profArctic}, my uncle said Mer was working on an upgrade for her comms system.
+                {nameof @profArctic}, my uncle said Mer was working on an upgrade for her comms system.
                  Do you know anything about that?
     {@arcticSci} Hmm... I do remember her working on some fixes. 
                   She was waiting to use it until she was sure it wouldn't damage her A.I. 
