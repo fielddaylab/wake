@@ -47,6 +47,7 @@ namespace Aqua
         [NonSerialized] private FourCC m_CurrentLanguage;
         [NonSerialized] private LayoutPrefabPackage m_CurrentJournalPackage;
         [NonSerialized] private List<LocText> m_ActiveTexts = new List<LocText>(64);
+        [NonSerialized] private List<LocFont> m_ActiveFonts = new List<LocFont>(64);
 
         public readonly CastableEvent<FourCC> OnLanguageUpdated = new CastableEvent<FourCC>(8);
 
@@ -247,11 +248,24 @@ namespace Aqua
             m_ActiveTexts.FastRemove(inText);
         }
 
+        public void RegisterFont(LocFont inText) {
+            m_ActiveFonts.Add(inText);
+        }
+
+        public void DeregisterFont(LocFont inText) {
+            m_ActiveFonts.FastRemove(inText);
+        }
+
+
         private void DispatchTextRefresh() {
             Services.Assets.OnLocalizationLoaded();
 
-            for (int i = 0, length = m_ActiveTexts.Count; i < length; i++)
+            for (int i = 0, length = m_ActiveTexts.Count; i < length; i++) {
                 m_ActiveTexts[i].OnLocalizationRefresh();
+            }
+            for (int i = 0; i < m_ActiveFonts.Count; i++) {
+                m_ActiveFonts[i].OnLocalizationRefresh();
+            }
             OnLanguageUpdated.Invoke(m_CurrentLanguage);
         }
 
