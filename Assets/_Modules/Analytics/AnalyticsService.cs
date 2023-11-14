@@ -125,7 +125,7 @@ namespace Aqua
             m_Log = new OGDLog(new OGDLogConsts() {
                 AppId = m_AppId,
                 AppVersion = m_AppVersion,
-                ClientLogVersion = 3
+                ClientLogVersion = 4
             }, new OGDLog.MemoryConfig(
                 4096, 1024 * 1024 * 32, 256
             )); // 32 kb game_state buffer? it's for switch_job, that can be massive, up to 32kb
