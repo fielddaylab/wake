@@ -337,6 +337,7 @@ namespace Aqua.Modeling {
                 BFBase fact = Assets.Fact(m_ProgressInfo.Scope.SyncModelId);
                 Services.UI.Popup.PresentFact(Loc.Find("modeling.newSyncModel.header"), null, null, fact, BFType.DefaultDiscoveredFlags(fact)).OnComplete((_) => {
                     Services.Script.TriggerResponse(ModelingConsts.Trigger_SyncCompleted);
+                    Services.Events.Dispatch(ModelingConsts.Event_Simulation_Complete, m_State.LastKnownAccuracy);
                 });
                 RefreshPhaseHeader();
                 Services.Audio.PostEvent("modelSynced");

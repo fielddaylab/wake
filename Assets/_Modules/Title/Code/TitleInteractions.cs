@@ -256,12 +256,13 @@ namespace Aqua.Title
             FourCC newCode = FourCC.Parse("EN");
 
             Debug.Log("[Lang] English clicked");
-            Services.Events.Dispatch(GameEvents.OnLanguageChange, newCode);
             m_LoadingLangText.text = EnglishLoadingText;
             m_EnglishButton.Underline.enabled = true;
             m_SpanishButton.Underline.enabled = false;
 
             Save.Options.Language.LanguageCode = newCode;
+
+            Services.Events.Dispatch(GameEvents.OnLanguageChange, newCode);
 
             Routine.Start(this, LanguageClickedCommon());
         }
@@ -275,12 +276,13 @@ namespace Aqua.Title
 
 
             Debug.Log("[Lang] Spanish clicked");
-            Services.Events.Dispatch(GameEvents.OnLanguageChange, newCode);
             m_LoadingLangText.text = SpanishLoadingText;
             m_EnglishButton.Underline.enabled = false;
             m_SpanishButton.Underline.enabled = true;
 
             Save.Options.Language.LanguageCode = newCode;
+
+            Services.Events.Dispatch(GameEvents.OnLanguageChange, newCode);
 
             Routine.Start(this, LanguageClickedCommon());
         }

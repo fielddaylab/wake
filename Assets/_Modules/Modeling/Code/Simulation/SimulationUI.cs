@@ -567,7 +567,6 @@ namespace Aqua.Modeling {
         private void OnSaveClicked() {
             switch(m_State.Phase) {
                 case ModelPhases.Sync: {
-                    Services.Events.Dispatch(ModelingConsts.Event_Simulation_Complete);
                     OnSyncAchieved?.Invoke();
                     break;
                 }
