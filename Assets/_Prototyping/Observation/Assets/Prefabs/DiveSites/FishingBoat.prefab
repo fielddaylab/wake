@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4875577485573058526}
+  - component: {fileID: 5458374671778976412}
   m_Layer: 0
   m_Name: FishingBoat
   m_TagString: Untagged
@@ -33,6 +34,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5458374671778976412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5251856085383984484}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae620349e7bce24688d2ab26f9be5a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DestroyInactiveChildren: 0
+  Recursive: 0
+  DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!1001 &85731681680870905
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -145,6 +162,11 @@ PrefabInstance:
       propertyPath: m_Id.m_Source
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 3146655083410380133, guid: d43f84959769055489a36095d9d2631d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3219354949484214776, guid: d43f84959769055489a36095d9d2631d,
         type: 3}
       propertyPath: CritterId.m_Hash
@@ -235,7 +257,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Taggable
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3219354949484214776, guid: d43f84959769055489a36095d9d2631d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: d43f84959769055489a36095d9d2631d, type: 3}
 --- !u!4 &3329930951939269772 stripped
 Transform:

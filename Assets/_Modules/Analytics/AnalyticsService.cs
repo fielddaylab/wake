@@ -778,6 +778,7 @@ namespace Aqua
         private void SetCurrentTankType(TankType inTankType)
         {
             m_CurrentTankType = inTankType.ToString();
+            m_CurrentCritters.Clear();
         }
 
         private void SetTankFeatureEnabled(MeasurementTank.FeatureMask feature)
@@ -879,7 +880,7 @@ namespace Aqua
 
             m_CurrentTankType = string.Empty;
             m_CurrentEnvironment = string.Empty;
-            m_CurrentCritters = new List<string>();
+            m_CurrentCritters.Clear();
             m_StabilizerEnabled = false;
             m_AutoFeederEnabled = false;
         }
