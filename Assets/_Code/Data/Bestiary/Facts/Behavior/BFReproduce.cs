@@ -36,7 +36,14 @@ namespace Aqua {
         {
             BFReproduce fact = (BFReproduce) inFact;
 
-            yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
+            if (Services.Loc.IsCurrentLanguageGendered())
+            {
+                yield return BFFragment.CreateGenderedLocNoun(fact.Parent.CommonName(), fact.Parent.Gender());
+            }
+            else
+            {
+                yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
+            }
             if (fact.Amount == 0)
             {
                 yield return BFFragment.CreateLocVerb(ReproduceDisabledVerb);

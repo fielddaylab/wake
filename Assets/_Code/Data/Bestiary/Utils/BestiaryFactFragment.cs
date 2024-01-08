@@ -1,4 +1,5 @@
 using BeauUtil;
+using System.Text;
 using UnityEngine;
 
 namespace Aqua
@@ -23,6 +24,22 @@ namespace Aqua
             {
                 Type = BestiaryFactFragmentType.Noun,
                 String = Services.Loc.Localize(inWord, true)
+            };
+        }
+
+        static public BFFragment CreateGenderedLocNoun(TextId inWord, TextId inArticle)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(Services.Loc.Localize(inArticle, true));
+            if (!inArticle.IsEmpty) {
+                builder.Append(" ");
+            }
+            builder.Append(Services.Loc.Localize(inWord, true));
+
+            return new BFFragment()
+            {
+                Type = BestiaryFactFragmentType.Noun,
+                String = builder.ToString()
             };
         }
 

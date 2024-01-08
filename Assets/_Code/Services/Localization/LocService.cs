@@ -45,6 +45,7 @@ namespace Aqua
 
         [NonSerialized] private bool m_Loading;
         [NonSerialized] private FourCC m_CurrentLanguage;
+        [NonSerialized] private bool m_CurrentLanguageGendered;
         [NonSerialized] private LayoutPrefabPackage m_CurrentJournalPackage;
         [NonSerialized] private List<LocText> m_ActiveTexts = new List<LocText>(64);
         [NonSerialized] private List<LocFont> m_ActiveFonts = new List<LocFont>(64);
@@ -110,6 +111,7 @@ namespace Aqua
             DebugService.Log(LogMask.Loading | LogMask.Localization, "[LocService] Loaded {0} keys ({1})", m_LanguagePackage.Count, manifest.LanguageId.ToString());
 
             m_CurrentLanguage = manifest.LanguageId;
+            m_CurrentLanguageGendered = manifest.Gendered;
             m_CurrentJournalPackage = manifest.JournalLayout;
             m_Loading = false;
             DispatchTextRefresh();
@@ -148,6 +150,11 @@ namespace Aqua
 
         public bool IsDefaultLanguage() {
             return m_CurrentLanguage == DefaultLanguage;
+        }
+
+        public bool IsCurrentLanguageGendered()
+        {
+            return m_CurrentLanguageGendered;
         }
 
         /// <summary>

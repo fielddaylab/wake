@@ -56,19 +56,44 @@ namespace Aqua {
                 {
                     yield return BFFragment.CreateAmount(BestiaryUtils.FormatMassRate(fact.Amount));
                 }
-                yield return BFFragment.CreateLocNoun(fact.Critter.CommonName());
+
+                if (Services.Loc.IsCurrentLanguageGendered() && !BFType.HasRate(inFlags)) {
+                    yield return BFFragment.CreateGenderedLocNoun(fact.Critter.CommonName(), fact.Critter.Gender());
+                }
+                else {
+                    yield return BFFragment.CreateLocNoun(fact.Critter.CommonName());
+                }
                 yield return BFFragment.CreateLocVerb(bIsHuman ? IsCaughtByVerb : IsEatenByVerb);
-                yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
+                if (Services.Loc.IsCurrentLanguageGendered()) {
+                    yield return BFFragment.CreateGenderedLocNoun(fact.Parent.CommonName(), fact.Parent.Gender());
+                }
+                else {
+                    yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
+                }
             }
             else
             {
-                yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
+                if (Services.Loc.IsCurrentLanguageGendered())
+                {
+                    yield return BFFragment.CreateGenderedLocNoun(fact.Parent.CommonName(), fact.Parent.Gender());
+                }
+                else
+                {
+                    yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
+                }
                 yield return BFFragment.CreateLocVerb(bIsHuman ? CatchVerb : EatVerb);
                 if (BFType.HasRate(inFlags))
                 {
                     yield return BFFragment.CreateAmount(BestiaryUtils.FormatMassRate(fact.Amount));
                 }
-                yield return BFFragment.CreateLocNoun(fact.Critter.CommonName());
+                if (Services.Loc.IsCurrentLanguageGendered() && !BFType.HasRate(inFlags))
+                {
+                    yield return BFFragment.CreateGenderedLocNoun(fact.Critter.CommonName(), fact.Critter.Gender());
+                }
+                else
+                {
+                    yield return BFFragment.CreateLocNoun(fact.Critter.CommonName());
+                }
             }
         }
 

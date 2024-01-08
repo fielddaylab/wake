@@ -26,6 +26,7 @@ namespace Aqua
         [SerializeField] private string m_ScientificName = null;
         [SerializeField] private TextId m_CommonNameId = default;
         [SerializeField] private TextId m_PluralCommonNameId = default;
+        [SerializeField] private TextId m_GenderId = default;
         [SerializeField] private TextId m_DescriptionId = default;
         [SerializeField] private TextId m_EncodedMessageId = default;
         
@@ -68,6 +69,8 @@ namespace Aqua
         public string ScientificName() { return m_ScientificName; }
         [LeafLookup("Name")] public TextId CommonName() { return m_CommonNameId; }
         [LeafLookup("PluralName")] public TextId PluralCommonName() { return m_PluralCommonNameId.IsEmpty ? m_CommonNameId : m_PluralCommonNameId; }
+        [LeafLookup("Gender")] public TextId Gender() { return m_GenderId; }
+
         public TextId Description() { return m_DescriptionId; }
         public TextId EncodedMessage() { Assert.True((m_Flags & BestiaryDescFlags.IsSpecter) != 0); return m_EncodedMessageId; }
 

@@ -19,6 +19,7 @@ namespace Aqua
         #region Inspector
 
         public FourCC LanguageId;
+        public bool Gendered;
         public LocPackage[] Packages;
         public LayoutPrefabPackage JournalLayout;
         [HideInInspector] public byte[] Binary = Array.Empty<byte>();

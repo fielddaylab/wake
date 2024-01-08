@@ -32,6 +32,10 @@ namespace Aqua
         static private readonly TextId ReduceSentence = "factFormat.reduce";
         static private readonly TextId ReduceSentenceStressed = "factFormat.reduce.stressed";
 
+        static public readonly TextId MascNoun = "words.masculineNoun";
+        static public readonly TextId FemNoun = "words.feminineNoun";
+
+
         static public void Configure()
         {
             BFType.DefineAttributes(BFTypeId.Consume, BFShapeId.Behavior, BFFlags.IsBehavior | BFFlags.HasRate, BFDiscoveredFlags.All, Compare);
@@ -44,13 +48,25 @@ namespace Aqua
             BFConsume fact = (BFConsume) inFact;
             bool bIsLight = fact.Property == WaterPropertyId.Light;
 
-            yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
+            if (Services.Loc.IsCurrentLanguageGendered()) { 
+                yield return BFFragment.CreateGenderedLocNoun(fact.Parent.CommonName(), fact.Parent.Gender());
+            }
+            else {
+                yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
+            }
             yield return BFFragment.CreateLocVerb(bIsLight ? ReduceVerb : ConsumeVerb);
             if (!bIsLight)
             {
                 yield return BFFragment.CreateAmount(BestiaryUtils.FormatPropertyRate(fact.Amount, fact.Property));
             }
-            yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).ShortLabelId());
+            if (Services.Loc.IsCurrentLanguageGendered()) {
+                // yield return BFFragment.CreateGenderedLocNoun(BestiaryUtils.Property(fact.Property).ShortLabelId(), BestiaryUtils.Property(fact.Property).GenderId());
+                // Turns out we don't need gendered articles on water properties
+                yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).ShortLabelId());
+            }
+            else {
+                yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).ShortLabelId());
+            }
             if (bIsLight)
             {
                 yield return BFFragment.CreateAmount(BestiaryUtils.FormatPropertyRate(fact.Amount, fact.Property));
