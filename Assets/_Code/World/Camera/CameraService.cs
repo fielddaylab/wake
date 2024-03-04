@@ -19,8 +19,8 @@ namespace Aqua.Cameras
 {
     public class CameraService : ServiceBehaviour, IPauseable
     {
-        private const float DesiredWidth = 1024;
-        private const float DesiredHeight = 660;
+        private const float DesiredWidth = 1920;
+        private const float DesiredHeight = 1080;
 
         #region Types
 
