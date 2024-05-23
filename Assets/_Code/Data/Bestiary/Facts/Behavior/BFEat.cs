@@ -121,7 +121,7 @@ namespace Aqua {
             {
                 details.Description = Loc.Format(CatchSentence,
                     fact.Parent.CommonName(),
-                    BestiaryUtils.FormatMass(fact.Amount),
+                    BestiaryUtils.FormatMass(fact.Amount, "/t"),
                     fact.Critter.CommonName());
             }
             else if (fact.OnlyWhenStressed)
@@ -130,7 +130,7 @@ namespace Aqua {
                 {
                     details.Description = Loc.Format(EatRateSentenceStressed,
                         inFact.Parent.CommonName(),
-                        BestiaryUtils.FormatMass(fact.Amount),
+                        BestiaryUtils.FormatMass(fact.Amount, "/t"),
                         fact.Critter.CommonName());
                 }
                 else

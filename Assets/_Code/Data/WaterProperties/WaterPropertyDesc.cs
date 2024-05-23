@@ -159,6 +159,10 @@ namespace Aqua
                 sb.Append(unitPrefix);
             }
             sb.Append(units);
+            if (unitSuffix != null)
+            {
+                sb.Append(unitSuffix);
+            }
         }
 
         public float MinValue() { return m_MinValue; }
