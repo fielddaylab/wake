@@ -65,7 +65,7 @@ namespace Aqua {
                 }
                 yield return BFFragment.CreateLocVerb(bIsHuman ? IsCaughtByVerb : IsEatenByVerb);
                 if (Services.Loc.IsCurrentLanguageGendered()) {
-                    yield return BFFragment.CreateGenderedLocNoun(fact.Parent.CommonName(), fact.Parent.Gender());
+                    yield return BFFragment.CreateGenderedLocNoun(fact.Parent.CommonName(), fact.Parent.Gender(), true);
                 }
                 else {
                     yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
@@ -88,7 +88,7 @@ namespace Aqua {
                 }
                 if (Services.Loc.IsCurrentLanguageGendered() && !BFType.HasRate(inFlags))
                 {
-                    yield return BFFragment.CreateGenderedLocNoun(fact.Critter.CommonName(), fact.Critter.Gender());
+                    yield return BFFragment.CreateGenderedLocNoun(fact.Critter.CommonName(), fact.Critter.Gender(), true);
                 }
                 else
                 {
@@ -133,7 +133,7 @@ namespace Aqua {
             {
                 details.Description = Loc.Format(EatRateSentence,
                     inFact.Parent.CommonName(),
-                    BestiaryUtils.FormatMass(fact.Amount),
+                    BestiaryUtils.FormatMass(fact.Amount, "/t"),
                     fact.Critter.CommonName());
             }
             else
