@@ -69,6 +69,7 @@ namespace Aqua
             }
             if (bIsLight)
             {
+                // TODO: add gendered light
                 yield return BFFragment.CreateAmount(BestiaryUtils.FormatPropertyRate(fact.Amount, fact.Property));
             }
         }
