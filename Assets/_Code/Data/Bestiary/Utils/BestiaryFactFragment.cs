@@ -18,6 +18,15 @@ namespace Aqua
             };
         }
 
+        static public BFFragment CreateLocWord(BestiaryFactFragmentType inType, TextId inWord)
+        {
+            return new BFFragment()
+            {
+                Type = inType,
+                String = Services.Loc.Localize(inWord, true)
+            };
+        }
+
         static public BFFragment CreateLocNoun(TextId inWord)
         {
             return new BFFragment()
@@ -109,5 +118,6 @@ namespace Aqua
         Conjunction,
         Condition,
         Image,
+        Article,
     }
 }

@@ -6,6 +6,7 @@ using BeauUtil.Debugger;
 using ScriptableBake;
 using UnityEngine;
 using UnityEngine.Serialization;
+using static UnityEngine.ParticleSystem;
 
 namespace Aqua
 {
@@ -35,6 +36,10 @@ namespace Aqua
         static public readonly TextId MascNoun = "words.masculineNoun";
         static public readonly TextId FemNoun = "words.feminineNoun";
 
+        static public readonly TextId OfArticle = "words.articles.of";
+        static public readonly TextId ByArticle = "words.articles.by";
+        static public readonly TextId PorArticle = "words.articles.por";
+
 
         static public void Configure()
         {
@@ -58,11 +63,19 @@ namespace Aqua
             if (!bIsLight)
             {
                 yield return BFFragment.CreateAmount(BestiaryUtils.FormatPropertyRate(fact.Amount, fact.Property));
+                if (Services.Loc.IsCurrentLanguageGendered())
+                {
+                    yield return BFFragment.CreateLocWord(BestiaryFactFragmentType.Article, OfArticle);
+                }
             }
             if (Services.Loc.IsCurrentLanguageGendered()) {
-                // yield return BFFragment.CreateGenderedLocNoun(BestiaryUtils.Property(fact.Property).ShortLabelId(), BestiaryUtils.Property(fact.Property).GenderId());
-                // Turns out we don't need gendered articles on water properties
-                yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).ShortLabelId());
+                // Turns out we don't need gendered articles on water properties except for light
+                if (bIsLight) {
+                    yield return BFFragment.CreateGenderedLocNoun(BestiaryUtils.Property(fact.Property).ShortLabelId(), BestiaryUtils.Property(fact.Property).GenderId(), true);
+                }
+                else {
+                    yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).ShortLabelId());
+                }
             }
             else {
                 yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).ShortLabelId());
@@ -70,6 +83,14 @@ namespace Aqua
             if (bIsLight)
             {
                 // TODO: add gendered light
+                if (Services.Loc.IsCurrentLanguageGendered())
+                {
+                    yield return BFFragment.CreateLocWord(BestiaryFactFragmentType.Article, PorArticle);
+                }
+                if (Services.Loc.IsCurrentLanguageGendered())
+                {
+                    yield return BFFragment.CreateLocWord(BestiaryFactFragmentType.Article, ByArticle);
+                }
                 yield return BFFragment.CreateAmount(BestiaryUtils.FormatPropertyRate(fact.Amount, fact.Property));
             }
         }

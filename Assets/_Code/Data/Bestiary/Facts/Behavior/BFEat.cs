@@ -31,6 +31,9 @@ namespace Aqua {
         static public readonly TextId CatchDisabledSentence = "factFormat.catch.disabled";
         static public readonly TextId EatSentenceStressed = "factFormat.eat.stressed";
         static public readonly TextId EatRateSentenceStressed = "factFormat.eat.stressed.rate";
+        static public readonly TextId OfArticle = "words.articles.of";
+        static public readonly TextId ByArticle = "words.articles.by";
+
 
         static public void Configure()
         {
@@ -55,6 +58,10 @@ namespace Aqua {
                 if (BFType.HasRate(inFlags))
                 {
                     yield return BFFragment.CreateAmount(BestiaryUtils.FormatMassRate(fact.Amount));
+                    if (Services.Loc.IsCurrentLanguageGendered())
+                    {
+                        yield return BFFragment.CreateLocWord(BestiaryFactFragmentType.Article, OfArticle);
+                    }
                 }
 
                 if (Services.Loc.IsCurrentLanguageGendered() && !BFType.HasRate(inFlags)) {
@@ -85,6 +92,10 @@ namespace Aqua {
                 if (BFType.HasRate(inFlags))
                 {
                     yield return BFFragment.CreateAmount(BestiaryUtils.FormatMassRate(fact.Amount));
+                    if (Services.Loc.IsCurrentLanguageGendered())
+                    {
+                        yield return BFFragment.CreateLocWord(BestiaryFactFragmentType.Article, OfArticle);
+                    }
                 }
                 if (Services.Loc.IsCurrentLanguageGendered() && !BFType.HasRate(inFlags))
                 {
