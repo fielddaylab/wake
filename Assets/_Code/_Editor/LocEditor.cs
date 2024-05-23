@@ -171,6 +171,10 @@ namespace Aqua.Editor {
                     package = allPackages[i];
                     string assetPath = AssetDatabase.GetAssetPath(package);
 
+                    if (assetPath.EndsWith("-Loc.aqloc")) {
+                        continue;
+                    }
+
                     Debug.LogFormat("[LocEditor] Importing {0}...", assetPath);
                     EditorUtility.DisplayProgressBar("Updating Loc Database", string.Format("Importing {0}/{1}: {2}", i + 1, packageCount, assetPath), (float)i + 1 / packageCount);
                     PackageRecord record = BlockParser.Parse(CharStreamParams.FromStream(File.OpenRead(assetPath), null, true, package.name), Parsing.Block, PackageGenerator.Instance);
@@ -480,8 +484,8 @@ namespace Aqua.Editor {
 
                     if (filePath.EndsWith(".aqloc")) {
                         StringSlice truncated = filePath.Substring(0, filePath.Length - 6);
-                        if (truncated.Length > 3)
-                            return truncated[truncated.Length - 3] != '.';
+                        if (truncated.Length > 4)
+                            return !truncated.EndsWith("-Loc");
                         return true;
                     }
                 }
