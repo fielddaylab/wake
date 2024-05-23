@@ -73,7 +73,7 @@ namespace Aqua.Scripting {
 
         static public ScriptInteractionGroup Find(StringHash32 id) {
             if (!s_Groups.TryGetValue(id, out ScriptInteractionGroup group)) {
-                Debug.LogErrorFormat("[ScriptInteractionGroup] Unable to find group with id '{0}'", id);
+                Debug.LogErrorFormat("[ScriptInteractionGroup] Unable to find group with id '{0}'", id.ToDebugString());
             }
             return group;
         }
