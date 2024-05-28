@@ -42,8 +42,23 @@ $choice .action.openShop; Sure, thanks!
 $choice .action.cancel; Not right now.
 
 #ShopHandler(a)
-{@$MerchantId} Welcome back, Ollie. Wanna take a look around?  
+{@$MerchantId} Welcome back, Ollie. Wanna take a look around?
 $choice .action.openShop; Sure, thanks!
+$choice .action.cancel; Not right now.
+
+#ShopHandler(lookingForFlashlight, world:flashlightQuest, !HasUpgrade("Flashlight"))
+{@$MerchantId} Welcome back, kid! Still looking for the {nameof Flashlight} {nameof @coralMechanic} dropped?
+        I can fill you in on the details if you need a refresher.
+$choice .flashlightRefresher; Remind me about the flashlight.
+$choice .action.openShop; Show me the shop!
+$choice .action.cancel; Never mind.
+
+:: flashlightRefresher
+{@$MerchantId}  Well, if I've got this straight... {nameof @coralMechanic} borrowed the {nameof Flashlight} from your uncle {nameof @kelpMechanic}.
+                Then she dropped it near the {nameof FinalStation}.
+                You'll have to dive down yourself to get it back.
+                So... anything else I can do for you?
+$choice .action.openShop; Show me the shop!
 $choice .action.cancel; Not right now.
 
 #ShopHandler(gotFlashlight, world:shop.boughtFlashlightFrom == "arctic", HasUpgrade("Flashlight"))

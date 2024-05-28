@@ -158,6 +158,23 @@ $call CheckJobTasks()
 $choice .action.openShop; Sure do!
 $choice .action.cancel; Not right now.
 
+
+#ShopHandler(lookingForFlashlight, world:flashlightQuest, !HasUpgrade("Flashlight"))
+{@$MerchantId}  Welcome back Ollie! I guess you heard that {nameof @coralMechanic} dropped my {nameof Flashlight} after I lent it to her.
+                Need any help finding it?
+$choice .flashlightRefresher; I could use a refresher about flashlight.
+$choice .action.openShop; No thanks. Show me the shop!
+$choice .action.cancel; Never mind.
+
+:: flashlightRefresher
+{@$MerchantId}  It shouldn't be too bad.
+                Since {nameof @coralMechanic} dropped the {nameof Flashlight} over the {nameof FinalStation}, you'll just have to go down to retrieve it.
+                Now, need any other upgrades for your ship?
+$choice .action.openShop; Show me the shop!
+$choice .action.cancel; Not right now.
+
+
+
 #ShopHandler(gotFlashlight, world:shop.boughtFlashlightFrom != "kelp", HasUpgrade("Flashlight"))
 @once
 {@$MerchantId}  Welcome back Ollie! Whoa... is that my {nameof Flashlight}?

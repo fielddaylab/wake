@@ -6,6 +6,7 @@ using BeauUtil.Debugger;
 using ScriptableBake;
 using UnityEngine;
 using UnityEngine.Serialization;
+using static UnityEngine.ParticleSystem;
 
 namespace Aqua
 {
@@ -32,6 +33,14 @@ namespace Aqua
         static private readonly TextId ReduceSentence = "factFormat.reduce";
         static private readonly TextId ReduceSentenceStressed = "factFormat.reduce.stressed";
 
+        static public readonly TextId MascNoun = "words.masculineNoun";
+        static public readonly TextId FemNoun = "words.feminineNoun";
+
+        static public readonly TextId OfArticle = "words.articles.of";
+        static public readonly TextId ByArticle = "words.articles.by";
+        static public readonly TextId PorArticle = "words.articles.por";
+
+
         static public void Configure()
         {
             BFType.DefineAttributes(BFTypeId.Consume, BFShapeId.Behavior, BFFlags.IsBehavior | BFFlags.HasRate, BFDiscoveredFlags.All, Compare);
@@ -44,15 +53,44 @@ namespace Aqua
             BFConsume fact = (BFConsume) inFact;
             bool bIsLight = fact.Property == WaterPropertyId.Light;
 
-            yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
+            if (Services.Loc.IsCurrentLanguageGendered()) { 
+                yield return BFFragment.CreateGenderedLocNoun(fact.Parent.CommonName(), fact.Parent.Gender());
+            }
+            else {
+                yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
+            }
             yield return BFFragment.CreateLocVerb(bIsLight ? ReduceVerb : ConsumeVerb);
             if (!bIsLight)
             {
                 yield return BFFragment.CreateAmount(BestiaryUtils.FormatPropertyRate(fact.Amount, fact.Property));
+                if (Services.Loc.IsCurrentLanguageGendered())
+                {
+                    yield return BFFragment.CreateLocWord(BestiaryFactFragmentType.Article, OfArticle);
+                }
             }
-            yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).ShortLabelId());
+            if (Services.Loc.IsCurrentLanguageGendered()) {
+                // Turns out we don't need gendered articles on water properties except for light
+                if (bIsLight) {
+                    yield return BFFragment.CreateGenderedLocNoun(BestiaryUtils.Property(fact.Property).ShortLabelId(), BestiaryUtils.Property(fact.Property).GenderId(), true);
+                }
+                else {
+                    yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).ShortLabelId());
+                }
+            }
+            else {
+                yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).ShortLabelId());
+            }
             if (bIsLight)
             {
+                // TODO: add gendered light
+                if (Services.Loc.IsCurrentLanguageGendered())
+                {
+                    yield return BFFragment.CreateLocWord(BestiaryFactFragmentType.Article, PorArticle);
+                }
+                if (Services.Loc.IsCurrentLanguageGendered())
+                {
+                    yield return BFFragment.CreateLocWord(BestiaryFactFragmentType.Article, ByArticle);
+                }
                 yield return BFFragment.CreateAmount(BestiaryUtils.FormatPropertyRate(fact.Amount, fact.Property));
             }
         }

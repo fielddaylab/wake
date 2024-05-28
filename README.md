@@ -29,6 +29,7 @@ Firebase automatically logs the following meaningful events, documented [here](h
 1. Initial version (3/14/22)
 2. Update experimentation events (3/22/22)
 3. Add event sequence index (5/17/22)
+4. Add event select_language, modify event sync_achieved to include % accuracy (11/13/2023)
 
 ### Event Categories
 1. [Progression](#Progression)
@@ -50,6 +51,7 @@ Firebase automatically logs the following meaningful events, documented [here](h
 4. [receive_entity](#receive_entity)
 5. [complete_job](#complete_job)
 6. [complete_task](#complete_task)
+7. [select_language](#select_language)
 
 <a name="accept_job"/>
 
@@ -168,6 +170,21 @@ Player completes a task for a given job.
 | log_version | Current logging version |
 | job_name | String name of the new job |
 | task_id | ID of the completed task |
+
+<a name="select_language"/>
+
+#### select_language
+
+Player selects a language with a given id.
+
+| Parameter | Description |
+| --- | --- |
+| event_sequence_index | Sequence index of the current event |
+| user_code | The player's unique save code |
+| app_version | Current game build version |
+| app_flavor | Git branch origin for current build |
+| log_version | Current logging version |
+| language | String name of the selected language ("ENGLISH" or "SPANISH") |
 
 <a name="PlayerActions"/>
 
@@ -683,6 +700,7 @@ Player successfully syncs the model.
 | log_version | Current logging version |
 | job_name | String name of the current job |
 | ecosystem | Ecosystem selected for modeling |
+| sync | Sync % achieved with the current model |
 
 <a name="model_predict_completed"/>
 

@@ -31,6 +31,9 @@ namespace Aqua {
         static public readonly TextId CatchDisabledSentence = "factFormat.catch.disabled";
         static public readonly TextId EatSentenceStressed = "factFormat.eat.stressed";
         static public readonly TextId EatRateSentenceStressed = "factFormat.eat.stressed.rate";
+        static public readonly TextId OfArticle = "words.articles.of";
+        static public readonly TextId ByArticle = "words.articles.by";
+
 
         static public void Configure()
         {
@@ -55,20 +58,53 @@ namespace Aqua {
                 if (BFType.HasRate(inFlags))
                 {
                     yield return BFFragment.CreateAmount(BestiaryUtils.FormatMassRate(fact.Amount));
+                    if (Services.Loc.IsCurrentLanguageGendered())
+                    {
+                        yield return BFFragment.CreateLocWord(BestiaryFactFragmentType.Article, OfArticle);
+                    }
                 }
-                yield return BFFragment.CreateLocNoun(fact.Critter.CommonName());
+
+                if (Services.Loc.IsCurrentLanguageGendered() && !BFType.HasRate(inFlags)) {
+                    yield return BFFragment.CreateGenderedLocNoun(fact.Critter.CommonName(), fact.Critter.Gender());
+                }
+                else {
+                    yield return BFFragment.CreateLocNoun(fact.Critter.CommonName());
+                }
                 yield return BFFragment.CreateLocVerb(bIsHuman ? IsCaughtByVerb : IsEatenByVerb);
-                yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
+                if (Services.Loc.IsCurrentLanguageGendered()) {
+                    yield return BFFragment.CreateGenderedLocNoun(fact.Parent.CommonName(), fact.Parent.Gender(), true);
+                }
+                else {
+                    yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
+                }
             }
             else
             {
-                yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
+                if (Services.Loc.IsCurrentLanguageGendered())
+                {
+                    yield return BFFragment.CreateGenderedLocNoun(fact.Parent.CommonName(), fact.Parent.Gender());
+                }
+                else
+                {
+                    yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
+                }
                 yield return BFFragment.CreateLocVerb(bIsHuman ? CatchVerb : EatVerb);
                 if (BFType.HasRate(inFlags))
                 {
                     yield return BFFragment.CreateAmount(BestiaryUtils.FormatMassRate(fact.Amount));
+                    if (Services.Loc.IsCurrentLanguageGendered())
+                    {
+                        yield return BFFragment.CreateLocWord(BestiaryFactFragmentType.Article, OfArticle);
+                    }
                 }
-                yield return BFFragment.CreateLocNoun(fact.Critter.CommonName());
+                if (Services.Loc.IsCurrentLanguageGendered() && !BFType.HasRate(inFlags))
+                {
+                    yield return BFFragment.CreateGenderedLocNoun(fact.Critter.CommonName(), fact.Critter.Gender(), true);
+                }
+                else
+                {
+                    yield return BFFragment.CreateLocNoun(fact.Critter.CommonName());
+                }
             }
         }
 
@@ -85,7 +121,7 @@ namespace Aqua {
             {
                 details.Description = Loc.Format(CatchSentence,
                     fact.Parent.CommonName(),
-                    BestiaryUtils.FormatMass(fact.Amount),
+                    BestiaryUtils.FormatMass(fact.Amount, "/t"),
                     fact.Critter.CommonName());
             }
             else if (fact.OnlyWhenStressed)
@@ -94,7 +130,7 @@ namespace Aqua {
                 {
                     details.Description = Loc.Format(EatRateSentenceStressed,
                         inFact.Parent.CommonName(),
-                        BestiaryUtils.FormatMass(fact.Amount),
+                        BestiaryUtils.FormatMass(fact.Amount, "/t"),
                         fact.Critter.CommonName());
                 }
                 else
@@ -108,7 +144,7 @@ namespace Aqua {
             {
                 details.Description = Loc.Format(EatRateSentence,
                     inFact.Parent.CommonName(),
-                    BestiaryUtils.FormatMass(fact.Amount),
+                    BestiaryUtils.FormatMass(fact.Amount, "/t"),
                     fact.Critter.CommonName());
             }
             else

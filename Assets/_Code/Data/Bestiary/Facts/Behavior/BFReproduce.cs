@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using BeauUtil;
 using ScriptableBake;
 using UnityEngine;
+using static UnityEngine.ParticleSystem;
 
 namespace Aqua {
     [CreateAssetMenu(menuName = "Aqualab Content/Fact/Reproduce")]
@@ -25,6 +26,9 @@ namespace Aqua {
         static private readonly TextId ReproduceSentenceStressed = "factFormat.reproduce.stressed";
         static private readonly TextId ReproduceDisabledSentenceStressed = "factFormat.reproduce.stressed.disabled";
 
+        static public readonly TextId OfArticle = "words.articles.of";
+        static public readonly TextId ByArticle = "words.articles.by";
+
         static public void Configure()
         {
             BFType.DefineAttributes(BFTypeId.Reproduce, BFShapeId.Behavior, BFFlags.IsBehavior | BFFlags.SelfTarget | BFFlags.HasRate, BFDiscoveredFlags.All, CompareStressedPair);
@@ -36,7 +40,14 @@ namespace Aqua {
         {
             BFReproduce fact = (BFReproduce) inFact;
 
-            yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
+            if (Services.Loc.IsCurrentLanguageGendered())
+            {
+                yield return BFFragment.CreateGenderedLocNoun(fact.Parent.CommonName(), fact.Parent.Gender());
+            }
+            else
+            {
+                yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
+            }
             if (fact.Amount == 0)
             {
                 yield return BFFragment.CreateLocVerb(ReproduceDisabledVerb);
@@ -44,6 +55,10 @@ namespace Aqua {
             else
             {
                 yield return BFFragment.CreateLocVerb(ReproduceVerb);
+                if (Services.Loc.IsCurrentLanguageGendered())
+                {
+                    yield return BFFragment.CreateLocWord(BestiaryFactFragmentType.Article, ByArticle);
+                }
                 yield return BFFragment.CreateAmount(BestiaryUtils.FormatPercentageRate(fact.Amount));
             }
         }

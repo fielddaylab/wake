@@ -22,6 +22,9 @@ namespace Aqua {
         static private readonly TextId GrowSentence = "factFormat.grow";
         static private readonly TextId GrowSentenceStressed = "factFormat.grow.stressed";
 
+        static public readonly TextId OfArticle = "words.articles.of";
+        static public readonly TextId ByArticle = "words.articles.by";
+
         static public void Configure()
         {
             BFType.DefineAttributes(BFTypeId.Grow, BFShapeId.Behavior, BFFlags.IsBehavior | BFFlags.SelfTarget, BFDiscoveredFlags.All, CompareStressedPair);
@@ -33,7 +36,12 @@ namespace Aqua {
         {
             BFGrow fact = (BFGrow) inFact;
 
-            yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
+            if (Services.Loc.IsCurrentLanguageGendered()) {
+                yield return BFFragment.CreateGenderedLocNoun(fact.Parent.CommonName(), fact.Parent.Gender());
+            }
+            else {
+                yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
+            }
             yield return BFFragment.CreateLocVerb(GrowVerb);
             yield return BFFragment.CreateAmount(BestiaryUtils.FormatMass(fact.Amount));
         }

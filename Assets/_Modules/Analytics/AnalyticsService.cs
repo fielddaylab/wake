@@ -15,10 +15,12 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
-using FieldDay;
+using OGD;
 using BeauUtil.Debugger;
 using Aqua.Debugging;
 using BeauPools;
+using BeauData;
+using Aqua.Analytics;
 
 namespace Aqua
 {
@@ -26,6 +28,7 @@ namespace Aqua
     public partial class AnalyticsService : ServiceBehaviour, IDebuggable
     {
         private const string NoActiveJobId = "no-active-job";
+        private const int ClientLogVersion = 5;
 
         static private readonly string[] FactTypeStringTable = Enum.GetNames(typeof(BFTypeId));
 
@@ -55,6 +58,7 @@ namespace Aqua
         [NonSerialized] private bool m_AutoFeederEnabled = false;
         [NonSerialized] private StringHash32 m_CurrentArgumentId = null;
         [NonSerialized] private bool m_Debug;
+        [NonSerialized] private FourCC m_CurrentLanguage;
 
         #endregion // Logging Variables
 
@@ -64,7 +68,9 @@ namespace Aqua
         {
             Services.Events.Register<StringHash32>(GameEvents.JobStarted, LogAcceptJob, this)
                 .Register<string>(GameEvents.ProfileStarting, SetUserCode, this)
-                .Register(GameEvents.ProfileStarted, OnProfileStarted)
+                .Register(GameEvents.ProfileUnloaded, OnProfileUnloaded, this)
+                .Register(GameEvents.ProfileStarted, OnProfileStarted, this)
+                .Register<FourCC>(GameEvents.OnLanguageChange, LogSelectLanguage, this)
                 .Register<StringHash32>(GameEvents.JobSwitched, LogSwitchJob, this)
                 .Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, HandleBestiaryUpdated, this)
                 .Register<StringHash32>(GameEvents.JobCompleted, LogCompleteJob, this)
@@ -75,7 +81,7 @@ namespace Aqua
                 .Register<TankType>(ExperimentEvents.ExperimentBegin, LogBeginExperiment, this)
                 .Register<string>(GameEvents.BeginDive, LogBeginDive, this)
                 .Register(ModelingConsts.Event_Simulation_Begin, LogBeginSimulation, this)
-                .Register(ModelingConsts.Event_Simulation_Complete, LogSimulationSyncAchieved, this)
+                .Register<int>(ModelingConsts.Event_Simulation_Complete, LogSimulationSyncAchieved, this)
                 .Register<PortableAppId>(GameEvents.PortableAppOpened, PortableAppOpenedHandler, this)
                 .Register<PortableAppId>(GameEvents.PortableAppClosed, PortableAppClosedHandler, this)
                 // .Register<BestiaryDescCategory>(GameEvents.PortableBestiaryTabSelected, PortableBestiaryTabSelectedHandler, this)
@@ -122,7 +128,7 @@ namespace Aqua
             m_Log = new OGDLog(new OGDLogConsts() {
                 AppId = m_AppId,
                 AppVersion = m_AppVersion,
-                ClientLogVersion = 3
+                ClientLogVersion = ClientLogVersion
             }, new OGDLog.MemoryConfig(
                 4096, 1024 * 1024 * 32, 256
             )); // 32 kb game_state buffer? it's for switch_job, that can be massive, up to 32kb
@@ -139,13 +145,26 @@ namespace Aqua
 
         private void SetUserCode(string userCode)
         {
+            var reminderStatus = UserCodeReminderFeature.GetStatus(Save.Current);
+
             m_Log.Initialize(new OGDLogConsts() {
                 AppId = m_AppId,
                 AppVersion = m_AppVersion,
-                ClientLogVersion = 3,
-                AppBranch = BuildInfo.Branch()
+                ClientLogVersion = ClientLogVersion,
+                AppBranch = UserCodeReminderFeature.GetModifiedBranchName(BuildInfo.Branch(), reminderStatus)
             });
             m_Log.SetUserId(userCode);
+        }
+
+        private void OnProfileUnloaded()
+        {
+            m_Log.Initialize(new OGDLogConsts() {
+                AppId = m_AppId,
+                AppVersion = m_AppVersion,
+                ClientLogVersion = ClientLogVersion,
+                AppBranch = BuildInfo.Branch()
+            });
+            m_Log.SetUserId(null);
         }
 
         protected override void Shutdown()
@@ -340,6 +359,23 @@ namespace Aqua
         private void OnProfileStarted() {
             m_PreviousJobName = NoActiveJobId;
             SetCurrentJob(Save.CurrentJobId);
+        }
+
+
+        private void LogSelectLanguage(FourCC langCode) {
+            m_CurrentLanguage = Services.Loc.CurrentLanguageId;
+
+            string selectedLang;
+            if (langCode.Equals(FourCC.Parse("ES"))) {
+                selectedLang = "SPANISH";
+            }
+            else {
+                selectedLang = "ENGLISH";
+            }
+
+            using (var e = m_Log.NewEvent("select_language")) {
+                e.Param("language", selectedLang);
+            }
         }
 
         private bool SetCurrentJob(StringHash32 jobId)
@@ -584,9 +620,11 @@ namespace Aqua
         }
         #endregion
 
-        private void LogSimulationSyncAchieved()
+        private void LogSimulationSyncAchieved(int sync)
         {
             using(var e = m_Log.NewEvent("simulation_sync_achieved")) {
+                e.Param("ecosystem", m_CurrentModelEcosystem);
+                e.Param("sync", sync);
             }
         }
 
@@ -756,6 +794,7 @@ namespace Aqua
         private void SetCurrentTankType(TankType inTankType)
         {
             m_CurrentTankType = inTankType.ToString();
+            m_CurrentCritters.Clear();
         }
 
         private void SetTankFeatureEnabled(MeasurementTank.FeatureMask feature)
@@ -857,7 +896,7 @@ namespace Aqua
 
             m_CurrentTankType = string.Empty;
             m_CurrentEnvironment = string.Empty;
-            m_CurrentCritters = new List<string>();
+            m_CurrentCritters.Clear();
             m_StabilizerEnabled = false;
             m_AutoFeederEnabled = false;
         }

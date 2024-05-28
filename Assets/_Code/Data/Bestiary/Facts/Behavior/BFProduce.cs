@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using BeauUtil;
 using ScriptableBake;
 using UnityEngine;
+using static UnityEngine.ParticleSystem;
 
 namespace Aqua {
     [CreateAssetMenu(menuName = "Aqualab Content/Fact/Produce")]
@@ -23,6 +24,9 @@ namespace Aqua {
         static private readonly TextId ProduceSentence = "factFormat.produce";
         static private readonly TextId ProduceSentenceStressed = "factFormat.produce.stressed";
 
+        static public readonly TextId OfArticle = "words.articles.of";
+        static public readonly TextId ByArticle = "words.articles.by";
+
         static public void Configure()
         {
             BFType.DefineAttributes(BFTypeId.Produce, BFShapeId.Behavior, BFFlags.IsBehavior | BFFlags.HasRate, BFDiscoveredFlags.All, Compare);
@@ -34,10 +38,30 @@ namespace Aqua {
         {
             BFProduce fact = (BFProduce) inFact;
 
-            yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
+
+            if (Services.Loc.IsCurrentLanguageGendered()) {
+                yield return BFFragment.CreateGenderedLocNoun(fact.Parent.CommonName(), fact.Parent.Gender());
+            }
+            else {
+                yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
+            }
             yield return BFFragment.CreateLocVerb(ProduceVerb);
             yield return BFFragment.CreateAmount(BestiaryUtils.FormatPropertyRate(fact.Amount, fact.Property));
-            yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).ShortLabelId());
+            if (Services.Loc.IsCurrentLanguageGendered())
+            {
+                yield return BFFragment.CreateLocWord(BestiaryFactFragmentType.Article, OfArticle);
+            }
+
+            if (Services.Loc.IsCurrentLanguageGendered())
+            {
+                //yield return BFFragment.CreateGenderedLocNoun(BestiaryUtils.Property(fact.Property).ShortLabelId(), BestiaryUtils.Property(fact.Property).GenderId());
+                // Turns out we don't need gendered articles on water properties
+                yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).ShortLabelId());
+            }
+            else
+            {
+                yield return BFFragment.CreateLocNoun(BestiaryUtils.Property(fact.Property).ShortLabelId());
+            }
         }
 
         static private BFDetails GenerateDetails(BFBase inFact, BFDiscoveredFlags inFlags, BestiaryDesc inReference)

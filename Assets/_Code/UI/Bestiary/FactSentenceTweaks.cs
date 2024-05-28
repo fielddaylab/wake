@@ -46,6 +46,8 @@ namespace Aqua
         [SerializeField] private TextBackgroundColorPair m_AmountColor = TextBackgroundColorPair.Default;
         [SerializeField] private TextBackgroundColorPair m_ConjunctionColor = TextBackgroundColorPair.Default;
         [SerializeField] private TextBackgroundColorPair m_ConditionColor = TextBackgroundColorPair.Default;
+        [SerializeField] private TextBackgroundColorPair m_ArticleColor = TextBackgroundColorPair.Default;
+
 
         #endregion // Inspector
 
@@ -149,6 +151,9 @@ namespace Aqua
 
                 case BestiaryFactFragmentType.Condition:
                     return m_ConditionColor;
+
+                case BestiaryFactFragmentType.Article:
+                    return m_ArticleColor;
 
                 default:
                     throw new ArgumentOutOfRangeException("inFragment.Type");

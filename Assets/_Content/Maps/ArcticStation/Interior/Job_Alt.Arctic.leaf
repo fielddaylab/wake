@@ -18,6 +18,14 @@ $else
     $choice .action.cancel; No thanks.
 $endif
 
+#NoJobHandler(mentionTio, jobs:final-final.upgradeReady, !jobs:final-final.tio.code-received)
+{@$JobGiverId}  Oh, Ollie...
+                Got a call from {nameof kelpMechanic} at the {nameof RS-1C}. He wants to talk to you about upgrading an access card.
+                You may want to visit him before taking any new jobs.
+                That said, want to see the {h}Job Board{/h}?
+$choice .action.openJobBoard; Sure!
+$choice .action.cancel; No thanks.
+
 #WrongStationJobHandler(a)
 {@$JobGiverId}  Hmm, it looks like you've taken a job with someone else.
                 Unfortunately I can't help you with it here.

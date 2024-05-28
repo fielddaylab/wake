@@ -9,6 +9,7 @@ using System.IO;
 using System.Text;
 using Aqua.Compression;
 using Aqua.Debugging;
+using Aqua.Option;
 using BeauData;
 using BeauPools;
 using BeauRoutine;
@@ -26,6 +27,8 @@ namespace Aqua
     [ServiceDependency(typeof(AssetsService))]
     public partial class LocService : ServiceBehaviour, ILoadable, IDebuggable
     {
+        private const string LocalSettingsPrefsKey = "settings/local";
+
         static private readonly FourCC DefaultLanguage = FourCC.Parse("EN");
 
         #region Inspector
@@ -42,8 +45,10 @@ namespace Aqua
 
         [NonSerialized] private bool m_Loading;
         [NonSerialized] private FourCC m_CurrentLanguage;
+        [NonSerialized] private bool m_CurrentLanguageGendered;
         [NonSerialized] private LayoutPrefabPackage m_CurrentJournalPackage;
         [NonSerialized] private List<LocText> m_ActiveTexts = new List<LocText>(64);
+        [NonSerialized] private List<LocFont> m_ActiveFonts = new List<LocFont>(64);
 
         public readonly CastableEvent<FourCC> OnLanguageUpdated = new CastableEvent<FourCC>(8);
 
@@ -56,7 +61,13 @@ namespace Aqua
         #region Loading
 
         private IEnumerator InitialLoad() {
-            yield return LoadLanguage(m_EnglishManifest);
+            if (Save.Options.Language.LanguageCode == FourCC.Parse("ES")) {
+                yield return LoadLanguage(m_SpanishManifest);
+            }
+            else {
+                // english by default
+                yield return LoadLanguage(m_EnglishManifest);
+            }
         }
 
         private IEnumerator LoadLanguage(LocManifest manifest) {
@@ -100,6 +111,7 @@ namespace Aqua
             DebugService.Log(LogMask.Loading | LogMask.Localization, "[LocService] Loaded {0} keys ({1})", m_LanguagePackage.Count, manifest.LanguageId.ToString());
 
             m_CurrentLanguage = manifest.LanguageId;
+            m_CurrentLanguageGendered = manifest.Gendered;
             m_CurrentJournalPackage = manifest.JournalLayout;
             m_Loading = false;
             DispatchTextRefresh();
@@ -138,6 +150,11 @@ namespace Aqua
 
         public bool IsDefaultLanguage() {
             return m_CurrentLanguage == DefaultLanguage;
+        }
+
+        public bool IsCurrentLanguageGendered()
+        {
+            return m_CurrentLanguageGendered;
         }
 
         /// <summary>
@@ -238,11 +255,24 @@ namespace Aqua
             m_ActiveTexts.FastRemove(inText);
         }
 
+        public void RegisterFont(LocFont inText) {
+            m_ActiveFonts.Add(inText);
+        }
+
+        public void DeregisterFont(LocFont inText) {
+            m_ActiveFonts.FastRemove(inText);
+        }
+
+
         private void DispatchTextRefresh() {
             Services.Assets.OnLocalizationLoaded();
 
-            for (int i = 0, length = m_ActiveTexts.Count; i < length; i++)
+            for (int i = 0, length = m_ActiveTexts.Count; i < length; i++) {
                 m_ActiveTexts[i].OnLocalizationRefresh();
+            }
+            for (int i = 0; i < m_ActiveFonts.Count; i++) {
+                m_ActiveFonts[i].OnLocalizationRefresh();
+            }
             OnLanguageUpdated.Invoke(m_CurrentLanguage);
         }
 
