@@ -391,9 +391,9 @@ namespace Aqua
         /// <summary>
         /// Formats a mass amount.
         /// </summary>
-        static public string FormatMass(float inAmount)
+        static public string FormatMass(float inAmount, string suffix = null)
         {
-            return BestiaryUtils.Property(WaterPropertyId.Mass).FormatValue(inAmount);
+            return BestiaryUtils.Property(WaterPropertyId.Mass).FormatValue(inAmount, "", suffix);
         }
 
         /// <summary>

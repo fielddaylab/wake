@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using BeauUtil;
 using ScriptableBake;
 using UnityEngine;
+using static UnityEngine.ParticleSystem;
 
 namespace Aqua {
     [CreateAssetMenu(menuName = "Aqualab Content/Fact/Produce")]
@@ -23,6 +24,9 @@ namespace Aqua {
         static private readonly TextId ProduceSentence = "factFormat.produce";
         static private readonly TextId ProduceSentenceStressed = "factFormat.produce.stressed";
 
+        static public readonly TextId OfArticle = "words.articles.of";
+        static public readonly TextId ByArticle = "words.articles.by";
+
         static public void Configure()
         {
             BFType.DefineAttributes(BFTypeId.Produce, BFShapeId.Behavior, BFFlags.IsBehavior | BFFlags.HasRate, BFDiscoveredFlags.All, Compare);
@@ -43,6 +47,10 @@ namespace Aqua {
             }
             yield return BFFragment.CreateLocVerb(ProduceVerb);
             yield return BFFragment.CreateAmount(BestiaryUtils.FormatPropertyRate(fact.Amount, fact.Property));
+            if (Services.Loc.IsCurrentLanguageGendered())
+            {
+                yield return BFFragment.CreateLocWord(BestiaryFactFragmentType.Article, OfArticle);
+            }
 
             if (Services.Loc.IsCurrentLanguageGendered())
             {

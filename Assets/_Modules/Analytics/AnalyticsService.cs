@@ -15,11 +15,12 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
-using FieldDay;
+using OGD;
 using BeauUtil.Debugger;
 using Aqua.Debugging;
 using BeauPools;
 using BeauData;
+using Aqua.Analytics;
 
 namespace Aqua
 {
@@ -27,6 +28,7 @@ namespace Aqua
     public partial class AnalyticsService : ServiceBehaviour, IDebuggable
     {
         private const string NoActiveJobId = "no-active-job";
+        private const int ClientLogVersion = 5;
 
         static private readonly string[] FactTypeStringTable = Enum.GetNames(typeof(BFTypeId));
 
@@ -66,8 +68,9 @@ namespace Aqua
         {
             Services.Events.Register<StringHash32>(GameEvents.JobStarted, LogAcceptJob, this)
                 .Register<string>(GameEvents.ProfileStarting, SetUserCode, this)
-                .Register(GameEvents.ProfileStarted, OnProfileStarted)
-                .Register<FourCC>(GameEvents.OnLanguageChange, LogSelectLanguage)
+                .Register(GameEvents.ProfileUnloaded, OnProfileUnloaded, this)
+                .Register(GameEvents.ProfileStarted, OnProfileStarted, this)
+                .Register<FourCC>(GameEvents.OnLanguageChange, LogSelectLanguage, this)
                 .Register<StringHash32>(GameEvents.JobSwitched, LogSwitchJob, this)
                 .Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, HandleBestiaryUpdated, this)
                 .Register<StringHash32>(GameEvents.JobCompleted, LogCompleteJob, this)
@@ -125,7 +128,7 @@ namespace Aqua
             m_Log = new OGDLog(new OGDLogConsts() {
                 AppId = m_AppId,
                 AppVersion = m_AppVersion,
-                ClientLogVersion = 4
+                ClientLogVersion = ClientLogVersion
             }, new OGDLog.MemoryConfig(
                 4096, 1024 * 1024 * 32, 256
             )); // 32 kb game_state buffer? it's for switch_job, that can be massive, up to 32kb
@@ -142,13 +145,26 @@ namespace Aqua
 
         private void SetUserCode(string userCode)
         {
+            var reminderStatus = UserCodeReminderFeature.GetStatus(Save.Current);
+
             m_Log.Initialize(new OGDLogConsts() {
                 AppId = m_AppId,
                 AppVersion = m_AppVersion,
-                ClientLogVersion = 3,
-                AppBranch = BuildInfo.Branch()
+                ClientLogVersion = ClientLogVersion,
+                AppBranch = UserCodeReminderFeature.GetModifiedBranchName(BuildInfo.Branch(), reminderStatus)
             });
             m_Log.SetUserId(userCode);
+        }
+
+        private void OnProfileUnloaded()
+        {
+            m_Log.Initialize(new OGDLogConsts() {
+                AppId = m_AppId,
+                AppVersion = m_AppVersion,
+                ClientLogVersion = ClientLogVersion,
+                AppBranch = BuildInfo.Branch()
+            });
+            m_Log.SetUserId(null);
         }
 
         protected override void Shutdown()

@@ -22,6 +22,9 @@ namespace Aqua {
         static private readonly TextId GrowSentence = "factFormat.grow";
         static private readonly TextId GrowSentenceStressed = "factFormat.grow.stressed";
 
+        static public readonly TextId OfArticle = "words.articles.of";
+        static public readonly TextId ByArticle = "words.articles.by";
+
         static public void Configure()
         {
             BFType.DefineAttributes(BFTypeId.Grow, BFShapeId.Behavior, BFFlags.IsBehavior | BFFlags.SelfTarget, BFDiscoveredFlags.All, CompareStressedPair);

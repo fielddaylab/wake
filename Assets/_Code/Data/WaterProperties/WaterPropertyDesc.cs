@@ -72,7 +72,7 @@ namespace Aqua
         public TextId StateChangeStressOnlyFormat() { return m_StateChangeStressOnlyFormat; }
         public TextId StateChangeUnaffectedFormat() { return m_StateChangeUnaffectedFormat; }
         
-        public string FormatValue(float inValue, string prefix = null)
+        public string FormatValue(float inValue, string prefix = null, string suffix = null)
         {
             inValue *= m_ValueScale;
             AdjustScale(ref inValue, GetAllowedConversions(), out string unitPrefix, out string unitOverride);
@@ -81,12 +81,12 @@ namespace Aqua
                 if (!string.IsNullOrEmpty(prefix)) {
                     psb.Builder.Append(prefix);
                 }
-                FormatValue(psb.Builder, inValue, m_SignificantDigits, unitPrefix, unitOverride ?? m_Units);
+                FormatValue(psb.Builder, inValue, m_SignificantDigits, unitPrefix, suffix, unitOverride ?? m_Units);
                 return psb.Builder.Flush();
             }
         }
 
-        public string FormatRate(float inValue, string prefix = null, string additionalUnits = null)
+        public string FormatRate(float inValue, string prefix = null, string suffix = null, string additionalUnits = null)
         {
             inValue *= m_ValueScale;
             AdjustScale(ref inValue, GetAllowedConversions(), out string unitPrefix, out string unitOverride);
@@ -95,7 +95,7 @@ namespace Aqua
                 if (!string.IsNullOrEmpty(prefix)) {
                     psb.Builder.Append(prefix);
                 }
-                FormatValue(psb.Builder, inValue, m_SignificantDigits, unitPrefix, unitOverride ?? (!string.IsNullOrEmpty(m_RateUnits) ? m_RateUnits : m_Units));
+                FormatValue(psb.Builder, inValue, m_SignificantDigits, unitPrefix, suffix, unitOverride ?? (!string.IsNullOrEmpty(m_RateUnits) ? m_RateUnits : m_Units));
                 if (additionalUnits != null) {
                     psb.Builder.Append('/').Append(additionalUnits);
                 }
@@ -131,7 +131,8 @@ namespace Aqua
             }
         }
 
-        static public void FormatValue(StringBuilder sb, float valueF, int significantDigits, string unitPrefix, string units) {
+        // this here
+        static public void FormatValue(StringBuilder sb, float valueF, int significantDigits, string unitPrefix, string unitSuffix, string units) {
             double value = valueF;
             int sign = Math.Sign(value);
             value = Math.Abs(value);
@@ -158,6 +159,10 @@ namespace Aqua
                 sb.Append(unitPrefix);
             }
             sb.Append(units);
+            if (unitSuffix != null)
+            {
+                sb.Append(unitSuffix);
+            }
         }
 
         public float MinValue() { return m_MinValue; }

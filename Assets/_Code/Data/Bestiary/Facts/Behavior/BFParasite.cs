@@ -57,7 +57,9 @@ namespace Aqua {
                 yield return BFFragment.CreateLocVerb(IsStressedByVerb);
 
                 if (Services.Loc.IsCurrentLanguageGendered()) {
-                    yield return BFFragment.CreateGenderedLocNoun(fact.Parent.CommonName(), fact.Parent.Gender());
+                    // Remove article in second verb
+                    //yield return BFFragment.CreateGenderedLocNoun(fact.Parent.CommonName(), fact.Parent.Gender(), true);
+                    yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
                 }
                 else {
                     yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
@@ -79,7 +81,9 @@ namespace Aqua {
                 }
 
                 if (Services.Loc.IsCurrentLanguageGendered()) {
-                    yield return BFFragment.CreateGenderedLocNoun(fact.Critter.CommonName(), fact.Critter.Gender());
+                    // Remove article in second verb
+                    // yield return BFFragment.CreateGenderedLocNoun(fact.Critter.CommonName(), fact.Critter.Gender(), true);
+                    yield return BFFragment.CreateLocNoun(fact.Parent.CommonName());
                 }
                 else {
                     yield return BFFragment.CreateLocNoun(fact.Critter.CommonName());
