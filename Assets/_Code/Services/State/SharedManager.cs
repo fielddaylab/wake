@@ -1,18 +1,9 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using BeauData;
-using BeauPools;
-using BeauRoutine;
 using BeauUtil;
-using BeauUtil.Tags;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using BeauUtil.Debugger;
-using BeauUtil.Variants;
 
-namespace Aqua
-{
+namespace Aqua {
+    [TypeIndexCapacity(16)]
+    [NonIndexed]
     public class SharedManager : MonoBehaviour
     {
         protected virtual void Awake()

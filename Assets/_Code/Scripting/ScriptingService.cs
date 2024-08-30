@@ -94,7 +94,7 @@ namespace Aqua
         private Dictionary<StringHash32, FunctionSet> m_LoadedFunctions;
 
         // objects
-        [NonSerialized] private RingBuffer<ScriptObject> m_ScriptObjects = new RingBuffer<ScriptObject>(256, RingBufferMode.Expand, CompareUtils.DefaultComparer<ScriptObject>());
+        [NonSerialized] private RingBuffer<ScriptObject> m_ScriptObjects = new RingBuffer<ScriptObject>(256, RingBufferMode.Expand, CompareUtils.DefaultEquals<ScriptObject>());
         [NonSerialized] private bool m_ScriptObjectListDirty = false;
 
         // pools
@@ -778,11 +778,11 @@ namespace Aqua
                 return parser;
             });
 
-            m_ChoiceSelectors = new Dictionary<StringHash32, ChoiceSelectorHandler>();
+            m_ChoiceSelectors = Collections.NewDictionary<StringHash32, ChoiceSelectorHandler>(3);
             m_LoadedPackages = Collections.NewSet<ScriptNodePackage>(8);
-            m_LoadedEntrypoints = new Dictionary<StringHash32, ScriptNode>(16);
-            m_LoadedResponses = new Dictionary<StringHash32, TriggerResponseSet>(16);
-            m_LoadedFunctions = new Dictionary<StringHash32, FunctionSet>(16);
+            m_LoadedEntrypoints = Collections.NewDictionary<StringHash32, ScriptNode>(16);
+            m_LoadedResponses = Collections.NewDictionary<StringHash32, TriggerResponseSet>(16);
+            m_LoadedFunctions = Collections.NewDictionary<StringHash32, FunctionSet>(16);
             m_LoadedPackageSourcesAssets = Collections.NewDictionary<LeafAsset, ScriptNodePackage>(16);
 
             m_TablePool = new DynamicPool<VariantTable>(8, Pool.DefaultConstructor<VariantTable>());

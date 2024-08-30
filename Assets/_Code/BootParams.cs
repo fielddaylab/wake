@@ -18,6 +18,8 @@ using System.Text;
 [assembly: InternalsVisibleTo("Aqua.Shared.Editor")]
 [assembly: InternalsVisibleTo("Assembly-CSharp-Editor")]
 
+[assembly: StringHashReverseCacheInitialCapacity(10000, 0)]
+
 namespace Aqua
 {
     [DefaultExecutionOrder(int.MinValue)]

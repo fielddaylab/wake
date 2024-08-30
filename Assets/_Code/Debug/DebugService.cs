@@ -18,6 +18,7 @@ using EasyBugReporter;
 using BeauUtil.Variants;
 using System.Text;
 using System.IO;
+using FieldDay.Debugging;
 
 namespace Aqua.Debugging
 {
@@ -176,12 +177,12 @@ namespace Aqua.Debugging
                 }
                 else
                 {
+                    m_DebugMenu.gameObject.SetActive(true);
                     if (!m_FirstMenuToggle)
                     {
                         m_DebugMenu.GotoMenu(s_RootMenu);
                         m_FirstMenuToggle = true;
                     }
-                    m_DebugMenu.gameObject.SetActive(true);
                     m_VisibilityWhenDebugMenuOpened = m_MinimalOn;
                     SetMinimalLayer(true);
                     Pause();
@@ -362,6 +363,11 @@ namespace Aqua.Debugging
                 }
 
                 ClearDebugCamera();
+                FramerateDisplay.Show();
+            }
+            else
+            {
+                FramerateDisplay.Hide();
             }
         }
 
@@ -392,7 +398,7 @@ namespace Aqua.Debugging
             Services.Pause.Pause();
             Services.Input.PushFlags(InputLayerFlags.System, this);
             m_Paused = true;
-            m_TimeDisplay.UpdateStateLabel("PAUSED");
+            m_TimeDisplay.UpdateState(true);
         }
 
         private void Resume()
@@ -406,7 +412,7 @@ namespace Aqua.Debugging
             Services.Pause.Resume();
             Services.Input.PopFlags(this);
             m_Paused = false;
-            m_TimeDisplay.UpdateStateLabel("PLAYING");
+            m_TimeDisplay.UpdateState(false);
         }
 
         #endregion // Pausing

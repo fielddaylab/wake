@@ -106,7 +106,7 @@ namespace ProtoAqua.ExperimentV2 {
 
             m_WaterSystem.SetActiveTank(tank);
 
-            Services.Events.Dispatch(ExperimentEvents.ExperimentView, tank.Type);
+            Services.Events.Dispatch(ExperimentEvents.ExperimentView, EvtArgs.Create(tank.Type));
 
             using (var table = TempVarTable.Alloc()) {
                 table.Set("tankType", tank.Type.ToString());

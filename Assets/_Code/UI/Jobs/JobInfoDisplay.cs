@@ -41,9 +41,9 @@ namespace Aqua
                 if (m_ShortDescriptionLabel)
                     m_ShortDescriptionLabel.SetTextFromString(null);
                 
-                for(int i = 0; i < m_Rewards.Length; ++i)
+                for(int i = 0; i < m_Rewards.Length; i++)
                     m_Rewards[i].gameObject.SetActive(false);
-                for(int i = 0; i < m_Difficulties.Length; ++i)
+                for(int i = 0; i < m_Difficulties.Length; i++)
                     m_Difficulties[i].gameObject.SetActive(false);
 
                 if (m_NoRewardsDisplay)
@@ -78,7 +78,7 @@ namespace Aqua
                     PopulateReward(rewardCount++, ItemIds.Exp, inJob.ExpReward());
                 }
 
-                for(int i = rewardCount; i < m_Rewards.Length; ++i)
+                for(int i = rewardCount; i < m_Rewards.Length; i++)
                 {
                     m_Rewards[i].gameObject.SetActive(false);
                 }
@@ -89,7 +89,7 @@ namespace Aqua
 
             if (m_Difficulties.Length > 0)
             {
-                for(int i = 0; i < m_Difficulties.Length; ++i)
+                for(int i = 0; i < m_Difficulties.Length; i++)
                 {
                     int difficulty = inJob.Difficulty((ScienceActivityType) i);
                     m_Difficulties[i].Display(difficulty);

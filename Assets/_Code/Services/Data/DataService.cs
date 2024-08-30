@@ -381,6 +381,8 @@ namespace Aqua
                     SetLastKnownProfile(m_CurrentSaveData);
                 }
                 OptionsData.SyncFrom(m_CurrentSaveData.Options, m_CurrentOptions, OptionsData.Authority.Profile);
+
+                inProfile.LaunchCount++;
             }
             
             m_LastOptionsHash = m_CurrentOptions.Hash();

@@ -12,6 +12,7 @@ namespace Aqua.Profile
         public uint Version;
         public double Playtime;
         public bool IsBookmark;
+        public ulong LaunchCount;
 
         public CharacterProfile Character = new CharacterProfile();
         public InventoryData Inventory = new InventoryData();
@@ -31,9 +32,12 @@ namespace Aqua.Profile
         #region IProfileChunk
 
         // v2: added options
+        // v3: added science
+        // v4: added save version
         // v5: added playtime
         // v6: added bookmark flag
-        ushort ISerializedVersion.Version { get { return 6; } }
+        // v7: added launchcount
+        ushort ISerializedVersion.Version { get { return 7; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
         {
@@ -67,6 +71,9 @@ namespace Aqua.Profile
 
             if (ioSerializer.ObjectVersion >= 5)
                 ioSerializer.Serialize("playtime", ref Playtime);
+
+            if (ioSerializer.ObjectVersion >= 7)
+                ioSerializer.Serialize("launchCount", ref LaunchCount);
         }
 
         public void MarkChangesPersisted()
@@ -93,6 +100,7 @@ namespace Aqua.Profile
             writer.KeyValue("Save Id", Id);
             writer.KeyValue("Last Updated", DateTime.FromFileTimeUtc(LastUpdated));
             writer.KeyValue("Save Version", Version);
+            writer.KeyValue("Launch Count", LaunchCount);
             writer.Space();
 
             writer.BeginSection("Character", false);

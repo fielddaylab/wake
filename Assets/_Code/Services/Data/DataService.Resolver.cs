@@ -49,7 +49,7 @@ namespace Aqua
         public Variant PopVariable(TableKeyPair inId, object inContext = null, Variant inDefaultValue = default)
         {
             Variant result = GetVariable(inId, inContext, inDefaultValue);
-            SetVariable(inId, null, inContext);
+            SetVariable(inId, Variant.Null, inContext);
             return result;
         }
 
@@ -66,7 +66,7 @@ namespace Aqua
             }
             else
             {
-                Services.Events.Queue(GameEvents.VariableSet, keyPair);
+                Services.Events.Queue(GameEvents.VariableSet, EvtArgs.Create(keyPair));
             }
         }
 
@@ -81,7 +81,7 @@ namespace Aqua
             }
             else
             {
-                Services.Events.Queue(GameEvents.VariableSet, inId);
+                Services.Events.Queue(GameEvents.VariableSet, EvtArgs.Create(inId));
             }
         }
 
@@ -98,7 +98,7 @@ namespace Aqua
             }
             else
             {
-                Services.Events.Queue(GameEvents.VariableSet, keyPair);
+                Services.Events.Queue(GameEvents.VariableSet, EvtArgs.Create(keyPair));
             }
         }
 
@@ -113,7 +113,7 @@ namespace Aqua
             }
             else
             {
-                Services.Events.Queue(GameEvents.VariableSet, inId);
+                Services.Events.Queue(GameEvents.VariableSet, EvtArgs.Create(inId));
             }
         }
 

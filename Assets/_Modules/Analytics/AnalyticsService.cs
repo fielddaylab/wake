@@ -36,6 +36,7 @@ namespace Aqua
 
         [SerializeField, Required] private string m_AppId = "AQUALAB";
         [SerializeField, Required] private string m_AppVersion = "6.2";
+        [SerializeField, Required] private SurveyPanel m_SurveyPrefab;
         [SerializeField] private FirebaseConsts m_Firebase = default(FirebaseConsts);
         
         #endregion // Inspector
@@ -43,6 +44,7 @@ namespace Aqua
         #region Logging Variables
 
         private OGDLog m_Log;
+        private OGDSurvey m_Survey;
 
         [NonSerialized] private StringHash32 m_CurrentJobHash = null;
         [NonSerialized] private string m_CurrentJobName = NoActiveJobId;
@@ -140,6 +142,14 @@ namespace Aqua
 
             m_Log.SetDebug(m_Debug);
 
+            m_Survey = new OGDSurvey(m_SurveyPrefab, m_Log);
+            m_Survey.OnSurveyBegin += (s) => {
+                Services.Events.Dispatch(GameEvents.SurveyStart, EvtArgs.Ref(s));
+            };
+            m_Survey.OnSurveyEnd += (s) => {
+                Services.Events.Dispatch(GameEvents.SurveyEnd, EvtArgs.Ref(s));
+            };
+
             RefreshGameState();
         }
 
@@ -171,6 +181,7 @@ namespace Aqua
         {
             Services.Events?.DeregisterAll(this);
             m_Log.Dispose();
+            m_Survey = null;
         }
         #endregion // IService
 
@@ -477,10 +488,19 @@ namespace Aqua
 
         private void LogCompleteJob(StringHash32 jobId)
         {
-            string parsedJobName = Assets.Job(jobId).name;
+            var job = Assets.Job(jobId);
+            string parsedJobName = job.name;
 
             using(var e = m_Log.NewEvent("complete_job")) {
                 e.Param("job_name", parsedJobName);
+            }
+
+            if (!job.HasFlags(JobDescFlags.None)) {
+                int jobCount = Save.Current.Jobs.CompletedJobIds().Count;
+                string surveyName = string.Format("completed-{0}-jobs", jobCount);
+                Services.Script.QueueInvoke(() => {
+                    m_Survey.TryDisplaySurvey(surveyName);
+                }, -10);
             }
         }
 
@@ -960,7 +980,7 @@ namespace Aqua
 
         #endregion // Log Events
 
-        #if DEVELOPMENT
+#if DEVELOPMENT
 
         IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus(FindOrCreateMenu findOrCreate) {
             DMInfo menu = findOrCreate("Logging");
@@ -973,6 +993,6 @@ namespace Aqua
             yield return menu;
         }
 
-        #endif // DEVELOPMENT
+#endif // DEVELOPMENT
     }
 }

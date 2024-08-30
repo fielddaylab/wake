@@ -267,7 +267,7 @@ namespace Aqua
                 Collider2D checkingCollider = null;
                 Collider2D lastCollider = null;
 
-                for(int contactIdx = 0; contactIdx < contactCount; ++contactIdx)
+                for(int contactIdx = 0; contactIdx < contactCount; contactIdx++)
                 {
                     contact = contactBuffer[contactIdx];
                     Assert.True(contact.otherCollider == objCollider);

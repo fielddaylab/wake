@@ -4,6 +4,7 @@ using Aqua.Journal;
 using Aqua.Profile;
 using BeauUtil;
 using BeauUtil.Debugger;
+using BeauUtil.IO;
 using Leaf;
 using UnityEngine;
 
@@ -109,7 +110,7 @@ namespace Aqua
             #if UNITY_EDITOR
             if (m_ScriptingRef == null)
             {
-                m_ScriptingRef = new ReloadableAssetRef<LeafAsset>(m_Scripting);
+                m_ScriptingRef = new ReloadableRef<LeafAsset>(m_Scripting);
             }
             return m_ScriptingRef;
             #else
@@ -153,11 +154,11 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
-        [NonSerialized] private ReloadableAssetRef<LeafAsset> m_ScriptingRef;
+        [NonSerialized] private ReloadableRef<LeafAsset> m_ScriptingRef;
 
         internal void EditorInit()
         {
-            m_ScriptingRef = new ReloadableAssetRef<LeafAsset>(m_Scripting);
+            m_ScriptingRef = new ReloadableRef<LeafAsset>(m_Scripting);
         }
 
         #endif // UNITY_EDITOR

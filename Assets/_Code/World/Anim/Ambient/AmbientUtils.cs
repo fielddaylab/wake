@@ -75,7 +75,7 @@ namespace Aqua.Animation
         /// </summary>
         static public unsafe void ProcessVec3Additive(Vector3* ioValues, float* inAnimScales, AmbientVec3State* ioStateBuffer, AmbientVec3PropertyConfig* inPropertyBuffer, byte* ioChangeBuffer, int inObjectCount, float inTimestamp, byte inChangeFlag)
         {
-            for(int i = 0; i < inObjectCount; ++i)
+            for(int i = 0; i < inObjectCount; i++)
             {
                 float xyzProgress = AmbientWaveState.CalculateProgress(ioStateBuffer[i].XYZ, inTimestamp, inPropertyBuffer[i].WaveXYZ.Delay <= 0);
                 float xProgress = AmbientWaveState.CalculateProgress(ioStateBuffer[i].X, inTimestamp, inPropertyBuffer[i].WaveX.Delay <= 0);
@@ -105,7 +105,7 @@ namespace Aqua.Animation
         /// </summary>
         static public unsafe void ProcessColorValues(Color* ioValues, AmbientColorState* ioStateBuffer, AmbientColorPropertyConfig* inPropertyBuffer, byte* ioChangeBuffer, int inObjectCount, float inTimestamp, byte inChangeFlag)
         {
-            for(int i = 0; i < inObjectCount; ++i)
+            for(int i = 0; i < inObjectCount; i++)
             {
                 float colorProgress = AmbientWaveState.CalculateProgress(ioStateBuffer[i].ColorState, inTimestamp, inPropertyBuffer[i].WaveColor.Delay <= 0);
                 float alphaProgress = AmbientWaveState.CalculateProgress(ioStateBuffer[i].AlphaState, inTimestamp, inPropertyBuffer[i].WaveAlpha.Delay <= 0);
@@ -129,7 +129,7 @@ namespace Aqua.Animation
         /// </summary>
         static public unsafe void ProcessVec3Waves(AmbientVec3State* ioStateBuffer, AmbientVec3PropertyConfig* inPropertyBuffer, int inObjectCount, float inTimestamp, Random inRandom)
         {
-            for(int i = 0; i < inObjectCount; ++i)
+            for(int i = 0; i < inObjectCount; i++)
             {
                 ProcessWave(ref ioStateBuffer[i].XYZ, inPropertyBuffer[i].WaveXYZ, inTimestamp, inRandom);
                 ProcessWave(ref ioStateBuffer[i].X, inPropertyBuffer[i].WaveX, inTimestamp, inRandom);
@@ -143,7 +143,7 @@ namespace Aqua.Animation
         /// </summary>
         static public unsafe void ProcessColorWaves(AmbientColorState* ioStateBuffer, AmbientColorPropertyConfig* inPropertyBuffer, int inObjectCount, float inTimestamp, Random inRandom)
         {
-            for(int i = 0; i < inObjectCount; ++i)
+            for(int i = 0; i < inObjectCount; i++)
             {
                 ProcessWave(ref ioStateBuffer[i].ColorState, inPropertyBuffer[i].WaveColor, inTimestamp, inRandom);
                 ProcessWave(ref ioStateBuffer[i].AlphaState, inPropertyBuffer[i].WaveAlpha, inTimestamp, inRandom);

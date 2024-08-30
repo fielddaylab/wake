@@ -8,6 +8,8 @@ using UnityEngine;
 
 namespace Aqua
 {
+    [TypeIndexCapacity(8)]
+    [NonIndexed]
     public abstract class TweakAsset : ScriptableObject, ISerializedVersion, ISerializedObject
     {
         #region Inspector

@@ -42,7 +42,7 @@ namespace Aqua.Option
             OptionsData options = Save.Options;
             m_Checkbox.targetGraphic.color = inbSetting ? AQColors.ContentBlue : AQColors.Teal;
             
-            Services.Events.Queue(GameEvents.OptionsUpdated, options);
+            Services.Events.Queue(GameEvents.OptionsUpdated, EvtArgs.Ref(options));
         }
     }
 }

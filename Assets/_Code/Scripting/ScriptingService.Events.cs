@@ -24,6 +24,7 @@ namespace Aqua
             public const string EnvColorString = "#f57c18";
             public const string ItemColorString = "#00ffc8";
             public const string MapColorString = "#ffccf9";
+            public const string JobColorString = "#ffccf9";
             public const string CashColorString = "#e5cf12";
             public const string ExpColorString = "#a1ff29";
         }
@@ -230,6 +231,12 @@ namespace Aqua
             if (!charDef.IsReferenceNull())
             {
                 return Loc.Find(charDef.ShortNameId());
+            }
+
+            JobDesc jobDef = obj as JobDesc;
+            if (!jobDef.IsReferenceNull())
+            {
+                return Loc.FormatFromString("<" + ColorTags.JobColorString + ">" + "{0}</color>", jobDef.NameId());
             }
 
             Log.Error("[ScriptingService] Unknown symbol to get name of: '{0}'", inTag.Data);
@@ -526,7 +533,7 @@ namespace Aqua
 
             var faders = Services.UI.WorldFaders;
             bool bWait = false;
-            for(int i = 2; i < args.Count; ++i)
+            for(int i = 2; i < args.Count; i++)
             {
                 var arg = args[i];
                 if (arg == "above-ui")
@@ -554,7 +561,7 @@ namespace Aqua
 
             var faders = Services.UI.WorldFaders;
             bool bWait = false;
-            for(int i = 2; i < args.Count; ++i)
+            for(int i = 2; i < args.Count; i++)
             {
                 var arg = args[i];
                 if (arg == "above-ui")
@@ -587,7 +594,7 @@ namespace Aqua
             float duration = StringParser.ParseFloat(args[0], 0.2f);
 
             bool bWait = false;
-            for(int i = 1; i < args.Count; ++i)
+            for(int i = 1; i < args.Count; i++)
             {
                 var arg = args[i];
                 if (arg == "wait")

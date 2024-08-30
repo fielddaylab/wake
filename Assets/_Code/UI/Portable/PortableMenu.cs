@@ -122,11 +122,11 @@ namespace Aqua.Portable {
             m_AppNavigationGroup.interactable = (m_Request.Flags & PortableRequestFlags.DisableNavigation) == 0;
             requestTab.App.HandleRequest(m_Request);
 
-            Services.Events.Dispatch(GameEvents.PortableOpened, m_Request);
+            Services.Events.Dispatch(GameEvents.PortableOpened, EvtArgs.Box(m_Request));
         }
 
         private void UpdateAvailableTabs() {
-            for (int i = 0; i < m_AppButtons.Length; ++i) {
+            for (int i = 0; i < m_AppButtons.Length; i++) {
                 var button = m_AppButtons[i];
                 switch(button.Id()) {
                     case PortableAppId.Organisms: {
@@ -150,7 +150,7 @@ namespace Aqua.Portable {
         }
 
         private PortableTabToggle GetAppButton(PortableAppId inId) {
-            for (int i = 0; i < m_AppButtons.Length; ++i) {
+            for (int i = 0; i < m_AppButtons.Length; i++) {
                 var button = m_AppButtons[i];
                 if (button.Id() == inId) {
                     return button;

@@ -1,5 +1,5 @@
 ﻿// comment out this define to disable the AB test
-#define ANALYTICS_ABTEST_USERCODEREMINDER
+// #define ANALYTICS_ABTEST_USERCODEREMINDER
 
 using System.Collections;
 using Aqua.Profile;

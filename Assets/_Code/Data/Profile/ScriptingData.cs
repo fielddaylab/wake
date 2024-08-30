@@ -89,7 +89,7 @@ namespace Aqua.Profile
 
         public bool HasRecentlySeen(StringHash32 inNodeId, int inDuration)
         {
-            for(int i = 0; i < m_RecentNodeHistory.Count && i < inDuration; ++i)
+            for(int i = 0; i < m_RecentNodeHistory.Count && i < inDuration; i++)
             {
                 if (m_RecentNodeHistory[i] == inNodeId)
                     return true;

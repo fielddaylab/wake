@@ -320,7 +320,7 @@ namespace Aqua
                 }
             }
 
-            Services.Events.Dispatch(GameEvents.JobTasksUpdated, statusMask);
+            Services.Events.Dispatch(GameEvents.JobTasksUpdated, EvtArgs.Create(statusMask));
 
             m_TaskUpdateMask = 0;
         }

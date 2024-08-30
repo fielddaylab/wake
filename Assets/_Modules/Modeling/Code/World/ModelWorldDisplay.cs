@@ -1166,7 +1166,7 @@ namespace Aqua.Modeling {
             InterveneUpdateData data;
             data.Organism = organism.name;
             data.DifferenceValue = result.DifferenceValue;
-            Services.Events.Dispatch(ModelingConsts.Event_Intervene_Update, data);
+            Services.Events.Dispatch(ModelingConsts.Event_Intervene_Update, EvtArgs.Box(data));
 
             return result;
         }

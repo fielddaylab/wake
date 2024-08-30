@@ -6,6 +6,7 @@ using BeauUtil;
 using System;
 using Aqua.Scripting;
 using System.Collections;
+using BeauUtil.Variants;
 
 namespace Aqua.Portable
 {
@@ -56,7 +57,7 @@ namespace Aqua.Portable
             base.OnShow(inbInstant);
 
             Script.WriteVariable("portable:app", PortableAppIdToString[(int) m_Id]);
-            Services.Events.Dispatch(GameEvents.PortableAppOpened, m_Id);
+            Services.Events.Dispatch(GameEvents.PortableAppOpened, EvtArgs.Create(m_Id));
 
             IEnumerator dataLoad = LoadData();
             if (dataLoad != null) {
@@ -88,8 +89,8 @@ namespace Aqua.Portable
             m_LoadRoutine.Stop();
             m_RootGroup.alpha = 0;
 
-            Services.Data?.CompareExchange("portable:app", PortableAppIdToString[(int) m_Id], null);
-            Services.Events?.Dispatch(GameEvents.PortableAppClosed, m_Id);
+            Services.Data?.CompareExchange("portable:app", PortableAppIdToString[(int) m_Id], Variant.Null);
+            Services.Events?.Dispatch(GameEvents.PortableAppClosed, EvtArgs.Create(m_Id));
 
             base.OnHide(inbInstant);
         }

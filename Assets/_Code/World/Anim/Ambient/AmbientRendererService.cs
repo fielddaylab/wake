@@ -79,7 +79,7 @@ namespace Aqua.Animation
             AmbientColorPropertyConfig* configBuffer = Frame.AllocArray<AmbientColorPropertyConfig>(objectCount);
             byte* changeBuffer = Frame.AllocArray<byte>(objectCount);
 
-            for(int i = 0; i < objectCount; ++i)
+            for(int i = 0; i < objectCount; i++)
             {
                 changeBuffer[i] = 0;
             }
@@ -103,7 +103,7 @@ namespace Aqua.Animation
                     ColorGroup targetGroup = obj.Group;
                     targetGroup.SetColor(obj.Channel, targetColor);
                 }
-                ++objectIdx;
+                objectIdx++;
             }
         }
 
@@ -117,7 +117,7 @@ namespace Aqua.Animation
                 ioStateBuffer[objectIndex] = obj.ColorState;
                 ioPropertyBuffer[objectIndex] = obj.ColorAnimation;
                 ioColors[objectIndex] = obj.ColorAnimation.Initial;
-                ++objectIndex;
+                objectIndex++;
             }
         }
 

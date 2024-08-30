@@ -24,7 +24,7 @@ namespace Aqua.Editor
 
             HashSet<string> usedNames = new HashSet<string>();
 
-            for(int i = 0; i < 32; ++i)
+            for(int i = 0; i < 32; i++)
             {
                 string layerName = LayerMask.LayerToName(i);
                 if (!string.IsNullOrEmpty(layerName))

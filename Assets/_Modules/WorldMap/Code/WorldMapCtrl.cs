@@ -136,7 +136,7 @@ namespace Aqua.WorldMap
         static private IEnumerator ShipoutSequence(StringHash32 stationId)
         {
             Services.UI.ShowLetterbox();
-            Script.WriteVariable("session:fromDream", null);
+            Script.WriteVariable("session:fromDream", Variant.Null);
             Script.WriteVariable("session:traveling", true);
 
             yield return 0.2f;

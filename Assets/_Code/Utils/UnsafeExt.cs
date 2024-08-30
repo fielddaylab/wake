@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using BeauUtil;
-using BeauUtil.Debugger;
-using Unity.Collections;
-using Unity.Collections.LowLevel.Unsafe;
 
 namespace Aqua {
     static public unsafe class UnsafeExt {
@@ -54,122 +51,56 @@ namespace Aqua {
         /// <summary>
         /// Hashes the given unmanaged struct.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static public ulong Hash<T>(T value) where T : unmanaged {
-            // fnv-1a
-            ulong hash = 14695981039346656037;
-            byte* ptr = (byte*) &value;
-            int length = sizeof(T);
-            while(length-- > 0) {
-                hash = (hash ^ *ptr++) * 1099511628211;
-            }
-            return hash;
+            return Unsafe.Hash64(value);
         }
 
         /// <summary>
         /// Hashes the given unmanaged struct.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static public ulong Hash<T>(T value, ulong initialHash) where T : unmanaged {
-            // fnv-1a
-            ulong hash = initialHash;
-            byte* ptr = (byte*) &value;
-            int length = sizeof(T);
-            while(length-- > 0) {
-                hash = (hash ^ *ptr++) * 1099511628211;
-            }
-            return hash;
+            return Unsafe.CombineHash64(initialHash, value);
         }
 
         #endregion // Hashing
 
         #region Read/Write
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static public T Read<T>(byte** mem, int* size) where T : unmanaged {
-            if (*size < sizeof(T)) {
-                throw new IndexOutOfRangeException();
-            }
-
-            T val = default(T);
-            if (((ulong)(*mem) % Unsafe.AlignOf<T>()) == 0) {
-                val = Unsafe.Reinterpret<byte, T>(*mem);
-            } else {
-                Unsafe.Copy(*mem, sizeof(T), &val, sizeof(T));
-            }
-
-            *size -= sizeof(T);
-            *mem += sizeof(T);
-            return val;
+            return Unsafe.Read<T>(mem, size);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static public T Read<T>(ref byte* mem, ref int size) where T : unmanaged {
-            if (size < sizeof(T)) {
-                throw new IndexOutOfRangeException();
-            }
-
-            T val = default(T);
-            if (((ulong)(*mem) % Unsafe.AlignOf<T>()) == 0) {
-                val = Unsafe.Reinterpret<byte, T>(mem);
-            } else {
-                Unsafe.Copy(mem, sizeof(T), &val, sizeof(T));
-            }
-
-            size -= sizeof(T);
-            mem += sizeof(T);
-            return val;
+            return Unsafe.Read<T>(ref mem, ref size);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static public string ReadString(byte** mem, int* size) {
-            ushort byteLength = Read<ushort>(mem, size);
-            if (byteLength > 0) {
-                char* charBuffer = stackalloc char[byteLength];
-                int stringLength = StringUtils.DecodeUFT8(*mem, byteLength, charBuffer, byteLength);
-
-                *mem += byteLength;
-                *size -= byteLength;
-                return new string(charBuffer, 0, stringLength);
-            } else {
-                return string.Empty;
-            }
+            return Unsafe.ReadUTF8(mem, size);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static public string ReadString(ref byte* mem, ref int size) {
-            ushort byteLength = Read<ushort>(ref mem, ref size);
-            if (byteLength > 0) {
-                char* charBuffer = stackalloc char[byteLength];
-                int stringLength = StringUtils.DecodeUFT8(mem, byteLength, charBuffer, byteLength);
-
-                mem += byteLength;
-                size -= byteLength;
-
-                return new string(charBuffer, 0, stringLength);
-            } else {
-                return string.Empty;
-            }
+            return Unsafe.ReadUTF8(ref mem, ref size);
         }
 
-        static public void Write<T>(byte** mem, int* size, T val) where T : unmanaged {
-            Unsafe.Copy(&val, sizeof(T), *mem, sizeof(T));
-            *mem += sizeof(T);
-            *size += sizeof(T);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static public void Write<T>(byte** mem, int* size, int capacity, T val) where T : unmanaged {
+            Unsafe.Write(val, mem, size, capacity);
         }
 
-        static public void Write<T>(ref byte* mem, ref int size, T val) where T : unmanaged {
-            Unsafe.Copy(&val, sizeof(T), mem, sizeof(T));
-            mem += sizeof(T);
-            size += sizeof(T);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static public void Write<T>(ref byte* mem, ref int size, int capacity, T val) where T : unmanaged {
+            Unsafe.Write(val, ref mem, ref size, capacity);
         }
 
-        static public void WriteString(byte** mem, int* size, string val) {
-            fixed(char* strChars = val) {
-                byte* lengthMarker = *mem;
-                UnsafeExt.Write(mem, size, (ushort) val.Length);
-                if (val.Length > 0) {
-                    ushort byteLength = (ushort) StringUtils.EncodeUFT8(strChars, val.Length, *mem, val.Length * 4);
-                    // Unsafe.Copy(lengthMarker, sizeof(ushort), &byteLength, sizeof(ushort));
-                    Unsafe.Copy(&byteLength, sizeof(ushort), lengthMarker, sizeof(ushort));
-                    *mem += byteLength;
-                    *size += byteLength;
-                }
-            }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static public void WriteString(byte** mem, int* size, int capacity, string val) {
+            Unsafe.WriteUTF8(val, mem, size, capacity);
         }
 
         #endregion // Read/Write
@@ -228,7 +159,7 @@ namespace Aqua {
             header._Reserved = 0;
 
             int finalSize = 0;
-            Write(&dest, &finalSize, header);
+            Write(&dest, &finalSize, destSize, header);
 
             byte groupSize = 0;
             byte groupMask = 0;
@@ -340,7 +271,7 @@ namespace Aqua {
                 return false;
             }
 
-            header = Unsafe.Reinterpret<byte, CompressionHeader>(src);
+            header = Unsafe.FastReinterpret<byte, CompressionHeader>(src);
             return header.Magic[0] == 'L' && header.Magic[1] == 'Z' && header.Magic[2] == 'B' && header.Magic[3] == '0';
         }
 

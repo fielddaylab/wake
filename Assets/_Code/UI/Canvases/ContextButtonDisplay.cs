@@ -6,6 +6,7 @@ using BeauUtil;
 using UnityEngine;
 using UnityEngine.UI;
 using BeauUtil.Debugger;
+using BeauUtil.Variants;
 
 namespace Aqua {
     public class ContextButtonDisplay : SharedPanel {
@@ -57,7 +58,7 @@ namespace Aqua {
 
         #endregion // Inspector
 
-        [NonSerialized] private RuntimeObjectHandle<SceneInteractable> m_TargetInteract;
+        [NonSerialized] private RuntimeObjectHandle m_TargetInteract;
 
         protected override void Start() {
             base.Start();
@@ -149,14 +150,14 @@ namespace Aqua {
             }
 
             m_TargetInteract = null;
-            Script.WriteVariable(GameVars.InteractObject, null);
+            Script.WriteVariable(GameVars.InteractObject, Variant.Null);
             Hide();
         }
 
         #region Handlers
 
         private void OnButtonClicked() {
-            m_TargetInteract.Object?.Interact();
+            m_TargetInteract.Cast<SceneInteractable>()?.Interact();
         }
 
         #endregion // Handlers
