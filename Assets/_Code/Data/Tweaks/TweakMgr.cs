@@ -81,6 +81,16 @@ namespace Aqua
             return m_TweakMap[TweakIndex.Get<T>()] as T;
         }
 
+        public TweakAsset GetByName(string name) {
+            foreach(var tweak in m_LoadedTweaks) {
+                if (tweak.name == name) {
+                    return tweak;
+                }
+            }
+
+            return null;
+        }
+
         #if UNITY_EDITOR
 
         private void OnValidate()

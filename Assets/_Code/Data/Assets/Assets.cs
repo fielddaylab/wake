@@ -86,6 +86,23 @@ namespace Aqua {
             return obj;
         }
 
+        static public bool TryFind(StringHash32 inId, out ScriptableObject asset) {
+#if UNITY_EDITOR
+            if (!UnityEditor.EditorApplication.isPlaying) {
+                asset = ValidationUtils.FindAsset<ScriptableObject>(inId.ToDebugString());
+                return asset != null;
+            }
+#endif // UNITY_EDITOR
+
+            if (inId.IsEmpty) {
+                asset = null;
+                return false;
+            }
+
+            ScriptableObject obj;
+            return s_GlobalLookup.TryGetValue(inId, out asset);
+        }
+
         [MethodImpl(256)]
         static public bool Has(StringHash32 inId) {
             #if UNITY_EDITOR

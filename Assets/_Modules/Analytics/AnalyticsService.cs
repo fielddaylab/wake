@@ -990,7 +990,13 @@ namespace Aqua
                 m_Debug = t;
                 m_Log.SetDebug(t);
             });
+
             yield return menu;
+
+            DMInfo research = findOrCreate("Research");
+            research.AddToggle("Always Predict Job Failure", JobPredictionFeature.DEBUG_IsAlwaysPredictFailure, JobPredictionFeature.DEBUG_SetAlwaysPredictFailure);
+
+            yield return research;
         }
 
 #endif // DEVELOPMENT

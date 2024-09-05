@@ -1,6 +1,7 @@
 using System;
 using Aqua.Option;
 using BeauData;
+using BeauUtil;
 using EasyBugReporter;
 
 namespace Aqua.Profile
@@ -13,6 +14,7 @@ namespace Aqua.Profile
         public double Playtime;
         public bool IsBookmark;
         public ulong LaunchCount;
+        public BitSet32 ResearchFlags;
 
         public CharacterProfile Character = new CharacterProfile();
         public InventoryData Inventory = new InventoryData();
@@ -36,7 +38,7 @@ namespace Aqua.Profile
         // v4: added save version
         // v5: added playtime
         // v6: added bookmark flag
-        // v7: added launchcount
+        // v7: added launchcount, researchflags
         ushort ISerializedVersion.Version { get { return 7; } }
 
         void ISerializedObject.Serialize(Serializer ioSerializer)
@@ -72,8 +74,10 @@ namespace Aqua.Profile
             if (ioSerializer.ObjectVersion >= 5)
                 ioSerializer.Serialize("playtime", ref Playtime);
 
-            if (ioSerializer.ObjectVersion >= 7)
+            if (ioSerializer.ObjectVersion >= 7) {
                 ioSerializer.Serialize("launchCount", ref LaunchCount);
+                ioSerializer.UInt32Proxy("researchFlags", ref ResearchFlags);
+            }
         }
 
         public void MarkChangesPersisted()
@@ -101,6 +105,7 @@ namespace Aqua.Profile
             writer.KeyValue("Last Updated", DateTime.FromFileTimeUtc(LastUpdated));
             writer.KeyValue("Save Version", Version);
             writer.KeyValue("Launch Count", LaunchCount);
+            writer.KeyValue("Research Flags", ResearchFlags);
             writer.Space();
 
             writer.BeginSection("Character", false);

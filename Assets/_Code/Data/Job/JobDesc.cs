@@ -28,7 +28,7 @@ namespace Aqua
         [SerializeField, Range(0, 5)] private int m_ModelingDifficulty = 0;
         [SerializeField, Range(0, 5)] private int m_ArgumentationDifficulty = 0;
 
-        [SerializeField] private JobDesc[] m_PrerequisiteJobs = Array.Empty<JobDesc>();
+        [RuntimePatchable] [SerializeField] private JobDesc[] m_PrerequisiteJobs = Array.Empty<JobDesc>();
         [SerializeField] private string m_PrereqConditions = null;
         [SerializeField, FilterBestiaryId] private StringHash32 m_PrereqBestiaryEntry = null;
         [SerializeField] private SerializedHash32 m_PrereqScanId = null;
@@ -41,8 +41,8 @@ namespace Aqua
         [SerializeField] internal EditorJobTask[] m_Tasks = Array.Empty<EditorJobTask>();
         [SerializeField] private JobTask[] m_OptimizedTaskList = Array.Empty<JobTask>();
 
-        [SerializeField] private int m_CashReward = 0;
-        [SerializeField] private int m_ExpReward = 5;
+        [RuntimePatchable] [SerializeField] private int m_CashReward = 0;
+        [RuntimePatchable] [SerializeField] private int m_ExpReward = 5;
         [SerializeField, JournalId] private StringHash32 m_JournalId = null;
 
         [SerializeField] internal LeafAsset m_Scripting = null;

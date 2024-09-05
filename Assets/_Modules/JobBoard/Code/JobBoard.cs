@@ -131,6 +131,10 @@ namespace Aqua.JobBoard {
             JobDesc missingJob = null;
             bool visitedMissingStation = false;
             foreach(var jobId in checkJobIds) {
+                if (jobId.IsEmpty) {
+                    continue;
+                }
+
                 JobDesc job = Assets.Job(jobId);
                 var status = JobUtils.GetJobStatus(job, Save.Current, true);
                 

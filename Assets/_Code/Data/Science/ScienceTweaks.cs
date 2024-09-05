@@ -10,7 +10,7 @@ using UnityEngine;
 namespace Aqua {
 
     [CreateAssetMenu(menuName = "Aqualab System/Science Tweaks", fileName = "ScienceTweaks")]
-    public class ScienceTweaks : TweakAsset, IBaked {
+    public class ScienceTweaks : TweakAsset, IBaked, IPostPatchCallback {
         #region Inspector
 
         [SerializeField] private Sprite[] m_LevelIcons;
@@ -18,11 +18,11 @@ namespace Aqua {
         [SerializeField] private Color32[] m_LevelColors;
 
         [Header("Specters")]
-        [SerializeField] private float m_SpecterMinIntervalMinutes = 10;
+        [RuntimePatchable] [SerializeField] private float m_SpecterMinIntervalMinutes = 10;
         [SerializeField] private string[] m_SpecterResourcePaths = null;
 
         [Header("Experience")]
-        [SerializeField] private uint[] m_BaseExperiencePerLevel = new uint[] { 30, 50 };
+        [RuntimePatchable] [SerializeField] private uint[] m_BaseExperiencePerLevel = new uint[] { 30, 50 };
 
         [Header("Bestiary Ordering")]
         [SerializeField] private TaggedBestiaryDesc[] m_CanonicalOrganismOrdering = null;
@@ -51,6 +51,14 @@ namespace Aqua {
             }
             ScienceUtils.UpdateLevelingCalculation(m_BaseExperiencePerLevel, cumulativeExp);
             ScienceUtils.UpdateMaxSpecters(m_SpecterResourcePaths.Length);
+        }
+
+        public void OnContentPostPatch() {
+            uint[] cumulativeExp = (uint[]) m_BaseExperiencePerLevel.Clone();
+            for (int i = 1; i < cumulativeExp.Length; i++) {
+                cumulativeExp[i] += cumulativeExp[i - 1];
+            }
+            ScienceUtils.UpdateLevelingCalculation(m_BaseExperiencePerLevel, cumulativeExp);
         }
 
         #if UNITY_EDITOR

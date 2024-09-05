@@ -50,6 +50,7 @@ namespace Aqua
         [NonSerialized] private PlayerBody m_Body;
         [NonSerialized] private bool m_InitFrame;
         [NonSerialized] private StringHash32 m_SceneName;
+        private RingBuffer<AsyncHandle> m_LoadBlockers = new RingBuffer<AsyncHandle>(8, RingBufferMode.Expand);
 
         private VariantTable m_TempSceneTable;
         private Func<IEnumerator> m_OnSceneReadyFunc;
@@ -424,6 +425,12 @@ namespace Aqua
         {
             while(BuildInfo.IsLoading())
                 yield return null;
+
+            while(m_LoadBlockers.TryPopFront(out AsyncHandle waitHandle)) {
+                while(waitHandle.IsRunning()) {
+                    yield return null;
+                }
+            }
 
             foreach(var service in Services.AllLoadable())
             {

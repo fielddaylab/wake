@@ -68,7 +68,7 @@ namespace Aqua {
         }
 
         static public JobsData Jobs {
-            [MethodImpl(256)] get { return s_CachedProfile.Jobs; }
+            [MethodImpl(256)] get { return s_CachedProfile?.Jobs; }
         }
 
         static public OptionsData Options {

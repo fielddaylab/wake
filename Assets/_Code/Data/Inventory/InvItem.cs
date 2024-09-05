@@ -23,9 +23,9 @@ namespace Aqua {
 
         [Header("Value")]
         [SerializeField] private uint m_Default = 0;
-        [SerializeField, FormerlySerializedAs("m_BuyCoinsValue")] private uint m_CashCost = 0;
-        [SerializeField] private uint m_RequiredLevel = 1;
-        [SerializeField] private InvItem m_Prerequisite = null;
+        [RuntimePatchable] [SerializeField, FormerlySerializedAs("m_BuyCoinsValue")] private uint m_CashCost = 0;
+        [RuntimePatchable] [SerializeField] private uint m_RequiredLevel = 1;
+        [RuntimePatchable] [SerializeField] private InvItem m_Prerequisite = null;
 
         [Header("Assets")]
         [SerializeField] private Sprite m_Icon = null;
