@@ -26,7 +26,7 @@ namespace Aqua.Analytics {
 
         static public Status GetStatus(SaveData saveData) {
 #if ANALYTICS_ABTEST_ALTJOBGRAPH
-            return ResearchTests.IsABC(saveData, 2) ? Status.Active : Status.Inactive;
+            return ResearchTests.IsABC(saveData, 2) || ResearchTests.IsFlagged(saveData, 0) ? Status.Active : Status.Inactive;
 #else
             return Status.Invalid;
 #endif // ANALYTICS_ABTEST_ALTJOBGRAPH
@@ -34,10 +34,16 @@ namespace Aqua.Analytics {
 
         static public void TryApplyPatch() {
 #if ANALYTICS_ABTEST_ALTJOBGRAPH
+            if (Save.Current == null) {
+                return;
+            }
+
             if (GetStatus(Save.Current) != Status.Active) {
                 ContentPatcher.Undo();
                 return;
             }
+
+            Save.Current.ResearchFlags.Set(0);
 
             if (ContentPatcher.IsPatched()) {
                 return;

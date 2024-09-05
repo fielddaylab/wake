@@ -1,0 +1,71 @@
+{
+    "package_config_id": "wake_survey_testing",
+    "surveys": [
+        {
+            "display_event_id": "first-launch",
+            "header": "Welcome To Wake",
+            "pages": [
+                {
+                    "items": [
+                        {
+                            "prompt": "Is this your first player code?",
+                            "responses": [
+                                "Yes", "No"
+                            ]
+                        },
+                        {
+                            "prompt": "Are you playing this as an assignment, or for fun?",
+                            "responses": [
+                                "Assignment", "Fun", "Other"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "items": [
+                        {
+                            "prompt": "About how old are you?",
+                            "responses": [
+                                "0-10", "11-14", "15-18", "19-25", "26+", "Prefer Not to Answer"
+                            ]
+                        },
+						{
+                            "prompt": "What grade level are you in?",
+                            "responses": [
+                                "Elementary", "6th", "7th", "8th", "9th", "10th", "11th", "12th", "College", "N/a"
+                            ]
+                        },
+						{
+							"prompt": "What gender are you?",
+							"responses": [
+								"Male", "Female", "Nonbinary", "Other", "Prefer Not To Answer"
+							]
+						}
+                    ]
+                }
+            ]
+        },
+		{
+            "display_event_id": "completed-jobs-1",
+            "header": "Welcome To Wake (pt. 2)",
+            "pages": [
+                {
+                    "items": [
+                        {
+                            "prompt": "How was that job?",
+                            "responses": [
+                                "Good", "Bad", "What?"
+                            ]
+                        },
+                        {
+                            "prompt": "Do you trust Mom?",
+                            "responses": [
+                                "Of course!", "Not quite", "Definitely not", "That's a leading question..."
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

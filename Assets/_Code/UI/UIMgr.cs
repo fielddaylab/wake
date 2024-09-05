@@ -479,8 +479,14 @@ namespace Aqua
             SceneHelper.OnSceneUnload += CleanupFromScene;
 
             Services.Events.Register(GameEvents.OptionsUpdated, OnOptionsUpdated)
-                .Register(GameEvents.SurveyStart, () => m_SurveyCounter++, this)
-                .Register(GameEvents.SurveyEnd, () => m_SurveyCounter--, this);
+                .Register(GameEvents.SurveyStart, () => {
+                    m_SurveyCounter++;
+                    Services.Input.PauseAll();
+                }, this)
+                .Register(GameEvents.SurveyEnd, () => {
+                    m_SurveyCounter--;
+                    Services.Input.ResumeAll();
+                }, this);
 
             BindCamera(Camera.main);
             transform.FlattenHierarchy();

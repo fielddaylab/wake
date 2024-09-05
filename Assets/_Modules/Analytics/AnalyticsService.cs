@@ -38,6 +38,7 @@ namespace Aqua
         [SerializeField, Required] private string m_AppId = "AQUALAB";
         [SerializeField, Required] private string m_AppVersion = "6.2";
         [SerializeField, Required] private SurveyPanel m_SurveyPrefab;
+        [SerializeField] private TextAsset m_SurveyData;
         [SerializeField] private FirebaseConsts m_Firebase = default(FirebaseConsts);
         
         #endregion // Inspector
@@ -152,12 +153,17 @@ namespace Aqua
                 Services.Events.Dispatch(GameEvents.SurveyEnd, EvtArgs.Ref(s));
             };
 
+            if (m_SurveyData != null) {
+                m_Survey.LoadSurveyPackageFromString(m_SurveyData.text);
+                Assets.FullyUnload(ref m_SurveyData);
+            }
+
             RefreshGameState();
         }
 
         private void OnProfileStarting(string userCode) {
             SetUserCode(userCode);
-            ResearchTests.HandleProfileStart();
+            ResearchTests.HandleProfileStart(m_Survey);
         }
 
         private void SetUserCode(string userCode)
@@ -509,9 +515,9 @@ namespace Aqua
                 e.Param("job_name", parsedJobName);
             }
 
-            if (!job.HasFlags(JobDescFlags.None)) {
+            if (!job.HasFlags(JobDescFlags.Hidden | JobDescFlags.NoPopup)) {
                 int jobCount = Save.Current.Jobs.CompletedJobIds().Count;
-                string surveyName = string.Format("completed-{0}-jobs", jobCount);
+                string surveyName = string.Concat("completed-jobs-", jobCount.ToStringLookup());
                 Services.Script.QueueInvoke(() => {
                     m_Survey.TryDisplaySurvey(surveyName);
                 }, -10);

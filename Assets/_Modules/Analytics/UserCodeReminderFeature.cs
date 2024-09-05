@@ -34,12 +34,13 @@ namespace Aqua.Analytics {
             }
         }
 
-        static public void TryQueueDisplay() {
+        static public bool TryQueueDisplay() {
             if (GetStatus(Save.Current) != Status.Active) {
-                return;
+                return false;
             }
 
             Services.State.OnSceneLoadReady(DisplayReminder);
+            return true;
         }
 
         static private IEnumerator DisplayReminder() {

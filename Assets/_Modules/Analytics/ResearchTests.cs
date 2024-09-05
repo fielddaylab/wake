@@ -5,8 +5,10 @@
 #define DEVELOPMENT
 #endif
 
+using System.Collections;
 using System.Runtime.CompilerServices;
 using Aqua.Profile;
+using OGD;
 
 namespace Aqua.Analytics {
     static public class ResearchTests {
@@ -53,6 +55,14 @@ namespace Aqua.Analytics {
 #endif // ABTESTS_ALLOWED
         }
 
+        static public bool IsFlagged(SaveData save, int flag) {
+#if ABTESTS_ALLOWED
+            return save != null && save.ResearchFlags.IsSet(flag);
+#else
+            return false;
+#endif // ABTESTS_ALLOWED
+        }
+
         #endregion // Tests
 
         #region Modifying Branch Name
@@ -82,9 +92,13 @@ namespace Aqua.Analytics {
         }
 #endif // DEVELOPMENT
 
-        static public void HandleProfileStart() {
+        static public void HandleProfileStart(OGDSurvey surveyDisplayer) {
 #if ABTESTS_ALLOWED
-            UserCodeReminderFeature.TryQueueDisplay();
+            if (IsNewSave(Save.Current)) {
+                Services.State.OnSceneLoadReady(() => InitialSurvey(surveyDisplayer));
+            } else {
+                UserCodeReminderFeature.TryQueueDisplay();
+            }
             JobPredictionFeature.TryLoadTable();
             AlternateJobGraphFeature.TryApplyPatch();
 #endif // ABTESTS_ALLOWED
@@ -92,6 +106,17 @@ namespace Aqua.Analytics {
 
         static public void HandleProfileEnd() {
             ContentPatcher.Undo();
+        }
+
+        static private bool IsNewSave(SaveData saveData) {
+            return saveData.LaunchCount == 1 && saveData.Script.ProfileNodeHistory.Count == 0;
+        }
+
+        static private IEnumerator InitialSurvey(OGDSurvey survey) {
+            survey.TryDisplaySurvey("first-launch");
+            while(Services.UI.IsDisplayingSurvey) {
+                yield return null;
+            }
         }
     }
 }
