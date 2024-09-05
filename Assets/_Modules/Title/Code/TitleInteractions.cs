@@ -187,7 +187,6 @@ namespace Aqua.Title
             {
                 Services.Input.ResumeAll();
                 Services.Data.StartPlaying("RS-1C");
-                UserCodeReminderFeature.TryQueueDisplay();
             }
         }
 
@@ -237,7 +236,6 @@ namespace Aqua.Title
             } else {
                 Services.Input.ResumeAll();
                 Services.Data.StartPlaying();
-                UserCodeReminderFeature.TryQueueDisplay();
             }
         }
 

@@ -18,7 +18,7 @@ namespace Aqua.Analytics {
     static public class JobPredictionFeature {
         private const int JobDifficultyCategoryThreshold = 2;
         private const double DenomEpsilon = double.Epsilon * 4;
-        private const double FailureThreshold = 0.5;
+        private const double FailureThreshold = 0.75;
 
         private const string JobDataTablePath = "Research/JobPredictionCoefficients";
 
@@ -40,7 +40,7 @@ namespace Aqua.Analytics {
             public double CompletedJobsExpCoefficient;
             public double CompletedJobsModelCoefficient;
             public double CompletedJobsArgueCoefficient;
-            public double VisitedStationCoefficient;
+            public double VisitedStationsCoefficient;
             public double LaunchCountCoefficient;
             public double PlaytimeCoefficient;
         }
@@ -80,16 +80,22 @@ namespace Aqua.Analytics {
 
         static public Status GetStatus(SaveData saveData) {
 #if ANALYTICS_ABTEST_JOBPREDICTION
-            if (saveData == null || saveData.IsBookmark || string.IsNullOrEmpty(saveData.Id)) {
-                return Status.Inactive;
-            }
-
-            char c = saveData.Id[0];
-            int offset = char.ToUpperInvariant(c) - 'A';
-            return (offset & 0x1) == 0 ? Status.Active : Status.Inactive;
+            return ResearchTests.IsABC(saveData, 1) ? Status.Active : Status.Inactive;
 #else
-            return Status.Inactive;
+            return Status.Invalid;
 #endif // ANALYTICS_ABTEST_JOBPREDICTION
+        }
+
+        static public string GetModifiedBranchName(string branchName, Status active) {
+            switch (active) {
+                case Status.Invalid:
+                default:
+                    return branchName;
+                case Status.Inactive:
+                    return branchName + "-no-failure-prediction";
+                case Status.Active:
+                    return branchName + "-has-failure-prediction";
+            }
         }
 
         static public void TryLoadTable() {
@@ -107,13 +113,36 @@ namespace Aqua.Analytics {
             }
 
             s_AsyncTableLoad = Async.Schedule(AsyncTableLoad(), AsyncFlags.MainThreadOnly);
-            
+            Services.State.RegisterLoadDependency(s_AsyncTableLoad);
 #endif // ANALYTICS_ABTEST_JOBPREDICTION
         }
 
 #if ANALYTICS_ABTEST_JOBPREDICTION
-        static private IEnumerator AsyncTableLoad() {
+        static private readonly StringUtils.CSV.Splitter s_TableSplitter = new StringUtils.CSV.Splitter(false);
 
+        static private IEnumerator AsyncTableLoad() {
+            var asyncLoad = Resources.LoadAsync<TextAsset>(JobDataTablePath);
+            while(!asyncLoad.isDone) {
+                yield return Async.Sleep(0);
+            }
+
+            TextAsset tableAsset = (TextAsset) asyncLoad.asset;
+            StringSlice[] lines = StringSlice.Split(tableAsset.text, StringUtils.DefaultNewLineChars, StringSplitOptions.RemoveEmptyEntries);
+
+            Dictionary<StringHash32, JobPredictionParams> table = MapUtils.Create<StringHash32, JobPredictionParams>(lines.Length - 1);
+
+            for(int i = 1; i < lines.Length; i++) {
+                JobPredictionParams parms = ReadLine(lines[i], out StringHash32 jobId);
+                if (!jobId.IsEmpty) {
+                    table[jobId] = parms;
+                }
+                yield return null;
+            }
+
+            Assets.FullyUnload(tableAsset);
+
+            s_AsyncTableLoad = default;
+            s_PredictTable = table;
         }
 
         static private void TryLoadTablePanic() {
@@ -127,9 +156,60 @@ namespace Aqua.Analytics {
 
             if (s_AsyncTableLoad.IsRunning()) {
                 s_AsyncTableLoad.Cancel();
+                s_AsyncTableLoad = default;
             }
 
-            TextAsset asset = Resources.Load<TextAsset>(JobDataTablePath);
+            TextAsset tableAsset = Resources.Load<TextAsset>(JobDataTablePath);
+            StringSlice[] lines = StringSlice.Split(tableAsset.text, StringUtils.DefaultNewLineChars, StringSplitOptions.RemoveEmptyEntries);
+
+            Dictionary<StringHash32, JobPredictionParams> table = MapUtils.Create<StringHash32, JobPredictionParams>(lines.Length - 1);
+
+            for (int i = 1; i < lines.Length; i++) {
+                JobPredictionParams parms = ReadLine(lines[i], out StringHash32 jobId);
+                if (!jobId.IsEmpty) {
+                    table[jobId] = parms;
+                }
+            }
+
+            Assets.FullyUnload(tableAsset);
+
+            s_PredictTable = table;
+        }
+
+        static private JobPredictionParams ReadLine(StringSlice slice, out StringHash32 id) {
+            JobPredictionParams parms;
+            var columns = slice.Split(s_TableSplitter, StringSplitOptions.None);
+            if (columns.Length < 16) {
+                id = null;
+                return default;
+            }
+
+            int c = 0;
+            id = columns[c++];
+            if (!Services.Assets.Jobs.HasId(id)) {
+                Log.Error("[JobPredictionFeature] Job '{0}' not found", id.ToDebugString());
+                id = default;
+                return default;
+            }
+
+            parms.Constant = StringParser.ParseDouble(columns[c++]);
+            parms.JobA.Id = columns[c++];
+            parms.JobA.Coefficient = StringParser.ParseDouble(columns[c++]);
+            parms.JobB.Id = columns[c++];
+            parms.JobB.Coefficient = StringParser.ParseDouble(columns[c++]);
+            parms.JobC.Id = columns[c++];
+            parms.JobC.Coefficient = StringParser.ParseDouble(columns[c++]);
+            parms.CompletedTasksCoefficient = StringParser.ParseDouble(columns[c++]);
+            parms.CompletedJobsCoefficient = StringParser.ParseDouble(columns[c++]);
+            parms.CompletedJobsExpCoefficient = StringParser.ParseDouble(columns[c++]);
+            parms.CompletedJobsModelCoefficient = StringParser.ParseDouble(columns[c++]);
+            parms.CompletedJobsArgueCoefficient = StringParser.ParseDouble(columns[c++]);
+            parms.VisitedStationsCoefficient = StringParser.ParseDouble(columns[c++]);
+            parms.LaunchCountCoefficient = StringParser.ParseDouble(columns[c++]);
+            parms.PlaytimeCoefficient = StringParser.ParseDouble(columns[c++]);
+
+            Log.Msg("[JobPredictionFeature] Loaded parameters for job '{0}'", id.ToDebugString());
+            return parms;
         }
 #endif // ANALYTICS_ABTEST_JOBPREDICTION
 
@@ -146,13 +226,13 @@ namespace Aqua.Analytics {
             int experimentCount = 0, modelCount = 0, argueCount = 0;
             foreach(var jobId in Save.Current.Jobs.CompletedJobIds()) {
                 var job = Assets.Job(jobId);
-                if (job.Difficulty(ScienceActivityType.Experimentation) >= JobDifficultyCategoryThreshold) {
+                if (job.Difficulty(ScienceActivityType.Experimentation) > JobDifficultyCategoryThreshold) {
                     experimentCount++;
                 }
-                if (job.Difficulty(ScienceActivityType.Modeling) >= JobDifficultyCategoryThreshold) {
+                if (job.Difficulty(ScienceActivityType.Modeling) > JobDifficultyCategoryThreshold) {
                     modelCount++;
                 }
-                if (job.Difficulty(ScienceActivityType.Argumentation) >= JobDifficultyCategoryThreshold) {
+                if (job.Difficulty(ScienceActivityType.Argumentation) > JobDifficultyCategoryThreshold) {
                     argueCount++;
                 }
             }
@@ -174,6 +254,9 @@ namespace Aqua.Analytics {
             if (Save.Current.Map.HasVisitedLocation(MapIds.KelpStation)) {
                 stationVisitCount++;
             }
+            if (Save.Current.Map.HasVisitedLocation(MapIds.FinalStation)) {
+                stationVisitCount++;
+            }
             s_CachedPredictionValues.VisitedStations = stationVisitCount;
 #endif // ANALYTICS_ABTEST_JOBPREDICTION
         }
@@ -182,7 +265,11 @@ namespace Aqua.Analytics {
 #if ANALYTICS_ABTEST_JOBPREDICTION
             if (GetStatus(Save.Current) != Status.Active) {
                 jobsToCheck = default;
+#if DEVELOPMENT
+                return s_DEBUGAlwaysPredictFailure;
+#else
                 return false;
+#endif // DEVELOPMENT
             }
 
             TryLoadTablePanic();
@@ -212,13 +299,13 @@ namespace Aqua.Analytics {
                 + (jobParms.CompletedJobsExpCoefficient * cached.CompletedJobsExp)
                 + (jobParms.CompletedJobsModelCoefficient * cached.CompletedJobsModel)
                 + (jobParms.CompletedJobsArgueCoefficient * cached.CompletedJobsArgue);
-            denomAccum += (jobParms.VisitedStationCoefficient * cached.VisitedStations)
+            denomAccum += (jobParms.VisitedStationsCoefficient * cached.VisitedStations)
                 + (jobParms.LaunchCountCoefficient * cached.LaunchCount)
                 + (jobParms.PlaytimeCoefficient * playTime);
 
             double determValue;
-            if (Math.Abs(denomAccum) <= DenomEpsilon) {
-                determValue = 0;
+            if (denomAccum <= DenomEpsilon) {
+                determValue = 1;
             } else {
                 determValue = Math.Log(1.0 / denomAccum);
             }

@@ -111,7 +111,7 @@ namespace Aqua.JobBoard {
                         if (m_SelectedJobButton.Group == JobProgressCategory.Available) {
                             if (!m_DisplayedPotentialFailureWarning && JobPredictionFeature.PredictFailure(m_SelectedJobButton.Job.Id(), out var checkJobs)) {
                                 m_DisplayedPotentialFailureWarning = true;
-                                DisplayPotentialFailureWarning(checkJobs);
+                                DisplayPotentialFailureWarning(m_SelectedJobButton.Job.Id(), checkJobs);
                                 break;
                             }
                             Services.Audio.PostEvent("JobBoard.Accept");
@@ -126,7 +126,7 @@ namespace Aqua.JobBoard {
             }
         }
 
-        private void DisplayPotentialFailureWarning(UnsafeSpan<StringHash32> checkJobIds) {
+        private void DisplayPotentialFailureWarning(StringHash32 attemptedJobId, UnsafeSpan<StringHash32> checkJobIds) {
             StringHash32 missingJobId = default;
             JobDesc missingJob = null;
             bool visitedMissingStation = false;
@@ -180,7 +180,10 @@ namespace Aqua.JobBoard {
                 Services.Script.TriggerResponse(GameTriggers.JobRecommendation, m_CurrentTargetId, null, table);
             }
 
-            Services.Events.Dispatch(GameEvents.DisplayedJobRecommendation, missingJobId);
+            Services.Events.Dispatch(GameEvents.DisplayedJobRecommendation, EvtArgs.Create(new JobRecommendationArgs() {
+                JobId = attemptedJobId,
+                RecommendationId = missingJobId
+            }));
         }
 
         private IEnumerator WaitToExit() {
@@ -480,5 +483,10 @@ namespace Aqua.JobBoard {
         }
 
         #endregion // BasePanel
+    }
+
+    public struct JobRecommendationArgs {
+        public StringHash32 JobId;
+        public StringHash32 RecommendationId;
     }
 }

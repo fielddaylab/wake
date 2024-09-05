@@ -27,6 +27,10 @@ namespace Aqua {
 
         #region Apply
 
+        static public bool IsPatched() {
+            return s_AppliedPatch.Assets.Count > 0;
+        }
+
         static public void Apply(string json) {
             Undo();
 
@@ -94,7 +98,7 @@ namespace Aqua {
                     assetField.SetValue(asset, patchedValue);
                     MarkChanged(asset);
 
-                    Log.Debug("[ContentPatcher] Patching field '{0}' on asset '{1}'...", fieldKv.Key, assetName);
+                    Log.Msg("[ContentPatcher] Patching field '{0}' on asset '{1}'...", fieldKv.Key, assetName);
                 }
             }
 
@@ -335,7 +339,7 @@ namespace Aqua {
         [UnityEditor.InitializeOnLoadMethod]
         static private void EditorInitialize() {
             EditorApplication.playModeStateChanged += (s) => {
-                if (s == PlayModeStateChange.ExitingEditMode) {
+                if (s == PlayModeStateChange.ExitingPlayMode) {
                     Undo();
                 }
             };

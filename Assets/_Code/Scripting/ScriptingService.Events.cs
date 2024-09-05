@@ -56,6 +56,7 @@ namespace Aqua
             m_TagEventParser.AddReplace("nameof", ReplaceNameOf);
             m_TagEventParser.AddReplace("pluralnameof", ReplacePluralNameOf);
             m_TagEventParser.AddReplace("fullnameof", ReplaceFullNameOf);
+            m_TagEventParser.AddReplace("formalnameof", ReplaceFormalShortNameOf);
             m_TagEventParser.AddReplace("item-count", ReplaceItemCount);
             m_TagEventParser.AddReplace('|', "{wait 0.25}");
 
@@ -295,6 +296,23 @@ namespace Aqua
             if (!map.IsReferenceNull())
             {
                 return Loc.FormatFromString("<" + ColorTags.MapColorString + ">" + "{0}</color>", map.LabelId());
+            }
+
+            return ReplaceNameOf(inTag, inContext);
+        }
+
+        static private string ReplaceFormalShortNameOf(TagData inTag, object inContext)
+        {
+            if (inTag.Data.StartsWith('@')) {
+                StringHash32 characterId = inTag.Data.Substring(1);
+                return Loc.Find(Assets.Character(characterId).FormalShortNameId());
+            }
+
+            ScriptableObject obj = Assets.Find(Script.ParseArg<StringHash32>(inTag.Data, inContext));
+
+            ScriptCharacterDef charDef = obj as ScriptCharacterDef;
+            if (!charDef.IsReferenceNull()) {
+                return Loc.Find(charDef.FormalShortNameId());
             }
 
             return ReplaceNameOf(inTag, inContext);

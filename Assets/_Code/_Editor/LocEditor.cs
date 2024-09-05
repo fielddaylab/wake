@@ -500,7 +500,13 @@ namespace Aqua.Editor {
 
         static public void Export(params LeafExport.CustomRule[] customRules) {
             LeafExport.CustomRule[] rules = customRules;
-            ArrayUtils.Add(ref rules, new LeafExport.CustomRule(typeof(LocPackage), (p) => LocPackage.GatherStrings((LocPackage) p)));
+            ArrayUtils.Add(ref rules, new LeafExport.CustomRule(typeof(LocPackage), (p) => {
+                if (p.name != "ES-Loc") {
+                    return LocPackage.GatherStrings((LocPackage) p);
+                } else {
+                    return Array.Empty<KeyValuePair<StringHash32, string>>();
+                }
+            }));
             ArrayUtils.Add(ref rules, new LeafExport.CustomRule(typeof(IHasLocalizationKeys), (p) => ((IHasLocalizationKeys) p).GetStrings()));
             IMethodCache methodCache = Leaf.LeafUtils.CreateMethodCache(typeof(IScriptComponent));
             methodCache.LoadStatic();

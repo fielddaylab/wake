@@ -628,6 +628,12 @@ namespace Aqua
             }
         }
 
+        public void RegisterLoadDependency(AsyncHandle handle) {
+            if (IsLoadingScene()) {
+                m_LoadBlockers.PushBack(handle);
+            }
+        }
+
         private void ProcessCallbackQueue() {
             m_OnLoadQueue.Sort((a, b) => b.Priority - a.Priority);
             while(m_OnLoadQueue.TryPopFront(out var action)) {

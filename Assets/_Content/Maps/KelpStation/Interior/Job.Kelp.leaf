@@ -158,11 +158,11 @@ $endif
 #JobRecommendationHandler(jobAtNotVisitedStation1, jobLocation != "KelpStation")
 @repeat 1
 {@$JobGiverId}  I can't recommend this one for you yet, Olivia.
-                I know that {nameof $local:jobPoster} has a job over at the {nameof $local:jobLocation}.
+                I know that {formalnameof $local:jobPoster} has a job over at the {nameof $local:jobLocation}.
                 {nameof $local:jobId}, I believe it's called.
 
 #JobRecommendationHandler(jobAtNotVisitedStation2, jobLocation != "KelpStation")
 @repeat 1
 {@$JobGiverId}  Hmm, I wouldn't suggest you try this one yet.
-                But I know {nameof $local:jobPoster} has a job at the {nameof $local:jobLocation}.
+                But I know {formalnameof $local:jobPoster} has a job at the {nameof $local:jobLocation}.
                 I'd recommend you head there and give {nameof $local:jobId} a try.

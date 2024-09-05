@@ -28,6 +28,7 @@ namespace Aqua
 
         [SerializeField] private TextId m_NameId = default;
         [SerializeField] private TextId m_ShortNameId = default;
+        [SerializeField] private TextId m_FormalShortNameId = default;
         [SerializeField, AutoEnum] private ScriptActorTypeFlags m_Flags = 0;
 
         [Header("Colors")]
@@ -53,6 +54,7 @@ namespace Aqua
 
         [LeafLookup("Name")] public TextId NameId() { return m_NameId; }
         [LeafLookup("ShortName")] public TextId ShortNameId() { return m_ShortNameId.IsEmpty ? m_NameId : m_ShortNameId; }
+        [LeafLookup("FormalShortName")] public TextId FormalShortNameId() { return m_FormalShortNameId.IsEmpty ? ShortNameId() : m_FormalShortNameId; }
         public ScriptActorTypeFlags Flags() { return m_Flags; }
         
         public ColorPalette4? NamePaletteOverride() { return m_OverrideNamePalette ? m_NameColor : new ColorPalette4?(); }
