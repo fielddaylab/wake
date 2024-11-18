@@ -3,15 +3,15 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Wake: Tales from the Aqualab</title>
+    <title>%UNITY_WEB_NAME%</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
     <link rel="stylesheet" href="TemplateData/style.css">
     <link rel="stylesheet" href="https://use.typekit.net/vis0yeq.css">
     <script src="TemplateData/UnityProgress.js"></script>
-    <script src="Build/UnityLoader.js"></script>
+    <script src="%UNITY_WEBGL_LOADER_URL%"></script>
     <script>
-        var unityInstance = UnityLoader.instantiate("unityContainer", "Build/vault-demo-build.json", { onProgress: UnityProgress });
+        var unityInstance = UnityLoader.instantiate("unityContainer", "%UNITY_WEBGL_BUILD_URL%", { onProgress: UnityProgress });
     </script>
     <script src="https://cdn.brainpop.com/games/assets/js/cameraProxyDOMCrossDomain.js"></script>
     <script src="https://cdn.brainpop.com/games/assets/js/html2canvas.js"></script>
