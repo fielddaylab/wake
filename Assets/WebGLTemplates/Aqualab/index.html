@@ -3,15 +3,15 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>%UNITY_WEB_NAME%</title>
+    <title>Wake: Tales from the Aqualab</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
     <link rel="stylesheet" href="TemplateData/style.css">
     <link rel="stylesheet" href="https://use.typekit.net/vis0yeq.css">
     <script src="TemplateData/UnityProgress.js"></script>
-    <script src="%UNITY_WEBGL_LOADER_URL%"></script>
+    <script src="Build/UnityLoader.js"></script>
     <script>
-        var unityInstance = UnityLoader.instantiate("unityContainer", "%UNITY_WEBGL_BUILD_URL%", { onProgress: UnityProgress });
+        var unityInstance = UnityLoader.instantiate("unityContainer", "Build/vault-demo-build.json", { onProgress: UnityProgress });
     </script>
     <script src="https://cdn.brainpop.com/games/assets/js/cameraProxyDOMCrossDomain.js"></script>
     <script src="https://cdn.brainpop.com/games/assets/js/html2canvas.js"></script>
@@ -37,7 +37,22 @@
 <body>
     <div id="BrainPOPsnapArea">
         <div class="webgl-content">
-            <floating-dropdown></floating-dropdown>
+            <floating-dropdown>
+                <style>
+                    p {
+                        font-family: "brandon-grotesque", sans-serif !important;
+                    }
+                </style>
+                <img slot="header" src="FloatingDropdown/img/vault-library-logo.png" alt="Vault Games Library" width="250px">
+                <p slot="desc" class="content" style="font-weight: 400;">
+                    Field Day presents the largest collection of
+                    <span style="color:#00ECD0">FREE</span>
+                    learning games on the web.
+                </p>
+                <p slot="button-label" class="content" style="font-weight: bolder;">
+                    OPEN VAULT
+                </p>
+            </floating-dropdown>
             <div id="unityContainer"></div>
         </div>
     </div>

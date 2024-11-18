@@ -8,7 +8,7 @@
     border-bottom-right-radius: 7px;
 
     margin: 0px;
-    padding: 0px 15px;
+    padding: 15px 15px;
     width: 275px;
 
     position: absolute;
@@ -19,15 +19,35 @@
 }
 
 #vault-button {
-    padding: 10px;
+    border: none;
+    padding: 5px;
     margin: 0px auto 15px auto;
+    justify-self: center;
+
+    border-bottom-right-radius: 32px;
+    border-bottom-left-radius: 32px;
+    border-top-right-radius: 32px;
     background-color: #00ECD0;
 
-    justify-self: center;
+    width: 200px;
+
+    font-size: 18px;
+    font-weight: bolder;
+    text-decoration: none;
+    line-height: 28px; 
+    letter-spacing: 3px;
 }
 
 .content {
     color: white;
+    text-decoration: none;
+
+    /* This is for expanding/collapsing content */
     display: none;
     overflow: hidden;
+}
+
+p {
+    font-family: "brandon-grotesque", sans-serif;
+    font-weight: 400;
 }
