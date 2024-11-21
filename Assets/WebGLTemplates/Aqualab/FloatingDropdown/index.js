@@ -1,7 +1,13 @@
+// This is where the custom component is defined
 fetch('FloatingDropdown/index.html')
     .then(stream => stream.text())
     .then(text => define(text))
 
+/**
+ * Sets up the custom component as defined in the FloatingDropdown template
+ * 
+ * @param {string} html the outerHTML attribute of the floating dropdown element defined in `index.html` 
+ */
 function define(html) {
     class FloatingDropdown extends HTMLElement {
         constructor() {
@@ -34,6 +40,11 @@ function define(html) {
   customElements.define("floating-dropdown", FloatingDropdown);
 }
 
+/**
+ * Handles the collapse functionality for .content elements in a collapsible
+ * 
+ * @param {*} element the root collapsible element containing content to hide
+ */
 function toggleCollapsibleContent(element) { 
     console.log("DEBUG [toggleCollapsible]");
     let contentList = element.querySelectorAll('.content');
