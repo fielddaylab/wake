@@ -18,7 +18,7 @@ namespace Aqua.Analytics {
     static public class JobPredictionFeature {
         private const int JobDifficultyCategoryThreshold = 2;
         private const double DenomEpsilon = double.Epsilon * 4;
-        private const double FailureThreshold = 0.75;
+        private const double FailureThreshold = 0.5;
 
         private const string JobDataTablePath = "Research/JobPredictionCoefficients";
 
@@ -120,6 +120,11 @@ namespace Aqua.Analytics {
 #if ANALYTICS_ABTEST_JOBPREDICTION
         static private readonly StringUtils.CSV.Splitter s_TableSplitter = new StringUtils.CSV.Splitter(false);
 
+        private struct IndexedP {
+            public int Index;
+            public double P;
+        }
+
         static private IEnumerator AsyncTableLoad() {
             var asyncLoad = Resources.LoadAsync<TextAsset>(JobDataTablePath);
             while(!asyncLoad.isDone) {
@@ -176,7 +181,7 @@ namespace Aqua.Analytics {
             s_PredictTable = table;
         }
 
-        static private JobPredictionParams ReadLine(StringSlice slice, out StringHash32 id) {
+        static private unsafe JobPredictionParams ReadLine(StringSlice slice, out StringHash32 id) {
             JobPredictionParams parms;
             var columns = slice.Split(s_TableSplitter, StringSplitOptions.None);
             if (columns.Length < 16) {
@@ -192,21 +197,43 @@ namespace Aqua.Analytics {
                 return default;
             }
 
-            parms.Constant = StringParser.ParseDouble(columns[c++]);
-            parms.JobA.Id = columns[c++];
-            parms.JobA.Coefficient = StringParser.ParseDouble(columns[c++]);
-            parms.JobB.Id = columns[c++];
-            parms.JobB.Coefficient = StringParser.ParseDouble(columns[c++]);
-            parms.JobC.Id = columns[c++];
-            parms.JobC.Coefficient = StringParser.ParseDouble(columns[c++]);
-            parms.CompletedTasksCoefficient = StringParser.ParseDouble(columns[c++]);
-            parms.CompletedJobsCoefficient = StringParser.ParseDouble(columns[c++]);
-            parms.CompletedJobsExpCoefficient = StringParser.ParseDouble(columns[c++]);
-            parms.CompletedJobsModelCoefficient = StringParser.ParseDouble(columns[c++]);
+            JobPredictionJob* allJobs = stackalloc JobPredictionJob[3];
+            IndexedP* pValues = stackalloc IndexedP[3];
+
+            allJobs[0].Id = columns[c++];
+            allJobs[1].Id = columns[c++];
+            allJobs[2].Id = columns[c++];
+
+            pValues[0].Index = 0;
+            pValues[1].Index = 1;
+            pValues[2].Index = 2;
+
+            pValues[0].P = StringParser.ParseDouble(columns[c++]);
+            pValues[1].P = StringParser.ParseDouble(columns[c++]);
+            pValues[2].P = StringParser.ParseDouble(columns[c++]);
+
+            allJobs[0].Coefficient = StringParser.ParseDouble(columns[c++]);
+            allJobs[1].Coefficient = StringParser.ParseDouble(columns[c++]);
+            allJobs[2].Coefficient = StringParser.ParseDouble(columns[c++]);
+
+            Unsafe.Quicksort(pValues, 3, (a, b) => {
+                return Math.Sign(a.P - b.P);
+            });
+
+            parms.JobA = allJobs[pValues[0].Index];
+            parms.JobB = allJobs[pValues[1].Index];
+            parms.JobC = allJobs[pValues[2].Index];
+
             parms.CompletedJobsArgueCoefficient = StringParser.ParseDouble(columns[c++]);
+            parms.CompletedJobsModelCoefficient = StringParser.ParseDouble(columns[c++]);
+            parms.CompletedJobsExpCoefficient = StringParser.ParseDouble(columns[c++]);
+
+            parms.PlaytimeCoefficient = StringParser.ParseDouble(columns[c++]);
+            parms.CompletedJobsCoefficient = StringParser.ParseDouble(columns[c++]);
+            parms.CompletedTasksCoefficient = StringParser.ParseDouble(columns[c++]);
             parms.VisitedStationsCoefficient = StringParser.ParseDouble(columns[c++]);
             parms.LaunchCountCoefficient = StringParser.ParseDouble(columns[c++]);
-            parms.PlaytimeCoefficient = StringParser.ParseDouble(columns[c++]);
+            parms.Constant = StringParser.ParseDouble(columns[c++]);
 
             Log.Msg("[JobPredictionFeature] Loaded parameters for job '{0}'", id.ToDebugString());
             return parms;
@@ -303,16 +330,13 @@ namespace Aqua.Analytics {
                 + (jobParms.LaunchCountCoefficient * cached.LaunchCount)
                 + (jobParms.PlaytimeCoefficient * playTime);
 
-            double determValue;
-            if (denomAccum <= DenomEpsilon) {
-                determValue = 1;
-            } else {
-                determValue = Math.Log(1.0 / denomAccum);
-            }
+            double determValue = 1 / (1.0 + Math.Exp(-denomAccum));
+            Log.Msg("[JobPredictionFeature] Probability of failure: {0}", determValue);
 
 #if DEVELOPMENT
             if (s_DEBUGAlwaysPredictFailure) {
                 determValue = 1;
+                Log.Warn("[JobPredictionFeature] Forcing failure");
             }
 #endif // DEVELOPMENT
             if (determValue > FailureThreshold) {

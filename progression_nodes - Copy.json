@@ -10,10 +10,6 @@
         "RS-1C": true,
         "KelpStation": true
     },
-    "constants": {
-        "EXP_1": 25,
-        "EXP_2": 75
-    },
     "nodes": {
         "Cash": {
             "type": "currency",
@@ -27,7 +23,7 @@
             "type": "item",
             "requires": [
                 {
-                    "id": "kelp-shop-welcome"
+                    "id": "Shop"
                 },
                 {
                     "id": "Exp",
@@ -43,7 +39,7 @@
             "type": "item",
             "requires": [
                 {
-                    "id": "kelp-shop-welcome"
+                    "id": "Shop"
                 },
                 {
                     "id": "Cash",
@@ -52,7 +48,7 @@
                 },
                 {
                     "id": "Exp",
-                    "amount": "EXP_2"
+                    "amount": 75
                 }
             ],
             "results": [
@@ -68,7 +64,7 @@
             "type": "item",
             "requires": [
                 {
-                    "id": "kelp-shop-welcome"
+                    "id": "Shop"
                 }
             ]
         },
@@ -76,7 +72,7 @@
             "type": "item",
             "requires": [
                 {
-                    "id": "kelp-shop-welcome"
+                    "id": "Shop"
                 },
                 {
                     "id": "Cash",
@@ -85,7 +81,7 @@
                 },
                 {
                     "id": "Exp",
-                    "amount": "EXP_1"
+                    "amount": 25
                 }
             ]
         },
@@ -93,7 +89,7 @@
             "type": "item",
             "requires": [
                 {
-                    "id": "kelp-shop-welcome"
+                    "id": "Shop"
                 },
                 {
                     "id": "Exp",
@@ -109,7 +105,7 @@
             "type": "item",
             "requires": [
                 {
-                    "id": "kelp-shop-welcome"
+                    "id": "Shop"
                 },
                 {
                     "id": "Cash",
@@ -118,7 +114,7 @@
                 },
                 {
                     "id": "Exp",
-                    "amount": "EXP_1"
+                    "amount": 25
                 }
             ]
         },
@@ -126,13 +122,10 @@
             "type": "item",
             "requires": [
                 {
-                    "id": "kelp-shop-welcome"
+                    "id": "Shop"
                 },
                 {
                     "id": "FlashlightCoordinates"
-                },
-                {
-                    "id": "RS-0"
                 }
             ]
         },
@@ -140,7 +133,7 @@
             "type": "item",
             "requires": [
                 {
-                    "id": "kelp-shop-welcome"
+                    "id": "Shop"
                 },
                 {
                     "id": "Cash",
@@ -149,15 +142,12 @@
                 },
                 {
                     "id": "Exp",
-                    "amount": "EXP_1"
+                    "amount": 25
                 }
             ],
             "results": [
                 {
                     "id": "FinalStation"
-                },
-                {
-                    "id": "RS-0"
                 }
             ]
         },
@@ -165,16 +155,16 @@
             "type": "item",
             "requires": [
                 {
-                    "id": "kelp-shop-welcome"
+                    "id": "Shop"
                 },
                 {
                     "id": "Cash",
-                    "amount": 350,
+                    "amount": 300,
                     "consume": true
                 },
                 {
                     "id": "Exp",
-                    "amount": "EXP_2"
+                    "amount": 75
                 }
             ]
         },
@@ -182,16 +172,16 @@
             "type": "item",
             "requires": [
                 {
-                    "id": "kelp-shop-welcome"
+                    "id": "Shop"
                 },
                 {
                     "id": "Cash",
-                    "amount": 200,
+                    "amount": 300,
                     "consume": true
                 },
                 {
                     "id": "Exp",
-                    "amount": "EXP_2"
+                    "amount": 75
                 }
             ]
         },
@@ -199,24 +189,7 @@
             "type": "item",
             "requires": [
                 {
-                    "id": "kelp-shop-welcome"
-                },
-                {
-                    "id": "Cash",
-                    "amount": 150,
-                    "consume": true
-                },
-                {
-                    "id": "Exp",
-                    "amount": "EXP_2"
-                }
-            ]
-        },
-        "ProbeHacker": {
-            "type": "item",
-            "requires": [
-                {
-                    "id": "kelp-shop-welcome"
+                    "id": "Shop"
                 },
                 {
                     "id": "Cash",
@@ -225,7 +198,24 @@
                 },
                 {
                     "id": "Exp",
-                    "amount": "EXP_1"
+                    "amount": 75
+                }
+            ]
+        },
+        "ProbeHacker": {
+            "type": "item",
+            "requires": [
+                {
+                    "id": "Shop"
+                },
+                {
+                    "id": "Cash",
+                    "amount": 100,
+                    "consume": true
+                },
+                {
+                    "id": "Exp",
+                    "amount": 25
                 },
                 {
                     "id": "ROVScanner"
@@ -236,7 +226,7 @@
             "type": "item",
             "requires": [
                 {
-                    "id": "kelp-shop-welcome"
+                    "id": "Shop"
                 },
                 {
                     "id": "Cash",
@@ -245,7 +235,7 @@
                 },
                 {
                     "id": "Exp",
-                    "amount": "EXP_1"
+                    "amount": 25
                 }
             ]
         },
@@ -253,7 +243,7 @@
             "type": "item",
             "requires": [
                 {
-                    "id": "kelp-shop-welcome"
+                    "id": "Shop"
                 }
             ]
         },
@@ -261,7 +251,7 @@
             "type": "item",
             "requires": [
                 {
-                    "id": "kelp-shop-welcome"
+                    "id": "Shop"
                 },
                 {
                     "id": "Cash",
@@ -281,16 +271,16 @@
             "type": "item",
             "requires": [
                 {
-                    "id": "kelp-shop-welcome"
+                    "id": "Shop"
                 },
                 {
                     "id": "Cash",
-                    "amount": 250,
+                    "amount": 300,
                     "consume": true
                 },
                 {
                     "id": "Exp",
-                    "amount": "EXP_2"
+                    "amount": 75
                 }
             ]
         },
@@ -298,7 +288,7 @@
             "type": "item",
             "requires": [
                 {
-                    "id": "kelp-shop-welcome"
+                    "id": "Shop"
                 },
                 {
                     "id": "Cash",
@@ -307,7 +297,7 @@
                 },
                 {
                     "id": "Exp",
-                    "amount": "EXP_1"
+                    "amount": 25
                 }
             ],
             "results": [
@@ -324,7 +314,7 @@
             "type": "item",
             "requires": [
                 {
-                    "id": "kelp-shop-welcome"
+                    "id": "Shop"
                 },
                 {
                     "id": "Exp",
@@ -336,7 +326,7 @@
             "type": "item",
             "requires": [
                 {
-                    "id": "kelp-shop-welcome"
+                    "id": "Shop"
                 },
                 {
                     "id": "Cash",
@@ -353,7 +343,7 @@
             "type": "item",
             "requires": [
                 {
-                    "id": "kelp-shop-welcome"
+                    "id": "Shop"
                 },
                 {
                     "id": "Exp",
@@ -588,7 +578,7 @@
             "results": [
                 {
                     "id": "Cash",
-                    "amount": 150
+                    "amount": 100
                 },
                 {
                     "id": "Exp",
@@ -656,7 +646,7 @@
             "results": [
                 {
                     "id": "Cash",
-                    "amount": 150
+                    "amount": 100
                 },
                 {
                     "id": "Exp",
@@ -699,7 +689,7 @@
             "results": [
                 {
                     "id": "Cash",
-                    "amount": 150
+                    "amount": 100
                 },
                 {
                     "id": "Exp",
@@ -883,9 +873,6 @@
                 },
                 {
                     "id": "Hull"
-                },
-                {
-                    "id": "bayou-reef-decision"
                 }
             ],
             "results": [
@@ -960,9 +947,6 @@
                 },
                 {
                     "id": "Hull"
-                },
-                {
-                    "id": "coral-ocean-plastics"
                 }
             ],
             "results": [
@@ -1064,7 +1048,7 @@
             "results": [
                 {
                     "id": "Cash",
-                    "amount": 150
+                    "amount": 100
                 },
                 {
                     "id": "Exp",
@@ -1096,9 +1080,6 @@
                 },
                 {
                     "id": "MeasurementTank"
-                },
-                {
-                    "id": "bayou-hide-n-seek"
                 }
             ],
             "results": [
@@ -1154,9 +1135,6 @@
                 },
                 {
                     "id": "ProbeHacker"
-                },
-                {
-                    "id": "coral-lionfish-conspiracy"
                 }
             ],
             "results": [
@@ -1313,7 +1291,7 @@
             "results": [
                 {
                     "id": "Cash",
-                    "amount": 150
+                    "amount": 100
                 },
                 {
                     "id": "Exp",
@@ -1408,7 +1386,7 @@
             "results": [
                 {
                     "id": "Cash",
-                    "amount": 150
+                    "amount": 100
                 },
                 {
                     "id": "Exp",
@@ -1588,9 +1566,6 @@
                 },
                 {
                     "id": "ObservationTank"
-                },
-                {
-                    "id": "coral-turtle-population"
                 }
             ],
             "results": [
@@ -1633,7 +1608,7 @@
             "results": [
                 {
                     "id": "Cash",
-                    "amount": 150
+                    "amount": 100
                 },
                 {
                     "id": "Exp",
@@ -1764,15 +1739,6 @@
             "requires": [
                 {
                     "id": "CoralStation"
-                },
-                {
-                    "id": "kelp-shop-welcome"
-                },
-                {
-                    "id": "arctic-stationary-survival"
-                },
-                {
-                    "id": "kelp-bull-kelp-forest"
                 }
             ],
             "results": [
@@ -1863,6 +1829,9 @@
                 },
                 {
                     "id": "RS-1A"
+                },
+                {
+                    "id": "Shop"
                 }
             ]
         },
@@ -1878,9 +1847,6 @@
                 },
                 {
                     "id": "kelp-shop-welcome"
-                },
-                {
-                    "id": "kelp-mussel-fest"
                 }
             ],
             "results": [
@@ -1918,9 +1884,6 @@
                 },
                 {
                     "id": "VisualModel"
-                },
-                {
-                    "id": "kelp-urchin-farm"
                 }
             ],
             "results": [
@@ -1989,15 +1952,12 @@
                 },
                 {
                     "id": "ProbeHacker"
-                },
-                {
-                    "id": "bayou-methanogen"
                 }
             ],
             "results": [
                 {
                     "id": "Cash",
-                    "amount": 150
+                    "amount": 100
                 },
                 {
                     "id": "Exp",
@@ -2081,12 +2041,13 @@
                     "id": "KelpStation"
                 },
                 {
-                    "id": "kelp-bull-kelp-forest"
+                    "id": "VisualModel"
                 },
                 {
-                    "id": "Cash",
-                    "amount": 20,
-                    "consume": true
+                    "id": "ROVTagger"
+                },
+                {
+                    "id": "kelp-bull-kelp-forest"
                 }
             ],
             "results": [
@@ -2106,10 +2067,7 @@
                     "id": "ModelingFoyer"
                 },
                 {
-                    "id": "VisualModel"
-                },
-                {
-                    "id": "ROVTagger"
+                    "id": "Modeling"
                 }
             ]
         },
@@ -2165,9 +2123,6 @@
                 },
                 {
                     "id": "PredictionModel"
-                },
-                {
-                    "id": "kelp-refuge-failure-simulation"
                 }
             ],
             "results": [
@@ -2205,9 +2160,6 @@
                 },
                 {
                     "id": "ROVTagger"
-                },
-                {
-                    "id": "coral-lionfish-conspiracy"
                 }
             ],
             "results": [
@@ -2292,6 +2244,12 @@
                 },
                 {
                     "id": "RS-1C"
+                },
+                {
+                    "id": "nav"
+                },
+                {
+                    "id": "exterior"
                 },
                 {
                     "id": "Experimentation"
@@ -2449,9 +2407,6 @@
             "requires": [
                 {
                     "id": "RS-0"
-                },
-                {
-                    "id": "final-final"
                 }
             ]
         },

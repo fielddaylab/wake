@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using BeauData;
 using BeauUtil;
 using UnityEngine;
@@ -34,11 +35,13 @@ namespace Aqua
             set.EnsureCapacity(capacity);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static public HashSet<T> NewSet<T>(int capacity)
         {
             return SetUtils.Create<T>(capacity);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static public Dictionary<K, V> NewDictionary<K, V>(int capacity)
         {
             return MapUtils.Create<K, V>(capacity);

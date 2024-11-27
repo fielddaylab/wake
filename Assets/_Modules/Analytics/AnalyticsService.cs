@@ -1028,7 +1028,21 @@ namespace Aqua
             research.AddDivider();
             research.AddToggle("Always Predict Job Failure", JobPredictionFeature.DEBUG_IsAlwaysPredictFailure, JobPredictionFeature.DEBUG_SetAlwaysPredictFailure);
 
+            DMInfo surveys = new DMInfo("Surveys");
+            foreach(var data in m_Survey.CurrentPackage.Surveys) {
+                AddSurveyButton(surveys, data);
+            }
+
+            research.AddDivider();
+            research.AddSubmenu(surveys);
+
             yield return research;
+        }
+
+        private void AddSurveyButton(DMInfo menu, SurveyData survey) {
+            menu.AddButton(survey.DisplayEventId, () => {
+                m_Survey.TryDisplaySurvey(survey.DisplayEventId);
+            });
         }
 
 #endif // DEVELOPMENT

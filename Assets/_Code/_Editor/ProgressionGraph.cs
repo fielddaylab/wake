@@ -13,6 +13,10 @@ namespace Aqua.Editor {
     static public class ProgressionGraph {
 
         public const int ExpForShop = 35;
+
+        static private readonly HashSet<string> IgnoreUnlocks = new HashSet<string>() {
+            "nav", "exterior", "Modeling"
+        };
         
         [MenuItem("Aqualab/Analysis/Generate Nodes File")]
         static private void GenerateProgressionSource() {
@@ -99,7 +103,7 @@ namespace Aqua.Editor {
 
                 if (obj.Category() != InvItemCategory.Currency || obj.CashCost() > 0 || obj.RequiredLevel() > 0) {
                     itemJSON["type"].AsString = "item";
-                    AddRequirement(itemJSON, "Shop");
+                    AddRequirement(itemJSON, "kelp-shop-welcome");
                 } else {
                     itemJSON["type"].AsString = "currency";
                     itemJSON["isToken"].AsBool = true;
@@ -139,11 +143,6 @@ namespace Aqua.Editor {
                     AddRequirement(jobJSON, obj.StationId());
                 }
 
-                if (obj.Id() == "kelp-shop-welcome") {
-                    AddRequirement(jobJSON, "VisualModel");
-                    AddRequirement(jobJSON, "ROVTagger");
-                }
-
                 foreach(var prereq in obj.RequiredJobs()) {
                     AddRequirement(jobJSON, prereq.name);
                 }
@@ -172,6 +171,7 @@ namespace Aqua.Editor {
                 }
 
                 AnalyzeJobScript(obj.Scripting(), jobJSON);
+                HandleSpecialJobUnlocks(obj.Id(), jobJSON);
 
                 root.Add(obj.name, jobJSON);
             }
@@ -197,7 +197,7 @@ namespace Aqua.Editor {
             }
 
             foreach(Match match in UnlockMapRegex.Matches(contents)) {
-                if (assets.Add(match.Groups[1].Value)) {
+                if (assets.Add(match.Groups[1].Value) && !IgnoreUnlocks.Contains(match.Groups[1].Value)) {
                     AddResult(jobJSON, match.Groups[1].Value);
                 }
             }
@@ -214,6 +214,9 @@ namespace Aqua.Editor {
                 itemJSON["unlockType"].AsString = "manual";
             } else if (id == ItemIds.FlashlightCoordinates) {
                 AddResult(itemJSON, "FinalStation");
+                AddResult(itemJSON, "RS-0");
+            } else if (id == ItemIds.Flashlight) {
+                AddRequirement(itemJSON, "RS-0");
             }
         }
 
@@ -226,6 +229,20 @@ namespace Aqua.Editor {
             } else if (id == MapIds.RS_4X) {
                 AddRequirement(mapJSON, ItemIds.Flashlight);
                 AddRequirement(mapJSON, ItemIds.Engine);
+            } else if (id == MapIds.RS_0_Cave) {
+                AddRequirement(mapJSON, JobIds.Final_final);
+            }
+        }
+
+        static private void HandleSpecialJobUnlocks(StringHash32 id, JSON jobJSON) {
+            if (id == "kelp-shop-welcome") {
+                AddResult(jobJSON, ItemIds.VisualModel);
+                AddResult(jobJSON, ItemIds.ROVTagger);
+
+                int cashCost = 0;
+                cashCost += ValidationUtils.FindAsset<InvItem>(ItemIds.VisualModel).CashCost();
+                cashCost += ValidationUtils.FindAsset<InvItem>(ItemIds.ROVTagger).CashCost();
+                AddResult(jobJSON, ItemIds.Cash, cashCost);
             }
         }
 

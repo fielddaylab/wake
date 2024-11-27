@@ -2,6 +2,7 @@ using System.Collections;
 using BeauRoutine;
 using OGD;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Aqua.Analytics {
     [RequireComponent(typeof(SurveyPanel))]
@@ -17,6 +18,7 @@ namespace Aqua.Analytics {
             panel.OpenPageAnim = OpenPageAnim;
             panel.ClosePageAnim = ClosePageAnim;
             panel.FinishedAnim = FinishedAnim;
+            panel.OnPopulateQuestion = PopulateQuestion;
 
             FullGroup.alpha = 0;
             QuestionGroup.alpha = 0;
@@ -40,6 +42,15 @@ namespace Aqua.Analytics {
         private IEnumerator FinishedAnim(SurveyPanel panel) {
             m_FullFadeRoutine.Stop();
             yield return FullGroup.FadeTo(0, 0.3f);
+        }
+
+        private void PopulateQuestion(SurveyQuestionDisplay display, SurveyQuestion question, SurveyPage page) {
+            LayoutGroup layout = display.transform.GetChild(1).GetComponent<LayoutGroup>();
+            if (question.UseVerticalLayout) {
+                layout.childAlignment = TextAnchor.MiddleLeft;
+            } else {
+                layout.childAlignment = TextAnchor.MiddleCenter;
+            }
         }
     }
 }

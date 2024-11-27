@@ -2,21 +2,21 @@
     "package_config_id": "wake_survey_testing",
     "surveys": [
         {
-            "display_event_id": "first-launch",
-            "header": "Welcome To Wake",
+            "display_event_id": "demographics",
+            "header": "A few questions",
             "pages": [
                 {
                     "items": [
                         {
-                            "prompt": "Is this your first player code?",
+                            "prompt": "Are you playing Wake at home or school?",
                             "responses": [
-                                "Yes", "No"
+                                "Home", "School"
                             ]
                         },
                         {
-                            "prompt": "Are you playing this as an assignment, or for fun?",
+                            "prompt": "Is this game connected to a larger educational unit or lesson?",
                             "responses": [
-                                "Assignment", "Fun", "Other"
+                                "Yes", "No", "Unsure"
                             ]
                         }
                     ]
@@ -24,43 +24,307 @@
                 {
                     "items": [
                         {
-                            "prompt": "About how old are you?",
+                            "prompt": "How old are you?",
                             "responses": [
-                                "0-10", "11-14", "15-18", "19-25", "26+", "Prefer Not to Answer"
+                                "9 or younger", "10-11", "12-13", "13-15", "16 or older"
                             ]
                         },
 						{
-                            "prompt": "What grade level are you in?",
+                            "prompt": "Do you speak Spanish at home with your family?",
                             "responses": [
-                                "Elementary", "6th", "7th", "8th", "9th", "10th", "11th", "12th", "College", "N/a"
+                                "Yes", "Sometimes", "No"
                             ]
-                        },
-						{
-							"prompt": "What gender are you?",
-							"responses": [
-								"Male", "Female", "Nonbinary", "Other", "Prefer Not To Answer"
-							]
-						}
+                        }
                     ]
                 }
             ]
         },
 		{
-            "display_event_id": "completed-jobs-1",
-            "header": "Welcome To Wake (pt. 2)",
+            "display_event_id": "science-efficacy",
+            "header": "How confident are you to do the following tasks?",
+            "pages": [
+                {
+                    "type": "likert-confidence",
+                    "items": [
+                        {
+                            "prompt": "Figure out the reasons why things happen in nature",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Use tables and graphs to figure things out",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Investigate the kinds of problems that ecosystem scientists would investigate",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                },
+                {
+                    "type": "likert-confidence",
+                    "items": [
+                        {
+                            "prompt": "Figure out what causes change in an environment",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Do the kinds of things that scientists do",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                },
+                {
+                    "type": "likert-confidence",
+                    "items": [
+                        {
+                            "prompt": "Look at data that you collect and notice patterns",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Figure out the relationships between organisms and their environment",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "display_event_id": "science-identity",
+            "header": "How true or false is each statement for you?",
+            "pages": [
+                {
+                    "type": "likert-truth",
+                    "items": [
+                        {
+                            "prompt": "Being involved in science is a key part of what I am.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "I can see science-related activities as being part of my future.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                },
+                {
+                    "type": "likert-truth",
+                    "items": [
+                        {
+                            "prompt": "I consider myself a science person.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "I can imagine myself being involved in a science-related career.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "display_event_id": "science-interest",
+            "header": "How true or false is each statement for you?",
+            "pages": [
+                {
+                    "type": "likert-truth",
+                    "items": [
+                        {
+                            "prompt": "I am interested in learning about nature.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "I have NO interest in learning about the environment.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                },
+                {
+                    "type": "likert-truth",
+                    "items": [
+                        {
+                            "prompt": "I would like to learn more about environmental science.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "I am interested in learning about ecosystems.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "display_event_id": "enjoyment",
+            "header": "How true or false is each statement for you?",
+            "pages": [
+                {
+                    "type": "likert-truth",
+                    "items": [
+                        {
+                            "prompt": "I'm finding this game enjoyable.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "I'm having fun playing this game.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "This game is boring.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "This game annoys me.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                },
+                {
+                    "type": "likert-truth",
+                    "items": [
+                        {
+                            "prompt": "Playing this game is pleasurable to me.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "This game leaves me unsatisfied.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "This game grabs my attention.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "display_event_id": "interest-items-hanson-2021",
+            "header": "How much do you enjoy the following?",
+            "pages": [
+                {
+                    "type": "likert-like",
+                    "items": [
+                        {
+                            "prompt": "Playing sports or joining a sports team",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Doing things to improve your fitness",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Attending a sports event",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Doing outdoor activities",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                },
+                {
+                    "type": "likert-like",
+                    "items": [
+                        {
+                            "prompt": "Participating in plays or drama",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Doing art, crafts, or hobbies",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Reading books or magazines",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Singing or playing a musical instrument",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                },
+                {
+                    "type": "likert-like",
+                    "items": [
+                        {
+                            "prompt": "Doing things with animals",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Thinking about fashion and style",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Doing things with engines, machines, or technology",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Playing computer, board, or fantasy games",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "display_event_id": "affective",
+            "header": "How are you feeling?",
             "pages": [
                 {
                     "items": [
                         {
-                            "prompt": "How was that job?",
+                            "prompt": "How are you feeling right now?",
                             "responses": [
-                                "Good", "Bad", "What?"
+                                "Bored",
+                                "Confused",
+                                "Frustrated",
+                                "Nervous",
+                                "Focused",
+                                "Happy"
+                            ],
+                            "responseFlags": [
+                                "negative",
+                                "negative",
+                                "negative",
+                                "negative",
+                                "positive",
+                                "positive"
                             ]
-                        },
+                        }
+                    ]
+                },
+                {
+                    "skipIf": [ "!negative" ],
+                    "items": [
                         {
-                            "prompt": "Do you trust Mom?",
+                            "useVerticalLayout": true,
+                            "prompt": "Why are you feeling that way?",
                             "responses": [
-                                "Of course!", "Not quite", "Definitely not", "That's a leading question..."
+                                "This is too hard",
+                                "This is too easy",
+                                "I'm not sure why I need to know this",
+                                "I don't find this topic interesting",
+                                "I don't know what to do next",
+                                "I'm just feeling that way",
+                                "Science class makes me feel that way",
+                                "The game isn't working properly"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "skipIf": [ "negative" ],
+                    "items": [
+                        {
+                            "useVerticalLayout": true,
+                            "prompt": "Why are you feeling that way?",
+                            "responses": [
+                                "This is a good challenge",
+                                "I just figured something out",
+                                "This topic is important to me",
+                                "I find this topic interesting",
+                                "I know what I want to do next",
+                                "I'm just feeling that way today",
+                                "Science class makes me feel that way"
                             ]
                         }
                     ]

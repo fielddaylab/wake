@@ -53,7 +53,9 @@ namespace Aqua {
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static public ulong Hash<T>(T value) where T : unmanaged {
-            return Unsafe.Hash64(value);
+            ulong* aligned = stackalloc ulong[Unsafe.AlignUp8(sizeof(T)) / 8];
+            Unsafe.FastCopy(&value, sizeof(T), aligned);
+            return Unsafe.Hash64(aligned, sizeof(T));
         }
 
         /// <summary>
@@ -61,7 +63,9 @@ namespace Aqua {
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static public ulong Hash<T>(T value, ulong initialHash) where T : unmanaged {
-            return Unsafe.CombineHash64(initialHash, value);
+            ulong* aligned = stackalloc ulong[Unsafe.AlignUp8(sizeof(T)) / 8];
+            Unsafe.FastCopy(&value, sizeof(T), aligned);
+            return Unsafe.CombineHash64(initialHash, aligned, sizeof(T));
         }
 
         #endregion // Hashing

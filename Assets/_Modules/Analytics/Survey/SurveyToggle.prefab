@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 467643430259556012}
   - component: {fileID: 7842835166434953078}
   - component: {fileID: 8675464223685741509}
+  - component: {fileID: 9123860418321089995}
   m_Layer: 0
   m_Name: SurveyToggle
   m_TagString: Untagged
@@ -42,7 +43,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 50, y: 0}
-  m_SizeDelta: {x: 0, y: 48}
+  m_SizeDelta: {x: 0, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2509788425201951720
 CanvasRenderer:
@@ -193,6 +194,23 @@ MonoBehaviour:
   m_Resolution: 2
   m_Outline: 0
   m_Thickness: 1
+--- !u!114 &9123860418321089995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4193486640416766506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69524b0b581a08942b851a2a5e8ccbaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TooltipId:
+    m_Source: 
+    m_HashValue: 0
+  TooltipOverride: 
+  Cursor: 1
 --- !u!1 &5474188497070154733
 GameObject:
   m_ObjectHideFlags: 0
@@ -374,8 +392,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 28
-  m_fontSizeBase: 28
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
