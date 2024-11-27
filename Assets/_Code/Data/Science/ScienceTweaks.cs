@@ -11,6 +11,12 @@ namespace Aqua {
 
     [CreateAssetMenu(menuName = "Aqualab System/Science Tweaks", fileName = "ScienceTweaks")]
     public class ScienceTweaks : TweakAsset, IBaked, IPostPatchCallback {
+        [Serializable]
+        private struct JobCountSurvey {
+            public int JobCount;
+            public string[] SurveyNames;
+        }
+        
         #region Inspector
 
         [SerializeField] private Sprite[] m_LevelIcons;
@@ -28,6 +34,10 @@ namespace Aqua {
         [SerializeField] private TaggedBestiaryDesc[] m_CanonicalOrganismOrdering = null;
         [SerializeField] private BestiaryDesc[] m_CanonicalSpecterOrdering = null;
 
+        [Header("Surveys")]
+        [SerializeField] private JobCountSurvey[] m_JobCountSurveys = null;
+        [SerializeField] private string m_FinalJobSurvey = null;
+
         #endregion // Inspector
 
         public Sprite LevelIcon(int level) { return m_LevelIcons[Mathf.Clamp(level - 1, 0, m_LevelIcons.Length - 1)]; }
@@ -41,6 +51,17 @@ namespace Aqua {
 
         public ListSlice<TaggedBestiaryDesc> CanonicalOrganismOrdering() { return m_CanonicalOrganismOrdering; }
         public ListSlice<BestiaryDesc> CanonicalSpecterOrdering() { return m_CanonicalSpecterOrdering; }
+
+        public string[] GetJobCountSurveys(int jobCount) {
+            for(int i = 0; i < m_JobCountSurveys.Length; i++) {
+                if (m_JobCountSurveys[i].JobCount == jobCount) {
+                    return m_JobCountSurveys[i].SurveyNames;
+                }
+            }
+            return null;
+        }
+
+        public string FinalJobSurvey() { return m_FinalJobSurvey; }
 
         protected override void Apply() {
             base.Apply();

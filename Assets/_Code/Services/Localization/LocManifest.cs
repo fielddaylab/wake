@@ -22,6 +22,7 @@ namespace Aqua
         public bool Gendered;
         public LocPackage[] Packages;
         public LayoutPrefabPackage JournalLayout;
+        public TextAsset Surveys;
         [HideInInspector] public byte[] Binary = Array.Empty<byte>();
 
         #endregion // Inspector

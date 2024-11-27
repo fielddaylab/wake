@@ -22,6 +22,7 @@ using BeauPools;
 using BeauData;
 using Aqua.Analytics;
 using Aqua.JobBoard;
+using System.Runtime.CompilerServices;
 
 namespace Aqua
 {
@@ -155,8 +156,14 @@ namespace Aqua
 
             if (m_SurveyData != null) {
                 m_Survey.LoadSurveyPackageFromString(m_SurveyData.text);
-                Assets.FullyUnload(ref m_SurveyData);
             }
+
+            Services.Loc.OnManifestUpdated.Register((m) => {
+                if (m.Surveys != m_SurveyData) {
+                    m_SurveyData = m.Surveys;
+                    m_Survey.LoadSurveyPackageFromString(m_SurveyData.text);
+                }
+            });
 
             RefreshGameState();
         }
@@ -515,12 +522,45 @@ namespace Aqua
                 e.Param("job_name", parsedJobName);
             }
 
+            ScienceTweaks tweaks = Services.Tweaks.Get<ScienceTweaks>();
+
             if (!job.HasFlags(JobDescFlags.Hidden | JobDescFlags.NoPopup)) {
-                int jobCount = Save.Current.Jobs.CompletedJobIds().Count;
-                string surveyName = string.Concat("completed-jobs-", jobCount.ToStringLookup());
-                Services.Script.QueueInvoke(() => {
-                    m_Survey.TryDisplaySurvey(surveyName);
-                }, -10);
+                CheckDefaultSurveys();
+            }
+
+            if (jobId == JobIds.Final_final) {
+                SceneHelper.OnSceneLoaded += FinalFinalSurveyTriggerCheck;
+            }
+        }
+
+        private string[] CheckDefaultSurveys() {
+            ScienceTweaks tweaks = Services.Tweaks.Get<ScienceTweaks>();
+            int jobCount = Save.Current.Jobs.CompletedJobIds().Count;
+            string[] surveys = tweaks.GetJobCountSurveys(jobCount);
+
+            if (surveys != null && surveys.Length > 0) {
+                for (int i = 0; i < surveys.Length; i++) {
+                    string survey = surveys[i];
+                    Services.Script.QueueInvoke(() => {
+                        m_Survey.TryDisplaySurvey(survey);
+                    }, -10 - i);
+                }
+            }
+
+            return surveys;
+        }
+
+        private void FinalFinalSurveyTriggerCheck(SceneBinding s, object c) {
+            if (s.Id == GameScenes.RS_1C_StationInterior) {
+                string[] surveys = CheckDefaultSurveys();
+                ScienceTweaks tweaks = Services.Tweaks.Get<ScienceTweaks>();
+                string finalSurvey = tweaks.FinalJobSurvey();
+                if (surveys == null || !ArrayUtils.Contains(surveys, finalSurvey)) {
+                    Services.Script.QueueInvoke(() => {
+                        m_Survey.TryDisplaySurvey(finalSurvey);
+                    }, -10000);
+                }
+                SceneHelper.OnSceneLoaded -= FinalFinalSurveyTriggerCheck;
             }
         }
 

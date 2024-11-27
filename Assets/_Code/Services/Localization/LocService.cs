@@ -50,6 +50,7 @@ namespace Aqua
         [NonSerialized] private List<LocText> m_ActiveTexts = new List<LocText>(64);
         [NonSerialized] private List<LocFont> m_ActiveFonts = new List<LocFont>(64);
 
+        public readonly CastableEvent<LocManifest> OnManifestUpdated = new CastableEvent<LocManifest>(8);
         public readonly CastableEvent<FourCC> OnLanguageUpdated = new CastableEvent<FourCC>(8);
 
 #if DEVELOPMENT
@@ -114,6 +115,9 @@ namespace Aqua
             m_CurrentLanguageGendered = manifest.Gendered;
             m_CurrentJournalPackage = manifest.JournalLayout;
             m_Loading = false;
+
+            OnManifestUpdated.Invoke(manifest);
+
             DispatchTextRefresh();
         }
 
