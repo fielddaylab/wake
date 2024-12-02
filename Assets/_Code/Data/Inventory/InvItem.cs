@@ -75,6 +75,10 @@ namespace Aqua {
             if (orderOrder != 0)
                 return orderOrder;
 
+            int priceOrder = x.m_CashCost.CompareTo(y.m_CashCost);
+            if (priceOrder != 0)
+                return priceOrder;
+
             return x.Id().CompareTo(y.Id());
         };
 

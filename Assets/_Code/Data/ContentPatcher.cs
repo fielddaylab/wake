@@ -72,20 +72,27 @@ namespace Aqua {
                 }
 
                 foreach(var fieldKv in kv.Value.KeyValues) {
-                    FieldInfo assetField = asset.GetType().GetField(fieldKv.Key, BindingFlags.NonPublic | BindingFlags.Instance);
+                    string fieldName = fieldKv.Key;
+                    bool isAppend = false;
+                    if (fieldName.StartsWith("+")) {
+                        isAppend = true;
+                        fieldName = fieldName.Substring(1);
+                    }
+
+                    FieldInfo assetField = asset.GetType().GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
                     if (assetField == null) {
-                        Log.Error("[ContentPatcher] Unable to find field '{0}' on asset '{1}'", fieldKv.Key, assetName);
+                        Log.Error("[ContentPatcher] Unable to find field '{0}' on asset '{1}'", fieldName, assetName);
                         continue;
                     }
 
                     if (!assetField.IsDefined(typeof(RuntimePatchableAttribute))) {
-                        Log.Error("[ContentPatcher] Field '{0}' on asset '{1}' is not marked as RuntimePatchable", fieldKv.Key, assetName);
+                        Log.Error("[ContentPatcher] Field '{0}' on asset '{1}' is not marked as RuntimePatchable", fieldName, assetName);
                         continue;
                     }
 
                     if (!TryConvert(assetField.FieldType, fieldKv.Value, out object patchedValue)) {
                         Log.Error("[ContentPatcher] Unable to resolve '{0}' to valid value for field '{1}' of type {2} on asset '{3}'",
-                            fieldKv.Value.ToString(), fieldKv.Key, assetField.FieldType.Name, assetName);
+                            fieldKv.Value.ToString(), fieldName, assetField.FieldType.Name, assetName);
                         continue;
                     }
 
@@ -95,10 +102,22 @@ namespace Aqua {
                     assetRec.OriginalValue = assetField.GetValue(asset);
                     record.Assets.Add(assetRec);
 
+                    if (isAppend) {
+                        Array originalArr = assetRec.OriginalValue as Array;
+                        Array patchArr = patchedValue as Array;
+                        if (originalArr != null && patchArr != null) {
+                            Log.Msg("[ContentPatcher] Patching as append...");
+                            Array concatArr = Array.CreateInstance(assetField.FieldType.GetElementType(), originalArr.Length + patchArr.Length);
+                            Array.Copy(originalArr, 0, concatArr, 0, originalArr.Length);
+                            Array.Copy(patchArr, 0, concatArr, originalArr.Length, patchArr.Length);
+                            patchedValue = concatArr;
+                        }
+                    }
+
                     assetField.SetValue(asset, patchedValue);
                     MarkChanged(asset);
 
-                    Log.Msg("[ContentPatcher] Patching field '{0}' on asset '{1}'...", fieldKv.Key, assetName);
+                    Log.Msg("[ContentPatcher] Patching field '{0}' on asset '{1}'...", fieldName, assetName);
                 }
             }
 
