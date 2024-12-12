@@ -1,5 +1,5 @@
 // This is where the custom component is defined
-fetch('FloatingDropdown/index.html')
+fetch('FloatingDropdown/template.html')
     .then(stream => stream.text())
     .then(text => define(text))
 
@@ -22,10 +22,6 @@ function define(html) {
             //Custom element
             const dropdown = template.content.cloneNode(true);
 
-            const collapsible = dropdown.querySelector(' #collapsible ');
-            collapsible.addEventListener("mouseenter", () => toggleCollapsibleContent(collapsible));
-            collapsible.addEventListener("mouseleave", () => toggleCollapsibleContent(collapsible));
-
             const shadowRoot = this.attachShadow({mode: "open"})
             shadowRoot.appendChild(dropdown);
 
@@ -38,24 +34,4 @@ function define(html) {
         }
   }
   customElements.define("floating-dropdown", FloatingDropdown);
-}
-
-/**
- * Handles the collapse functionality for .content elements in a collapsible
- * 
- * @param {*} element the root collapsible element containing content to hide
- */
-function toggleCollapsibleContent(element) { 
-    console.log("DEBUG [toggleCollapsible]");
-    let contentList = element.querySelectorAll('.content');
-
-    let i;
-
-    for (i = 0; i < contentList.length; i++){
-        if (contentList[i].style.display === "flex") {
-            contentList[i].style.display = "none";
-        } else {
-            contentList[i].style.display = "flex";
-        }
-    }
 }
