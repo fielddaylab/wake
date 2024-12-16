@@ -4,104 +4,96 @@ name: Aqualab Build
 # tags.  Creating new 'versions' via github is the most straightforward 
 # way of doing this.
 on:
-  #create:
-  #  tags:
-  #    - '*'
-   push:
-   workflow_dispatch:
-  #   branches: [ develop ] 
-
-env:
-  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-  UNITY_VERSION: 2019.4.40f1
-  
+  push:
+  workflow_dispatch:
+ 
 jobs:
-  build:
-    name: Build Unity Project
-    runs-on: ubuntu-20.04
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
-      cancel-in-progress: true
+ build:
+   name: Build Unity Project
+   runs-on: ubuntu-latest
+   concurrency:
+     group: ${{ github.workflow }}-${{ github.ref }}
+     cancel-in-progress: true
 
-    # Setup Steps
+   # Setup Steps
 
-    steps:
-      
-    - name: Install OpenConnect
-      run: sudo apt-get update && sudo apt-get install openconnect
-      
-    - name: Connect to VPN
-      run: echo ${{ secrets.FIELDDAY_VPN_PASSWORD }} | sudo openconnect --protocol=gp -u ${{ secrets.FIELDDAY_VPN_USERNAME }} --passwd-on-stdin soe.vpn.wisc.edu &
-      
-    - name: Checkout repository
-      uses: actions/checkout@v2
-      with:
-        lfs: true
-      
-    - name: Checkout submodules
-      uses: srt32/git-actions@v0.0.3
-      with:
-        args:  |
-          git config --global --add safe.directory "/github/workspace"
-          git config --global --add safe.directory /github/workspace/Submodules/unity-aesprite-importer
-          git submodule update --init --recursive
+   steps:
+     
+   - name: Install OpenConnect
+     run: sudo NEEDRESTART_MODE=a sudo apt-get update && sudo apt-get install openconnect
+     
+   - name: Connect to VPN
+     run: echo ${{ secrets.FIELDDAY_VPN_PASSWORD }} | sudo openconnect --protocol=gp -u ${{ secrets.FIELDDAY_VPN_USERNAME }} --passwd-on-stdin soe.vpn.wisc.edu &
+     
+   - name: Checkout repository
+     uses: actions/checkout@v4
+     with:
+       lfs: true
+     
+   - name: Checkout submodules
+     uses: srt32/git-actions@v0.0.3
+     with:
+       args:  |
+         git config --global --add safe.directory "/github/workspace"
+         git config --global --add safe.directory "/github/workspace/Submodules"
+         git submodule update --init --recursive
 
-    # Extracts branch name into BRANCH environment variable
-    - name: Extract branch name
-      shell: bash
-      run: echo "BRANCH=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')" >> $GITHUB_ENV
+   # Extracts branch name into BRANCH environment variable
+   - name: Extract branch name
+     shell: bash
+     run: echo "BRANCH=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')" >> $GITHUB_ENV
 
-    # Extracts version tag into VERSION environment variable
-    - name: Extract version name
-      shell: bash
-      run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/\//_/g')" >> $GITHUB_ENV
-      
-    # Unity Build Steps
+   # Extracts version tag into VERSION environment variable
+   - name: Extract version name
+     shell: bash
+     run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/\//_/g')" >> $GITHUB_ENV
 
-    - name: Cache Library folder
-      uses: actions/cache@v2
-      with:
-        path: Library
-        key: Library
-    
-    #- name: Run tests
-    #  uses: webbertakken/unity-test-runner@v1.3
-    #  with:
-    #    unityVersion: ${{ env.UNITY_VERSION }}
-    
-    - name: Build project
-      uses: game-ci/unity-builder@v2
-      with:
-        unityVersion: ${{ env.UNITY_VERSION }}
-        targetPlatform: WebGL
-        #customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
-    
-    
-    # Deploy Steps
-    
-    - name: Upload build as artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: aqualab-webgl_${{ env.VERSION }}
-        path: build/WebGL/WebGL
+   # Read editor version
+   - name: Retrieve editor version
+     id: getEditorVersion
+     uses: pietrobolcato/action-read-yaml@1.1.0
+     with:
+       config: ${{ github.workspace }}/ProjectSettings/ProjectVersion.txt
 
-    # # If this succeeded, and we're on the staging branch, then we can merge staging into production
-    # - name: Merge into production
-    #   if: github.ref == 'ref/heads/staging'
-    #   uses: devmasx/merge-branch@master
-    #   with:
-    #     type: now
-    #     from_branch: hotfix
-    #     target_branch: staging
-    #     github_token: ${{ github.token }}
-    
-    - name: Upload to web server via rsync
-      uses: burnett01/rsync-deployments@5.2
-      with:
-        switches: -avzr --delete
-        path: build/WebGL/WebGL/*
-        remote_path: ${{ secrets.DEPLOY_DIR }}/${{ env.BRANCH }}
-        remote_host: ${{ secrets.FIELDDAY_WISC_EDU_DEPLOY_HOST }}
-        remote_user: ${{ secrets.FIELDDAY_WISC_EDU_DEPLOY_USER }}
-        remote_key: ${{ secrets.FIELDDAY_WISC_EDU_DEPLOY_KEY }}
-    
+   - name: Extract editor version to var
+     shell: bash
+     run: echo "UNITY_VERSION=${{ steps.getEditorVersion.outputs['m_EditorVersion'] }}" >> $GITHUB_ENV
+     
+   # Unity Build Steps
+
+   - name: Cache Library folder
+     uses: actions/cache@v2
+     with:
+       path: Library
+       key: Library
+   
+   # Build
+   - name: Build project
+     uses: game-ci/unity-builder@v4
+     env:
+       UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+       UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+       UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+     with:
+       unityVersion: ${{ env.UNITY_VERSION }}
+       targetPlatform: WebGL
+       #customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
+   
+   
+   # Deploy Steps
+   
+   - name: Upload build as artifact
+     uses: actions/upload-artifact@v3
+     with:
+       name: ${{ github.event.repository.name }}-webgl_${{ env.VERSION }}
+       path: build/WebGL/WebGL
+   
+   - name: Upload to web server via rsync
+     uses: burnett01/rsync-deployments@5.2
+     with:
+       switches: -avzr --delete --rsync-path="mkdir -p ${{ secrets.DEPLOY_DIR }}/${{ env.BRANCH }} && rsync"
+       path: build/WebGL/WebGL/*
+       remote_path: ${{ secrets.DEPLOY_DIR }}/${{ env.BRANCH }}
+       remote_host: ${{ secrets.FIELDDAY_WISC_EDU_DEPLOY_HOST }}
+       remote_user: ${{ secrets.FIELDDAY_WISC_EDU_DEPLOY_USER }}
+       remote_key: ${{ secrets.FIELDDAY_WISC_EDU_DEPLOY_KEY }}

@@ -1,0 +1,13 @@
+<template id="floating-dropdown">
+    <div id="header">
+        <slot name="header"><h2>Header</h2></slot>
+    </div>
+    <div id="dropdown">
+        <p class="content"><slot name="desc">Description Here</slot></p>
+        <a href="https://vaultlearninggames.org/" target="_blank" class="content">
+            <button id="vault-button">
+                <slot name="button-label">Press Me</slot>
+            </button>
+        </a>
+    </div>
+</template>
