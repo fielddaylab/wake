@@ -18,11 +18,7 @@
                             "responses": [
                                 "Yes", "No", "Unsure"
                             ]
-                        }
-                    ]
-                },
-                {
-                    "items": [
+                        },
                         {
                             "prompt": "How old are you?",
                             "responses": [
@@ -58,20 +54,10 @@
                         {
                             "prompt": "Investigate the kinds of problems that ecosystem scientists would investigate",
                             "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        }
-                    ]
-                },
-                {
-                    "type": "likert-confidence",
-                    "subheader": "1 = Not confident at all, 6 = Completely confident",
-                    "items": [
+                        },
                         {
                             "prompt": "Figure out what causes change in an environment",
                             "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "Do the kinds of things that scientists do",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
                         }
                     ]
                 },
@@ -79,6 +65,10 @@
                     "type": "likert-confidence",
                     "subheader": "1 = Not confident at all, 6 = Completely confident",
                     "items": [
+                        {
+                            "prompt": "Do the kinds of things that scientists do",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
                         {
                             "prompt": "Look at data that you collect and notice patterns",
                             "responses": [ "1", "2", "3", "4", "5", "6" ]
@@ -106,13 +96,7 @@
                         {
                             "prompt": "I can see science-related activities as being part of my future.",
                             "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        }
-                    ]
-                },
-                {
-                    "type": "likert-truth",
-                    "subheader": "1 = Completely false, 6 = Completely true",
-                    "items": [
+                        },
                         {
                             "prompt": "I consider myself a science person.",
                             "responses": [ "1", "2", "3", "4", "5", "6" ]
@@ -140,13 +124,7 @@
                         {
                             "prompt": "I have NO interest in learning about the environment.",
                             "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        }
-                    ]
-                },
-                {
-                    "type": "likert-truth",
-                    "subheader": "1 = Completely false, 6 = Completely true",
-                    "items": [
+                        },
                         {
                             "prompt": "I would like to learn more about environmental science.",
                             "responses": [ "1", "2", "3", "4", "5", "6" ]
@@ -284,6 +262,7 @@
                 {
                     "items": [
                         {
+                            "useVerticalLayout": true,
                             "prompt": "How are you feeling right now?",
                             "responses": [
                                 "Bored",
@@ -344,12 +323,12 @@
             ]
         },
         {
-            "display_event_id": "values",
-            "header": "Here we briefly describe some people",
+            "display_event_id": "values-1",
+            "header": "How much is the person in the description like you?",
             "pages": [
                 {
                     "type": "likert-resemble",
-                    "subheader": "How much is the person in the description like you?\n1 = Very Much Like Me, 6 = Not Like Me At All",
+                    "subheader": "1 = Very Much Like Me, 6 = Not Like Me At All",
                     "items": [
                         {
                             "prompt": "Thinking up new ideas and being creative is important to her. She likes to do things in her own original way.",
@@ -358,27 +337,27 @@
                         {
                             "prompt": "It is important to her to be rich. She wants to have a lot of money and expensive things.",
                             "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        }
-                    ]
-                },
-                {
-                    "type": "likert-resemble",
-                    "subheader": "How much is the person in the description like you?\n1 = Very Much Like Me, 6 = Not Like Me At All",
-                    "items": [
+                        },
                         {
                             "prompt": "She thinks it is important that every person in the world be treated equally. She believes everyone should have equal opportunities in life.",
                             "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "display_event_id": "values-2",
+            "header": "How much is the person in the description like you?",
+            "pages": [
+                {
+                    "type": "likert-resemble",
+                    "subheader": "1 = Very Much Like Me, 6 = Not Like Me At All",
+                    "items": [
                         {
                             "prompt": "It's important to her to show her abilities. She wants people to admire what she does.",
                             "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        }
-                    ]
-                },
-                {
-                    "type": "likert-resemble",
-                    "subheader": "How much is the person in the description like you?\n1 = Very Much Like Me, 6 = Not Like Me At All",
-                    "items": [
+                        },
                         {
                             "prompt": "It is important to her to live in secure surroundings. She avoids anything that might endanger her safety.",
                             "responses": [ "1", "2", "3", "4", "5", "6" ]
@@ -388,10 +367,16 @@
                             "responses": [ "1", "2", "3", "4", "5", "6" ]
                         }
                     ]
-                },
+                }
+            ]
+        },
+        {
+            "display_event_id": "values-3",
+            "header": "How much is the person in the description like you?",
+            "pages": [
                 {
                     "type": "likert-resemble",
-                    "subheader": "How much is the person in the description like you?\n1 = Very Much Like Me, 6 = Not Like Me At All",
+                    "subheader": "1 = Very Much Like Me, 6 = Not Like Me At All",
                     "items": [
                         {
                             "prompt": "She believes that people should do what they're told. She thinks people should follow rules at all times, even when no-one is watching.",
@@ -400,27 +385,27 @@
                         {
                             "prompt": "It is important to her to listen to people who are different from her. Even when she disagrees with them, she still wants to understand them.",
                             "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        }
-                    ]
-                },
-                {
-                    "type": "likert-resemble",
-                    "subheader": "How much is the person in the description like you?\n1 = Very Much Like Me, 6 = Not Like Me At All",
-                    "items": [
+                        },
                         {
                             "prompt": "It is important to her to be humble and modest. She tries not to draw attention to herself.",
                             "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "display_event_id": "values-4",
+            "header": "How much is the person in the description like you?",
+            "pages": [
+                {
+                    "type": "likert-resemble",
+                    "subheader": "1 = Very Much Like Me, 6 = Not Like Me At All",
+                    "items": [
                         {
                             "prompt": "Having a good time is important to her. She likes to \"spoil\" herself.",
                             "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        }
-                    ]
-                },
-                {
-                    "type": "likert-resemble",
-                    "subheader": "How much is the person in the description like you?\n1 = Very Much Like Me, 6 = Not Like Me At All",
-                    "items": [
+                        },
                         {
                             "prompt": "It is important to her to make her own decisions about what she does. She likes to be free and not depend on others.",
                             "responses": [ "1", "2", "3", "4", "5", "6" ]
@@ -430,10 +415,16 @@
                             "responses": [ "1", "2", "3", "4", "5", "6" ]
                         }
                     ]
-                },
+                }
+            ]
+        },
+        {
+            "display_event_id": "values-5",
+            "header": "How much is the person in the description like you?",
+            "pages": [
                 {
                     "type": "likert-resemble",
-                    "subheader": "How much is the person in the description like you?\n1 = Very Much Like Me, 6 = Not Like Me At All",
+                    "subheader": "1 = Very Much Like Me, 6 = Not Like Me At All",
                     "items": [
                         {
                             "prompt": "Being very successful is important to her. She hopes people will recognize her achievements.",
@@ -442,27 +433,27 @@
                         {
                             "prompt": "It is important to her that the government insure her safety against all threats. She wants the state to be strong so it can defend its citizens.",
                             "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        }
-                    ]
-                },
-                {
-                    "type": "likert-resemble",
-                    "subheader": "How much is the person in the description like you?\n1 = Very Much Like Me, 6 = Not Like Me At All",
-                    "items": [
+                        },
                         {
                             "prompt": "She looks for adventures and likes to take risks. She wants to have an exciting life.",
                             "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "display_event_id": "values-6",
+            "header": "How much is the person in the description like you?",
+            "pages": [
+                {
+                    "type": "likert-resemble",
+                    "subheader": "1 = Very Much Like Me, 6 = Not Like Me At All",
+                    "items": [
                         {
                             "prompt": "It is important to her always to behave properly. She wants to avoid doing anything people would say is wrong.",
                             "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        }
-                    ]
-                },
-                {
-                    "type": "likert-resemble",
-                    "subheader": "How much is the person in the description like you?\n1 = Very Much Like Me, 6 = Not Like Me At All",
-                    "items": [
+                        },
                         {
                             "prompt": "It is important to her to get respect from others. She wants people to do what she says.",
                             "responses": [ "1", "2", "3", "4", "5", "6" ]
@@ -472,10 +463,16 @@
                             "responses": [ "1", "2", "3", "4", "5", "6" ]
                         }
                     ]
-                },
+                }
+            ]
+        },
+        {
+            "display_event_id": "values-7",
+            "header": "How much is the person in the description like you?",
+            "pages": [
                 {
                     "type": "likert-resemble",
-                    "subheader": "How much is the person in the description like you?\n1 = Very Much Like Me, 6 = Not Like Me At All",
+                    "subheader": "1 = Very Much Like Me, 6 = Not Like Me At All",
                     "items": [
                         {
                             "prompt": "She strongly believes that people should care for nature. Looking after the environment is important to her.",
@@ -484,13 +481,7 @@
                         {
                             "prompt": "Tradition is important to her. She tries to follow the customs handed down by her religion or her family.",
                             "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        }
-                    ]
-                },
-                {
-                    "type": "likert-resemble",
-                    "subheader": "How much is the person in the description like you?\n1 = Very Much Like Me, 6 = Not Like Me At All",
-                    "items": [
+                        },
                         {
                             "prompt": "She seeks every chance she can to have fun. It is important to her to do things that give her pleasure.",
                             "responses": [ "1", "2", "3", "4", "5", "6" ]

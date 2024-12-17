@@ -179,6 +179,8 @@ namespace Aqua
                     BlockParser.Parse(ref tmpPkg, pkg, Parsing.Block, Generator.Instance);
                 }
 
+                Log.Msg("{0} nodes in package", tmpPkg.m_Nodes.Count);
+
                 UnsafeExt.Write(&head, &bufferLength, MaxCompressedSize, (ushort) tmpPkg.m_Nodes.Count);
                 foreach(var kv in tmpPkg.m_Nodes) {
                     UnsafeExt.Write(&head, &bufferLength, MaxCompressedSize, kv.Key);

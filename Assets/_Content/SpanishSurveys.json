@@ -1,0 +1,494 @@
+{
+    "package_config_id": "winter2024_progressions_experiment_v1",
+    "surveys": [
+        {
+            "display_event_id": "demographics",
+            "header": "Algunas Preguntitas",
+            "pages": [
+                {
+                    "items": [
+                        {
+                            "prompt": "¿Juegas 'Wake' en la casa o en el colegio?",
+                            "responses": [
+                                "En la casa", "En el colegio"
+                            ]
+                        },
+                        {
+                            "prompt": "¿Está este juego relacionado con una unidad o lección educativa más extensa?",
+                            "responses": [
+                                "Sí", "No", "No estoy seguro(a)"
+                            ]
+                        },
+                        {
+                            "prompt": "¿Cuántos años tienes?",
+                            "responses": [
+                                "9 o menos", "10-11", "12-13", "13-15", "16 años o más"
+                            ]
+                        },
+						{
+                            "prompt": "¿Hablas español en casa con tu familia?",
+                            "responses": [
+                                "Sí", "A veces", "No"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+		{
+            "display_event_id": "science-efficacy",
+            "header": "¿Qué nivel de confianza tienes para hacer las siguientes tareas?",
+            "pages": [
+                {
+                    "type": "likert-confidence",
+                    "subheader": "1=Nada seguro(a),  6=Completamente seguro(a)",
+                    "items": [
+                        {
+                            "prompt": "Descubrir las razones de por qué suceden cosas en la naturaleza",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Utilizar tablas y gráficos para averiguar cosas",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Investigar los tipos de problemas que investigan los científicos ecológicos.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Averiguar qué provoca los cambios en un entorno",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                },
+                {
+                    "type": "likert-confidence",
+                    "subheader": "1=Nada seguro(a),  6=Completamente seguro(a)",
+                    "items": [
+                        {
+                            "prompt": "Hacer las cosas que hacen los científicos",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Observar los datos recopilados y detectar patrones",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Averiguar las relaciones entre los organismos y su entorno",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "display_event_id": "science-identity",
+            "header": "¿Qué tan verdadera o falsa es cada frase para ti?",
+            "pages": [
+                {
+                    "type": "likert-truth",
+                    "subheader": "1=Completamente falso,  6=Completamente cierto",
+                    "items": [
+                        {
+                            "prompt": "Estar involucrado(a) en la ciencia es una parte importante de lo que yo soy.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Puedo ver las disciplinas científicas como parte de mi futuro.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Me considero una persona de las ciencias.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Me puedo imaginar dedicándome a una carrera relacionada con la ciencia.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "display_event_id": "science-interest",
+            "header": "¿Qué tan verdadera o falsa es cada frase para ti?",
+            "pages": [
+                {
+                    "type": "likert-truth",
+                    "subheader": "1=Completamente falso,  6=Completamente cierto",
+                    "items": [
+                        {
+                            "prompt": "Me interesa aprender sobre la naturaleza.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "NO tengo interés en aprender sobre el medio ambiente.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Me gustaría aprender más sobre las ciencias medioambientales.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Me interesa aprender sobre los ecosistemas.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "display_event_id": "enjoyment",
+            "header": "¿Qué tan verdadera o falsa es cada frase para ti?",
+            "pages": [
+                {
+                    "type": "likert-truth",
+                    "subheader": "1=Completamente falso,  6=Completamente cierto",
+                    "items": [
+                        {
+                            "prompt": "Este juego me parece divertido/ o agrada.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Me lo paso genial jugando este juego.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Este juego me aburre.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Este juego me molesta.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                },
+                {
+                    "type": "likert-truth",
+                    "subheader": "1=Completamente falso,  6=Completamente cierto",
+                    "items": [
+                        {
+                            "prompt": "Es un gozo jugando este juego.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Este juego me deja descontento.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Este juego capta mi atención.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "display_event_id": "interest-items-hanson-2021",
+            "header": "¿Cuánto te agrada lo siguiente?",
+            "pages": [
+                {
+                    "type": "likert-like",
+                    "subheader": "1=Me desagrada mucho, 6= Me agrada mucho",
+                    "items": [
+                        {
+                            "prompt": "Practicar deportes o unirme a un equipo deportivo",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Hacer cosas para mejorar mi forma física",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Asistir a los eventos deportivos",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Hacer actividades al aire libre",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                },
+                {
+                    "type": "likert-like",
+                    "subheader": "1=Me desagrada mucho, 6= Me agrada mucho",
+                    "items": [
+                        {
+                            "prompt": "Participar en obras de teatro",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Hacer arte, manualidades o pasatiempos",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Leer libros o revistas",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Cantar o tocar un instrumento musical",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                },
+                {
+                    "type": "likert-like",
+                    "subheader": "1=Me desagrada mucho, 6= Me agrada mucho",
+                    "items": [
+                        {
+                            "prompt": "Hacer cosas con animales",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Pensar en la moda y el estilo",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Hacer cosas con motores, máquinas o tecnología",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Jugar a juegos de ordenador, de mesa o de fantasía",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "display_event_id": "affective",
+            "header": "¿Cómo te sientes?",
+            "pages": [
+                {
+                    "items": [
+                        {
+                            "useVerticalLayout": true,
+                            "prompt": "¿Cómo te sientes en este momento?",
+                            "responses": [
+                                "Aburrido(a)",
+                                "Confundido(a)",
+                                "Frustrado(a)",
+                                "Nervioso(a)",
+                                "Concentrado(a)",
+                                "Feliz"
+                            ],
+                            "responseFlags": [
+                                "negative",
+                                "negative",
+                                "negative",
+                                "negative",
+                                "positive",
+                                "positive"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "skipIf": [ "!negative" ],
+                    "items": [
+                        {
+                            "useVerticalLayout": true,
+                            "prompt": "¿Por qué te sientes así?",
+                            "responses": [
+                                "Esto es demasiado difícil",
+                                "Esto es demasiado fácil",
+                                "No estoy seguro(a) por qué necesito saber esto",
+                                "Este tema no me parece interesante",
+                                "No sé qué hacer después",
+                                "No sé qué hacer a continuación",
+                                "La clase de ciencias me hace sentir así",
+                                "El juego no está funcionando bien"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "skipIf": [ "negative" ],
+                    "items": [
+                        {
+                            "useVerticalLayout": true,
+                            "prompt": "¿Por qué te sientes así?",
+                            "responses": [
+                                "Esto es un buen reto",
+                                "Acabo de descubrir algo",
+                                "Este tema es importante para mí",
+                                "Este tema me parece interesante",
+                                "Sé lo que quiero hacer a continuación",
+                                "Hoy solo me siento así",
+                                "La clase de ciencias me hace sentir así"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "display_event_id": "values-1",
+            "header": "¿En qué medida se parece a ti la persona de la descripción?",
+            "pages": [
+                {
+                    "type": "likert-resemble",
+                    "subheader": "1=Se parece mucho a mí, 6=No se parece nada a mí",
+                    "items": [
+                        {
+                            "prompt": "Tener ideas originales y ser creativa es importante para ella.  Le gusta hacer las cosas a su manera.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Para ella es importante ser rica.  Quiere tener mucho dinero y cosas caras.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Le parece importante que todo el mundo sea tratado de la misma manera.  Cree que todo el mundo debería tener las mismas oportunidades en la vida.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "display_event_id": "values-2",
+            "header": "¿En qué medida se parece a ti la persona de la descripción?",
+            "pages": [
+                {
+                    "type": "likert-resemble",
+                    "subheader": "1=Se parece mucho a mí, 6=No se parece nada a mí",
+                    "items": [
+                        {
+                            "prompt": "Para ella es importante mostrar sus habilidades.  Quiere que todo el mundo la admire por lo que hace.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Para ella es importante vivir en un entorno seguro. Evita cualquier cosa que pueda poner en peligro su seguridad.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Le gustan las sorpresas y siempre está buscando hacer cosas nuevas.  Le parece importante hacer muchas cosas distintas en la vida.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "display_event_id": "values-3",
+            "header": "¿En qué medida se parece a ti la persona de la descripción?",
+            "pages": [
+                {
+                    "type": "likert-resemble",
+                    "subheader": "1=Se parece mucho a mí, 6=No se parece nada a mí",
+                    "items": [
+                        {
+                            "prompt": "Cree que las personas deberían hacer lo que se les manda.  Cree que deberían obedecer las normas siempre, aunque nadie les vea.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Para ella es importante escuchar a personas que son distintas a ella.  Aunque no esté de acuerdo con ellas quiere comprenderlas.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Para ella es importante ser humilde y modesta. Trata de no llamar la atención.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "display_event_id": "values-4",
+            "header": "¿En qué medida se parece a ti la persona de la descripción?",
+            "pages": [
+                {
+                    "type": "likert-resemble",
+                    "subheader": "1=Se parece mucho a mí, 6=No se parece nada a mí",
+                    "items": [
+                        {
+                            "prompt": "Para ella es importante divertirse. Le gusta darse caprichos.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Para ella es importante tomar sus propias decisiones sobre qué va a hacer.  Le gusta ser libre y no depender de los demás.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Para ella es muy importante ayudar a las personas que tiene a su alrededor.  Se preocupa por su bienestar.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "display_event_id": "values-5",
+            "header": "¿En qué medida se parece a ti la persona de la descripción?",
+            "pages": [
+                {
+                    "type": "likert-resemble",
+                    "subheader": "1=Se parece mucho a mí, 6=No se parece nada a mí",
+                    "items": [
+                        {
+                            "prompt": "Tener éxito es importante para ella.  Le gustaría que todo el mundo reconociese sus éxitos.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Para ella es importante que el gobierno le garantice su seguridad frente a todo tipo de amenazas.  Quiere un Estado fuerte capaz de defender a sus ciudadanos.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Busca aventura y le gusta tomar riesgos.  Quiere una vida emocionante.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "display_event_id": "values-6",
+            "header": "¿En qué medida se parece a ti la persona de la descripción?",
+            "pages": [
+                {
+                    "type": "likert-resemble",
+                    "subheader": "1=Se parece mucho a mí, 6=No se parece nada a mí",
+                    "items": [
+                        {
+                            "prompt": "Para ella es importante comportarse siempre correctamente.  Quiere evitar hacer cualquier cosa que puedan decir que está mal.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Para ella es importante hacerse respetar por los demás. Quiere que la gente haga lo que ella dice.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Para ella es importante ser fiel a sus amigos.  Quiere dedicarse a las personas que le son cercanas.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "display_event_id": "values-7",
+            "header": "¿En qué medida se parece a ti la persona de la descripción?",
+            "pages": [
+                {
+                    "type": "likert-resemble",
+                    "subheader": "1=Se parece mucho a mí, 6=No se parece nada a mí",
+                    "items": [
+                        {
+                            "prompt": "Cree firmemente que la gente debería preocuparse por la naturaleza.  Cuidar el medio ambiente es importante para ella.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Las tradiciones son importantes para ella.  Trata de seguir las costumbres de su religión o de su familia.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        },
+                        {
+                            "prompt": "Busca cualquier ocasión para divertirse.  Para ella es importante hacer cosas que le proporcionen placer.",
+                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

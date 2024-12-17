@@ -57,6 +57,12 @@ namespace Aqua
                     nameStr = nameStr.Replace(":", "_c_");
                 }
 
+                nameStr = nameStr.Trim();
+
+                if (string.IsNullOrEmpty(nameStr)) {
+                    continue;
+                }
+
                 /*
                 // remove unique line identifiers
                 if (nameStr.Contains(":")) {
