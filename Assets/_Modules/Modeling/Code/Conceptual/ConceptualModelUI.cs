@@ -244,7 +244,7 @@ namespace Aqua.Modeling {
                 m_ImportGroup.SetActive(false);
                 m_ImportFader.SetActive(false);
                 UpdateButtons();
-                Services.Events.Dispatch(ModelingConsts.Event_Concept_Updated, m_State.Conceptual.Status);
+                Services.Events.Dispatch(ModelingConsts.Event_Concept_Updated, EvtArgs.Create(m_State.Conceptual.Status));
                 Services.Script.TriggerResponse(ModelingConsts.Trigger_ConceptUpdated);
             }
         }

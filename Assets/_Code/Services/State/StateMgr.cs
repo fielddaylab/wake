@@ -21,6 +21,8 @@ using Aqua.Character;
 using Aqua.Scripting;
 using UnityEngine.U2D.Animation;
 
+using SharedManagerIndex = BeauUtil.TypeIndex<Aqua.SharedManager>;
+
 namespace Aqua
 {
     [ServiceDependency(typeof(UIMgr)), DefaultExecutionOrder(999999)]
@@ -48,12 +50,13 @@ namespace Aqua
         [NonSerialized] private PlayerBody m_Body;
         [NonSerialized] private bool m_InitFrame;
         [NonSerialized] private StringHash32 m_SceneName;
+        private RingBuffer<AsyncHandle> m_LoadBlockers = new RingBuffer<AsyncHandle>(8, RingBufferMode.Expand);
 
         private VariantTable m_TempSceneTable;
         private Func<IEnumerator> m_OnSceneReadyFunc;
 
         private RingBuffer<SceneBinding> m_SceneHistory = new RingBuffer<SceneBinding>(8, RingBufferMode.Overwrite);
-        private Dictionary<Type, SharedManager> m_SharedManagers;
+        [NonSerialized] private SharedManager[] m_SharedManagers = new SharedManager[SharedManagerIndex.Capacity];
 
         private RingBuffer<PrioritizedCallback> m_OnLoadQueue = new RingBuffer<PrioritizedCallback>(64, RingBufferMode.Expand);
 
@@ -423,6 +426,12 @@ namespace Aqua
             while(BuildInfo.IsLoading())
                 yield return null;
 
+            while(m_LoadBlockers.TryPopFront(out AsyncHandle waitHandle)) {
+                while(waitHandle.IsRunning()) {
+                    yield return null;
+                }
+            }
+
             foreach(var service in Services.AllLoadable())
             {
                 if (ReferenceEquals(this, service))
@@ -619,6 +628,12 @@ namespace Aqua
             }
         }
 
+        public void RegisterLoadDependency(AsyncHandle handle) {
+            if (IsLoadingScene()) {
+                m_LoadBlockers.PushBack(handle);
+            }
+        }
+
         private void ProcessCallbackQueue() {
             m_OnLoadQueue.Sort((a, b) => b.Priority - a.Priority);
             while(m_OnLoadQueue.TryPopFront(out var action)) {
@@ -678,33 +693,35 @@ namespace Aqua
         public void RegisterManager(SharedManager inManager)
         {
             Type t = inManager.GetType();
-            SharedManager manager;
-            if (m_SharedManagers.TryGetValue(t, out manager))
+            int index = SharedManagerIndex.Get(t);
+            SharedManager existingManager;
+            if ((existingManager = m_SharedManagers[index]) != null)
             {
-                if (manager != inManager)
+                if (existingManager != inManager)
                     throw new ArgumentException(string.Format("Manager with type {0} already exists", t.FullName), "inManager");
 
                 return;
             }
 
-            m_SharedManagers.Add(t, inManager);
+            m_SharedManagers[index] = inManager;
         }
 
         public void DeregisterManager(SharedManager inManager)
         {
             Type t = inManager.GetType();
-            SharedManager manager;
-            if (m_SharedManagers.TryGetValue(t, out manager) && manager == inManager)
+            int index = SharedManagerIndex.Get(t);
+            SharedManager existingManager;
+            if ((existingManager = m_SharedManagers[index]) == inManager)
             {
-                m_SharedManagers.Remove(t);
+                m_SharedManagers[index] = null;
             }
         }
 
         public T FindManager<T>() where T : SharedManager
         {
-            Type t = typeof(T);
-            SharedManager manager;
-            if (!m_SharedManagers.TryGetValue(t, out manager))
+            int index = SharedManagerIndex.Get<T>();
+            SharedManager manager = m_SharedManagers[index];
+            if (manager == null)
             {
                 manager = FindObjectOfType<T>();
                 if (manager != null)
@@ -720,15 +737,11 @@ namespace Aqua
         private void CleanupFromScene(SceneBinding inBinding, object inContext)
         {
             int removedManagerCount = 0;
-            using(PooledList<SharedManager> sharedManagers = PooledList<SharedManager>.Create(m_SharedManagers.Values))
-            {
-                foreach(var manager in sharedManagers)
-                {
-                    if (manager.gameObject.scene == inBinding.Scene)
-                    {
-                        DeregisterManager(manager);
-                        ++removedManagerCount;
-                    }
+            for(int i = 0; i < SharedManagerIndex.Count; i++) {
+                var manager = m_SharedManagers[i];
+                if (manager != null && manager.gameObject.scene == inBinding.Scene) {
+                    DeregisterManager(manager);
+                    removedManagerCount++;
                 }
             }
 
@@ -752,8 +765,6 @@ namespace Aqua
 
             // if (SceneHelper.ActiveScene().BuildIndex >= GameConsts.GameSceneIndexStart)
             //     Services.UI.ForceLoadingScreen();
-
-            m_SharedManagers = new Dictionary<Type, SharedManager>(8, ReferenceEqualityComparer<Type>.Default);
 
             Frame.CreateBuffer();
             StartCoroutine(EndOfFrame());

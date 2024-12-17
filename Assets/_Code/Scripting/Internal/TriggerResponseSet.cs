@@ -63,7 +63,7 @@ namespace Aqua.Scripting {
             ScriptNode node;
             TriggerNodeData triggerData;
             int count = 0;
-            for(int nodeIdx = 0, nodeCount = m_TriggerNodes.Count; nodeIdx < nodeCount; ++nodeIdx)
+            for(int nodeIdx = 0, nodeCount = m_TriggerNodes.Count; nodeIdx < nodeCount; nodeIdx++)
             {
                 node = m_TriggerNodes[nodeIdx];
                 triggerData = node.TriggerData;
@@ -150,7 +150,7 @@ namespace Aqua.Scripting {
                 DebugService.Log(LogMask.Scripting, "...node passed!");
                 outNodes.Add(node);
                 ioMinScore = triggerData.Score;
-                ++count;
+                count++;
             }
 
             return count;

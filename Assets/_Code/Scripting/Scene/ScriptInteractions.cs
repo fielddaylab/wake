@@ -14,8 +14,8 @@ namespace Aqua.Scripting {
 
     public struct ScriptInteractParams {
         public ScriptInteractConfig Config;
-        public RuntimeObjectHandle<ScriptComponent> Invoker;
-        public RuntimeObjectHandle<ScriptComponent> Source;
+        public RuntimeObjectHandle Invoker;
+        public RuntimeObjectHandle Source;
         public bool Available;
     }
 

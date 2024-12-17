@@ -19,11 +19,12 @@ using Leaf.Runtime;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
+using SharedPanelIndex = BeauUtil.TypeIndex<Aqua.SharedPanel>;
+
 namespace Aqua
 {
     [DefaultExecutionOrder(10000), ServiceDependency(typeof(EventService))]
-    public class UIMgr : ServiceBehaviour, IDebuggable
-    {
+    public class UIMgr : ServiceBehaviour, IDebuggable {
         #region Inspector
 
         [SerializeField, Required] private Camera m_UICamera = null;
@@ -58,13 +59,14 @@ namespace Aqua
         [NonSerialized] private int m_LetterboxCounter = 0;
         [NonSerialized] private int m_LetterboxDisableFrameCount = 0;
         private Dictionary<StringHash32, DialogPanel> m_DialogStyleMap;
-        private Dictionary<Type, SharedPanel> m_SharedPanels;
+        [NonSerialized] private SharedPanel[] m_SharedPanels = new SharedPanel[SharedPanelIndex.Capacity];
         [NonSerialized] private bool m_SkippingCutscene;
         [NonSerialized] private TempAlloc<FaderRect> m_SkipFader;
         [NonSerialized] private CursorHintMgr m_CursorHintMgr;
         [NonSerialized] private List<GameObject> m_PersistentUIObjects = new List<GameObject>();
         [NonSerialized] private BufferedCollection<IUpdaterUI> m_UIUpdates = new BufferedCollection<IUpdaterUI>();
         [NonSerialized] private RingBuffer<KeyboardShortcutDisplay> m_ShortcutDisplays = new RingBuffer<KeyboardShortcutDisplay>(16, RingBufferMode.Expand);
+        [NonSerialized] private int m_SurveyCounter;
 
         private Routine m_PersistentUILoad;
         private Routine m_JournalLoad;
@@ -100,9 +102,11 @@ namespace Aqua
                 panel.InstantHide();
             }
 
-            foreach(var panel in m_SharedPanels.Values)
-            {
-                panel.InstantHide();
+            for(int i = 0; i < SharedPanelIndex.Count; i++) {
+                var panel = m_SharedPanels[i];
+                if (panel) {
+                    panel.InstantHide();
+                }
             }
         }
 
@@ -195,39 +199,36 @@ namespace Aqua
         public void RegisterPanel(SharedPanel inPanel)
         {
             Type t = inPanel.GetType();
-
-            SharedPanel panel;
-            if (m_SharedPanels.TryGetValue(t, out panel))
+            int index = SharedPanelIndex.Get(t);
+            SharedPanel existingPanel;
+            if ((existingPanel = m_SharedPanels[index]) != null)
             {
-                if (panel != inPanel)
+                if (existingPanel != inPanel)
                     throw new ArgumentException(string.Format("Panel with type {0} already exists", t.FullName), "inPanel");
 
                 return;
             }
 
-            m_SharedPanels.Add(t, inPanel);
+            m_SharedPanels[index] = inPanel;
         }
 
         public void DeregisterPanel(SharedPanel inPanel)
         {
             Type t = inPanel.GetType();
-
-            SharedPanel panel;
-            if (m_SharedPanels.TryGetValue(t, out panel) && panel == inPanel)
-            {
-                m_SharedPanels.Remove(t);
+            int index = SharedPanelIndex.Get(t);
+            SharedPanel existingPanel;
+            if ((existingPanel = m_SharedPanels[index]) == inPanel) {
+                m_SharedPanels[index] = null;
             }
         }
 
         public T FindPanel<T>() where T : SharedPanel
         {
-            Type t = typeof(T);
-            SharedPanel panel;
-            if (!m_SharedPanels.TryGetValue(t, out panel))
-            {
+            int index = SharedPanelIndex.Get<T>();
+            SharedPanel panel = m_SharedPanels[index];
+            if (panel == null) {
                 panel = FindObjectOfType<T>();
-                if (panel != null)
-                {
+                if (panel != null) {
                     RegisterPanel(panel);
                 }
             }
@@ -236,11 +237,9 @@ namespace Aqua
 
         public bool TryFindPanel<T>(out T outPanel) where T : SharedPanel
         {
-            Type t = typeof(T);
-            SharedPanel panel;
-            bool success = m_SharedPanels.TryGetValue(t, out panel);
-            outPanel = panel as T;
-            return success;
+            int index = SharedPanelIndex.Get<T>();
+            outPanel = m_SharedPanels[index] as T;
+            return outPanel != null;
         }
 
         #endregion // Additional Panels
@@ -390,6 +389,10 @@ namespace Aqua
         public CursorHintMgr CursorHintMgr { get { return m_CursorHintMgr; } }
         public KeycodeDisplayMap KeycodeMap { get { return m_KeyboardMap; } }
 
+        public bool IsDisplayingSurvey {
+            get { return m_SurveyCounter > 0; }
+        }
+
         private void LateUpdate()
         {
             if (m_LetterboxCounter == 0 && m_Letterbox.IsShowing()) {
@@ -431,15 +434,11 @@ namespace Aqua
         private void CleanupFromScene(SceneBinding inBinding, object inContext)
         {
             int removedPanelCount = 0;
-            using(PooledList<SharedPanel> sharedPanels = PooledList<SharedPanel>.Create(m_SharedPanels.Values))
-            {
-                foreach(var panel in sharedPanels)
-                {
-                    if (panel.gameObject.scene == inBinding.Scene)
-                    {
-                        DeregisterPanel(panel);
-                        ++removedPanelCount;
-                    }
+            for (int i = 0; i < SharedPanelIndex.Count; i++) {
+                var panel = m_SharedPanels[i];
+                if (panel != null && panel.gameObject.scene == inBinding.Scene) {
+                    DeregisterPanel(panel);
+                    removedPanelCount++;
                 }
             }
 
@@ -476,11 +475,18 @@ namespace Aqua
                 m_DialogStyleMap.Add(panel.StyleId(), panel);
             }
 
-            m_SharedPanels = new Dictionary<Type, SharedPanel>(16, ReferenceEqualityComparer<Type>.Default);
             m_CursorHintMgr = new CursorHintMgr(m_Cursor, m_Tooltip);
             SceneHelper.OnSceneUnload += CleanupFromScene;
 
-            Services.Events.Register(GameEvents.OptionsUpdated, OnOptionsUpdated);
+            Services.Events.Register(GameEvents.OptionsUpdated, OnOptionsUpdated)
+                .Register(GameEvents.SurveyStart, () => {
+                    m_SurveyCounter++;
+                    Services.Input.PauseAll();
+                }, this)
+                .Register(GameEvents.SurveyEnd, () => {
+                    m_SurveyCounter--;
+                    Services.Input.ResumeAll();
+                }, this);
 
             BindCamera(Camera.main);
             transform.FlattenHierarchy();

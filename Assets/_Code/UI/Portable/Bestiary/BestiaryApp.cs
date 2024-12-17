@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using EasyAssetStreaming;
 using System.Collections;
+using BeauUtil.Variants;
 
 namespace Aqua.Portable {
     public sealed class BestiaryApp : PortableMenuApp {
@@ -67,7 +68,7 @@ namespace Aqua.Portable {
         #region Panel
 
         protected override void OnHide(bool inbInstant) {
-            Script.WriteVariable("portable:bestiary.currentEntry", null);
+            Script.WriteVariable("portable:bestiary.currentEntry", Variant.Null);
 
             m_LastScroll = m_EntryScroll.verticalNormalizedPosition;
 
@@ -121,7 +122,7 @@ namespace Aqua.Portable {
                 return;
             }
 
-            Services.Events.Dispatch(GameEvents.PortableEntrySelected, (BestiaryDesc)inElement.Data);
+            Services.Events.Dispatch(GameEvents.PortableEntrySelected, EvtArgs.Ref((BestiaryDesc)inElement.Data));
 
             m_EntryPageLoad.Replace(this, LoadEntry((BestiaryDesc)inElement.Data, false)).Tick();
         }
@@ -223,7 +224,7 @@ namespace Aqua.Portable {
                 m_InfoPage.FactPools.FreeAll();
                 m_InstantiatedButtons.Clear();
                 m_EntryToggleGroup.SetAllTogglesOff();
-                Script.WriteVariable("portable:bestiary.currentEntry", null);
+                Script.WriteVariable("portable:bestiary.currentEntry", Variant.Null);
                 if (inbSyncToggles) {
                     m_EntryScroll.verticalNormalizedPosition = 1;
                 }

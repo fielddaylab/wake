@@ -17,10 +17,11 @@ namespace Aqua.Profile {
         public ushort CurrentLevel;
         public SaveSummaryFlags Flags;
         public ushort DreamMask;
+        public ulong LaunchCount;
 
         #region ISerializedObject
 
-        public ushort Version { get { return 4; } }
+        public ushort Version { get { return 5; } }
 
         public void Serialize(Serializer ioSerializer) {
             ioSerializer.Serialize("profileId", ref Id);
@@ -40,6 +41,9 @@ namespace Aqua.Profile {
                 ioSerializer.Serialize("jobCompletedCount", ref JobCompletedCount);
                 ioSerializer.Serialize("currentLevel", ref CurrentLevel);
             }
+            if (ioSerializer.ObjectVersion >= 5) {
+                ioSerializer.Serialize("launchCount", ref LaunchCount);
+            }
         }
 
         #endregion // ISerializedObject
@@ -57,6 +61,7 @@ namespace Aqua.Profile {
             summary.SpecterCount = (byte) data.Science.SpecterCount();
             summary.DreamMask = GetDreamMask(data);
             summary.CurrentLevel = (ushort) data.Science.CurrentLevel();
+            summary.LaunchCount = data.LaunchCount;
             return summary;
         }
 

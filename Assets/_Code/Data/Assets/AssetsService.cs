@@ -1,7 +1,12 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#define DEVELOPMENT
+#endif // UNITY_EDITOR || DEVELOPMENT_BUILD
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Aqua.Journal;
 using BeauData;
 using BeauPools;
@@ -13,9 +18,10 @@ using EasyAssetStreaming;
 using NativeUtils;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace Aqua {
-    public class AssetsService : ServiceBehaviour {
+    public class AssetsService : ServiceBehaviour, IDebuggable {
         #region Inspector
 
         [Header("Databases")]
@@ -68,8 +74,8 @@ namespace Aqua {
 
         public Material SubtractCanvasMaterial { get { return m_SubtractCanvasMaterial; } }
 
-        private Dictionary<StringHash32, PreloadGroup> m_PreloadGroupMap = new Dictionary<StringHash32, PreloadGroup>(32);
-        private Dictionary<StringHash32, int> m_PreloadPathRefCountMap = new Dictionary<StringHash32, int>(64);
+        private Dictionary<StringHash32, PreloadGroup> m_PreloadGroupMap = Collections.NewDictionary<StringHash32, PreloadGroup>(32);
+        private Dictionary<StringHash32, int> m_PreloadPathRefCountMap = Collections.NewDictionary<StringHash32, int>(64);
         private Unsafe.ArenaHandle m_DecompressionBuffer;
 
         protected override void Initialize() {
@@ -337,5 +343,47 @@ namespace Aqua {
         }
 
         #endregion // Preload+Streaming
+
+#if DEVELOPMENT
+
+        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus(FindOrCreateMenu findOrCreate) {
+            DMInfo audit = findOrCreate("Audit", 8);
+            RegisterAssetDumpButton(audit, typeof(Texture2D));
+            RegisterAssetDumpButton(audit, typeof(RenderTexture));
+            RegisterAssetDumpButton(audit, typeof(AudioClip));
+            RegisterAssetDumpButton(audit, typeof(ScriptableObject));
+            RegisterAssetDumpButton(audit, typeof(Shader));
+            RegisterAssetDumpButton(audit, typeof(Material));
+            yield return audit;
+        }
+
+        static private void RegisterAssetDumpButton(DMInfo info, Type assetType) {
+            info.AddButton(string.Format("Dump {0} Stats", assetType.FullName), () => AuditAssets(assetType, false));
+            info.AddButton(string.Format("Dump {0} Details", assetType.FullName), () => AuditAssets(assetType, true));
+        }
+
+        static private void AuditAssets(Type assetType, bool verbose) {
+            StringBuilder sb = new StringBuilder(1024);
+            UnityEngine.Object[] objs = Resources.FindObjectsOfTypeAll(assetType);
+            sb.Append("Asset Stats for '").Append(assetType.FullName).Append("'\n - ")
+                    .Append(objs.Length).Append(" instances\n - ");
+
+            long bytes = 0;
+            foreach (var asset in objs) {
+                bytes += Profiler.GetRuntimeMemorySizeLong(asset);
+            }
+
+            Unsafe.FormatBytes(bytes, sb);
+            sb.Append(" native");
+            if (verbose) {
+                foreach(var asset in objs) {
+                    sb.Append("\n - Instance '").Append(asset.name).Append("' = ");
+                    Unsafe.FormatBytes(Profiler.GetRuntimeMemorySizeLong(asset), sb);
+                }
+            }
+            Log.Msg(sb.Flush());
+        }
+
+#endif // DEVELOPMENT
     }
 }

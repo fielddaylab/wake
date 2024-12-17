@@ -34,9 +34,9 @@ namespace Aqua
                 target = -1;
             }
 
-            for(int i = 0; i < inTickCount; ++i)
+            for(int i = 0; i < inTickCount; i++)
                 m_Ticks[i].color = m_EnabledColor;
-            for(int i = inTickCount; i < m_Ticks.Length; ++i)
+            for(int i = inTickCount; i < m_Ticks.Length; i++)
                 m_Ticks[i].color = m_DisabledColor;
 
             if (m_TickLayout != null) {

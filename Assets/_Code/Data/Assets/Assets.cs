@@ -41,7 +41,7 @@ namespace Aqua {
             WaterPropertyDB = inService.WaterProp;
             JournalDB = inService.Journal;
 
-            s_GlobalLookup = new Dictionary<StringHash32, ScriptableObject>(1600);
+            s_GlobalLookup = Collections.NewDictionary<StringHash32, ScriptableObject>(1600);
 
             Import(BestiaryDB);
             Import(CharacterDB);
@@ -84,6 +84,23 @@ namespace Aqua {
             Assert.True(s_GlobalLookup.ContainsKey(inId), "No asset with id '{0}'", inId.ToDebugString());
             s_GlobalLookup.TryGetValue(inId, out obj);
             return obj;
+        }
+
+        static public bool TryFind(StringHash32 inId, out ScriptableObject asset) {
+#if UNITY_EDITOR
+            if (!UnityEditor.EditorApplication.isPlaying) {
+                asset = ValidationUtils.FindAsset<ScriptableObject>(inId.ToDebugString());
+                return asset != null;
+            }
+#endif // UNITY_EDITOR
+
+            if (inId.IsEmpty) {
+                asset = null;
+                return false;
+            }
+
+            ScriptableObject obj;
+            return s_GlobalLookup.TryGetValue(inId, out asset);
         }
 
         [MethodImpl(256)]

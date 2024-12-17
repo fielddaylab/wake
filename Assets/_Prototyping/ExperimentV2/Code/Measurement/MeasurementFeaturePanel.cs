@@ -72,10 +72,10 @@ namespace ProtoAqua.ExperimentV2
         private void OnFeatureChanged(MeasurementTank.FeatureMask feature, bool value) {
             if (value) {
                 m_SelectedFeatures |= feature;
-                Services.Events.Dispatch(ExperimentEvents.ExperimentEnableFeature, feature);
+                Services.Events.Dispatch(ExperimentEvents.ExperimentEnableFeature, EvtArgs.Create(feature));
             } else {
                 m_SelectedFeatures &= ~feature;
-                Services.Events.Dispatch(ExperimentEvents.ExperimentDisableFeature, feature);
+                Services.Events.Dispatch(ExperimentEvents.ExperimentDisableFeature, EvtArgs.Create(feature));
             }
 
             OnUpdated?.Invoke(m_SelectedFeatures);

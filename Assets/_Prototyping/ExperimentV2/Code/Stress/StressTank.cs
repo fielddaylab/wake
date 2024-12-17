@@ -123,7 +123,7 @@ namespace ProtoAqua.ExperimentV2 {
 
         private void OnBackClick() {
             ExperimentScreen.Transition(m_OrganismScreen, m_World, Routine.Call(() => m_OrganismScreen.Panel.ClearSelection()));
-            Services.Events.Dispatch(ExperimentEvents.ExperimentEnded, m_ParentTank.Type);
+            Services.Events.Dispatch(ExperimentEvents.ExperimentEnded, EvtArgs.Create(m_ParentTank.Type));
             Services.Camera.MoveToPose(m_ParentTank.CameraPose, 0.4f);
             m_ParentTank.Guide.MoveTo(m_ParentTank.GuideTarget);
         }
@@ -163,7 +163,7 @@ namespace ProtoAqua.ExperimentV2 {
                     Services.Script.TriggerResponse(ExperimentTriggers.ExperimentFinished, table);
                 }
 
-                Services.Events.Dispatch(ExperimentEvents.ExperimentEnded, m_ParentTank.Type);
+                Services.Events.Dispatch(ExperimentEvents.ExperimentEnded, EvtArgs.Create(m_ParentTank.Type));
                 ExperimentScreen.Transition(m_OrganismScreen, m_World);
             }
         }
@@ -184,7 +184,7 @@ namespace ProtoAqua.ExperimentV2 {
 
                 m_SelectedCritterInstance = ActorWorld.Alloc(m_World, inDesc.Id());
 
-                Services.Events.Dispatch(ExperimentEvents.ExperimentBegin, m_ParentTank.Type);
+                Services.Events.Dispatch(ExperimentEvents.ExperimentBegin, EvtArgs.Create(m_ParentTank.Type));
                 Services.Camera.MoveToPose(m_ParentTank.ZoomPose, 0.4f);
                 m_ParentTank.Guide.MoveTo(m_ParentTank.GuideTargetZoomed);
 

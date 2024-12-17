@@ -66,7 +66,7 @@ namespace Aqua.Profile
             {
                 m_HasChanges = true;
                 m_UnlockedTabs |= GetTab(inEntityId);
-                Services.Events.Queue(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Entity, inEntityId));
+                Services.Events.Queue(GameEvents.BestiaryUpdated, EvtArgs.Create(new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Entity, inEntityId)));
                 return true;
             }
 
@@ -142,7 +142,7 @@ namespace Aqua.Profile
             if (m_ObservedEntities.Remove(inEntityId))
             {
                 m_HasChanges = true;
-                Services.Events.Queue(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.RemovedEntity, inEntityId));
+                Services.Events.Queue(GameEvents.BestiaryUpdated, EvtArgs.Create(new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.RemovedEntity, inEntityId)));
                 return true;
             }
 
@@ -207,7 +207,7 @@ namespace Aqua.Profile
                 }
                 if (bVisible)
                 {
-                    Services.Events.Queue(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Fact, inFactId));
+                    Services.Events.Queue(GameEvents.BestiaryUpdated, EvtArgs.Create(new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.Fact, inFactId)));
                 }
                 return true;
             }
@@ -276,7 +276,7 @@ namespace Aqua.Profile
                 }
                 
                 m_HasChanges = true;
-                Services.Events.Queue(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.RemovedFact, inFactId));
+                Services.Events.Queue(GameEvents.BestiaryUpdated, EvtArgs.Create(new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.RemovedFact, inFactId)));
                 return true;
             }
 
@@ -343,7 +343,7 @@ namespace Aqua.Profile
             bool bVisible = m_ObservedEntities.Contains(fact.Parent.Id());
             if (bVisible)
             {
-                Services.Events.Queue(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.UpgradeFact, inFactId));
+                Services.Events.Queue(GameEvents.BestiaryUpdated, EvtArgs.Create(new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.UpgradeFact, inFactId)));
             }
 
             m_HasChanges = true;
@@ -377,7 +377,7 @@ namespace Aqua.Profile
                 bool bVisible = m_ObservedEntities.Contains(fact.Parent.Id());
                 if (bVisible)
                 {
-                    Services.Events.Queue(GameEvents.BestiaryUpdated, new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.UpgradeFact, inFactId));
+                    Services.Events.Queue(GameEvents.BestiaryUpdated, EvtArgs.Create(new BestiaryUpdateParams(BestiaryUpdateParams.UpdateType.UpgradeFact, inFactId)));
                 }
 
                 m_HasChanges = true;

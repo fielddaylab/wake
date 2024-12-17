@@ -406,7 +406,7 @@ namespace Aqua
         public WaterPropertyMask(WaterPropertyId[] inIds)
         {
             Mask = 0;
-            for(int i = 0; i < inIds.Length; ++i)
+            for(int i = 0; i < inIds.Length; i++)
             {
                 Mask |= (byte) (1 << (int) inIds[i]);
             }

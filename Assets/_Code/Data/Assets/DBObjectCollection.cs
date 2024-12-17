@@ -73,7 +73,7 @@ namespace Aqua
             if (inPredicate == null)
                 throw new ArgumentNullException("inPredicate");
             
-            for(int i = 0; i < m_Objects.Length; ++i)
+            for(int i = 0; i < m_Objects.Length; i++)
             {
                 T obj = m_Objects[i];
                 if (inPredicate(obj))
@@ -105,7 +105,7 @@ namespace Aqua
         {
             PreLookupConstruct();
 
-            for(int i = 0; i < m_Objects.Length; ++i)
+            for(int i = 0; i < m_Objects.Length; i++)
             {
                 T obj = m_Objects[i];
                 ConstructLookupForItem(obj, i);
@@ -114,7 +114,7 @@ namespace Aqua
 
         protected virtual void PreLookupConstruct()
         {
-            m_IdMap = new Dictionary<StringHash32, T>(m_Objects.Length);
+            m_IdMap = Collections.NewDictionary<StringHash32, T>(m_Objects.Length);
         }
 
         protected virtual void ConstructLookupForItem(T inItem, int inIndex)

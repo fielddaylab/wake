@@ -121,10 +121,10 @@ namespace Aqua.Profile
             {
                 DebugService.Log(LogMask.DataService, "[ScienceData] Player level changed from {0} to {1}", m_CurrentLevel, inNextLevel);
 
-                Services.Events.Queue(GameEvents.ScienceLevelUpdated, new ScienceLevelUp() {
+                Services.Events.Queue(GameEvents.ScienceLevelUpdated, EvtArgs.Create(new ScienceLevelUp() {
                     OriginalLevel = m_CurrentLevel,
                     LevelAdjustment = (int) inNextLevel - (int) m_CurrentLevel
-                });
+                }));
 
                 m_CurrentLevel = inNextLevel;
                 m_HasChanges = true;

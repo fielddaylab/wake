@@ -273,6 +273,19 @@ namespace Aqua.Profile {
             return false;
         }
 
+        /// <summary>
+        /// Calculates the total number of completed tasks.
+        /// </summary>
+        public int CalculateTotalCompletedTasks() {
+            int count = m_CompletedTasks.Count;
+
+            foreach(var job in m_CompletedJobs) {
+                count += Assets.Job(job).Tasks().Length;
+            }
+
+            return count;
+        }
+
         #endregion // Tasks
 
         #region Debug
@@ -396,6 +409,7 @@ namespace Aqua.Profile {
             foreach(var taskId in m_CompletedTasks) {
                 writer.Text(taskId.ToDebugString());
             }
+            writer.KeyValue("Completed Task Count", CalculateTotalCompletedTasks());
         }
 
         #endregion // IProfileChunk

@@ -14,7 +14,8 @@ namespace Aqua.Profile {
         // 3: fix for softlock in first job
         // 4: exp->levels, adjusting starting exp
         // 5: story
-        public const uint CurrentVersion = 5;
+        // 6: surveys
+        public const uint CurrentVersion = 6;
 
         private const uint ValidVersionThreshold = 5;
 

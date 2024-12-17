@@ -65,7 +65,7 @@ namespace Aqua
             double stepPower = Math.Pow(10, -Math.Floor(Math.Log10(absRoughStep)));
             double normalizedStep = roughStep * stepPower;
             double goodNormalizedStep = normalizedStep;
-            for(int i = 0; i < GoodNormalizedTickCount; ++i)
+            for(int i = 0; i < GoodNormalizedTickCount; i++)
             {
                 if (GoodNormalizedTicks[i] >= normalizedStep)
                 {

@@ -187,7 +187,6 @@ namespace Aqua.Title
             {
                 Services.Input.ResumeAll();
                 Services.Data.StartPlaying("RS-1C");
-                UserCodeReminderFeature.TryQueueDisplay();
             }
         }
 
@@ -237,7 +236,6 @@ namespace Aqua.Title
             } else {
                 Services.Input.ResumeAll();
                 Services.Data.StartPlaying();
-                UserCodeReminderFeature.TryQueueDisplay();
             }
         }
 
@@ -265,7 +263,7 @@ namespace Aqua.Title
 
             Save.Options.Language.LanguageCode = newCode;
 
-            Services.Events.Dispatch(GameEvents.OnLanguageChange, newCode);
+            Services.Events.Dispatch(GameEvents.OnLanguageChange, EvtArgs.Create(newCode));
 
             Routine.Start(this, LanguageClickedCommon());
         }
@@ -285,7 +283,7 @@ namespace Aqua.Title
 
             Save.Options.Language.LanguageCode = newCode;
 
-            Services.Events.Dispatch(GameEvents.OnLanguageChange, newCode);
+            Services.Events.Dispatch(GameEvents.OnLanguageChange, EvtArgs.Create(newCode));
 
             Routine.Start(this, LanguageClickedCommon());
         }

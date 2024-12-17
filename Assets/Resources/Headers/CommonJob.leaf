@@ -32,10 +32,17 @@
 @when       JobIsAtCurrentStation(), $conditions \
 @cutscene
 
+#macro JobRecommendationHandler(nodeId, ...conditions) \
+:: jobGiver.jobRec.$nodeId \
+@trigger    JobRecommendation \
+@who        $JobGiverId \
+@when       $conditions \
+@cutscene
+
 // ACTIONS
 
 :: action.openJobBoard
-$call InteriorOpenJobBoard($JobGiverCameraPose)
+$call InteriorOpenJobBoard($JobGiverId, $JobGiverCameraPose)
 
 :: action.report
 {trigger-response TryArgumentation}

@@ -17,7 +17,7 @@ namespace Aqua
         {
             using(Profiling.Time("loading tweaks"))
             {
-                for(int i = 0; i < m_Tweaks.Length; ++i)
+                for(int i = 0; i < m_Tweaks.Length; i++)
                 {
                     Services.Tweaks.Load(m_Tweaks[i]);
                     yield return null;
@@ -27,7 +27,7 @@ namespace Aqua
 
         public void OnSceneUnload(SceneBinding inScene, object inContext)
         {
-            for(int i = 0; i < m_Tweaks.Length; ++i)
+            for(int i = 0; i < m_Tweaks.Length; i++)
             {
                 Services.Tweaks.Unload(m_Tweaks[i]);
             }

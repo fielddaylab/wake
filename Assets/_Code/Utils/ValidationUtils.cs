@@ -81,7 +81,7 @@ namespace Aqua
             if (assetGuids == null)
                 return null;
             
-            for (int i = 0; i < assetGuids.Length; ++i)
+            for (int i = 0; i < assetGuids.Length; i++)
             {
                 string path = AssetDatabase.GUIDToAssetPath(assetGuids[i]);
                 foreach (var obj in AssetDatabase.LoadAllAssetsAtPath(path))
@@ -101,7 +101,7 @@ namespace Aqua
             if (assetGuids == null)
                 return null;
             
-            for (int i = 0; i < assetGuids.Length; ++i)
+            for (int i = 0; i < assetGuids.Length; i++)
             {
                 string path = AssetDatabase.GUIDToAssetPath(assetGuids[i]);
                 foreach (var obj in AssetDatabase.LoadAllAssetsAtPath(path))
@@ -121,7 +121,7 @@ namespace Aqua
             if (assetGuids == null)
                 return null;
             
-            for (int i = 0; i < assetGuids.Length; ++i)
+            for (int i = 0; i < assetGuids.Length; i++)
             {
                 string path = AssetDatabase.GUIDToAssetPath(assetGuids[i]);
                 foreach (var obj in AssetDatabase.LoadAllAssetsAtPath(path))
@@ -141,7 +141,7 @@ namespace Aqua
             if (assetGuids == null)
                 return null;
             
-            for (int i = 0; i < assetGuids.Length; ++i)
+            for (int i = 0; i < assetGuids.Length; i++)
             {
                 string path = AssetDatabase.GUIDToAssetPath(assetGuids[i]);
                 var obj = AssetDatabase.LoadAssetAtPath<SceneAsset>(path);
@@ -159,7 +159,7 @@ namespace Aqua
             if (assetGuids == null)
                 return null;
             
-            for (int i = 0; i < assetGuids.Length; ++i)
+            for (int i = 0; i < assetGuids.Length; i++)
             {
                 string path = AssetDatabase.GUIDToAssetPath(assetGuids[i]);
                 GameObject obj = AssetDatabase.LoadAssetAtPath<GameObject>(path);
@@ -179,7 +179,7 @@ namespace Aqua
             if (assetGuids == null)
                 return null;
             
-            for (int i = 0; i < assetGuids.Length; ++i)
+            for (int i = 0; i < assetGuids.Length; i++)
             {
                 string path = AssetDatabase.GUIDToAssetPath(assetGuids[i]);
                 GameObject obj = AssetDatabase.LoadAssetAtPath<GameObject>(path);
@@ -203,7 +203,7 @@ namespace Aqua
                 return null;
             
             HashSet<T> assets = new HashSet<T>();
-            for (int i = 0; i < assetGuids.Length; ++i)
+            for (int i = 0; i < assetGuids.Length; i++)
             {
                 string path = AssetDatabase.GUIDToAssetPath(assetGuids[i]);
                 foreach (var obj in AssetDatabase.LoadAllAssetsAtPath(path))
@@ -229,7 +229,7 @@ namespace Aqua
                 return null;
             
             HashSet<T> assets = new HashSet<T>();
-            for (int i = 0; i < assetGuids.Length; ++i)
+            for (int i = 0; i < assetGuids.Length; i++)
             {
                 string path = AssetDatabase.GUIDToAssetPath(assetGuids[i]);
                 foreach (var obj in AssetDatabase.LoadAllAssetsAtPath(path))

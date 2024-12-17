@@ -82,7 +82,7 @@ namespace Aqua.Option
 
             OnChanged?.Invoke(m_Id, currentSettings);
 
-            Services.Events.Queue(GameEvents.OptionsUpdated, options);
+            Services.Events.Queue(GameEvents.OptionsUpdated, EvtArgs.Ref(options));
         }
 
         private void VolumeChange(float inVolume) 
@@ -95,7 +95,7 @@ namespace Aqua.Option
 
             OnChanged?.Invoke(m_Id, currentSettings);
             
-            Services.Events.Queue(GameEvents.OptionsUpdated, options);
+            Services.Events.Queue(GameEvents.OptionsUpdated, EvtArgs.Ref(options));
         }
 
         #endregion // Handlers

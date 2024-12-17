@@ -437,10 +437,10 @@ namespace ProtoAqua.Observation
                             // TODO: Play impact noise
 
                             if (m_DashDuration > 0) {
-                                Services.Events.Queue(Event_DashCollision, contact.Normal);
+                                Services.Events.Queue(Event_DashCollision, EvtArgs.Create(contact.Normal));
                                 Services.Script.QueueTriggerResponse(Trigger_DashCollision, -10000);
                             } else {
-                                Services.Events.Queue(Event_HardCollision, contact.Normal);
+                                Services.Events.Queue(Event_HardCollision, EvtArgs.Create(contact.Normal));
                                 Services.Script.QueueTriggerResponse(Trigger_HardCollision, -10000);
                             }
                         } else {
@@ -514,7 +514,7 @@ namespace ProtoAqua.Observation
                 Services.Script.QueueTriggerResponse(Trigger_ToolActivated, 0, tempTable);
             }
 
-            Services.Events.Dispatch(Event_ToolSwitched, new ToolState(inTool, true));
+            Services.Events.Dispatch(Event_ToolSwitched, EvtArgs.Create(new ToolState(inTool, true)));
             return true;
         }
 
@@ -538,7 +538,7 @@ namespace ProtoAqua.Observation
                 Script.WriteVariable(Var_LastFlashlightState, state);
             }
 
-            Services.Events.Dispatch(Event_ToolSwitched, new ToolState(inTool, state));
+            Services.Events.Dispatch(Event_ToolSwitched, EvtArgs.Create(new ToolState(inTool, state)));
             
             var tempTable = TempVarTable.Alloc();
             tempTable.Set("toolId", ToolIdToString[(int) inTool]);
@@ -727,7 +727,7 @@ namespace ProtoAqua.Observation
                 }
             }
 
-            Services.Events.Dispatch(Event_ToolPermissions, new ToolState(inToolId, allowed));
+            Services.Events.Dispatch(Event_ToolPermissions, EvtArgs.Create(new ToolState(inToolId, allowed)));
         }
 
         #endregion // Leaf

@@ -115,7 +115,7 @@ namespace Aqua.Option
 
             OptionsData options = Save.Options;
             
-            Services.Events.Queue(GameEvents.OptionsUpdated, options);
+            Services.Events.Queue(GameEvents.OptionsUpdated, EvtArgs.Ref(options));
         }
     }
 }

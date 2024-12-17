@@ -560,7 +560,7 @@ namespace Aqua.Argumentation {
                 Log.Error("[ArgumentationService] Argumentation is not loaded, or was completed when loaded (id={0})", s_Instance.m_CurrentId);
                 return;
             }
-            Services.Events.Dispatch(ArgueEvents.ClaimDisplay, s_Instance.m_CurrentStatus);
+            Services.Events.Dispatch(ArgueEvents.ClaimDisplay, EvtArgs.Ref(s_Instance.m_CurrentStatus));
         }
 
         [LeafMember("ArgueHideClaim"), Preserve]

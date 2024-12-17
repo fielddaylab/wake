@@ -191,9 +191,10 @@ namespace Aqua.StationInterior
         #region Leaf
 
         [LeafMember("InteriorOpenJobBoard"), Preserve]
-        static private void LeafOpenJobBoard(ScriptObject inCameraPose = null) {
+        static private void LeafOpenJobBoard(StringHash32 inCharacterId, ScriptObject inCameraPose = null) {
             var ctrl = Services.State.FindManager<InteriorUICtrl>();
             Assert.NotNull(ctrl);
+            ctrl.m_JobBoard.OverrideTargetId(inCharacterId);
             ctrl.m_JobBoard.OverrideZoomPose(inCameraPose);
             ctrl.SetPanel(ctrl.m_JobBoard, ctrl.m_CurrencyJobOffsetX);
         }
