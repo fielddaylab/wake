@@ -15,7 +15,9 @@ public class VaultDropdownToggle : MonoBehaviour {
     private void OnSceneUnloaded(Scene current) {
         if(current.name != sceneToDisplay) return;
         Debug.Log("[VaultDropdownToggle] remove vault button");
+#if UNITY_WEBGL && !UNITY_EDITOR
         DisableVaultButton();
+#endif
     }
     
     private void OnDisable() {
