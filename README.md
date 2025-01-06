@@ -2,7 +2,17 @@
 WAKE is an NSF Funded (DRL #1907384) science practices and life science content learning game produced by Field Day @ University of Wisconsin - Madison, Harvard University and University of Pennslvania.
 
 ## Debugging Tools
+Debugger can be launched by pressing Shify+W in a debug build
+
 [Job Pricing / Sequence Explorer](https://beauprime.github.io/ProgressionGraph/)
+
+In the "research" options of the debugger 
+"always predict job failure" forces it to give a job recommendation regardless of the output of the model
+
+The force AB test slider forces the game to behave as if the given test is active:
+* A: control group
+* B: job failure prediction
+* C: alternate job graph (this will permanently set it for the save file)
 
 ## Firebase Telemetry Events
 
