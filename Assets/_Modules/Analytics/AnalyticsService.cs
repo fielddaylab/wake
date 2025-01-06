@@ -91,7 +91,7 @@ namespace Aqua
                 .Register<PortableAppId>(GameEvents.PortableAppClosed, PortableAppClosedHandler, this)
                 // .Register<BestiaryDescCategory>(GameEvents.PortableBestiaryTabSelected, PortableBestiaryTabSelectedHandler, this)
                 .Register(ModelingConsts.Event_Begin_Model, LogBeginModel, this)
-                .Register<byte>(ModelingConsts.Event_Phase_Changed, LogModelPhaseChanged, this)
+                .Register<ModelPhases>(ModelingConsts.Event_Phase_Changed, LogModelPhaseChanged, this)
                 .Register<string>(ModelingConsts.Event_Ecosystem_Selected, LogModelEcosystemSelected, this)
                 .Register(ModelingConsts.Event_Concept_Started, LogModelConceptStarted, this)
                 .Register<ConceptualModelState.StatusId>(ModelingConsts.Event_Concept_Updated, LogModelConceptUpdated, this)
@@ -738,7 +738,7 @@ namespace Aqua
             }
         }
 
-        private void LogModelPhaseChanged(byte inPhase)
+        private void LogModelPhaseChanged(ModelPhases inPhase)
         {
             m_CurrentModelPhase = ((ModelPhases)inPhase).ToString();
 
