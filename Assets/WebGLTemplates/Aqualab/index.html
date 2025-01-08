@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en-us">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -8,6 +7,7 @@
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
     <link rel="stylesheet" href="TemplateData/style.css">
+    <link rel="stylesheet" href="https://use.typekit.net/vis0yeq.css">
     <script src="TemplateData/UnityProgress.js"></script>
     <script src="%UNITY_WEBGL_LOADER_URL%"></script>
     <script>
@@ -17,6 +17,7 @@
     <script src="https://cdn.brainpop.com/games/assets/js/html2canvas.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.4.3/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.4.3/firebase-analytics.js"></script>
+    <script src="FloatingDropdown/index.js"></script>
     <script>
       var firebaseConfig = {
         apiKey: "AIzaSyDM8z5Q3ydHPPTXu374ZF_5Uwc6rX2B7q4",
@@ -34,6 +35,22 @@
 </head>
 
 <body>
+    <floating-dropdown>
+        <style>
+            span {
+                font-family: "brandon-grotesque", sans-serif !important;
+            }
+        </style>
+        <img slot="header" src="FloatingDropdown/vault-library-logo.png" alt="Vault Games Library" width="250px">
+        <span slot="desc" class="content">
+            Field Day presents the largest collection of
+            <span style="color:#00ECD0">FREE</span>
+            learning games on the web.
+        </span>
+        <span slot="button-label" class="content">
+            OPEN VAULT
+        </span>
+    </floating-dropdown>
     <div id="BrainPOPsnapArea">
         <div class="webgl-content">
             <div id="unityContainer"></div>
