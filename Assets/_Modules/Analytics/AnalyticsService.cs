@@ -21,6 +21,8 @@ using Aqua.Debugging;
 using BeauPools;
 using BeauData;
 using Aqua.Analytics;
+using Aqua.JobBoard;
+using System.Runtime.CompilerServices;
 
 namespace Aqua
 {
@@ -36,6 +38,8 @@ namespace Aqua
 
         [SerializeField, Required] private string m_AppId = "AQUALAB";
         [SerializeField, Required] private string m_AppVersion = "6.2";
+        [SerializeField, Required] private SurveyPanel m_SurveyPrefab;
+        [SerializeField] private TextAsset m_SurveyData;
         [SerializeField] private FirebaseConsts m_Firebase = default(FirebaseConsts);
         
         #endregion // Inspector
@@ -43,6 +47,7 @@ namespace Aqua
         #region Logging Variables
 
         private OGDLog m_Log;
+        private OGDSurvey m_Survey;
 
         [NonSerialized] private StringHash32 m_CurrentJobHash = null;
         [NonSerialized] private string m_CurrentJobName = NoActiveJobId;
@@ -67,7 +72,7 @@ namespace Aqua
         protected override void Initialize()
         {
             Services.Events.Register<StringHash32>(GameEvents.JobStarted, LogAcceptJob, this)
-                .Register<string>(GameEvents.ProfileStarting, SetUserCode, this)
+                .Register<string>(GameEvents.ProfileStarting, OnProfileStarting, this)
                 .Register(GameEvents.ProfileUnloaded, OnProfileUnloaded, this)
                 .Register(GameEvents.ProfileStarted, OnProfileStarted, this)
                 .Register<FourCC>(GameEvents.OnLanguageChange, LogSelectLanguage, this)
@@ -86,7 +91,7 @@ namespace Aqua
                 .Register<PortableAppId>(GameEvents.PortableAppClosed, PortableAppClosedHandler, this)
                 // .Register<BestiaryDescCategory>(GameEvents.PortableBestiaryTabSelected, PortableBestiaryTabSelectedHandler, this)
                 .Register(ModelingConsts.Event_Begin_Model, LogBeginModel, this)
-                .Register<byte>(ModelingConsts.Event_Phase_Changed, LogModelPhaseChanged, this)
+                .Register<ModelPhases>(ModelingConsts.Event_Phase_Changed, LogModelPhaseChanged, this)
                 .Register<string>(ModelingConsts.Event_Ecosystem_Selected, LogModelEcosystemSelected, this)
                 .Register(ModelingConsts.Event_Concept_Started, LogModelConceptStarted, this)
                 .Register<ConceptualModelState.StatusId>(ModelingConsts.Event_Concept_Updated, LogModelConceptUpdated, this)
@@ -97,7 +102,7 @@ namespace Aqua
                 .Register(ModelingConsts.Event_Intervene_Error, LogModelInterveneError, this)
                 .Register(ModelingConsts.Event_Intervene_Complete, LogModelInterveneCompleted, this)
                 .Register(ModelingConsts.Event_End_Model, LogEndModel, this)
-                .Register<BestiaryDesc> (GameEvents.PortableEntrySelected, PortableBestiaryEntrySelectedhandler, this)
+                .Register<BestiaryDesc>(GameEvents.PortableEntrySelected, PortableBestiaryEntrySelectedhandler, this)
                 .Register(GameEvents.ScenePreloading, ClearSceneState, this)
                 .Register(GameEvents.PortableClosed, PortableClosed, this)
                 .Register<StringHash32>(GameEvents.InventoryUpdated, LogPurchaseUpgrade, this)
@@ -115,7 +120,8 @@ namespace Aqua
                 .Register<StringHash32>(ArgueEvents.FactSubmitted, LogFactSubmitted, this)
                 .Register<StringHash32>(ArgueEvents.FactRejected, LogFactRejected, this)
                 .Register(ArgueEvents.Unloaded, LogLeaveArgument, this)
-                .Register<StringHash32>(ArgueEvents.Completed, LogCompleteArgument,this);
+                .Register<StringHash32>(ArgueEvents.Completed, LogCompleteArgument, this)
+                .Register<JobRecommendationArgs>(GameEvents.DisplayedJobRecommendation, LogRecommendedJob, this);
                 
 
             Services.Script.OnTargetedThreadStarted += GuideHandler;
@@ -140,18 +146,40 @@ namespace Aqua
 
             m_Log.SetDebug(m_Debug);
 
+            m_Survey = new OGDSurvey(m_SurveyPrefab, m_Log);
+            m_Survey.OnSurveyBegin += (s) => {
+                Services.Events.Dispatch(GameEvents.SurveyStart, EvtArgs.Ref(s));
+            };
+            m_Survey.OnSurveyEnd += (s) => {
+                Services.Events.Dispatch(GameEvents.SurveyEnd, EvtArgs.Ref(s));
+            };
+
+            if (m_SurveyData != null) {
+                m_Survey.LoadSurveyPackageFromString(m_SurveyData.text);
+            }
+
+            Services.Loc.OnManifestUpdated.Register((m) => {
+                if (m.Surveys != m_SurveyData) {
+                    m_SurveyData = m.Surveys;
+                    m_Survey.LoadSurveyPackageFromString(m_SurveyData.text);
+                }
+            });
+
             RefreshGameState();
+        }
+
+        private void OnProfileStarting(string userCode) {
+            SetUserCode(userCode);
+            ResearchTests.HandleProfileStart(m_Survey);
         }
 
         private void SetUserCode(string userCode)
         {
-            var reminderStatus = UserCodeReminderFeature.GetStatus(Save.Current);
-
             m_Log.Initialize(new OGDLogConsts() {
                 AppId = m_AppId,
                 AppVersion = m_AppVersion,
                 ClientLogVersion = ClientLogVersion,
-                AppBranch = UserCodeReminderFeature.GetModifiedBranchName(BuildInfo.Branch(), reminderStatus)
+                AppBranch = ResearchTests.GetModifiedBranchName(BuildInfo.Branch())
             });
             m_Log.SetUserId(userCode);
         }
@@ -165,12 +193,15 @@ namespace Aqua
                 AppBranch = BuildInfo.Branch()
             });
             m_Log.SetUserId(null);
+
+            ResearchTests.HandleProfileEnd();
         }
 
         protected override void Shutdown()
         {
             Services.Events?.DeregisterAll(this);
             m_Log.Dispose();
+            m_Survey = null;
         }
         #endregion // IService
 
@@ -407,6 +438,13 @@ namespace Aqua
             }
         }
 
+        private void LogRecommendedJob(JobRecommendationArgs recArgs) {
+            using(var e = m_Log.NewEvent("recommended_job")) {
+                e.Param("attempted_job_name", Assets.NameOf(recArgs.JobId));
+                e.Param("recommended_job_name", recArgs.RecommendationId.IsEmpty ? "" : Assets.NameOf(recArgs.RecommendationId));
+            }
+        }
+
         private void LogSwitchJob(StringHash32 jobId)
         {
             SetCurrentJob(jobId);
@@ -477,10 +515,52 @@ namespace Aqua
 
         private void LogCompleteJob(StringHash32 jobId)
         {
-            string parsedJobName = Assets.Job(jobId).name;
+            var job = Assets.Job(jobId);
+            string parsedJobName = job.name;
 
             using(var e = m_Log.NewEvent("complete_job")) {
                 e.Param("job_name", parsedJobName);
+            }
+
+            ScienceTweaks tweaks = Services.Tweaks.Get<ScienceTweaks>();
+
+            if (!job.HasFlags(JobDescFlags.Hidden | JobDescFlags.NoPopup)) {
+                CheckDefaultSurveys();
+            }
+
+            if (jobId == JobIds.Final_final) {
+                SceneHelper.OnSceneLoaded += FinalFinalSurveyTriggerCheck;
+            }
+        }
+
+        private string[] CheckDefaultSurveys() {
+            ScienceTweaks tweaks = Services.Tweaks.Get<ScienceTweaks>();
+            int jobCount = Save.Current.Jobs.CompletedJobIds().Count;
+            string[] surveys = tweaks.GetJobCountSurveys(jobCount);
+
+            if (surveys != null && surveys.Length > 0) {
+                for (int i = 0; i < surveys.Length; i++) {
+                    string survey = surveys[i];
+                    Services.Script.QueueInvoke(() => {
+                        m_Survey.TryDisplaySurvey(survey);
+                    }, -10 - i);
+                }
+            }
+
+            return surveys;
+        }
+
+        private void FinalFinalSurveyTriggerCheck(SceneBinding s, object c) {
+            if (s.Id == GameScenes.RS_1C_StationInterior) {
+                string[] surveys = CheckDefaultSurveys();
+                ScienceTweaks tweaks = Services.Tweaks.Get<ScienceTweaks>();
+                string finalSurvey = tweaks.FinalJobSurvey();
+                if (surveys == null || !ArrayUtils.Contains(surveys, finalSurvey)) {
+                    Services.Script.QueueInvoke(() => {
+                        m_Survey.TryDisplaySurvey(finalSurvey);
+                    }, -10000);
+                }
+                SceneHelper.OnSceneLoaded -= FinalFinalSurveyTriggerCheck;
             }
         }
 
@@ -658,7 +738,7 @@ namespace Aqua
             }
         }
 
-        private void LogModelPhaseChanged(byte inPhase)
+        private void LogModelPhaseChanged(ModelPhases inPhase)
         {
             m_CurrentModelPhase = ((ModelPhases)inPhase).ToString();
 
@@ -960,7 +1040,7 @@ namespace Aqua
 
         #endregion // Log Events
 
-        #if DEVELOPMENT
+#if DEVELOPMENT
 
         IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus(FindOrCreateMenu findOrCreate) {
             DMInfo menu = findOrCreate("Logging");
@@ -970,9 +1050,41 @@ namespace Aqua
                 m_Debug = t;
                 m_Log.SetDebug(t);
             });
+
             yield return menu;
+
+            DMInfo research = findOrCreate("Research");
+            research.AddSlider("Force AB Test Value", () => ResearchTests.s_DEBUGForceTest, (f) => {
+                ResearchTests.s_DEBUGForceTest = (int) f;
+                ResearchTests.DEBUGRefreshAllTests();
+            }, -1, 2, 1, (f) => {
+                int i = (int) f;
+                if (i < 0) {
+                    return "N/a";
+                } else {
+                    return char.ToString((char) ('A' + i));
+                }
+            });
+            research.AddDivider();
+            research.AddToggle("Always Predict Job Failure", JobPredictionFeature.DEBUG_IsAlwaysPredictFailure, JobPredictionFeature.DEBUG_SetAlwaysPredictFailure);
+
+            DMInfo surveys = new DMInfo("Surveys");
+            foreach(var data in m_Survey.CurrentPackage.Surveys) {
+                AddSurveyButton(surveys, data);
+            }
+
+            research.AddDivider();
+            research.AddSubmenu(surveys);
+
+            yield return research;
         }
 
-        #endif // DEVELOPMENT
+        private void AddSurveyButton(DMInfo menu, SurveyData survey) {
+            menu.AddButton(survey.DisplayEventId, () => {
+                m_Survey.TryDisplaySurvey(survey.DisplayEventId);
+            });
+        }
+
+#endif // DEVELOPMENT
     }
 }

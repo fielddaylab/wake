@@ -265,7 +265,7 @@ namespace ProtoAqua.ExperimentV2
                 thread = Services.Script.TriggerResponse(ExperimentTriggers.ExperimentStarted, table);
             }
 
-            Services.Events.Dispatch(ExperimentEvents.ExperimentBegin, m_ParentTank.Type);
+            Services.Events.Dispatch(ExperimentEvents.ExperimentBegin, EvtArgs.Create(m_ParentTank.Type));
 
             yield return thread.Wait();
 
@@ -451,7 +451,7 @@ namespace ProtoAqua.ExperimentV2
                     Services.Script.TriggerResponse(ExperimentTriggers.ExperimentFinished, table);
                 }
 
-                Services.Events.Dispatch(ExperimentEvents.ExperimentEnded, m_ParentTank.Type);
+                Services.Events.Dispatch(ExperimentEvents.ExperimentEnded, EvtArgs.Create(m_ParentTank.Type));
                 ExperimentScreen.Transition(m_BeginScreen, m_World);
             }
         }

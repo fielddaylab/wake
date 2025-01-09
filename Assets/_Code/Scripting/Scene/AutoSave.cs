@@ -186,13 +186,13 @@ namespace Aqua.Scripting
         [LeafMember("AutoSaveNow"), Preserve]
         static public void Force()
         {
-            Services.Events.Dispatch(GameEvents.ProfileAutosaveHint, Mode.Now);
+            Services.Events.Dispatch(GameEvents.ProfileAutosaveHint, EvtArgs.Create(Mode.Now));
         }
 
         [LeafMember("AutoSaveHint"), Preserve]
         static public void Hint()
         {
-            Services.Events.Dispatch(GameEvents.ProfileAutosaveHint, Mode.Delayed);
+            Services.Events.Dispatch(GameEvents.ProfileAutosaveHint, EvtArgs.Create(Mode.Delayed));
         }
 
         [LeafMember("AutoSaveSuppress"), Preserve]

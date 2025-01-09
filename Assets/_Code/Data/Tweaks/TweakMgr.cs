@@ -8,6 +8,8 @@ using UnityEngine;
 using BeauUtil.Services;
 using Aqua.Debugging;
 
+using TweakIndex = BeauUtil.TypeIndex<Aqua.TweakAsset>;
+
 namespace Aqua
 {
     [ServiceDependency(typeof(AssetsService))]
@@ -20,19 +22,21 @@ namespace Aqua
         #endregion // Inspector
 
         [NonSerialized] private readonly HashSet<TweakAsset> m_LoadedTweaks = Collections.NewSet<TweakAsset>(16);
-        [NonSerialized] private readonly Dictionary<Type, TweakAsset> m_TweakMap = new Dictionary<Type, TweakAsset>(ReferenceEqualityComparer<Type>.Default);
+        [NonSerialized] private readonly TweakAsset[] m_TweakMap = new TweakAsset[TweakIndex.Capacity];
 
         #region IService
 
         protected override void Shutdown()
         {
-            foreach(var tweak in m_LoadedTweaks)
-            {
-                Unload(tweak, false);
+            for(int i = 0; i < TweakIndex.Count; i++) {
+                ref var tweak = ref m_TweakMap[i];
+                if (tweak != null) {
+                    Unload(tweak, false);
+                    tweak = null;
+                }
             }
 
             m_LoadedTweaks.Clear();
-            m_TweakMap.Clear();
         }
 
         protected override void Initialize()
@@ -50,7 +54,7 @@ namespace Aqua
             if (!m_LoadedTweaks.Add(inTweaks))
                 return;
 
-            m_TweakMap.Add(inTweaks.GetType(), inTweaks);
+            m_TweakMap[TweakIndex.Get(inTweaks.GetType())] = inTweaks;
             inTweaks.OnAdded();
 
             DebugService.Log(LogMask.Loading, "[TweakMgr] Loaded tweak '{0}' ({1})", inTweaks.name, inTweaks.GetType().Name);
@@ -66,7 +70,7 @@ namespace Aqua
             if (inbRemove && !m_LoadedTweaks.Remove(inTweaks))
                 return;
 
-            m_TweakMap.Remove(inTweaks.GetType());
+            m_TweakMap[TweakIndex.Get(inTweaks.GetType())] = null;
             inTweaks.OnRemoved();
 
             DebugService.Log(LogMask.Loading, "[TweakMgr] Unloaded tweak '{0}' ({1})", inTweaks.name, inTweaks.GetType().Name);
@@ -74,9 +78,17 @@ namespace Aqua
 
         public T Get<T>() where T : TweakAsset
         {
-            TweakAsset asset;
-            m_TweakMap.TryGetValue(typeof(T), out asset);
-            return asset as T;
+            return m_TweakMap[TweakIndex.Get<T>()] as T;
+        }
+
+        public TweakAsset GetByName(string name) {
+            foreach(var tweak in m_LoadedTweaks) {
+                if (tweak.name == name) {
+                    return tweak;
+                }
+            }
+
+            return null;
         }
 
         #if UNITY_EDITOR

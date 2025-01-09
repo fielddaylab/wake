@@ -297,7 +297,7 @@ namespace EasyAssetStreaming
                 switch(m_Type)
                 {
                     case NodeType.Array:
-                        for (int i = 0; i < m_List.Count; ++i)
+                        for (int i = 0; i < m_List.Count; i++)
                             yield return m_List[i];
                         break;
                     case NodeType.Object:
@@ -320,7 +320,7 @@ namespace EasyAssetStreaming
                 switch(m_Type)
                 {
                     case NodeType.Array:
-                        for (int i = 0; i < m_List.Count; ++i)
+                        for (int i = 0; i < m_List.Count; i++)
                             yield return new KeyValuePair<string, JSON>(null, m_List[i]);
                         break;
                     case NodeType.Object:
@@ -1220,7 +1220,7 @@ namespace EasyAssetStreaming
                 case NodeType.Array:
                     {
                         ioBuilder.Append('[');
-                        for (int i = 0; i < m_List.Count; ++i)
+                        for (int i = 0; i < m_List.Count; i++)
                         {
                             if (i > 0)
                                 ioBuilder.Append(',');
@@ -1289,7 +1289,7 @@ namespace EasyAssetStreaming
                 case NodeType.Array:
                     {
                         ioBuilder.Append('[');
-                        for (int i = 0; i < m_List.Count; ++i)
+                        for (int i = 0; i < m_List.Count; i++)
                         {
                             if (i > 0)
                                 ioBuilder.Append(',');
@@ -1331,7 +1331,7 @@ namespace EasyAssetStreaming
             if (inText == null)
                 return;
                 
-            for (int i = 0; i < inText.Length; ++i)
+            for (int i = 0; i < inText.Length; i++)
             {
                 char c = inText[i];
                 switch (c)
@@ -1376,7 +1376,7 @@ namespace EasyAssetStreaming
                 case NodeType.Array:
                     {
                         ioWriter.Write('[');
-                        for (int i = 0; i < m_List.Count; ++i)
+                        for (int i = 0; i < m_List.Count; i++)
                         {
                             if (i > 0)
                                 ioWriter.Write(',');
@@ -1446,7 +1446,7 @@ namespace EasyAssetStreaming
                 case NodeType.Array:
                     {
                         ioWriter.Write('[');
-                        for (int i = 0; i < m_List.Count; ++i)
+                        for (int i = 0; i < m_List.Count; i++)
                         {
                             if (i > 0)
                                 ioWriter.Write(',');
@@ -1495,7 +1495,7 @@ namespace EasyAssetStreaming
             if (inText == null)
                 return;
                 
-            for (int i = 0; i < inText.Length; ++i)
+            for (int i = 0; i < inText.Length; i++)
             {
                 char c = inText[i];
                 switch (c)
@@ -1589,7 +1589,7 @@ namespace EasyAssetStreaming
 
                     case NodeType.Array:
                         ioWriter.Write(inJSON.m_List.Count);
-                        for (int i = 0; i < inJSON.m_List.Count; ++i)
+                        for (int i = 0; i < inJSON.m_List.Count; i++)
                             Serialize(inJSON.m_List[i], ioWriter);
                         break;
 
@@ -1643,7 +1643,7 @@ namespace EasyAssetStreaming
                         {
                             int count = inReader.ReadInt32();
                             JSON obj = CreateObject();
-                            for (int i = 0; i < count; ++i)
+                            for (int i = 0; i < count; i++)
                             {
                                 string key = inReader.ReadString();
                                 obj.m_Dict.Add(key, Deserialize(inReader));
@@ -1655,7 +1655,7 @@ namespace EasyAssetStreaming
                         {
                             int count = inReader.ReadInt32();
                             JSON arr = CreateArray(count);
-                            for (int i = 0; i < count; ++i)
+                            for (int i = 0; i < count; i++)
                                 arr.m_List.Add(Deserialize(inReader));
                             return arr;
                         }

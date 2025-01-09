@@ -11,6 +11,9 @@ using BeauUtil;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Aqua.Analytics;
+using Aqua.Scripting;
+using BeauUtil.Variants;
 
 namespace Aqua.JobBoard {
     public class JobBoard : BasePanel, IAsyncLoadPanel {
@@ -58,6 +61,8 @@ namespace Aqua.JobBoard {
         [NonSerialized] private bool m_HasAvailableJobs = false;
         [NonSerialized] private CameraPose m_OverrideZoomPose = null;
         [NonSerialized] private Routine m_AsyncLoadRoutine;
+        [NonSerialized] private bool m_DisplayedPotentialFailureWarning = false;
+        [NonSerialized] private StringHash32 m_CurrentTargetId;
 
         #region Unity Events
 
@@ -84,6 +89,10 @@ namespace Aqua.JobBoard {
             }
         }
 
+        public void OverrideTargetId(StringHash32 id) {
+            m_CurrentTargetId = id;
+        }
+
         #region Handlers
 
         private void OnButtonSelected(JobButton inJobButton) {
@@ -91,6 +100,7 @@ namespace Aqua.JobBoard {
             m_Info.Populate(inJobButton.Job, inJobButton.Status);
             Services.Audio.PostEvent("Menu.Fill");
             m_JobToggle.allowSwitchOff = false;
+            m_DisplayedPotentialFailureWarning = false;
         }
 
         private void OnJobAction() {
@@ -99,6 +109,11 @@ namespace Aqua.JobBoard {
                 case JobProgressCategory.Available:
                 case JobProgressCategory.InProgress: {
                         if (m_SelectedJobButton.Group == JobProgressCategory.Available) {
+                            if (!m_DisplayedPotentialFailureWarning && JobPredictionFeature.PredictFailure(m_SelectedJobButton.Job.Id(), out var checkJobs)) {
+                                m_DisplayedPotentialFailureWarning = true;
+                                DisplayPotentialFailureWarning(m_SelectedJobButton.Job.Id(), checkJobs);
+                                break;
+                            }
                             Services.Audio.PostEvent("JobBoard.Accept");
                         } else {
                             Services.Audio.PostEvent("JobBoard.Switch");
@@ -109,6 +124,66 @@ namespace Aqua.JobBoard {
                         break;
                     }
             }
+        }
+
+        private void DisplayPotentialFailureWarning(StringHash32 attemptedJobId, UnsafeSpan<StringHash32> checkJobIds) {
+            StringHash32 missingJobId = default;
+            JobDesc missingJob = null;
+            bool visitedMissingStation = false;
+            foreach(var jobId in checkJobIds) {
+                if (jobId.IsEmpty) {
+                    continue;
+                }
+
+                JobDesc job = Assets.Job(jobId);
+                var status = JobUtils.GetJobStatus(job, Save.Current, true);
+                
+                // if we've completed this job, skip
+                if ((status.Status & JobStatusFlags.Completed) != 0) {
+                    continue;
+                }
+
+                // if the job is not visible and unlocked, skip
+                if ((status.Status & JobStatusFlags.Mask_Available) != JobStatusFlags.Mask_Available) {
+                    continue;
+                }
+
+                // if the job is at a station we have yet to unlock, skip
+                if (!job.StationId().IsEmpty && !Save.Map.IsStationUnlocked(job.StationId())) {
+                    continue;
+                }
+
+                MapDesc quickTravel = Assets.Map(job.StationId()).QuickTravel();
+                if (quickTravel) {
+                    visitedMissingStation = Save.Map.HasVisitedLocation(quickTravel.Id());
+                } else {
+                    visitedMissingStation = Save.Map.HasVisitedLocation(job.StationId());
+                }
+
+                missingJobId = jobId;
+                missingJob = job;
+                break;
+            }
+
+            using(var table = TempVarTable.Alloc()) {
+                table.Set("jobId", missingJobId);
+                table.Set("jobLocationPreviouslyVisited", visitedMissingStation);
+                if (!missingJobId.IsEmpty) {
+                    table.Set("jobLocation", missingJob.StationId());
+                    table.Set("jobPoster", missingJob.PosterId());
+                    table.Set("jobInProgress", Save.Jobs.IsInProgress(missingJobId));
+                } else {
+                    table.Set("jobLocationPreviouslyVisited", Variant.Null);
+                    table.Set("jobPoster", Variant.Null);
+                    table.Set("jobInProgress", Variant.Null);
+                }
+                Services.Script.TriggerResponse(GameTriggers.JobRecommendation, m_CurrentTargetId, null, table);
+            }
+
+            Services.Events.Dispatch(GameEvents.DisplayedJobRecommendation, EvtArgs.Create(new JobRecommendationArgs() {
+                JobId = attemptedJobId,
+                RecommendationId = missingJobId
+            }));
         }
 
         private IEnumerator WaitToExit() {
@@ -366,6 +441,8 @@ namespace Aqua.JobBoard {
 
             m_JobToggle.allowSwitchOff = true;
             m_AsyncLoadRoutine.Replace(this, LoadButtons());
+            m_DisplayedPotentialFailureWarning = false;
+            JobPredictionFeature.CacheJobPredictionValues();
 
             m_Info.Clear();
         }
@@ -406,5 +483,10 @@ namespace Aqua.JobBoard {
         }
 
         #endregion // BasePanel
+    }
+
+    public struct JobRecommendationArgs {
+        public StringHash32 JobId;
+        public StringHash32 RecommendationId;
     }
 }

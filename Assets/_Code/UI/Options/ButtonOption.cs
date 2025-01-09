@@ -32,7 +32,7 @@ namespace Aqua.Option
         private void HandleButtonClick() 
         {
             OnClicked?.Invoke();
-            Services.Events.Queue(GameEvents.OptionsUpdated, Save.Options);
+            Services.Events.Queue(GameEvents.OptionsUpdated, EvtArgs.Ref(Save.Options));
         }
     }
 }

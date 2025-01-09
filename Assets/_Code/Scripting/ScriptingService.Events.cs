@@ -24,6 +24,7 @@ namespace Aqua
             public const string EnvColorString = "#f57c18";
             public const string ItemColorString = "#00ffc8";
             public const string MapColorString = "#ffccf9";
+            public const string JobColorString = "#ffccf9";
             public const string CashColorString = "#e5cf12";
             public const string ExpColorString = "#a1ff29";
         }
@@ -55,6 +56,7 @@ namespace Aqua
             m_TagEventParser.AddReplace("nameof", ReplaceNameOf);
             m_TagEventParser.AddReplace("pluralnameof", ReplacePluralNameOf);
             m_TagEventParser.AddReplace("fullnameof", ReplaceFullNameOf);
+            m_TagEventParser.AddReplace("formalnameof", ReplaceFormalShortNameOf);
             m_TagEventParser.AddReplace("item-count", ReplaceItemCount);
             m_TagEventParser.AddReplace('|', "{wait 0.25}");
 
@@ -232,6 +234,12 @@ namespace Aqua
                 return Loc.Find(charDef.ShortNameId());
             }
 
+            JobDesc jobDef = obj as JobDesc;
+            if (!jobDef.IsReferenceNull())
+            {
+                return Loc.FormatFromString("<" + ColorTags.JobColorString + ">" + "{0}</color>", jobDef.NameId());
+            }
+
             Log.Error("[ScriptingService] Unknown symbol to get name of: '{0}'", inTag.Data);
             return "[ERROR]";
         }
@@ -288,6 +296,23 @@ namespace Aqua
             if (!map.IsReferenceNull())
             {
                 return Loc.FormatFromString("<" + ColorTags.MapColorString + ">" + "{0}</color>", map.LabelId());
+            }
+
+            return ReplaceNameOf(inTag, inContext);
+        }
+
+        static private string ReplaceFormalShortNameOf(TagData inTag, object inContext)
+        {
+            if (inTag.Data.StartsWith('@')) {
+                StringHash32 characterId = inTag.Data.Substring(1);
+                return Loc.Find(Assets.Character(characterId).FormalShortNameId());
+            }
+
+            ScriptableObject obj = Assets.Find(Script.ParseArg<StringHash32>(inTag.Data, inContext));
+
+            ScriptCharacterDef charDef = obj as ScriptCharacterDef;
+            if (!charDef.IsReferenceNull()) {
+                return Loc.Find(charDef.FormalShortNameId());
             }
 
             return ReplaceNameOf(inTag, inContext);
@@ -526,7 +551,7 @@ namespace Aqua
 
             var faders = Services.UI.WorldFaders;
             bool bWait = false;
-            for(int i = 2; i < args.Count; ++i)
+            for(int i = 2; i < args.Count; i++)
             {
                 var arg = args[i];
                 if (arg == "above-ui")
@@ -554,7 +579,7 @@ namespace Aqua
 
             var faders = Services.UI.WorldFaders;
             bool bWait = false;
-            for(int i = 2; i < args.Count; ++i)
+            for(int i = 2; i < args.Count; i++)
             {
                 var arg = args[i];
                 if (arg == "above-ui")
@@ -587,7 +612,7 @@ namespace Aqua
             float duration = StringParser.ParseFloat(args[0], 0.2f);
 
             bool bWait = false;
-            for(int i = 1; i < args.Count; ++i)
+            for(int i = 1; i < args.Count; i++)
             {
                 var arg = args[i];
                 if (arg == "wait")

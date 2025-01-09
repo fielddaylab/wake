@@ -28,7 +28,7 @@ namespace EasyAssetStreaming.Editor {
             Array.Resize(ref s_LayerContent, layers.Length);
             Array.Resize(ref s_LayerIds, layers.Length);
 
-            for (int i = 0; i < layers.Length; ++i)
+            for (int i = 0; i < layers.Length; i++)
             {
                 s_LayerContent[i] = new GUIContent(layers[i].name);
                 s_LayerIds[i] = layers[i].id;

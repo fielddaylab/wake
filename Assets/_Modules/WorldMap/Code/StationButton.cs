@@ -92,7 +92,7 @@ namespace Aqua.WorldMap
 
             m_Selected = true;
             m_HighlightColorRoutine.Replace(this, ColorGroupTween(m_RegionColor, GetFillColor(AQColors.HighlightYellow.WithAlpha(0.5f)), 0.2f));
-            Services.Events.Dispatch(WorldMapCtrl.Event_RequestChangeStation, this);
+            Services.Events.Dispatch(WorldMapCtrl.Event_RequestChangeStation, EvtArgs.Ref(this));
         }
 
         private void OnPointerEnter(PointerEventData _) {

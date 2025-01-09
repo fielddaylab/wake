@@ -84,7 +84,7 @@ namespace Aqua {
         #region Unity Events
 
         public void Initialize() {
-            for (int i = 0; i < m_Buttons.Length; ++i) {
+            for (int i = 0; i < m_Buttons.Length; i++) {
                 int cachedIdx = i;
                 m_Buttons[i].Button.onClick.AddListener(() => OnButtonClicked(cachedIdx));
             }
@@ -226,7 +226,7 @@ namespace Aqua {
             if (m_OptionCount == 0) {
                 ioPopupFlags |= PopupFlags.ShowCloseButton;
             }
-            for (int i = 0; i < m_Buttons.Length; ++i) {
+            for (int i = 0; i < m_Buttons.Length; i++) {
                 ref ButtonConfig config = ref m_Buttons[i];
 
                 if (i < m_OptionCount) {

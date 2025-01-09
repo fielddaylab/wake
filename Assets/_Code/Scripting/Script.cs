@@ -40,12 +40,12 @@ namespace Aqua {
 
         [LeafMember("ScriptBlocking"), Preserve]
         static public bool ShouldBlock() {
-            return !Services.Valid || Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.UI.IsLetterboxed() || StateUtil.IsLoading || JournalCanvas.Visible();
+            return !Services.Valid || Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.UI.IsLetterboxed() || Services.UI.IsDisplayingSurvey || StateUtil.IsLoading || JournalCanvas.Visible();
         }
 
         [LeafMember("ScriptBlockingIgnoreLetterbox"), Preserve]
         static public bool ShouldBlockIgnoreLetterbox() {
-            return Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || StateUtil.IsLoading || JournalCanvas.Visible();
+            return Services.Script.IsCutscene() || Services.UI.Popup.IsDisplaying() || Services.UI.IsDisplayingSurvey || StateUtil.IsLoading || JournalCanvas.Visible();
         }
 
         [MethodImpl(256)]
@@ -272,7 +272,7 @@ namespace Aqua {
 
             ScriptThreadHandle thread;
 
-            thread = ScriptObject.Interact(inParams.Source.Object.Parent, !inParams.Available, inParams.Config.TargetId);
+            thread = ScriptObject.Interact(inParams.Source.Cast<ScriptComponent>().Parent, !inParams.Available, inParams.Config.TargetId);
 
             if (!inParams.Available) {
                 IEnumerator locked = inParams.Config.OnLocked?.Invoke(inParams, thread);
@@ -296,13 +296,13 @@ namespace Aqua {
 
             switch (inParams.Config.Action) {
                 case ScriptInteractAction.Inspect: {
-                        thread = ScriptObject.Inspect(inParams.Source.Object.Parent);
+                        thread = ScriptObject.Inspect(inParams.Source.Cast<ScriptComponent>().Parent);
                         yield return thread.Wait();
                         break;
                     }
 
                 case ScriptInteractAction.Talk: {
-                        thread = ScriptObject.Talk(inParams.Source.Object.Parent, inParams.Config.TargetId);
+                        thread = ScriptObject.Talk(inParams.Source.Cast<ScriptComponent>().Parent, inParams.Config.TargetId);
                         yield return thread.Wait();
                         break;
                     }
@@ -318,7 +318,7 @@ namespace Aqua {
                     }
 
                 case ScriptInteractAction.GoToView: {
-                        ViewManager.Find<ViewManager>().GoToNode(inParams.Source.Object.GetComponent<ViewLink>());
+                        ViewManager.Find<ViewManager>().GoToNode(inParams.Source.Cast<ScriptComponent>().GetComponent<ViewLink>());
                         break;
                     }
             }

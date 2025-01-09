@@ -41,9 +41,9 @@ namespace AquaAudio
         #endregion // Inspector
 
         private readonly HashSet<AudioPackage> m_LoadedPackages = Collections.NewSet<AudioPackage>(8);
-        private readonly Dictionary<StringHash32, AudioEvent> m_EventLookup = new Dictionary<StringHash32, AudioEvent>(128);
+        private readonly Dictionary<StringHash32, AudioEvent> m_EventLookup = Collections.NewDictionary<StringHash32, AudioEvent>(128);
 
-        private readonly Dictionary<StringHash32, StringHash32> m_EventRemap = new Dictionary<StringHash32, StringHash32>(32);
+        private readonly Dictionary<StringHash32, StringHash32> m_EventRemap = Collections.NewDictionary<StringHash32, StringHash32>(32);
 
         private readonly FixedPool<AudioTrackState> m_TrackPool = new FixedPool<AudioTrackState>(MaxTracks, Pool.DefaultConstructor<AudioTrackState>());
         private readonly RingBuffer<AudioTrackState> m_ActiveSamples = new RingBuffer<AudioTrackState>(MaxSampleTracks, RingBufferMode.Fixed);
@@ -76,7 +76,7 @@ namespace AquaAudio
             m_ListenerTransform = m_Listener.transform;
 
             m_BusMixes = new AudioPropertyBlock[BusCount - 1];
-            for(int i = 0; i < m_BusMixes.Length; ++i)
+            for(int i = 0; i < m_BusMixes.Length; i++)
                 m_BusMixes[i] = AudioPropertyBlock.Default;
             
             InitPool();
@@ -124,7 +124,7 @@ namespace AquaAudio
             properties[0] = masterProperties;
 
             // mix for each bux
-            for(int i = 0; i < m_BusMixes.Length; ++i)
+            for(int i = 0; i < m_BusMixes.Length; i++)
                 AudioPropertyBlock.Combine(masterProperties, m_BusMixes[i], ref properties[1 + i]);
 
             // additional layer mixes

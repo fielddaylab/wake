@@ -19,7 +19,7 @@ namespace ProtoAqua.Observation
             var scanMgr = ScanSystem.Find<ScanSystem>();
             using(Profiling.Time("loading scan data"))
             {
-                for(int i = 0; i < m_ScanData.Length; ++i)
+                for(int i = 0; i < m_ScanData.Length; i++)
                 {
                     scanMgr.Load(m_ScanData[i]);
                 }
@@ -30,7 +30,7 @@ namespace ProtoAqua.Observation
         public void OnSceneUnload(SceneBinding inScene, object inContext)
         {
             var scanMgr = ScanSystem.Find<ScanSystem>();
-            for(int i = 0; i < m_ScanData.Length; ++i)
+            for(int i = 0; i < m_ScanData.Length; i++)
             {
                 scanMgr.Unload(m_ScanData[i]);
             }

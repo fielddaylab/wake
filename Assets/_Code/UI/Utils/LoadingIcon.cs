@@ -156,7 +156,7 @@ namespace Aqua {
         static public Future PromptRetry()
         {
             Future future = new Future();
-            Services.Events?.Dispatch(Event_Prompt, future);
+            Services.Events?.Dispatch(Event_Prompt, EvtArgs.Ref(future));
             return future;
         }
     }

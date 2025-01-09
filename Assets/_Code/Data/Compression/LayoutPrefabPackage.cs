@@ -69,6 +69,9 @@ namespace Aqua.Compression {
             GameObject root = new GameObject("temp");
             root.SetActive(false);
 
+            long rawSize = 0;
+            long compressedSize = 0;
+
             try {
                 using(Profiling.Time("compressing prefabs")) {
                     int idx = 0;
@@ -82,6 +85,7 @@ namespace Aqua.Compression {
                         try {
                             Log.Msg("[LayoutPrefabPackage] Encoding '{0}'", prefab.name);
                             byte[] compressed = instantiated.GetComponent<CompressiblePrefab>().Compress(compressor, CompressedRectTransformBounds.Default);
+                            rawSize += compressed.Length;
                             if (m_AllowLZCompression && compressed.Length >= 0x80) {
                                 Log.Msg("[LayoutPrefabPackage] Compressing '{0}'...", prefab.name);
                                 byte[] uncompressed = (byte[]) compressed.Clone();
@@ -99,6 +103,7 @@ namespace Aqua.Compression {
                                 Offset = (uint) allData.Count,
                                 Length = (uint) compressed.Length
                             };
+                            compressedSize += compressed.Length;
                             toc.Add(entry);
                             allData.AddRange(compressed);
                         } finally {
@@ -108,6 +113,8 @@ namespace Aqua.Compression {
                     m_Bank = new PackageBank(compressor);
                     m_TOC = toc.ToArray();
                     m_CompressedData = allData.ToArray();
+
+                    Log.Msg("[LayoutPrefabPackage] Total Compression Ratio: {0} ({1} raw vs {2} compressed)", (float) rawSize / compressedSize, rawSize, compressedSize);
                 }
 
                 EditorUtility.SetDirty(this);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using BeauUtil;
+using BeauUtil.IO;
 using Leaf;
 using UnityEngine;
 
@@ -21,7 +22,7 @@ namespace Aqua
             #if UNITY_EDITOR
             if (m_ScriptingRef == null)
             {
-                m_ScriptingRef = new ReloadableAssetRef<LeafAsset>(m_Scripting);
+                m_ScriptingRef = new ReloadableRef<LeafAsset>(m_Scripting);
             }
             return m_ScriptingRef;
             #else
@@ -31,11 +32,11 @@ namespace Aqua
 
         #if UNITY_EDITOR
 
-        [NonSerialized] private ReloadableAssetRef<LeafAsset> m_ScriptingRef = null;
+        [NonSerialized] private ReloadableRef<LeafAsset> m_ScriptingRef = null;
 
         internal void EditorInit()
         {
-            m_ScriptingRef = new ReloadableAssetRef<LeafAsset>(m_Scripting);
+            m_ScriptingRef = new ReloadableRef<LeafAsset>(m_Scripting);
         }
 
         #endif // UNITY_EDITOR

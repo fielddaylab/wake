@@ -8,6 +8,8 @@ using Aqua.Scripting;
 
 namespace Aqua
 {
+    [TypeIndexCapacity(16)]
+    [NonIndexed]
     public class SharedPanel : BasePanel, IScriptComponent
     {
         [NonSerialized] private Canvas m_CachedCanvas;

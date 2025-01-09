@@ -37,12 +37,12 @@ namespace ProtoAqua.Observation
 
         private void OnToolSelected(PlayerROV.ToolId inToolId)
         {
-            Services.Events.Dispatch(PlayerROV.Event_RequestToolSwitch, inToolId);
+            Services.Events.Dispatch(PlayerROV.Event_RequestToolSwitch, EvtArgs.Create(inToolId));
         }
 
         private void OnToolToggled(PlayerROV.ToolId inToolId, bool state)
         {
-            Services.Events.Dispatch(PlayerROV.Event_RequestToolToggle, new PlayerROV.ToolState(inToolId, state));
+            Services.Events.Dispatch(PlayerROV.Event_RequestToolToggle, EvtArgs.Create(new PlayerROV.ToolState(inToolId, state)));
         }
 
         private void OnToolPermissions(PlayerROV.ToolState state) {

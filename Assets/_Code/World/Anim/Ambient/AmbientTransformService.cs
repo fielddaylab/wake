@@ -112,7 +112,7 @@ namespace Aqua.Animation
             float* animScaleBuffer = stackalloc float[objectCount];
             byte* changeBuffer = stackalloc byte[objectCount];
 
-            for(int i = 0; i < objectCount; ++i)
+            for(int i = 0; i < objectCount; i++)
             {
                 changeBuffer[i] = 0;
             }
@@ -185,7 +185,7 @@ namespace Aqua.Animation
                         targetTransform.localScale = targetScale;
                     }
                 }
-                ++objectIdx;
+                objectIdx++;
             }
         }
 
@@ -200,7 +200,7 @@ namespace Aqua.Animation
                 ioPropertyBuffer[objectIndex] = obj.PositionAnimation;
                 ioPositions[objectIndex] = obj.PositionAnimation.Initial;
                 ioAnimScales[objectIndex] = obj.AnimationScale;
-                ++objectIndex;
+                objectIndex++;
             }
         }
 
@@ -212,7 +212,7 @@ namespace Aqua.Animation
                 ioStateBuffer[objectIndex] = obj.TransformState.ScaleState;
                 ioPropertyBuffer[objectIndex] = obj.ScaleAnimation;
                 ioScales[objectIndex] = obj.ScaleAnimation.Initial;
-                ++objectIndex;
+                objectIndex++;
             }
         }
 
@@ -224,7 +224,7 @@ namespace Aqua.Animation
                 ioStateBuffer[objectIndex] = obj.TransformState.RotationState;
                 ioPropertyBuffer[objectIndex] = obj.RotationAnimation;
                 ioRotations[objectIndex] = obj.RotationAnimation.Initial;
-                ++objectIndex;
+                objectIndex++;
             }
         }
 

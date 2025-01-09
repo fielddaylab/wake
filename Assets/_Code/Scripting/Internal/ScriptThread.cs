@@ -313,7 +313,7 @@ namespace Aqua.Scripting
         public void MarkChoice()
         {
             m_Flags |= ScriptFlags.InChoice;
-            Services.Events.Dispatch(GameEvents.ScriptChoicePresented, m_LastKnownChoiceDialog);
+            Services.Events.Dispatch(GameEvents.ScriptChoicePresented, EvtArgs.Box(m_LastKnownChoiceDialog));
         }
 
         public void EndChoice()

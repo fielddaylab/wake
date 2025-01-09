@@ -139,7 +139,7 @@ $call Uncle->TeleportTo(tio-intro-pos)
 {@drKelp} Besides, the Lower Depths are too dangerous. 
 {@drKelp} You can do so much good right here!  
 {@drKelp}Sun's almost up. Let's get you started with your first job. 
-$call InteriorOpenJobBoard()
+$call InteriorOpenJobBoard("drKelp")
 $set global:Act1.TalkedToMomMad = true
 {hide-dialog}
 {wait 0.5}
@@ -154,7 +154,7 @@ $set global:Act1.TalkedToMomMad = true
 @cutscene
 {@drKelp}   You've got your first job, Olivia! 
 {@drKelp} Let's see how it goes, and then I'll think about giving you more to do around here.  
-$call InteriorOpenJobBoard()
+$call InteriorOpenJobBoard("drKelp")
 
 // :: momMad
 // @trigger    Talk

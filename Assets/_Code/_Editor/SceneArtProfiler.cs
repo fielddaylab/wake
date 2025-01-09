@@ -268,7 +268,7 @@ namespace Aqua.Editor
         }
 
         static private void Reference(UnityEngine.Object asset, ref AssetStats currentStats, ref AssetStatDB db) {
-            if (!asset) {
+            if (!asset || !UnityHelper.IsPersistent(asset)) {
                 return;
             }
 
@@ -340,7 +340,7 @@ namespace Aqua.Editor
 
                 for(int i = 0; i < texturePropIds.Length; i++) {
                     Texture t = m.GetTexture(texturePropIds[i]);
-                    if (t != null) {
+                    if (t != null && UnityHelper.IsPersistent(t)) {
                         int textureId = GetMeta(t, db).Id;
                         textureRefBuffer[textureCount++] = textureId;
                     }

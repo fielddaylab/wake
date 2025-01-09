@@ -69,3 +69,65 @@ $choice .action.cancel; No thanks.
                  She was always working on something new. 
                  Sorry I can't be more help, Ollie. 
     $set jobs:specter6-comms.arctic.discussed = true
+
+// Recommendations
+
+#JobRecommendationHandler(noJob1, !jobId)
+@boostScore 5000
+@repeat 1
+{@$JobGiverId}  Hmm, I'm not sure you're ready for that yet.
+                You |might| want to try some other jobs first.
+
+#JobRecommendationHandler(noJob2, !jobId)
+@boostScore 5000
+@repeat 1
+{@$JobGiverId}  I don't know if you're ready for that one yet, Ollie.
+                I'd suggest you try some other jobs first.
+
+#JobRecommendationHandler(jobWithMe1, jobPoster == "$JobGiverId", !jobInProgress)
+@repeat 1
+{@$JobGiverId}  I don't think I'd recommend this one just yet, Ollie.
+                But I do have {nameof $local:jobId}.
+                I'd suggest you give that one a look.
+
+#JobRecommendationHandler(jobWithMe2, jobPoster == "$JobGiverId", !jobInProgress)
+@repeat 1
+{@$JobGiverId}  Hmm, I'm not sure you're ready for that one yet.
+                I do have {nameof $local:jobId} posted.
+                I'd recommend you check that job out first.
+
+#JobRecommendationHandler(resumeJobWithMe1, jobPoster == "$JobGiverId", jobInProgress)
+@repeat 1
+{@$JobGiverId}  I don't think I'd recommend this one just yet, Ollie.
+                But I believe you've already started on {nameof $local:jobId}.
+                I'd suggest you give that one another look.
+
+#JobRecommendationHandler(resumeJobWithMe2, jobPoster == "$JobGiverId", jobInProgress)
+@repeat 1
+{@$JobGiverId}  Hmm, I'm not sure you're ready for that one yet.
+                But you've already started {nameof $local:jobId}.
+                Perhaps you should go back and finish it.
+
+#JobRecommendationHandler(jobWithOther1, jobPoster == "profArctic")
+@repeat 1
+{@$JobGiverId}  I don't think I'd recommend this one just yet, Ollie.
+                But {nameof @profArctic} does have {nameof $local:jobId}.
+                I'd suggest you give that one a look.
+
+#JobRecommendationHandler(jobWithOther2, jobPoster == "profArctic")
+@repeat 1
+{@$JobGiverId}  Hmm, I'm not sure you're ready for that one yet.
+                {nameof @profArctic} does have {nameof $local:jobId} posted.
+                I'd recommend you check that job out first.
+
+#JobRecommendationHandler(jobAtNotVisitedStation1, jobLocation != "ArcticStation")
+@repeat 1
+{@$JobGiverId}  I can't recommend this one for you yet, Ollie.
+                I know that {formalnameof $local:jobPoster} has a job over at the {nameof $local:jobLocation}.
+                {nameof $local:jobId}, I believe it's called.
+
+#JobRecommendationHandler(jobAtNotVisitedStation2, jobLocation != "ArcticStation")
+@repeat 1
+{@$JobGiverId}  Hmm, I wouldn't suggest you try this one yet.
+                But I know {formalnameof $local:jobPoster} has a job at the {nameof $local:jobLocation}.
+                I'd recommend you head there and give {nameof $local:jobId} a try.

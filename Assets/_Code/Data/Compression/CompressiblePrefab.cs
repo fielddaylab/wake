@@ -37,6 +37,8 @@ namespace Aqua.Compression {
 
         #if UNITY_EDITOR
 
+        private const int MaxByteLength = 4096;
+
         internal byte[] Compress(PackageBuilder compressor, CompressedRectTransformBounds rectBounds) {
             unsafe {
                 Undo.IncrementCurrentGroup();
@@ -76,7 +78,7 @@ namespace Aqua.Compression {
                 }
 
                 // write to buffer
-                byte* tempBuffer = stackalloc byte[2048];
+                byte* tempBuffer = stackalloc byte[MaxByteLength];
                 int bufferLength = 0;
 
                 byte* bufferHead = tempBuffer;
@@ -84,11 +86,11 @@ namespace Aqua.Compression {
                 PrefabHeader prefabHeader;
                 prefabHeader.ObjectCount = (ushort) layoutElementCount;
 
-                UnsafeExt.Write(&bufferHead, &bufferLength, prefabHeader);
+                UnsafeExt.Write(&bufferHead, &bufferLength, MaxByteLength, prefabHeader);
 
                 for(int i = 0; i < layoutElementCount; i++) {
                     CompressedPrefabFlags flags = i == 0 ? CompressedPrefabFlags.IsRoot : 0;
-                    WriteObject(&bufferHead, &bufferLength, (Transform) layoutBuffer[i].Object, flags, typeBuffer[i], compressor, rectBounds, PreserveNames);
+                    WriteObject(&bufferHead, &bufferLength, MaxByteLength, (Transform) layoutBuffer[i].Object, flags, typeBuffer[i], compressor, rectBounds, PreserveNames);
                 }
 
                 // revert
@@ -101,48 +103,48 @@ namespace Aqua.Compression {
             }
         }
 
-        static private unsafe void WriteObject(byte** buffer, int* size, Transform obj, CompressedPrefabFlags flags, CompressedComponentTypes components, PackageBuilder compressor, CompressedRectTransformBounds rectBounds, bool preserveNames) {
+        static private unsafe void WriteObject(byte** buffer, int* size, int capacity, Transform obj, CompressedPrefabFlags flags, CompressedComponentTypes components, PackageBuilder compressor, CompressedRectTransformBounds rectBounds, bool preserveNames) {
             ObjectHeader objHeader;
             objHeader.NameIdx = compressor.AddString(preserveNames ? obj.name : "$");
             objHeader.ComponentTypes = components;
             objHeader.Flags = flags;
 
-            UnsafeExt.Write(buffer, size, objHeader);
+            UnsafeExt.Write(buffer, size, capacity, objHeader);
 
             if (HasComponent(objHeader.ComponentTypes, CompressedComponentTypes.RectTransform)) {
                 RectTransform rect = (RectTransform) obj;
                 CompressedRectTransform.Compress(rectBounds, rect, out CompressedRectTransform data);
-                UnsafeExt.Write(buffer, size, data);
+                UnsafeExt.Write(buffer, size, capacity, data);
             }
 
             if (HasComponent(objHeader.ComponentTypes, CompressedComponentTypes.RectGraphic)) {
                 RectGraphic graphic = obj.GetComponent<RectGraphic>();
                 CompressedRectGraphic.Compress(graphic, out CompressedRectGraphic data);
-                UnsafeExt.Write(buffer, size, data);
+                UnsafeExt.Write(buffer, size, capacity, data);
             }
 
             if (HasComponent(objHeader.ComponentTypes, CompressedComponentTypes.Image)) {
                 Image graphic = obj.GetComponent<Image>();
                 CompressedImage.Compress(compressor, graphic, out CompressedImage data);
-                UnsafeExt.Write(buffer, size, data);
+                UnsafeExt.Write(buffer, size, capacity, data);
             }
 
             if (HasComponent(objHeader.ComponentTypes, CompressedComponentTypes.StreamingUGUITexture)) {
                 StreamingUGUITexture graphic = obj.GetComponent<StreamingUGUITexture>();
                 CompressedStreamingUGUITexture.Compress(compressor, graphic, out CompressedStreamingUGUITexture data);
-                UnsafeExt.Write(buffer, size, data);
+                UnsafeExt.Write(buffer, size, capacity, data);
             }
 
             if (HasComponent(objHeader.ComponentTypes, CompressedComponentTypes.TextMeshPro)) {
                 TMP_Text graphic = obj.GetComponent<TMP_Text>();
                 CompressedTextMeshPro.Compress(compressor, graphic, out CompressedTextMeshPro data);
-                UnsafeExt.Write(buffer, size, data);
+                UnsafeExt.Write(buffer, size, capacity, data);
             }
 
             if (HasComponent(objHeader.ComponentTypes, CompressedComponentTypes.LocText)) {
                 LocText locText = obj.GetComponent<LocText>();
                 CompressedLocText.Compress(locText, out CompressedLocText data);
-                UnsafeExt.Write(buffer, size, data);
+                UnsafeExt.Write(buffer, size, capacity, data);
             }
         }
 

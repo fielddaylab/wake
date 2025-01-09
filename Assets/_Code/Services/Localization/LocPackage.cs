@@ -16,7 +16,7 @@ namespace Aqua
     {
         private const int MaxCompressedSize = 1024 * 1024 * 8;
 
-        private readonly Dictionary<StringHash32, string> m_Nodes = new Dictionary<StringHash32, string>(512);
+        private readonly Dictionary<StringHash32, string> m_Nodes = Collections.NewDictionary<StringHash32, string>(512);
         private readonly HashSet<StringHash32> m_IdsWithEvents = Collections.NewSet<StringHash32>(128);
 
         [BlockMeta("basePath"), Preserve] private string m_RootPath = string.Empty;
@@ -179,15 +179,17 @@ namespace Aqua
                     BlockParser.Parse(ref tmpPkg, pkg, Parsing.Block, Generator.Instance);
                 }
 
-                UnsafeExt.Write(&head, &bufferLength, (ushort) tmpPkg.m_Nodes.Count);
+                Log.Msg("{0} nodes in package", tmpPkg.m_Nodes.Count);
+
+                UnsafeExt.Write(&head, &bufferLength, MaxCompressedSize, (ushort) tmpPkg.m_Nodes.Count);
                 foreach(var kv in tmpPkg.m_Nodes) {
-                    UnsafeExt.Write(&head, &bufferLength, kv.Key);
-                    UnsafeExt.WriteString(&head, &bufferLength, kv.Value);
+                    UnsafeExt.Write(&head, &bufferLength, MaxCompressedSize, kv.Key);
+                    UnsafeExt.WriteString(&head, &bufferLength, MaxCompressedSize, kv.Value);
                 }
 
-                UnsafeExt.Write(&head, &bufferLength, (ushort) tmpPkg.m_IdsWithEvents.Count);
+                UnsafeExt.Write(&head, &bufferLength, MaxCompressedSize, (ushort) tmpPkg.m_IdsWithEvents.Count);
                 foreach(var v in tmpPkg.m_IdsWithEvents) {
-                    UnsafeExt.Write(&head, &bufferLength, v);
+                    UnsafeExt.Write(&head, &bufferLength, MaxCompressedSize, v);
                 }
 
                 byte[] written = new byte[bufferLength];

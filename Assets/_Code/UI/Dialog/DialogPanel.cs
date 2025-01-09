@@ -417,7 +417,7 @@ namespace Aqua
 
                     s_TextDisplayArgs.VisibleText = inLine.VisibleText;
                     s_TextDisplayArgs.NodeId = m_CurrentThread.GetThread()?.PeekNode().FullName();
-                    Services.Events.Dispatch(GameEvents.TextLineDisplayed, s_TextDisplayArgs);
+                    Services.Events.Dispatch(GameEvents.TextLineDisplayed, EvtArgs.Ref(s_TextDisplayArgs));
                 }
 
                 TagStringEventHandler handler = GetHandler();
@@ -627,7 +627,7 @@ namespace Aqua
 
             m_TempTagString?.Clear();
 
-            for(int i = optionsToShow; i < m_OptionButtons.Length; ++i)
+            for(int i = optionsToShow; i < m_OptionButtons.Length; i++)
             {
                 m_OptionButtons[i].gameObject.SetActive(false);
             }
@@ -640,7 +640,7 @@ namespace Aqua
             m_OptionSizer.enabled = false;
             m_OptionLayout.enabled = false;
 
-            for(int i = 0; i < optionsToShow; ++i)
+            for(int i = 0; i < optionsToShow; i++)
             {
                 m_OptionButtons[i].Prep();
             }

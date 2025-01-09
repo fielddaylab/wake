@@ -27,7 +27,7 @@ namespace ProtoAqua.Observation
 
         private void OnDisable() {
             if (m_Tick > 0) {
-                Services.Animation.Layout.Remove(this);
+                Services.Animation.Layout?.Remove(this);
                 m_Tick = 0;
             }
             Offset.Offset1 = default(Vector2);

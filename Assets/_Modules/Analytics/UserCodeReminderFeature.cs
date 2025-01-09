@@ -1,5 +1,5 @@
 ﻿// comment out this define to disable the AB test
-#define ANALYTICS_ABTEST_USERCODEREMINDER
+//#define ANALYTICS_ABTEST_USERCODEREMINDER
 
 using System.Collections;
 using Aqua.Profile;
@@ -16,15 +16,9 @@ namespace Aqua.Analytics {
 
         static public Status GetStatus(SaveData saveData) {
 #if ANALYTICS_ABTEST_USERCODEREMINDER
-            if (saveData == null || saveData.IsBookmark || string.IsNullOrEmpty(saveData.Id)) {
-                return Status.Inactive;
-            }
-
-            char c = saveData.Id[0];
-            int offset = char.ToUpperInvariant(c) - 'A';
-            return (offset & 0x1) == 0 ? Status.Active : Status.Inactive;
+            return ResearchTests.IsAB(saveData, 0) ? Status.Active : Status.Inactive;
 #else
-            return Status.Inactive;
+            return Status.Invalid;
 #endif // ANALYTICS_ABTEST_USERCODEREMINDER
         }
 
@@ -40,11 +34,13 @@ namespace Aqua.Analytics {
             }
         }
 
-        static public void TryQueueDisplay() {
-            var status = GetStatus(Save.Current);
-            if (status == Status.Active) {
-                Services.State.OnSceneLoadReady(DisplayReminder);
+        static public bool TryQueueDisplay() {
+            if (GetStatus(Save.Current) != Status.Active) {
+                return false;
             }
+
+            Services.State.OnSceneLoadReady(DisplayReminder);
+            return true;
         }
 
         static private IEnumerator DisplayReminder() {

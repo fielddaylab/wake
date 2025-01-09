@@ -85,16 +85,16 @@ namespace Aqua
             return TryGetScriptNode(inLocalNode, inNodeId, out outNode);
         }
 
-        IEnumerator ILeafPlugin<ScriptNode>.RunLine(LeafThreadState<ScriptNode> inThreadState, StringSlice inLine)
+        IEnumerator ILeafPlugin<ScriptNode>.RunLine(LeafThreadState<ScriptNode> inThreadState, LeafLineInfo inLine)
         {
             var thread = ScriptThread(inThreadState);
             if (thread.IsSkipping())
             {
-                SkipEventLine(thread, inLine);
+                SkipEventLine(thread, inLine.Text);
                 return null;
             }
 
-            return PerformEventLine(thread, inLine);
+            return PerformEventLine(thread, inLine.Text);
         }
 
         IEnumerator ILeafPlugin<ScriptNode>.ShowOptions(LeafThreadState<ScriptNode> inThreadState, LeafChoice inChoice)
@@ -231,7 +231,7 @@ namespace Aqua
 
             inThread.RecordDialog(lineEvents);
 
-            for (int i = 0; i < lineEvents.Nodes.Length; ++i)
+            for (int i = 0; i < lineEvents.Nodes.Length; i++)
             {
                 TagNodeData node = lineEvents.Nodes[i];
                 switch (node.Type)

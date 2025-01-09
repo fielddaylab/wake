@@ -13,10 +13,16 @@ namespace Aqua.Editor {
     static public class ProgressionGraph {
 
         public const int ExpForShop = 35;
+
+        static private readonly HashSet<string> IgnoreUnlocks = new HashSet<string>() {
+            "nav", "exterior", "Modeling", "Shop"
+        };
         
         [MenuItem("Aqualab/Analysis/Generate Nodes File")]
         static private void GenerateProgressionSource() {
+            ValidationUtils.FindAsset<ScienceTweaks>().EditorApply();
             JSON js = JSON.CreateObject();
+            GenerateConstants(js["constants"]);
             GenerateAssetsList(js["nodes"], js["startWith"]);
             using(var writer = new StreamWriter(File.Open("progression_nodes.json", FileMode.Create))) {
                 js.WriteTo(writer, 4);
@@ -24,8 +30,13 @@ namespace Aqua.Editor {
             EditorUtility.OpenWithDefaultApp("progression_nodes.json");
         }
 
+        static private void GenerateConstants(JSON consts) {
+            consts["EXP_1"].AsUInt = ScienceUtils.TotalExpForLevel(1);
+            consts["EXP_2"].AsUInt = ScienceUtils.TotalExpForLevel(2);
+            consts["EXP_3"].AsUInt = ScienceUtils.TotalExpForLevel(3);
+        }
+
         static private void GenerateAssetsList(JSON nodes, JSON starting) {
-            ValidationUtils.FindAsset<ScienceTweaks>().EditorApply();
             GenerateItemList(nodes, starting);
             GenerateJobsList(nodes, starting);
             GenerateMapList(nodes, starting);
@@ -99,7 +110,7 @@ namespace Aqua.Editor {
 
                 if (obj.Category() != InvItemCategory.Currency || obj.CashCost() > 0 || obj.RequiredLevel() > 0) {
                     itemJSON["type"].AsString = "item";
-                    AddRequirement(itemJSON, "Shop");
+                    AddRequirement(itemJSON, "kelp-shop-welcome");
                 } else {
                     itemJSON["type"].AsString = "currency";
                     itemJSON["isToken"].AsBool = true;
@@ -109,7 +120,7 @@ namespace Aqua.Editor {
                     AddRequirement(itemJSON, ItemIds.Cash, obj.CashCost(), true);
                 }
                 if (obj.RequiredLevel() > 0) {
-                    AddRequirement(itemJSON, ItemIds.Exp, (int) ScienceUtils.TotalExpForLevel((uint) obj.RequiredLevel()));
+                    AddRequirement(itemJSON, ItemIds.Exp, "EXP_" + obj.RequiredLevel().ToString());
                 }
                 if (obj.Prerequisite()) {
                     AddRequirement(itemJSON, obj.Prerequisite().name);
@@ -128,6 +139,7 @@ namespace Aqua.Editor {
                 JSON jobJSON = JSON.CreateObject();
 
                 jobJSON["type"].AsString = "job";
+                jobJSON["required_level"].AsInt = 0;
 
                 JSON difficulties = jobJSON["difficulty"];
 
@@ -139,17 +151,19 @@ namespace Aqua.Editor {
                     AddRequirement(jobJSON, obj.StationId());
                 }
 
-                if (obj.Id() == "kelp-shop-welcome") {
-                    AddRequirement(jobJSON, "VisualModel");
-                    AddRequirement(jobJSON, "ROVTagger");
-                }
+                int minLevel = 0;
 
                 foreach(var prereq in obj.RequiredJobs()) {
                     AddRequirement(jobJSON, prereq.name);
                 }
-                foreach(var upgrade in obj.RequiredUpgrades()) {
-                    AddRequirement(jobJSON, upgrade);
+                foreach(var upgradeId in obj.RequiredUpgrades()) {
+                    AddRequirement(jobJSON, upgradeId);
+
+                    InvItem upgrade = ValidationUtils.FindAsset<InvItem>(upgradeId);
+                    minLevel = Math.Max(upgrade.RequiredLevel(), minLevel);
                 }
+
+                jobJSON["required_level"].AsInt = minLevel;
 
                 if (obj.RequiredExp() > 0) {
                     AddRequirement(jobJSON, ItemIds.Exp, obj.RequiredExp());
@@ -172,6 +186,7 @@ namespace Aqua.Editor {
                 }
 
                 AnalyzeJobScript(obj.Scripting(), jobJSON);
+                HandleSpecialJobUnlocks(obj.Id(), jobJSON);
 
                 root.Add(obj.name, jobJSON);
             }
@@ -197,7 +212,7 @@ namespace Aqua.Editor {
             }
 
             foreach(Match match in UnlockMapRegex.Matches(contents)) {
-                if (assets.Add(match.Groups[1].Value)) {
+                if (assets.Add(match.Groups[1].Value) && !IgnoreUnlocks.Contains(match.Groups[1].Value)) {
                     AddResult(jobJSON, match.Groups[1].Value);
                 }
             }
@@ -214,6 +229,9 @@ namespace Aqua.Editor {
                 itemJSON["unlockType"].AsString = "manual";
             } else if (id == ItemIds.FlashlightCoordinates) {
                 AddResult(itemJSON, "FinalStation");
+                AddResult(itemJSON, "RS-0");
+            } else if (id == ItemIds.Flashlight) {
+                AddRequirement(itemJSON, "RS-0");
             }
         }
 
@@ -226,6 +244,23 @@ namespace Aqua.Editor {
             } else if (id == MapIds.RS_4X) {
                 AddRequirement(mapJSON, ItemIds.Flashlight);
                 AddRequirement(mapJSON, ItemIds.Engine);
+            } else if (id == MapIds.RS_0_Cave) {
+                AddRequirement(mapJSON, JobIds.Final_final);
+            }
+        }
+
+        static private void HandleSpecialJobUnlocks(StringHash32 id, JSON jobJSON) {
+            if (id == JobIds.Kelp_shop_welcome) {
+                AddResult(jobJSON, ItemIds.VisualModel);
+                AddResult(jobJSON, ItemIds.ROVTagger);
+
+                int cashCost = 0;
+                cashCost += ValidationUtils.FindAsset<InvItem>(ItemIds.VisualModel).CashCost();
+                cashCost += ValidationUtils.FindAsset<InvItem>(ItemIds.ROVTagger).CashCost();
+                AddResult(jobJSON, ItemIds.Cash, cashCost, true);
+            } else if (id == JobIds.Arctic_missing_whale) {
+                AddRequirement(jobJSON, ItemIds.Engine);
+                jobJSON["required_level"].AsInt = 2;
             }
         }
 
@@ -247,6 +282,16 @@ namespace Aqua.Editor {
             return obj;
         }
 
+        static private JSON GenerateAssetRef(string name, string constName, bool spend = false) {
+            JSON obj = JSON.CreateObject();
+            obj["id"].AsString = name;
+            obj["amount"].AsString = constName;
+            if (spend) {
+                obj["consume"].AsBool = true;
+            }
+            return obj;
+        }
+
         static private void AddRequirement(JSON nodeJSON, string name) {
             nodeJSON["requires"].Add(GenerateAssetRef(name));
         }
@@ -259,8 +304,16 @@ namespace Aqua.Editor {
             nodeJSON["requires"].Add(GenerateAssetRef(name, amount, spend));
         }
 
+        static private void AddRequirement(JSON nodeJSON, string name, string constName, bool spend = false) {
+            nodeJSON["requires"].Add(GenerateAssetRef(name, constName, spend));
+        }
+
         static private void AddRequirement(JSON nodeJSON, StringHash32 id, int amount, bool spend = false) {
             nodeJSON["requires"].Add(GenerateAssetRef(id.ToDebugString(), amount, spend));
+        }
+
+        static private void AddRequirement(JSON nodeJSON, StringHash32 id, string constName, bool spend = false) {
+            nodeJSON["requires"].Add(GenerateAssetRef(id.ToDebugString(), constName, spend));
         }
 
         static private void AddResult(JSON nodeJSON, string name) {
@@ -277,6 +330,14 @@ namespace Aqua.Editor {
 
         static private void AddResult(JSON nodeJSON, StringHash32 id, int amount, bool spend = false) {
             nodeJSON["results"].Add(GenerateAssetRef(id.ToDebugString(), amount, spend));
+        }
+
+        static private void AddResult(JSON nodeJSON, string name, string constName, bool spend = false) {
+            nodeJSON["results"].Add(GenerateAssetRef(name, constName, spend));
+        }
+
+        static private void AddResult(JSON nodeJSON, StringHash32 id, string constName, bool spend = false) {
+            nodeJSON["results"].Add(GenerateAssetRef(id.ToDebugString(), constName, spend));
         }
 
         #endregion // Generic

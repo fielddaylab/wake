@@ -57,7 +57,7 @@ namespace Aqua.Scripting
         {
             ScriptNode node;
             int count = 0;
-            for(int nodeIdx = 0, nodeCount = m_FunctionNodes.Count; nodeIdx < nodeCount; ++nodeIdx)
+            for(int nodeIdx = 0, nodeCount = m_FunctionNodes.Count; nodeIdx < nodeCount; nodeIdx++)
             {
                 node = m_FunctionNodes[nodeIdx];
 
@@ -77,7 +77,7 @@ namespace Aqua.Scripting
                 }
 
                 outNodes.Add(node);
-                ++count;
+                count++;
             }
 
             return count;
