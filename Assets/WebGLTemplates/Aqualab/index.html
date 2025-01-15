@@ -1,17 +1,24 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>%UNITY_WEB_NAME%</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
-    <link rel="stylesheet" href="TemplateData/style.css">
-    <link rel="stylesheet" href="https://use.typekit.net/vis0yeq.css">
+    <link rel="shortcut icon" href="TemplateData/favicon.ico" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Source+Code+Pro"
+    />
+    <link rel="stylesheet" href="TemplateData/style.css" />
+    <link rel="stylesheet" href="https://use.typekit.net/vis0yeq.css" />
     <script src="TemplateData/UnityProgress.js"></script>
     <script src="%UNITY_WEBGL_LOADER_URL%"></script>
     <script>
-        var unityInstance = UnityLoader.instantiate("unityContainer", "%UNITY_WEBGL_BUILD_URL%", { onProgress: UnityProgress });
+      var unityInstance = UnityLoader.instantiate(
+        "unityContainer",
+        "%UNITY_WEBGL_BUILD_URL%",
+        { onProgress: UnityProgress }
+      );
     </script>
     <script src="https://cdn.brainpop.com/games/assets/js/cameraProxyDOMCrossDomain.js"></script>
     <script src="https://cdn.brainpop.com/games/assets/js/html2canvas.js"></script>
@@ -26,63 +33,70 @@
         storageBucket: "aqualab-57f88.appspot.com",
         messagingSenderId: "98477450602",
         appId: "1:98477450602:web:b157d2ddea1d77ea66f113",
-        measurementId: "G-29QRJ22477"
+        measurementId: "G-29QRJ22477",
       };
       firebase.initializeApp(firebaseConfig);
       const analytics = firebase.analytics();
-      gtag('config', 'G-29QRJ22477', {cookie_flags: "max-age=7200;secure;samesite=none" });
+      gtag("config", "G-29QRJ22477", {
+        cookie_flags: "max-age=7200;secure;samesite=none",
+      });
     </script>
-</head>
+  </head>
 
-<body>
+  <body>
     <floating-dropdown>
-        <style>
-            span {
-                font-family: "brandon-grotesque", sans-serif !important;
-            }
-        </style>
-        <img slot="header" src="FloatingDropdown/vault-library-logo.png" alt="Vault Games Library" width="250px">
-        <span slot="desc" class="content">
-            Field Day presents the largest collection of
-            <span style="color:#00ECD0">FREE</span>
-            learning games on the web.
-        </span>
-        <span slot="button-label" class="content">
-            OPEN VAULT
-        </span>
+      <style>
+        floating-dropdown {
+          --custom-font: "brandon-grotesque";
+          --scale-factor: 0.9;
+        }
+      </style>
+      <img
+        slot="header"
+        src="FloatingDropdown/vault-library-logo.png"
+        alt="Vault Games Library"
+      />
+      <span slot="desc" class="content">
+        Field Day presents the largest collection of
+        <span style="color: #00ecd0">FREE</span>
+        learning games on the web.
+      </span>
+      <span slot="button-label" class="content"> OPEN VAULT </span>
     </floating-dropdown>
     <div id="BrainPOPsnapArea">
-        <div class="webgl-content">
-            <div id="unityContainer"></div>
-        </div>
+      <div class="webgl-content">
+        <div id="unityContainer"></div>
+      </div>
     </div>
     <script>
-        function checkGPU() {
-            var canvas = document.createElement('canvas');
-            var webGLConfig = { powerPreference: 'high-performance' };
-            var gl;
-            try {
-                gl = canvas.getContext('webgl', webGLConfig) || canvas.getContext('experimental-webgl', webGLConfig);
-            } catch (e) {
-            }
+      function checkGPU() {
+        var canvas = document.createElement("canvas");
+        var webGLConfig = { powerPreference: "high-performance" };
+        var gl;
+        try {
+          gl =
+            canvas.getContext("webgl", webGLConfig) ||
+            canvas.getContext("experimental-webgl", webGLConfig);
+        } catch (e) {}
 
-            canvas.remove();
+        canvas.remove();
 
-            if (!gl) {
-                return false;
-            }
-
-            if (typeof WebGLRenderingContext != 'undefined') {
-                return gl instanceof WebGLRenderingContext;
-            }
-
-            return false;
+        if (!gl) {
+          return false;
         }
 
-        if (!checkGPU()) {
-            alert("Your browser does not have hardware acceleration enabled - this game will perform poorly as a result. Please enable it in your settings and refresh the page.");
+        if (typeof WebGLRenderingContext != "undefined") {
+          return gl instanceof WebGLRenderingContext;
         }
+
+        return false;
+      }
+
+      if (!checkGPU()) {
+        alert(
+          "Your browser does not have hardware acceleration enabled - this game will perform poorly as a result. Please enable it in your settings and refresh the page."
+        );
+      }
     </script>
-</body>
-
+  </body>
 </html>
