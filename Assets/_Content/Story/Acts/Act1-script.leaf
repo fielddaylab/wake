@@ -1,38 +1,7 @@
 # basePath   act1
 #include "Headers/Common.leaf"
 
-:: checkIntro
-@trigger    SceneStart
-@when       scene:name == "RS-1C"
-@boostScore 100000
-@cutscene
-@once
-@noDelay
 
-{fade-out black, 0}
-{bgm-volume 0, 0}
-$call hotbar.guide->Lock()
-$call hotbar.portable->Lock()
-$call StationEntrance->Deactivate()
-$call Player->TeleportTo(IntroSpawn)
-$call CameraSnapToPose("IntroCameraPoseA")
-{wait 0.5}
-
-$set world:intro.completed = false
-$set jobs:num-specters-seen = 0
-{@player} Wow... this place looks so different at night. 
-{@player} Tío, are you still there? 
-{fade-in 3}
-$fork   .introCameraPan
-{@kelpMechanic} Sí, mijita. I can hear you on the comms.
-{@kelpMechanic} Keep exploring. Your driver's test is almost done. 
-{@kelpMechanic} A few more seconds, and the computer will be able to calculate your score. 
-{@player} Gracias, Tío. 
-{@player} Just... don't tell Mom I'm out here, okay?
-{@kelpMechanic} No promises, Ollie. 
-{hide-dialog}
-$join
-$start .tutorialMove
 
 :: introCameraPan
 $call CameraRecenterOnTarget(4)
@@ -49,11 +18,7 @@ $call CameraRecenterOnTarget(4)
 {/cutscene} {release-dialog}
 $call CameraSetMode(Hinted)
 
-:: tutorialMoveCompleted
-@trigger    PlayerExitRegion
-@when       regionId == "IntroMovement"
-@once
-$CutsceneDelayed(8, .intro-part2)
+
 
 :: intro-part2
 @cutscene

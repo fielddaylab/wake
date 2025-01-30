@@ -198,7 +198,7 @@ namespace ProtoAqua.Observation
             m_VelocityHint = Services.Camera.AddHint(m_Transform, 1, 0).Id;
             m_MouseHint = Services.Camera.AddHint(m_Transform, 1, m_CameraForwardLookWeight).Id;
 
-            m_CameraDriftHint = Services.Camera.AddDrift(new Vector2(0.1f, 0.1f), new Vector2(11, 7), RNG.Instance.NextVector2()).Id;
+            //m_CameraDriftHint = Services.Camera.AddDrift(new Vector2(0.1f, 0.1f), new Vector2(11, 7), RNG.Instance.NextVector2()).Id;
 
             m_Input.OnInputDisabled.AddListener(OnInputDisabled);
             m_Input.OnInputEnabled.AddListener(OnInputEnabled);
