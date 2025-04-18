@@ -191,7 +191,7 @@ namespace Aqua.Analytics {
 
             int c = 0;
             id = columns[c++];
-            if (!Services.Assets.Jobs.HasId(id)) {
+            if (id.IsEmpty || !Services.Assets.Jobs.HasId(id)) {
                 Log.Error("[JobPredictionFeature] Job '{0}' not found", id.ToDebugString());
                 id = default;
                 return default;
@@ -203,6 +203,11 @@ namespace Aqua.Analytics {
             allJobs[0].Id = columns[c++];
             allJobs[1].Id = columns[c++];
             allJobs[2].Id = columns[c++];
+
+            if (!ValidateJobCoefficients(id, allJobs, 3)) {
+                id = default;
+                return default;
+            }
 
             pValues[0].Index = 0;
             pValues[1].Index = 1;
@@ -237,6 +242,18 @@ namespace Aqua.Analytics {
 
             Log.Msg("[JobPredictionFeature] Loaded parameters for job '{0}'", id.ToDebugString());
             return parms;
+        }
+
+        static private unsafe bool ValidateJobCoefficients(StringHash32 lineId, JobPredictionJob* indices, int count) {
+            for(int i = 0; i < count; i++) {
+                StringHash32 id = indices[i].Id;
+                if (!id.IsEmpty && !Services.Assets.Jobs.HasId(id)) {
+                    Log.Error("[JobPredictionFeature] Dependent job '{0}' (job '{1}') not found", id.ToDebugString(), lineId.ToDebugString());
+                    return false;
+                }
+            }
+
+            return true;
         }
 #endif // ANALYTICS_ABTEST_JOBPREDICTION
 

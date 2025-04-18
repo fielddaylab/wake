@@ -316,6 +316,7 @@ namespace Aqua
             saveMenu.AddButton("Save as Bookmark", null, () => false);
             #endif // UNITY_EDITOR
             saveMenu.AddToggle("Autosave Enabled", AutosaveEnabled, SetAutosaveEnabled);
+            saveMenu.AddToggle("Disable Saving", () => m_ForceSavingDisabled, (b) => ForceNoSaving(b));
 
             saveMenu.AddDivider();
 
