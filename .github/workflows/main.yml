@@ -83,7 +83,7 @@ jobs:
    # Deploy Steps
    
    - name: Upload build as artifact
-     uses: actions/upload-artifact@v3
+     uses: actions/upload-artifact@v4
      with:
        name: ${{ github.event.repository.name }}-webgl_${{ env.VERSION }}
        path: build/WebGL/WebGL
