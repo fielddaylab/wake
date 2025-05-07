@@ -63,7 +63,7 @@ $choose branch
 $if ArgueSetClaim(Claim, jobs.bayou-shrimp-yields.argue.claimLabelAccurate)
     $call ArgueFactSlot(P_DeadZone.Population.WhiteShrimp) 
 $endif
-{@bayouSci}    How many did you count?
+{@bayouSci}    How many shrimp did you count? (It should be in the {h}Sites{/h} tab of {h}AQOS{/h}.)
 $branch .argue.showClaimAccurate
 
 :: argue.showClaimAccurate
@@ -85,7 +85,7 @@ $branch .argue.showClaimAccurate
 $if ArgueSetClaim(Claim, jobs.bayou-shrimp-yields.argue.claimLabelInaccurate)
     $call ArgueFactSlot(P_DeadZone.Population.WhiteShrimp) 
 $endif
-{@bayouSci}    How many did you count?
+{@bayouSci}    How many shrimp did you count? (It should be in the {h}Sites{/h} tab of {h}AQOS{/h}.)
 $branch .argue.showClaimInaccurate
 
 :: argue.showClaimInaccurate
