@@ -56,8 +56,8 @@ LightmapSettings:
   m_LightmapEditorSettings:
     serializedVersion: 12
     m_Resolution: 2
-    m_BakeResolution: 9
-    m_AtlasSize: 128
+    m_BakeResolution: 16
+    m_AtlasSize: 1024
     m_AO: 1
     m_AOMaxDistance: 2
     m_CompAOExponent: 1
@@ -76,7 +76,7 @@ LightmapSettings:
     m_PVRSampling: 1
     m_PVRDirectSampleCount: 16
     m_PVRSampleCount: 256
-    m_PVRBounces: 2
+    m_PVRBounces: 4
     m_PVREnvironmentSampleCount: 128
     m_PVREnvironmentReferencePointCount: 2048
     m_PVRFilteringMode: 1
@@ -176,6 +176,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 1
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!114 &109386354
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,6 +190,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Always: 1
+  IgnoreAnimators: 1
 --- !u!1001 &153492826
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5247,6 +5249,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!114 &603868756
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5260,6 +5263,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Always: 1
+  IgnoreAnimators: 1
 --- !u!1 &633127362
 GameObject:
   m_ObjectHideFlags: 0
@@ -10279,6 +10283,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1008225337}
     m_Modifications:
+    - target: {fileID: 757913865129046602, guid: 8a74e79b42859fc4a87005877f51f12a,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
     - target: {fileID: 1872643034831442526, guid: 8a74e79b42859fc4a87005877f51f12a,
         type: 3}
       propertyPath: m_Flags
@@ -10308,6 +10317,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4490151446090574772, guid: 8a74e79b42859fc4a87005877f51f12a,
+        type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 5983256456486292616, guid: 8a74e79b42859fc4a87005877f51f12a,
         type: 3}
@@ -10437,6 +10451,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!114 &1008225339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10578,12 +10593,12 @@ PrefabInstance:
     - target: {fileID: -5770212215128677521, guid: 56ef21d2008261040bbd5a18a2801442,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -5770212215128677521, guid: 56ef21d2008261040bbd5a18a2801442,
         type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 1
+      value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: -5686349630687954570, guid: 56ef21d2008261040bbd5a18a2801442,
         type: 3}
@@ -10689,6 +10704,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_StaticEditorFlags
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1996984892828021216, guid: 56ef21d2008261040bbd5a18a2801442,
+        type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: -1996984892828021216, guid: 56ef21d2008261040bbd5a18a2801442,
         type: 3}
@@ -10832,6 +10852,11 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: a816f5eb691a34042811d00ae3f4f531, type: 2}
     - target: {fileID: 6289003146085347564, guid: 56ef21d2008261040bbd5a18a2801442,
         type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6289003146085347564, guid: 56ef21d2008261040bbd5a18a2801442,
+        type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: a816f5eb691a34042811d00ae3f4f531, type: 2}
@@ -10904,6 +10929,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 1
   Recursive: 1
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!114 &1012268657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10917,6 +10943,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Always: 1
+  IgnoreAnimators: 1
 --- !u!114 &1012268658
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10931,6 +10958,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Recursive: 1
   DestroyGameObject: 0
+--- !u!1 &1012268659 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -5770212215128677521, guid: 56ef21d2008261040bbd5a18a2801442,
+    type: 3}
+  m_PrefabInstance: {fileID: 1012268653}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1012268660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1012268659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cede38f1373ac0148a5c1ceb4eb43408, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1067493712
 GameObject:
   m_ObjectHideFlags: 0
