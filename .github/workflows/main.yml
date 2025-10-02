@@ -19,7 +19,12 @@ jobs:
 
    steps:
      
-   - name: Install OpenConnect
+   - name: Install OpenConnect (self-hosted)
+     if: contains(runner.labels, 'self-hosted')
+     run: NEEDRESTART_MODE=a apt-get update && apt-get install openconnect
+
+   - name: Install OpenConnect (hosted)
+     if: "!contains(runner.labels, 'self-hosted')"
      run: sudo NEEDRESTART_MODE=a sudo apt-get update && sudo apt-get install openconnect
      
    - name: Connect to VPN
