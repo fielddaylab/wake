@@ -1,3 +1,4 @@
+using System.Text;
 using BeauUtil;
 using BeauUtil.Tags;
 
@@ -6,7 +7,7 @@ namespace Aqua
     /// <summary>
     /// Record of displayed dialog.
     /// </summary>
-    public struct DialogRecord : IDebugString
+    public sealed class DialogRecord : IDebugString
     {
         public StringHash32 CharacterId;
         public string Name;
@@ -14,9 +15,8 @@ namespace Aqua
         public bool IsBoundary;
         public bool IsChoice;
 
-        static public DialogRecord FromTag(TagString inTag, StringHash32 inDefaultCharacterId, string inDefaultName, bool inbBoundary, bool inbChoice)
+        static public void FromTag(ref DialogRecord record, TagString inTag, StringHash32 inDefaultCharacterId, string inDefaultName, bool inbBoundary, bool inbChoice)
         {
-            DialogRecord record;
             if (!ScriptingService.TryFindCharacter(inTag, out record.CharacterId, out record.Name))
             {
                 record.CharacterId = inDefaultCharacterId;
@@ -25,7 +25,6 @@ namespace Aqua
             record.Text = inTag.RichText;
             record.IsBoundary = inbBoundary;
             record.IsChoice = inbChoice;
-            return record;
         }
 
         public string ToDebugString()

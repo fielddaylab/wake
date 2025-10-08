@@ -331,7 +331,7 @@ namespace Aqua.Argumentation {
                 return false;
             }
 
-            return ArrayUtils.Contains(m_CurrentStatus.SubmittedFacts, id);;
+            return ArrayUtils.Contains(m_CurrentStatus.SubmittedFacts, id);
         }
 
         private bool AreAllSlotsFilled() {
@@ -397,6 +397,52 @@ namespace Aqua.Argumentation {
             return true;
         }
 
+        private PortableAppId GetSelectorAppId(out StringHash32 targetEntry) {
+            if (m_CurrentId.IsEmpty || m_CurrentCompleted || m_CurrentStatus == null || m_CurrentStatus.ClaimId.IsEmpty) {
+                targetEntry = default;
+                return m_LastApp;
+            }
+
+            bool hasOrganism = false;
+            bool hasEnvironment = false;
+
+            StringHash32 firstEntryId = default;
+            BestiaryDescCategory firstEntryCategory = BestiaryDescCategory._Unused;
+            bool hasSingleEntry = false;
+            foreach(var factId in m_CurrentStatus.ExpectedFacts) {
+                if (ArrayUtils.Contains(m_CurrentStatus.SubmittedFacts, factId)) {
+                    continue;
+                }
+
+                var entry = Assets.Fact(factId).Parent;
+                BestiaryDescCategory category = entry.Category();
+                if (category == BestiaryDescCategory.Critter) {
+                    hasOrganism = true;
+                } else if (category == BestiaryDescCategory.Environment) {
+                    hasEnvironment = true;
+                }
+
+                if (firstEntryId.IsEmpty) {
+                    firstEntryId = entry.Id();
+                    firstEntryCategory = entry.Category();
+                    hasSingleEntry = true;
+                } else if (firstEntryId != entry.Id()) {
+                    hasSingleEntry = false;
+                }
+            }
+
+            if (hasOrganism && !hasEnvironment) {
+                targetEntry = hasSingleEntry && firstEntryCategory == BestiaryDescCategory.Critter ? firstEntryId : default;
+                return PortableAppId.Organisms;
+            } else if (hasEnvironment && !hasOrganism) {
+                targetEntry = hasSingleEntry && firstEntryCategory == BestiaryDescCategory.Environment ? firstEntryId : default;
+                return PortableAppId.Environments;
+            } else {
+                targetEntry = default;
+                return m_LastApp;
+            }
+        }
+
         #endregion // Claim
 
         #region Fact Selector
@@ -407,7 +453,7 @@ namespace Aqua.Argumentation {
             Array.Copy(m_CurrentStatus.SubmittedFacts, m_RevertSubmitState, ArgueConsts.MaxFactsPerClaim);
 
             PortableRequest request = PortableRequest.SelectFact();
-            request.App = m_LastApp;
+            request.App = GetSelectorAppId(out request.TargetId);
             request.CanSelect = CanSelectAndHasSlot;
             request.OnSelect = HandleSingleSelect;
             request.Response.OnComplete((f) => SubmitFact(f));
@@ -423,7 +469,7 @@ namespace Aqua.Argumentation {
             m_ShouldRevert = true;
 
             PortableRequest request = PortableRequest.SelectFactSet(HandleMultiSelect);
-            request.App = m_LastApp;
+            request.App = GetSelectorAppId(out request.TargetId);
             request.CanSelect = CanSelectAndHasSlot;
 
             PortableMenu.Request(request);

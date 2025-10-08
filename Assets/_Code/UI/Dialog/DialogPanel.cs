@@ -11,6 +11,7 @@ using BeauUtil;
 using Leaf;
 using BeauUtil.Debugger;
 using Leaf.Runtime;
+using System.Text;
 
 namespace Aqua
 {
@@ -78,10 +79,33 @@ namespace Aqua
         public sealed class TextDisplayArgs
         {
             public string VisibleText;
+            public string Speaker;
+            public string NodeId;
+        }
+
+        public sealed class OptionsDisplayedArgs {
+            public OptionInfo[] Options = new OptionInfo[8];
+            public int OptionCount;
+        }
+
+        public struct OptionInfo {
+            public string Text;
+            public LeafChoice.OptionFlags Flags;
+            public string TargetId;
+        }
+
+        public sealed class OptionChosenArgs {
+            public OptionInfo Option;
+        }
+
+        public sealed class ClickNextLineArgs {
             public string NodeId;
         }
 
         static private readonly TextDisplayArgs s_TextDisplayArgs = new TextDisplayArgs();
+        static private readonly OptionsDisplayedArgs s_OptionsDisplayArgs = new OptionsDisplayedArgs();
+        static private readonly OptionChosenArgs s_OptionSelectedArgs = new OptionChosenArgs();
+        static private readonly ClickNextLineArgs s_ClickNextLineArgs = new ClickNextLineArgs();
 
         #endregion // Types
 
@@ -416,7 +440,7 @@ namespace Aqua
                     RebuildLayout();
 
                     s_TextDisplayArgs.VisibleText = inLine.VisibleText;
-                    s_TextDisplayArgs.NodeId = m_CurrentThread.GetThread()?.PeekNode().FullName();
+                    s_TextDisplayArgs.NodeId = m_CurrentThread.NodeName();
                     Services.Events.Dispatch(GameEvents.TextLineDisplayed, EvtArgs.Ref(s_TextDisplayArgs));
                 }
 
@@ -645,6 +669,8 @@ namespace Aqua
                 m_OptionButtons[i].Prep();
             }
 
+            Services.Events.Dispatch(GameEvents.TextOptionsDisplayed, EvtArgs.Ref(s_OptionsDisplayArgs));
+
             float width = ((RectTransform) m_OptionSizer.transform).sizeDelta.x / 2 + m_OptionsInset;
 
             yield return Root.AnchorPosTo(m_OriginalX - width, 0.2f, Axis.X).Ease(Curve.Smooth);
@@ -720,6 +746,9 @@ namespace Aqua
                 Routine.WaitCondition(() => m_CurrentState.IsCutsceneSkip || m_Input.Device.MousePressed(0) || m_Input.Device.KeyPressed(KeyCode.Space))
             );
             m_ButtonContainer.gameObject.SetActive(false);
+
+            s_ClickNextLineArgs.NodeId = m_CurrentThread.NodeName();
+            Services.Events.Dispatch(GameEvents.TextClickNext, EvtArgs.Ref(s_ClickNextLineArgs));
         }
 
         private IEnumerator Wait(float inDuration)

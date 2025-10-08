@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Runtime.CompilerServices;
 using BeauUtil;
 using BeauUtil.Debugger;
 using Leaf.Runtime;
@@ -18,6 +19,7 @@ namespace Aqua.Scripting
             m_Thread = inHandle;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal ScriptThread GetThread()
         {
             return m_Thread.GetThread<ScriptThread>();
@@ -44,7 +46,12 @@ namespace Aqua.Scripting
         public StringHash32 TriggerId() { return GetThread()?.TriggerId() ?? StringHash32.Null; }
 
         /// <summary>
-        /// Initialize node of this thread.
+        /// Node of this thread.
+        /// </summary>
+        public string NodeName() { return GetThread()?.PeekNode().FullName() ?? string.Empty; }
+
+        /// <summary>
+        /// Initial node of this thread.
         /// </summary>
         public string RootNodeName() { return GetThread()?.InitialNodeName() ?? string.Empty; }
 

@@ -103,11 +103,34 @@ namespace Aqua
                                 }
                             }
                         }
+
+                        if (!name.StartsWith("[")) {
+                            if (CanShowUpInStressTank(this)) {
+                                Assert.True(!m_FirstStressFactId.IsEmpty, "Critter '{0}' can be added to stress tank but has no stress facts", name);
+                                Assert.True(CanHitRangeInStressTank(m_StateTransitions.Light, WaterPropertyId.Light), "Critter '{0}' has light ranges that cannot be hit in the stress tank", name);
+                                Assert.True(CanHitRangeInStressTank(m_StateTransitions.Temperature, WaterPropertyId.Temperature), "Critter '{0}' has temperature ranges that cannot be hit in the stress tank", name);
+                                Assert.True(CanHitRangeInStressTank(m_StateTransitions.PH, WaterPropertyId.PH), "Critter '{0}' has PH ranges that cannot be hit in the stress tank", name);
+                            }
+                        }
                         break;
                     }
             }
 
             return true;
+        }
+
+        static private bool CanHitRangeInStressTank(ActorStateTransitionRange range, WaterPropertyId propertyId) {
+            WaterPropertyDesc property = Assets.Property(propertyId);
+            bool bHasMin = !float.IsInfinity(range.AliveMin);
+            bool bHasMax = !float.IsInfinity(range.AliveMax);
+            float min = bHasMin ? range.AliveMin : property.MinValue();
+            float max = bHasMax ? range.AliveMax : property.MaxValue();
+
+            return min >= property.MinValue() && max <= property.MaxValue();
+        }
+
+        static private bool CanShowUpInStressTank(BestiaryDesc desc) {
+            return !desc.HasFlags(BestiaryDescFlags.DoNotUseInExperimentation | BestiaryDescFlags.DoNotUseInStressTank | BestiaryDescFlags.IsNotLiving);
         }
 
         internal BFBase[] OwnedFacts { get { return m_Facts; } }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
+using System.Reflection;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -499,6 +501,10 @@ namespace ScriptableBake {
                 Debug.LogFormat("[Bake] Found {0} bakeable objects in {1}", baked.Count, source);
             }
 
+            FieldInfo assertField = Type.GetType("BeauUtil.Debugger.Assert, BeauUtil, Version=0.0.0.0").GetField("s_Broken", BindingFlags.NonPublic | BindingFlags.Static);
+
+            assertField?.SetValue(null, false);
+
             try {
                 if (baked.Count > 0) {
                     if (OnPreBake != null) {
@@ -544,6 +550,7 @@ namespace ScriptableBake {
                         }
                         catch(Exception e) {
                             Debug.LogException(e);
+                            assertField?.SetValue(null, false);
                             bError = true;
                         }
                         yield return null;
@@ -578,6 +585,7 @@ namespace ScriptableBake {
                 }
             }
 
+            assertField?.SetValue(null, false);
             if (bError) {
                 throw new BakeException("Baking failed");
             }

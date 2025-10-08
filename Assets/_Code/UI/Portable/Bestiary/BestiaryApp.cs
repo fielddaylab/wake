@@ -108,6 +108,13 @@ namespace Aqua.Portable {
                     m_EntryPageLoad.Replace(this, LoadEntry(Assets.Fact(m_Request.TargetId).Parent, true)).Tick();
                     break;
                 }
+                case PortableRequestType.SelectFact:
+                case PortableRequestType.SelectFactSet: {
+                    if (!m_Request.TargetId.IsEmpty) {
+                        m_EntryPageLoad.Replace(this, LoadEntry(Assets.Bestiary(m_Request.TargetId), true)).Tick();
+                    }
+                    break;
+                }
             }
         }
 

@@ -56,8 +56,8 @@ LightmapSettings:
   m_LightmapEditorSettings:
     serializedVersion: 12
     m_Resolution: 2
-    m_BakeResolution: 9
-    m_AtlasSize: 128
+    m_BakeResolution: 10
+    m_AtlasSize: 1024
     m_AO: 1
     m_AOMaxDistance: 2
     m_CompAOExponent: 1
@@ -76,7 +76,7 @@ LightmapSettings:
     m_PVRSampling: 1
     m_PVRDirectSampleCount: 16
     m_PVRSampleCount: 256
-    m_PVRBounces: 2
+    m_PVRBounces: 4
     m_PVREnvironmentSampleCount: 128
     m_PVREnvironmentReferencePointCount: 2048
     m_PVRFilteringMode: 1
@@ -176,6 +176,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 1
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!114 &109386354
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,6 +190,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Always: 1
+  IgnoreAnimators: 1
 --- !u!1001 &153492826
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5247,6 +5249,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!114 &603868756
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5260,6 +5263,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Always: 1
+  IgnoreAnimators: 1
 --- !u!1 &633127362
 GameObject:
   m_ObjectHideFlags: 0
@@ -10437,6 +10441,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!114 &1008225339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10578,7 +10583,7 @@ PrefabInstance:
     - target: {fileID: -5770212215128677521, guid: 56ef21d2008261040bbd5a18a2801442,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -5770212215128677521, guid: 56ef21d2008261040bbd5a18a2801442,
         type: 3}
@@ -10904,6 +10909,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 1
   Recursive: 1
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!114 &1012268657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10917,6 +10923,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Always: 1
+  IgnoreAnimators: 1
 --- !u!114 &1012268658
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10931,6 +10938,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Recursive: 1
   DestroyGameObject: 0
+--- !u!1 &1012268659 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -5770212215128677521, guid: 56ef21d2008261040bbd5a18a2801442,
+    type: 3}
+  m_PrefabInstance: {fileID: 1012268653}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1012268660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1012268659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cede38f1373ac0148a5c1ceb4eb43408, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1067493712
 GameObject:
   m_ObjectHideFlags: 0
