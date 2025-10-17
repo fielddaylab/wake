@@ -1,0 +1,204 @@
+using Aqua.Scripting;
+using BeauData;
+using BeauUtil;
+using BeauUtil.Debugger;
+using BeauUtil.Tags;
+using Leaf;
+using System.Collections.Generic;
+using System.IO;
+using UnityEditor;
+using UnityEngine;
+using static Leaf.Editor.LeafExport;
+
+namespace Aqua.Editor {
+    static public class ScriptParityValidation {
+        private struct LineInfo {
+            public StringHash32 CharacterId;
+            public StringHash32 PoseId;
+            public string Text;
+
+            static public LineInfo FromString(StringSlice data) {
+                LineInfo info = default;
+                info.Text = data.ToString();
+
+                int openIdx = data.IndexOf("{@");
+                if (openIdx >= 0) {
+                    openIdx += 2;
+                    int closeIdx = data.IndexOf("}", openIdx);
+                    if (closeIdx >= 0) {
+                        TagData tagData = TagData.Parse(data.Substring(openIdx, closeIdx - openIdx), Parsing.InlineEvent);
+                        info.CharacterId = tagData.Id.Hash32();
+                        if (tagData.Data.StartsWith('#')) {
+                            info.PoseId = tagData.Data.Substring(1).Hash32();
+                        }
+                    }
+                }
+
+                return info;
+            }
+        }
+
+        private static readonly string[] DefaultTextReplaceTags = new string[2] { "random", "rand" };
+
+        static private Dictionary<StringHash32, LineInfo> BuildMasterDB(LocManifest manifest, LeafAsset[] scripts, IHasLocalizationKeys[] locKeys) {
+            Dictionary<StringHash32, LineInfo> lineInfo = new Dictionary<StringHash32, LineInfo>(2048);
+
+            LocPackage fullPackage = null;
+            try {
+                fullPackage = LocPackage.CombineAll(manifest.Packages);
+                foreach (var key in fullPackage.AllKeys) {
+                    fullPackage.TryGetContent(key, out var lineText);
+                    if (TagStringParser.ContainsText(lineText, Parsing.InlineEvent, DefaultTextReplaceTags)) {
+                        lineInfo.Add(key, LineInfo.FromString(lineText));
+                    }
+                }
+
+                foreach (var leafAsset in scripts) {
+                    ScriptNodePackage leafPackage = LeafAsset.Compile<ScriptNode, ScriptNodePackage>(leafAsset, ScriptNodePackage.Generator.Instance);
+                    foreach (var line in leafPackage.AllLines()) {
+                        if (TagStringParser.ContainsText(line.Value, Parsing.InlineEvent, DefaultTextReplaceTags)) {
+                            lineInfo.Add(line.Key, LineInfo.FromString(line.Value));
+                        }
+                    }
+                }
+                foreach (var asset in locKeys) {
+                    foreach (var kv in asset.GetStrings()) {
+                        if (TagStringParser.ContainsText(kv.Value, Parsing.InlineEvent, DefaultTextReplaceTags)) {
+                            lineInfo.Add(kv.Key, LineInfo.FromString(kv.Value));
+                        }
+                    }
+                }
+
+                return lineInfo;
+            } finally {
+                if (fullPackage) {
+                    GameObject.DestroyImmediate(fullPackage);
+                }
+            }
+        }
+
+        static private Dictionary<StringHash32, LineInfo> BuildMasterDB() {
+            var englishManifest = ValidationUtils.FindAsset<LocManifest>("EnglishLanguage");
+            LeafAsset[] leafAssets = ValidationUtils.FindAllAssets<LeafAsset>();
+            List<LeafAsset> leafAssetsList = new List<LeafAsset>(leafAssets);
+            for(int i = leafAssetsList.Count; i-- > 0;) {
+                if (leafAssetsList[i].name.Contains(".template")) {
+                    leafAssetsList.FastRemoveAt(i);
+                }
+            }
+            leafAssets = leafAssetsList.ToArray();
+
+            ScriptableObject[] allScriptableObjects = ValidationUtils.FindAllAssets<ScriptableObject>();
+            List<IHasLocalizationKeys> locKeysList = new List<IHasLocalizationKeys>();
+            foreach(var obj in allScriptableObjects) {
+                if (obj is IHasLocalizationKeys) {
+                    locKeysList.Add((IHasLocalizationKeys)obj);
+                }
+            }
+            IHasLocalizationKeys[] locKeys = locKeysList.ToArray();
+
+            return BuildMasterDB(englishManifest, leafAssets, locKeys);
+        }
+
+        [MenuItem("Aqualab/DEBUG/Export Line Valildation DB")]
+        static public void ExportMasterDB() {
+            var masterDB = BuildMasterDB();
+            ExportMasterDB(masterDB, "LineData.csv");
+        }
+
+        [MenuItem("Aqualab/DEBUG/Check for Line Inconsistencies")]
+        static public void CheckForInconsistencies() {
+            var masterDB = BuildMasterDB();
+            using (StreamWriter writer = new StreamWriter("LocIssues.txt")) {
+                int errorCount = 0;
+                int missingLineCount = 0;
+
+                foreach (var manifest in ValidationUtils.FindAllAssets<LocManifest>()) {
+                    if (manifest.LanguageId == LocService.DefaultLanguage) {
+                        continue;
+                    }
+
+                    LocPackage tempPkg = null;
+                    try {
+                        tempPkg = LocPackage.CombineAll(manifest.Packages);
+                        foreach(var kv in masterDB) {
+                            if (!tempPkg.TryGetContent(kv.Key, out string data)) {
+                                errorCount++;
+                                missingLineCount++;
+                                writer.Write("!! Language ");
+                                writer.Write(manifest.name);
+                                writer.Write(" is missing '");
+                                writer.Write(kv.Key.ToDebugString());
+                                writer.Write("'\n");
+                            } else {
+                                LineInfo parsedLineInfo = LineInfo.FromString(data);
+                                LineInfo comparedLineInfo = kv.Value;
+                                if (parsedLineInfo.CharacterId != comparedLineInfo.CharacterId) {
+                                    errorCount++;
+                                    writer.Write("Language ");
+                                    writer.Write(manifest.name);
+                                    writer.Write(" line '");
+                                    writer.Write(kv.Key.ToDebugString());
+                                    writer.Write("' has incorrect character id (expected '");
+                                    writer.Write(comparedLineInfo.CharacterId.ToDebugString());
+                                    writer.Write("', has '");
+                                    writer.Write(parsedLineInfo.CharacterId.ToDebugString());
+                                    writer.Write("')\n");
+                                }
+                                if (parsedLineInfo.PoseId != comparedLineInfo.PoseId) {
+                                    errorCount++;
+                                    writer.Write("Language ");
+                                    writer.Write(manifest.name);
+                                    writer.Write(" line '");
+                                    writer.Write(kv.Key.ToDebugString());
+                                    writer.Write("' has incorrect pose id (expected '");
+                                    writer.Write(comparedLineInfo.PoseId.ToDebugString());
+                                    writer.Write("', has '");
+                                    writer.Write(parsedLineInfo.PoseId.ToDebugString());
+                                    writer.Write("')\n");
+                                }
+                            }
+                        }
+                        foreach(var key in tempPkg.AllKeys) {
+                            if (!masterDB.ContainsKey(key)) {
+                                errorCount++;
+                                writer.Write("?? Language ");
+                                writer.Write(manifest.name);
+                                writer.Write(" has extra key '");
+                                writer.Write(key.ToDebugString());
+                                writer.Write("'\n");
+                            }
+                        }
+                    } finally {
+                        if (tempPkg) {
+                            GameObject.DestroyImmediate(tempPkg);
+                        }
+                    }
+                }
+
+                if (missingLineCount > 0) {
+                    Log.Error("Found {0} missing lines! (total errors {1})", missingLineCount, errorCount);
+                } else {
+                    Log.Error("Found {0} errors!", errorCount);
+                }
+            }
+        }
+
+        static private void ExportMasterDB(Dictionary<StringHash32, LineInfo> db, string filePath) {
+            using (StreamWriter writer = new StreamWriter(filePath)) {
+                foreach(var kv in db) {
+                    writer.Write(kv.Key.ToDebugString());
+                    writer.Write(", ");
+                    writer.Write(kv.Value.CharacterId.ToDebugString());
+                    writer.Write(", ");
+                    writer.Write(kv.Value.PoseId.ToDebugString());
+                    writer.Write(", ");
+                    string escaped = StringUtils.Escape(kv.Value.Text, StringUtils.CSV.Escaper.Instance);
+                    writer.Write('"');
+                    writer.Write(escaped);
+                    writer.Write("\"\n");
+                }
+            }
+        }
+    }
+}

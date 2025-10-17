@@ -29,7 +29,7 @@ namespace Aqua
     {
         private const string LocalSettingsPrefsKey = "settings/local";
 
-        static private readonly FourCC DefaultLanguage = FourCC.Parse("EN");
+        static public readonly FourCC DefaultLanguage = FourCC.Parse("EN");
 
         #region Inspector
 

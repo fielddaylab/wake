@@ -509,6 +509,20 @@ namespace Aqua
             }
         }
 
+        static internal LocPackage CombineAll(LocPackage[] inPackages) {
+            LocPackage tmpPkg = ScriptableObject.CreateInstance<LocPackage>();
+            try {
+                foreach (var pkg in inPackages) {
+                    BlockParser.Parse(ref tmpPkg, pkg, Parsing.Block, Generator.Instance);
+                }
+            } catch {
+                DestroyImmediate(tmpPkg);
+                throw;
+            }
+
+            return tmpPkg;
+        }
+
         #endif // UNITY_EDITOR
     }
 }
