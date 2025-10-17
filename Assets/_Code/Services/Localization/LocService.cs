@@ -96,7 +96,7 @@ namespace Aqua
                 }
                 else {
                     DebugService.Log(LogMask.Loading | LogMask.Localization, "[LocService] Loading '{0}' from {1:0.00}kb binary", manifest.name, manifest.Binary.Length / 1024);
-                    yield return Async.Schedule(LocPackage.ReadFromBinary(m_LanguagePackage, manifest.Binary));
+                    yield return Async.Schedule(LocPackage.ReadFromBinary(m_LanguagePackage, manifest.Binary), AsyncFlags.HighPriority);
                 }
             }
 

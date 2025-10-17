@@ -1,6 +1,7 @@
 using BeauUtil;
 using System.Text;
 using UnityEngine;
+using BeauPools;
 
 namespace Aqua
 {
@@ -38,20 +39,28 @@ namespace Aqua
 
         static public BFFragment CreateGenderedLocNoun(TextId inWord, TextId inArticle, bool makeLowerCase = false)
         {
-            StringBuilder builder = new StringBuilder();
-            if (makeLowerCase) { builder.Append(Services.Loc.Localize(inArticle, true).ToLower()); }
-            else { builder.Append(Services.Loc.Localize(inArticle, true)); }
-            
-            if (!inArticle.IsEmpty) {
-                builder.Append(" ");
-            }
-            builder.Append(Services.Loc.Localize(inWord, true));
-
-            return new BFFragment()
+            using (PooledStringBuilder psb = PooledStringBuilder.Create())
             {
-                Type = BestiaryFactFragmentType.Noun,
-                String = builder.ToString()
-            };
+                StringBuilder builder = psb.Builder;
+                builder.Append(Services.Loc.Localize(inArticle, true));
+                if (makeLowerCase) {
+                    for(int i = 0; i < builder.Length; i++) {
+                        builder[i] = char.ToLowerInvariant(builder[i]);
+                    }
+                }
+                
+                if (!inArticle.IsEmpty)
+                {
+                    builder.Append(" ");
+                }
+                builder.Append(Services.Loc.Localize(inWord, true));
+
+                return new BFFragment()
+                {
+                    Type = BestiaryFactFragmentType.Noun,
+                    String = builder.ToString()
+                };
+            }
         }
 
         static public BFFragment CreateVerb(StringSlice inWord)

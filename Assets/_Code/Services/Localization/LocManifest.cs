@@ -23,6 +23,7 @@ namespace Aqua
         public LocPackage[] Packages;
         public LayoutPrefabPackage JournalLayout;
         public TextAsset Surveys;
+        public bool CollapseConsts;
         [HideInInspector] public byte[] Binary = Array.Empty<byte>();
 
         #endregion // Inspector
@@ -34,7 +35,7 @@ namespace Aqua
         bool IBaked.Bake(BakeFlags flags, BakeContext context)
         {
             if (Packages.Length > 0) {
-                Binary = LocPackage.Compress(Packages);
+                Binary = LocPackage.Compress(Packages, CollapseConsts || UnityEditor.BuildPipeline.isBuildingPlayer);
                 if (UnityEditorInternal.InternalEditorUtility.isHumanControllingUs) {
                     Directory.CreateDirectory("Temp/LanguageExport");
                     File.WriteAllBytes("Temp/LanguageExport/" + name + ".bin", Binary);

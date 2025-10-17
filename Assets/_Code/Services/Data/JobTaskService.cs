@@ -244,18 +244,24 @@ namespace Aqua
                     switch(desiredStatus)
                     {
                         case JobTaskStatus.Active:
-                            if (inJobs.SetTaskActive(taskState.Task.Id))
+                            if (inJobs.SetTaskActive(taskState.Task.Id)) {
                                 ioUpdateMask |= taskMask;
+                                JobEvents.OnJobTaskActivated.Invoke(inJobs.CurrentJobId, taskState.Task.Id);
+                            }
                             break;
 
                         case JobTaskStatus.Complete:
-                            if (inJobs.SetTaskComplete(taskState.Task.Id))
+                            if (inJobs.SetTaskComplete(taskState.Task.Id)) {
                                 ioUpdateMask |= taskMask;
+                                JobEvents.OnJobTaskCompleted.Invoke(inJobs.CurrentJobId, taskState.Task.Id);
+                            }
                             break;
 
                         case JobTaskStatus.Inactive:
-                            if (inJobs.SetTaskInactive(taskState.Task.Id))
+                            if (inJobs.SetTaskInactive(taskState.Task.Id)) {
                                 ioUpdateMask |= taskMask;
+                                JobEvents.OnJobTaskDeactivated.Invoke(inJobs.CurrentJobId, taskState.Task.Id);
+                            }
                             break;
                     }
                 }
@@ -442,5 +448,11 @@ namespace Aqua
         static private void ForceReevaluateTasks() {
             Services.Events.Dispatch(Event_ForceReprocess);
         }
+    }
+
+    static public partial class JobEvents {
+        static public readonly CastableEvent<StringHash32, StringHash32> OnJobTaskDeactivated = new CastableEvent<StringHash32, StringHash32>(2);
+        static public readonly CastableEvent<StringHash32, StringHash32> OnJobTaskActivated = new CastableEvent<StringHash32, StringHash32>(2);
+        static public readonly CastableEvent<StringHash32, StringHash32> OnJobTaskCompleted = new CastableEvent<StringHash32, StringHash32>(2);
     }
 }
