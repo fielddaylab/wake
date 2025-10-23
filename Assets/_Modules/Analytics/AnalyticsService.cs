@@ -156,7 +156,6 @@ namespace Aqua
                 .Register<StringHash32>(GameEvents.JobSwitched, LogSwitchJob, this)
                 .Register<BestiaryUpdateParams>(GameEvents.BestiaryUpdated, HandleBestiaryUpdated, this)
                 .Register<StringHash32>(GameEvents.JobCompleted, LogCompleteJob, this)
-                .Register<StringHash32>(GameEvents.JobTaskCompleted, LogCompleteTask, this)
                 .Register<string>(GameEvents.ViewChanged, LogRoomChanged, this)
                 .Register<string>(GameEvents.ScriptFired, LogScriptFired, this)
                 .Register<DialogPanel.TextDisplayArgs>(GameEvents.TextLineDisplayed, LogScriptLine, this)
@@ -199,7 +198,8 @@ namespace Aqua
                 .Register(ArgueEvents.Unloaded, LogLeaveArgument, this)
                 .Register<StringHash32>(ArgueEvents.Completed, LogCompleteArgument, this)
                 .Register<JobRecommendationArgs>(GameEvents.DisplayedJobRecommendation, LogRecommendedJob, this);
-                
+
+            JobEvents.OnJobTaskCompleted.Register(LogCompleteTask);
 
             Services.Script.OnTargetedThreadStarted += GuideHandler;
             SceneHelper.OnSceneLoaded += LogSceneChanged;
@@ -346,17 +346,28 @@ namespace Aqua
                 Assert.True(Save.IsLoaded, "Save is not loaded");
 
                 MapDesc map = Assets.Map(MapDB.LookupMap(currentScene));
-                m_GameState.site = map.name;
                 m_GameState.region = Assets.Map(Save.Map.CurrentStationId()).name;
+                if (map) {
+                    m_GameState.site = map.name;
 
-                if (map.HasFlags(MapFlags.IsStationInterior)) {
-                    m_GameState.scene_type = "station-interior";
-                } else if (map.Category() == MapCategory.ShipRoom) {
-                    m_GameState.scene_type = "ship";
-                } else if (map.Category() == MapCategory.Station) {
-                    m_GameState.scene_type = "surface";
+                    if (map.HasFlags(MapFlags.IsStationInterior)) {
+                        m_GameState.scene_type = "station-interior";
+                    } else if (map.Category() == MapCategory.ShipRoom) {
+                        m_GameState.scene_type = "ship";
+                    } else if (map.Category() == MapCategory.Station) {
+                        m_GameState.scene_type = "surface";
+                    } else {
+                        m_GameState.scene_type = "dive-site";
+                    }
                 } else {
-                    m_GameState.scene_type = "dive-site";
+                    m_GameState.site = currentScene.name;
+                    if (sceneId == GameScenes.StationTransition) {
+                        m_GameState.scene_type = "transition";
+                    } else if (m_GameState.site.StartsWith("Dream")) {
+                        m_GameState.scene_type = "dream";
+                    } else {
+                        m_GameState.scene_type = "unknown";
+                    }
                 }
             } else {
                 m_GameState.region = "no-active-region";
@@ -720,7 +731,7 @@ namespace Aqua
             }
         }
 
-        private void LogCompleteTask(StringHash32 inTaskId)
+        private void LogCompleteTask(StringHash32 jobId, StringHash32 inTaskId)
         {
             string taskId = Assets.Job(m_CurrentJobHash).Task(inTaskId).IdString;
 

@@ -579,6 +579,9 @@ Oí que hay un mecánico justo al lado del muelle que puede mejorar nuestra nave
 :: script__job.kelp-urchin-farm.argue.intro_c_5
 : argue.giveUp
 
+:: script__job.kelp-welcome.start_c_2
+{style center}{@tutorial}{speaker Tableta AQOS}
+
 :: script__job.kelp-welcome.start_c_11
 ¡Revisa tu {item-name}Tableta AQOS{/item-name} para ver toda la información sobre tu trabajo actual! 
 
@@ -593,6 +596,9 @@ Las teclas de acceso directo del teclado pueden activarse desde el {h}Menú de O
 
 :: script__job.kelp-welcome.start_c_23
 {@player} Entendido. Gracias, mamá.
+
+:: script__job.kelp-welcome.diveSite_c_18
+{style center}{@tutorial}{speaker V1ct0r}
 
 :: script__job.kelp-welcome.diveSite_c_26
 Habla con {nameof @guide} pulsando el botón {h}con los ojos{/h} aquí.
@@ -863,7 +869,7 @@ Por eso{wait 0.5} mi mami no quiere que vaya. Ella| no quiere que baje allí.
 {@kelpMechanic}   Tu madre no quiere perderte.
 
 :: Shop.Kelp__interior.shop.kelp.shopOpen.restorePower_c_22
-Pero... {espera 1} ya eres adulta, Oli.
+Pero... {wait 1} ya eres adulta, Oli.
 
 :: Shop.Kelp__interior.shop.kelp.shopOpen.restorePower_c_24
 Y tu mejor amigo te necesita.
@@ -1872,7 +1878,7 @@ El contenido no puede descifrarse con el equipo actual.
 :: script__job.coral-hunting-lions.start_c_12
 {@player} .|.|.|Óooorale.| Casi te la creía, Profe. Muy bromista.
 
-:: script__job.coral-fake-fix.argue.chooseClaim_c_5
+:: script__job.coral-fake-fix.argue.chooseClaim_c_6
 {@player} Pero...
 
 :: script__job.coral-eat-seaweed.start_c_1
@@ -1881,7 +1887,7 @@ El contenido no puede descifrarse con el equipo actual.
 :: script__job.coral-fake-fix.argue.correctFactsAB_c_2
 {@player} ¡Eso es porque hay otra cosa sucediendo ahí fuera, Profe!
 
-:: script__job.coral-fake-fix.argue.chooseClaim_c_2
+:: script__job.coral-fake-fix.argue.chooseClaim_c_3
 {@player} Que horror Profe. Estaba loquisímo. Habian arpones por todas partes y toneladas de peces horripilantes y muertos.
 
 :: script__job.coral-eat-seaweed.argue.urchin_c_4
@@ -1968,7 +1974,7 @@ El contenido no puede descifrarse con el equipo actual.
 :: script__job.coral-fake-fix.start_c_10
 {@profCoral} ¡Buena suerte! Ahora, si me disculpas, necesito darles a mis tortugitas sus tortitas de camarón...
 
-:: script__job.coral-fake-fix.argue.chooseClaim_c_6
+:: script__job.coral-fake-fix.argue.chooseClaim_c_9
 {@profCoral} ¿Han ayudado los arrecifes artificiales a aumentar las poblaciones de coral?
 
 :: script__job.coral-casting-shade.argue.noEvidence_c_0
@@ -2040,7 +2046,7 @@ El contenido no puede descifrarse con el equipo actual.
 :: script__job.coral-fishy-bizz.argue.correctFacts_c_1
 {@profCoral} Esto es exactamente lo que necesitaba, Oli. Gran trabajo.
 
-:: script__job.coral-fake-fix.argue.chooseClaim_c_4
+:: script__job.coral-fake-fix.argue.chooseClaim_c_5
 {@profCoral} Espera, Oli. Me gustaría hablar de tu trabajo actual.
 
 :: script__job.coral-eat-seaweed.argue.intro_c_0
@@ -2241,9 +2247,6 @@ Si simplemente quitamos el Sargazo nosotros mismos, solamente se arrastrarían m
 :: Act1-script__act1.checkIntro_c_18
 {@player} Gracias, Tío.
 
-:: script__job.coral-fake-fix.argue.chooseClaim_c_9
-Déjame revisar mis notas y te contestaré.
-
 :: script__job.coral-eat-seaweed.argue.evidence_c_7
 Te contestaré después
 
@@ -2274,7 +2277,7 @@ Los Erizos podrían ser la solución permanente que estamos buscando.
 :: script__job.coral-casting-shade.start_c_7
 Mi mami también tiene un dicho así. Aunque la suya hablaba de alas y de volar.
 
-:: script__job.coral-fake-fix.argue.chooseClaim_c_3
+:: script__job.coral-fake-fix.argue.chooseClaim_c_4
 Tenemos que hacer algo, reportarlo a alguien, antes de que destruyan todo el arrecife——
 
 :: script__job.coral-fishy-bizz.argue.chooseEvidence_c_6
@@ -2289,7 +2292,7 @@ No, todavía no.
 :: script__job.coral-casting-shade.argue.introRevisit_c_2
 No, todavía no.
 
-:: script__job.coral-fake-fix.argue.chooseClaim_c_7
+:: script__job.coral-fake-fix.argue.chooseClaim_c_10
 No, los arrecifes artificiales no han ayudado.
 
 :: script__job.coral-eat-seaweed.argue.intro_c_5
@@ -2394,6 +2397,9 @@ Puede que haya una mejor solución...
 :: script__job.coral-eat-seaweed.argue.intro_c_4
 Erizo de mar
 
+:: Act1-script__act1.tutorialMove_c_3
+{style center}{@tutorial}{speaker Movimiento}
+
 :: Act1-script__act1.tutorialMove_c_4
 Utiliza el {h}Ratón{/h} o las teclas {h}[W][A][S][D]{/h} para mover tu submarino.
 
@@ -2442,8 +2448,11 @@ Sí, tengo las pruebas.
 :: script__job.coral-casting-shade.argue.introRevisit_c_1
 Sí, tengo las pruebas.
 
-:: script__job.coral-fake-fix.argue.chooseClaim_c_8
+:: script__job.coral-fake-fix.argue.chooseClaim_c_11
 Sí, ¡los arrecifes artificiales ayudaron!
+
+:: script__job.coral-fake-fix.argue.chooseClaim_c_12
+Déjame revisar mis notas y te contestaré.
 
 :: script__job.coral-hunting-lions.start_c_14
 Puedes decidir si estás preparada para enfrentarte a esto, o si te gustaría volver más tarde.
@@ -3247,10 +3256,10 @@ Quizá hayga algo que esté atrayendo al bacalao.
 {@player}Entendido. Gracias, {nameof @profArctic}.
 
 :: script__job.arctic-in-Ice.tryScanAlgaeNewY_c_0
-{@guide }  Necesitarás un microscopio para investigar este organismo a fondo.
+{@guide}  Necesitarás un microscopio para investigar este organismo a fondo.
 
 :: script__job.arctic-in-Ice.tryScanAlgaeY_c_0
-{@guide }  Necesitarás un microscopio para investigar este organismo a fondo.
+{@guide}  Necesitarás un microscopio para investigar este organismo a fondo.
 
 :: script__job.arctic-in-Ice.tryScanAlgaeNewMicroscopeY_c_0
 {@guide}   Utiliza tu microscopio para escanear este organismo.
@@ -3259,10 +3268,10 @@ Quizá hayga algo que esté atrayendo al bacalao.
 {@guide}   Utiliza tu microscopio para escanear este organismo.
 
 :: script__job.arctic-in-Ice.tryScanAlgaeNewX_c_0
-{@guide }  Necesitarás un microscopio para investigar este organismo a fondo.
+{@guide}  Necesitarás un microscopio para investigar este organismo a fondo.
 
 :: script__job.arctic-in-Ice.tryScanAlgaeX_c_0
-{@guide }  Necesitarás un microscopio para investigar este organismo a fondo.
+{@guide}  Necesitarás un microscopio para investigar este organismo a fondo.
 
 :: script__job.arctic-in-Ice.tryScanAlgaeNewMicroscopeX_c_0
 {@guide}   Utiliza tu microscopio para escanear este organismo.
@@ -3271,10 +3280,10 @@ Quizá hayga algo que esté atrayendo al bacalao.
 {@guide}   Utiliza tu microscopio para escanear este organismo.
 
 :: script__job.arctic-in-Ice.tryScanAlgaeNewZ_c_0
-{@guide }  Necesitarás un microscopio para investigar este organismo a fondo.
+{@guide}  Necesitarás un microscopio para investigar este organismo a fondo.
 
 :: script__job.arctic-in-Ice.tryScanAlgaeZ_c_0
-{@guide }  Necesitarás un microscopio para investigar este organismo a fondo.
+{@guide}  Necesitarás un microscopio para investigar este organismo a fondo.
 
 :: script__job.arctic-in-Ice.tryScanAlgaeNewMicroscopeZ_c_0
 {@guide}   Utiliza tu microscopio para escanear este organismo.
@@ -3569,12 +3578,6 @@ Veámoslo a fondo.
 
 :: script__job.arctic-isolated-instnace.catchCheckCrab_c_2
 Te sugiero que las coloques todas juntas en tu {h}Tanque de Observación{/h}.
-
-:: script__job.arctic-isolated-instnace.catchCheckSeal_c_0
-{@guide}	Utiliza tu Tanque de Observación para averiguar si algún depredador del {h}Sitio Z{/h} se alimenta de Esponjas Vítreas.
-
-:: script__job.arctic-isolated-instnace.catchCheckSeal_c_1
-Creo que tienes más especies por observar.
 
 :: script__job.arctic-isolated-instnace.catchCheckShark_c_0
 {@guide}	Utiliza tu Tanque de Observación para averiguar si algún depredador del {h}Sitio Z{/h} se alimenta de Esponjas Vítreas.
@@ -4915,13 +4918,10 @@ Puedes consultar tu AQOS para obtener más información sobre el sitio.
 {@player}   Guau. Está muy oscuro aquí.
 
 :: script__job.arctic-underneath.useFlashlight_c_2
-{@player} Sí.... En realidad no necesitaba escuchar esas probabilidades, {nameof @guide}.
+{@guide}    Sí. Predigo que tienes un 8,2% de probabilidades de perderte y no volver jamás. Como Linda.
 
 :: script__job.arctic-underneath.useFlashlight_c_3
 {@player} Sí.... En realidad no necesitaba escuchar esas probabilidades, {nameof @guide}.
-
-:: script__job.arctic-underneath.useFlashlight_c_4
-{@guide}    Procesando.... ¡ah! ¡Puedes reducir tus probabilidades de morir a sólo un 8,2% utilizando tu {nameof Flashlight}!
 
 :: script__job.arctic-underneath.useFlashlight_c_6
 {@guide}    Sí. Predigo que tienes un 23,5% de probabilidades de perderte y no volver jamás. Como Linda.
@@ -5119,7 +5119,7 @@ Si te faltan {!}organismos{/!} puede que tengamos que volver al {h}sitio de inme
 ¡Entonces, uelve a la estación y comparte tus descubrimientos con {nameof @profBayou}!
 
 :: script__job.alt-energy.argue.intro_c_0
-¡{@profBayou} {nameof @player}! ¿Viniste a resolver el misterio por nosotros?
+{@profBayou} ¡{nameof @player}! ¿Viniste a resolver el misterio por nosotros?
 
 :: script__job.alt-energy.argue.intro_c_1
 {@bayouSci} Tengo que admitir que yo también me muero por oír esto.
@@ -8385,23 +8385,23 @@ Deberíamos investigar por qué.
 :: script__job.coral-much-algae.argue.correctFacts_c_3
 Avísame si quieres otro trabajo, Oli. Creo que al {nameof BlueTang} le vendría bien un chequeo.
 
-:: script__job.coral-much-algae.argue.incorrectFacts_c_1
+:: script__job.coral-much-algae.argue.incorrectFacts_c_2
 {@profCoral}	Hmmm. Esto es un {h}Modelo Visual{/h}. ¿Por qué no lo intentas de nuevo?
 
-:: script__job.coral-much-algae.argue.incorrectFacts_c_10
+:: script__job.coral-much-algae.argue.incorrectFacts_c_9
 {@profCoral}	Hmmm. Así que el Pez cirujano normalmente mantendría bajo control a las Algas.
 
-:: script__job.coral-much-algae.argue.incorrectFacts_c_11
+:: script__job.coral-much-algae.argue.incorrectFacts_c_10
 ¿Creaste un {h}Modelo Descriptivo{/h} con estos datos?
 
-:: script__job.coral-much-algae.argue.incorrectFacts_c_16
+:: script__job.coral-much-algae.argue.incorrectFacts_c_15
 {@profCoral}	Tu modelo es sólido, Oli. Pero no estoy seguro si el segundo dato sea relevante.
 
 :: script__job.coral-much-algae.argue.giveUp_c_0
-{@profCoralPor supuesto. Avísame cuando estés preparado.
+{@profCoral} Por supuesto. Avísame cuando estés preparado.
 
 :: script__job.coral-much-algae.argue.claimLionfishQuicken_c_0
-{Ya veo. ¿Tienes algún experimento que lo demuestre?
+{@player} Ya veo. ¿Tienes algún experimento que lo demuestre?
 
 :: script__job.coral-much-algae.argue.claimLionfishQuicken_c_6
 Presentar los datos del AQOS
@@ -8478,8 +8478,8 @@ Es hora de volver al AquaLab.
 :: script__job.coral-ocean-plastic.catchScanReef_c_0
 {@player} ¿Qué hago ahora, {nameof @guide}?
 
-:: script__job.coral-ocean-plastic.catchScanReef_c_1
-{@guide}    Escanea los Organismos del Sitio V.
+:: script__job.coral-ocean-plastic.catchScanReef_c_2
+{@guide}    Sigue explorando. Escanea los organismos del Sitio V.
 
 :: script__job.coral-ocean-plastic.catchWhatTurtlesEat_c_0
 {@player} ¿Qué hago ahora, {nameof @guide}?
@@ -8830,7 +8830,7 @@ Me preguntaba si podrías recopilar datos para mejorar la precisión del modelo.
 Pues... mejor hagamos un recuento de la población.
 
 :: script__job.coral-check-up.countIck_c_0
-{@player}	Agh. Este lugar está plagado de {name of Ick}.
+{@player}	Agh. Este lugar está plagado de {nameof Ick}.
 
 :: script__job.coral-check-up.countIck_c_1
 {@guide} 	Sí. Te sugiero que utilices tu {item}Tanque de Observación{/item} para ver cómo está afectando el {nameof Ick} al Pez Cirujano.
@@ -9292,13 +9292,13 @@ Asegúrate que también has escaneado los pequeños organismos que nadan en los 
 {@guide}    ¿Hay algo que interactúe con los {pluralnameof QueenConch}?
 
 :: script__job.coral-turtle-stability.helpDoExperiment.InExperiment_c_5
-{@guide}    ¿Hay algo interactuando con los {criter-name}Camarones Blancos{/criter-name}?
+{@guide}    ¿Hay algo interactuando con los {critter-name}Camarones Blancos{/critter-name}?
 
 :: script__job.coral-turtle-stability.helpDoExperiment.InExperiment_c_7
 {@guide}    No estoy seguro de que sea posible obtener nueva información de este experimento.
 
 :: script__job.coral-turtle-stability.helpDoExperiment.InExperiment_c_8
-Te sugiero que añades algunos nadadores, como {criter-name}Camarones Blancos{/criter-name} o {pluralnameof Copepod}.
+Te sugiero que añades algunos nadadores, como {critter-name}Camarones Blancos{/critter-name} o {pluralnameof Copepod}.
 
 :: script__job.coral-turtle-stability.helpDoExperiment.TankView_c_0
 {@guide}    Has escaneado algunas nuevas especies. Ahora tienes que ver cuáles de ellas se comen las tortugas.
@@ -9310,7 +9310,7 @@ Te sugiero que añades algunos nadadores, como {criter-name}Camarones Blancos{/c
 {@guide}    ¡Has añadido unos {pluralnameof QueenConch}! ¿Con qué podrían interactuar?
 
 :: script__job.coral-turtle-stability.helpDoExperiment.TankView_c_6
-{@guide}    ¡Has añadido unos {criter-name}Camarones Blancos{/criter-name}! ¿Con qué podrían interactuar?
+{@guide}    ¡Has añadido unos {critter-name}Camarones Blancos{/critter-name}! ¿Con qué podrían interactuar?
 
 :: script__job.coral-turtle-stability.helpDoExperiment.TankView_c_8
 {@guide}    Te sugiero que añades {pluralnameof Copepod}.
@@ -9502,7 +9502,7 @@ Volvamos al Timón.
 {@player} {nameof @guide}? ¿Qué ocurre?
 
 :: script__job.final-final.catchGetUncleHelp_c_1
-{@guide}    {Sistemas fallando}
+{@guide}    [Sistemas fallando]
 
 :: script__job.final-final.catchGetUncleHelp_c_2
 {@player} {nameof @guide}??
@@ -9754,7 +9754,7 @@ Tienes que salir a la superficie y dirigir tu barco al {h}Sitio A{/h}.
 {@player} 	¿Y ahora qué, {nameof @guide}?
 
 :: script__job.kelp-bull-kelp-forest.helpGoToLab_c_1
-{guide}	Has completado tu tarea. Ahora dirígete a tu nave de {nameof Experimentation}.
+{@guide}	Has completado tu tarea. Ahora dirígete a tu nave de {nameof Experimentation}.
 
 :: script__job.kelp-bull-kelp-forest.helpGoToLab_c_4
 {@guide}	El primer paso es volver a la superficie y subir a tu nave.
@@ -9799,7 +9799,7 @@ Organiza un experimento del {h}Tanque de Observación{/h}, como la última vez.
 {@guide}	Vamos a informar a tu {nameof @drKelp}.
 
 :: script__job.kelp-bull-kelp-forest.catchSiteA_c_0
-{@guide}    Dirígete al {sitio A} e ¡identifica cualquier nueva especie!
+{@guide}    Dirígete al {h}Sitio A{/h} e ¡identifica cualquier nueva especie!
 
 :: script__job.kelp-bull-kelp-forest.catchFoodWeb_c_0
 {@guide}    Utiliza el Tanque de Observación para ver cómo se integra la Alga de Toro en la red trófica del Sitio A.
@@ -9913,7 +9913,7 @@ Vuelve a la ficha {h}Ecosistema{/h} y selecciona el {nameof WarmKelpForest}.
 {@guide}	Haz clic en el botón {h}Importar Datos Nuevos{/h} para introducir todos tus datos sobre este ecosistema en el modelo.
 
 :: script__job.kelp-energy.generic.visual-model.imported_c_0
-{@guide)	Este es un modelo visual de todas las especies del {nameof WarmKelpForest}.
+{@guide}	Este es un modelo visual de todas las especies del {nameof WarmKelpForest}.
 
 :: script__job.kelp-energy.generic.visual-model.imported_c_1
 Las flechas muestran las relaciones que tus experimentos han descubierto.
@@ -10084,7 +10084,7 @@ Si has hecho un modelo, debería estar guardado en AQOS para este ecosistema. ¿
 {@drKelp}   Pero tu trabajo es muy importante.
 
 :: script__job.kelp-energy.argue.done_c_6
-{@drKelp}   Si queremos crear ese Refugio de Algas, no es suficiente con hacer presuposiciones.
+Si queremos crear ese Refugio de Algas, no es suficiente con hacer presuposiciones.
 
 :: script__job.kelp-energy.argue.done_c_7
 {@drKelp}   Necesitamos todos los datos que estás recopilando. Necesitamos comprender cada parte de este ecosistema.
@@ -10266,9 +10266,6 @@ Te contestaré después
 :: script__job.kelp-mussel-fest-solution.start_c_0
 {@drKelp} ¡Maravilloso! Tenía muchas ganas de resolver el misterio de los mejillones.
 
-:: script__job.kelp-mussel-fest-solution.start_c_1
-{@guide}   	Aún tienes que contar las tortugas bobas en el sitio V.
-
 :: script__job.kelp-mussel-fest-solution.start_c_2
 {@drKelp}  La comunidad está bastante preocupada. Los mejillones son un plato exquisito por aquí.
 
@@ -10342,7 +10339,7 @@ Creo que necesitarás el {nameof MeasurementTank} de la sala de Experimentos.
 {@player}   ¿Y ahora qué?
 
 :: script__job.kelp-mussel-fest-solution.helpReport_c_1
-{@guide}	 Ahora deberías de decirle a {nameof DrKelp} sobre el efecto del estrés en la reproducción del mejillón.
+{@guide}	 Ahora deberías de decirle a {nameof drKelp} sobre el efecto del estrés en la reproducción del mejillón.
 
 :: script__job.kelp-mussel-fest-solution.catchUnstressedRate_c_0
 {@guide}    Pon los Mejillones en el Tanque de Medidas en un ambiente que no los estrese.
@@ -10660,7 +10657,7 @@ Te contestaré después
 {@drKelp}. No me suena, Mijita.
 
 :: script__job.kelp-refuge-failure.argue.pickyUrchins_c_1
-(@drKelp} Ya determinaste que los Erizos se comen los dos tipos de Alga.
+{@drKelp} Ya determinaste que los Erizos se comen los dos tipos de Alga.
 
 :: script__job.kelp-refuge-failure.argue.pickyUrchins_c_2
 {@drKelp} Tienes otra teoría?
@@ -10812,9 +10809,6 @@ Presentar los datos del AQOS
 :: script__job.kelp-refuge-failure-simulation.argue.defendClaim_c_6
 Te contestaré después
 
-:: script__job.kelp-refuge-failure-simulation.argue.correctFacts_c_2
-{@player} Lo siento, mami. Sabía que este trabajo era una mala idea.
-
 :: script__job.kelp-refuge-failure-simulation.argue.correctFacts_c_3
 {@player} Lo siento, mamá. Sabía que este trabajo era una mala idea.
 
@@ -10915,7 +10909,7 @@ Esta herramienta sólo puede simular una intervención a la vez, así que asegú
 {@player} 	Ugh. Estoy atascada.
 
 :: script__job.kelp-save-urchin-barren.ModelHelp3_c_1
-¿Alguna idea, {@guide}?
+¿Alguna idea, {nameof @guide}?
 
 :: script__job.kelp-save-urchin-barren.ModelHelp3_c_2
 {@guide}	Procesando...
@@ -11133,8 +11127,11 @@ Ahora sólo tenemos que decidir qué nutrias añadir. ¿Quizá Ofelia y Otis? Y 
 :: script__job.kelp-shop-welcome.end_c_21
 {@guide} ¡Tu mapa está listo!
 
-:: script__job.kelp-shop-welcome.end_c_22
-{@guide}  Utiliza el mapa para ver los trabajos disponibles y viajar a diferentes ecosistemas.
+:: script__job.kelp-shop-welcome.end_c_25
+{style center}{@tutorial}{speaker Mapa del Mundo}
+
+:: script__job.kelp-shop-welcome.end_c_27
+Utiliza el mapa para ver los trabajos disponibles y viajar a diferentes ecosistemas.
 
 :: script__job.kelp-start-refuge.start_c_0
 {@drKelp}	¡Estoy tan feliz que estés aquí, Olivia!
@@ -11701,7 +11698,7 @@ Pero, ¿por qué?
 {@player} 	¿Y ahora qué, {nameof @guide}?
 
 :: script__job.kelp-urchin-barren.helpBackToShip_c_1
-{guide}	Tienes que volver a tu nave.
+{@guide}	Tienes que volver a tu nave.
 
 :: script__job.kelp-urchin-barren.helpToModeling_c_0
 {@player} 	¿Y ahora qué, {nameof @guide}?
@@ -12571,7 +12568,7 @@ Lo siento, no te puedo ayudar más, Oli.
 {h}¡Sí! (Comprar){/h}
 
 :: Headers/CommonShop.leaf__interior.shop.arctic.eval.purchasePrompt_c_4
-{ramdom ...Sí?|Eh... (Comprar)}
+{random ...Sí?|Eh... (Comprar)}
 
 :: Headers/CommonShop.leaf__interior.shop.arctic.eval.purchasePrompt_c_8
 {h}¡Sí! (Instalar){/h}
@@ -12667,7 +12664,7 @@ Ahora no.
 {@arcticMechanic} {random ¡Guau!| Oye,|Parece que} esto desbloquearía algunos trabajos en la {nameof $local:hintStation}!
 
 :: Shop.Arctic__interior.shop.arctic.lowExp_c_0
-{@arcticMechanic}   Oh, {no tan rápido, chica|lo siento, Oli}... No puedo dejártelo. Primero necesitas un {h}Nivel de Autorización{/h} más alto.
+{@arcticMechanic}   Oh, {random no tan rápido, chica|lo siento, Oli}... No puedo dejártelo. Primero necesitas un {h}Nivel de Autorización{/h} más alto.
 
 :: Shop.Arctic__interior.shop.arctic.freeItem_c_0
 {@arcticMechanic}   Entonces, ¿quieres el {nameof $local:itemId}? No te costará nada.
@@ -12943,7 +12940,7 @@ Quizá tengamos que mejorar nuestra nave y volver más tarde.
 {@player}   Uf. 0 de 3.
 
 :: RS-4Y-script__RS-4Y.emergeAgain_c_6
-{@guide}    ¡¡{nameof @player }!! ¿Me escuchas? ¡Necesitas un mejor {h}motor{/h} si quieres resolver este problema!
+{@guide}    ¡¡{nameof @player}!! ¿Me escuchas? ¡Necesitas un mejor {h}motor{/h} si quieres resolver este problema!
 
 :: RS-4Y-script__RS-4Y.emergeAgain_c_9
 {@player}   ¡Argh! ¡La frustración, cuyo nombre es la corriente!
@@ -12994,13 +12991,13 @@ Podría usarlo aquí.
 Si eliminas ese arrecife, ¡toda esa vida será destruida! {auto}{wait-abs 2.5}
 
 :: dream06_00__Dream06.convoTrigger1_c_4
-¡NECESITA irse! {auto}{espera-abs 2.5}
+¡NECESITA irse! {auto}{wait-abs 2.5}
 
 :: dream06_00__Dream06.convoTrigger1_c_7
-¡PIENSA EN LAS CONSECUENCIAS! {auto}{espera-abs 2.5}
+¡PIENSA EN LAS CONSECUENCIAS! {auto}{wait-abs 2.5}
 
 :: dream06_00__Dream06.convoTrigger1_c_10
-¡YA BASTA! ¡Voy a salvar el arrecife! {auto}{espera-abs 4}
+¡YA BASTA! ¡Voy a salvar el arrecife! {auto}{wait-abs 4}
 
 :: BayouStationInterior__interior.bayouStation.intro_c_1
 {@bayouSci} Vaya, vaya, vaya. ¡Por fín, there's new blood round here!
@@ -13192,7 +13189,7 @@ No.
 {h}¡Sí! (Comprar){/h}
 
 :: Headers/CommonShop.leaf__interior.shop.bayou.eval.purchasePrompt_c_4
-{ramdom ...Sí?|Eh... (Comprar)}
+{random ...Sí?|Eh... (Comprar)}
 
 :: Headers/CommonShop.leaf__interior.shop.bayou.eval.purchasePrompt_c_8
 {h}¡Sí! (Instalar){/h}
@@ -13390,7 +13387,7 @@ Y ahora que lo pienso. ¡Encontré aquel viejo artículo sobre Mer!
 {@bayouMechanic}   ¿Quieres el {nameof $local:itemId}? ¡Gratis para un buen hogar!
 
 :: Shop.Bayou__interior.shop.bayou.costItem_c_0
-{@bayouMechanic}   ¿Quieres comprar el {nameof$local:itemId}?
+{@bayouMechanic}   ¿Quieres comprar el {nameof $local:itemId}?
  Sólo {cash} {$local:cashCost} {cash}.
 
 :: Shop.Bayou__interior.shop.bayou.cancel_c_0
@@ -13733,7 +13730,7 @@ No.
 {h}¡Sí! (Comprar){/h}
 
 :: Headers/CommonShop.leaf__interior.shop.coral.eval.purchasePrompt_c_4
-{ramdom ...Sí?|Eh... (Comprar)}
+{random ...Sí?|Eh... (Comprar)}
 
 :: Headers/CommonShop.leaf__interior.shop.coral.eval.purchasePrompt_c_8
 {h}¡Sí! (Instalar){/h}
@@ -14601,7 +14598,7 @@ No importa. Gracias, mami.
 {h}¡Sí! (Comprar){/h}
 
 :: Headers/CommonShop.leaf__interior.shop.kelp.eval.purchasePrompt_c_4
-{ramdom ...Sí?|Eh... (Comprar)}
+{random ...Sí?|Eh... (Comprar)}
 
 :: Headers/CommonShop.leaf__interior.shop.kelp.eval.purchasePrompt_c_8
 {h}¡Sí! (Instalar){/h}
@@ -15308,7 +15305,7 @@ Pues... no tengo nada específico.
 :: PartnerHelp__partner.talk.help.undefined.1_c_4
 ¿Y quizás revisa también tu {item-name}Tableta AQOS{/item-name}?
 
-:: PartnerHelp__partner.talk.help.undefined.1_c_-51
+:: PartnerHelp__partner.talk.help.undefined.1_c_-70
 {@} (El sistema de ayuda aún no está terminado.)
 
 :: ModelingScript__modeling.generic.visual-model.intro_c_0
@@ -15663,7 +15660,7 @@ Llegaremos a nuestro destino mañana.
 {h}¡Sí! (Comprar){/h}
 
 :: CommonShop__eval.purchasePrompt_c_4
-{ramdom ...Sí?|Eh... (Comprar)}
+{random ...Sí?|Eh... (Comprar)}
 
 :: CommonShop__eval.purchasePrompt_c_8
 {h}¡Sí! (Instalar){/h}
@@ -15678,7 +15675,7 @@ Mami, la Investigadora de Algas Marinas
 Mami
 
 :: char.profCoral.name
-Profesor Cempaka, Investigador de corales
+Profesor Cempaka, Investigador de Corales
 
 :: char.profCoral.name.short
 Profesor Cempaka
@@ -15708,13 +15705,13 @@ Sofía, La Mecánica del Sitio Coral
 Sofía
 
 :: char.bayouMechanic.name
-Alex, el mecánico del pantano
+Alex, La Mecánica del Pantano
 
 :: char.bayouMechanic.name.short
 Alex
 
 :: char.arcticMechanic.name
-Reiner, Mecánico del Ártico
+Reiner, El Mecánico del Ártico
 
 :: char.arcticMechanic.name.short
 Reiner
@@ -16316,7 +16313,7 @@ El borde del hábitat de un arrecife de coral.
 Volver al Exterior del Timón
 
 :: experiment.env.none
-<color=amarillo> Ningún Ambiente Definido</color>
+<color=yellow> Ningún Ambiente Definido</color>
 
 :: experiment.env.button.tooltip
 Selecciona Ambiente
@@ -19268,7 +19265,7 @@ La concentración de {property-name}Oxígeno{/property-name} en {env-name}{0}{/e
 Temperatura
 
 :: properties.temperature.sentence
-La {propiedad-nombre}Temperatura{/propiedad-nombre} en {env-name}{0}{/env-name} es {1}
+La {property-name}Temperatura{/property-name} en {env-name}{0}{/env-name} es {1}
 
 :: properties.temperature.history.sentence
 La {property-name}Temperatura{/property-name} en {env-name}{0}{/env-name} ha sido {1} durante los últimos {2} años
@@ -20145,7 +20142,9 @@ Datos del ecosistema descargados.
 Pescadores (Línea de pesca)
 
 :: RS-2V.fisherLine.body
-<i>Homosapiens</i> {i}No es un mamífero peluchín de tierra.
+<i>Homosapiens</i>
+
+No es un mamífero peluchín de tierra.
 Pone las redes y las cañas de pescar.
 
 :: RS-2V.redGrouper.header

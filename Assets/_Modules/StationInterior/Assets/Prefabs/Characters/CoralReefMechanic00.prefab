@@ -301,6 +301,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Period: 2
+  Stagger: 0
+  Animator: {fileID: 0}
+  ForceSomeAnimation: 0
+  m_SkinnedSprites: []
 --- !u!1 &1089085067734952447
 GameObject:
   m_ObjectHideFlags: 0
@@ -697,21 +701,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63a18b24c3d6f2b4eae4fa906f0ff980, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_OnPointerEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnPointerExit:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnPointerDown:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnPointerUp:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &3037171445521046049
 GameObject:
   m_ObjectHideFlags: 0
@@ -1330,6 +1319,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7077716114224728902}
+  - component: {fileID: 6419528262874884317}
   m_Layer: 0
   m_Name: CoralReefMechanic00
   m_TagString: Untagged
@@ -1357,6 +1347,17 @@ Transform:
   m_Father: {fileID: 5131542425279016290}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -43.350002, z: 0}
+--- !u!210 &6419528262874884317
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6026933624879388857}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
 --- !u!1 &6261044946265361688
 GameObject:
   m_ObjectHideFlags: 0
@@ -1598,7 +1599,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_Sprite: {fileID: 21300000, guid: 15aa4a52245f4a14f97a18721c557943, type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 0.11372549}
   m_FlipX: 0

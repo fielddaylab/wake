@@ -69,7 +69,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_Sprite: {fileID: 21300000, guid: 15aa4a52245f4a14f97a18721c557943, type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 0.09803922}
   m_FlipX: 0
@@ -249,21 +249,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63a18b24c3d6f2b4eae4fa906f0ff980, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_OnPointerEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnPointerExit:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnPointerDown:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnPointerUp:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &1350022472006522391
 GameObject:
   m_ObjectHideFlags: 0
@@ -789,6 +774,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3171208429351559738}
+  - component: {fileID: 3851292410079281491}
   m_Layer: 0
   m_Name: BayouLeadSci00
   m_TagString: Untagged
@@ -819,6 +805,17 @@ Transform:
   m_Father: {fileID: 82628654206924156}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 34.377003, z: 0}
+--- !u!210 &3851292410079281491
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2917068804933791436}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
 --- !u!1 &2979555121732213321
 GameObject:
   m_ObjectHideFlags: 0
@@ -1761,6 +1758,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Period: 2
+  Stagger: 0
+  Animator: {fileID: 0}
+  ForceSomeAnimation: 0
+  m_SkinnedSprites: []
 --- !u!1 &6893440351001558934
 GameObject:
   m_ObjectHideFlags: 0

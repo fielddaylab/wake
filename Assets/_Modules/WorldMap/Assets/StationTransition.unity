@@ -513,6 +513,7 @@ GameObject:
   - component: {fileID: 1272992512}
   - component: {fileID: 1272992514}
   - component: {fileID: 1272992513}
+  - component: {fileID: 1272992515}
   m_Layer: 0
   m_Name: SkyBG
   m_TagString: Untagged
@@ -570,8 +571,8 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1950296351
+  m_SortingLayer: 7
   m_SortingOrder: 0
 --- !u!33 &1272992514
 MeshFilter:
@@ -581,6 +582,20 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1272992511}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1272992515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1272992511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da53921b37e75734fad5b6f2f4c4b661, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Layer: 1950296351
+  m_Order: 0
 --- !u!1 &1491038789
 GameObject:
   m_ObjectHideFlags: 0
@@ -794,6 +809,7 @@ MonoBehaviour:
   m_DefaultText:
     m_Source: ui.loadingStation
     m_HashValue: 2654863975
+  m_TintSprites: 0
   m_Prefix: 
   m_Postfix: 
 --- !u!114 &1705606160
@@ -1076,6 +1092,7 @@ MonoBehaviour:
   m_Crossfade: 0.5
   m_StopOnDisable: 1
   m_PlayOnLoad: 1
+  m_DoNotPreload: 0
 --- !u!4 &1907463700
 Transform:
   m_ObjectHideFlags: 0
@@ -1611,7 +1628,7 @@ Camera:
   m_GameObject: {fileID: 5566503563602500871}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 4
   m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2

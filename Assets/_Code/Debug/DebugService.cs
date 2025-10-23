@@ -160,6 +160,17 @@ namespace Aqua.Debugging
                     }
                     m_UnlockAllLastPress = now;
                 }
+                else if (m_Input.KeyPressed(KeyCode.Minus)) {
+                    Camera currentCamera = Services.Camera.Current;
+                    if (currentCamera) {
+                        if (currentCamera.clearFlags == CameraClearFlags.Nothing) {
+                            currentCamera.clearFlags = CameraClearFlags.SolidColor;
+                            currentCamera.backgroundColor = ColorBank.Magenta;
+                        } else {
+                            currentCamera.clearFlags = CameraClearFlags.Nothing;
+                        }
+                    }
+                }
             }
         }
 

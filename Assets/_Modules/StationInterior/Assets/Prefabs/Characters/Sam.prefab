@@ -1,5 +1,16 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!210 &1948045237577903290
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7649527734706578138}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
 --- !u!1 &789344766078617592
 GameObject:
   m_ObjectHideFlags: 0
@@ -75,21 +86,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63a18b24c3d6f2b4eae4fa906f0ff980, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_OnPointerEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnPointerExit:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnPointerDown:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnPointerUp:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &2665073320031180010
 GameObject:
   m_ObjectHideFlags: 0
@@ -201,6 +197,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Period: 2
+  Stagger: 0
+  Animator: {fileID: 0}
+  ForceSomeAnimation: 0
+  m_SkinnedSprites: []
 --- !u!1001 &789344765472964942
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1031,6 +1031,12 @@ PrefabInstance:
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 7006735314794168095, guid: c5f5e5677834a4d44bef3d289891829c,
     type: 3}
+--- !u!1 &7649527734706578138 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6979669111923778452, guid: c5f5e5677834a4d44bef3d289891829c,
+    type: 3}
+  m_PrefabInstance: {fileID: 789344765472964942}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3246307476602720664 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -6342929119146340138, guid: c5f5e5677834a4d44bef3d289891829c,

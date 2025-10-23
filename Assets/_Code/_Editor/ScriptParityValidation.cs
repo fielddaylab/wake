@@ -38,7 +38,7 @@ namespace Aqua.Editor {
             }
         }
 
-        private static readonly string[] DefaultTextReplaceTags = new string[2] { "random", "rand" };
+        private static readonly string[] DefaultTextReplaceTags = new string[] { "random", "rand", "speaker" };
 
         static private Dictionary<StringHash32, LineInfo> BuildMasterDB(LocManifest manifest, LeafAsset[] scripts, IHasLocalizationKeys[] locKeys) {
             Dictionary<StringHash32, LineInfo> lineInfo = new Dictionary<StringHash32, LineInfo>(2048);
@@ -100,86 +100,121 @@ namespace Aqua.Editor {
             return BuildMasterDB(englishManifest, leafAssets, locKeys);
         }
 
-        [MenuItem("Aqualab/DEBUG/Export Line Valildation DB")]
+        [MenuItem("Aqualab/Localization/Export Line Valildation DB", priority = 200)]
         static public void ExportMasterDB() {
             var masterDB = BuildMasterDB();
             ExportMasterDB(masterDB, "LineData.csv");
         }
 
-        [MenuItem("Aqualab/DEBUG/Check for Line Inconsistencies")]
+        [MenuItem("Aqualab/Localization/Check for Line Inconsistencies", priority = 201)]
         static public void CheckForInconsistencies() {
             var masterDB = BuildMasterDB();
             using (StreamWriter writer = new StreamWriter("LocIssues.txt")) {
-                int errorCount = 0;
-                int missingLineCount = 0;
+                using (StreamWriter compare = new StreamWriter("LocCompare.txt")) {
+                    int errorCount = 0;
+                    int missingLineCount = 0;
 
-                foreach (var manifest in ValidationUtils.FindAllAssets<LocManifest>()) {
-                    if (manifest.LanguageId == LocService.DefaultLanguage) {
-                        continue;
-                    }
+                    foreach (var manifest in ValidationUtils.FindAllAssets<LocManifest>()) {
+                        if (manifest.LanguageId == LocService.DefaultLanguage) {
+                            continue;
+                        }
 
-                    LocPackage tempPkg = null;
-                    try {
-                        tempPkg = LocPackage.CombineAll(manifest.Packages);
-                        foreach(var kv in masterDB) {
-                            if (!tempPkg.TryGetContent(kv.Key, out string data)) {
-                                errorCount++;
-                                missingLineCount++;
-                                writer.Write("!! Language ");
-                                writer.Write(manifest.name);
-                                writer.Write(" is missing '");
-                                writer.Write(kv.Key.ToDebugString());
-                                writer.Write("'\n");
-                            } else {
-                                LineInfo parsedLineInfo = LineInfo.FromString(data);
-                                LineInfo comparedLineInfo = kv.Value;
-                                if (parsedLineInfo.CharacterId != comparedLineInfo.CharacterId) {
+                        LocPackage tempPkg = null;
+                        try {
+                            tempPkg = LocPackage.CombineAll(manifest.Packages);
+                            foreach (var kv in masterDB) {
+                                if (!tempPkg.TryGetContent(kv.Key, out string data)) {
                                     errorCount++;
+                                    missingLineCount++;
                                     writer.Write("Language ");
                                     writer.Write(manifest.name);
                                     writer.Write(" line '");
                                     writer.Write(kv.Key.ToDebugString());
-                                    writer.Write("' has incorrect character id (expected '");
-                                    writer.Write(comparedLineInfo.CharacterId.ToDebugString());
-                                    writer.Write("', has '");
-                                    writer.Write(parsedLineInfo.CharacterId.ToDebugString());
-                                    writer.Write("')\n");
+                                    writer.Write("' is missing [!!]\n");
+
+                                    compare.Write("Line: ");
+                                    compare.Write(kv.Key.ToDebugString());
+                                    compare.Write("\n\nOriginal:\n");
+                                    compare.Write(kv.Value.Text);
+                                    compare.Write("\n\n");
+                                    compare.Write(manifest.name);
+                                    compare.Write(":\n");
+                                    compare.Write("");
+                                    compare.Write("\n\n--------\n");
+                                } else {
+                                    LineInfo parsedLineInfo = LineInfo.FromString(data);
+                                    LineInfo comparedLineInfo = kv.Value;
+                                    if (parsedLineInfo.CharacterId != comparedLineInfo.CharacterId) {
+                                        errorCount++;
+                                        writer.Write("Language ");
+                                        writer.Write(manifest.name);
+                                        writer.Write(" line '");
+                                        writer.Write(kv.Key.ToDebugString());
+                                        writer.Write("' has incorrect character id (expected '");
+                                        writer.Write(comparedLineInfo.CharacterId.ToDebugString());
+                                        writer.Write("', has '");
+                                        writer.Write(parsedLineInfo.CharacterId.ToDebugString());
+                                        writer.Write("')\n");
+                                    }
+                                    if (parsedLineInfo.PoseId != comparedLineInfo.PoseId) {
+                                        errorCount++;
+                                        writer.Write("Language ");
+                                        writer.Write(manifest.name);
+                                        writer.Write(" line '");
+                                        writer.Write(kv.Key.ToDebugString());
+                                        writer.Write("' has incorrect pose id (expected '");
+                                        writer.Write(comparedLineInfo.PoseId.ToDebugString());
+                                        writer.Write("', has '");
+                                        writer.Write(parsedLineInfo.PoseId.ToDebugString());
+                                        writer.Write("')\n");
+                                    }
+
+                                    compare.Write("Line: ");
+                                    compare.Write(kv.Key.ToDebugString());
+                                    compare.Write("\n\nOriginal:\n");
+                                    compare.Write(kv.Value.Text);
+                                    compare.Write("\n\n");
+                                    compare.Write(manifest.name);
+                                    compare.Write(":\n");
+                                    compare.Write(data);
+                                    compare.Write("\n\n--------\n");
                                 }
-                                if (parsedLineInfo.PoseId != comparedLineInfo.PoseId) {
+                            }
+                            foreach (var key in tempPkg.AllKeys) {
+                                if (!masterDB.ContainsKey(key)) {
                                     errorCount++;
                                     writer.Write("Language ");
                                     writer.Write(manifest.name);
                                     writer.Write(" line '");
-                                    writer.Write(kv.Key.ToDebugString());
-                                    writer.Write("' has incorrect pose id (expected '");
-                                    writer.Write(comparedLineInfo.PoseId.ToDebugString());
-                                    writer.Write("', has '");
-                                    writer.Write(parsedLineInfo.PoseId.ToDebugString());
-                                    writer.Write("')\n");
+                                    writer.Write(key.ToDebugString());
+                                    writer.Write("' has no english counterpart [??]\n");
+
+                                    compare.Write("Line: ");
+                                    compare.Write(key.ToDebugString());
+                                    compare.Write("\n\nOriginal:\n");
+                                    compare.Write("");
+                                    compare.Write("\n\n");
+                                    compare.Write(manifest.name);
+                                    compare.Write(":\n");
+                                    tempPkg.TryGetContent(key, out string content);
+                                    compare.Write(content);
+                                    compare.Write("\n\n--------\n");
                                 }
                             }
-                        }
-                        foreach(var key in tempPkg.AllKeys) {
-                            if (!masterDB.ContainsKey(key)) {
-                                errorCount++;
-                                writer.Write("?? Language ");
-                                writer.Write(manifest.name);
-                                writer.Write(" has extra key '");
-                                writer.Write(key.ToDebugString());
-                                writer.Write("'\n");
+                        } finally {
+                            if (tempPkg) {
+                                GameObject.DestroyImmediate(tempPkg);
                             }
                         }
-                    } finally {
-                        if (tempPkg) {
-                            GameObject.DestroyImmediate(tempPkg);
-                        }
                     }
-                }
 
-                if (missingLineCount > 0) {
-                    Log.Error("Found {0} missing lines! (total errors {1})", missingLineCount, errorCount);
-                } else {
-                    Log.Error("Found {0} errors!", errorCount);
+                    if (missingLineCount > 0) {
+                        Log.Error("Found {0} missing lines! (total errors {1})", missingLineCount, errorCount);
+                    } else if (errorCount > 0) {
+                        Log.Error("Found {0} errors!", errorCount);
+                    } else {
+                        Log.Msg("No errors found! Hell yeah!");
+                    }
                 }
             }
         }

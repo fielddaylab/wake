@@ -84,7 +84,7 @@ namespace Aqua.WorldMap
             gameObject.SetActive(true);
         }
 
-        private void OnClick(PointerEventData unused)
+        private void OnClick()
         {
             if (m_Selected) {
                 return;
@@ -95,7 +95,7 @@ namespace Aqua.WorldMap
             Services.Events.Dispatch(WorldMapCtrl.Event_RequestChangeStation, EvtArgs.Ref(this));
         }
 
-        private void OnPointerEnter(PointerEventData _) {
+        private void OnPointerEnter() {
             if (m_Selected) {
                 return;
             }
@@ -104,7 +104,7 @@ namespace Aqua.WorldMap
             Services.Audio.PostEvent("ui_hover");
         }
 
-        private void OnPointerExit(PointerEventData _) {
+        private void OnPointerExit() {
             if (m_Selected) {
                 return;
             }

@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -460,7 +460,7 @@ PrefabInstance:
     - target: {fileID: 8918220503764507537, guid: 704f2a273a59f4747a6f29f73eac3122,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8918220503764507537, guid: 704f2a273a59f4747a6f29f73eac3122,
         type: 3}
@@ -2383,7 +2383,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &575936045
 MonoBehaviour:
@@ -2705,7 +2705,7 @@ Transform:
   m_Children:
   - {fileID: 704969328}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &853195465
 MonoBehaviour:
@@ -12682,6 +12682,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6764311288495454985, guid: 27a30752abd839945bbd6c647af31d95,
         type: 3}
+      propertyPath: m_ClearFlags
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6764311288495454985, guid: 27a30752abd839945bbd6c647af31d95,
+        type: 3}
       propertyPath: field of view
       value: 60.9311
       objectReference: {fileID: 0}
@@ -12999,7 +13004,7 @@ Transform:
   - {fileID: 456890284}
   - {fileID: 1685827154}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2027025720
 MonoBehaviour:

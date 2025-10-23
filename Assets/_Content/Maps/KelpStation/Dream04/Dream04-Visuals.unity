@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -4516,9 +4516,13 @@ MonoBehaviour:
     m_HashValue: 3750002915
   m_UnitTiming: 0.1
   Pattern: ... --- ...
+  PatternId:
+    m_Source: 
+    m_HashValue: 0
   PlayOnAwake: 1
   PlaybackRate: 1
   PlaybackVolume: 1
+  PlaybackPitch: 1
   PatternEndDelay: 12
   Location: {fileID: 360180450}
 --- !u!114 &360180449
@@ -4685,7 +4689,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 380517037}
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 0.3, y: -12.4, z: 0}
+  m_LocalPosition: {x: 0.345, y: -12.4, z: 0}
   m_LocalScale: {x: 1, y: 3.7002344, z: 1}
   m_Children: []
   m_Father: {fileID: 1868805342}
@@ -26003,7 +26007,7 @@ MonoBehaviour:
     serializedVersion: 2
     rgba: 4294967295
   m_Visible: 1
-  m_Size: {x: 29, y: 14}
+  m_Size: {x: 35, y: 14}
   m_Pivot: {x: 0.5, y: 0.5}
   m_UVRect:
     serializedVersion: 2
@@ -26012,7 +26016,7 @@ MonoBehaviour:
     width: 1
     height: 1
   m_AutoSize: 0
-  m_SortingLayer: -1434789061
+  m_SortingLayer: 1950296351
   m_SortingOrder: 0
 --- !u!4 &1690822831
 Transform:
@@ -26022,7 +26026,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1690822829}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -11.7, y: 6, z: 300}
+  m_LocalPosition: {x: -10.7, y: 6, z: 300}
   m_LocalScale: {x: 9, y: 9, z: 1}
   m_Children: []
   m_Father: {fileID: 1381467552}
@@ -26064,8 +26068,8 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1434789061
-  m_SortingLayer: -2
+  m_SortingLayerID: 1950296351
+  m_SortingLayer: 7
   m_SortingOrder: 0
 --- !u!33 &1690822833
 MeshFilter:

@@ -210,21 +210,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63a18b24c3d6f2b4eae4fa906f0ff980, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_OnPointerEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnPointerExit:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnPointerDown:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnPointerUp:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &1308782782685702349
 GameObject:
   m_ObjectHideFlags: 0
@@ -432,7 +417,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_Sprite: {fileID: 21300000, guid: 15aa4a52245f4a14f97a18721c557943, type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 0.11372549}
   m_FlipX: 0
@@ -681,6 +666,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Period: 2
+  Stagger: 0
+  Animator: {fileID: 0}
+  ForceSomeAnimation: 0
+  m_SkinnedSprites: []
 --- !u!1 &2591029317384541213
 GameObject:
   m_ObjectHideFlags: 0
@@ -1356,6 +1345,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4352732201690364128}
   - component: {fileID: 2447431860313100888}
+  - component: {fileID: 9094449862300990270}
   m_Layer: 0
   m_Name: Uncle00
   m_TagString: Untagged
@@ -1403,6 +1393,17 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!210 &9094449862300990270
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4942778008634314567}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
 --- !u!1 &4978047633508512416
 GameObject:
   m_ObjectHideFlags: 0

@@ -2,6 +2,7 @@ using BeauUtil.Blocks;
 using BeauUtil.Debugger;
 using BeauUtil.Tags;
 using BeauUtil;
+using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.IO;
@@ -163,6 +164,8 @@ namespace Aqua
 
         [ScriptedExtension(1, "aqloc")]
         private class Importer : ImporterBase<LocPackage> { }
+
+        #region Const Parser
 
         static private CustomTagParserConfig CreateConstParser() {
             CustomTagParserConfig config = new CustomTagParserConfig();
@@ -426,6 +429,8 @@ namespace Aqua
             return TryReplaceNameOf(tag, context, out result);
         }
 
+        #endregion // Const Parser
+
         static internal IEnumerable<KeyValuePair<StringHash32, string>> GatherStrings(LocPackage inPackage)
         {
             inPackage.Parse(Generator.Instance);
@@ -515,9 +520,9 @@ namespace Aqua
                 foreach (var pkg in inPackages) {
                     BlockParser.Parse(ref tmpPkg, pkg, Parsing.Block, Generator.Instance);
                 }
-            } catch {
+            } catch(Exception e) {
                 DestroyImmediate(tmpPkg);
-                throw;
+                throw e;
             }
 
             return tmpPkg;
