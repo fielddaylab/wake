@@ -13,7 +13,6 @@ using BeauUtil.Services;
 using ProtoAqua.ExperimentV2;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using UnityEngine;
 using OGD;
 using BeauUtil.Debugger;
@@ -22,19 +21,16 @@ using BeauPools;
 using BeauData;
 using Aqua.Analytics;
 using Aqua.JobBoard;
-using System.Runtime.CompilerServices;
 using FieldDay;
 using FieldDay.Data;
 using UnityEngine.SceneManagement;
-using Leaf;
 
 namespace Aqua
 {
     [ServiceDependency(typeof(EventService), typeof(ScriptingService))]
-    public partial class AnalyticsService : ServiceBehaviour, IDebuggable
-    {
+    public partial class AnalyticsService : ServiceBehaviour, IDebuggable {
         private const string NoActiveJobId = "no-active-job";
-        private const int ClientLogVersion = 5;
+        private const int ClientLogVersion = 6;
 
         static private readonly string[] FactTypeStringTable = Enum.GetNames(typeof(BFTypeId));
 
@@ -75,7 +71,7 @@ namespace Aqua
                     gs.Field("job_modeling", job_modeling);
                     gs.Field("job_argumentation", job_argumentation);
                     gs.BeginArray("task_list");
-                    for(int i = 0; i < task_list_count; i++) {
+                    for (int i = 0; i < task_list_count; i++) {
                         var task = task_list[i];
                         gs.BeginObject();
                         gs.Field("task_id", task.task_id);
@@ -107,7 +103,7 @@ namespace Aqua
         [SerializeField, Required] private SurveyPanel m_SurveyPrefab;
         [SerializeField] private TextAsset m_SurveyData;
         [SerializeField] private FirebaseConsts m_Firebase = default(FirebaseConsts);
-        
+
         #endregion // Inspector
 
         #region Logging Variables
@@ -141,14 +137,14 @@ namespace Aqua
         };
 
         [NonSerialized] private JsonBuilder m_JsonBuilder = new JsonBuilder(2048);
-        
+
         #endregion // Logging Variables
 
         #region IService
 
-        protected override void Initialize()
-        {
-            Services.Events.Register<StringHash32>(GameEvents.JobStarted, LogAcceptJob, this)
+        protected override void Initialize() {
+            Services.Events
+                .Register<StringHash32>(GameEvents.JobStarted, LogAcceptJob, this)
                 .Register<string>(GameEvents.ProfileStarting, OnProfileStarting, this)
                 .Register(GameEvents.ProfileUnloaded, OnProfileUnloaded, this)
                 .Register(GameEvents.ProfileStarted, OnProfileStarted, this)
@@ -183,7 +179,7 @@ namespace Aqua
                 .Register(GameEvents.PortableClosed, PortableClosed, this)
                 .Register<StringHash32>(GameEvents.InventoryUpdated, LogPurchaseUpgrade, this)
                 .Register<StringHash32>(ShopConsts.Event_InsufficientFunds, LogInsufficientFunds, this)
-                .Register(ShopConsts.Event_TalkToShopkeep, LogTalkToShopkeep, this)
+                .Register(ShopConsts.Event_TalkToShopkeep, LogClickTalkShopkeeper, this)
                 .Register<TankType>(ExperimentEvents.ExperimentView, SetCurrentTankType, this)
                 .Register<MeasurementTank.FeatureMask>(ExperimentEvents.ExperimentEnableFeature, SetTankFeatureEnabled, this)
                 .Register<MeasurementTank.FeatureMask>(ExperimentEvents.ExperimentDisableFeature, SetTankFeatureDisabled, this)
@@ -192,11 +188,11 @@ namespace Aqua
                 .Register<StringHash32>(ExperimentEvents.ExperimentAddCritter, LogAddCritter, this)
                 .Register<StringHash32>(ExperimentEvents.ExperimentRemoveCritter, LogRemoveCritter, this)
                 .Register<TankType>(ExperimentEvents.ExperimentEnded, LogEndExperiment, this)
-                .Register<StringHash32>(ArgueEvents.Loaded, LogBeginArgument, this)
+                .Register<StringHash32>(ArgueEvents.Loaded, LogArgumentationStarted, this)
                 .Register<StringHash32>(ArgueEvents.FactSubmitted, LogFactSubmitted, this)
                 .Register<StringHash32>(ArgueEvents.FactRejected, LogFactRejected, this)
-                .Register(ArgueEvents.Unloaded, LogLeaveArgument, this)
-                .Register<StringHash32>(ArgueEvents.Completed, LogCompleteArgument, this)
+                .Register(ArgueEvents.Unloaded, LogArgumentationEnded, this)
+                .Register<StringHash32>(ArgueEvents.Completed, LogArgumentationCompleted, this)
                 .Register<JobRecommendationArgs>(GameEvents.DisplayedJobRecommendation, LogRecommendedJob, this);
 
             JobEvents.OnJobTaskCompleted.Register(LogCompleteTask);
@@ -217,9 +213,9 @@ namespace Aqua
             )); // 32 kb game_state buffer? it's for switch_job, that can be massive, up to 32kb
             m_Log.UseFirebase(m_Firebase);
 
-            #if DEVELOPMENT && !UNITY_EDITOR
+#if DEVELOPMENT && !UNITY_EDITOR
             m_Debug = true;
-            #endif // DEVELOPMENT && !UNITY_EDITOR
+#endif // DEVELOPMENT && !UNITY_EDITOR
 
             m_Log.SetDebug(m_Debug);
 
@@ -245,8 +241,7 @@ namespace Aqua
             RefreshGameState();
         }
 
-        protected override void Shutdown()
-        {
+        protected override void Shutdown() {
             Services.Events?.DeregisterAll(this);
             m_Log.Dispose();
             m_Survey = null;
@@ -291,8 +286,7 @@ namespace Aqua
 
         #region GameState
 
-        private void ClearSceneState()
-        {
+        private void ClearSceneState() {
             m_CurrentPortableAppId = PortableAppId.NULL;
             m_CurrentPortableBestiaryTabId = null;
         }
@@ -300,7 +294,7 @@ namespace Aqua
         private void UpdateJobInfo(StringHash32 id) {
             if (id.IsEmpty) {
                 m_CurrentJobAsset = null;
-                
+
                 m_GameState.job_id = NoActiveJobId;
                 m_GameState.job_argumentation = -1;
                 m_GameState.job_modeling = -1;
@@ -318,7 +312,7 @@ namespace Aqua
                 var tasks = job.Tasks();
                 m_GameState.task_list_count = tasks.Length;
                 Assert.True(tasks.Length <= m_GameState.task_list.Length);
-                for(int i = 0; i < tasks.Length; i++) {
+                for (int i = 0; i < tasks.Length; i++) {
                     var task = tasks[i];
                     ref var taskData = ref m_GameState.task_list[i];
                     taskData.task_id = task.IdString;
@@ -377,9 +371,9 @@ namespace Aqua
         }
 
         private void UpdateCurrencyInfo() {
-            m_GameState.money = (int) Save.Cash;
-            m_GameState.science_points = (int) Save.Exp;
-            m_GameState.science_level = (int) Save.ExpLevel;
+            m_GameState.money = (int)Save.Cash;
+            m_GameState.science_points = (int)Save.Exp;
+            m_GameState.science_level = (int)Save.ExpLevel;
         }
 
         private void RefreshGameState() {
@@ -392,6 +386,940 @@ namespace Aqua
         #endregion // Game State
 
         #region Log Events
+
+        #region Main Menu Events
+
+        // app_launch
+        private void LogAppLaunch() {
+
+        }
+
+        // click_start_credits
+        // click_exit_credits
+        private void LogToggleCredits(bool toggle) {
+            if (toggle) {
+                m_Log.NewEvent("click_start_credits");
+            } else {
+                m_Log.NewEvent("click_exit_credits");
+            }
+        }
+
+        // click_switch_language
+        private void LogClickSwitchLanguage() {
+            // new language
+        }
+
+
+        // click_open_settings
+        // click_close_settings
+        private void LogToggleSettings(bool toggle) {
+            if (toggle) {
+                m_Log.NewEvent("click_open_settings");
+            } else {
+                m_Log.NewEvent("click_close_settings");
+            }
+
+        }
+
+        // settings_view_displayed
+        private void LogSettingsViewDisplayed() {
+            m_Log.NewEvent("settings_view_displayed");
+        }
+
+        // set_audio_level
+        private void LogSetAudioLevel(float level) {
+            // value
+            // setting
+            // category
+        }
+
+
+        //toggle_setting
+        private void LogToggleSetting() {
+            //      is_enabled
+            //      setting
+            //      category
+        }
+
+        //pick_setting_option: when player picks a multiselect
+        private void LogPickSettingOption() {
+            //      value
+            //      setting
+            //      category
+        }
+
+
+        //click_new_game
+        private void LogClickNewGame() {
+            m_Log.NewEvent("click_new_game");
+        }
+
+        //click_continue_game
+        private void LogClickContinueGame() {
+            m_Log.NewEvent("click_continue_game");
+        }
+
+        //click_back_to_main
+        private void LogClickBackToMain() {
+            m_Log.NewEvent("click_back_to_main");
+        }
+        //click_start_game
+        private void LogClickStartGame() {
+            //      from_continue
+            m_Log.NewEvent("click_start_game");
+        }
+
+        //game_started
+        private void LogClickGameStarted() {
+            m_Log.NewEvent("game_started");
+        }
+
+        #endregion // Main Menu Events
+
+        #region Script Events
+
+        //script_began
+        private void LogScriptBegan() {
+            //      node_id
+        }
+
+        //script_line_displayed
+        private void LogScriptLineDisplayed() {
+            //      script_node
+            //      speaker
+            //      line_text
+        }
+
+        //dialogue_choice_displayed
+        private void LogDialogueChoiceDisplayed() {
+            //      options:
+            //            option_text
+            //            target_type : ChoiceTarget
+            //            target_node
+        }
+
+        //select_dialogue_choice
+        private void LogSelectDialogueChoice() {
+            //      option_text
+            //      target_type : ChoiceTarget
+            //      target_node
+        }
+
+        //click_next_line
+        private void LogClickNextLine() {
+            //      script_node
+        }
+
+        //ask_for_help
+        private void LogAskForHelp() {
+            //      node_id
+        }
+
+        #endregion Script Events
+
+        #region Dive Events
+
+        //dive_movement_package?
+        private void LogDiveMovementPackage() {
+            //      positions
+            //      orientations
+            //      velocities
+        }
+
+        //surface_from_dive
+        private void LogSurfaceFromDive() {
+            m_Log.NewEvent("surface_from_dive");
+        }
+        //receive_upgrade
+        private void LogReceiveUpgrade() {
+            m_Log.NewEvent("receive_upgrade");
+        }
+        //activate_counter_tool
+        //deactivate_counter_tool
+        private void LogToggleCounterTool(bool toggle) {
+            if (toggle) {
+                m_Log.NewEvent("activate_counter_tool");
+            } else {
+                m_Log.NewEvent("deactivate_counter_tool");
+            }
+        }
+
+
+        //counter_tool_update
+        private void LogCounterToolUpdate() {
+            //      counts
+            //            organism_id
+            //            count_proportion : float
+        }
+
+        private void LogDreamSequence(bool started) {
+            if (started) {
+                //dream_sequence_started
+                m_Log.NewEvent("dream_sequence_started");
+            } else {
+                //dream_sequence_ended
+                m_Log.NewEvent("dream_sequence_ended");
+
+            }
+        }
+
+        //secret_code_entered
+        private void LogSecretCodeEntered() {
+            //      code_id
+
+        }
+
+        #endregion //Dive Events
+
+        #region Station Events
+
+        //enter_station
+        private void LogEnterStation() {
+            // should we have a "station name"?
+        }
+
+        //click_leave_station
+        private void LogClickLeaveStation() {
+            m_Log.NewEvent("click_leave_station");
+        }
+
+        //click_change_view
+        private void LogClickChangeView() {
+            //      view : StationViews
+        }
+        //view_changed
+        private void LogViewChanged() {
+            //      view : StationViews
+        }
+
+        // handle click jobgiver and shopkeeper
+        private void LogClickTalkCharacter() {
+
+        }
+
+        //click_talk_jobgiver
+        private void LogClickTalkJobgiver() {
+            m_Log.NewEvent("click_talk_shopkeeper");
+        }
+
+
+        private void LogJobBoardDisplayed() {
+            //job_board_displayed
+            //      open_jobs: list of job names
+            //      locked_jobs: list of jobs that are locked for upgrades
+        }
+        // select_open_job
+        private void LogSelectOpenJob() {
+            //      description
+            //      experimentation_level
+            //      modeling_level
+            //      argumentation_level
+            //      money_reward
+            //      science_point_reward
+        }
+
+        private void LogClickLeaveJobgiver() {
+            //click_leave_jobgiver
+
+        }
+
+        //accept_job
+        private void LogAcceptJob() {
+            //      new_job_id
+        }
+
+        //switch_job
+        private void LogSwitchJob() {
+            //      old_job_id
+
+        }
+
+        //complete_job
+        private void LogCompleteJob() {
+            m_Log.NewEvent("complete_job");
+        }
+
+
+
+
+        #region Shop Events
+        //click_talk_shopkeeper
+        private void LogClickTalkShopkeeper() {
+            m_Log.NewEvent("click_talk_shopkeeper");
+        }
+
+        // TODO: do we want "click leave shopkeeper"?
+        // click_leave_shopkeeper
+        private void LogClickLeaveShopkeeper() {
+            m_Log.NewEvent("click_leave_shopkeeper");
+        }
+
+        //open_exploration_purchase_tab
+        private void LogOpenExplorationPurchaseTab() {
+            m_Log.NewEvent("open_exploration_purchase_tab");
+        }
+
+        //exploration_purchase_tab_displayed
+        private void LogExplorationPurchaseTabDisplayed() {
+            m_Log.NewEvent("exploration_purchase_tab_displayed");
+            //      observation_list:
+            //            upgrade_name
+            //            upgrade_level
+            //            upgrade_cost
+            //            is_purchased
+            //      navigation_list
+            //            upgrade_name
+            //            upgrade_level
+            //            upgrade_cost
+            //            is_purchased
+        }
+
+        //open_science_purchase_tab
+        private void LogOpenSciencePurchaseTab() {
+            m_Log.NewEvent("open_science_purchase_tab");
+
+        }
+
+        //science_purchase_tab_displayed
+        private void LogSciencePurchaseTabDisplayed() {
+            m_Log.NewEvent("science_purchase_tab_displayed");
+            //experimentation_list
+            //            upgrade_name
+            //            upgrade_level
+            //            upgrade_cost
+            //            is_purchased
+            //modeling_list
+            //            upgrade_name
+            //            upgrade_level
+            //            upgrade_cost
+            //            is_purchased
+        }
+
+        //select_upgrade
+
+        private void LogSelectUpgrade() {
+            //      upgrade_name
+        }
+
+        //purchase_upgrade
+        private void LogPurchaseUpgrade() {
+            //      upgrade_name
+            //      new_money
+        }
+        #endregion //Shop Events
+        #endregion //Station Events
+
+        #region Aqos Events
+        //open_aqos
+        private void LogOpenAqos() {
+            m_Log.NewEvent("open_aqos");
+        }
+
+        private void LogOpenAqosTab(string tabType) {
+            switch (tabType) {
+                case "Job": LogOpenJobTab();
+                    break;
+                case "Settings": LogOpenSettingsTab();
+                    break;
+                case "Organisms": LogOpenOrganismsTab();
+                    break;
+                case "Sites": LogOpenSitesTab();
+                    break;
+                case "Anomalies": LogOpenAnomalyTab();
+                    break;
+                case "Tech": LogOpenTechTab();
+                    break;
+                case "Progression": LogOpenProgressionTab();
+                    break;
+                case "Exploration": LogOpenExplorationTab();
+                    break;
+                case "Science": LogOpenScienceTab();
+                    break;
+                default:
+                    break;
+            }
+
+
+        }
+
+        //open_job_tab
+        private void LogOpenJobTab() {
+            m_Log.NewEvent("open_job_tab");
+        }
+        //job_tab_displayed
+        private void LogJobTabDisplayed() {
+            //      task_list :
+            //      is_complete
+            //      task_description
+        }
+
+        //open_settings_tab
+        private void LogOpenSettingsTab() {
+            m_Log.NewEvent("open_settings_tab");
+        }
+        //settings_tab_displayed
+        private void LogSettingsTabDisplayed() {
+            m_Log.NewEvent("settings_tab_displayed");
+        }
+        //open_organisms_tab
+        private void LogOpenOrganismsTab() {
+            m_Log.NewEvent("open_organisms_tab");
+        }
+        //organisms_tab_displayed
+        private void LogOrganismsTabDisplayed() {
+            //      organism_list:
+            //      organism_id
+            //      location
+        }
+
+
+        //select_organism_entry
+        private void LogSelectOrganismEntry() {
+            //      organism_id
+            //      description
+            //      facts:
+            //            category
+            //            fact_id
+        }
+
+
+        //open_sites_tab
+        private void LogOpenSitesTab() {
+            m_Log.NewEvent("open_sites_tab");
+        }
+        //sites_tab_displayed
+        private void LogSitesTabDisplayed() {
+            //      site_list:
+            //            site_name
+            //            location
+        }
+
+        //select_site_entry
+        private void LogSelectSiteEntry() {
+            //      site_id
+            //      description
+            //      temperature
+            //      light
+            //      ph
+            //      oxygen
+            //      co2
+            //      model_list?
+            //      population_counts?
+
+        }
+
+        //open_anomaly_tab
+        private void LogOpenAnomalyTab() {
+            m_Log.NewEvent("open_anomaly_tab");
+        }
+        //anomaly_tab_displayed
+        private void LogAnomalyTabDisplayed() {
+            //      anomaly_list:
+            //            name
+            //            decrypted
+        }
+
+        //select_anomaly
+        private void LogSelectAnomaly() {
+            //      name
+            //      description
+            //      decrypted
+        }
+
+        //select_fact
+        private void LogSelectFact() {
+            //      fact_id
+            //      ??
+        }
+
+        //submit_fact
+        private void LogSubmitFact() {
+            //      fact_id
+
+        }
+
+        //close_fact
+        private void LogCloseFact() {
+            //      fact_id
+
+        }
+        
+        //open_tech_tab
+        private void LogOpenTechTab() {
+            m_Log.NewEvent("open_tech_tab");
+        }
+
+        //tech_tab_displayed
+        private void LogTechTabDisplayed() {
+            //      view_type : TechTabs
+
+        }
+
+        //open_exploration_tab
+        private void LogOpenExplorationTab() {
+            m_Log.NewEvent("open_exploration_tab");
+        }
+        //exploration_tab_displayed
+        private void LogExplorationTabDisplayed() {
+            //      observation_list
+            //      navigation_list
+        }
+
+        //open_science_tab
+        private void LogOpenScienceTab() {
+            m_Log.NewEvent("open_science_tab");
+        }
+
+        //science_tab_displayed
+        private void LogScienceTabDisplayed() {
+            //      experimentation_list
+            //      modeling_list
+        }
+
+        //open_progression_tab
+        private void LogOpenProgressionTab() {
+            m_Log.NewEvent("open_progression_tab");
+        }
+
+        //progression_tab_displayed
+        private void LogProgressionTabDisplayed() {
+            //      points_to_next_level
+            //      current_level
+        }
+
+        //receive_ecosystem
+        private void LogReceiveEcosystem() {
+            //      ecosystem_name
+            //      description
+        }
+
+        //receive_fact
+        private void LogReceiveFact() {
+
+            //      fact_id
+        }
+
+        //begin_scan
+        private void LogBeginScan() {
+            //      category : EntityCategory
+            //      object_id
+        }
+
+        //scan_complete
+        private void LogScanComplete() {
+            //      category : EntityCategory
+            //      object_id
+        }
+
+        //receive_critter
+        private void LogReceiveCritter() {
+            //      critter_id
+            //      description
+        }
+
+        //click_add_to_aqos
+        private void LogCickAddToAqos() {
+            m_Log.NewEvent("click_add_to_aqos");
+        }
+        //task_completed : need to also send on job accept, and on argumentation complete
+        private void LogTaskCompleted() {
+            //      task_id
+            //      task_description
+        }
+
+
+        #endregion //Aqos Events
+
+        #region Ship Map Events
+        //open_ship_map
+        //close_ship_map
+        private void LogToggleShipMap(bool toggle) {
+            if (toggle) {
+                m_Log.NewEvent("open_ship_map");
+            } else {
+                m_Log.NewEvent("close_ship_map");
+            }
+         }
+        private void LogShipMapNavigation() {
+            //click_open_helm
+            m_Log.NewEvent("click_open_helm");
+            //click_open_experiment
+            m_Log.NewEvent("click_open_experiment");
+            //click_open_modeling
+            m_Log.NewEvent("click_open_modeling");
+            //click_quick_travel_station
+            m_Log.NewEvent("click_quick_travel_station");
+            //click_open_cabin
+            m_Log.NewEvent("click_open_cabin");
+        }
+
+        #endregion // Ship Map Events
+
+        #region World Map/Helm Events
+        //helm_entered
+        private void LogHelmEntered() {
+            m_Log.NewEvent("helm_entered");
+        }
+        //open_world_map
+        private void LogOpenWorldMap() {
+            m_Log.NewEvent("open_world_map");
+        }
+
+        //close_world_map
+        private void LogCloseWorldMap() {
+            m_Log.NewEvent("close_world_map");
+        }
+        //click_navigate
+        private void LogClickNavigate() {
+            m_Log.NewEvent("click_navigate");
+        }
+        //navigation_view_opened
+        private void LogNavigationViewOpened() {
+            m_Log.NewEvent("navigation_view_opened");
+        }
+        #endregion // World Map Events
+
+        #region Journal/Cabin Events
+        //cabin_entered
+        private void LogCabinEntered() {
+            m_Log.NewEvent("cabin_entered");
+        }
+
+        //journal_entry_unlocked
+        private void LogJournalEntryUnlocked() {
+            //      entry_id
+
+        }
+
+        //click_open_journal
+        //click_close_journal
+        private void LogToggleJournal(bool toggle) {
+            if (toggle) {
+                m_Log.NewEvent("click_open_journal");
+            } else {
+                m_Log.NewEvent("click_close_journal");
+            }
+        }
+
+        //click_next_journal_page
+        //click_previous_journal_page
+        private void LogTurnJournalPage(bool next) {
+            if (next) {
+                m_Log.NewEvent("click_next_journal_page");
+            } else {
+                m_Log.NewEvent("click_previous_journal_page");
+            }
+        }
+
+        //select_journal_tab
+        private void LogSelectJournalTab() {
+            //      tab_name
+        }
+
+        #endregion //Journal/Cabin Events
+
+        #region Experimentation Events
+
+        //experimentation_room_entered
+        private void LogExperimentationRoomEntered() {
+            m_Log.NewEvent("experimentation_room_entered");
+        }
+        //select_experimentation_tank
+        private void LogSelectExperimentationTank() {
+            //      tank_id
+
+        }
+
+        //begin_experimental_setup
+        private void LogBeginExperimentalSetup() {
+            //      tank_id
+
+        }
+        //environment_picker_displayed
+        private void LogEnvironmentPickerDisplayed() {
+            //      environment_list
+
+        }
+        //organism_picker_displayed
+        private void LogOrganismPickerDisplayed() {
+
+            //      organism_list
+        }
+        //select_environment
+        private void LogSelectEnvironment() {
+            //      site_id
+
+        }
+        //click_add_water
+        private void LogClickAddWater() {
+            //      site_id
+            //      water chemistry here
+        }
+
+        //select_organism
+        //deslect_organism
+
+        private void LogToggleSelectOrganism(bool toggle, string organismId) {
+            if (toggle) {
+                using (var e = m_Log.NewEvent("select_organism")) {
+                    e.Param("organism_id", organismId);
+                }
+            } else {
+                using (var e = m_Log.NewEvent("deselect_organism")) {
+                    e.Param("organism_id", organismId);
+                }
+            }
+        }
+
+        //click_add_organisms
+        private void LogClickAddOrganisms() {
+            //      organism_list
+
+        }
+        //tank_features_displayed
+        private void LogTankFeaturesDisplayed() {
+            //      features:
+            //            feature_name
+            //            description
+            //            is_enabled
+        }
+
+        //toggle_tank_feature
+        private void ToggleTankFeature() {
+            //      feature_name
+            //      is_enabled
+        }
+
+        //experiment_began
+        //experiment_ended
+        private void LogExperiment(bool began) {
+            //      tank_id
+            //      environment_id
+            //      organism_list
+            //      autofeeder_enabled
+            //      stabilizer_enabled
+        }
+        //click_end_experiment
+
+        private void LogClickEndExperiment() {
+            //      tank_id
+
+        }
+
+        //experiment_summary_displayed
+        private void LogExperimentSummaryDisplayed() {
+            //      fact_ids: List, empty if nothing new
+
+        }
+        //click_capture_behavior
+        private void LogClickCaptureBehavior() {
+            //      fact_id
+            //      organism_list
+            //      behavior_type
+        }
+
+        //begin_stress_drag
+        private void LogBeginStressDrag() {
+            //      water_property_type
+
+        }
+
+        //end_stress_drag
+        private void LogEndStressDrag() {
+            //      water_property_type
+
+        }
+
+        //stress_limit_discovered
+        private void LogStressLimitDiscovered() {
+            //      organism_id
+            //      water_property_type
+            //      limit_type : StressLimit
+        }
+
+
+        #endregion //Experimentation Events
+
+        #region Argumentation Events
+
+        //argumentation_started
+        private void LogArgumentationStarted(StringHash32 argumentId) {
+            m_CurrentArgumentId = argumentId;
+            m_Log.NewEvent("argumentation_started");
+        }
+
+        //argumentation_ended
+        private void LogArgumentationEnded() {
+            m_Log.NewEvent("argumentation_ended");
+
+        }   
+        //argumentation_completed
+        private void LogArgumentationCompleted(StringHash32 argumentId) {
+            m_CurrentArgumentId = null;
+            m_Log.NewEvent("argumentation_completed");
+        }
+
+        //argument_claim_started
+        private void LogArgumentClaimStarted() {
+            //      claim_prompt
+            //      evidence_slots:
+            //            correct_fact_id
+        }
+
+        private void LogArgumentClaimCompleted() {
+            //argument_claim_completed
+            //      evidence_slots:
+            //            correct_fact_id
+        }
+
+        //fact_accepted
+        //fact_rejected
+        private void LogFactResponse(bool accepted, StringHash32 factId) {
+            //      fact_id
+
+            if (accepted) {
+
+            } else {
+
+            }
+        }
+        #endregion //Argumentation Events
+
+        #region Modeling Events
+        //begin_modeling
+        //leave_modeling
+        private void LogToggleModeling(bool toggle) {
+            if (toggle) {
+                m_Log.NewEvent("begin_modeling");
+            } else {
+                m_Log.NewEvent("leave_modeling");
+            }
+        }
+
+        //click_import_facts
+        private void LogClickImportFacts() {
+            m_Log.NewEvent("click_import_facts");
+        }
+
+        private void LogSelectModelTab() {
+            //select_model_visualization_tab
+            //      environment_id
+            //      organisms: List
+            //      relationship_facts:List
+            //      missing_relationship_facts:List
+            //select_model_describe_tab
+            //select_model_simulation_tab
+            //select_model_evaluation_tab
+            //select_model_prediction_tab
+            //select_model_intervention_tab
+
+
+        }
+
+        //open_visualization_filters
+        private void LogOpenVisualizationFilters() {
+            //      filters:
+            //      name
+            //      enabled
+        }
+
+        private void LogToggleVisualizationFilter() {
+            //toggle_visualization_filter
+            //      name
+            //      enabled
+        }
+
+        //start_model_simulation
+        private void LogStartModelSimulation() {
+            m_Log.NewEvent("start_model_simulation");
+        }
+
+        //model_simulation_completed
+        private void LogModelSimulationCompleted() {
+            //      model_accuracy
+
+        }
+
+        //open_model_deviation
+        //close_model_deviation
+
+        private void LogToggleModelDeviation(bool toggle) {
+            if (toggle) {
+                m_Log.NewEvent("open_model_deviation");
+            } else {
+                m_Log.NewEvent("close_model_deviation");
+            }
+        }
+
+        //model_deviation_displayed
+        private void LogModelDeviationDisplayed() {
+            //      deviation_level : DeviationLevel
+
+        }
+        
+        //click_save_model
+        private void LogClickSaveModel() {
+            m_Log.NewEvent("click_save_model");
+        }
+
+        //model_save_displayed
+        private void LogModelSaveDisplayed() {
+            //      description
+        }
+
+        //dismiss_saved_model
+        private void LogDismissSavedModel() {
+            m_Log.NewEvent("dismiss_saved_model");
+        }
+        //click_run_prediction
+        private void LogClickRunPrediction() {
+            m_Log.NewEvent("click_run_prediction");
+        }
+        //prediction_run_began
+        private void LogPredictionRunBegan() {
+            m_Log.NewEvent("prediction_run_began");
+        }
+        //prediction_run_completed
+        private void LogPredictionRunCompleted() {
+            m_Log.NewEvent("prediction_run_completed");
+        }
+
+        private void LogChangeInterventionPopulation() {
+            //increase_intervention_population
+            //      organism_id
+            //      population_change
+            //      new_population
+            //decrease_intervention_population
+            //      organism
+            //      population_change
+            //      new_population
+            //reset_intervention_population
+            //      organism
+            //      population_change
+            //      new_population
+        }
+
+
+        //click_introduce_new_organism
+        private void LogClickIntroduceNewOrganism() {
+            m_Log.NewEvent("click_introduce_new_organism");
+        }
+
+        //click_start_intervention
+        private void LogClickStartIntervention() {
+            m_Log.NewEvent("click_start_intervention");
+        }
+
+        //intervention_started
+        private void LogInterventionStarted() {
+            m_Log.NewEvent("intervention_started");
+        }
+        #endregion Modeling Events
+
+
+
+
+        #region Old Events
 
         private void GuideHandler(ScriptThreadHandle inThread)
         {
@@ -860,7 +1788,7 @@ namespace Aqua
                 e.Param("sync", sync);
             }
         }
-
+    
         #region Job Events
 
         #endregion // Job Events
@@ -1243,6 +2171,8 @@ namespace Aqua
         }
 
         #endregion // Errors
+
+        #endregion // Old Events
 
         #endregion // Log Events
 
