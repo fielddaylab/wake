@@ -41,7 +41,7 @@ Shader "Aqualab/Journal Reveal"
         Cull Off
         Lighting Off
         ZWrite Off
-        ZTest [unity_GUIZTestMode]
+        ZTest Always
         Blend SrcAlpha OneMinusSrcAlpha
         ColorMask [_ColorMask]
 

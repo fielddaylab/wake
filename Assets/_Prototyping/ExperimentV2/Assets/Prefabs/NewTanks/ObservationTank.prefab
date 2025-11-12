@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &6030846033761473113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2362485665687504515}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3856ec2f20ddbe4d9743b202f8ff574, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ParentTank: {fileID: 2362485665687504541}
+  m_HeaderUI: {fileID: 1785055978176334666}
+  m_BeginScreen: {fileID: 5522787111722315568}
+  m_EnvironmentScreen: {fileID: 462294024178790602}
+  m_OrganismScreen: {fileID: 3830656856917588678}
+  m_RunningScreen: {fileID: 1404057878345318666}
+  m_BehaviorCircles:
+    m_Prefab: {fileID: 2423523140435794314, guid: fd9ccafda6eeffc4dbf452f655171520,
+      type: 3}
+    m_Name: 
+    m_InitialCapacity: 8
+    m_PrewarmOnInitialize: 0
+    m_InitialPrewarm: 8
+    m_DefaultPoolRoot: {fileID: 2369252030618630884}
+    m_DefaultSpawnRoot: {fileID: 0}
+    m_ResetTransformOnAlloc: 1
+  m_FinishButtonHighlight: {fileID: 8976698822731857811}
+  m_UnobservedStateLabel: {fileID: 7389350682214826076}
 --- !u!1 &2239145569349423281
 GameObject:
   m_ObjectHideFlags: 0
@@ -32,36 +62,6 @@ Transform:
   m_Father: {fileID: 2362485665687504514}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6030846033761473113
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2362485665687504515}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3856ec2f20ddbe4d9743b202f8ff574, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ParentTank: {fileID: 2362485665687504541}
-  m_HeaderUI: {fileID: 1785055978176334666}
-  m_BeginScreen: {fileID: 5522787111722315568}
-  m_EnvironmentScreen: {fileID: 462294024178790602}
-  m_OrganismScreen: {fileID: 3830656856917588678}
-  m_RunningScreen: {fileID: 1404057878345318666}
-  m_BehaviorCircles:
-    m_Prefab: {fileID: 2423523140435794314, guid: fd9ccafda6eeffc4dbf452f655171520,
-      type: 3}
-    m_Name: 
-    m_InitialCapacity: 8
-    m_PrewarmOnInitialize: 0
-    m_InitialPrewarm: 8
-    m_DefaultPoolRoot: {fileID: 2369252030618630884}
-    m_DefaultSpawnRoot: {fileID: 0}
-    m_ResetTransformOnAlloc: 1
-  m_FinishButtonHighlight: {fileID: 8976698822731857811}
-  m_UnobservedStateLabel: {fileID: 7389350682214826076}
 --- !u!1 &2823355060848505789
 GameObject:
   m_ObjectHideFlags: 0
@@ -353,7 +353,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -9071924821917460114, guid: b15403010083ed84b8d4539664e828a8, type: 2}
+  - {fileID: 2100000, guid: e7344c0d15c36654b8a26f6d2bc6eed9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -404,8 +404,7 @@ MonoBehaviour:
   m_text: '-'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b15403010083ed84b8d4539664e828a8, type: 2}
-  m_sharedMaterial: {fileID: -9071924821917460114, guid: b15403010083ed84b8d4539664e828a8,
-    type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: e7344c0d15c36654b8a26f6d2bc6eed9, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -803,6 +802,16 @@ PrefabInstance:
       propertyPath: m_text
       value: Observation Tank
       objectReference: {fileID: 0}
+    - target: {fileID: 4353761855084274373, guid: 5e3a61bc7dc7d7342bee0410e95f36be,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: 2a6cab1f3dfe4964a9a3b80f5334c0d5, type: 2}
+    - target: {fileID: 4353761855084274375, guid: 5e3a61bc7dc7d7342bee0410e95f36be,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 2a6cab1f3dfe4964a9a3b80f5334c0d5, type: 2}
     - target: {fileID: 4353761855905777646, guid: 5e3a61bc7dc7d7342bee0410e95f36be,
         type: 3}
       propertyPath: m_LocalScale.x
@@ -2174,7 +2183,7 @@ PrefabInstance:
     - target: {fileID: 5694567769988148046, guid: c7310f416889c164d861a43f7f4c1832,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 491.19
+      value: 491.175
       objectReference: {fileID: 0}
     - target: {fileID: 5694567769988148046, guid: c7310f416889c164d861a43f7f4c1832,
         type: 3}

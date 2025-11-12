@@ -16,15 +16,15 @@ using BeauUtil.Debugger;
 using BeauUtil.Services;
 using Leaf;
 using Leaf.Runtime;
+using ScriptableBake;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
 using SharedPanelIndex = BeauUtil.TypeIndex<Aqua.SharedPanel>;
 
-namespace Aqua
-{
+namespace Aqua {
     [DefaultExecutionOrder(10000), ServiceDependency(typeof(EventService))]
-    public class UIMgr : ServiceBehaviour, IDebuggable {
+    public class UIMgr : ServiceBehaviour, IDebuggable, IBaked {
         #region Inspector
 
         [SerializeField, Required] private Camera m_UICamera = null;
@@ -75,9 +75,8 @@ namespace Aqua
 
         #region Loading Screen
 
-        public bool IsTransitioning()
-        {
-            return  m_ScreenFaders.WipeCount > 0 || m_WorldFaders.WipeCount > 0;
+        public bool IsTransitioning() {
+            return m_ScreenFaders.WipeCount > 0 || m_WorldFaders.WipeCount > 0;
         }
 
         #endregion // Loading Screen
@@ -87,8 +86,7 @@ namespace Aqua
         public DialogPanel Dialog { get { return m_DialogPanel; } }
         public PopupPanel Popup { get { return m_PopupPanel; } }
 
-        public void HideAll()
-        {
+        public void HideAll() {
             m_DialogPanel.InstantHide();
             m_PopupPanel.InstantHide();
             m_LetterboxCounter = 0;
@@ -97,12 +95,11 @@ namespace Aqua
             m_WorldFaders.StopAll();
             m_FocusHighlight.Hide(true);
 
-            foreach(var panel in m_DialogStyles)
-            {
+            foreach (var panel in m_DialogStyles) {
                 panel.InstantHide();
             }
 
-            for(int i = 0; i < SharedPanelIndex.Count; i++) {
+            for (int i = 0; i < SharedPanelIndex.Count; i++) {
                 var panel = m_SharedPanels[i];
                 if (panel) {
                     panel.InstantHide();
@@ -110,11 +107,9 @@ namespace Aqua
             }
         }
 
-        public DialogPanel GetDialog(StringHash32 inStyleId)
-        {
+        public DialogPanel GetDialog(StringHash32 inStyleId) {
             DialogPanel panel;
-            if (!m_DialogStyleMap.TryGetValue(inStyleId, out panel))
-            {
+            if (!m_DialogStyleMap.TryGetValue(inStyleId, out panel)) {
                 panel = m_DialogPanel;
                 Log.Error("[UIMgr] Unable to retrieve dialog panel with style '{0}'", inStyleId);
             }
@@ -130,32 +125,26 @@ namespace Aqua
 
         #region Letterbox
 
-        public void ShowLetterbox()
-        {
+        public void ShowLetterbox() {
             if (++m_LetterboxCounter == 1)
                 m_Letterbox.Show();
         }
 
-        public void HideLetterbox()
-        {
+        public void HideLetterbox() {
             if (m_LetterboxCounter > 0)
                 --m_LetterboxCounter;
         }
 
-        public bool IsLetterboxed()
-        {
+        public bool IsLetterboxed() {
             return m_LetterboxCounter > 0;
         }
 
-        public bool IsLetterboxVisible()
-        {
+        public bool IsLetterboxVisible() {
             return m_LetterboxCounter > 0 || m_Letterbox.IsTransitioning();
         }
 
-        public IEnumerator StartSkipCutscene()
-        {
-            if (!m_SkippingCutscene)
-            {
+        public IEnumerator StartSkipCutscene() {
+            if (!m_SkippingCutscene) {
                 m_SkippingCutscene = true;
                 m_SkipFader = m_ScreenFaders.AllocFader();
                 return m_SkipFader.Object.Show(Color.black, 0.2f);
@@ -164,18 +153,15 @@ namespace Aqua
             return null;
         }
 
-        public void StopSkipCutscene()
-        {
-            if (m_SkippingCutscene)
-            {
+        public void StopSkipCutscene() {
+            if (m_SkippingCutscene) {
                 m_SkipFader.Object?.Hide(0.2f);
                 m_SkipFader = default;
                 m_SkippingCutscene = false;
             }
         }
 
-        public bool IsSkippingCutscene()
-        {
+        public bool IsSkippingCutscene() {
             return m_SkippingCutscene;
         }
 
@@ -187,8 +173,7 @@ namespace Aqua
         public ScreenFaderDisplay WorldFaders { get { return m_WorldFaders; } }
         public FocusHighlight Focus { get { return m_FocusHighlight; } }
 
-        public ScreenFaderDisplay Faders(ScreenFaderLayer inLayer)
-        {
+        public ScreenFaderDisplay Faders(ScreenFaderLayer inLayer) {
             return inLayer == ScreenFaderLayer.Screen ? m_ScreenFaders : m_WorldFaders;
         }
 
@@ -196,13 +181,11 @@ namespace Aqua
 
         #region Additional Panels
 
-        public void RegisterPanel(SharedPanel inPanel)
-        {
+        public void RegisterPanel(SharedPanel inPanel) {
             Type t = inPanel.GetType();
             int index = SharedPanelIndex.Get(t);
             SharedPanel existingPanel;
-            if ((existingPanel = m_SharedPanels[index]) != null)
-            {
+            if ((existingPanel = m_SharedPanels[index]) != null) {
                 if (existingPanel != inPanel)
                     throw new ArgumentException(string.Format("Panel with type {0} already exists", t.FullName), "inPanel");
 
@@ -212,8 +195,7 @@ namespace Aqua
             m_SharedPanels[index] = inPanel;
         }
 
-        public void DeregisterPanel(SharedPanel inPanel)
-        {
+        public void DeregisterPanel(SharedPanel inPanel) {
             Type t = inPanel.GetType();
             int index = SharedPanelIndex.Get(t);
             SharedPanel existingPanel;
@@ -222,8 +204,7 @@ namespace Aqua
             }
         }
 
-        public T FindPanel<T>() where T : SharedPanel
-        {
+        public T FindPanel<T>() where T : SharedPanel {
             int index = SharedPanelIndex.Get<T>();
             SharedPanel panel = m_SharedPanels[index];
             if (panel == null) {
@@ -235,8 +216,7 @@ namespace Aqua
             return (T) panel;
         }
 
-        public bool TryFindPanel<T>(out T outPanel) where T : SharedPanel
-        {
+        public bool TryFindPanel<T>(out T outPanel) where T : SharedPanel {
             int index = SharedPanelIndex.Get<T>();
             outPanel = m_SharedPanels[index] as T;
             return outPanel != null;
@@ -271,20 +251,16 @@ namespace Aqua
 
         #region Persistent UI
 
-        public IEnumerator LoadPersistentUI()
-        {
-            if (m_PersistentUIObjects.Count == 0 && !m_PersistentUILoad)
-            {
+        public IEnumerator LoadPersistentUI() {
+            if (m_PersistentUIObjects.Count == 0 && !m_PersistentUILoad) {
                 return (m_PersistentUILoad = Routine.Start(this, LoadPersistentUI_Routine())).Wait();
             }
 
             return null;
         }
 
-        private IEnumerator LoadPersistentUI_Routine()
-        {
-            using(Profiling.Time("loading persistent ui"))
-            {
+        private IEnumerator LoadPersistentUI_Routine() {
+            using (Profiling.Time("loading persistent ui")) {
                 Services.Assets.PreloadGroup("Prefab/Portable");
                 var request = Future.Resources.LoadAsync<GameObject>(m_PersistentGameUIPath);
                 yield return request;
@@ -293,9 +269,8 @@ namespace Aqua
                 yield return null;
                 DontDestroyOnLoad(instantiated);
                 m_PersistentUIObjects.Capacity = instantiated.transform.childCount;
-                
-                foreach(Transform child in instantiated.transform)
-                {
+
+                foreach (Transform child in instantiated.transform) {
                     m_PersistentUIObjects.Add(child.gameObject);
                 }
                 instantiated.transform.FlattenHierarchy(false);
@@ -303,13 +278,10 @@ namespace Aqua
             }
         }
 
-        public void UnloadPersistentUI()
-        {
-            if (m_PersistentUILoad || m_PersistentUIObjects.Count > 0)
-            {
+        public void UnloadPersistentUI() {
+            if (m_PersistentUILoad || m_PersistentUIObjects.Count > 0) {
                 m_PersistentUILoad.Stop();
-                foreach(var obj in m_PersistentUIObjects)
-                {
+                foreach (var obj in m_PersistentUIObjects) {
                     GameObject.Destroy(obj);
                 }
 
@@ -322,8 +294,7 @@ namespace Aqua
 
         #region Journal
 
-        public void PreloadJournal()
-        {
+        public void PreloadJournal() {
             JournalCanvas instance = FindPanel<JournalCanvas>();
             if (instance == null && !m_JournalLoad) {
                 m_JournalLoad = Routine.Start(this, LoadJournalPrefab());
@@ -331,13 +302,11 @@ namespace Aqua
             }
         }
 
-        public bool IsJournalPreloaded()
-        {
+        public bool IsJournalPreloaded() {
             return !m_JournalLoad && FindPanel<JournalCanvas>() && Services.Assets.PreloadGroupIsPrimaryLoaded(JournalCanvas.PreloadGroup);
         }
 
-        public IEnumerator OpenJournalNewEntry()
-        {
+        public IEnumerator OpenJournalNewEntry() {
             JournalCanvas instance = FindPanel<JournalCanvas>();
             if (instance != null) {
                 return instance.ShowNewEntry();
@@ -361,10 +330,8 @@ namespace Aqua
             }
         }
 
-        private IEnumerator LoadJournalPrefab()
-        {
-            using(Profiling.Time("loading journal ui"))
-            {
+        private IEnumerator LoadJournalPrefab() {
+            using (Profiling.Time("loading journal ui")) {
                 Services.Assets.PreloadGroup(JournalCanvas.PreloadGroup);
                 var request = Future.Resources.LoadAsync<GameObject>(m_JournalUIPath);
                 yield return request;
@@ -377,7 +344,7 @@ namespace Aqua
         }
 
         private IEnumerator DelayedJournalOperation(Action<JournalCanvas> onFinished) {
-            using(Script.DisableInput()) {
+            using (Script.DisableInput()) {
                 yield return m_JournalLoad;
                 onFinished(FindPanel<JournalCanvas>());
             }
@@ -393,8 +360,7 @@ namespace Aqua
             get { return m_SurveyCounter > 0; }
         }
 
-        private void LateUpdate()
-        {
+        private void LateUpdate() {
             if (m_LetterboxCounter == 0 && m_Letterbox.IsShowing()) {
                 if (++m_LetterboxDisableFrameCount > 1) {
                     m_Letterbox.Hide();
@@ -408,18 +374,27 @@ namespace Aqua
             m_Tooltip.Process(cursorPos);
 
             m_UIUpdates.ForEach(UpdateUpdater);
+
+#if DEVELOPMENT
+            GameObject depthTest = m_UICamera.transform.GetChild(0).gameObject;
+            if (!Services.Input.IsEditingText() && Input.GetKeyDown(KeyCode.H)) {
+                depthTest.SetActive(!depthTest.activeSelf);
+            }
+
+            if (depthTest.activeSelf) {
+                depthTest.transform.localPosition = Input.GetKey(KeyCode.H) ? new Vector3(12f * Mathf.Sin(Time.realtimeSinceStartup), 0, 0.35f) : new Vector3(0, 0, 0.35f);
+            }
+#endif // DEVELOPMENT
         }
 
         static private readonly Action<IUpdaterUI> UpdateUpdater = (o) => {
             o.OnUIUpdate();
         };
 
-        public void BindCamera(Camera inCamera)
-        {
+        public void BindCamera(Camera inCamera) {
             var uiCameraData = m_UICamera.GetUniversalAdditionalCameraData();
 
-            if (inCamera == null || inCamera == m_UICamera)
-            {
+            if (inCamera == null || inCamera == m_UICamera) {
                 uiCameraData.renderType = CameraRenderType.Base;
                 return;
             }
@@ -431,8 +406,7 @@ namespace Aqua
             inCamera.cullingMask &= ~GameLayers.UI_Mask;
         }
 
-        private void CleanupFromScene(SceneBinding inBinding, object inContext)
-        {
+        private void CleanupFromScene(SceneBinding inBinding, object inContext) {
             int removedPanelCount = 0;
             for (int i = 0; i < SharedPanelIndex.Count; i++) {
                 var panel = m_SharedPanels[i];
@@ -442,8 +416,7 @@ namespace Aqua
                 }
             }
 
-            if (removedPanelCount > 0)
-            {
+            if (removedPanelCount > 0) {
                 Log.Warn("[UIMgr] Unregistered {0} shared panels that were not deregistered at scene unload", removedPanelCount);
             }
 
@@ -457,21 +430,18 @@ namespace Aqua
 
         private void OnOptionsUpdated() {
             bool shortcutsEnabled = Accessibility.DisplayShortcuts;
-            foreach(var shortcut in m_ShortcutDisplays) {
+            foreach (var shortcut in m_ShortcutDisplays) {
                 shortcut.SetDisplay(shortcutsEnabled);
             }
         }
 
-        protected override void Shutdown()
-        {
+        protected override void Shutdown() {
             SceneHelper.OnSceneUnload -= CleanupFromScene;
         }
 
-        protected override void Initialize()
-        {
+        protected override void Initialize() {
             m_DialogStyleMap = new Dictionary<StringHash32, DialogPanel>(m_DialogStyles.Length);
-            foreach(var panel in m_DialogStyles)
-            {
+            foreach (var panel in m_DialogStyles) {
                 m_DialogStyleMap.Add(panel.StyleId(), panel);
             }
 
@@ -494,9 +464,8 @@ namespace Aqua
             Async.InvokeAsync(FlattenHierarchyDynamic);
         }
 
-        private void FlattenHierarchyDynamic()
-        {
-            foreach(var additionalTransform in m_HierarchiesToFlatten)
+        private void FlattenHierarchyDynamic() {
+            foreach (var additionalTransform in m_HierarchiesToFlatten)
                 additionalTransform.FlattenHierarchy();
         }
 
@@ -505,8 +474,7 @@ namespace Aqua
         #region Leaf
 
         [LeafMember("ShowPopup"), UnityEngine.Scripting.Preserve]
-        static private IEnumerator LeafShowPopup([BindThread] ScriptThread inThread, StringHash32 inHeader, StringHash32 inDescription)
-        {
+        static private IEnumerator LeafShowPopup([BindThread] ScriptThread inThread, StringHash32 inHeader, StringHash32 inDescription) {
             inThread.Dialog = null;
             if (Services.UI.IsSkippingCutscene())
                 return null;
@@ -516,10 +484,9 @@ namespace Aqua
 
         #endregion // Leaf
 
-        #if DEVELOPMENT
+#if DEVELOPMENT
 
-        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus(FindOrCreateMenu findOrCreate)
-        {
+        IEnumerable<DMInfo> IDebuggable.ConstructDebugMenus(FindOrCreateMenu findOrCreate) {
             DMInfo uiMenu = new DMInfo("UI");
 
             RegisterDebugCutsceneToggle(uiMenu);
@@ -535,23 +502,32 @@ namespace Aqua
             yield return uiMenu;
         }
 
-        static private void RegisterDebugCutsceneToggle(DMInfo inMenu)
-        {
+        static private void RegisterDebugCutsceneToggle(DMInfo inMenu) {
             bool bDebugSet = false;
-            inMenu.AddToggle("Cutscene Mode", () => bDebugSet, 
+            inMenu.AddToggle("Cutscene Mode", () => bDebugSet,
             (b) => {
                 bDebugSet = b;
-                if (b)
-                {
+                if (b) {
                     Services.UI.ShowLetterbox();
-                }
-                else
-                {
+                } else {
                     Services.UI.HideLetterbox();
                 }
             });
         }
 
-        #endif // DEVELOPMENT
+#endif // DEVELOPMENT
+
+#if UNITY_EDITOR
+        int IBaked.Order => 10000;
+
+        bool IBaked.Bake(BakeFlags flags, BakeContext context) {
+            if ((flags & BakeFlags.IsDevelopment) == 0) {
+                Baking.Destroy(m_UICamera.transform.GetChild(0).gameObject);
+                return true;
+            }
+            return false;
+        }
+
+#endif // UNITY_EDITOR
     }
 }

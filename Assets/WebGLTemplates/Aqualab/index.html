@@ -17,7 +17,14 @@
       var unityInstance = UnityLoader.instantiate(
         "unityContainer",
         "%UNITY_WEBGL_BUILD_URL%",
-        { onProgress: UnityProgress }
+        {
+            onProgress: UnityProgress,
+            Module: {
+                "webglContextAttributes": {
+                    "preserveDrawingBuffer": true
+                }
+            }
+        }
       );
     </script>
     <script src="https://cdn.brainpop.com/games/assets/js/cameraProxyDOMCrossDomain.js"></script>
