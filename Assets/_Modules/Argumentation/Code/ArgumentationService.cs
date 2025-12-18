@@ -422,6 +422,10 @@ namespace Aqua.Argumentation {
                     hasEnvironment = true;
                 }
 
+                if (!Save.Bestiary.HasEntity(entry.Id())) {
+                    continue;
+                }
+
                 if (firstEntryId.IsEmpty) {
                     firstEntryId = entry.Id();
                     firstEntryCategory = entry.Category();

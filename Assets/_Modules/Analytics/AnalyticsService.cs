@@ -718,17 +718,17 @@ namespace Aqua
         }
 
         private void FinalFinalSurveyTriggerCheck(SceneBinding s, object c) {
-            if (s.Id == GameScenes.RS_1C_StationInterior) {
-                string[] surveys = CheckDefaultSurveys();
-                ScienceTweaks tweaks = Services.Tweaks.Get<ScienceTweaks>();
-                string finalSurvey = tweaks.FinalJobSurvey();
-                if (surveys == null || !ArrayUtils.Contains(surveys, finalSurvey)) {
-                    Services.Script.QueueInvoke(() => {
-                        m_Survey.TryDisplaySurvey(finalSurvey);
-                    }, -10000);
-                }
-                SceneHelper.OnSceneLoaded -= FinalFinalSurveyTriggerCheck;
-            }
+            //if (s.Id == GameScenes.RS_1C_StationInterior) {
+            //    string[] surveys = CheckDefaultSurveys();
+            //    ScienceTweaks tweaks = Services.Tweaks.Get<ScienceTweaks>();
+            //    string finalSurvey = tweaks.FinalJobSurvey();
+            //    if (surveys == null || !ArrayUtils.Contains(surveys, finalSurvey)) {
+            //        Services.Script.QueueInvoke(() => {
+            //            m_Survey.TryDisplaySurvey(finalSurvey);
+            //        }, -10000);
+            //    }
+            //    SceneHelper.OnSceneLoaded -= FinalFinalSurveyTriggerCheck;
+            //}
         }
 
         private void LogCompleteTask(StringHash32 jobId, StringHash32 inTaskId)
