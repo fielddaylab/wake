@@ -6,6 +6,7 @@ using BeauUtil.Tags;
 using Leaf;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 using static Leaf.Editor.LeafExport;
@@ -98,6 +99,11 @@ namespace Aqua.Editor {
             IHasLocalizationKeys[] locKeys = locKeysList.ToArray();
 
             return BuildMasterDB(englishManifest, leafAssets, locKeys);
+        }
+
+        [MenuItem("Aqualab/Localization/Import SpanishLanguage from LocCompare", priority = 202)]
+        static public void ImportSpanishLanguageFromLocCompare() {
+            ImportLocalizationFromLocCompare("LocCompare_Import.txt", "Assets/_Content/Text/ES/ES-Loc.aqloc", "SpanishLanguage");
         }
 
         [MenuItem("Aqualab/Localization/Export Line Valildation DB", priority = 200)]
@@ -214,6 +220,45 @@ namespace Aqua.Editor {
                         Log.Error("Found {0} errors!", errorCount);
                     } else {
                         Log.Msg("No errors found! Hell yeah!");
+                    }
+                }
+            }
+        }
+
+        static private void ImportLocalizationFromLocCompare(string inputFile, string outputFile, string localizationName) {
+            using (StreamWriter writer = new StreamWriter(outputFile)) {
+                using (StreamReader reader = new StreamReader(inputFile)) {
+                    int state = 0;
+                    localizationName = localizationName + ":";
+                    string lineKey = null;
+                    StringBuilder lineData = new StringBuilder(2048);
+                    while (!reader.EndOfStream) {
+                        string line = reader.ReadLine();
+                        if (line == "--------") {
+                            if (state == 2) {
+                                lineData.TrimEnd(StringUtils.DefaultNewLineChars);
+                                writer.Write(":: ");
+                                writer.Write(lineKey.Replace("|", "__").Replace(":", "_c_"));
+                                writer.Write('\n');
+                                writer.Write(lineData.ToString());
+                                writer.Write("\n\n");
+                            }
+                            state = 0;
+                            lineData.Clear();
+                            lineKey = null;
+                        } else if (line.StartsWith("Line: ")) {
+                            if (state == 0) {
+                                lineKey = line.Substring(6).Trim();
+                                state = 1;
+                                lineData.Clear();
+                            }
+                        } else if (line == localizationName) {
+                            if (state == 1) {
+                                state = 2;
+                            }
+                        } else if (state == 2) {
+                            lineData.Append(line).Append('\n');
+                        }
                     }
                 }
             }
