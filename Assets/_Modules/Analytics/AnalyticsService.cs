@@ -576,31 +576,18 @@ namespace Aqua
             }
         }
 
-        private bool SetCurrentJob(StringHash32 jobId)
+        private void SetCurrentJob(StringHash32 jobId)
         {
             m_CurrentJobHash = jobId;
-            //m_PreviousJobName = m_CurrentJobName;
+            m_PreviousJobName = m_GameState.job_id;
 
-            //if (jobId.IsEmpty)
-            //{
-            //    m_CurrentJobName = NoActiveJobId;
-            //    RefreshGameState();
-            //}
-            //else
-            //{
-            //    m_CurrentJobName = Assets.Job(jobId).name;
-            //    RefreshGameState();
-            //    if (m_PreviousJobName != NoActiveJobId)
-            //    {
-            //        return true;
-            //    }
-            //}
-
-            return false;
+            UpdateJobInfo(jobId);
+            RefreshGameState();
         }
 
         private void LogAcceptJob(StringHash32 jobId)
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("accept_job")) {
             }
         }
@@ -616,29 +603,11 @@ namespace Aqua
         {
             SetCurrentJob(jobId);
 
-            using(var gs = m_Log.OpenGameState()) {
-                //gs.Param("job_name", m_CurrentJobName);
-
-                using(var psb = PooledStringBuilder.Create()) {
-                    psb.Builder.Append('[');
-                    foreach(var entityId in Save.Bestiary.GetEntityIds()) {
-                        psb.Builder.Append("\"").Append(Assets.NameOf(entityId)).Append("\",");
-                    }
-                    foreach(var factId in Save.Bestiary.GetFactIds()) {
-                        psb.Builder.Append("\"").Append(Assets.NameOf(factId)).Append("\",");
-                    }
-
-                    psb.Builder.TrimEnd(new char[] { ',' }).Append(']');
-
-                    gs.Param("current_bestiary", psb.Builder);
-                }
-            }
-
-            using(var e = m_Log.NewEvent("switch_job")) {
+            RefreshGameState();
+            
+            using (var e = m_Log.NewEvent("switch_job")) {
                 e.Param("prev_job_name", m_PreviousJobName);
             }
-
-            RefreshGameState();
         }
 
         private void HandleBestiaryUpdated(BestiaryUpdateParams inParams)
@@ -695,7 +664,7 @@ namespace Aqua
                 CheckDefaultSurveys();
             }
 
-            if (jobId == JobIds.Final_final) {
+            if (jobId == JobIds.Final_final && !string.IsNullOrEmpty(tweaks.FinalJobSurvey())) {
                 SceneHelper.OnSceneLoaded += FinalFinalSurveyTriggerCheck;
             }
         }
@@ -718,17 +687,17 @@ namespace Aqua
         }
 
         private void FinalFinalSurveyTriggerCheck(SceneBinding s, object c) {
-            //if (s.Id == GameScenes.RS_1C_StationInterior) {
-            //    string[] surveys = CheckDefaultSurveys();
-            //    ScienceTweaks tweaks = Services.Tweaks.Get<ScienceTweaks>();
-            //    string finalSurvey = tweaks.FinalJobSurvey();
-            //    if (surveys == null || !ArrayUtils.Contains(surveys, finalSurvey)) {
-            //        Services.Script.QueueInvoke(() => {
-            //            m_Survey.TryDisplaySurvey(finalSurvey);
-            //        }, -10000);
-            //    }
-            //    SceneHelper.OnSceneLoaded -= FinalFinalSurveyTriggerCheck;
-            //}
+            if (s.Id == GameScenes.RS_1C_StationInterior) {
+                string[] surveys = CheckDefaultSurveys();
+                ScienceTweaks tweaks = Services.Tweaks.Get<ScienceTweaks>();
+                string finalSurvey = tweaks.FinalJobSurvey();
+                if (surveys == null || !ArrayUtils.Contains(surveys, finalSurvey)) {
+                    Services.Script.QueueInvoke(() => {
+                        m_Survey.TryDisplaySurvey(finalSurvey);
+                    }, -10000);
+                }
+                SceneHelper.OnSceneLoaded -= FinalFinalSurveyTriggerCheck;
+            }
         }
 
         private void LogCompleteTask(StringHash32 jobId, StringHash32 inTaskId)
