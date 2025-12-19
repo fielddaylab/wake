@@ -44,6 +44,11 @@ namespace Aqua
 
         #region GameState
 
+        /// <summary>
+        /// A snapshot of the player's current game context for analytics logging.
+        /// This struct is refreshed via <see cref="RefreshGameState()"> before each analytics event is logged, serializing this contextual state to JSON and attaching it to the event payload.
+        /// See also <see cref="UpdateJobInfo()"> and <see cref="UpdateCurrencyInfo()"/>
+        /// </summary>
         private struct GameState {
             public struct JobTask {
                 public string task_id;
@@ -258,6 +263,11 @@ namespace Aqua
 
         private void OnProfileStarting(string userCode) {
             SetUserCode(userCode);
+
+            /// Ensure <see cref='m_GameState'> is properly initalized
+            UpdateJobInfo(Save.CurrentJobId);
+            UpdateCurrencyInfo();
+
             ResearchTests.HandleProfileStart(m_Survey);
         }
 
@@ -282,8 +292,9 @@ namespace Aqua
 
             m_CurrentJobAsset = null;
             m_GameState.money = m_GameState.science_level = m_GameState.science_points = 0;
-            UpdateJobInfo(default);
 
+            UpdateJobInfo(default);
+            UpdateCurrencyInfo();
             ResearchTests.HandleProfileEnd();
         }
 
@@ -297,10 +308,16 @@ namespace Aqua
             m_CurrentPortableBestiaryTabId = null;
         }
 
+        /// <summary>
+        /// Update <see cref="m_GameState"/> with data from the provided current job <paramref name="id"/>.
+        /// If no job is provided (empty id), we reset all job-related fields to default values.
+        /// Otherwise, populates job metadata including difficulty ratings for each science activity type and the list of associated tasks with their completion status.
+        /// </summary>
+        /// <param name="id">The unique identifier of the job to update, or empty to clear job info.</param>
         private void UpdateJobInfo(StringHash32 id) {
             if (id.IsEmpty) {
                 m_CurrentJobAsset = null;
-                
+
                 m_GameState.job_id = NoActiveJobId;
                 m_GameState.job_argumentation = -1;
                 m_GameState.job_modeling = -1;
@@ -560,9 +577,9 @@ namespace Aqua
 
         private void OnProfileStarted() {
             m_PreviousJobName = NoActiveJobId;
+            UpdateCurrencyInfo();
             SetCurrentJob(Save.CurrentJobId);
         }
-
 
         private void LogSelectLanguage(FourCC langCode) {
             m_CurrentLanguage = Services.Loc.CurrentLanguageId;
@@ -661,6 +678,7 @@ namespace Aqua
             var job = Assets.Job(jobId);
             string parsedJobName = job.name;
 
+            UpdateCurrencyInfo();
             RefreshGameState();
             using(var e = m_Log.NewEvent("complete_job")) {
                 e.Param("job_name", parsedJobName);
@@ -1018,6 +1036,7 @@ namespace Aqua
 
         private void LogPurchaseUpgrade(StringHash32 inUpgradeId)
         {
+            UpdateCurrencyInfo();
             InvItem item = Services.Assets.Inventory.Get(inUpgradeId);
             string name = item.name;
 
@@ -1219,6 +1238,7 @@ namespace Aqua
 
         private void LogCompleteArgument(StringHash32 id)
         {
+            UpdateCurrencyInfo();
             RefreshGameState();
             using(var e = m_Log.NewEvent("complete_argument")) {
             }
