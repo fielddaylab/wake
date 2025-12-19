@@ -101,6 +101,27 @@ namespace Aqua.Editor {
             return BuildMasterDB(englishManifest, leafAssets, locKeys);
         }
 
+        static private Dictionary<StringHash32, LineInfo> BuildManifestDB(LocManifest manifest) {
+            Dictionary<StringHash32, LineInfo> lineInfo = new Dictionary<StringHash32, LineInfo>(2048);
+
+            LocPackage tempPkg = null;
+            try {
+                tempPkg = LocPackage.CombineAll(manifest.Packages);
+                foreach (var key in tempPkg.AllKeys) {
+                    tempPkg.TryGetContent(key, out var lineText);
+                    if (TagStringParser.ContainsText(lineText, Parsing.InlineEvent, DefaultTextReplaceTags)) {
+                        lineInfo.Add(key, LineInfo.FromString(lineText));
+                    }
+                }
+            } finally {
+                if (tempPkg) {
+                    GameObject.DestroyImmediate(tempPkg);
+                }
+            }
+
+            return lineInfo;
+        }
+
         [MenuItem("Aqualab/Localization/Import SpanishLanguage from LocCompare", priority = 202)]
         static public void ImportSpanishLanguageFromLocCompare() {
             ImportLocalizationFromLocCompare("LocCompare_Import.txt", "Assets/_Content/Text/ES/ES-Loc.aqloc", "SpanishLanguage");
@@ -109,7 +130,20 @@ namespace Aqua.Editor {
         [MenuItem("Aqualab/Localization/Export Line Valildation DB", priority = 200)]
         static public void ExportMasterDB() {
             var masterDB = BuildMasterDB();
-            ExportMasterDB(masterDB, "LineData.csv");
+            ExportDatabase(masterDB, "LineData.csv");
+        }
+
+        [MenuItem("Aqualab/Localization/Export Spanish DB", priority = 200)]
+        static public void ExportSpanishDB() {
+            var db = BuildManifestDB(ValidationUtils.FindAsset<LocManifest>("SpanishLanguage"));
+            ExportDatabase(db, "SpanishLineData.csv");
+        }
+
+        [MenuItem("Aqualab/Localization/Export English-Spanish CSV", priority = 200)]
+        static public void ExportEnglishSpanishCSV() {
+            var master = BuildMasterDB();
+            var db = BuildManifestDB(ValidationUtils.FindAsset<LocManifest>("SpanishLanguage"));
+            ExportComparisonDatabase(master, db, "CompareLineData.csv");
         }
 
         [MenuItem("Aqualab/Localization/Check for Line Inconsistencies", priority = 201)]
@@ -264,7 +298,7 @@ namespace Aqua.Editor {
             }
         }
 
-        static private void ExportMasterDB(Dictionary<StringHash32, LineInfo> db, string filePath) {
+        static private void ExportDatabase(Dictionary<StringHash32, LineInfo> db, string filePath) {
             using (StreamWriter writer = new StreamWriter(filePath)) {
                 foreach(var kv in db) {
                     writer.Write(kv.Key.ToDebugString());
@@ -277,6 +311,30 @@ namespace Aqua.Editor {
                     writer.Write('"');
                     writer.Write(escaped);
                     writer.Write("\"\n");
+                }
+            }
+        }
+
+        static private void ExportComparisonDatabase(Dictionary<StringHash32, LineInfo> dbA, Dictionary<StringHash32, LineInfo> dbB, string filePath) {
+            using (StreamWriter writer = new StreamWriter(filePath)) {
+                foreach (var kv in dbA) {
+                    writer.Write(kv.Key.ToDebugString());
+                    writer.Write(", ");
+                    writer.Write(kv.Value.CharacterId.ToDebugString());
+                    writer.Write(", ");
+                    writer.Write(kv.Value.PoseId.ToDebugString());
+                    writer.Write(", ");
+                    string escaped = StringUtils.Escape(kv.Value.Text, StringUtils.CSV.Escaper.Instance);
+                    writer.Write('"');
+                    writer.Write(escaped);
+                    writer.Write("\", ");
+                    if (dbB.TryGetValue(kv.Key, out LineInfo b)) {
+                        string escapedB = StringUtils.Escape(b.Text, StringUtils.CSV.Escaper.Instance);
+                        writer.Write('"');
+                        writer.Write(escapedB);
+                        writer.Write("\"");
+                    }
+                    writer.Write("\n");
                 }
             }
         }
