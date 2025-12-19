@@ -733,7 +733,7 @@ namespace Aqua
 
         private void LogCompleteTask(StringHash32 jobId, StringHash32 inTaskId)
         {
-            string taskId = Assets.Job(m_CurrentJobHash).Task(inTaskId).IdString;
+            string taskId = Assets.Job(jobId).Task(inTaskId).IdString;
 
             using(var e = m_Log.NewEvent("complete_task")) {
                 e.Param("task_id", taskId);
