@@ -470,6 +470,7 @@ namespace Aqua
 
                 ResetIdsWithEvents(tmpPkg);
 
+                TagStringParser.SuppressWarnings = true;
                 UnsafeExt.Write(&head, &bufferLength, MaxCompressedSize, (ushort) tmpPkg.m_Nodes.Count);
                 foreach(var kv in tmpPkg.m_Nodes) {
                     UnsafeExt.Write(&head, &bufferLength, MaxCompressedSize, kv.Key);
@@ -509,6 +510,7 @@ namespace Aqua
                 Unsafe.CopyArray(buffer, bufferLength, written);
                 return written;
             } finally {
+                TagStringParser.SuppressWarnings = false;
                 DestroyImmediate(tmpPkg);
                 Unsafe.Free(buffer);
             }

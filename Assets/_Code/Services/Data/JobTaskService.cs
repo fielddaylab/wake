@@ -451,6 +451,7 @@ namespace Aqua
     }
 
     static public partial class JobEvents {
+        static public readonly CastableEvent<StringHash32> OnJobStarted = new CastableEvent<StringHash32>(2);
         static public readonly CastableEvent<StringHash32, StringHash32> OnJobTaskDeactivated = new CastableEvent<StringHash32, StringHash32>(2);
         static public readonly CastableEvent<StringHash32, StringHash32> OnJobTaskActivated = new CastableEvent<StringHash32, StringHash32>(2);
         static public readonly CastableEvent<StringHash32, StringHash32> OnJobTaskCompleted = new CastableEvent<StringHash32, StringHash32>(2);

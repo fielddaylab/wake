@@ -186,6 +186,7 @@ MonoBehaviour:
   m_DefaultText:
     m_Source: modeling.importing.starting
     m_HashValue: 2077032763
+  m_TintSprites: 0
   m_Prefix: 
   m_Postfix: 
 --- !u!1 &6625920438801299363
@@ -426,6 +427,7 @@ MonoBehaviour:
   m_DefaultText:
     m_Source: modeling.importing.facts
     m_HashValue: 1320331822
+  m_TintSprites: 0
   m_Prefix: 
   m_Postfix: 
 --- !u!1 &6625920439229956911
@@ -579,6 +581,7 @@ MonoBehaviour:
   m_DefaultText:
     m_Source: modeling.importing.organisms
     m_HashValue: 4074468892
+  m_TintSprites: 0
   m_Prefix: 
   m_Postfix: 
 --- !u!1 &6625920439309291988
@@ -849,6 +852,7 @@ MonoBehaviour:
   m_DefaultText:
     m_Source: modeling.importing.completed
     m_HashValue: 2446051720
+  m_TintSprites: 0
   m_Prefix: 
   m_Postfix: 
 --- !u!1 &6625920439410244090
@@ -1002,6 +1006,7 @@ MonoBehaviour:
   m_DefaultText:
     m_Source: modeling.importing.tolerances
     m_HashValue: 2070340551
+  m_TintSprites: 0
   m_Prefix: 
   m_Postfix: 
 --- !u!1 &6625920439943580305
@@ -1119,6 +1124,8 @@ GameObject:
   - component: {fileID: 6625920440192409597}
   - component: {fileID: 6625920440192409571}
   - component: {fileID: 6625920440192409570}
+  - component: {fileID: 782200422218664438}
+  - component: {fileID: 6848118242348246846}
   m_Layer: 5
   m_Name: Concept
   m_TagString: Untagged
@@ -1201,6 +1208,44 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!223 &782200422218664438
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6625920440192409596}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!114 &6848118242348246846
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6625920440192409596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &6625920440326259715
 GameObject:
   m_ObjectHideFlags: 0
@@ -1352,6 +1397,7 @@ MonoBehaviour:
   m_DefaultText:
     m_Source: modeling.importing.historical
     m_HashValue: 1379172043
+  m_TintSprites: 0
   m_Prefix: 
   m_Postfix: 
 --- !u!1001 &548280855132551235

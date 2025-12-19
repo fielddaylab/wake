@@ -2198,6 +2198,8 @@ GameObject:
   - component: {fileID: 4675946309666272469}
   - component: {fileID: 2795509744006134669}
   - component: {fileID: 4223771488105080650}
+  - component: {fileID: 4355249285886137355}
+  - component: {fileID: 1503448369925484844}
   m_Layer: 5
   m_Name: Viewport
   m_TagString: Untagged
@@ -2247,6 +2249,44 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Padding: {x: 0, y: 0, z: 0, w: 0}
   m_Softness: {x: 0, y: 0}
+--- !u!223 &4355249285886137355
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7808246159875021194}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!114 &1503448369925484844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7808246159875021194}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &8958228741512812588
 GameObject:
   m_ObjectHideFlags: 0
@@ -2530,6 +2570,8 @@ GameObject:
   - component: {fileID: 8248140361115716179}
   - component: {fileID: 3172524720553599740}
   - component: {fileID: 2525314267557618420}
+  - component: {fileID: 3830509121492738946}
+  - component: {fileID: 904756492477141212}
   m_Layer: 5
   m_Name: JobApp
   m_TagString: Untagged
@@ -2594,6 +2636,44 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!223 &3830509121492738946
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9087520519614495142}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!114 &904756492477141212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9087520519614495142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1001 &7328221824837982598
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2738,6 +2818,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 040e6150a82c36444b82ee0447ab9117, type: 3}
+--- !u!224 &3440192715156815133 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5335947386381755547, guid: 040e6150a82c36444b82ee0447ab9117,
+    type: 3}
+  m_PrefabInstance: {fileID: 7328221824837982598}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &303301692730111571 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7027473198317334485, guid: 040e6150a82c36444b82ee0447ab9117,
@@ -2750,9 +2836,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4db7a114972834c8e4117be1d82ba3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!224 &3440192715156815133 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 5335947386381755547, guid: 040e6150a82c36444b82ee0447ab9117,
-    type: 3}
-  m_PrefabInstance: {fileID: 7328221824837982598}
-  m_PrefabAsset: {fileID: 0}
