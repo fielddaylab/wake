@@ -133,7 +133,7 @@ namespace Aqua
 
                 m_CurrentSaveData.IsBookmark = oldbookmark;
 
-                string bookmarkName = Path.GetFileName(path);
+                string bookmarkName = Path.GetFileNameWithoutExtension(path);
                 PlayerPrefs.SetString(LastBookmarkSaveKey, bookmarkName);
                 PlayerPrefs.Save();
             }

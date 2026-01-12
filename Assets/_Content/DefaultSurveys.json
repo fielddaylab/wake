@@ -1,5 +1,5 @@
 {
-    "package_config_id": "winter2024_progressions_experiment_v1",
+    "package_config_id": "winter2025_v1",
     "surveys": [
         {
             "display_event_id": "demographics",
@@ -36,220 +36,84 @@
             ]
         },
 		{
-            "display_event_id": "science-efficacy",
-            "header": "How confident are you to do the following tasks?",
+            "display_event_id": "jen-survey-1",
+            "header": "A few questions",
             "pages": [
                 {
-                    "type": "likert-confidence",
-                    "subheader": "1 = Not confident at all, 6 = Completely confident",
+                    "type": "likert-agreement",
+                    "subheader": "1 = Strongly Disagree, 5 = Strongly Agree",
                     "items": [
                         {
-                            "prompt": "Figure out the reasons why things happen in nature",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                            "prompt": "My friends know me as someone who always joins in on jokes.",
+                            "responses": [ "1", "2", "3", "4", "5" ]
                         },
                         {
-                            "prompt": "Use tables and graphs to figure things out",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                            "prompt": "I don’t take things too seriously — I like to keep things fun and easygoing.",
+                            "responses": [ "1", "2", "3", "4", "5" ]
                         },
                         {
-                            "prompt": "Investigate the kinds of problems that ecosystem scientists would investigate",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                            "prompt": "I think it’s fun to talk about big or tricky ideas, even if people don’t all agree.",
+                            "responses": [ "1", "2", "3", "4", "5" ]
                         },
                         {
-                            "prompt": "Figure out what causes change in an environment",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        }
-                    ]
-                },
-                {
-                    "type": "likert-confidence",
-                    "subheader": "1 = Not confident at all, 6 = Completely confident",
-                    "items": [
-                        {
-                            "prompt": "Do the kinds of things that scientists do",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "Look at data that you collect and notice patterns",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "Figure out the relationships between organisms and their environment",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                            "prompt": "People see me as a little different or unique — I stand out in my own way.",
+                            "responses": [ "1", "2", "3", "4", "5" ]
                         }
                     ]
                 }
             ]
         },
-        {
-            "display_event_id": "science-identity",
-            "header": "How true or false is each statement for you?",
+		{
+            "display_event_id": "jen-survey-2",
+            "header": "A few questions",
             "pages": [
                 {
-                    "type": "likert-truth",
-                    "subheader": "1 = Completely false, 6 = Completely true",
+                    "type": "likert-agreement",
+                    "subheader": "1 = Strongly Disagree, 5 = Strongly Agree",
                     "items": [
                         {
-                            "prompt": "Being involved in science is a key part of what I am.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                            "prompt": "I like being goofy and doing silly things to make people laugh.",
+                            "responses": [ "1", "2", "3", "4", "5" ]
                         },
                         {
-                            "prompt": "I can see science-related activities as being part of my future.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                            "prompt": "Some people stress too much. If something doesn’t work, I just go with the flow and figure it out.",
+                            "responses": [ "1", "2", "3", "4", "5" ]
                         },
                         {
-                            "prompt": "I consider myself a science person.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                            "prompt": "I like to mess around with ideas and see what new things I can come up with.",
+                            "responses": [ "1", "2", "3", "4", "5" ]
                         },
                         {
-                            "prompt": "I can imagine myself being involved in a science-related career.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                            "prompt": "I don’t like being put in a box, so I enjoy doing things that surprise people or are a little unexpected.",
+                            "responses": [ "1", "2", "3", "4", "5" ]
                         }
                     ]
                 }
             ]
         },
-        {
-            "display_event_id": "science-interest",
-            "header": "How true or false is each statement for you?",
+		{
+            "display_event_id": "jen-survey-3",
+            "header": "A few questions",
             "pages": [
                 {
-                    "type": "likert-truth",
-                    "subheader": "1 = Completely false, 6 = Completely true",
+                    "type": "likert-agreement",
+                    "subheader": "1 = Strongly Disagree, 5 = Strongly Agree",
                     "items": [
                         {
-                            "prompt": "I am interested in learning about nature.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                            "prompt": "Sometimes, it’s better to just wait and see instead of overthinking everything.",
+                            "responses": [ "1", "2", "3", "4", "5" ]
                         },
                         {
-                            "prompt": "I have NO interest in learning about the environment.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                            "prompt": "Free time is better when I can be silly and joke around with others.",
+                            "responses": [ "1", "2", "3", "4", "5" ]
                         },
                         {
-                            "prompt": "I would like to learn more about environmental science.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                            "prompt": "When I need to learn something fast, I try to make it fun or turn it into a game or challenge to help me.",
+                            "responses": [ "1", "2", "3", "4", "5" ]
                         },
                         {
-                            "prompt": "I am interested in learning about ecosystems.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "display_event_id": "enjoyment",
-            "header": "How true or false is each statement for you?",
-            "pages": [
-                {
-                    "type": "likert-truth",
-                    "subheader": "1 = Completely false, 6 = Completely true",
-                    "items": [
-                        {
-                            "prompt": "I'm finding this game enjoyable.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "I'm having fun playing this game.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "This game is boring.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "This game annoys me.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        }
-                    ]
-                },
-                {
-                    "type": "likert-truth",
-                    "subheader": "1 = Completely false, 6 = Completely true",
-                    "items": [
-                        {
-                            "prompt": "Playing this game is pleasurable to me.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "This game leaves me unsatisfied.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "This game grabs my attention.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "display_event_id": "interest-items-hanson-2021",
-            "header": "How much do you enjoy the following?",
-            "pages": [
-                {
-                    "type": "likert-like",
-                    "subheader": "1 = Strongly dislike, 6 = Strongly enjoy",
-                    "items": [
-                        {
-                            "prompt": "Playing sports or joining a sports team",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "Doing things to improve your fitness",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "Attending a sports event",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "Doing outdoor activities",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        }
-                    ]
-                },
-                {
-                    "type": "likert-like",
-                    "subheader": "1 = Strongly dislike, 6 = Strongly enjoy",
-                    "items": [
-                        {
-                            "prompt": "Participating in plays or drama",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "Doing art, crafts, or hobbies",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "Reading books or magazines",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "Singing or playing a musical instrument",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        }
-                    ]
-                },
-                {
-                    "type": "likert-like",
-                    "subheader": "1 = Strongly dislike, 6 = Strongly enjoy",
-                    "items": [
-                        {
-                            "prompt": "Doing things with animals",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "Thinking about fashion and style",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "Doing things with engines, machines, or technology",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "Playing computer, board, or fantasy games",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
+                            "prompt": "I don’t like to allow myself to be labeled. I try to have my own style and be my own person.",
+                            "responses": [ "1", "2", "3", "4", "5" ]
                         }
                     ]
                 }
@@ -317,174 +181,6 @@
                                 "I'm just feeling that way today",
                                 "Science class makes me feel that way"
                             ]
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "display_event_id": "values-1",
-            "header": "How much is the person in the description like you?",
-            "pages": [
-                {
-                    "type": "likert-resemble",
-                    "subheader": "1 = Not Like Me At All, 6 = Very Much Like Me",
-                    "items": [
-                        {
-                            "prompt": "Thinking up new ideas and being creative is important to her. She likes to do things in her own original way.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "It is important to her to be rich. She wants to have a lot of money and expensive things.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "She thinks it is important that every person in the world be treated equally. She believes everyone should have equal opportunities in life.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "display_event_id": "values-2",
-            "header": "How much is the person in the description like you?",
-            "pages": [
-                {
-                    "type": "likert-resemble",
-                    "subheader": "1 = Not Like Me At All, 6 = Very Much Like Me",
-                    "items": [
-                        {
-                            "prompt": "It's important to her to show her abilities. She wants people to admire what she does.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "It is important to her to live in secure surroundings. She avoids anything that might endanger her safety.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "She likes surprises and is always looking for new things to do. She thinks it is important to do lots of different things in life.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "display_event_id": "values-3",
-            "header": "How much is the person in the description like you?",
-            "pages": [
-                {
-                    "type": "likert-resemble",
-                    "subheader": "1 = Not Like Me At All, 6 = Very Much Like Me",
-                    "items": [
-                        {
-                            "prompt": "She believes that people should do what they're told. She thinks people should follow rules at all times, even when no-one is watching.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "It is important to her to listen to people who are different from her. Even when she disagrees with them, she still wants to understand them.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "It is important to her to be humble and modest. She tries not to draw attention to herself.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "display_event_id": "values-4",
-            "header": "How much is the person in the description like you?",
-            "pages": [
-                {
-                    "type": "likert-resemble",
-                    "subheader": "1 = Not Like Me At All, 6 = Very Much Like Me",
-                    "items": [
-                        {
-                            "prompt": "Having a good time is important to her. She likes to \"spoil\" herself.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "It is important to her to make her own decisions about what she does. She likes to be free and not depend on others.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "It's very important to her to help the people around her. She wants to care for their well-being.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "display_event_id": "values-5",
-            "header": "How much is the person in the description like you?",
-            "pages": [
-                {
-                    "type": "likert-resemble",
-                    "subheader": "1 = Not Like Me At All, 6 = Very Much Like Me",
-                    "items": [
-                        {
-                            "prompt": "Being very successful is important to her. She hopes people will recognize her achievements.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "It is important to her that the government insure her safety against all threats. She wants the state to be strong so it can defend its citizens.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "She looks for adventures and likes to take risks. She wants to have an exciting life.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "display_event_id": "values-6",
-            "header": "How much is the person in the description like you?",
-            "pages": [
-                {
-                    "type": "likert-resemble",
-                    "subheader": "1 = Not Like Me At All, 6 = Very Much Like Me",
-                    "items": [
-                        {
-                            "prompt": "It is important to her always to behave properly. She wants to avoid doing anything people would say is wrong.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "It is important to her to get respect from others. She wants people to do what she says.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "It is important to her to be loyal to her friends. She wants to devote herself to people close to her.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "display_event_id": "values-7",
-            "header": "How much is the person in the description like you?",
-            "pages": [
-                {
-                    "type": "likert-resemble",
-                    "subheader": "1 = Not Like Me At All, 6 = Very Much Like Me",
-                    "items": [
-                        {
-                            "prompt": "She strongly believes that people should care for nature. Looking after the environment is important to her.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "Tradition is important to her. She tries to follow the customs handed down by her religion or her family.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
-                        },
-                        {
-                            "prompt": "She seeks every chance she can to have fun. It is important to her to do things that give her pleasure.",
-                            "responses": [ "1", "2", "3", "4", "5", "6" ]
                         }
                     ]
                 }

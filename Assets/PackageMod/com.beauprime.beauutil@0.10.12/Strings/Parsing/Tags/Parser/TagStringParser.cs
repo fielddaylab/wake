@@ -19,6 +19,8 @@ namespace BeauUtil.Tags
     /// </summary>
     public partial class TagStringParser : IDisposable
     {
+        static public bool SuppressWarnings = false;
+
         static public readonly string VisibleRichTagChar = char.ToString((char) 1);
 
         #region Local Vars
@@ -209,7 +211,9 @@ namespace BeauUtil.Tags
 
                         if (!bRichHandled)
                         {
-                            Debug.LogWarningFormat("[TagStringParser] Unrecognized text tag '{0}' in source '{1}'", richSlice, inInput);
+                            if (!SuppressWarnings) {
+                                Debug.LogWarningFormat("[TagStringParser] Unrecognized text tag '{0}' in source '{1}'", richSlice, inInput);
+                            }
                             CopyNonRichText(ref state, charIdx + 1);
                         }
                         else
@@ -281,7 +285,9 @@ namespace BeauUtil.Tags
 
                         if (!bTagHandled)
                         {
-                            Debug.LogWarningFormat("[TagStringParser] Unrecognized text tag '{0}' in source '{1}'", tagSlice, inInput);
+                            if (!SuppressWarnings) {
+                                Debug.LogWarningFormat("[TagStringParser] Unrecognized text tag '{0}' in source '{1}'", tagSlice, inInput);
+                            }
                             CopyNonRichText(ref state, charIdx + 1);
                         }
                         else

@@ -44,6 +44,11 @@ namespace Aqua
 
         #region GameState
 
+        /// <summary>
+        /// A snapshot of the player's current game context for analytics logging.
+        /// This struct is refreshed via <see cref="RefreshGameState()"> before each analytics event is logged, serializing this contextual state to JSON and attaching it to the event payload.
+        /// See also <see cref="UpdateJobInfo()"> and <see cref="UpdateCurrencyInfo()"/>
+        /// </summary>
         private struct GameState {
             public struct JobTask {
                 public string task_id;
@@ -258,6 +263,11 @@ namespace Aqua
 
         private void OnProfileStarting(string userCode) {
             SetUserCode(userCode);
+
+            /// Ensure <see cref='m_GameState'> is properly initalized
+            UpdateJobInfo(Save.CurrentJobId);
+            UpdateCurrencyInfo();
+
             ResearchTests.HandleProfileStart(m_Survey);
         }
 
@@ -282,8 +292,9 @@ namespace Aqua
 
             m_CurrentJobAsset = null;
             m_GameState.money = m_GameState.science_level = m_GameState.science_points = 0;
-            UpdateJobInfo(default);
 
+            UpdateJobInfo(default);
+            UpdateCurrencyInfo();
             ResearchTests.HandleProfileEnd();
         }
 
@@ -297,10 +308,16 @@ namespace Aqua
             m_CurrentPortableBestiaryTabId = null;
         }
 
+        /// <summary>
+        /// Update <see cref="m_GameState"/> with data from the provided current job <paramref name="id"/>.
+        /// If no job is provided (empty id), we reset all job-related fields to default values.
+        /// Otherwise, populates job metadata including difficulty ratings for each science activity type and the list of associated tasks with their completion status.
+        /// </summary>
+        /// <param name="id">The unique identifier of the job to update, or empty to clear job info.</param>
         private void UpdateJobInfo(StringHash32 id) {
             if (id.IsEmpty) {
                 m_CurrentJobAsset = null;
-                
+
                 m_GameState.job_id = NoActiveJobId;
                 m_GameState.job_argumentation = -1;
                 m_GameState.job_modeling = -1;
@@ -392,6 +409,10 @@ namespace Aqua
         #endregion // Game State
 
         #region Log Events
+
+        /// <summary>
+        /// Quick note, to ensure that new events are logged correctly, make a call to RefreshGameState() before each call.
+        /// </summary>
 
         private void GuideHandler(ScriptThreadHandle inThread)
         {
@@ -556,9 +577,9 @@ namespace Aqua
 
         private void OnProfileStarted() {
             m_PreviousJobName = NoActiveJobId;
+            UpdateCurrencyInfo();
             SetCurrentJob(Save.CurrentJobId);
         }
-
 
         private void LogSelectLanguage(FourCC langCode) {
             m_CurrentLanguage = Services.Loc.CurrentLanguageId;
@@ -571,41 +592,30 @@ namespace Aqua
                 selectedLang = "ENGLISH";
             }
 
+            RefreshGameState();
             using (var e = m_Log.NewEvent("select_language")) {
                 e.Param("language", selectedLang);
             }
         }
 
-        private bool SetCurrentJob(StringHash32 jobId)
+        private void SetCurrentJob(StringHash32 jobId)
         {
             m_CurrentJobHash = jobId;
-            //m_PreviousJobName = m_CurrentJobName;
+            m_PreviousJobName = m_GameState.job_id;
 
-            //if (jobId.IsEmpty)
-            //{
-            //    m_CurrentJobName = NoActiveJobId;
-            //    RefreshGameState();
-            //}
-            //else
-            //{
-            //    m_CurrentJobName = Assets.Job(jobId).name;
-            //    RefreshGameState();
-            //    if (m_PreviousJobName != NoActiveJobId)
-            //    {
-            //        return true;
-            //    }
-            //}
-
-            return false;
+            UpdateJobInfo(jobId);
+            RefreshGameState();
         }
 
         private void LogAcceptJob(StringHash32 jobId)
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("accept_job")) {
             }
         }
 
         private void LogRecommendedJob(JobRecommendationArgs recArgs) {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("recommended_job")) {
                 e.Param("attempted_job_name", Assets.NameOf(recArgs.JobId));
                 e.Param("recommended_job_name", recArgs.RecommendationId.IsEmpty ? "" : Assets.NameOf(recArgs.RecommendationId));
@@ -616,29 +626,11 @@ namespace Aqua
         {
             SetCurrentJob(jobId);
 
-            using(var gs = m_Log.OpenGameState()) {
-                //gs.Param("job_name", m_CurrentJobName);
-
-                using(var psb = PooledStringBuilder.Create()) {
-                    psb.Builder.Append('[');
-                    foreach(var entityId in Save.Bestiary.GetEntityIds()) {
-                        psb.Builder.Append("\"").Append(Assets.NameOf(entityId)).Append("\",");
-                    }
-                    foreach(var factId in Save.Bestiary.GetFactIds()) {
-                        psb.Builder.Append("\"").Append(Assets.NameOf(factId)).Append("\",");
-                    }
-
-                    psb.Builder.TrimEnd(new char[] { ',' }).Append(']');
-
-                    gs.Param("current_bestiary", psb.Builder);
-                }
-            }
-
-            using(var e = m_Log.NewEvent("switch_job")) {
+            RefreshGameState();
+            
+            using (var e = m_Log.NewEvent("switch_job")) {
                 e.Param("prev_job_name", m_PreviousJobName);
             }
-
-            RefreshGameState();
         }
 
         private void HandleBestiaryUpdated(BestiaryUpdateParams inParams)
@@ -654,6 +646,7 @@ namespace Aqua
                 e.Param("has_rate", hasRate && (Save.Bestiary.GetDiscoveredFlags(fact) & BFDiscoveredFlags.Rate) != 0);
             };
 
+            RefreshGameState();
             if (inParams.Type == BestiaryUpdateParams.UpdateType.Fact)
             {
                 BFBase fact = Assets.Fact(inParams.Id);
@@ -685,6 +678,8 @@ namespace Aqua
             var job = Assets.Job(jobId);
             string parsedJobName = job.name;
 
+            UpdateCurrencyInfo();
+            RefreshGameState();
             using(var e = m_Log.NewEvent("complete_job")) {
                 e.Param("job_name", parsedJobName);
             }
@@ -695,7 +690,7 @@ namespace Aqua
                 CheckDefaultSurveys();
             }
 
-            if (jobId == JobIds.Final_final) {
+            if (jobId == JobIds.Final_final && !string.IsNullOrEmpty(tweaks.FinalJobSurvey())) {
                 SceneHelper.OnSceneLoaded += FinalFinalSurveyTriggerCheck;
             }
         }
@@ -733,8 +728,9 @@ namespace Aqua
 
         private void LogCompleteTask(StringHash32 jobId, StringHash32 inTaskId)
         {
-            string taskId = Assets.Job(m_CurrentJobHash).Task(inTaskId).IdString;
+            string taskId = Assets.Job(jobId).Task(inTaskId).IdString;
 
+            RefreshGameState();
             using(var e = m_Log.NewEvent("complete_task")) {
                 e.Param("task_id", taskId);
             }
@@ -742,21 +738,20 @@ namespace Aqua
 
         private void LogBeginDive(string inTargetScene)
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("begin_dive")) {
                 e.Param("site_id", inTargetScene);
             }
         }
 
-        private void LogBeginModel()
-        {
-            using(var e = m_Log.NewEvent("begin_model")) {
-            }
+        private void LogBeginModel() {
+            RefreshGameState();
+            using(var e = m_Log.NewEvent("begin_model")) { }
         }
 
-        private void LogBeginSimulation()
-        {
-            using(var e = m_Log.NewEvent("begin_simulation")) {
-            }
+        private void LogBeginSimulation() {
+            RefreshGameState();
+            using(var e = m_Log.NewEvent("begin_simulation")) { }
         }
 
         #region Bestiary App Logging
@@ -764,8 +759,8 @@ namespace Aqua
         {
             m_CurrentPortableBestiaryTabId = BestiaryDescCategory.Critter;
 
-            using(var e = m_Log.NewEvent("open_bestiary")) {
-            }
+            RefreshGameState();
+            using(var e = m_Log.NewEvent("open_bestiary")) { }
             LogBestiaryOpenSpeciesTab();
         }
 
@@ -773,47 +768,50 @@ namespace Aqua
         {
             m_CurrentPortableBestiaryTabId = BestiaryDescCategory.Environment;
 
-            using(var e = m_Log.NewEvent("open_bestiary")) {
-            }
+            RefreshGameState();
+            using(var e = m_Log.NewEvent("open_bestiary")) { }
             LogBestiaryOpenEnvironmentsTab();
         }
 
-        private void LogBestiaryOpenSpeciesTab()
-        {
-            using(var e = m_Log.NewEvent("bestiary_open_species_tab")) {
-            }
+        private void LogBestiaryOpenSpeciesTab() {
+            RefreshGameState();
+            using(var e = m_Log.NewEvent("bestiary_open_species_tab")) { }
         }
         private void LogBestiaryOpenEnvironmentsTab()
         {
-            using(var e = m_Log.NewEvent("bestiary_open_environments_tab")) {
-            }
+            RefreshGameState();
+            using(var e = m_Log.NewEvent("bestiary_open_environments_tab")) { }
         }
         private void LogBestiaryOpenModelsTab()
         {
-            using(var e = m_Log.NewEvent("bestiary_open_models_tab")) {
-            }
+            RefreshGameState();
+            using(var e = m_Log.NewEvent("bestiary_open_models_tab")) { }
         }
 
         private void LogBestiarySelectSpecies(string speciesId)
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("bestiary_select_species")) {
                 e.Param("species_id", speciesId);
             }
         }
         private void LogBestiarySelectEnvironment(string environmentId)
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("bestiary_select_environment")) {
                 e.Param("environment_id", environmentId);
             }
         }
         private void LogBestiarySelectModel(string modelId)
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("bestiary_select_model")) {
                 e.Param("model_id", modelId);
             }
         }
         private void LogCloseBestiary()
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("close_bestiary")) {
             }
         }
@@ -822,6 +820,7 @@ namespace Aqua
         #region Status App Logging
         private void LogOpenStatus()
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("open_status")) {
             }
 
@@ -830,24 +829,28 @@ namespace Aqua
 
         private void LogStatusOpenJobTab()
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("status_open_job_tab")) {
             }
         }
 
         private void LogStatusOpenItemTab()
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("status_open_item_tab")) {
             }
         }
 
         private void LogStatusOpenTechTab()
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("status_open_tech_tab")) {
             }
         }
 
         private void LogCloseStatus()
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("close_status")) {
             }
         }
@@ -855,6 +858,7 @@ namespace Aqua
 
         private void LogSimulationSyncAchieved(int sync)
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("simulation_sync_achieved")) {
                 e.Param("ecosystem", m_CurrentModelEcosystem);
                 e.Param("sync", sync);
@@ -921,6 +925,7 @@ namespace Aqua
 
         private void LogStartModel()
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("model_start")) {
             }
         }
@@ -929,6 +934,7 @@ namespace Aqua
         {
             m_CurrentModelPhase = ((ModelPhases)inPhase).ToString();
 
+            RefreshGameState();
             using(var e = m_Log.NewEvent("model_phase_changed")) {
                 e.Param("phase", m_CurrentModelPhase);
             }
@@ -938,6 +944,7 @@ namespace Aqua
         {
             m_CurrentModelEcosystem = ecosystem;
 
+            RefreshGameState();
             using(var e = m_Log.NewEvent("model_ecosystem_selected")) {
                 e.Param("ecosystem", m_CurrentModelEcosystem);
             }
@@ -945,6 +952,7 @@ namespace Aqua
 
         private void LogModelConceptStarted()
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("model_concept_started")) {
                 e.Param("ecosystem", m_CurrentModelEcosystem);
             }
@@ -952,6 +960,7 @@ namespace Aqua
 
         private void LogModelConceptUpdated(ConceptualModelState.StatusId status)
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("model_concept_updated")) {
                 e.Param("ecosystem", m_CurrentModelEcosystem);
                 e.Param("status", status.ToString());
@@ -960,6 +969,7 @@ namespace Aqua
 
         private void LogModelConceptExported()
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("model_concept_exported")) {
                 e.Param("ecosystem", m_CurrentModelEcosystem);
             }
@@ -967,6 +977,7 @@ namespace Aqua
 
         private void LogModelSyncError(int sync)
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("model_sync_error")) {
                 e.Param("ecosystem", m_CurrentModelEcosystem);
                 e.Param("sync", sync);
@@ -975,6 +986,7 @@ namespace Aqua
 
         private void LogModelPredictCompleted()
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("model_predict_completed")) {
                 e.Param("ecosystem", m_CurrentModelEcosystem);
             }
@@ -982,6 +994,7 @@ namespace Aqua
 
         private void LogModelInterveneUpdate(InterveneUpdateData data)
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("model_intervene_update")) {
                 e.Param("ecosystem", m_CurrentModelEcosystem);
                 e.Param("organism", data.Organism);
@@ -991,6 +1004,7 @@ namespace Aqua
 
         private void LogModelInterveneError()
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("model_intervene_error")) {
                 e.Param("ecosystem", m_CurrentModelEcosystem);
             }
@@ -998,6 +1012,7 @@ namespace Aqua
 
         private void LogModelInterveneCompleted()
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("model_intervene_completed")) {
                 e.Param("ecosystem", m_CurrentModelEcosystem);
             }
@@ -1005,6 +1020,7 @@ namespace Aqua
 
         private void LogEndModel()
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("model_end")) {
                 e.Param("phase", m_CurrentModelPhase);
                 e.Param("ecosystem", m_CurrentModelEcosystem);
@@ -1020,6 +1036,7 @@ namespace Aqua
 
         private void LogPurchaseUpgrade(StringHash32 inUpgradeId)
         {
+            UpdateCurrencyInfo();
             InvItem item = Services.Assets.Inventory.Get(inUpgradeId);
             string name = item.name;
 
@@ -1027,6 +1044,7 @@ namespace Aqua
             {
                 int cost = item.CashCost();
 
+                RefreshGameState();
                 using(var e = m_Log.NewEvent("purchase_upgrade")) {
                     e.Param("item_id", inUpgradeId.ToString());
                     e.Param("item_name", name);
@@ -1041,6 +1059,7 @@ namespace Aqua
             string name = item.name;
             int cost = item.CashCost();
 
+            RefreshGameState();
             using(var e = m_Log.NewEvent("insufficient_funds")) {
                 e.Param("item_id", inUpgradeId.ToString());
                 e.Param("item_name", name);
@@ -1050,6 +1069,7 @@ namespace Aqua
 
         private void LogTalkToShopkeep()
         {
+            RefreshGameState();
             using(var e = m_Log.NewEvent("talk_to_shopkeep")) {
             }
         }
@@ -1093,6 +1113,7 @@ namespace Aqua
             string environment = Services.Assets.Bestiary.Get(inEnvironmentId).name;
             m_CurrentEnvironment = environment;
 
+            RefreshGameState();
             using(var e = m_Log.NewEvent("add_environment")) {
                 e.Param("tank_type", m_CurrentTankType);
                 e.Param("environment", environment);
@@ -1104,6 +1125,7 @@ namespace Aqua
             string environment = Services.Assets.Bestiary.Get(inEnvironmentId).ToString();
             m_CurrentEnvironment = string.Empty;
 
+            RefreshGameState();
             using(var e = m_Log.NewEvent("remove_environment")) {
                 e.Param("tank_type", m_CurrentTankType);
                 e.Param("environment", environment);
@@ -1115,6 +1137,7 @@ namespace Aqua
             string critter = Services.Assets.Bestiary.Get(inCritterId).name;
             m_CurrentCritters.Add(critter);
 
+            RefreshGameState();
             using(var e = m_Log.NewEvent("add_critter")) {
                 e.Param("tank_type", m_CurrentTankType);
                 e.Param("environment", m_CurrentEnvironment);
@@ -1127,6 +1150,7 @@ namespace Aqua
             string critter = Services.Assets.Bestiary.Get(inCritterId).name;
             m_CurrentCritters.Remove(critter);
 
+            RefreshGameState();
             using(var e = m_Log.NewEvent("remove_critter")) {
                 e.Param("tank_type", m_CurrentTankType);
                 e.Param("environment", m_CurrentEnvironment);
@@ -1139,6 +1163,7 @@ namespace Aqua
             string tankType = inTankType.ToString();
             string critters = String.Join(",", m_CurrentCritters.ToArray());
 
+            RefreshGameState();
             using(var e = m_Log.NewEvent("begin_experiment")) {
                 e.Param("tank_type", tankType);
                 e.Param("environment", m_CurrentEnvironment);
@@ -1153,6 +1178,7 @@ namespace Aqua
             string tankType = inTankType.ToString();
             string critters = String.Join(",", m_CurrentCritters.ToArray());
 
+            RefreshGameState();
             using(var e = m_Log.NewEvent("end_experiment")) {
                 e.Param("tank_type", tankType);
                 e.Param("environment", m_CurrentEnvironment);
@@ -1176,6 +1202,7 @@ namespace Aqua
         {
             m_CurrentArgumentId = id;
 
+            RefreshGameState();
             using(var e = m_Log.NewEvent("begin_argument")) {
             }
         }
@@ -1184,6 +1211,7 @@ namespace Aqua
         {
             string factId = Assets.Fact(inFactId).name;
 
+            RefreshGameState();
             using(var e = m_Log.NewEvent("fact_submitted")) {
                 e.Param("fact_id", factId);
             }
@@ -1193,6 +1221,7 @@ namespace Aqua
         {
             string factId = Assets.Fact(inFactId).name;
 
+            RefreshGameState();
             using(var e = m_Log.NewEvent("fact_rejected")) {
                 e.Param("fact_id", factId);
             }
@@ -1202,12 +1231,15 @@ namespace Aqua
         {
             if (ArgumentationService.LeafIsComplete(m_CurrentArgumentId)) return;
 
+            RefreshGameState();
             using(var e = m_Log.NewEvent("leave_argument")) {
             }
         }
 
         private void LogCompleteArgument(StringHash32 id)
         {
+            UpdateCurrencyInfo();
+            RefreshGameState();
             using(var e = m_Log.NewEvent("complete_argument")) {
             }
             
