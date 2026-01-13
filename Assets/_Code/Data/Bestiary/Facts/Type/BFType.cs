@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using BeauPools;
 using BeauUtil;
+using Unity.IL2CPP.CompilerServices;
 using UnityEngine;
 
 namespace Aqua {
@@ -49,52 +50,88 @@ namespace Aqua {
         static private readonly GetPropertyDelegate[] s_GetPropertyDelegates = new GetPropertyDelegate[TypeCount];
         static private readonly Comparison<BFBase>[] s_ComparisonDelegates = new Comparison<BFBase>[TypeCount];
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.NullChecks, false)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.ArrayBoundsChecks, false)]
         static public bool IsBehavior(BFTypeId inTypeId) {
             return (s_Flags[(int)inTypeId] & BFFlags.IsBehavior) != 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.NullChecks, false)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.ArrayBoundsChecks, false)]
         static public bool IsBehavior(BFBase inFact) {
             return (s_Flags[(int)inFact.Type] & BFFlags.IsBehavior) != 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.NullChecks, false)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.ArrayBoundsChecks, false)]
         static public bool IsSelfTargeting(BFTypeId inTypeId) {
             return (s_Flags[(int)inTypeId] & BFFlags.SelfTarget) != 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.NullChecks, false)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.ArrayBoundsChecks, false)]
         static public bool IsSelfTargeting(BFBase inFact) {
             return (s_Flags[(int)inFact.Type] & BFFlags.SelfTarget) != 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.NullChecks, false)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.ArrayBoundsChecks, false)]
         static public bool IsEnvironment(BFTypeId inTypeId) {
             return (s_Flags[(int)inTypeId] & BFFlags.EnvironmentFact) != 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.NullChecks, false)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.ArrayBoundsChecks, false)]
         static public bool IsEnvironment(BFBase inFact) {
             return (s_Flags[(int)inFact.Type] & BFFlags.EnvironmentFact) != 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.NullChecks, false)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.ArrayBoundsChecks, false)]
         static public bool IsOrganism(BFTypeId inTypeId) {
             return (s_Flags[(int)inTypeId] & BFFlags.EnvironmentFact) == 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.NullChecks, false)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.ArrayBoundsChecks, false)]
         static public bool IsOrganism(BFBase inFact) {
             return (s_Flags[(int)inFact.Type] & BFFlags.EnvironmentFact) == 0;
         }
 
         #region Attributes
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.NullChecks, false)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.ArrayBoundsChecks, false)]
         static public BFShapeId Shape(BFBase inFact) {
             return s_Shapes[(int)inFact.Type];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.NullChecks, false)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.ArrayBoundsChecks, false)]
         static public BFShapeId Shape(BFTypeId inFactType) {
             return s_Shapes[(int)inFactType];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.NullChecks, false)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.ArrayBoundsChecks, false)]
         static public BFFlags Flags(BFBase inFact) {
             return s_Flags[(int)inFact.Type];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.NullChecks, false)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.ArrayBoundsChecks, false)]
         static public BFFlags Flags(BFTypeId inFactType) {
             return s_Flags[(int)inFactType];
         }
@@ -105,6 +142,9 @@ namespace Aqua {
             return s_DefaultDiscoveredFlags[(int)inFact.Type];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.NullChecks, false)]
+        [Il2CppSetOption(Unity.IL2CPP.CompilerServices.Option.ArrayBoundsChecks, false)]
         static public BFDiscoveredFlags DefaultDiscoveredFlags(BFTypeId inFactType) {
             return s_DefaultDiscoveredFlags[(int)inFactType];
         }

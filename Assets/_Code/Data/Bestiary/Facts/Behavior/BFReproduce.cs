@@ -55,10 +55,6 @@ namespace Aqua {
             else
             {
                 yield return BFFragment.CreateLocVerb(ReproduceVerb);
-                if (Services.Loc.IsCurrentLanguageGendered())
-                {
-                    yield return BFFragment.CreateLocWord(BestiaryFactFragmentType.Article, ByArticle);
-                }
                 yield return BFFragment.CreateAmount(BestiaryUtils.FormatPercentageRate(fact.Amount));
             }
         }

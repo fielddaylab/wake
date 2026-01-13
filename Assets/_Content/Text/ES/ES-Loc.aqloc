@@ -709,10 +709,19 @@ Volver al Exterior del Timón
 :: experiment.env.button.tooltip
 Selecciona Ambiente
 
+:: experiment.env.select
+Selecciona Ambiente
+
 :: experiment.critter.button.tooltip
 Selecciona Organismo
 
 :: experiment.critter.button.multi.tooltip
+Selecciona Organismos
+
+:: experiment.critter.select
+Selecciona Organismo
+
+:: experiment.critter.selectMultiple
 Selecciona Organismos
 
 :: experiment.run.button.tooltip
@@ -800,13 +809,22 @@ Experimento Inconcluso
 Experimento Innecesario
 
 :: experiment.summary.measure.repro
-Instrucciones sobre la Tasa de Reproducción- Activa el {nameof AutoFeeder}- Activa el {nameof WaterStabilizer}- Añade un Tipo de Organismo
+Instrucciones sobre la Tasa de Reproducción
+- Activa el {nameof AutoFeeder}
+- Activa los {nameof WaterStabilizer}
+- Añade un Tipo de Organismo
 
 :: experiment.summary.measure.water
-Instrucciones sobre la química del agua: - Activa el {nameof AutoFeeder} - Desactiva el {nameof WaterStabilizer} - Añade un tipo de organismo.
+Instrucciones sobre la química del agua:
+- Activa el {nameof AutoFeeder}
+- Desactiva los {nameof WaterStabilizer}
+- Añade un tipo de organismo.
 
 :: experiment.summary.measure.eat
-Instrucciones sobre la tasa de alimentación- Desactiva el {nameof AutoFeeder}- Activa el {nameof WaterStabilizer}- Añade dos tipos de organismos
+Instrucciones sobre la tasa de alimentación
+- Desactiva el {nameof AutoFeeder}
+- Activa los {nameof WaterStabilizer}
+- Añade dos tipos de organismos
 
 :: experiment.button.measure
 Analizar Datos
@@ -820,17 +838,29 @@ En Ecosystema
 :: experiment.tank.observation
 Tanque de Observación
 
+:: experiment.nav.observation
+Observación
+
 :: experiment.tank.stress
 Tanque de Estrés
 
+:: experiment.nav.stress
+Estrés
+
 :: experiment.tank.measurement
 Tanque de Medidas
+
+:: experiment.nav.measure
+Medidas
 
 :: experiment.button.enable
 DESACTIVADO
 
 :: experiment.button.enabled
 ACTIVADO
+
+:: experiment.stress.adjust
+Ajustar la Química del Agua
 
 :: experiment.observation.newBehavior.header
 ¡Nuevo Comportamiento Descubierto!
@@ -1165,7 +1195,7 @@ Linterna
 Una luz para guiarte en la oscuridad.
 
 :: inv.autoFeeder.name
-Alimentador automático
+Alimentador Automático
 
 :: inv.autoFeeder.description
 Alimentador automático para el Tanque de Medidas. Te permite activar el sistema de alimentación automática para los organismos.
@@ -1228,7 +1258,7 @@ Barco de {player-name}
 Laboratorio de Experimentos
 
 :: map.modeling.name
-Laboratorio de Modelización
+<size=90%>Laboratorio de Modelización
 
 :: map.kelpStation.name
 Bosque de algas del Gran Canal
@@ -2252,13 +2282,13 @@ Reportate con un Modelo Visual de la Red Alimentaria de las Tortugas
 Hay múltiples fuentes de alimento para las tortugas.
 
 :: jobs.kelp-energy.name
-La energía en el sistema de las Laguna Forestal
+La energía en el sistema de Laguna Forestal
 
 :: jobs.kelp-energy.desc
 Queremos construir un modelo visual de la energía alimentaria en la Laguna Forestal.
 
 :: jobs.kelp-energy.task.model
-Utiliza el Laboratorio de Modelización para visualizar la red trófica del {nameof WarmKelpForest}.
+Utiliza el Laboratorio de Modelización para visualizar la red trófica de la {nameof WarmKelpForest}.
 
 :: jobs.kelp-energy.argue.claimLabel
 El Alga Gigante provee la energía en este sistema.
@@ -5005,7 +5035,7 @@ Unas condiciones estresaran a los organismos, otras no. No tengas miedo de selec
 Después seleccionarás los {h}Organismos{/h} que estás investigando.
 
 :: ExperimentResponses__partner.talk.experiment.generic.measurement-tank.intro_c_5
-Y después, puedes ajustar el {nameof WaterStabilizer} o el {nameof AutoFeeder} si los tienes.
+Y después, puedes ajustar los {nameof WaterStabilizer} o el {nameof AutoFeeder} si los tienes.
 
 :: ExperimentResponses__partner.talk.experiment.generic.measurement-tank.intro_c_6
 ¡Haz clic en el botón {h}Añadir agua{/h} para empezar!
@@ -5029,13 +5059,13 @@ No tengas miedo de seleccionar ecosistemas fuera de tu trabajo actual.
 Después, selecciona tus {h}Organismos{/h}.
 
 :: ExperimentResponses__partner.talk.experiment.generic.measurement-tank.request-intro_c_6
-Y después ajusta el {nameof WaterStabilizer} o el {nameof AutoFeeder}, si los tienes.
+Y después ajusta los {nameof WaterStabilizer} o el {nameof AutoFeeder}, si los tienes.
 
 :: ExperimentResponses__partner.talk.experiment.generic.features.intro_c_0
 {@guide}	Aquí es donde puedes modificar las características de los tanques para medir diferentes hechos.
 
 :: ExperimentResponses__partner.talk.experiment.generic.features.intro_c_1
-Desactiva el {h}{nameof WaterStabilizer}{/h} si quieres ver cómo cambia su ambiente un organismo.
+Desactiva los {h}{nameof WaterStabilizer}{/h} si quieres ver cómo cambia su ambiente un organismo.
 
 :: ExperimentResponses__partner.talk.experiment.generic.features.intro_c_2
 O desactiva el {nameof AutoFeeder} si quieres medir las tasas de consumo.
@@ -20124,7 +20154,7 @@ Sólo podemos simular una intervención a la vez, así que no se pueden añadir 
 {@guide}    Buen día. Llegamos a la Estación del Pantano.
 
 :: Cabin__ship.cabin.StartAudio.NoDream_c_11
-{@guide}    Buenos dÃ­as. Hemos llegado a {nameof RS-0}.
+{@guide}    Buenos días. Hemos llegado a {nameof RS-0}.
 
 :: Cabin__ship.cabin.TrunkSequence_c_0
 {@player}   Espera un momento... {nameof @guide}, ¿es ése el viejo baúl de mi hermana?
