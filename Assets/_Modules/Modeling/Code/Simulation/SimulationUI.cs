@@ -16,6 +16,7 @@ namespace Aqua.Modeling {
         [Header("Graphs")]
         [SerializeField] private SimLineGraph m_Graph = null;
         [SerializeField] private GameObject m_GraphFader = null;
+        [SerializeField] private FlashAnim m_SuccessFailureFlash = null;
 
         [Header("Sync")]
         [SerializeField] private CanvasGroup m_SyncInputGroup = null;
@@ -275,6 +276,7 @@ namespace Aqua.Modeling {
 
         private void TryDisplaySaveButton(StringHash32 modelId) {
             if (!modelId.IsEmpty && !Save.Bestiary.HasFact(modelId)) {
+                PlayFlashAnimation(true);
                 m_SaveButton.gameObject.SetActive(true);
             } else {
                 m_SaveButton.gameObject.SetActive(false);
@@ -374,6 +376,7 @@ namespace Aqua.Modeling {
                 if (m_ProgressInfo.Scope.MinimumSyncAccuracy <= m_State.LastKnownAccuracy) {
                     TryDisplaySaveButton(m_ProgressInfo.Scope.SyncModelId);
                 } else {
+                    PlayFlashAnimation(false);
                     OnSyncUnsuccessful?.Invoke();
                 }
             }
@@ -486,8 +489,10 @@ namespace Aqua.Modeling {
             if (m_ProgressInfo.Scope != null) {
                 if (result.Success) {
                     Log.Msg("[SimulationUI] Intervention hit target!");
+                    Services.Audio.PostEvent("modelSynced");
                     TryDisplaySaveButton(m_ProgressInfo.Scope.InterveneModelId);
                 } else {
+                    PlayFlashAnimation(false);
                     Services.Audio.PostEvent("syncDenied");
                     OnInterventionUnsuccessful?.Invoke(result);
                 }
@@ -561,6 +566,18 @@ namespace Aqua.Modeling {
         }
 
         #endregion // BasePanel
+
+        #region Flash
+
+        private void PlayFlashAnimation(bool success) {
+            if (success) {
+                m_SuccessFailureFlash.Ping(Color.green);
+            } else {
+                m_SuccessFailureFlash.Ping(Color.red);
+            }
+        }
+
+        #endregion // Flash
 
         #region Callbacks
 

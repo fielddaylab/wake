@@ -12,6 +12,7 @@ namespace Aqua.Modeling {
         #region Inspector
 
         public RectTransform Layout;
+        public ShakeAnim Shake;
         public LocText LocText;
         public Graphic Background;
         public GraphTargetRegionDiscrepancy Discrepancy;

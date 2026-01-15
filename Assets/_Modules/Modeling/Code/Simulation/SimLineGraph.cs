@@ -616,6 +616,7 @@ namespace Aqua.Modeling {
                     Ref.Swap(ref upperY, ref lowerY);
                 }
 
+                region.Shake.Ping();
                 region.Discrepancy.Layout.SetAnchorsY(lowerY, upperY);
             }
         }
