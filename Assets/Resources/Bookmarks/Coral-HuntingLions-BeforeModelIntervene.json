@@ -1,24 +1,17 @@
 {
    "__serializerVersion": 2,
-   "__version": 4,
-   "version": 3,
+   "__version": 7,
+   "version": 6,
    "id": "FumingNutmeg",
-   "lastUpdated": 1.33076615637711E+17,
+   "lastUpdated": 1.34129741106761E+17,
+   "isBookmark": true,
    "character": {
       "displayName": null,
       "pronouns": "Neutral"
    },
    "inventory": {
-      "__version": 4,
+      "__version": 5,
       "items": [
-         {
-            "id": 374439154,
-            "value": 500
-         },
-         {
-            "id": 3618342856,
-            "value": 35
-         }
       ],
       "scannerIds": [
          1681199945,
@@ -62,7 +55,9 @@
          1178420878,
          4244679458,
          3563014782
-      ]
+      ],
+      "cash": 500,
+      "exp": 25
    },
    "script": {
       "__version": 3,
@@ -153,12 +148,12 @@
                "value": true
             },
             {
-               "id": 2859916113,
+               "id": 2710836295,
                "type": "Bool",
                "value": true
             },
             {
-               "id": 2710836295,
+               "id": 2859916113,
                "type": "Bool",
                "value": true
             }
@@ -307,7 +302,7 @@
          3242527826,
          341298857,
          526148177,
-         703223020,
+         1569436531,
          1357081751,
          1443959053,
          2331472125,
@@ -324,7 +319,7 @@
          2564734920,
          2075760832,
          2312445359,
-         2346806886,
+         1300319732,
          2758078659,
          1590122952,
          1380939620,
@@ -383,7 +378,9 @@
          3290904200,
          1313354711,
          540164591,
-         3434771298
+         3434771298,
+         2550962424,
+         3795679549
       ],
       "factMetas": [
          {
@@ -525,7 +522,7 @@
       ]
    },
    "options": {
-      "__version": 2,
+      "__version": 3,
       "audio": {
          "__version": 3,
          "master": {
@@ -533,7 +530,7 @@
             "mute": false
          },
          "sfx": {
-            "volume": 0.800000011920929,
+            "volume": 0.400000005960464,
             "mute": false
          },
          "music": {
@@ -552,38 +549,48 @@
          "observationAction": "Hold"
       },
       "performance": {
-         "framerate": "High"
+         "__version": 3,
+         "framerate": "High",
+         "resolution": "Minimum",
+         "animation": "High",
+         "effects": "High"
       },
       "accessibility": {
          "tts": "Off",
          "flags": "0"
+      },
+      "language": {
+         "__version": 3,
+         "language": "EN"
       }
    },
    "science": {
-      "__version": 5,
+      "__version": 6,
       "siteSurveys": [
          {
-            "__version": 2,
+            "__version": 3,
             "mapId": 2212350453,
             "taggedCritters": [
             ],
             "graphedCritters": [
             ],
             "graphedFacts": [
-            ]
+            ],
+            "graphLayoutSeed": 0
          },
          {
-            "__version": 2,
+            "__version": 3,
             "mapId": 2178795215,
             "taggedCritters": [
             ],
             "graphedCritters": [
             ],
             "graphedFacts": [
-            ]
+            ],
+            "graphLayoutSeed": 0
          },
          {
-            "__version": 2,
+            "__version": 3,
             "mapId": 2162458881,
             "taggedCritters": [
                4257683625,
@@ -592,17 +599,17 @@
             "graphedCritters": [
             ],
             "graphedFacts": [
-            ]
+            ],
+            "graphLayoutSeed": 0
          },
          {
-            "__version": 2,
+            "__version": 3,
             "mapId": 2212791738,
             "taggedCritters": [
                3177283071,
                2717353052,
                193540374,
                1734724709,
-               1605956068,
                586288757,
                3939929818,
                3815586090
@@ -610,10 +617,11 @@
             "graphedCritters": [
             ],
             "graphedFacts": [
-            ]
+            ],
+            "graphLayoutSeed": 0
          },
          {
-            "__version": 2,
+            "__version": 3,
             "mapId": 1562088238,
             "taggedCritters": [
             ],
@@ -621,7 +629,6 @@
                193540374,
                444981425,
                586288757,
-               1605956068,
                1734724709,
                2717353052,
                3177283071,
@@ -652,14 +659,10 @@
                3773007000,
                3814092213,
                4064289156,
-               299259218,
-               561544465,
-               975850868,
-               1688490569,
-               2555751373,
-               3115336262,
-               3538760043,
-               3909879605,
+               3795679549,
+               2550962424,
+               1569436531,
+               1300319732,
                115798069,
                427368968,
                2457174900,
@@ -687,7 +690,6 @@
                2761823288,
                341298857,
                526148177,
-               703223020,
                1357081751,
                1443959053,
                2325572518,
@@ -698,7 +700,8 @@
                3527410094,
                3706251762,
                4073886610
-            ]
+            ],
+            "graphLayoutSeed": 2099444120
          }
       ],
       "argues": [
@@ -710,6 +713,12 @@
          812463964,
          1459540192
       ],
-      "level": 0
-   }
+      "level": 2,
+      "decrypt": 0,
+      "spectersQueued": 0,
+      "spectersQueueOverride": 0
+   },
+   "playtime": 8.58539380505681,
+   "launchCount": 0,
+   "researchFlags": 0
 }

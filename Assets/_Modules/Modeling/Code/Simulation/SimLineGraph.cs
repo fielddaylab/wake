@@ -12,6 +12,11 @@ namespace Aqua.Modeling {
             public ushort EndIdx;
         }
 
+        public enum InterventionAllocResult {
+            NotChanged,
+            Updated,
+        }
+
         #region Inspector
 
         [SerializeField] private Color m_StressColor = Color.red;
@@ -34,7 +39,6 @@ namespace Aqua.Modeling {
 
         [NonSerialized] private SimGraphBlock m_InterventionBlock;
         [NonSerialized] private List<GraphTargetRegion> m_InterveneRegions = new List<GraphTargetRegion>(2);
-        private static readonly List<float> s_FinalBlockYs = new List<float>(8);
         private readonly GenerateStressPointsDelegate StressPointCallback;
         private readonly GenerateDivergenceDelegate DivergenceCallback;
 
@@ -92,7 +96,7 @@ namespace Aqua.Modeling {
         }
 
         private void Start() {
-            Services.Events.Register(ModelingConsts.Event_Intervene_Error, OnInterveneError, this);
+            Services.Events.Register<SimulationDataCtrl.InterventionResult>(ModelingConsts.Event_Intervene_Error, OnInterveneError, this);
             m_DivergenceIcons.TryInitialize(null, null, 0);
             
             Action<GraphDivergencePoint> callbackInvoker = (g) => OnDivergenceClicked?.Invoke(g);
@@ -122,24 +126,28 @@ namespace Aqua.Modeling {
             }
         }
 
-        public void Intervene(SimulationDataCtrl.InterventionData data, ModelState state) {
+        public InterventionAllocResult Intervene(SimulationDataCtrl.InterventionData data, ModelState state) {
             StringHash32 id = data.Target?.Id() ?? StringHash32.Null;
             
             if (m_InterventionBlock != null) {
                 if (m_InterventionBlock.ActorId == id) {
-                    return;
+                    return InterventionAllocResult.NotChanged;
                 }
 
                 m_AllocatedBlockMap.Remove(m_InterventionBlock.ActorId);
                 m_AllocatedBlocks.FastRemove(m_InterventionBlock);
                 m_Blocks.Free(m_InterventionBlock);
                 m_InterventionBlock = null;
+                return InterventionAllocResult.Updated;
             }
 
             if (!id.IsEmpty && !m_AllocatedBlockMap.ContainsKey(id)) {
                 m_InterventionBlock = GetBlock(id, state);
                 m_InterventionBlock.transform.SetAsFirstSibling();
+                return InterventionAllocResult.Updated;
             }
+
+            return InterventionAllocResult.NotChanged;
         }
 
         public void PopulateData(ModelState state, ModelProgressInfo info, SimRenderMask mask) {
@@ -160,13 +168,17 @@ namespace Aqua.Modeling {
             if (info.Scope) {
                 ResetInterveneError();
                 m_Targets.Reset();
+                int targetIndex = 0;
                 foreach(var target in info.Scope.InterventionTargets) {
                     var block = GetBlock(target.Id, state);
                     var targetObj = m_Targets.TempAlloc();
                     block.Intervention = targetObj;
-                    targetObj.Object.Layout.SetParent(block.PredictGroup.transform, false);
+                    RectTransform targetRoot = (RectTransform) targetObj.Object.transform;
+                    targetRoot.SetParent(block.PredictGroup.transform, false);
+                    targetObj.Object.Layout.sizeDelta = default;
                     targetObj.Object.MinValue = target.Population - target.Range;
                     targetObj.Object.MaxValue = target.Population + target.Range;
+                    targetObj.Object.TargetIndex = targetIndex++;
                     targetObj.Object.Background.color = m_InterventionGoalColor;
                     targetObj.Object.LocText.SetText("modeling.intervene.target");
 
@@ -197,7 +209,6 @@ namespace Aqua.Modeling {
                 }
             }
             m_InterveneRegions.Clear();
-            s_FinalBlockYs.Clear();
         }
 
         #region Retrieving Blocks
@@ -398,26 +409,22 @@ namespace Aqua.Modeling {
 
                     changed |= block.Predict.ApplyScale(bounds);
 
+                    if (block.Predict.PointCount != 0) {
+                        block.LastNormalizedPointY = block.Predict.Points[block.Predict.PointCount - 1].y;
+                    }
+
                     // temp setting
                     block.IconPin.SetAnchorY(0f);
-                    if (block.Intervention.IsAllocated) {
-                        if (block.Predict.PointCount != 0) {
-                            float newY = block.IconPin.position.y +
-                                block.Predict.Points[block.Predict.PointCount - 1].y / blocks.Length;
-                            s_FinalBlockYs.Add(newY);
-                        }
-                    }
 
                     if (showIntervene && pointCount < 2) {
                         block.IconPin.SetAnchorY(0.5f);
                     } else {
                         block.IconPin.SetAnchorY(block.Predict.Points[0].y);
                     }
-
                 }
 
                 if (showIntervene && block.Intervention.IsAllocated) {
-                    RenderIntervention(block.Intervention, block.LastRect);
+                    RenderInterventionTarget(block.Intervention, block.LastRect);
                 }
 
                 RenderStressPoints(block, mask, pointCount);
@@ -435,7 +442,7 @@ namespace Aqua.Modeling {
                 block.Predict.enabled = showPredict;
                 block.Fill.enabled = showFill;
                 if (block.Intervention.IsAllocated) {
-                    block.Intervention.Object.Layout.gameObject.SetActive(showIntervene);
+                    block.Intervention.Object.gameObject.SetActive(showIntervene);
                 }
 
                 GraphDivergencePoint divergence = block.Divergence.Object;
@@ -460,10 +467,13 @@ namespace Aqua.Modeling {
             }
         }
 
-        static private void RenderIntervention(GraphTargetRegion region, Rect rect) {
+        static private void RenderInterventionTarget(GraphTargetRegion region, Rect rect) {
             float min = MathUtils.Remap(region.MinValue, rect.yMin, rect.yMax, 0, 1);
             float max = MathUtils.Remap(region.MaxValue, rect.yMin, rect.yMax, 0, 1);
-            if (min > 1) { min = 0; }
+            if (min > 1) {
+                // TODO: clarify why this exists
+                min = 0;
+            }
             region.Layout.SetAnchorsY(min, max);
         }
 
@@ -586,41 +596,27 @@ namespace Aqua.Modeling {
 
         #region Handlers
 
-        private void OnInterveneError() {
-            if (m_InterveneRegions == null || m_InterveneRegions.Count == 0) { return; }
+        private void OnInterveneError(SimulationDataCtrl.InterventionResult result) {
+            for(int i = 0; i < m_AllocatedBlocks.Count; i++) {
+                SimGraphBlock block = m_AllocatedBlocks[i];
+                GraphTargetRegion region = block.Intervention;
+                if (!region || !result.IncorrectTargets.IsSet(region.TargetIndex)) {
+                    continue;
+                }
 
-            for (int i = 0; i < m_InterveneRegions.Count; i++) {
-                GraphTargetRegion region = m_InterveneRegions[i];
-                if (region.Background == null) { continue; }
-
-                // TODO: Check if this *specific* region is incorrect
                 region.Background.color = m_InterventionDiscrepancyColor;
                 region.LocText.SetText("modeling.noIntervenePopup.header");
 
                 region.Discrepancy.gameObject.SetActive(true);
 
-                region.Discrepancy.Layout.SetPosition(new Vector3(0, 0, 0), Axis.XY, Space.Self);
-                
-                Vector3 upperPos = new Vector3(region.Layout.position.x, region.Layout.position.y, 1);
-                Vector3 lowerPos = new Vector3(region.Layout.position.x, s_FinalBlockYs[i], 1);
+                float upperY = block.LastNormalizedPointY;
+                float lowerY = (region.Layout.anchorMin.y + region.Layout.anchorMax.y) / 2;
 
-                if (upperPos.y < lowerPos.y) {
-                    Vector3 tempPos = upperPos;
-                    upperPos = lowerPos;
-                    lowerPos = tempPos;
+                if (upperY < lowerY) {
+                    Ref.Swap(ref upperY, ref lowerY);
                 }
 
-                Vector3 midPos = (upperPos + lowerPos) / 2;
-
-                region.Discrepancy.UpperDot.gameObject.transform.position = new Vector3(region.Discrepancy.UpperDot.gameObject.transform.position.x, upperPos.y, 1);
-                region.Discrepancy.LowerDot.gameObject.transform.position = new Vector3(region.Discrepancy.LowerDot.gameObject.transform.position.x, lowerPos.y, 1);
-                region.Discrepancy.Circle.gameObject.transform.position = new Vector3(region.Discrepancy.Circle.gameObject.transform.position.x, midPos.y, 1);
-                region.Discrepancy.Line.gameObject.transform.position = new Vector3(region.Discrepancy.Line.gameObject.transform.position.x, midPos.y, 1);
-
-                // TODO: create individual lines connecting upper to lower dot, instead of just adjusting scale
-                float dotBuffer = region.Discrepancy.UpperDot.rectTransform.rect.height / 2;
-                region.Discrepancy.Line.rectTransform.sizeDelta = new Vector2(region.Discrepancy.Line.rectTransform.rect.width,
-                    Mathf.Abs(region.Discrepancy.UpperDot.gameObject.transform.localPosition.y - region.Discrepancy.LowerDot.gameObject.transform.localPosition.y + dotBuffer));
+                region.Discrepancy.Layout.SetAnchorsY(lowerY, upperY);
             }
         }
 

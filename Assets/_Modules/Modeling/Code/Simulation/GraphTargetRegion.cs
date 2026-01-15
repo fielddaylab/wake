@@ -20,5 +20,6 @@ namespace Aqua.Modeling {
 
         [NonSerialized] public float MinValue;
         [NonSerialized] public float MaxValue;
+        [NonSerialized] public int TargetIndex;
     }
 }

@@ -56,6 +56,7 @@ namespace Aqua.Modeling {
             m_SimulationUI.OnPredictCompleted = OnPredictCompleted;
             m_SimulationUI.OnInterventionReset = OnInterventionReset;
             m_SimulationUI.OnAnimationStart = OnAnimationStart;
+            m_SimulationUI.OnAnimationFinished = OnAnimationFinished;
             m_SimulationUI.OnInterventionSuccessful = OnInterventionCompleted;
             m_SimulationUI.OnInterventionUnsuccessful = OnInterventionUnsuccessful;
 
@@ -361,8 +362,9 @@ namespace Aqua.Modeling {
             m_World.ReconstructForIntervention();
         }
 
-        private void OnInterventionUnsuccessful() {
-            Services.Events.Dispatch(ModelingConsts.Event_Intervene_Error);
+        private void OnInterventionUnsuccessful(SimulationDataCtrl.InterventionResult result) {
+            m_World.EnableIntervention();
+            Services.Events.Dispatch(ModelingConsts.Event_Intervene_Error, EvtArgs.Create(result));
             Services.Script.TriggerResponse(ModelingConsts.Trigger_InterveneError);
         }
 
@@ -370,6 +372,12 @@ namespace Aqua.Modeling {
             if (m_State.Phase == ModelPhases.Intervene) {
                 m_World.DisableIntervention();
             }
+        }
+
+        private void OnAnimationFinished() {
+            //if (m_State.Phase == ModelPhases.Intervene) {
+            //    m_World.EnableIntervention();
+            //}
         }
 
         private void OnInterventionReset() {

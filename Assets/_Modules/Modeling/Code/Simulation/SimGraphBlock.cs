@@ -32,6 +32,7 @@ namespace Aqua.Modeling {
         [NonSerialized] public WaterPropertyId PropertyId = WaterPropertyId.NONE;
         [NonSerialized] public Color PrimaryColor;
         [NonSerialized] public Rect LastRect;
+        [NonSerialized] public float LastNormalizedPointY;
         [NonSerialized] public Rect LastRectHistorical;
         [NonSerialized] public Rect LastRectPlayer;
         [NonSerialized] public Rect LastRectPredict;
@@ -51,6 +52,9 @@ namespace Aqua.Modeling {
             LastRectPredict = default;
             Intervention.Free();
             Divergence.Free();
+            Historical.Clear();
+            Player.Clear();
+            Predict.Clear();
             if (StressPoints != null) {
                 while(StressPoints.TryPopBack(out var b)) {
                     b.Dispose();

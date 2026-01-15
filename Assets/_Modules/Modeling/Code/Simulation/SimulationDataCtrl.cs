@@ -52,6 +52,11 @@ namespace Aqua.Modeling {
             public readonly HashSet<BFBase> AdditionalFacts = Collections.NewSet<BFBase>(8);
         }
 
+        public struct InterventionResult {
+            public bool Success;
+            public BitSet32 IncorrectTargets;
+        }
+
         [SerializeField] private float m_ErrorScale = 2;
         [Header("Accuracy Stars")]
         [SerializeField, Range(1, 100)] private int m_AccuracyStars1 = 20;
@@ -645,9 +650,12 @@ namespace Aqua.Modeling {
         /// <summary>
         /// Evaluates whether or not intervention goals were met.
         /// </summary>
-        public bool EvaluateInterventionGoals() {
+        public InterventionResult EvaluateInterventionGoals() {
+            InterventionResult result = default;
+            
             if (!m_ProgressInfo.Scope) {
-                return false;
+                result.Success = false;
+                return result;
             }
 
             SimProfile finalProfile = m_PredictProfile;
@@ -657,17 +665,18 @@ namespace Aqua.Modeling {
                 ActorCountRange target = targets[i];
                 int actorIdx = finalProfile.IndexOfActorType(target.Id);
                 if (actorIdx < 0) {
-                    return false;
-                }
-
-                uint population = finalShapshot.Populations[actorIdx];
-                long diff = (long) population - target.Population;
-                if (diff > target.Range || diff < -target.Range) {
-                    return false;
+                    result.IncorrectTargets.Set(i);
+                } else {
+                    uint population = finalShapshot.Populations[actorIdx];
+                    long diff = (long)population - target.Population;
+                    if (diff > target.Range || diff < -target.Range) {
+                        result.IncorrectTargets.Set(i);
+                    }
                 }
             }
 
-            return true;
+            result.Success = result.IncorrectTargets.IsEmpty;
+            return result;
         }
 
         #endregion // Prediction Data

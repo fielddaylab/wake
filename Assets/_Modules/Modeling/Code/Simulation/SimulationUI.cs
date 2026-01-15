@@ -73,7 +73,7 @@ namespace Aqua.Modeling {
         public Action OnPredictCompleted;
 
         public Action OnInterventionSuccessful;
-        public Action OnInterventionUnsuccessful;
+        public Action<SimulationDataCtrl.InterventionResult> OnInterventionUnsuccessful;
         
         public Action OnAnimationStart;
         public Action OnAnimationFinished;
@@ -247,6 +247,7 @@ namespace Aqua.Modeling {
 
                 case ModelPhases.Predict: {
                     m_State.Display.FilterNodes(WorldFilterMask.HasRate | WorldFilterMask.Missing | WorldFilterMask.Organism, WorldFilterMask.Relevant, WorldFilterMask.AnyWaterChem, true);
+                    m_State.Display.Status(null);
 
                     if (alreadyCompleted) {
                         m_PredictButton.gameObject.SetActive(false);
@@ -260,6 +261,7 @@ namespace Aqua.Modeling {
             
                 case ModelPhases.Intervene: {
                     m_State.Display.FilterNodes(WorldFilterMask.HasRate | WorldFilterMask.Missing | WorldFilterMask.Organism, WorldFilterMask.Relevant, WorldFilterMask.AnyWaterChem, true);
+                    m_State.Display.Status(null);
 
                     m_InterveneButtonGroup.gameObject.SetActive(true);
                     m_Graph.RenderData(0);
@@ -460,8 +462,6 @@ namespace Aqua.Modeling {
         }
 
         private IEnumerator Intervene_Attempt() {
-            m_Graph.RenderData(SimRenderMask.PredictIntervene, true);
-
             m_State.Simulation.EnsurePredictData();
 
             m_PredictButton.gameObject.SetActive(false);
@@ -478,18 +478,18 @@ namespace Aqua.Modeling {
             m_GraphFader.SetActive(false);
 
             OnAnimationFinished?.Invoke();
-
+            
             yield return 0.2f;
 
-            bool bSuccess = m_State.Simulation.EvaluateInterventionGoals();
+            SimulationDataCtrl.InterventionResult result = m_State.Simulation.EvaluateInterventionGoals();
 
             if (m_ProgressInfo.Scope != null) {
-                if (bSuccess) {
+                if (result.Success) {
                     Log.Msg("[SimulationUI] Intervention hit target!");
                     TryDisplaySaveButton(m_ProgressInfo.Scope.InterveneModelId);
                 } else {
                     Services.Audio.PostEvent("syncDenied");
-                    OnInterventionUnsuccessful?.Invoke();
+                    OnInterventionUnsuccessful?.Invoke(result);
                 }
             }
         }
@@ -674,10 +674,12 @@ namespace Aqua.Modeling {
             m_InterveneRunButton.interactable = m_State.Simulation.Intervention.Target != null && m_State.Simulation.Intervention.Amount != 0;
             m_InterveneResetButton.interactable = m_State.Simulation.Intervention.Target != null;
             m_InterveneAddToggleGroup.SetActive(m_State.Simulation.Intervention.Target == null);
+            m_IntervenePopup.Hide();
 
-            m_Graph.Intervene(m_State.Simulation.Intervention, m_State);
-            m_Graph.PopulateData(m_State, m_ProgressInfo, SimRenderMask.PredictIntervene);
-            m_Graph.RenderData(SimRenderMask.PredictIntervene, true);
+            if (m_Graph.Intervene(m_State.Simulation.Intervention, m_State) == SimLineGraph.InterventionAllocResult.Updated) {
+                //m_Graph.PopulateData(m_State, m_ProgressInfo, SimRenderMask.PredictIntervene);
+                //m_Graph.RenderData(SimRenderMask.PredictIntervene, true);
+            }
         }
 
         #endregion // Callbacks

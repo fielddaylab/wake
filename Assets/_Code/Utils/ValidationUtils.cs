@@ -251,11 +251,13 @@ namespace Aqua
 
         [InitializeOnLoadMethod]
         static private void HashAllIds() {
-            using(Profiling.Time("hashing all DBObject names")) {
-                foreach(var asset in FindAllAssets<DBObject>()) {
-                    new StringHash32(asset.name);
+            EditorApplication.delayCall += () => {
+                using (Profiling.Time("hashing all DBObject names")) {
+                    foreach (var asset in FindAllAssets<DBObject>()) {
+                        new StringHash32(asset.name);
+                    }
                 }
-            }
+            };
         }
 
         static private void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths) {

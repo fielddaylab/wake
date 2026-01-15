@@ -96,6 +96,11 @@ namespace Aqua.Modeling {
             SetVerticesDirty();
         }
 
+        public void Clear() {
+            PointCount = 0;
+            SubmitChanges();
+        }
+
         protected override void OnPopulateMesh(VertexHelper vh) {
             vh.Clear();
 
