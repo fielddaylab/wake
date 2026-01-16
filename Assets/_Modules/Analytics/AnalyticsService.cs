@@ -53,7 +53,7 @@ namespace Aqua
             public struct JobTask {
                 public string task_id;
                 public bool is_complete;
-                public string task_description;
+                // public string task_description;
             }
 
             public string job_id;
@@ -84,7 +84,7 @@ namespace Aqua
                         var task = task_list[i];
                         gs.BeginObject();
                         gs.Field("task_id", task.task_id);
-                        gs.Field("task_description", task.task_description);
+                        // gs.Field("task_description", task.task_description);
                         gs.Field("is_complete", task.is_complete);
                         gs.EndObject();
                     }
@@ -339,7 +339,7 @@ namespace Aqua
                     var task = tasks[i];
                     ref var taskData = ref m_GameState.task_list[i];
                     taskData.task_id = task.IdString;
-                    taskData.task_description = Loc.Find(task.LabelId);
+                    // taskData.task_description = Loc.Find(task.LabelId);
                     taskData.is_complete = Save.Jobs.IsTaskComplete(task.Id);
                 }
             }
@@ -433,27 +433,24 @@ namespace Aqua
             }
         }
 
-        private void LogSceneChanged(SceneBinding scene, object context)
-        {
+        private void LogSceneChanged(SceneBinding scene, object context) {
             string sceneName = scene.Name;
 
-            if (sceneName != "Boot" && sceneName != "Title")
-            {
-                UpdateSceneInfo();
-                RefreshGameState();
-
+            if (sceneName != "Boot" && sceneName != "Title") {
                 using(var e = m_Log.NewEvent("scene_changed")) {
                     e.Param("scene_name", sceneName);
                 }
             }
+
+            UpdateSceneInfo();
+            RefreshGameState();
         }
 
-        private void LogRoomChanged(string roomName)
-        {
-            RefreshGameState();
+        private void LogRoomChanged(string roomName) {
             using(var e = m_Log.NewEvent("room_changed")) {
                 e.Param("room_name", roomName);
             }
+            RefreshGameState();
         }
 
         #region bestiary handlers
@@ -726,10 +723,10 @@ namespace Aqua
             }
         }
 
-        private void LogCompleteTask(StringHash32 jobId, StringHash32 inTaskId)
-        {
+        private void LogCompleteTask(StringHash32 jobId, StringHash32 inTaskId){
             string taskId = Assets.Job(jobId).Task(inTaskId).IdString;
 
+            UpdateJobTaskCompletion();
             RefreshGameState();
             using(var e = m_Log.NewEvent("complete_task")) {
                 e.Param("task_id", taskId);
