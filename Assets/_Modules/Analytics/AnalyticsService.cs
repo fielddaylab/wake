@@ -339,7 +339,6 @@ namespace Aqua
                     var task = tasks[i];
                     ref var taskData = ref m_GameState.task_list[i];
                     taskData.task_id = task.IdString;
-                    // taskData.task_description = Loc.Find(task.LabelId);
                     taskData.is_complete = Save.Jobs.IsTaskComplete(task.Id);
                 }
             }
@@ -595,8 +594,7 @@ namespace Aqua
             }
         }
 
-        private void SetCurrentJob(StringHash32 jobId)
-        {
+        private void SetCurrentJob(StringHash32 jobId) {
             m_CurrentJobHash = jobId;
             m_PreviousJobName = m_GameState.job_id;
 
@@ -604,8 +602,7 @@ namespace Aqua
             RefreshGameState();
         }
 
-        private void LogAcceptJob(StringHash32 jobId)
-        {
+        private void LogAcceptJob(StringHash32 jobId) {
             RefreshGameState();
             using(var e = m_Log.NewEvent("accept_job")) {
             }
@@ -726,11 +723,11 @@ namespace Aqua
         private void LogCompleteTask(StringHash32 jobId, StringHash32 inTaskId){
             string taskId = Assets.Job(jobId).Task(inTaskId).IdString;
 
-            UpdateJobTaskCompletion();
             RefreshGameState();
             using(var e = m_Log.NewEvent("complete_task")) {
                 e.Param("task_id", taskId);
             }
+            UpdateJobTaskCompletion();
         }
 
         private void LogBeginDive(string inTargetScene)
