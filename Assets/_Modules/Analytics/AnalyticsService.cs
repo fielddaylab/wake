@@ -34,7 +34,7 @@ namespace Aqua
     public partial class AnalyticsService : ServiceBehaviour, IDebuggable
     {
         private const string NoActiveJobId = "no-active-job";
-        private const int ClientLogVersion = 5;
+        private const int ClientLogVersion = 6;
 
         static private readonly string[] FactTypeStringTable = Enum.GetNames(typeof(BFTypeId));
 
