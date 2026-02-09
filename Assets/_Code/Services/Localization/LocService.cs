@@ -121,6 +121,56 @@ namespace Aqua
             DispatchTextRefresh();
         }
 
+#if DEVELOPMENT
+        private void DebugLoad(LocManifest manifest) {
+            m_Loading = true;
+
+            Services.Events.Dispatch(GameEvents.OnLanguageChange, EvtArgs.Create(manifest.LanguageId));
+
+            if (m_LanguagePackage == null) {
+                m_LanguagePackage = ScriptableObject.CreateInstance<LocPackage>();
+                m_LanguagePackage.name = "LanguageStrings";
+            }
+
+            m_LanguagePackage.Clear();
+
+            bool loadPackages;
+#if PREVIEW || PRODUCTION
+                loadPackages = false;
+#else
+            loadPackages = manifest.Packages.Length > 0;
+#endif // 
+
+            if (loadPackages) {
+                DebugService.Log(LogMask.Loading | LogMask.Localization, "[LocService] Loading '{0}' from {1} packages", manifest.name, manifest.Packages.Length);
+                foreach (var file in manifest.Packages) {
+                    BlockParser.Parse(ref m_LanguagePackage, file, Parsing.Block, LocPackage.Generator.Instance);
+                }
+            } else {
+                DebugService.Log(LogMask.Loading | LogMask.Localization, "[LocService] Loading '{0}' from {1:0.00}kb binary", manifest.name, manifest.Binary.Length / 1024);
+                var read = LocPackage.ReadFromBinary(m_LanguagePackage, manifest.Binary);
+                while (read.MoveNext())
+                    ;
+            }
+
+            m_UsageAudit.Clear();
+            foreach (var key in m_LanguagePackage.AllKeys) {
+                m_UsageAudit.Add(key);
+            }
+
+            DebugService.Log(LogMask.Loading | LogMask.Localization, "[LocService] Loaded {0} keys ({1})", m_LanguagePackage.Count, manifest.LanguageId.ToString());
+
+            m_CurrentLanguage = manifest.LanguageId;
+            m_CurrentLanguageGendered = manifest.Gendered;
+            m_CurrentJournalPackage = manifest.JournalLayout;
+            m_Loading = false;
+
+            OnManifestUpdated.Invoke(manifest);
+
+            DispatchTextRefresh();
+        }
+#endif // DEVELOPMENT
+
         #endregion // Loading
 
 
@@ -331,6 +381,17 @@ namespace Aqua
             });
 
             yield return info;
+
+            DMInfo languageSwitch = findOrCreate("Language");
+
+            languageSwitch.AddButton("Switch to English", () => {
+                DebugLoad(m_EnglishManifest);
+            }, () => !m_Loading && m_CurrentLanguage != m_EnglishManifest.LanguageId);
+            languageSwitch.AddButton("Switch to Spanish", () => {
+                DebugLoad(m_SpanishManifest);
+            }, () => !m_Loading && m_CurrentLanguage != m_SpanishManifest.LanguageId);
+
+            yield return languageSwitch;
         }
 
 #endif // DEVELOPMENT
