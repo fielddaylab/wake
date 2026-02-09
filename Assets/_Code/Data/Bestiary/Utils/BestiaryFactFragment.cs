@@ -2,6 +2,8 @@ using BeauUtil;
 using System.Text;
 using UnityEngine;
 using BeauPools;
+using System;
+using System.Collections.Generic;
 
 namespace Aqua
 {
@@ -128,5 +130,20 @@ namespace Aqua
         Condition,
         Image,
         Article,
+    }
+
+    public struct BFFragmentGenerator : IDisposable {
+        public readonly List<BFFragment> Fragments;
+        public readonly StringArena Arena;
+
+        public BFFragmentGenerator(List<BFFragment> fragments, StringArena stringAllocator) {
+            Fragments = fragments;
+            Arena = stringAllocator;
+        }
+
+        public void Dispose() {
+            Fragments.Clear();
+            Arena.Reset();
+        }
     }
 }
