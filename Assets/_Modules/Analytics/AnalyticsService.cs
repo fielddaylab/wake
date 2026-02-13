@@ -74,7 +74,7 @@ namespace Aqua
             public double time_since_launch;
 
             public void WriteToJSON(JsonBuilder gs) {
-                gs.Field("job_id", job_id);
+                gs.Field("job_name", job_id);
                 if (job_experimentation >= 0) {
                     gs.Field("job_experimentation", job_experimentation);
                     gs.Field("job_modeling", job_modeling);
