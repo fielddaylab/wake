@@ -63,6 +63,7 @@ namespace Aqua.Editor {
                 BuildUtils.WriteDefines("PRODUCTION");
             }
 
+            PlayerSettings.SetIl2CppCompilerConfiguration(EditorUserBuildSettings.selectedBuildTargetGroup, bDesiredDevBuild || bDesiredPreviewBuild ? Il2CppCompilerConfiguration.Release : Il2CppCompilerConfiguration.Master);
             PlayerSettings.SetManagedStrippingLevel(EditorUserBuildSettings.selectedBuildTargetGroup, bDesiredDevBuild ? ManagedStrippingLevel.Medium : ManagedStrippingLevel.High);
             EditorApplication.playModeStateChanged += OnPlayStateChanged;
         }

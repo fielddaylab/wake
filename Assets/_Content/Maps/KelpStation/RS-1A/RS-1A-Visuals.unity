@@ -13388,6 +13388,91 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 929713711}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &940415107
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1381467552}
+    m_Modifications:
+    - target: {fileID: 5173360189148856797, guid: faff5941e484c83498d9599dc6732005,
+        type: 3}
+      propertyPath: m_Name
+      value: SingleColorSkybox
+      objectReference: {fileID: 0}
+    - target: {fileID: 5173360189148856799, guid: faff5941e484c83498d9599dc6732005,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5173360189148856799, guid: faff5941e484c83498d9599dc6732005,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: 5173360189148856799, guid: faff5941e484c83498d9599dc6732005,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 192.69466
+      objectReference: {fileID: 0}
+    - target: {fileID: 5173360189148856799, guid: faff5941e484c83498d9599dc6732005,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -6.2616215
+      objectReference: {fileID: 0}
+    - target: {fileID: 5173360189148856799, guid: faff5941e484c83498d9599dc6732005,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -25.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 5173360189148856799, guid: faff5941e484c83498d9599dc6732005,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 301.7821
+      objectReference: {fileID: 0}
+    - target: {fileID: 5173360189148856799, guid: faff5941e484c83498d9599dc6732005,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5173360189148856799, guid: faff5941e484c83498d9599dc6732005,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5173360189148856799, guid: faff5941e484c83498d9599dc6732005,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5173360189148856799, guid: faff5941e484c83498d9599dc6732005,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5173360189148856799, guid: faff5941e484c83498d9599dc6732005,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5173360189148856799, guid: faff5941e484c83498d9599dc6732005,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5173360189148856799, guid: faff5941e484c83498d9599dc6732005,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: faff5941e484c83498d9599dc6732005, type: 3}
+--- !u!4 &940415108 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5173360189148856799, guid: faff5941e484c83498d9599dc6732005,
+    type: 3}
+  m_PrefabInstance: {fileID: 940415107}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &946554381
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20024,6 +20109,7 @@ Transform:
   m_Children:
   - {fileID: 1746784380}
   - {fileID: 2142917294}
+  - {fileID: 940415108}
   - {fileID: 1690822831}
   - {fileID: 2010282390}
   m_Father: {fileID: 0}
@@ -24637,7 +24723,7 @@ MonoBehaviour:
     width: 1
     height: 1
   m_AutoSize: 0
-  m_SortingLayer: -1434789061
+  m_SortingLayer: 1950296351
   m_SortingOrder: 0
 --- !u!4 &1690822831
 Transform:
@@ -24651,7 +24737,7 @@ Transform:
   m_LocalScale: {x: 9, y: 9, z: 1}
   m_Children: []
   m_Father: {fileID: 1381467552}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1690822832
 MeshRenderer:
@@ -24689,8 +24775,8 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1434789061
-  m_SortingLayer: -2
+  m_SortingLayerID: 1950296351
+  m_SortingLayer: 7
   m_SortingOrder: 0
 --- !u!33 &1690822833
 MeshFilter:
@@ -29926,7 +30012,7 @@ Transform:
   - {fileID: 1969888451}
   - {fileID: 1150035513}
   m_Father: {fileID: 1381467552}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &2010282391
 Animator:

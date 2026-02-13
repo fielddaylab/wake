@@ -112,8 +112,8 @@ namespace Aqua.Modeling {
             UpdateButtons();
         }
 
-        private void OnInspectClicked(PointerEventData evt) {
-            GameObject press = evt.pointerPressRaycast.gameObject;
+        private void OnInspectClicked(PointerListener.EventData evt) {
+            GameObject press = evt.EventSystemData.pointerPressRaycast.gameObject;
             if (press.TryGetComponent(out ModelConnectionDisplay connection)) {
                 if (connection.Fact) {
                     if (connection.Fact2) {

@@ -92,6 +92,9 @@ namespace Aqua
                     {
                         m_StateTransitions.Reset();
                         m_FirstStressFactId = null;
+                        bool hasTempStress = false;
+                        bool hasPHStress = false;
+                        bool hasLightStress = false;
                         foreach(var fact in m_Facts)
                         {
                             if (fact.Type == BFTypeId.State)
@@ -101,6 +104,27 @@ namespace Aqua
                                 if (m_FirstStressFactId.IsEmpty) {
                                     m_FirstStressFactId = fact.Id;
                                 }
+                                switch(state.Property) {
+                                    case WaterPropertyId.Temperature:
+                                        hasTempStress = true;
+                                        break;
+                                    case WaterPropertyId.Light:
+                                        hasLightStress = true;
+                                        break;
+                                    case WaterPropertyId.PH:
+                                        hasPHStress = true;
+                                        break;
+                                }
+                            }
+                        }
+
+                        if (!name.StartsWith("[")) {
+                            if (CanShowUpInStressTank(this)) {
+                                Assert.True(!m_FirstStressFactId.IsEmpty, "Critter '{0}' can be added to stress tank but has no stress facts", name);
+                                Assert.True(hasTempStress && hasPHStress && hasLightStress, "Critter '{0}' is missing a stress rule", name);
+                                Assert.True(CanHitRangeInStressTank(m_StateTransitions.Light, WaterPropertyId.Light), "Critter '{0}' has light ranges that cannot be hit in the stress tank", name);
+                                Assert.True(CanHitRangeInStressTank(m_StateTransitions.Temperature, WaterPropertyId.Temperature), "Critter '{0}' has temperature ranges that cannot be hit in the stress tank", name);
+                                Assert.True(CanHitRangeInStressTank(m_StateTransitions.PH, WaterPropertyId.PH), "Critter '{0}' has PH ranges that cannot be hit in the stress tank", name);
                             }
                         }
                         break;
@@ -108,6 +132,20 @@ namespace Aqua
             }
 
             return true;
+        }
+
+        static private bool CanHitRangeInStressTank(ActorStateTransitionRange range, WaterPropertyId propertyId) {
+            WaterPropertyDesc property = Assets.Property(propertyId);
+            bool bHasMin = !float.IsInfinity(range.AliveMin) && range.AliveMin >= property.MinValue();
+            bool bHasMax = !float.IsInfinity(range.AliveMax) && range.AliveMax <= property.MaxValue();
+            float min = bHasMin ? range.AliveMin : property.MinValue();
+            float max = bHasMax ? range.AliveMax : property.MaxValue();
+
+            return min >= property.MinValue() && max <= property.MaxValue() && max != min;
+        }
+
+        static private bool CanShowUpInStressTank(BestiaryDesc desc) {
+            return !desc.HasFlags(BestiaryDescFlags.DoNotUseInExperimentation | BestiaryDescFlags.DoNotUseInStressTank | BestiaryDescFlags.IsNotLiving);
         }
 
         internal BFBase[] OwnedFacts { get { return m_Facts; } }

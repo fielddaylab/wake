@@ -57,7 +57,7 @@ namespace ProtoAqua.ExperimentV2
             OnChanged?.Invoke(Property.Index(), actualValue);
         }
 
-        private void InvokeReleased(PointerEventData _)
+        private void InvokeReleased()
         {
             OnReleased?.Invoke(Property.Index());
         }

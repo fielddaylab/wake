@@ -54,7 +54,7 @@ $choice .action.openShop; Show me the shop!
 $choice .action.cancel; Never mind.
 
 :: flashlightRefresher
-{@$MerchantId}  Well, if I've got this straight... {nameof @coralMechanic} borrowed the {nameof Flashlight} from your uncle {nameof @kelpMechanic}.
+{@$MerchantId}  Well, if I've got this straight... {nameof @coralMechanic} borrowed the {nameof Flashlight} from your uncle.
                 Then she dropped it near the {nameof FinalStation}.
                 You'll have to dive down yourself to get it back.
                 So... anything else I can do for you?
@@ -164,7 +164,7 @@ $EvaluateItemPurchase()
 @boostScore 100
 @once
 {@$MerchantId}  The {nameof Flashlight}.
-                You oughta get one of these as soon as possible
+                You oughta get one of these as soon as possible.
                 Real helpful for deep-sea jobs where the light can't reach.
 $set local:postPurchaseBranch = "interior.shop.arctic.PostFlashlight"
 $EvaluateItemPurchase()

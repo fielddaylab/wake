@@ -101,11 +101,31 @@ namespace Aqua.Portable {
 
             switch(m_Request.Type) {
                 case PortableRequestType.ShowBestiary: {
-                    m_EntryPageLoad.Replace(this, LoadEntry(Assets.Bestiary(m_Request.TargetId), true)).Tick();
+                    if (Save.Bestiary.HasEntity(m_Request.TargetId)) {
+                        m_EntryPageLoad.Replace(this, LoadEntry(Assets.Bestiary(m_Request.TargetId), true)).Tick();
+                    } else {
+                        Log.Warn("[BestiaryApp] Attempting to open bestiary page for unacquired entry '{0}'", m_Request.TargetId);
+                    }
                     break;
                 }
                 case PortableRequestType.ShowFact: {
-                    m_EntryPageLoad.Replace(this, LoadEntry(Assets.Fact(m_Request.TargetId).Parent, true)).Tick();
+                    var factParent = Assets.Fact(m_Request.TargetId).Parent;
+                    if (Save.Bestiary.HasEntity(factParent.Id())) {
+                        m_EntryPageLoad.Replace(this, LoadEntry(factParent, true)).Tick();
+                    } else {
+                        Log.Warn("[BestiaryApp] Attempting to open bestiary page for unacquired entry '{0}'", factParent.name);
+                    }
+                    break;
+                }
+                case PortableRequestType.SelectFact:
+                case PortableRequestType.SelectFactSet: {
+                    if (!m_Request.TargetId.IsEmpty) {
+                        if (Save.Bestiary.HasEntity(m_Request.TargetId)) {
+                            m_EntryPageLoad.Replace(this, LoadEntry(Assets.Bestiary(m_Request.TargetId), true)).Tick();
+                        } else {
+                            Log.Warn("[BestiaryApp] Attempting to open bestiary page for unacquired entry '{0}'", m_Request.TargetId);
+                        }
+                    }
                     break;
                 }
             }

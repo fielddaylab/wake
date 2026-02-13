@@ -183,12 +183,15 @@ namespace Aqua.Scripting
                 }
                 return;
             }
+
+            if (m_LastKnownChoiceDialog == null) {
+                m_LastKnownChoiceDialog = new DialogRecord();
+            }
             
-            DialogRecord record = DialogRecord.FromTag(inString, m_LastKnownCharacter, m_LastKnownName, !m_RecordedDialog, false);
-            m_LastKnownCharacter = record.CharacterId;
-            m_LastKnownName = record.Name;
+            DialogRecord.FromTag(ref m_LastKnownChoiceDialog, inString, m_LastKnownCharacter, m_LastKnownName, !m_RecordedDialog, false);
+            m_LastKnownCharacter = m_LastKnownChoiceDialog.CharacterId;
+            m_LastKnownName = m_LastKnownChoiceDialog.Name;
             m_RecordedDialog = true;
-            m_LastKnownChoiceDialog = record;
 
             // Services.Data.AddToDialogHistory(record);
         }
@@ -198,16 +201,8 @@ namespace Aqua.Scripting
         /// </summary>
         public void RecordChoice(string inChoice)
         {
-            DialogRecord record = new DialogRecord()
-            {
-                CharacterId = "player",
-                Text = inChoice,
-                IsBoundary = true,
-                IsChoice = true
-            };
-
-            m_LastKnownCharacter = record.CharacterId;
-            m_LastKnownName = record.Name;
+            m_LastKnownCharacter = "player";
+            m_LastKnownName = string.Empty;
             m_RecordedDialog = false;
 
             // Services.Data.AddToDialogHistory(record);
@@ -313,7 +308,7 @@ namespace Aqua.Scripting
         public void MarkChoice()
         {
             m_Flags |= ScriptFlags.InChoice;
-            Services.Events.Dispatch(GameEvents.ScriptChoicePresented, EvtArgs.Box(m_LastKnownChoiceDialog));
+            Services.Events.Dispatch(GameEvents.ScriptChoicePresented, EvtArgs.Ref(m_LastKnownChoiceDialog));
         }
 
         public void EndChoice()

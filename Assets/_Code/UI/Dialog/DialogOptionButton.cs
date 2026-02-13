@@ -13,6 +13,7 @@ using Leaf.Runtime;
 using BeauUtil.Variants;
 using BeauUtil.Debugger;
 using Aqua.Portable;
+using System.Text;
 
 namespace Aqua
 {

@@ -151,11 +151,21 @@ namespace Aqua {
 
         [MethodImpl(256)]
         static public ScriptCharacterDef Character(StringHash32 inId) {
+            #if UNITY_EDITOR
+            if (!UnityEditor.EditorApplication.isPlaying) {
+                return inId.IsEmpty ? null : ValidationUtils.FindAsset<ScriptCharacterDef>(inId.ToDebugString());
+            }
+            #endif // UNITY_EDITOR
             return CharacterDB.Get(inId);
         }
 
         [MethodImpl(256)]
         static public InvItem Item(StringHash32 inId) {
+            #if UNITY_EDITOR
+            if (!UnityEditor.EditorApplication.isPlaying) {
+                return inId.IsEmpty ? null : ValidationUtils.FindAsset<InvItem>(inId.ToDebugString());
+            }
+            #endif // UNITY_EDITOR
             return InventoryDB.Get(inId);
         }
 

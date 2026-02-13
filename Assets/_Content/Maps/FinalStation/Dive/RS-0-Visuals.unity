@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -3285,6 +3285,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1001 &143526433
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6170,7 +6171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c9d0e3a9ab93463094ca7ab1a6ac68e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rendForTextureSwap: {fileID: 1264726946}
+  rendForTextureSwap: {fileID: 0}
   transitionTime: 6
   materialSlot: 1
 --- !u!1001 &305797579
@@ -15290,6 +15291,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!4 &784291647
 Transform:
   m_ObjectHideFlags: 0
@@ -16418,6 +16420,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1001 &834764533
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18607,7 +18610,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MeshFilter: {fileID: 951784183}
   m_MeshRenderer: {fileID: 951784182}
-  m_ColorGroup: {fileID: 0}
   m_Path: Textures/Observation/UnderwaterBG09.png
   m_Material: {fileID: 2100000, guid: c8b6641b5a3b33b458c8057d085962b8, type: 2}
   m_Tessellation: 0
@@ -18771,12 +18773,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ae72338073ebfbd41bddfe2a60f08673, type: 3}
---- !u!23 &961447722 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: ff11dc167caa8498f9f2b90e7a44cca2,
-    type: 3}
-  m_PrefabInstance: {fileID: 707388928}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &982447464
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19940,6 +19936,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!4 &1040157679 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4875577485573058526, guid: ae72338073ebfbd41bddfe2a60f08673,
@@ -27363,6 +27360,50 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1155384304}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1155828396
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1155828398}
+  - component: {fileID: 1155828397}
+  m_Layer: 0
+  m_Name: BGColor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1155828397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1155828396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0f178565879e134695af66636ed2230, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
+--- !u!4 &1155828398
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1155828396}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -96.736305, y: 198.37498, z: 93.64862}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 20
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1159574827 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4875577485573058526, guid: ae72338073ebfbd41bddfe2a60f08673,
@@ -29037,12 +29078,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ae72338073ebfbd41bddfe2a60f08673, type: 3}
---- !u!23 &1264726946 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: ff11dc167caa8498f9f2b90e7a44cca2,
-    type: 3}
-  m_PrefabInstance: {fileID: 2086721686}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1270671614
 GameObject:
   m_ObjectHideFlags: 0
@@ -29078,7 +29113,7 @@ PlayableDirector:
   - key: {fileID: 0}
     value: {fileID: 663293211}
   - key: {fileID: -1646155999327122110, guid: 5a544eef44eef984da0c2294ad325d9a, type: 2}
-    value: {fileID: 2053734624}
+    value: {fileID: 0}
   - key: {fileID: 8547117926187266097, guid: 5a544eef44eef984da0c2294ad325d9a, type: 2}
     value: {fileID: 663293211}
   m_ExposedReferences:
@@ -34256,7 +34291,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MeshFilter: {fileID: 1299919517}
   m_MeshRenderer: {fileID: 1299919516}
-  m_ColorGroup: {fileID: 0}
   m_Path: Textures/Observation/UnderwaterBG08.png
   m_Material: {fileID: 2100000, guid: c8b6641b5a3b33b458c8057d085962b8, type: 2}
   m_Tessellation: 0
@@ -49991,6 +50025,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 0
+  IgnoreAnimators: 1
 --- !u!4 &1666239401
 Transform:
   m_ObjectHideFlags: 0
@@ -56297,6 +56332,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!1001 &1750246392
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -59535,7 +59571,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c9d0e3a9ab93463094ca7ab1a6ac68e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rendForTextureSwap: {fileID: 961447722}
+  rendForTextureSwap: {fileID: 0}
   transitionTime: 3
   materialSlot: 1
 --- !u!1001 &1894845721
@@ -76747,6 +76783,7 @@ MonoBehaviour:
   DestroyInactiveChildren: 0
   Recursive: 0
   DestroyGameObject: 1
+  IgnoreAnimators: 1
 --- !u!4 &2037692425
 Transform:
   m_ObjectHideFlags: 0
@@ -77198,12 +77235,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4875577485573058526, guid: ae72338073ebfbd41bddfe2a60f08673,
     type: 3}
   m_PrefabInstance: {fileID: 285714088}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &2053734624 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 4071031309450407548, guid: 33a454cab10a0f3409bb8017c46cad3f,
-    type: 3}
-  m_PrefabInstance: {fileID: 1693910028}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2055366186
 PrefabInstance:

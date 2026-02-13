@@ -24,7 +24,7 @@ namespace Aqua
 
         public IEnumerator Show(Color inColor, float inDuration)
         {
-            m_Graphic.material = GetMaterialForColor(ref inColor);
+            //m_Graphic.material = GetMaterialForColor(ref inColor);
 
             if (inDuration <= 0)
             {

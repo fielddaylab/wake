@@ -1,14 +1,19 @@
-using BeauUtil;
 using BeauUtil.Blocks;
+using BeauUtil.Debugger;
+using BeauUtil.Tags;
+using BeauUtil;
+using System;
 using System.Collections.Generic;
 using System.Collections;
-using BeauUtil.Tags;
-using UnityEngine;
 using System.IO;
-using UnityEngine.Scripting;
-using BeauUtil.Debugger;
 using System.Runtime.CompilerServices;
 using System.Text;
+using UnityEngine.Scripting;
+using UnityEngine;
+
+#if UNITY_EDITOR
+using static Aqua.ScriptingService;
+#endif // UNITY_EDITOR
 
 namespace Aqua
 {
@@ -150,7 +155,8 @@ namespace Aqua
             package.m_Nodes.Add(id, text);
         }
 
-        static private unsafe StringHash32 ReadNodeId(ref Unsafe.PinnedArrayHandle<byte> bytes) {
+        static private unsafe StringHash32 ReadNodeId(ref Unsafe.PinnedArrayHandle<byte> bytes)
+        {
             return UnsafeExt.Read<StringHash32>(ref bytes.Address, ref bytes.Length);
         }
 
@@ -158,6 +164,272 @@ namespace Aqua
 
         [ScriptedExtension(1, "aqloc")]
         private class Importer : ImporterBase<LocPackage> { }
+
+        #region Const Parser
+
+        static private CustomTagParserConfig CreateConstParser() {
+            CustomTagParserConfig config = new CustomTagParserConfig();
+            config.AddReplace("n", "\n").WithAliases("newline");
+            config.AddReplace("highlight", "<color=yellow>").WithAliases("h").CloseWith("</color>");
+            config.AddReplace("property-name", "<" + ColorTags.PropertyColorString + ">").CloseWith("</color>");
+            config.AddReplace("critter-name", "<" + ColorTags.CritterColorString + ">").CloseWith("</color>");
+            config.AddReplace("!", "<" + ColorTags.AlertColorString + ">").CloseWith("</color>");
+            config.AddReplace("env-name", "<" + ColorTags.EnvColorString + ">").CloseWith("</color>");
+            config.AddReplace("item", "<" + ColorTags.ItemColorString + ">").CloseWith("</color>");
+            config.AddReplace("item-name", "<" + ColorTags.ItemColorString + ">").CloseWith("</color>");
+            config.AddReplace("map-name", "<" + ColorTags.MapColorString + ">").CloseWith("</color>");
+            config.AddReplace("m", "<" + ColorTags.MapColorString + ">").CloseWith("</color>");
+            config.AddReplace("cash", "<" + ColorTags.CashColorString + ">").CloseWith("</color><sprite name=\"cash\">");
+            config.AddReplace("exp", "<" + ColorTags.ExpColorString + ">").CloseWith("</color><sprite name=\"exp\">");
+            config.AddReplace("player-name", "O");
+            config.AddReplace("icon", ReplaceIcon);
+            config.AddReplace("nameof", TryReplaceNameOf);
+            config.AddReplace("pluralnameof", TryReplacePluralNameOf);
+            config.AddReplace("fullnameof", TryReplaceFullNameOf);
+            config.AddReplace("formalnameof", TryReplaceFormalShortNameOf);
+            config.AddReplace('|', "{wait 0.25}");
+
+            // Extra Replace Tags (with embedded events)
+
+            config.AddReplace("slow", "{wait 0.05}{speed 0.5}").CloseWith("{/speed}{wait 0.05}");
+            config.AddReplace("reallySlow", "{wait 0.05}{speed 0.25}").CloseWith("{/speed}{wait 0.05}");
+            config.AddReplace("fast", "{wait 0.05}{speed 1.25}").CloseWith("{/speed}{wait 0.05}");
+
+            return config;
+        }
+
+        static private void ResetIdsWithEvents(LocPackage package) {
+            package.m_IdsWithEvents.Clear();
+        }
+
+        static private void MarkIdWithEvent(LocPackage package, StringHash32 id, string data) {
+            if (data.IndexOf('{') >= 0) {
+                package.m_IdsWithEvents.Add(id);
+            }
+        }
+
+        static private string ReplaceIcon(TagData inTag, object inContext) {
+            return string.Format("<sprite name=\"{0}\">", inTag.Data.ToString());
+        }
+
+        static private bool IsTagConst(StringSlice inData) {
+            return inData.Length < 2 || inData[0] != '$';
+        }
+
+        static private bool TryReplaceNameOf(TagData tag, object context, out string result) {
+            if (!IsTagConst(tag.Data)) {
+                result = null;
+                return false;
+            }
+
+            LocPackage pkg = (LocPackage)context;
+
+            if (tag.Data.StartsWith('@')) {
+                StringHash32 characterId = tag.Data.Substring(1);
+                ScriptCharacterDef inlineCharDef = Assets.Character(characterId);
+                if (!inlineCharDef) {
+                    Log.Error("[ScriptingService] Unknown character: '{0}'", characterId.ToDebugString());
+                    result = null;
+                    return false;
+                }
+                return pkg.TryGetContent(inlineCharDef.ShortNameId(), out result);
+            }
+
+            ScriptableObject obj = Assets.Find(tag.Data);
+
+            BestiaryDesc bestiary = obj as BestiaryDesc;
+            if (!bestiary.IsReferenceNull()) {
+                switch (bestiary.Category()) {
+                    case BestiaryDescCategory.Critter: {
+                        bool found = pkg.TryGetContent(bestiary.CommonName(), out result);
+                        result = "<" + ColorTags.CritterColorString + ">" + result + "</color>";
+                        return found;
+                    }
+                    case BestiaryDescCategory.Environment: {
+                        bool found = pkg.TryGetContent(bestiary.CommonName(), out result);
+                        result = "<" + ColorTags.EnvColorString + ">" + result + "</color>";
+                        return found;
+                    }
+                    default: {
+                        return pkg.TryGetContent(bestiary.CommonName(), out result);
+                    }
+                }
+            }
+
+            InvItem item = obj as InvItem;
+            if (!item.IsReferenceNull()) {
+                if (item.Id() == ItemIds.Cash) {
+                    bool found = pkg.TryGetContent(item.NameTextId(), out result);
+                    result = "<" + ColorTags.CashColorString + ">" + result + "</color><sprite name=\"cash\">";
+                    return found;
+                } else if (item.Id() == ItemIds.Exp) {
+                    bool found = pkg.TryGetContent(item.NameTextId(), out result);
+                    result = "<" + ColorTags.ExpColorString + ">" + result + "</color><sprite name=\"exp\">";
+                    return found;
+                } else {
+                    bool found = pkg.TryGetContent(item.NameTextId(), out result);
+                    result = "<" + ColorTags.ItemColorString + ">" + result + "</color>";
+                    return found;
+                }
+            }
+
+            WaterPropertyDesc property = obj as WaterPropertyDesc;
+            if (!property.IsReferenceNull()) {
+                bool found = pkg.TryGetContent(property.LabelId(), out result);
+                result = "<" + ColorTags.PropertyColorString + ">" + result + "</color>";
+                return found;
+            }
+
+            MapDesc map = obj as MapDesc;
+            if (!map.IsReferenceNull()) {
+                bool found = pkg.TryGetContent(map.ProperNameId(), out result);
+                result = "<" + ColorTags.MapColorString+ ">" + result + "</color>";
+                return found;
+            }
+
+            ScriptCharacterDef charDef = obj as ScriptCharacterDef;
+            if (!charDef.IsReferenceNull()) {
+                return pkg.TryGetContent(charDef.ShortNameId(), out result);
+            }
+
+            JobDesc jobDef = obj as JobDesc;
+            if (!jobDef.IsReferenceNull()) {
+                bool found = pkg.TryGetContent(jobDef.NameId(), out result);
+                result = "<" + ColorTags.JobColorString + ">" + result + "</color>";
+                return found;
+            }
+
+            Log.Error("[ScriptingService] Unknown symbol to get name of: '{0}'", tag.Data);
+            result = null;
+            return false;
+        }
+
+        static private bool TryReplacePluralNameOf(TagData tag, object context, out string result) {
+            if (!IsTagConst(tag.Data)) {
+                result = null;
+                return false;
+            }
+
+            LocPackage pkg = (LocPackage)context;
+
+            if (tag.Data.StartsWith('@')) {
+                StringHash32 characterId = tag.Data.Substring(1);
+                ScriptCharacterDef inlineCharDef = Assets.Character(characterId);
+                if (!inlineCharDef) {
+                    Log.Error("[ScriptingService] Unknown character: '{0}'", characterId.ToDebugString());
+                    result = null;
+                    return false;
+                }
+                return pkg.TryGetContent(inlineCharDef.ShortNameId(), out result);
+            }
+
+            ScriptableObject obj = Assets.Find(tag.Data);
+
+            BestiaryDesc bestiary = obj as BestiaryDesc;
+            if (!bestiary.IsReferenceNull()) {
+                switch (bestiary.Category()) {
+                    case BestiaryDescCategory.Critter: {
+                        bool found = pkg.TryGetContent(bestiary.PluralCommonName(), out result);
+                        result = "<" + ColorTags.CritterColorString + ">" + result + "</color>";
+                        return found;
+                    }
+                    case BestiaryDescCategory.Environment: {
+                        bool found = pkg.TryGetContent(bestiary.PluralCommonName(), out result);
+                        result = "<" + ColorTags.EnvColorString + ">" + result + "</color>";
+                        return found;
+                    }
+                    default: {
+                        return pkg.TryGetContent(bestiary.PluralCommonName(), out result);
+                    }
+                }
+            }
+
+            InvItem item = obj as InvItem;
+            if (!item.IsReferenceNull()) {
+                if (item.Id() == ItemIds.Cash) {
+                    bool found = pkg.TryGetContent(item.PluralNameTextId(), out result);
+                    result = "<" + ColorTags.CashColorString + ">" + result + "</color><sprite name=\"cash\">";
+                    return found;
+                } else if (item.Id() == ItemIds.Exp) {
+                    bool found = pkg.TryGetContent(item.PluralNameTextId(), out result);
+                    result = "<" + ColorTags.ExpColorString + ">" + result + "</color><sprite name=\"exp\">";
+                    return found;
+                } else {
+                    bool found = pkg.TryGetContent(item.PluralNameTextId(), out result);
+                    result = "<" + ColorTags.ItemColorString + ">" + result + "</color>";
+                    return found;
+                }
+            }
+
+            return TryReplaceNameOf(tag, context, out result);
+        }
+
+        static private bool TryReplaceFullNameOf(TagData tag, object context, out string result) {
+            if (!IsTagConst(tag.Data)) {
+                result = null;
+                return false;
+            }
+
+            LocPackage pkg = (LocPackage)context;
+
+            if (tag.Data.StartsWith('@')) {
+                StringHash32 characterId = tag.Data.Substring(1);
+                ScriptCharacterDef inlineCharDef = Assets.Character(characterId);
+                if (!inlineCharDef) {
+                    Log.Error("[ScriptingService] Unknown character: '{0}'", characterId.ToDebugString());
+                    result = null;
+                    return false;
+                }
+                return pkg.TryGetContent(inlineCharDef.NameId(), out result);
+            }
+
+            ScriptableObject obj = Assets.Find(tag.Data);
+
+            ScriptCharacterDef charDef = obj as ScriptCharacterDef;
+            if (!charDef.IsReferenceNull()) {
+                return pkg.TryGetContent(charDef.NameId(), out result);
+            }
+
+            MapDesc map = obj as MapDesc;
+            if (!map.IsReferenceNull()) {
+                bool found = pkg.TryGetContent(map.LabelId(), out result);
+                result = "<" + ColorTags.MapColorString + ">" + result + "</color>";
+                return found;
+            }
+
+            return TryReplaceNameOf(tag, context, out result);
+        }
+
+        static private bool TryReplaceFormalShortNameOf(TagData tag, object context, out string result) {
+            if (!IsTagConst(tag.Data)) {
+                result = null;
+                return false;
+            }
+
+            LocPackage pkg = (LocPackage)context;
+
+            if (tag.Data.StartsWith('@')) {
+                StringHash32 characterId = tag.Data.Substring(1);
+                ScriptCharacterDef inlineCharDef = Assets.Character(characterId);
+                if (!inlineCharDef) {
+                    Log.Error("[ScriptingService] Unknown character: '{0}'", characterId.ToDebugString());
+                    result = null;
+                    return false;
+                }
+                return pkg.TryGetContent(inlineCharDef.FormalShortNameId(), out result);
+            }
+
+            ScriptableObject obj = Assets.Find(tag.Data);
+
+            ScriptCharacterDef charDef = obj as ScriptCharacterDef;
+            if (!charDef.IsReferenceNull()) {
+                return pkg.TryGetContent(charDef.FormalShortNameId(), out result);
+            }
+
+            return TryReplaceNameOf(tag, context, out result);
+        }
+
+        #endregion // Const Parser
 
         static internal IEnumerable<KeyValuePair<StringHash32, string>> GatherStrings(LocPackage inPackage)
         {
@@ -168,9 +440,21 @@ namespace Aqua
             }
         }
 
-        static internal unsafe byte[] Compress(LocPackage[] inPackages)
+        static internal unsafe byte[] Compress(LocPackage[] inPackages, bool collapseConsts)
         {
             LocPackage tmpPkg = ScriptableObject.CreateInstance<LocPackage>();
+            bool isHumanControlling = UnityEditorInternal.InternalEditorUtility.isHumanControllingUs && !UnityEditor.BuildPipeline.isBuildingPlayer;
+
+            var constParser = new TagStringParser();
+            if (collapseConsts) {
+                var constConfig = CreateConstParser();
+                constParser.ReplaceProcessor = constConfig;
+                constParser.EventProcessor = null;
+                constParser.Delimiters = Parsing.InlineEvent;
+            }
+            TagString constTagString = new TagString();
+            int collapsedCount = 0;
+            
             byte* buffer = Unsafe.AllocArray<byte>(MaxCompressedSize);
             byte* head = buffer;
             int bufferLength = 0;
@@ -180,12 +464,42 @@ namespace Aqua
                 }
 
                 Log.Msg("{0} nodes in package", tmpPkg.m_Nodes.Count);
+                Log.Msg("{0} nodes with events originally in package", tmpPkg.m_IdsWithEvents.Count);
 
+                int originalEventNodeCount = tmpPkg.m_IdsWithEvents.Count;
+
+                ResetIdsWithEvents(tmpPkg);
+
+                TagStringParser.SuppressWarnings = true;
                 UnsafeExt.Write(&head, &bufferLength, MaxCompressedSize, (ushort) tmpPkg.m_Nodes.Count);
                 foreach(var kv in tmpPkg.m_Nodes) {
                     UnsafeExt.Write(&head, &bufferLength, MaxCompressedSize, kv.Key);
-                    UnsafeExt.WriteString(&head, &bufferLength, MaxCompressedSize, kv.Value);
+
+                    string text = kv.Value;
+
+                    if (collapseConsts) {
+                        constParser.Parse(ref constTagString, text, tmpPkg);
+                        if (constTagString.EventCount == 0) {
+                            string newText = constTagString.RichText;
+                            if (newText != text) {
+                                if (isHumanControlling) {
+                                    string msg = "Collapsed text for " + kv.Key.ToDebugString() + ":\nOriginal: '" + text + "'\nNew: '" + newText + "'";
+                                    Debug.Log(msg);
+                                }
+                                text = newText;
+                                collapsedCount++;
+                            }
+                        }
+                    }
+                    UnsafeExt.WriteString(&head, &bufferLength, MaxCompressedSize, text);
+                    MarkIdWithEvent(tmpPkg, kv.Key, text);
                 }
+
+                Log.Msg("{0} nodes collapsed", collapsedCount);
+
+                int eventTextsRemoved = originalEventNodeCount - tmpPkg.m_IdsWithEvents.Count;
+
+                Log.Msg("{0} node with events in package (removed {1})", tmpPkg.m_IdsWithEvents.Count, eventTextsRemoved);
 
                 UnsafeExt.Write(&head, &bufferLength, MaxCompressedSize, (ushort) tmpPkg.m_IdsWithEvents.Count);
                 foreach(var v in tmpPkg.m_IdsWithEvents) {
@@ -196,9 +510,24 @@ namespace Aqua
                 Unsafe.CopyArray(buffer, bufferLength, written);
                 return written;
             } finally {
+                TagStringParser.SuppressWarnings = false;
                 DestroyImmediate(tmpPkg);
                 Unsafe.Free(buffer);
             }
+        }
+
+        static internal LocPackage CombineAll(LocPackage[] inPackages) {
+            LocPackage tmpPkg = ScriptableObject.CreateInstance<LocPackage>();
+            try {
+                foreach (var pkg in inPackages) {
+                    BlockParser.Parse(ref tmpPkg, pkg, Parsing.Block, Generator.Instance);
+                }
+            } catch(Exception e) {
+                DestroyImmediate(tmpPkg);
+                throw e;
+            }
+
+            return tmpPkg;
         }
 
         #endif // UNITY_EDITOR

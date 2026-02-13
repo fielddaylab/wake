@@ -27,19 +27,19 @@ namespace Aqua.Portable
             };
         }
 
-        static public PortableRequest SelectFact() {
+        static public PortableRequest SelectFact(PortableAppId inApp = PortableAppId.Organisms) {
             return new PortableRequest() {
                 Type = PortableRequestType.SelectFact,
-                App = PortableAppId.Organisms,
+                App = inApp,
                 Flags = PortableRequestFlags.ForceInputEnabled,
                 Response = Future.Create<StringHash32>()
             };
         }
 
-        static public PortableRequest SelectFactSet(BestiaryApp.SelectForSetDelegate inSelectDelegate) {
+        static public PortableRequest SelectFactSet(BestiaryApp.SelectForSetDelegate inSelectDelegate, PortableAppId inApp = PortableAppId.Organisms) {
             return new PortableRequest() {
                 Type = PortableRequestType.SelectFactSet,
-                App = PortableAppId.Organisms,
+                App = inApp,
                 Flags = PortableRequestFlags.ForceInputEnabled,
                 Response = Future.Create<StringHash32>(),
                 OnSelect = inSelectDelegate

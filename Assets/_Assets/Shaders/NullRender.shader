@@ -20,23 +20,26 @@ Shader "Null Render"
         Cull Off
         Lighting Off
         ZWrite Off
-        Blend One OneMinusSrcAlpha
+		ZTest Equal
+        Blend Off
 
         Pass
         {
         CGPROGRAM
-            #pragma vertex SpriteVert
-            #pragma fragment SpriteFrag
+            #pragma vertex SpriteVertCutout
+            #pragma fragment SpriteFragCutout
             #pragma target 2.0
-            #pragma multi_compile_instancing
-            #pragma multi_compile_local _ PIXELSNAP_ON
-            #include "UnitySprites.cginc"
+            #include "UnityCG.cginc"
+
+			struct vertex_t
+			{
+			};
 
             struct v2f_cutout
             {
             };
 
-            v2f_cutout SpriteVertCutout(appdata_t IN)
+            v2f_cutout SpriteVertCutout(vertex_t IN)
             {
                 v2f_cutout OUT;
                 return OUT;
@@ -45,8 +48,7 @@ Shader "Null Render"
 
             fixed4 SpriteFragCutout(v2f_cutout IN) : SV_Target
             {
-                clip(-1);
-                return fixed4(0, 0, 0, 0);
+				return fixed4(0, 0, 0, 0);
             }
         ENDCG
         }

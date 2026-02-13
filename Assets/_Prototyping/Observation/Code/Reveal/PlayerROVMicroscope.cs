@@ -90,7 +90,7 @@ namespace ProtoAqua.Observation {
 
             m_WorldMicroscopeLayer.SetActive(true);
 
-            m_ProjectionCamera.backgroundColor = Services.Camera.Current.backgroundColor;
+            m_ProjectionCamera.backgroundColor = FakeCameraBackgroundColor.Current;
         }
 
         public void GetTargetPosition(bool inbOnGamePlane, out Vector3? outWorld, out Vector3? outCursor) {

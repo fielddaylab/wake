@@ -353,6 +353,11 @@ namespace Aqua {
 #endif // UNITY_EDITOR
         }
 
+        static private void LockChanges() {
+            s_AppliedPatch.Assets.Clear();
+            s_AppliedPatch.Callbacks.Clear();
+        }
+
 #if UNITY_EDITOR
 
         [UnityEditor.InitializeOnLoadMethod]
@@ -365,6 +370,22 @@ namespace Aqua {
 
             EditorApplication.quitting += () => Undo();
             AppDomain.CurrentDomain.DomainUnload += (_, __) => Undo();
+        }
+
+        [MenuItem("Aqualab/Apply Patch File")]
+        static private void CreatePatcherWindow() {
+            ScriptableWizard.DisplayWizard<PatcherWindow>("Apply Patch File", "Apply");
+        }
+
+        private sealed class PatcherWindow : ScriptableWizard {
+            public TextAsset Text;
+
+            public void OnWizardCreate() {
+                if (Text) {
+                    Apply(Text.text);
+                    LockChanges();
+                }
+            }
         }
 
 #endif // UNITY_EDITOR

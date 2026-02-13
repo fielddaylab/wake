@@ -287,7 +287,7 @@ MeshRenderer:
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 0.5
+  m_ScaleInLightmap: 0
   m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
@@ -630,7 +630,7 @@ MonoBehaviour:
     width: 1
     height: 1
   m_AutoSize: 0
-  m_SortingLayer: -1434789061
+  m_SortingLayer: 1950296351
   m_SortingOrder: 0
 --- !u!23 &189873306
 MeshRenderer:
@@ -668,8 +668,8 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1434789061
-  m_SortingLayer: -2
+  m_SortingLayerID: 1950296351
+  m_SortingLayer: 7
   m_SortingOrder: 0
 --- !u!33 &189873307
 MeshFilter:
@@ -728,7 +728,7 @@ MonoBehaviour:
   m_MeshRenderer: {fileID: 193151360}
   m_ColorGroup: {fileID: 0}
   m_Path: Textures/Observation/oilRig_BG.png
-  m_Material: {fileID: 2100000, guid: 75c7a84bba59f274283fe6434ed6ce91, type: 2}
+  m_Material: {fileID: 2100000, guid: 79f0bd7fc29019e43ba58c2e8f003d57, type: 2}
   m_Tessellation: 0
   m_Color:
     serializedVersion: 2
@@ -743,8 +743,8 @@ MonoBehaviour:
     width: 1
     height: 1
   m_AutoSize: 0
-  m_SortingLayer: -1434789061
-  m_SortingOrder: 0
+  m_SortingLayer: 1950296351
+  m_SortingOrder: 1
 --- !u!23 &193151360
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -763,7 +763,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 75c7a84bba59f274283fe6434ed6ce91, type: 2}
+  - {fileID: 2100000, guid: 79f0bd7fc29019e43ba58c2e8f003d57, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -781,9 +781,9 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1434789061
-  m_SortingLayer: -2
-  m_SortingOrder: 0
+  m_SortingLayerID: 1950296351
+  m_SortingLayer: 7
+  m_SortingOrder: 1
 --- !u!33 &193151361
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -2382,7 +2382,7 @@ MonoBehaviour:
   m_MeshRenderer: {fileID: 414810893}
   m_ColorGroup: {fileID: 0}
   m_Path: Textures/Observation/oilRig_BG01.png
-  m_Material: {fileID: 2100000, guid: 75c7a84bba59f274283fe6434ed6ce91, type: 2}
+  m_Material: {fileID: 2100000, guid: 79f0bd7fc29019e43ba58c2e8f003d57, type: 2}
   m_Tessellation: 0
   m_Color:
     serializedVersion: 2
@@ -2397,8 +2397,8 @@ MonoBehaviour:
     width: 1
     height: 1
   m_AutoSize: 0
-  m_SortingLayer: -1434789061
-  m_SortingOrder: 0
+  m_SortingLayer: 1950296351
+  m_SortingOrder: 1
 --- !u!23 &414810893
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2417,7 +2417,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 75c7a84bba59f274283fe6434ed6ce91, type: 2}
+  - {fileID: 2100000, guid: 79f0bd7fc29019e43ba58c2e8f003d57, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2435,9 +2435,9 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1434789061
-  m_SortingLayer: -2
-  m_SortingOrder: 0
+  m_SortingLayerID: 1950296351
+  m_SortingLayer: 7
+  m_SortingOrder: 1
 --- !u!33 &414810894
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -2874,6 +2874,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: d9ee72f8fbd684a40b42842c2b5300bc,
         type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: d9ee72f8fbd684a40b42842c2b5300bc,
+        type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 04709e54f2eba435cb368020e1e28782, type: 2}
@@ -2885,7 +2890,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: d9ee72f8fbd684a40b42842c2b5300bc,
         type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 4294967295
+      value: 4294967294
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d9ee72f8fbd684a40b42842c2b5300bc, type: 3}
@@ -8915,7 +8920,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 0cacebacd7e77bc4387c82ff25f3fe4c,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 0cacebacd7e77bc4387c82ff25f3fe4c,
         type: 3}
@@ -8950,6 +8955,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Always: 1
   IgnoreAnimators: 1
+--- !u!114 &898671688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 898671686}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cede38f1373ac0148a5c1ceb4eb43408, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &971787880 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d6809dc1b98a79046a24729369d0ea5b,
@@ -9133,7 +9150,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: fc418650e5bb8af45bcac04e46ebe08d,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: fc418650e5bb8af45bcac04e46ebe08d,
         type: 3}
@@ -9168,6 +9185,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Always: 1
   IgnoreAnimators: 1
+--- !u!114 &1026110166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1026110164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cede38f1373ac0148a5c1ceb4eb43408, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1047025832
 GameObject:
   m_ObjectHideFlags: 0
@@ -10650,7 +10679,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: a40e4b72a7b09504cb4700b0c20955cc,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: a40e4b72a7b09504cb4700b0c20955cc,
         type: 3}
@@ -10685,6 +10714,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Always: 1
   IgnoreAnimators: 1
+--- !u!114 &1374261201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1374261199}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cede38f1373ac0148a5c1ceb4eb43408, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1392036110
 GameObject:
   m_ObjectHideFlags: 0
@@ -10968,7 +11009,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: e8b91f0aac7ad0d47a8191f176723494,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: e8b91f0aac7ad0d47a8191f176723494,
         type: 3}
@@ -11003,6 +11044,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Always: 1
   IgnoreAnimators: 1
+--- !u!114 &1492466392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1492466390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cede38f1373ac0148a5c1ceb4eb43408, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1536292574 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b351f6bdde8dc3a49801b052cfad4412,

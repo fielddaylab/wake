@@ -48,7 +48,6 @@ namespace Aqua
         [SerializeField] private TextBackgroundColorPair m_ConditionColor = TextBackgroundColorPair.Default;
         [SerializeField] private TextBackgroundColorPair m_ArticleColor = TextBackgroundColorPair.Default;
 
-
         #endregion // Inspector
 
         #region TweakAsset

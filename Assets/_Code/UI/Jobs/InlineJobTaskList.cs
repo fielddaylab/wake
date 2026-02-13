@@ -124,7 +124,7 @@ namespace Aqua
             ReloadTasks(true, true);
         }
         
-        private void OnTaskButtonClicked(PointerEventData _)
+        private void OnTaskButtonClicked()
         {
             PortableMenu.OpenApp(PortableAppId.Job);
             

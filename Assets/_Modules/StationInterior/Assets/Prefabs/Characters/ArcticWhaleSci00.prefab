@@ -1,5 +1,16 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!210 &3900923387197438296
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 607622900370656829}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
 --- !u!1 &872087068965779236
 GameObject:
   m_ObjectHideFlags: 0
@@ -69,7 +80,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_Sprite: {fileID: 21300000, guid: 15aa4a52245f4a14f97a18721c557943, type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 0.11372549}
   m_FlipX: 0
@@ -243,6 +254,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Period: 2
+  Stagger: 0
+  Animator: {fileID: 0}
+  ForceSomeAnimation: 0
+  m_SkinnedSprites: []
 --- !u!1 &4513477547301606619
 GameObject:
   m_ObjectHideFlags: 0
@@ -318,21 +333,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63a18b24c3d6f2b4eae4fa906f0ff980, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_OnPointerEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnPointerExit:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnPointerDown:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnPointerUp:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1001 &1652927509892707761
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1063,6 +1063,12 @@ PrefabInstance:
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 4455696623894892839, guid: c99e366da333d604e950bc85ce14758a,
     type: 3}
+--- !u!1 &607622900370656829 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -7016936840420885620, guid: c99e366da333d604e950bc85ce14758a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1652927509892707761}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4288777882829468699 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -5947940010375642710, guid: c99e366da333d604e950bc85ce14758a,

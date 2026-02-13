@@ -158,7 +158,7 @@ namespace Aqua.Scripting {
             
             if (m_Proxy && m_Proxy.gameObject != gameObject) {
                 Hint = m_Proxy.EnsureComponent<CursorInteractionHint>();
-                m_Proxy.onClick.AddListener(((IPointerClickHandler) this).OnPointerClick);
+                m_Proxy.onClick.AddListener((e) => ((IPointerClickHandler) this).OnPointerClick(e.EventSystemData));
             } else {
                 Hint = this.EnsureComponent<CursorInteractionHint>();
             }

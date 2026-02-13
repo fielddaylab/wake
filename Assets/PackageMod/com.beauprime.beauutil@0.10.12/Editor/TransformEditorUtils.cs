@@ -1,0 +1,92 @@
+/*
+ * Copyright (C) 2017-2020. Filament Games, LLC. All rights reserved.
+ * Author:  Autumn Beauchesne
+ * Date:    10 March 2021
+ * 
+ * File:    TransformEditorUtils.cs
+ * Purpose: Utility methods for dealing with transforms.
+ */
+
+using System;
+using System.Reflection;
+using UnityEditor;
+using UnityEngine;
+
+namespace BeauUtil.Editor
+{
+    static public class TransformEditorUtils
+    {
+        /// <summary>
+        /// Flattens the hierarchy at this transform. Children will become siblings.
+        /// </summary>
+        static public void FlattenHierarchy(Transform inTransform, bool inbRecursive = false)
+        {
+            if (inbRecursive)
+            {
+                Undo.SetCurrentGroupName("Flatten hierarchy (deep)");
+
+                int placeIdx = inTransform.GetSiblingIndex() + 1;
+                FlattenHierarchyRecursive(inTransform, inTransform.parent, ref placeIdx);
+                return;
+            }
+
+            Undo.SetCurrentGroupName("Flatten hierarchy (shallow)");
+
+            Transform transform = inTransform;
+            Transform parent = transform.parent;
+            Transform child;
+            int childCount = transform.childCount;
+            int siblingIdx = transform.GetSiblingIndex() + 1;
+            while(childCount-- > 0)
+            {
+                child = transform.GetChild(0);
+                Undo.RecordObject(child, "Flatten child");
+                Undo.SetTransformParent(child, parent, "Change child parent");
+                child.SetSiblingIndex(siblingIdx++);
+            }
+        }
+
+        static private void FlattenHierarchyRecursive(Transform inTransform, Transform inParent, ref int ioSiblingIndex)
+        {
+            Transform transform = inTransform;
+            Transform child;
+            int childCount = transform.childCount;
+            while(childCount-- > 0)
+            {
+                child = transform.GetChild(0);
+                Undo.RecordObject(child, "Flatten child");
+                Undo.SetTransformParent(child, inParent, "Change child parent");
+                child.SetSiblingIndex(ioSiblingIndex++);
+                FlattenHierarchyRecursive(child, inParent, ref ioSiblingIndex);
+            }
+        }
+
+        [MenuItem("GameObject/Flatten Hierarchy (Shallow) %#Q", false, 2000)]
+        static private void FlattenHierarchyNonRecursive()
+        {
+            foreach(var gameObject in Selection.gameObjects)
+                FlattenHierarchy(gameObject.transform, false);
+        }
+
+        [MenuItem("GameObject/Flatten Hierarchy (Deep) %#W", false, 2001)]
+        static private void FlattenHierarchyRecursive()
+        {
+            foreach(var gameObject in Selection.gameObjects)
+                FlattenHierarchy(gameObject.transform, true);
+        }
+
+        //[MenuItem("CONTEXT/Transform/Log Transform Hash")]
+        static private void LogTransformHash(MenuCommand command)
+        {
+            Transform t = (Transform) command.context;
+            Debug.LogFormat("Hash of Transform '{0}' State: {1:X8}", t.name, t.GetStateHash());
+        }
+
+        //[MenuItem("CONTEXT/Camera/Log Camera Hash")]
+        static private void LogCameraHash(MenuCommand command)
+        {
+            Camera c = (Camera) command.context;
+            Debug.LogFormat("Hash of Camera '{0}' State: {1:X8}", c.name, c.GetStateHash());
+        }
+    }
+}

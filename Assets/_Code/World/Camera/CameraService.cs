@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Aqua.Debugging;
 using BeauRoutine;
@@ -1778,7 +1779,7 @@ namespace Aqua.Cameras
 
         #endif // DEVELOPMENT
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
 
         [NonSerialized] private bool m_ScreenshotMode = false;
 

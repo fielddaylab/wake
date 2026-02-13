@@ -3,7 +3,7 @@
 #endif
 
 // comment out this define to disable the AB test
-#define ANALYTICS_ABTEST_ALTJOBGRAPH
+// #define ANALYTICS_ABTEST_ALTJOBGRAPH
 
 using System;
 using BeauUtil;

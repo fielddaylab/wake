@@ -134,16 +134,16 @@ namespace ProtoAqua.Observation {
             Show();
         }
 
-        private void OnButtonPress(PointerEventData evt) {
-            if (evt.button != 0) {
+        private void OnButtonPress(PointerListener.EventData evt) {
+            if (evt.EventSystemData.button != 0) {
                 return;
             }
 
             m_ButtonHeld = true;
         }
 
-        private void OnButtonReleased(PointerEventData evt) {
-            if (evt.button != 0) {
+        private void OnButtonReleased(PointerListener.EventData evt) {
+            if (evt.EventSystemData != null && evt.EventSystemData.button != 0) {
                 return;
             }
 

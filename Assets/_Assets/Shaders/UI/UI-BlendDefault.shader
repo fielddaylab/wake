@@ -45,7 +45,7 @@ Shader "UI/Blend Default"
         Cull Off
         Lighting Off
         ZWrite Off
-        ZTest [unity_GUIZTestMode]
+        ZTest Always
         Blend [_SrcBlend] [_DestBlend]
         BlendOp [_BlendOp]
         ColorMask [_ColorMask]

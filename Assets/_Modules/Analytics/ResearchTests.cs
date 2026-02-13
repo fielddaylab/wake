@@ -1,5 +1,8 @@
 // Comment out the line below to disallow any AB testing
-#define ABTESTS_ALLOWED
+// #define ABTESTS_ALLOWED
+
+// Comment out the line below to disallow the initial survey
+#define INITIAL_SURVEY_ALLOWED
 
 #if (UNITY_EDITOR && !IGNORE_UNITY_EDITOR) || DEVELOPMENT_BUILD
 #define DEVELOPMENT
@@ -93,12 +96,17 @@ namespace Aqua.Analytics {
 #endif // DEVELOPMENT
 
         static public void HandleProfileStart(OGDSurvey surveyDisplayer) {
-#if ABTESTS_ALLOWED
             if (IsNewSave(Save.Current)) {
+#if INITIAL_SURVEY_ALLOWED
                 Services.State.OnSceneLoadReady(() => InitialSurvey(surveyDisplayer));
+#endif // INITIAL_SURVEY_ALLOWED
             } else {
+#if ABTESTS_ALLOWED
                 UserCodeReminderFeature.TryQueueDisplay();
+#endif // ABTESTS_ALLOWED
             }
+
+#if ABTESTS_ALLOWED
             JobPredictionFeature.TryLoadTable();
             AlternateJobGraphFeature.TryApplyPatch();
 #endif // ABTESTS_ALLOWED
