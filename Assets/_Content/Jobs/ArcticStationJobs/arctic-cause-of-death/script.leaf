@@ -153,7 +153,8 @@ $set jobs:arctic-cause-of-death.grantedStress = true
 @when 		JobTaskActive(getCurrPopulationData)
 @boostScore -5
 @cutscene
-{@guide}    We need to collect the current populations of all organisms at the {h}whalefall site{/h}.
+{@guide}    You need to see if Linda had enough food. {nameof @arcticSci} said {pluralnameof BowheadWhale} eat diatoms and ice algae.
+            So you need to find and count both of them. Remember to use your microscope.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp

@@ -53,7 +53,7 @@ $if !HasEntity(Detritus), jobs:arctic-whalefall.num-attempts > 0, !HasUpgrade(En
      {@player}  Hmm. A stronger engine? I think I saw something in the shop like that. 
 $else
     {@guide}	You need to track down Linda, the missing whale.
-                Check your AQOS to see her last known location. 
+                {nameof @arcticSci} said to search {fullnameof RS-4W}.
 $endif
 
 :: enterScene
@@ -107,10 +107,7 @@ $call GiveJournalEntry("N03_AfterWhaleFall")
 @when 		JobTaskTop(reportBack)
 @cutscene
 {@player} 	Can you remind me where to go, {nameof @guide}?
-{@guide}	My sensors indicate that you are stalling, O.
-{@player}   What? Of course I'm not stalling!
-{@guide}    Ah. I must have misinterpreted the data. 
-            You need to report back to {nameof @arcticSci} and tell them that Linda has been found. 
+{@guide}    You need to report back to {nameof @arcticSci} and tell them that Linda has been found. 
 
 // CATCH-ALL GUIDE TEXT
 

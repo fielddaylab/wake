@@ -56,13 +56,14 @@ $endif
 @cutscene
 {@player}   What should I do next, {nameof @guide}?
 {@guide}    Use your {h}Observation Tank{/h} to determine the relationships between the organisms from Site N.
+            You may have to run several {h}Observation Tank{/h} experiments to find everything.
 
 :: helpwExp
 @trigger    RequestPartnerHelp
 @when 		JobTaskActive(wormEat), scene:name == "ExperimentV2"
 {@player}   Hmmm, any advice {nameof @guide}?
 {@guide}    Our objective is to find the {h}producers{/h} for this ecosystem.
-            That means we want to discover what what organisms are {h}eaten by nothing else{/h}
+            That means we want to discover what organisms don't consume anything.
 
 :: catchAtSiteNScan
 @trigger    RequestPartnerHelp
