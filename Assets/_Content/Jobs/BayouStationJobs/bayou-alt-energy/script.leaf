@@ -50,20 +50,16 @@ $else
              You'll need to head down there, from the deepest part of {h}Site O{/h}. 
 $endif
 
-:: catchGoObservation
-@trigger    RequestPartnerHelp
-@when 		JobTaskActive(wormEat), scene:name != "ExperimentV2"
-@cutscene
-{@player}   What should I do next, {nameof @guide}?
-{@guide}    Use your {h}Observation Tank{/h} to determine the relationships between the organisms from Site N.
-            You may have to run several {h}Observation Tank{/h} experiments to find everything.
-
 :: helpwExp
 @trigger    RequestPartnerHelp
-@when 		JobTaskActive(wormEat), scene:name == "ExperimentV2"
-{@player}   Hmmm, any advice {nameof @guide}?
+@when 		JobTaskActive(wormEat)
+@cutscene
+{@player}   What should I do next, {nameof @guide}?
 {@guide}    Our objective is to find the {h}producers{/h} for this ecosystem.
             That means we want to discover what organisms don't consume anything.
+{@player}   Hmmm, any advice?
+{@guide}    Use your {item}Observation Tank{/item} to determine the relationships between the organisms from {h}Site N{/h}.
+            You may have to run several {item}Observation Tank{/item} experiments to find everything.
 
 :: catchAtSiteNScan
 @trigger    RequestPartnerHelp
@@ -83,7 +79,7 @@ $endif
 
 :: catchReportBack
 @trigger    RequestPartnerHelp
-@when 		
+@when 		JobTaskActive(reportBack)
 @boostScore -10
 @cutscene
 

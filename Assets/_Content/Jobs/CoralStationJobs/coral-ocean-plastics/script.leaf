@@ -65,10 +65,11 @@ $endif
 @boostScore -5
 @cutscene
 {@player} What should I do now, {nameof @guide}?
-{@guide}    Use the Observation Tank to figure out what Loggerhead Turtles eat.
-$if !HasFact(LoggerheadTurtle.Eats.PlasticBag), HasFact(LoggerheadTurtle.Eats.AngelFish), HasFact(LoggerheadTurtle.Eats.Copepod), HasFact(LoggerheadTurtle.Eats.Cyanobacteria), HasFact(LogerheadTurtle.Eats.MoonJelly), HasFact(LoggerheadTurtle.Eats.QueenConch), HasFact(LoggerheadTurtle.Eats.WhiteShrimp)
-    {@guide}    Remember, {naameof profCoral} was worried about plastic in the reef, because the bags look like {pluralnameof MoonJelly} to the turtles.
-                Use the Observation Tank to see if the turtles try to eat the plastic bags.
+{@guide}    Use the {item}Observation Tank{/item} to figure out what {pluralnameof LoggerheadTurtle} eat.
+$if !HasFact(LoggerheadTurtle.Eats.PlasticBag), HasFact(LoggerheadTurtle.Eats.Copepod), HasFact(LoggerheadTurtle.Eats.QueenConch), HasFact(LoggerheadTurtle.Eats.WhiteShrimp)
+    {@guide}    Remember, {nameof @profCoral} was worried about plastic in the reef, because the bags look like {pluralnameof MoonJelly} to the turtles.
+                Use the {item}Observation Tank{/item} to see if the turtles try to eat the {pluralnameof PlasticBag}.
+$endif
 
 :: catchMakeModel
 @trigger    RequestPartnerHelp

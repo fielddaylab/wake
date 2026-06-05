@@ -42,8 +42,16 @@ $endif
 @cutscene
 {@player}   Can I have a little help, {nameof @guide}?
 {@guide}    Certainly, O!
-            First you'll need to use your {h}Observation Tank{/h} to understand how the different organisms from {h}Site W{/h} interact.
-            Then head to your {nameof Modeling} and use what you found out to create a visual model!
+$if !HasFact(BristleWorm.Eats.Detritus), !HasFact(Hagfish.Eats.Detritus), !HasFact(SnowCrab.Eats.Detritus), !HasFact(NorthAtlanticOctopus.Eats.Detritus), !HasFact(NorthAtlanticOctopus.Eats.SnowCrab), !HasFact(ZombieWorm.Eats.Detritus)
+    {@guide} First you'll need to use your {h}Observation Tank{/h} to understand how the different organisms from {h}Site W{/h} interact.
+             Then head to your {nameof Modeling} and use what you found out to create a visual model!
+$elseif HasFact(BristleWorm.Eats.Detritus), HasFact(Hagfish.Eats.Detritus), HasFact(SnowCrab.Eats.Detritus), HasFact(NorthAtlanticOctopus.Eats.Detritus), HasFact(NorthAtlanticOctopus.Eats.SnowCrab), HasFact(ZombieWorm.Eats.Detritus)
+    {@guide} I think you have everything you need to build a model.
+             Now head to your {nameof Modeling} and create a visual model of site W.
+$else
+    {@guide} You need to find out everything that eats the whale detritus at {h}Site W{/h}.
+             You could also try building a {h}visual model{/h} of site W. If you see a question mark icon next to an organism, go back to the {item}Observation Tank{/item} and test it specifically.
+$endif
 
 ::reportBack
 @trigger    RequestPartnerHelp

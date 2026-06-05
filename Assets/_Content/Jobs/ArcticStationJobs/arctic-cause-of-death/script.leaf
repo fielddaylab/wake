@@ -153,8 +153,9 @@ $set jobs:arctic-cause-of-death.grantedStress = true
 @when 		JobTaskActive(getCurrPopulationData)
 @boostScore -5
 @cutscene
-{@guide}    You need to see if Linda had enough food. {nameof @arcticSci} said {pluralnameof BowheadWhale} eat diatoms and ice algae.
-            So you need to find and count both of them. Remember to use your microscope.
+{@guide}    You need to see if Linda had enough food.
+            {nameof @arcticSci} said {pluralnameof BowheadWhale} eat {nameof Diatoms} and {nameof IceAlgae}. So you need to find and count both of them.
+            Remember to use your {item}microscope{/item}.
 
 :: catchReportBack
 @trigger    RequestPartnerHelp

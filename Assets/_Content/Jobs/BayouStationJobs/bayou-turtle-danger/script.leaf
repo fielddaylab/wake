@@ -60,7 +60,15 @@ $call GiveJournalEntry("N15_BayouFight")
 @boostScore -5
 @cutscene
 {@player} Okay, {nameof @guide}. What now?
-{@guide}  Use your {item}Observation Tank{/item} to find what Loggerhead Turtles eat at Site O.
+$if HasFact(LoggerheadTurtle.Eats.AngelFish), !HasFact(LoggerheadTurtle.Eats.Cyanobacteria)
+    {@guide} You need to find out everything {pluralnameof LoggerheadTurtle} eat.
+             Make sure you try all the species at {h}Site O{/h}. You may have to run several more {item}Observation Tank{/item} experiments.
+$elseif !HasFact(LoggerheadTurtle.Eats.AngelFish), HasFact(LoggerheadTurtle.Eats.Cyanobacteria)
+    {@guide} You need to find out everything {pluralnameof LoggerheadTurtle} eat.
+             Make sure you try all the species at {h}Site O{/h}. You may have to run several more {item}Observation Tank{/item} experiments.
+$else
+    {@guide}  Use your {item}Observation Tank{/item} to find what Loggerhead Turtles eat at Site O.
+$endif
 
 :: catchVisualModelO
 @trigger    RequestPartnerHelp

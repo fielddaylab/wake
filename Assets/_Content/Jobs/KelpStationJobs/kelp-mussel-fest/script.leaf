@@ -29,7 +29,11 @@
 @cutscene
 {@player}   Can you remind me what to do next, {nameof @guide}?
 {@guide}	Certainly, O.
-            You need to scan a mussel and gather data from the water chemistry probe!
+$if HasEntity(Mussel)
+    {@guide}    You need to gather data from the water chemistry probe.
+$else
+    {@guide}    You need to scan a mussel and gather data from the water chemistry probe!
+$endif
 
 :: navigation.goBackUp
 @trigger    JobTasksUpdated

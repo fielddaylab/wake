@@ -163,7 +163,8 @@ $set jobs:arctic-in-ice.triedScan = true
 {@player}   What should I be doing, {nameof @guide}?
 {@guide}    We must see if you can find what is attracting the {nameof ArcticCod} to the ice shelf.
 $if scene:name != "RS-4Z"
-    {@guide}  The ice shelf is at site Z, the Frosted Sea, where the station is.
+    {@guide}  The ice shelf is at site Z, the {nameof RS-4Z}, where the station is.
+$endif
 
 :: catchCountAlgae
 @trigger	RequestPartnerHelp
@@ -174,7 +175,7 @@ $if scene:name != "RS-4Z"
 $if scene:name == "RS-4Z"
     {@guide} You still need to count the {nameof IceAlgae}. Make sure to use your microscope!
 $else
-    {@guide} You still need to count the {nameof IceAlgae} at the ice shelf at site Z. Make sure to use your microscope!
+    {@guide} You still need to count the {nameof IceAlgae} at the ice shelf at {h}site Z{/h}. Make sure to use your microscope!
 $endif
 
 :: catchObserveEat
