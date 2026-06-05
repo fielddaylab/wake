@@ -61,7 +61,7 @@ $endif
 {@player}   No. I mean... what are we supposed to do here?
 {@guide}    Ah. You have been tasked with investigating each of {nameof @arcticSci}'s theories about Linda's death: water conditions, or lack of food.
             You will still need more information in order to investigate either theory.
-            Check your {h}AQOS{/h} to see where to go next.
+            First, we need to go to {h}Site W{/h}, where Linda died.
 
 ::helpScanProbE
 @trigger    RequestPartnerHelp
@@ -73,13 +73,13 @@ $endif
 
 ::helpScanProbP
 @trigger    RequestPartnerHelp
-@when   scene:name == "RS-4W", JobTaskTop(getHistPopulationData)
+@when   JobTaskTop(getHistPopulationData)
 @cutscene
 {@player}  Okay, {nameof @guide}. What's our next step?
 {@guide}   You need to determine if Linda died of starvation.
-            That means you'll need to find out if her food population declined.
+           That means you'll need to find out if her food population declined.
            There's no live whale here to help us obtain data on what Bowhead Whales eat...
-           So I would suggest gathering data on everything.
+           So I would suggest scanning the population probe to get historical data at {h}Site W{/h}.
 {@player}  Got it. Thanks, {nameof @guide}.
 
 ::helpReport
