@@ -1,99 +1,72 @@
 name: Aqualab Build
 
-# Controls when the action will run. Triggers the workflow on creation of 
-# tags.  Creating new 'versions' via github is the most straightforward 
-# way of doing this.
+# One Unity build, deployed independently to:
+#   - the Vault staging CDN: https://cdn.vaultlearninggames-staging.org/fieldday/wake/<branch>/
+#   - the DoIT server (legacy; delete the `doit` job when DoIT is retired)
+# The two deploys don't depend on each other. Deleting a branch removes its CDN preview.
 on:
-  push:
-  workflow_dispatch:
- 
+   push:
+   delete:
+   workflow_dispatch:
+
 jobs:
- build:
-   name: Build Unity Project
-   runs-on: ubuntu-latest
-   concurrency:
-     group: ${{ github.workflow }}-${{ github.ref }}
-     cancel-in-progress: true
+  build:
+    if: github.event_name != 'delete'
+    uses: fielddaylab/vault-publisher/.github/workflows/unity-build.yml@v1
+    secrets: inherit
 
-   # Setup Steps
+  preview:
+    needs: build
+    permissions:
+      contents: read
+      id-token: write
+    uses: fielddaylab/vault-publisher/.github/workflows/publish-preview.yml@v1
+    with:
+      game: wake
+      artifact: ${{ needs.build.outputs.artifact }}
 
-   steps:
-     
-   - name: Install OpenConnect
-     run: sudo NEEDRESTART_MODE=a sudo apt-get update && sudo apt-get install openconnect
-     
-   - name: Connect to VPN
-     run: echo ${{ secrets.FIELDDAY_VPN_PASSWORD }} | sudo openconnect --protocol=gp -u ${{ secrets.FIELDDAY_VPN_USERNAME }} --passwd-on-stdin soe.vpn.wisc.edu &
-     
-   - name: Checkout repository
-     uses: actions/checkout@v4
-     with:
-       lfs: true
-     
-   - name: Checkout submodules
-     uses: srt32/git-actions@v0.0.3
-     with:
-       args:  |
-         git config --global --add safe.directory "/github/workspace"
-         git config --global --add safe.directory "/github/workspace/Submodules"
-         git submodule update --init --recursive
+  remove-preview:
+    if: github.event_name == 'delete'
+    permissions:
+      contents: read
+      id-token: write
+    uses: fielddaylab/vault-publisher/.github/workflows/publish-preview.yml@v1
+    with:
+      game: wake
 
-   # Extracts branch name into BRANCH environment variable
-   - name: Extract branch name
-     shell: bash
-     run: echo "BRANCH=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')" >> $GITHUB_ENV
+  # Legacy DoIT deploy: https://fielddaylab.wisc.edu/play/wake/ci/<branch>/
+  doit:
+    needs: build
+    runs-on: ubuntu-latest
+    concurrency:
+      group: doit-${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+    - name: Download build
+      uses: actions/download-artifact@v8
+      with:
+        name: ${{ needs.build.outputs.artifact }}
+        path: build
 
-   # Extracts version tag into VERSION environment variable
-   - name: Extract version name
-     shell: bash
-     run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/\//_/g')" >> $GITHUB_ENV
+    - name: Install OpenConnect
+      run: sudo NEEDRESTART_MODE=a apt-get -q update && sudo NEEDRESTART_MODE=a apt-get -q install -y openconnect
 
-   # Read editor version
-   - name: Retrieve editor version
-     id: getEditorVersion
-     uses: pietrobolcato/action-read-yaml@1.1.0
-     with:
-       config: ${{ github.workspace }}/ProjectSettings/ProjectVersion.txt
+    - name: Connect to VPN
+      run: |
+        echo "${{ secrets.FIELDDAY_VPN_PASSWORD }}" | sudo openconnect --protocol=gp -u "${{ secrets.FIELDDAY_VPN_USERNAME }}" --passwd-on-stdin --background soe.vpn.wisc.edu
+        # Wait for the tunnel before uploading.
+        for _ in $(seq 1 30); do ip link show tun0 > /dev/null 2>&1 && exit 0; sleep 2; done
+        echo "::error::VPN tunnel did not come up"; exit 1
 
-   - name: Extract editor version to var
-     shell: bash
-     run: echo "UNITY_VERSION=${{ steps.getEditorVersion.outputs['m_EditorVersion'] }}" >> $GITHUB_ENV
-     
-   # Unity Build Steps
+    - name: Branch folder name
+      run: echo "BRANCH=$(echo "${GITHUB_REF#refs/heads/}" | sed 's/\//_/g')" >> "$GITHUB_ENV"
 
-   - name: Cache Library folder
-     uses: actions/cache@v3
-     with:
-       path: Library
-       key: Library
-   
-   # Build
-   - name: Build project
-     uses: game-ci/unity-builder@v4.3.0
-     env:
-       UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-       UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-       UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-     with:
-       unityVersion: ${{ env.UNITY_VERSION }}
-       targetPlatform: WebGL
-       #customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
-   
-   
-   # Deploy Steps
-   
-   - name: Upload build as artifact
-     uses: actions/upload-artifact@v4
-     with:
-       name: ${{ github.event.repository.name }}-webgl_${{ env.VERSION }}
-       path: build/WebGL/WebGL
-   
-   - name: Upload to web server via rsync
-     uses: burnett01/rsync-deployments@5.2
-     with:
-       switches: -avzr --delete --rsync-path="mkdir -p ${{ secrets.DEPLOY_DIR }}/${{ env.BRANCH }} && rsync"
-       path: build/WebGL/WebGL/*
-       remote_path: ${{ secrets.DEPLOY_DIR }}/${{ env.BRANCH }}
-       remote_host: ${{ secrets.FIELDDAY_WISC_EDU_DEPLOY_HOST }}
-       remote_user: ${{ secrets.FIELDDAY_WISC_EDU_DEPLOY_USER }}
-       remote_key: ${{ secrets.FIELDDAY_WISC_EDU_DEPLOY_KEY }}
+    - name: Upload to web server via rsync
+      uses: burnett01/rsync-deployments@5.2
+      with:
+        switches: -avzr --delete --rsync-path="mkdir -p ${{ secrets.DEPLOY_DIR }}/${{ env.BRANCH }} && rsync"
+        path: build/*
+        remote_path: ${{ secrets.DEPLOY_DIR }}/${{ env.BRANCH }}
+        remote_host: ${{ secrets.FIELDDAY_WISC_EDU_DEPLOY_HOST }}
+        remote_user: ${{ secrets.FIELDDAY_WISC_EDU_DEPLOY_USER }}
+        remote_key: ${{ secrets.FIELDDAY_WISC_EDU_DEPLOY_KEY }}
