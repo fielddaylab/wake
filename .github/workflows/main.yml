@@ -12,7 +12,7 @@ on:
 jobs:
   build:
     if: github.event_name != 'delete'
-    uses: fielddaylab/vault-publisher/.github/workflows/unity-build.yml@v1
+    uses: VaultLearningGames/vault-publisher/.github/workflows/unity-build.yml@v1
     secrets: inherit
 
   preview:
@@ -20,7 +20,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    uses: fielddaylab/vault-publisher/.github/workflows/publish-preview.yml@v1
+    uses: VaultLearningGames/vault-publisher/.github/workflows/publish-preview.yml@v1
     with:
       game: wake
       artifact: ${{ needs.build.outputs.artifact }}
@@ -30,7 +30,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    uses: fielddaylab/vault-publisher/.github/workflows/publish-preview.yml@v1
+    uses: VaultLearningGames/vault-publisher/.github/workflows/publish-preview.yml@v1
     with:
       game: wake
 
